@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thế giới Trường Rubik</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="game"></div>
+
+<div id="hud" hidden>
+  <div class="card me"><b id="hName"></b><span id="hZone"></span><span id="hCoins"></span></div>
+  <div class="card board"><h3>Bảng xếp hạng</h3><ol id="lb"></ol></div>
+  <div class="card chat"><div id="chatLog"></div><form id="chatForm"><input id="chatIn" maxlength="120" placeholder="Nhấn Enter để chat…" autocomplete="off" aria-label="Tin nhắn"><button>Gửi</button></form></div>
+  <div class="prompt" id="prompt" hidden></div>
+  <div class="toast" id="toast" hidden></div>
+  <div class="tools"><button id="bInv">Túi đồ</button><button id="bBike">Đạp xe</button><button id="bMap">Bản đồ</button></div>
+</div>
+
+<div class="overlay" id="login">
+  <div class="panel">
+    <h1>Thế giới Trường Rubik</h1>
+    <p>Nhập tên, chọn phong cách rồi vào game. Mọi người mở cùng đường link sẽ thấy nhau di chuyển thời gian thực.</p>
+    <label>Tên của bạn<input id="lName" maxlength="18" placeholder="Ví dụ: Hà Quân" autocomplete="nickname"></label>
+    <div class="stylepick">
+      <canvas id="lPrev" width="120" height="150" aria-label="Xem trước nhân vật"></canvas>
+      <div>
+        <div class="row" id="lLooks"></div>
+        <label>Màu da<input type="color" id="lSkin" value="#f2c9a0"></label>
+        <label>Màu tóc<input type="color" id="lHair" value="#2a1a12"></label>
+        <label>Màu áo<input type="color" id="lShirt" value="#3d7bff"></label>
+        <label>Màu quần<input type="color" id="lPants" value="#24356b"></label>
+        <label>Kiểu tóc<select id="lHairS"><option value="short">Ngắn</option><option value="long">Dài</option><option value="bun">Búi</option><option value="spiky">Dựng</option><option value="pony">Đuôi ngựa</option></select></label>
+      </div>
+    </div>
+    <button id="lGo" class="primary">Vào game</button>
+    <p class="hint">Di chuyển: phím mũi tên hoặc WASD · E: tương tác · Enter: chat</p>
+  </div>
+</div>
+
+<div class="overlay" id="modal" hidden>
+  <div class="panel wide"><div class="mhead"><h2 id="mTitle"></h2><button id="mClose" aria-label="Đóng">×</button></div><div id="mBody"></div></div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/lib/phaser.min.js"></script>
+<script src="/lib/chess.js"></script>
+<script src="js/shared.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/world.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
