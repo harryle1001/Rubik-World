@@ -9,7 +9,11 @@ const { ZONES, CATALOG, CROPS, PLOT_PRICE, PLOT_COUNT } = require('../client/js/
 const PORT = process.env.PORT || 3000;
 const ROOT = path.join(__dirname, '..');
 const DATA = path.join(ROOT, 'data', 'players.json');
+const WORLD_FILE = path.join(ROOT, 'data', 'world.json');
+const ADMIN_FILE = path.join(ROOT, 'data', 'admin.json');
 const app = express();
+app.get('/sw.js', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'sw.js')); });
+app.get('/manifest.webmanifest', (req, res) => { res.type('application/manifest+json'); res.sendFile(path.join(ROOT, 'client', 'manifest.webmanifest')); });
 app.use(express.static(path.join(ROOT, 'client')));
 app.use('/assets', express.static(path.join(ROOT, 'public', 'assets')));
 app.get('/lib/phaser.min.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'phaser', 'dist', 'phaser.min.js')));
@@ -21,6 +25,18 @@ const io = new Server(server);
 let saved = {};
 try { saved = JSON.parse(fs.readFileSync(DATA, 'utf8')); } catch (e) { saved = {}; }
 let dirty = false;
+
+// ---------- game owner (admin) key + world edits made in edit mode ----------
+let ADMIN_KEY = process.env.ADMIN_KEY || '';
+if (!ADMIN_KEY) { try { ADMIN_KEY = JSON.parse(fs.readFileSync(ADMIN_FILE, 'utf8')).key; } catch (e) {} }
+if (!ADMIN_KEY) { ADMIN_KEY = Array.from({ length: 8 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join(''); try { fs.mkdirSync(path.dirname(ADMIN_FILE), { recursive: true }); fs.writeFileSync(ADMIN_FILE, JSON.stringify({ key: ADMIN_KEY }, null, 1)); } catch (e) {} }
+let WORLD = { props: {}, signs: {}, zoneNames: {}, prices: {} };
+try { WORLD = Object.assign(WORLD, JSON.parse(fs.readFileSync(WORLD_FILE, 'utf8'))); } catch (e) {}
+let worldDirty = false, propSeq = Date.now() % 100000;
+setInterval(() => { if (!worldDirty) return; worldDirty = false; fs.writeFile(WORLD_FILE, JSON.stringify(WORLD, null, 1), () => {}); }, 2000);
+const PROP_KINDS = ['oak', 'pine', 'sakura', 'palm', 'flowers', 'bush', 'rock', 'bench', 'lamp', 'statue', 'fountain', 'sign', 'chest', 'balloon'];
+const priceOf = it => (WORLD.prices[it.id] != null ? WORLD.prices[it.id] : it.price);
+const worldMeta = () => ({ signs: WORLD.signs, zoneNames: WORLD.zoneNames, prices: WORLD.prices });
 setInterval(() => { if (!dirty) return; dirty = false; fs.writeFile(DATA, JSON.stringify(saved, null, 1), () => {}); }, 4000);
 
 // ---------- world state ----------
@@ -51,8 +67,8 @@ function leaderboard() {
   return Object.entries(all).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([name, score]) => { const p = on.get(name); return { name, score, online: !!p, zone: p ? ZONES[p.zone].name : null }; });
 }
 function persist(p) { saved[p.name] = { style: p.style, coins: p.coins, score: p.score, inv: p.inv, equip: p.equip }; dirty = true; }
-function zoneState(zone) { return { zone, players: [...players.values()].filter(p => p.zone === zone).map(pub), stars: [...stars[zone].values()], plots: zone === 'vuon' ? plots : null }; }
-function me(p) { return { id: p.id, name: p.name, coins: p.coins, score: p.score, inv: p.inv, equip: p.equip, style: p.style }; }
+function zoneState(zone) { return { zone, players: [...players.values()].filter(p => p.zone === zone).map(pub), stars: [...stars[zone].values()], plots: zone === 'vuon' ? plots : null, props: WORLD.props[zone] || [] }; }
+function me(p) { return { id: p.id, name: p.name, coins: p.coins, score: p.score, inv: p.inv, equip: p.equip, style: p.style, admin: !!p.admin }; }
 
 io.on('connection', socket => {
   let p = null;
@@ -67,8 +83,10 @@ io.on('connection', socket => {
     p = { id: socket.id, name, style: cleanStyle(data && data.style || prev.style), zone: z, x: Z.spawn[0] + Math.round(Math.random() * 60 - 30), y: Z.spawn[1], dir: 1, moving: false, ride: null,
           coins: prev.coins != null ? prev.coins : 100, score: prev.score || 0, inv: prev.inv || { 'bike_city|#3d7bff': 1 }, equip: prev.equip || {} };
     p.ride = p.equip.bike || null;
+    p.admin = !!(data && typeof data.adminKey === 'string' && data.adminKey.trim().toUpperCase() === ADMIN_KEY.toUpperCase());
     players.set(socket.id, p); socket.join(z); persist(p);
-    socket.emit('welcome', { me: me(p), state: zoneState(z), leaderboard: leaderboard() });
+    socket.emit('welcome', { me: me(p), state: zoneState(z), leaderboard: leaderboard(), meta: worldMeta() });
+    if (data && data.adminKey && !p.admin) socket.emit('toast', 'Mã chủ game không đúng, bạn vào game như người chơi thường.');
     socket.to(z).emit('joined', pub(p));
     io.emit('system', `${name} vừa vào thế giới Trường Rubik!`);
   });
@@ -106,8 +124,8 @@ io.on('connection', socket => {
   socket.on('buy', d => {
     if (!p || !d) return; const it = CATALOG.find(c => c.id === d.id); if (!it) return;
     const color = /^#[0-9a-f]{6}$/i.test(d.color) ? d.color : '#3d7bff';
-    if (p.coins < it.price) { socket.emit('toast', 'Chưa đủ xu. Hãy nhặt sao, làm vườn, chơi mini game để kiếm thêm!'); return; }
-    p.coins -= it.price; const key = it.kind === 'seed' ? it.id : `${it.id}|${color}`;
+    if (p.coins < priceOf(it)) { socket.emit('toast', 'Chưa đủ xu. Hãy nhặt sao, làm vườn, chơi mini game để kiếm thêm!'); return; }
+    p.coins -= priceOf(it); const key = it.kind === 'seed' ? it.id : `${it.id}|${color}`;
     p.inv[key] = (p.inv[key] || 0) + (it.kind === 'seed' ? 5 : 1);
     if (it.kind === 'bike' || it.kind === 'hat') { p.equip[it.kind] = key; if (it.kind === 'bike') p.ride = key; io.to(p.zone).emit('restyle', { id: p.id, equip: p.equip, ride: p.ride }); }
     persist(p); socket.emit('me', me(p)); socket.emit('toast', `Đã mua ${it.name}${it.kind === 'seed' ? ' (5 hạt)' : ''}!`);
@@ -132,10 +150,33 @@ io.on('connection', socket => {
   socket.on('challengeReply', d => { if (!p || !d) return; const t = players.get(d.to); if (!t) return; if (d.ok) { const game = `g${Date.now()}`; io.to(t.id).emit('chessStart', { game, color: 'w', opp: p.name, oppId: p.id }); socket.emit('chessStart', { game, color: 'b', opp: t.name, oppId: t.id }); } else io.to(t.id).emit('toast', `${p.name} từ chối lời mời.`); });
   socket.on('chessMove', d => { if (!p || !d) return; const t = players.get(d.to); if (t) io.to(t.id).emit('chessMove', { from: d.from, to: d.toSq, promotion: d.promotion }); });
   socket.on('chessEnd', d => { if (!p || !d) return; if (d.won) { p.score += 30; p.coins += 30; persist(p); socket.emit('me', me(p)); } });
+  // ---------- edit mode: only the game owner (admin) may change the world ----------
+  socket.on('refresh', () => { if (p) socket.emit('zoneState', zoneState(p.zone)); });
+  socket.on('edit', d => {
+    if (!p || !p.admin || !d) { socket.emit('toast', 'Chỉ chủ game mới được sửa.'); return; }
+    const Z = Object.prototype.hasOwnProperty.call(ZONES, d.zone) ? ZONES[d.zone] : null; const txt = v => clean(v, 40);
+    if (d.op === 'addProp' && Z && PROP_KINDS.includes(d.kind)) {
+      const list = WORLD.props[d.zone] = WORLD.props[d.zone] || []; if (list.length >= 200) { socket.emit('toast', 'Khu này đã có quá nhiều đồ trang trí.'); return; }
+      list.push({ id: 'p' + (propSeq++), kind: d.kind, x: Math.max(0, Math.min(Z.w, Math.round(+d.x || 0))), y: Math.max(0, Math.min(Z.h, Math.round(+d.y || 0))), text: txt(d.text), color: /^#[0-9a-f]{6}$/i.test(d.color) ? d.color : null });
+    } else if (d.op === 'moveProp' && Z) {
+      const it = (WORLD.props[d.zone] || []).find(o => o.id === d.id); if (!it) return; it.x = Math.max(0, Math.min(Z.w, Math.round(+d.x || 0))); it.y = Math.max(0, Math.min(Z.h, Math.round(+d.y || 0)));
+    } else if (d.op === 'delProp' && Z) {
+      WORLD.props[d.zone] = (WORLD.props[d.zone] || []).filter(o => o.id !== d.id);
+    } else if (d.op === 'sign' && Z && Z.exits[+d.idx]) {
+      const t = txt(d.label); if (t) WORLD.signs[d.zone + '|' + (+d.idx)] = t; else delete WORLD.signs[d.zone + '|' + (+d.idx)];
+    } else if (d.op === 'zoneName' && Z) {
+      const t = txt(d.name); if (t) WORLD.zoneNames[d.zone] = t; else delete WORLD.zoneNames[d.zone];
+    } else if (d.op === 'price') {
+      const it = CATALOG.find(c => c.id === d.id); const v = Math.round(+d.price); if (!it) return; if (v > 0 && v <= 100000 && v !== it.price) WORLD.prices[it.id] = v; else delete WORLD.prices[it.id];
+    } else return;
+    worldDirty = true;
+    if (['addProp', 'moveProp', 'delProp'].includes(d.op)) io.to(d.zone).emit('props', { zone: d.zone, props: WORLD.props[d.zone] || [] });
+    else io.emit('worldMeta', worldMeta());
+  });
   socket.on('disconnect', () => {
     if (!p) return; persist(p); players.delete(socket.id); io.to(p.zone).emit('left', p.id); io.emit('system', `${p.name} đã rời game.`);
   });
 });
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
-server.listen(PORT, () => console.log(`Server game đang chạy tại http://localhost:${PORT}`));
+server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); });

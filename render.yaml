@@ -1,0 +1,11 @@
+# One-click deploy on Render (https://render.com): New > Blueprint > pick this repo.
+services:
+  - type: web
+    name: truong-rubik
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: ADMIN_KEY      # game owner key for edit mode; set your own secret value in the Render dashboard
+        sync: false

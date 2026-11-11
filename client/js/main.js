@@ -12,16 +12,18 @@ const SPEED = 230, AV = 2; // px/s, avatar draw scale
   (function anim(){ if($('login').hidden) return; ph += .15; c.clearRect(0, 0, 120, 150); drawAvatar(CG(c, 60, 135, 3.2), st(), {dir:1, phase:ph, moving:true}); requestAnimationFrame(anim); })();
   const go = () => { const name = $('lName').value.trim(); if(!name){ $('lName').focus(); $('lName').placeholder = 'Hãy nhập tên trước nhé!'; return; }
     try { localStorage.setItem('rw_name', name); localStorage.setItem('rw_style', JSON.stringify(st())); } catch(e){}
-    $('lGo').disabled = true; EXTRAS.gesture(); connect(name, st()); };
+    const key = ($('lAdmin').value || '').trim(); try { if(key) localStorage.setItem('rw_admin', key); else localStorage.removeItem('rw_admin'); } catch(e){}
+    $('lGo').disabled = true; EXTRAS.gesture(); connect(name, st(), key); };
   $('lGo').onclick = go; $('lName').onkeydown = e => { if(e.key === 'Enter') go(); };
+  try { const k = localStorage.getItem('rw_admin'); if(k){ $('lAdmin').value = k; $('lAdminBox').open = true; } } catch(e){}
   $('lName').focus();
 })();
 
 // ---------- socket ----------
-function connect(name, style){
+function connect(name, style, adminKey){
   const s = NET.socket = io();
-  s.on('connect', () => { if(!G.me) s.emit('join', {name, style}); });
-  s.on('welcome', d => { G.me = d.me; $('login').hidden = true; $('hud').hidden = false; UI.me(d.me); UI.board(d.leaderboard); UI.chat({sys:true, text:'Chào ' + d.me.name + '! Đi xuống cửa lớp để ra đường chính. Enter để chat.'}); startGame(d.state); });
+  s.on('connect', () => { if(!G.me) s.emit('join', {name, style, adminKey}); });
+  s.on('welcome', d => { applyMeta(d.meta); $('bEdit').hidden = !d.me.admin; if(d.me.admin) UI.toast('Bạn là chủ game: bấm ✏️ Sửa để chỉnh thế giới.'); G.me = d.me; $('login').hidden = true; $('hud').hidden = false; UI.me(d.me); UI.board(d.leaderboard); UI.chat({sys:true, text:'Chào ' + d.me.name + '! Đi xuống cửa lớp để ra đường chính. Enter để chat.'}); startGame(d.state); });
   s.on('zoneState', st => { G.pending = null; if(G.game) G.game.scene.getScene('zone').scene.restart({state:st}); });
   s.on('joined', p => G.scene && G.scene.addOther(p));
   s.on('moved', m => { const o = G.scene && G.scene.others.get(m.id); if(o){ o.tx = m.x; o.ty = m.y; o.dir = m.dir; o.moving = m.moving; o.ride = m.ride; } });
@@ -35,6 +37,8 @@ function connect(name, style){
   s.on('toast', UI.toast);
   s.on('restyle', r => { const o = G.scene && (r.id === G.me.id ? G.scene.meAv : G.scene.others.get(r.id)); if(o){ o.ride = r.ride; o.hat = r.equip && r.equip.hat; } });
   s.on('plots', p => { G.plots = p; });
+  s.on('props', d => { if(G.scene && d.zone === G.zone){ G.scene.state.props = d.props; propsRender(G.scene, d.props); } });
+  s.on('worldMeta', m => { applyMeta(m); s.emit('refresh'); if(EDITOR.on) setTimeout(edPanel, 300); });
   s.on('challenged', UI.invited);
   s.on('chessStart', d => UI.chessGame({color:d.color, opp:d.opp, oppId:d.oppId}));
   s.on('chessMove', UI.remoteChess);
@@ -79,6 +83,7 @@ class ZoneScene extends Phaser.Scene {
     if(!this.textures.exists('puff')){ const t = this.make.graphics({x:0, y:0, add:false}); t.fillStyle(0xffffff, 1); t.fillCircle(16, 16, 16); t.generateTexture('puff', 32, 32); t.clear(); t.fillStyle(0xffffff, 1); t.fillCircle(6, 6, 6); t.generateTexture('spark', 12, 12); t.destroy(); }
     this.world = drawZone(this, Z, st.zone);
     EXTRAS.zoneCreated(this, Z);
+    propsRender(this, st.props);
     this.others = new Map(); this.stars = new Map();
     const mine = st.players.find(p => p.id === G.me.id) || {id:G.me.id, name:G.me.name, style:G.me.style, x:Z.spawn[0], y:Z.spawn[1]};
     this.meAv = new Avatar(this, mine, true); this.meAv.ride = (G.me.equip || {}).bike || null; this.meAv.hat = (G.me.equip || {}).hat || null;
@@ -89,7 +94,9 @@ class ZoneScene extends Phaser.Scene {
     this.camTarget = this.add.zone(mine.x, mine.y - 40, 1, 1); cam.startFollow(this.camTarget, true, .12, .12); cam.fadeIn(350, 0, 0, 0);
     this.keys = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT', false);
     this.input.keyboard.on('keydown-E', () => { if(busy() || !this.near) return; this.near.act(); });
-    this.input.on('pointerdown', p => { if(busy()) return; if(this.near && Math.hypot(p.worldX - this.near.x, p.worldY - this.near.y) < this.near.r) this.near.act(); });
+    this.input.on('pointermove', p => { if(p.isDown) editorPointer(this, 'move', p); });
+    this.input.on('pointerup', p => editorPointer(this, 'up', p));
+    this.input.on('pointerdown', p => { if(EDITOR.on && !UI.open){ document.activeElement && document.activeElement.blur(); if(editorPointer(this, 'down', p)) return; } if(busy()) return; if(this.near && Math.hypot(p.worldX - this.near.x, p.worldY - this.near.y) < this.near.r) this.near.act(); });
     this.sendT = 0; this.lastSent = ''; this.enterLock = this.time.now + 700;
     if(st.zone === 'vuon') this.plotTick = 0;
   }
@@ -138,3 +145,4 @@ function startGame(state){
   G.game = new Phaser.Game({type:Phaser.AUTO, parent:'game', backgroundColor:'#0a0f22', scale:{mode:Phaser.Scale.RESIZE, width:window.innerWidth, height:window.innerHeight}, render:{antialias:true}, scene:[]});
   G.game.scene.add('zone', ZoneScene, true, {state});
 }
+edInit();

@@ -2,3 +2,6 @@ node_modules/
 data/players.json
 *.png
 !public/assets/**/*.png
+!client/icons/*.png
+data/admin.json
+data/world.json

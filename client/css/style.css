@@ -55,3 +55,21 @@ body.touch .tools{bottom:auto;top:50%;transform:translateY(-50%);flex-direction:
 body.touch .tools button{font-size:13px;padding:5px 9px}
 body.touch #bAct{bottom:28px}
 body.touch .prompt{bottom:170px;max-width:70%;text-align:center;font-size:14px}
+/* ---------- PWA: safe areas on notched phones (iPhone) ---------- */
+@supports (padding: max(0px)){
+  .me{left:max(12px, env(safe-area-inset-left));top:max(12px, env(safe-area-inset-top))}
+  .board{right:max(12px, env(safe-area-inset-right));top:max(12px, env(safe-area-inset-top))}
+  .chat{left:max(12px, env(safe-area-inset-left));bottom:max(12px, env(safe-area-inset-bottom))}
+  .tools{right:max(12px, env(safe-area-inset-right));bottom:max(12px, env(safe-area-inset-bottom))}
+}
+#lAdminBox{margin:8px 0;color:var(--muted)}#lAdminBox summary{cursor:pointer}
+ol.steps{line-height:1.6;padding-left:22px}
+/* ---------- owner edit mode ---------- */
+body.editing #game{outline:4px dashed var(--y);outline-offset:-4px}
+.edpanel{left:12px;top:70px;width:min(340px,calc(100% - 24px));max-height:calc(100% - 250px);overflow:auto;z-index:6;display:flex;flex-direction:column;gap:8px}
+.edpanel[hidden]{display:none}
+.edpanel .mhead b{color:var(--y);font-size:14px}.edpanel .mhead button{padding:0 8px}
+#edTabs button.on,#edKinds button.on{background:var(--y);color:#1a1400}
+#edKinds button{font-size:13px;padding:4px 8px}
+.edprices{display:flex;flex-direction:column;gap:2px;max-height:260px;overflow:auto}.edprices label,#edSigns label,#ed_names>label,#edSignRow{display:flex;justify-content:space-between;gap:6px;font-size:13px;align-items:center}
+.edprices input{width:90px}#edSigns input,#edZone,#edSignText{flex:1;min-width:0}

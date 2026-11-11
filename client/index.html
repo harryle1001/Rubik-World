@@ -2,8 +2,17 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Thế giới Trường Rubik</title>
+<meta name="description" content="Game thế giới mở nhiều người chơi: trường học Rubik, nông trại, bầu trời, đại dương.">
+<meta name="theme-color" content="#0a0f22">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Trường Rubik">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,9 +24,18 @@
   <div class="card chat"><div id="chatLog"></div><form id="chatForm"><input id="chatIn" maxlength="120" placeholder="Nhấn Enter để chat…" autocomplete="off" aria-label="Tin nhắn"><button>Gửi</button></form></div>
   <div class="prompt" id="prompt" hidden></div>
   <div class="toast" id="toast" hidden></div>
-  <div class="tools"><button id="bInv">Túi đồ</button><button id="bBike">Đạp xe</button><button id="bMap">Bản đồ</button><button id="bMini" title="Phím M">Bản đồ nhỏ</button><button id="bSound">Âm thanh: bật</button><button id="bChat" class="touchonly">Chat</button></div>
+  <div class="tools"><button id="bInv">Túi đồ</button><button id="bBike">Đạp xe</button><button id="bMap">Bản đồ</button><button id="bMini" title="Phím M">Bản đồ nhỏ</button><button id="bSound">Âm thanh: bật</button><button id="bChat" class="touchonly">Chat</button><button id="bEdit" class="primary" hidden>✏️ Sửa</button><button id="bInstall" hidden>📲 Cài app</button></div>
   <div id="joy" class="touchonly" aria-hidden="true"><div id="joyK"></div></div>
   <button id="bAct" class="touchonly" aria-label="Tương tác">E</button>
+  <aside class="card edpanel" id="edPanel" hidden aria-label="Bảng sửa của chủ game">
+    <div class="mhead"><b>✏️ Chế độ sửa · chỉ chủ game thấy</b><button id="edClose" aria-label="Đóng">×</button></div>
+    <div class="row" id="edTabs"><button data-t="place" class="on">Trang trí</button><button data-t="names">Tên & bảng chỉ dẫn</button><button data-t="prices">Giá cửa hàng</button></div>
+    <div id="ed_place"><p class="hint">Chọn món rồi bấm lên bản đồ để đặt. Kéo món đã đặt để dời chỗ, bấm chọn rồi Xóa.</p><div class="row" id="edKinds"></div>
+      <label id="edSignRow" hidden>Chữ trên bảng<input id="edSignText" maxlength="40" placeholder="Ví dụ: Chào mừng tới vườn!"></label>
+      <button id="edDel" disabled>🗑 Xóa món đang chọn</button></div>
+    <div id="ed_names" hidden><label>Tên khu này<input id="edZone" maxlength="40"></label><div id="edSigns"></div><button id="edSaveNames" class="primary">Lưu cho mọi người</button></div>
+    <div id="ed_prices" hidden><div id="edPrices" class="edprices"></div><button id="edSavePrices" class="primary">Lưu giá</button></div>
+  </aside>
 </div>
 
 <div class="overlay" id="login">
@@ -36,7 +54,8 @@
         <label>Kiểu tóc<select id="lHairS"><option value="short">Ngắn</option><option value="long">Dài</option><option value="bun">Búi</option><option value="spiky">Dựng</option><option value="pony">Đuôi ngựa</option></select></label>
       </div>
     </div>
-    <button id="lGo" class="primary">Vào game</button>
+    <details id="lAdminBox"><summary>🔑 Tôi là chủ game</summary><label>Mã chủ game<input id="lAdmin" maxlength="20" autocomplete="off" placeholder="Mã hiện trong cửa sổ chạy server"></label></details>
+    <button id="lGo" class="primary">Vào game</button> <button id="lInstall" hidden>📲 Cài app lên máy</button>
     <p class="hint">Di chuyển: phím mũi tên hoặc WASD · E: tương tác · Enter: chat</p>
   </div>
 </div>
@@ -53,6 +72,8 @@
 <script src="js/world.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/extras.js"></script>
+<script src="js/editor.js"></script>
 <script src="js/main.js"></script>
+<script src="js/pwa.js"></script>
 </body>
 </html>
