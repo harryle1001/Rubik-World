@@ -148,6 +148,7 @@ function drawZone(scene, Z, zid){
       const t = TXT(scene, x, y - 100, n, 18, '#fff'); t.setDepth(y);
       I(x, y + 110, 90, `Mua sắm: ${n}`, () => UI.shop(k)); });
     signpost(scene, 900, 300, 'Chào mừng! Bấm E ở quầy để mua'); break; }
+  case 'farm': { Farm.build(scene, d, dd, W, H, I, B, out); break; }
   case 'garden': {
     grassTex(d, 0, 0, W, H, '#8bc34a', '#7cb342'); d.rect('#5d4037', 0, 0, W, 180); TXT(scene, 800, 90, 'KHU VƯỜN · MUA ĐẤT, GIEO HẠT, TƯỚI NƯỚC, THU HOẠCH', 22, '#fff');
     scene.plotG = scene.add.graphics().setDepth(3);
@@ -226,4 +227,76 @@ const Snd = {
   noise(d, f, v){ const ac = this.ctx(), b = ac.createBuffer(1, ac.sampleRate*d, ac.sampleRate), x = b.getChannelData(0); for(let i=0;i<x.length;i++) x[i] = (Math.random()*2 - 1)*(1 - i/x.length); const s = ac.createBufferSource(); s.buffer = b; const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = f; const g = ac.createGain(); g.gain.value = v; s.connect(fl); fl.connect(g); g.connect(ac.destination); s.start(); },
   launch(){ this.noise(2.2, 1200, .5); }, boom(){ this.noise(2.8, 300, 1); this.noise(.6, 3000, .4); },
   tone(f, d, v, type){ const ac = this.ctx(), o = ac.createOscillator(), g = ac.createGain(); o.type = type || 'triangle'; o.frequency.value = f; g.gain.setValueAtTime(.0001, ac.currentTime); g.gain.exponentialRampToValueAtTime(v || .2, ac.currentTime + .01); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + d); o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + d + .05); }
+};
+
+// ---------- cage-free community farm: animals roam freely, a sheepdog herds the flock ----------
+const Farm = {
+  build(scene, d, dd, W, H, I, B, out){
+    grassTex(d, 0, 0, W, H, '#8fc757', '#7cb342');
+    for(let i=0;i<260;i++) d.circ(['#fff176','#f8bbd0','#ffffff','#b39ddb'][i % 4], (i*131) % W, 180 + (i*71) % (H - 200), 3);
+    const pond = scene.add.graphics().setDepth(1); pond.fillStyle(0x4fc3f7, 1); pond.fillEllipse(1900, 520, 520, 280); pond.fillStyle(0x81d4fa, 1); pond.fillEllipse(1880, 500, 400, 180); B(1660, 400, 480, 230);
+    for(let k=0;k<8;k++) d.ell('#66bb6a', 1660 + k*60, 660 + (k % 2)*10, 22, 10);
+    // open barn (no doors, no cages): animals come and go as they like
+    dd.rect('#b71c1c', 160, 250, 360, 220); d.tri('#7f0000', 140, 250, 540, 250, 340, 160); dd.rect('#3e2723', 270, 330, 140, 140); dd.rect('#ffe082', 280, 340, 120, 30); B(160, 250, 360, 80);
+    TXT(scene, 340, 220, 'Kho cỏ mở · không chuồng', 16, '#fff8e1', 'rgba(0,0,0,.45)').setDepth(300);
+    for(let k=0;k<5;k++){ dd.rect('#ffca28', 600 + k*46, 420, 40, 30); dd.rect('#f9a825', 600 + k*46, 432, 40, 3); }
+    // the meadow target circle for herding
+    const meadow = {x:1100, y:420, r:200}; const mg = scene.add.graphics().setDepth(1); mg.fillStyle(0xc5e1a5, .7); mg.fillCircle(meadow.x, meadow.y, meadow.r); mg.lineStyle(4, 0xffffff, .7); mg.strokeCircle(meadow.x, meadow.y, meadow.r);
+    TXT(scene, meadow.x, meadow.y - meadow.r - 18, 'Đồng cỏ xanh: lùa cả đàn cừu vào đây!', 16, '#33691e', 'rgba(255,255,255,.75)').setDepth(6);
+    for(let k=0;k<10;k++) tree(dd, 60 + k*250, 150, k % 3 ? 'oak' : 'sakura', 1);
+    signpost(scene, 900, 1180, 'Nông trại cộng sinh · thả tự do');
+    // animals
+    const A = []; const add = (kind, n, x, y, spread) => { for(let i=0;i<n;i++) A.push({kind, x:x + (Math.random() - .5)*spread, y:y + (Math.random() - .5)*spread, vx:0, vy:0, ph:Math.random()*6, t:Math.random()*3}); };
+    add('sheep', 14, 1500, 1050, 300); add('cow', 3, 600, 800, 300); add('chicken', 8, 700, 520, 200); add('duck', 5, 1900, 520, 200); add('goat', 3, 2100, 1000, 200); add('horse', 2, 300, 1100, 200);
+    const dog = {kind:'dog', x:1300, y:1150, vx:0, vy:0, ph:0, ang:0}; scene.farmDog = dog;
+    const g = scene.add.graphics().setDepth(500); let won = false, last = 0;
+    const sheep = A.filter(a => a.kind === 'sheep'), walk = scene.Z.walk;
+    out.ticks.push(dt => {
+      const me = scene.meAv; g.clear(); const t = scene.time.now/1000;
+      // flock centre
+      let cx = 0, cy = 0; sheep.forEach(s => { cx += s.x; cy += s.y; }); cx /= sheep.length; cy /= sheep.length;
+      let avg = 0; sheep.forEach(s => avg += Math.hypot(s.x - cx, s.y - cy)); avg /= sheep.length;
+      const dcx = cx - dog.x, dcy = cy - dog.y, dcl = Math.hypot(dcx, dcy) || 1, atHome = Math.hypot(cx - meadow.x, cy - meadow.y) < meadow.r*.5, push = !atHome && dcl < avg + 160 ? 70 : 0; // whole flock drifts away from the dog
+      A.forEach(a => {
+        a.ph += dt*6; a.t -= dt;
+        if(a.kind === 'sheep'){ // boids-lite: cohesion + separation + flee from dog/player + graze wander
+          let ax = (cx - a.x)*.25, ay = (cy - a.y)*.25;
+          sheep.forEach(o => { if(o === a) return; const dx = a.x - o.x, dy = a.y - o.y, d2 = dx*dx + dy*dy; if(d2 < 900 && d2 > 0){ ax += dx/d2*900; ay += dy/d2*900; } });
+          [[dog, 180, 2400], [me, 150, 2000]].forEach(([f, R, k]) => { if(!f) return; const dx = a.x - f.x, dy = a.y - f.y, dd2 = Math.hypot(dx, dy); if(dd2 < R && dd2 > 1){ ax += dx/dd2*k*(1 - dd2/R); ay += dy/dd2*k*(1 - dd2/R); } });
+          if(a.t < 0){ a.t = 2 + Math.random()*3; a.wx = (Math.random() - .5)*30; a.wy = (Math.random() - .5)*30; } ax += (a.wx || 0) + dcx/dcl*push; ay += (a.wy || 0) + dcy/dcl*push;
+          a.vx += ax*dt; a.vy += ay*dt; const sp = Math.hypot(a.vx, a.vy), mx = 150; if(sp > mx){ a.vx *= mx/sp; a.vy *= mx/sp; } a.vx *= Math.pow(.3, dt); a.vy *= Math.pow(.3, dt);
+        } else if(a.t < 0){ a.t = 1.5 + Math.random()*4; const s = {cow:25, chicken:60, duck:30, goat:45, horse:70}[a.kind]; const an = Math.random()*6.28; a.vx = Math.random() < .35 ? 0 : Math.cos(an)*s; a.vy = Math.random() < .35 ? 0 : Math.sin(an)*s;
+          if(me && Math.hypot(me.x - a.x, me.y - a.y) < 160 && a.kind !== 'duck'){ a.vx = (me.x - a.x)*.15; a.vy = (me.y - a.y)*.15; } } // friendly animals come to visit
+        a.x += a.vx*dt; a.y += a.vy*dt;
+        if(a.kind === 'duck'){ const k = Math.hypot((a.x - 1900)/220, (a.y - 520)/110); if(k > 1){ a.x = 1900 + (a.x - 1900)/k; a.y = 520 + (a.y - 520)/k; a.vx *= -1; a.vy *= -1; } }
+        else { a.x = Phaser.Math.Clamp(a.x, walk[0] + 20, walk[2] - 20); a.y = Phaser.Math.Clamp(a.y, walk[1] + 40, walk[3] - 20); const k = Math.hypot((a.x - 1900)/260, (a.y - 520)/140); if(k < 1){ a.x = 1900 + (a.x - 1900)/k; a.y = 520 + (a.y - 520)/k; } }
+      });
+      // sheepdog: circles the flock on the side away from the meadow, pushing it toward the grass
+      const toM = Math.atan2(meadow.y - cy, meadow.x - cx), spread = avg;
+      if(atHome){ dog.ang += dt*.5; dog.tx = meadow.x + Math.cos(dog.ang)*(meadow.r + 150); dog.ty = meadow.y + Math.sin(dog.ang)*(meadow.r + 150); }
+      else if(spread > 110){ const far = sheep.reduce((b, s) => Math.hypot(s.x - cx, s.y - cy) > Math.hypot(b.x - cx, b.y - cy) ? s : b); const an = Math.atan2(far.y - cy, far.x - cx); dog.tx = far.x + Math.cos(an)*60; dog.ty = far.y + Math.sin(an)*60; }
+      else { dog.ang += dt*.8; const an = toM + Math.PI + Math.sin(dog.ang)*.6; dog.tx = cx + Math.cos(an)*(spread + 110); dog.ty = cy + Math.sin(an)*(spread + 110); }
+      const ddx = dog.tx - dog.x, ddy = dog.ty - dog.y, dl = Math.hypot(ddx, ddy); const dsp = Math.min(260, dl*2.5); if(dl > 1){ dog.vx = ddx/dl*dsp; dog.vy = ddy/dl*dsp; } dog.x += dog.vx*dt; dog.y += dog.vy*dt; dog.ph += dt*12;
+      // draw (sorted by y so they overlap correctly)
+      [...A, dog].sort((p, q) => p.y - q.y).forEach(a => Farm.draw(PG(g, a.x, a.y, 1.8), a, t));
+      const inside = sheep.filter(s => Math.hypot(s.x - meadow.x, s.y - meadow.y) < meadow.r).length;
+      if(!won && inside >= sheep.length - 1){ won = true; UI.toast('Cả đàn cừu đã về đồng cỏ! Cảm ơn bạn và chú chó chăn cừu.'); NET.reward('herd', 'Lùa đàn cừu về đồng cỏ'); Snd.tone(523, .2, .2); setTimeout(() => Snd.tone(784, .3, .2), 180); }
+      if(won && inside < sheep.length - 4) won = false;
+      if(scene.time.now - last > 500){ last = scene.time.now; scene.farmInside = inside; }
+    });
+    I(700, 560, 90, 'Rắc thóc cho gà ăn', () => { A.filter(a => a.kind === 'chicken').forEach(c => { c.vx = (scene.meAv.x - c.x)*.6; c.vy = (scene.meAv.y + 20 - c.y)*.6; c.t = 1.5; }); Snd.tone(1200, .05, .1); NET.reward('feed', 'Cho gà ăn'); UI.toast('Đàn gà chạy tới mổ thóc!'); });
+    I(1300, 1150, 120, 'Gọi chú chó chăn cừu', () => { UI.toast(`Gâu gâu! Chó chăn cừu đang lùa đàn. Đã có ${scene.farmInside || 0}/${sheep.length} con cừu trên đồng cỏ. Bạn đi vòng phía sau đàn để giúp!`); Snd.tone(300, .1, .3, 'square'); setTimeout(() => Snd.tone(260, .12, .3, 'square'), 140); });
+    I(340, 500, 90, 'Kho cỏ mở: vì sao không có chuồng?', () => UI.modal('Nông trại cộng sinh', '<p>Ở đây các con vật sống tự do: cừu gặm cỏ theo đàn, chó chăn cừu trông chừng, gà bới đất làm tơi vườn, vịt ăn bọ dưới ao, bò bón phân cho đồng cỏ.</p><p>Mỗi loài giúp loài khác, và con người là người bạn chăm sóc chứ không giam giữ. Hãy đi thật chậm để các con vật không sợ, và cùng chó lùa đàn cừu về đồng cỏ xanh.</p>'));
+  },
+  draw(d, a, t){
+    const x = 0, y = 0, f = a.vx < -1 ? -1 : 1, mv = Math.hypot(a.vx, a.vy) > 5, lg = mv ? Math.sin(a.ph*1.6)*2 : 0;
+    d.ell('#000', x, y + 2, 14, 4, .18);
+    if(a.kind === 'sheep'){ d.rect('#37474f', x - 9, y - 6 + lg, 3, 8); d.rect('#37474f', x + 6, y - 6 - lg, 3, 8); [[-8, -12], [0, -15], [8, -12], [-4, -8], [5, -8]].forEach(([dx, dy]) => d.circ('#fafafa', x + dx, y + dy, 7)); d.ell('#37474f', x + 13*f, y - 13, 5, 4); d.circ('#fff', x + 15*f, y - 14, 1.2); }
+    else if(a.kind === 'dog'){ d.rect('#3e2723', x - 10, y - 6 + lg, 3, 7); d.rect('#3e2723', x + 7, y - 6 - lg, 3, 7); d.ell('#212121', x, y - 10, 13, 6); d.ell('#fafafa', x + 2*f, y - 8, 7, 3); d.circ('#212121', x + 13*f, y - 16, 6); d.ell('#fafafa', x + 16*f, y - 14, 3, 2); d.tri('#212121', x + 10*f, y - 21, x + 14*f, y - 21, x + 11*f, y - 26); d.line('#212121', x - 12*f, y - 12, x - 18*f, y - 18 + Math.sin(a.ph)*3, 3); }
+    else if(a.kind === 'cow'){ d.rect('#5d4037', x - 14, y - 8 + lg, 4, 10); d.rect('#5d4037', x + 10, y - 8 - lg, 4, 10); d.ell('#fafafa', x, y - 16, 20, 10); d.ell('#212121', x - 6, y - 18, 6, 4); d.ell('#212121', x + 8, y - 14, 5, 3); d.ell('#fafafa', x + 20*f, y - 22, 7, 6); d.ell('#f8bbd0', x + 24*f, y - 19, 4, 3); d.tri('#bdbdbd', x + 16*f, y - 28, x + 18*f, y - 28, x + 14*f, y - 33); }
+    else if(a.kind === 'chicken'){ const pk = mv ? 0 : Math.max(0, Math.sin(a.ph*.7))*4; d.line('#ffb300', x - 2, y - 4, x - 2, y, 1.2); d.line('#ffb300', x + 2, y - 4, x + 2, y, 1.2); d.ell('#fff8e1', x, y - 8, 7, 5); d.circ('#fff8e1', x + 6*f, y - 13 + pk, 4); d.tri('#e53935', x + 5*f, y - 17 + pk, x + 8*f, y - 17 + pk, x + 6*f, y - 20 + pk); d.tri('#ffb300', x + 9*f, y - 13 + pk, x + 13*f, y - 12 + pk, x + 9*f, y - 11 + pk); }
+    else if(a.kind === 'duck'){ d.ell('#ffffff', x, y - 4, 9, 5); d.circ('#2e7d32', x + 8*f, y - 10, 4); d.tri('#ffb300', x + 11*f, y - 10, x + 16*f, y - 9, x + 11*f, y - 8); d.ell('#ffffff', x - 2*f, y - 1, 12, 2, .35); }
+    else if(a.kind === 'goat'){ d.rect('#8d6e63', x - 9, y - 6 + lg, 3, 8); d.rect('#8d6e63', x + 6, y - 6 - lg, 3, 8); d.ell('#d7ccc8', x, y - 12, 12, 7); d.circ('#d7ccc8', x + 12*f, y - 19, 5); d.tri('#6d4c41', x + 10*f, y - 23, x + 12*f, y - 23, x + 7*f, y - 30); d.tri('#efebe9', x + 12*f, y - 15, x + 15*f, y - 15, x + 13*f, y - 10); }
+    else if(a.kind === 'horse'){ d.rect('#4e342e', x - 14, y - 12 + lg, 4, 14); d.rect('#4e342e', x + 10, y - 12 - lg, 4, 14); d.ell('#8d5524', x, y - 20, 18, 9); d.tri('#8d5524', x + 12*f, y - 24, x + 18*f, y - 24, x + 24*f, y - 40); d.ell('#8d5524', x + 25*f, y - 40, 7, 4); d.line('#3e2723', x + 14*f, y - 30, x + 20*f, y - 42, 3); d.line('#3e2723', x - 17*f, y - 22, x - 22*f, y - 10 + Math.sin(a.ph)*2, 3); }
+  }
 };

@@ -94,7 +94,7 @@ io.on('connection', socket => {
   socket.on('reward', d => {
     // small, rate-limited rewards for client-side activities (missile hit, punching bag, telescope tour...)
     if (!p || !d) return; const now = Date.now(); if (now - lastHit < 8000) return; lastHit = now;
-    const amt = { pirate: 40, gym: 10, planet: 15, chess: 30, music: 8, goal: 15, lesson: 10, paint: 8, rubik: 12 }[d.kind]; if (!amt) return;
+    const amt = { pirate: 40, gym: 10, planet: 15, chess: 30, music: 8, goal: 15, lesson: 10, paint: 8, rubik: 12, herd: 25, feed: 6 }[d.kind]; if (!amt) return;
     p.coins += amt; p.score += amt; persist(p); socket.emit('me', me(p)); socket.emit('toast', `+${amt} xu · ${clean(d.label, 40)}`);
   });
   socket.on('chat', t => {
