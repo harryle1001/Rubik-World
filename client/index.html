@@ -11,11 +11,13 @@
 
 <div id="hud" hidden>
   <div class="card me"><b id="hName"></b><span id="hZone"></span><span id="hCoins"></span></div>
-  <div class="card board"><h3>Bảng xếp hạng</h3><ol id="lb"></ol></div>
+  <div class="card board"><h3>Bảng xếp hạng</h3><ol id="lb"></ol><canvas id="mini" width="206" height="110" aria-label="Bản đồ nhỏ của khu hiện tại"></canvas></div>
   <div class="card chat"><div id="chatLog"></div><form id="chatForm"><input id="chatIn" maxlength="120" placeholder="Nhấn Enter để chat…" autocomplete="off" aria-label="Tin nhắn"><button>Gửi</button></form></div>
   <div class="prompt" id="prompt" hidden></div>
   <div class="toast" id="toast" hidden></div>
-  <div class="tools"><button id="bInv">Túi đồ</button><button id="bBike">Đạp xe</button><button id="bMap">Bản đồ</button></div>
+  <div class="tools"><button id="bInv">Túi đồ</button><button id="bBike">Đạp xe</button><button id="bMap">Bản đồ</button><button id="bMini" title="Phím M">Bản đồ nhỏ</button><button id="bSound">Âm thanh: bật</button><button id="bChat" class="touchonly">Chat</button></div>
+  <div id="joy" class="touchonly" aria-hidden="true"><div id="joyK"></div></div>
+  <button id="bAct" class="touchonly" aria-label="Tương tác">E</button>
 </div>
 
 <div class="overlay" id="login">
@@ -50,6 +52,7 @@
 <script src="js/avatar.js"></script>
 <script src="js/world.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/extras.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

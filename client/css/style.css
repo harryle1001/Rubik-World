@@ -40,3 +40,18 @@ input[type=color]{padding:0;width:44px;height:32px}
 .piano .down{background:var(--y)!important}
 canvas.big{width:100%;max-width:900px;background:#000;border-radius:12px;display:block}
 @media (max-width:700px){.board{width:170px;font-size:12px}#chatLog{height:80px}}
+/* minimap, leaderboard click, touch controls */
+#mini{display:block;width:100%;margin-top:6px;border-radius:8px;background:#0f1533;image-rendering:pixelated}
+.board li{cursor:default}.board li.on{cursor:pointer}.board li.on:hover{color:var(--y)}
+.touchonly{display:none}
+body.touch .touchonly{display:block}
+#joy{position:fixed;left:18px;bottom:18px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.12);border:3px solid rgba(255,255,255,.35);touch-action:none;z-index:4}
+#joyK{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(255,210,63,.85);box-shadow:0 3px 0 #8a6d00}
+#bAct{position:fixed;right:22px;bottom:78px;width:76px;height:76px;border-radius:50%;font-size:28px;font-weight:800;background:var(--y);color:#1a1400;border-color:#b8941e;touch-action:none;z-index:4}
+body.touch .chat{bottom:160px;display:none}body.touch.chaton .chat{display:block}
+body.touch .tools{flex-wrap:wrap;justify-content:flex-end;max-width:60%}
+@media (max-width:700px){body.touch .board{width:150px}body.touch .board ol{display:none}body.touch .me{flex-wrap:wrap;gap:4px;max-width:55%;font-size:13px}}
+body.touch .tools{bottom:auto;top:50%;transform:translateY(-50%);flex-direction:column;align-items:flex-end;max-width:none}
+body.touch .tools button{font-size:13px;padding:5px 9px}
+body.touch #bAct{bottom:28px}
+body.touch .prompt{bottom:170px;max-width:70%;text-align:center;font-size:14px}

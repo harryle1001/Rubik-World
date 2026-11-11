@@ -1,2 +1,4 @@
 node_modules/
 data/players.json
+*.png
+!public/assets/**/*.png

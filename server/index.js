@@ -47,7 +47,8 @@ function leaderboard() {
   const all = {};
   Object.entries(saved).forEach(([n, v]) => { if (n !== '__plots') all[n] = v.score || 0; });
   players.forEach(p => { all[p.name] = p.score; });
-  return Object.entries(all).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([name, score]) => ({ name, score, online: [...players.values()].some(p => p.name === name) }));
+  const on = new Map([...players.values()].map(p => [p.name, p]));
+  return Object.entries(all).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([name, score]) => { const p = on.get(name); return { name, score, online: !!p, zone: p ? ZONES[p.zone].name : null }; });
 }
 function persist(p) { saved[p.name] = { style: p.style, coins: p.coins, score: p.score, inv: p.inv, equip: p.equip }; dirty = true; }
 function zoneState(zone) { return { zone, players: [...players.values()].filter(p => p.zone === zone).map(pub), stars: [...stars[zone].values()], plots: zone === 'vuon' ? plots : null }; }

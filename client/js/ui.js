@@ -9,7 +9,7 @@ const UI = {
   prompt(t){ const el = $('prompt'); if(!t){ el.hidden = true; return; } el.textContent = 'E · ' + t; el.hidden = false; },
   me(m){ $('hName').textContent = m.name; $('hCoins').textContent = '💰 ' + m.coins + ' xu · ⭐ ' + m.score; },
   zone(n){ $('hZone').textContent = '📍 ' + n; },
-  board(list){ $('lb').innerHTML = list.map(r => `<li class="${r.online ? 'on' : ''}">${esc(r.name)} · ${r.score}</li>`).join(''); },
+  board(list){ $('lb').innerHTML = list.map(r => `<li class="${r.online ? 'on' : ''}" data-zone="${r.zone ? esc(r.zone) : ''}" data-name="${esc(r.name)}" title="${r.online ? 'Bấm để xem đang ở đâu' : 'Đang ngoại tuyến'}">${esc(r.name)} · ${r.score}</li>`).join(''); },
   chat(m){ const el = $('chatLog'); const d = document.createElement('div'); if(m.sys){ d.className = 'sys'; d.textContent = m.text; } else d.innerHTML = `<b>${esc(m.name)}</b> <small>(${esc(m.zone)})</small>: ${esc(m.text)}`; el.appendChild(d); while(el.children.length > 80) el.firstChild.remove(); el.scrollTop = el.scrollHeight; },
 
   // ---------- lessons ----------

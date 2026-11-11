@@ -12,7 +12,7 @@ const SPEED = 230, AV = 2; // px/s, avatar draw scale
   (function anim(){ if($('login').hidden) return; ph += .15; c.clearRect(0, 0, 120, 150); drawAvatar(CG(c, 60, 135, 3.2), st(), {dir:1, phase:ph, moving:true}); requestAnimationFrame(anim); })();
   const go = () => { const name = $('lName').value.trim(); if(!name){ $('lName').focus(); $('lName').placeholder = 'Hãy nhập tên trước nhé!'; return; }
     try { localStorage.setItem('rw_name', name); localStorage.setItem('rw_style', JSON.stringify(st())); } catch(e){}
-    $('lGo').disabled = true; connect(name, st()); };
+    $('lGo').disabled = true; EXTRAS.gesture(); connect(name, st()); };
   $('lGo').onclick = go; $('lName').onkeydown = e => { if(e.key === 'Enter') go(); };
   $('lName').focus();
 })();
@@ -78,6 +78,7 @@ class ZoneScene extends Phaser.Scene {
     if(st.plots) G.plots = st.plots;
     if(!this.textures.exists('puff')){ const t = this.make.graphics({x:0, y:0, add:false}); t.fillStyle(0xffffff, 1); t.fillCircle(16, 16, 16); t.generateTexture('puff', 32, 32); t.clear(); t.fillStyle(0xffffff, 1); t.fillCircle(6, 6, 6); t.generateTexture('spark', 12, 12); t.destroy(); }
     this.world = drawZone(this, Z, st.zone);
+    EXTRAS.zoneCreated(this, Z);
     this.others = new Map(); this.stars = new Map();
     const mine = st.players.find(p => p.id === G.me.id) || {id:G.me.id, name:G.me.name, style:G.me.style, x:Z.spawn[0], y:Z.spawn[1]};
     this.meAv = new Avatar(this, mine, true); this.meAv.ride = (G.me.equip || {}).bike || null; this.meAv.hat = (G.me.equip || {}).hat || null;
@@ -100,12 +101,13 @@ class ZoneScene extends Phaser.Scene {
   blocked(x, y){ const [x0, y0, x1, y1] = this.Z.walk; if(x < x0 || x > x1 || y < y0 || y > y1) return true; return this.world.blockers.some(([bx, by, bw, bh]) => x > bx - 8 && x < bx + bw + 8 && y > by && y < by + bh); }
   update(time, ms){
     const dt = Math.min(.05, ms/1000), a = this.meAv, k = this.keys; let vx = 0, vy = 0;
-    if(!busy() && !this.missileBusy){ if(k.LEFT.isDown || k.A.isDown) vx--; if(k.RIGHT.isDown || k.D.isDown) vx++; if(k.UP.isDown || k.W.isDown) vy--; if(k.DOWN.isDown || k.S.isDown) vy++; }
-    a.moving = !!(vx || vy);
-    if(a.moving){ const l = Math.hypot(vx, vy), sp = SPEED*(a.ride ? 1.8 : 1)*dt; const nx = a.x + vx/l*sp, ny = a.y + vy/l*sp; if(!this.blocked(nx, a.y)) a.x = nx; if(!this.blocked(a.x, ny)) a.y = ny; if(vx) a.dir = vx; }
+    if(!busy() && !this.missileBusy){ if(k.LEFT.isDown || k.A.isDown) vx--; if(k.RIGHT.isDown || k.D.isDown) vx++; if(k.UP.isDown || k.W.isDown) vy--; if(k.DOWN.isDown || k.S.isDown) vy++; vx += TOUCH.vx; vy += TOUCH.vy; }
+    a.moving = Math.hypot(vx, vy) > .05;
+    if(a.moving){ const l = Math.max(1, Math.hypot(vx, vy)), sp = SPEED*(a.ride ? 1.8 : 1)*dt; const nx = a.x + vx/l*sp, ny = a.y + vy/l*sp; if(!this.blocked(nx, a.y)) a.x = nx; if(!this.blocked(a.x, ny)) a.y = ny; if(Math.abs(vx) > .1) a.dir = vx < 0 ? -1 : 1; }
     if(!this.missileBusy){ this.camTarget.x = a.x; this.camTarget.y = a.y - 40; }
     a.update(dt); this.others.forEach(o => o.update(dt));
     this.world.ticks.forEach(f => f(dt));
+    EXTRAS.tick(this, dt);
     // network: ~15 updates/s, only when something changed
     this.sendT += dt; const sig = `${Math.round(a.x)},${Math.round(a.y)},${a.dir},${a.moving}`;
     if(this.sendT > 1/15 && sig !== this.lastSent){ this.sendT = 0; this.lastSent = sig; NET.socket.emit('move', {x:Math.round(a.x), y:Math.round(a.y), dir:a.dir, moving:a.moving}); }
