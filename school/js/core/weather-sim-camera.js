@@ -50,7 +50,7 @@ function strike(){
   let tx, ty;
   const out = outdoorVictims();
   const ctrl = out.find(a => a.controlled);
-  if(ctrl && Math.random() < .5){ tx = ctrl.x + rnd(-15,15); ty = ctrl.y; }
+  if(ctrl && Math.random() < .09){ /* 9% of bolts aim at you */ tx = ctrl.x + rnd(-15,15); ty = ctrl.y; }
   else if(out.length && Math.random() < .25){ const v = pick(out); tx = v.x + rnd(-25,25); ty = v.y; }
   else if(Math.random() < .35){ tx = LIGHTHOUSE[0]; ty = 740; }
   else { tx = clamp(rnd(cam.x - cw/cam.z/2, cam.x + cw/cam.z/2), 20, W-20); ty = clamp(rnd(cam.y - ch/cam.z/2, cam.y + ch/cam.z/2), 40, H-40); }

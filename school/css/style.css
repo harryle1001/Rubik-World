@@ -632,3 +632,40 @@ body.v32phone #v26Area{top:calc(var(--v32t) + 170px)}
 body.v32phone #stage .prof .pinfo{flex-direction:column;align-items:flex-start;gap:0}
 body.v32phone .v37info{max-width:calc(100vw - 150px);font-size:11.5px}
 body.v32phone #stage .mtrack.v32sheet{right:64px!important;width:min(320px, calc(100% - 128px))!important}
+/* ===== EXT43 (v38): gold line icons, profile info line, daily missions, events, house hints, full-screen mini games ===== */
+body.v32phone .v32ic{background:radial-gradient(circle at 32% 26%,#2c376b,#0c1130 72%);border:1.5px solid rgba(255,210,63,.72);box-shadow:0 4px 12px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.14);color:#ffd23f}
+body.v32phone .v32ic.v32menu{background:linear-gradient(160deg,#ffe680,#f0b400);border-color:#fff3c4}
+body.v32phone .v32ic[aria-pressed="true"]{background:radial-gradient(circle at 32% 26%,#2f7d4f,#123d26 72%);border-color:#9be7b4}
+.v32ic svg.v38i{display:block;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))}
+body.v32phone .v37info{display:flex;gap:2px 9px;flex-wrap:wrap;white-space:normal;overflow:visible;max-width:calc(100vw - 150px);font-size:11.5px;margin-top:1px}
+.v37info span{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.v37info svg{flex:none}
+body.v32phone #stage .prof{border:1.5px solid rgba(255,210,63,.45);background:linear-gradient(180deg,rgba(24,31,70,.92),rgba(10,15,40,.9));box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.v32chip svg{vertical-align:-3px}
+#mtrackList li.v38h{list-style:none;margin:8px 0 2px -16px;font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:#ffd23f;border-bottom:1px solid rgba(255,210,63,.3)}
+#mtrackList li.v38today span{color:#fff}
+#mtrackList li.v38ok{opacity:.55}
+#mtrackList li svg{vertical-align:-2px}
+body.v32phone #stage .mtrack.v32sheet ol{max-height:min(58dvh, 330px)!important}
+.v38ev{display:none}
+body.v32phone #stage .mlog.v32sheet{max-height:80dvh;display:flex!important;flex-direction:column}
+body.v32phone #stage .mlog.v32sheet #mlogList{max-height:32dvh!important}
+body.v32phone #stage .mlog.v32sheet .v38ev{display:block;border-top:2px solid var(--line)}
+.v38ev ol{list-style:none;margin:0;padding:4px 6px 8px;max-height:30dvh;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain}
+.v38ev li{display:flex;align-items:center;gap:6px;padding:7px 8px;margin:4px 0;border-radius:12px;background:rgba(255,255,255,.05);font-size:14px;cursor:pointer}
+.v38ev li:active{background:rgba(255,210,63,.18)}
+.v38ev li > svg:last-child{margin-left:auto;flex:none}
+.v38ev li b{font-weight:400;font-size:12px;color:#ffd23f;white-space:nowrap}
+.v38ev li b.live{color:#0b1028;background:#7cf29c;border-radius:999px;padding:0 6px;animation:v38pulse 1.4s ease-in-out infinite}
+.v38ev li b.end{color:var(--muted)}
+@keyframes v38pulse{50%{box-shadow:0 0 0 4px rgba(124,242,156,.25)}}
+body.v32phone.v38full .modal{padding:0!important}
+body.v32phone.v38full .modal .mbox,body.v32phone.v38full .modal .mbox.wide{width:100vw!important;max-width:none!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important;border:0!important;margin:0!important;padding:0 max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))!important}
+body.v32phone.v38full .modal .mhead{padding-top:max(6px,env(safe-area-inset-top))!important}
+body.v32phone.v38full .modal canvas{max-width:100%!important;max-height:calc(100dvh - 150px);height:auto!important;object-fit:contain;touch-action:none}
+.v38guide{position:fixed;left:50%;bottom:calc(18% + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:95;pointer-events:none;opacity:0;text-align:center;color:#fff;max-width:86vw}
+.v38guide p{margin:6px 0 0;background:rgba(10,15,34,.85);border:1.5px solid rgba(255,210,63,.7);border-radius:999px;padding:6px 14px;font-size:15px}
+.v38guide .hand{font-size:40px;animation:v38swipe 1.2s ease-in-out infinite}
+.v38guide.show{animation:v38g 3.6s ease forwards}
+@keyframes v38g{0%{opacity:0}10%,82%{opacity:1}100%{opacity:0}}
+@keyframes v38swipe{0%{transform:translateX(-40px)}50%{transform:translateX(40px)}100%{transform:translateX(-40px)}}
