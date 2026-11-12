@@ -188,14 +188,14 @@ function v38Swipe(){
 }
 function v38Guide(id){
   if(!document.body.classList.contains('v32phone')) return; const m = $('#' + id); if(!m) return; let g = m.querySelector('.v38guide'); if(!g){ g = document.createElement('div'); g.className = 'v38guide'; m.appendChild(g); }
-  const swipe = id === 'mArcade' ? 'Vuốt trên màn chơi để di chuyển · chạm nhanh để nhảy/bắn' : id === 'mHouse' ? 'Chạm sàn để đi · chạm người, thú cưng, rương để tương tác' : 'Chạm và vuốt trực tiếp trên màn chơi';
+  const swipe = id === 'mArcade' ? 'Vuốt để di chuyển · chạm để nhảy/sút · giữ để lấy lực · 2 ngón = chiêu B' : id === 'mHouse' ? 'Chạm sàn để đi · chạm người, thú cưng, rương để tương tác' : 'Chạm và vuốt trực tiếp trên màn chơi';
   g.innerHTML = `<div class="hand">👆</div><p>${swipe}</p>`; g.classList.remove('show'); void g.offsetWidth; g.classList.add('show'); clearTimeout(g._t); g._t = setTimeout(() => g.classList.remove('show'), 3600);
 }
 function v38Modal(){ const base = showModal; showModal = function(id){ const r = base.apply(this, arguments); if(document.body.classList.contains('v32phone') && /^(mArcade|mHouse|mChess|mRubik|mFish|mFishDeep|mCaro|mGo|mPaint|mLab|mOly|mMusic|mFarm|mZen|mSudoku|mMemory|mMath|mOAQ|mMissile|mObs|mGarden|mScope)$/.test(id)){ document.body.classList.add('v38full'); setTimeout(() => v38Guide(id), 450); } return r; };
   const hb = hideModal; hideModal = function(){ const r = hb.apply(this, arguments); setTimeout(() => { if(!document.querySelector('.modal:not([hidden])')) document.body.classList.remove('v38full'); }, 0); return r; }; }
 
 function v38Init(){
-  v38Hud(); v37Info(); v38Mprog(); v38EvBox(); v38Sheet(); v38HouseHooks(); v38Swipe(); v38Modal();
+  v38Hud(); v37Info(); v38Mprog(); v38EvBox(); v38Sheet(); v38HouseHooks(); v38Modal();
   [$('#mtrack'), $('#mlog')].forEach(e => e && e.classList.add('v38sheet'));
   try { trackRender(); } catch(e){}
   setInterval(() => { v38Hud(); try { v38EvTick(); } catch(e){} const l = $('#mlog'); if(l && l.classList.contains('v32sheet')){ try { v27Diary(); } catch(e){} } }, 1000);

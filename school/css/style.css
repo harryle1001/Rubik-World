@@ -790,3 +790,8 @@ body.v32phone .v40ic{top:calc(var(--v32t) + 98px)!important}
 #quick #hBike,#quick #hBoat,#quick #hFly,#quick #dismountBtn,section #boatBtn,section #dismountBtn{display:none!important}
 @media (orientation:landscape) and (max-height:500px){#v41Col{gap:5px}.v41b .ic{width:44px;height:44px}.v41b{gap:2px}}
 @media (min-width:900px) and (min-height:501px){#v41Col{right:256px}#v41Card{right:330px}}
+/* ===== EXT47 (v42): touch-only mini games ===== */
+body.touchdev #arcPad,body.touchdev #mArcade .padrow,body.touchdev #arcAct,body.touchdev #arcAlt,body.touchdev #dpad,body.touchdev .dpad{display:none!important}
+body.touchdev #mArcade .legend{font-size:0}
+body.touchdev #mArcade .legend::after{content:attr(data-touch);font-size:14px}
+body.touchdev #arcCv{touch-action:none}
