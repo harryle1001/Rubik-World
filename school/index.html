@@ -1,0 +1,771 @@
+<title>Trường Rubik Của Hà Quân</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=VT323&display=swap">
+
+<link rel="stylesheet" href="css/style.css">
+
+
+<script>(function(){try{var r=window.devicePixelRatio||1,s=JSON.parse(localStorage.getItem('truong-mobile-v24')||'{}'),c=s.saver==='on'?1.25:2;if(r>c)Object.defineProperty(window,'devicePixelRatio',{configurable:true,get:function(){return c}});}catch(e){}})();</script>
+
+
+
+
+
+
+<div class="app noconsole">
+  <main class="stage" id="stage">
+    <canvas id="world" aria-label="Bản đồ trường học, kéo để di chuyển, cuộn để phóng to"></canvas>
+    <div class="hud">
+      <span class="chip" id="hudClock">Thứ 2 · 07:12</span>
+      <span class="chip" id="hudPeriod">Đến trường</span>
+      <span class="chip" id="hudWeather">Thu · Nắng</span>
+      <span class="chip ff" id="hudFF" hidden>Tua nhanh ngoài giờ</span>
+    </div>
+    <div class="cams" id="cams">
+      <button id="camToggle" class="camtoggle" aria-expanded="true" aria-controls="camgrid"><span><i class="rec" aria-hidden="true"></i>CCTV · 7 camera</span><span id="camArrow" aria-hidden="true">▾</span></button>
+      <div class="camgrid" id="camgrid"></div>
+    </div>
+    <button class="mini" id="mini" aria-label="Bản đồ tròn quanh bạn, bấm để mở bản đồ lớn và chỉ đường" title="Bấm để mở bản đồ (phím M)"><canvas id="miniCv"></canvas></button>
+    <div class="zoom">
+      <button id="zin" aria-label="Phóng to">+</button>
+      <button id="zout" aria-label="Thu nhỏ">−</button>
+      <button id="zfit" aria-label="Xem toàn cảnh" title="Toàn cảnh"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M1 1h5v2H3v3H1zM10 1h5v5h-2V3h-3zM1 10h2v3h3v2H1zM13 10h2v5h-5v-2h3z"/></svg></button>
+    </div>
+    <div class="dpad" id="dpad" hidden>
+      <button class="u" data-k="up" aria-label="Lên"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 3l6 9H2z"/></svg></button>
+      <button class="l" data-k="left" aria-label="Trái"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M3 8l9-6v12z"/></svg></button>
+      <button class="r" data-k="right" aria-label="Phải"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M13 8L4 14V2z"/></svg></button>
+      <button class="d" data-k="down" aria-label="Xuống"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 13L2 4h12z"/></svg></button>
+    </div>
+    <div class="mtrack" id="mtrack"><div class="mthead" id="mtrackHead" role="button" tabindex="0" title="Bấm để xem tất cả nhiệm vụ"><b>Nhiệm vụ</b> <span id="mtrackN"></span><button type="button" id="mtrackFold" aria-label="Thu gọn danh sách nhiệm vụ">▾</button></div><ol id="mtrackList"></ol></div>
+    <div class="hint" id="hint">Kéo để di chuyển · lăn chuột hoặc phím +/− để phóng to · M: bản đồ</div>
+    <div class="prof guest" id="prof" role="button" tabindex="0" aria-label="Hồ sơ người chơi">
+      <canvas id="profAv" width="52" height="60" aria-hidden="true"></canvas>
+      <div class="pinfo"><div class="prow"><b id="profName">Khách</b><span id="profLvl" class="lv">Chưa đăng nhập</span><span id="profMoney" class="money"></span></div>
+        <div class="pbar"><i id="profBar"></i></div><div id="profExp" class="pexp">Bấm để đăng nhập hoặc tạo tài khoản</div></div>
+    </div>
+    <div class="quick" id="quick"><button id="hMenu" class="primary" title="Trò chơi, mini game, âm nhạc">☰ Menu</button><button id="hSet" title="Cài đặt (phím O)" aria-label="Cài đặt">⚙ Cài đặt</button><button id="hAdmin" hidden>🛠 Bảng chủ game</button><button id="hMe">Nhân vật của tôi</button><button id="hBike">Đạp xe</button><button id="hBoat">Lên thuyền</button><button id="hFish" hidden class="primary">Câu cá trên tàu</button><button id="hShop">Cửa hàng</button><button id="hHome">Nhà tôi</button><button id="hMarket">Chợ</button><button id="hEnter" class="primary enter" hidden>Vào</button><button id="hSchool" class="primary">Đi đến trường</button><button id="hWhere">Tôi ở đâu?</button><select id="hDest" aria-label="Tự đi tới"><option value="">Tự đi tới…</option></select><button id="hOnline">Online</button><button id="hFly">🎈 Bay lên trời</button><button id="hChal" hidden>♞ Thách đấu cờ</button><button id="hSound" aria-pressed="true">Âm thanh: bật</button><span class="ambname" id="ambName"></span></div>
+    <div class="lvlup" id="lvlUp" hidden><div class="rays"></div><div class="lvltxt">LEVEL UP!</div><div class="lvlnum" id="lvlNum">2</div><div class="lvlun" id="lvlUnlock"></div></div>
+    <div class="mentor" id="mentor" hidden role="status" aria-live="polite"><canvas id="mtAv" width="64" height="72" aria-hidden="true"></canvas><div class="mtx"><b id="mtName"></b><p id="mtLine"></p><q id="mtQuote"></q><span id="mtSrc"></span></div></div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <div class="mobctl" id="mobCtl" aria-hidden="false">
+      <div class="mjoy" id="mJoy" role="application" aria-label="Cần điều khiển: kéo để di chuyển"><div class="mjoyk" id="mJoyK"></div></div>
+      <div class="mbtns"><button id="mBtnE" class="mbtn primary" aria-label="Vào cửa / tương tác">E</button><button id="mBtnFly" class="mbtn" aria-label="Bay lên trời hoặc hạ cánh">🎈</button><button id="mBtnMap" class="mbtn" aria-label="Mở bản đồ">🗺</button></div>
+    </div>
+    <div class="imm" id="imm" hidden><span id="immCap">Chế độ đắm chìm</span><button id="immExit">Thoát (Esc)</button></div>
+  </main>
+
+  <aside class="console">
+    <header>
+      <h1><span class="cube" aria-hidden="true"><i style="background:var(--cube-r)"></i><i style="background:var(--cube-y)"></i><i style="background:var(--cube-b)"></i><i style="background:var(--cube-g)"></i><i style="background:var(--cube-w)"></i><i style="background:var(--cube-o)"></i><i style="background:var(--cube-b)"></i><i style="background:var(--cube-r)"></i><i style="background:var(--cube-y)"></i></span>Trường Agent Rubik</h1>
+      <p class="sub">21 nhân vật cùng khách du lịch, mỗi nhân vật là một agent tự quyết định việc làm theo thời khóa biểu, thời tiết và những gì họ thấy.</p>
+    </header>
+
+    <section class="box" aria-label="Điều khiển mô phỏng">
+      <h2>Mô phỏng</h2>
+      <div class="row">
+        <button id="play" class="primary" data-on="1"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 2h4v12H3zM9 2h4v12H9z"/></svg><span>Dừng</span></button>
+        <button id="step1" title="Chạy thêm 1 phút trong game">+1 phút</button>
+        <button id="step10" title="Chạy thêm 10 phút trong game">+10 phút</button>
+        <select id="speed" aria-label="Tốc độ">
+          <option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option>
+        </select>
+      </div>
+      <p class="legend">Phím: Space dừng/chạy · N chạy 1 phút · F theo dõi · mũi tên/WASD điều khiển. Ngoài giờ học không có ai ở trường thì game tự tua nhanh.</p>
+    </section>
+
+    <section class="box" aria-label="Sự kiện">
+      <h2>Sự kiện</h2>
+      <div class="row">
+        <button id="concert">Biểu diễn ở Hội trường</button>
+        <button id="festBtn">Lễ hội mùa này</button>
+        <button id="picnicBtn">Dã ngoại vào rừng</button>
+        <button id="truckBtn">Gọi xe chở hàng</button>
+        <button id="subBtn">Chuyến tàu ngầm</button>
+        <button id="pirateBtn">Tàu hải tặc</button>
+        <button id="fightBtn" class="danger">Sự cố đánh lộn</button>
+        <button id="nextDay">Sang ngày tiếp theo</button>
+      </div>
+      <p class="legend">Lịch tuần: Thứ 2 chào cờ · Thứ 2–6 học cả ngày · Thứ 5 kiểm tra 15 phút · Thứ 7 lễ hội theo mùa (Xuân múa lân, Hạ thăm lớp, Thu giải bóng đá, Đông Giáng sinh) · Chủ nhật sáng các bạn vào rừng thông picnic, cắm trại, đạp xe; chiều vài bạn ra sân đá bóng.</p>
+    </section>
+
+    <section class="box" aria-label="Trò chơi và nhiệm vụ">
+      <h2>Trò chơi & nhiệm vụ</h2>
+      <div class="row">
+        <button id="openChess">Cờ vua thật</button>
+        <button id="openRubik">Rubik 3D</button>
+        <button id="openFish">Câu cá thư giãn</button>
+        <button id="openMissions">Nhiệm vụ <span id="starCount" class="badge">0</span></button>
+        <button id="skyBtn">Ngắm bầu trời</button>
+        <button id="immersiveBtn" class="primary">Chế độ đắm chìm</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="mentorOn" checked> Hiện lời dạy của các người thầy trong mỗi trò chơi</label>
+      <p class="legend">Bấm thẳng vào bàn cờ khổng lồ, tượng đài Rubik, hồ câu ở Công viên trí tuệ (phía trên trường) hay bến tàu ngoài biển cũng mở được trò chơi.</p>
+    </section>
+
+    <section class="box games2" aria-label="Khu vui chơi và mini game">
+      <h2>Khu vui chơi & mini game</h2>
+      <div class="row"><button id="xPiano" class="primary">Đàn piano</button><button id="xGuitar">Đàn guitar</button><button id="xTables">Xem 5 bàn cờ</button><button id="xCaro">Cờ caro</button><button id="xGo">Cờ vây</button><button id="xPaint">Vẽ tranh</button></div>
+      <h2>Ngoài trời</h2>
+      <div class="row"><button id="xFoot">Bóng đá mini</button><button id="xBasket">Bóng rổ</button><button id="xSkate">Trượt ván</button><button id="xPatin">Trượt patin</button><button id="xSki">Trượt tuyết</button><button id="xBalloon">Khinh khí cầu</button><button id="xBbq">Lửa trại BBQ</button></div>
+      <h2>Thế giới mới</h2>
+      <div class="row"><button id="wLib" class="primary">Thư viện</button><button id="wZen">Ngồi thiền</button><button id="wOly">Thế vận hội</button><button id="wKart">Rubik Kart</button><button id="wAcad">Học viện trí tuệ</button><button id="wHall">Game 2 người</button><button id="wLobby">Đấu online</button><button id="xShop">Cửa hàng</button><button id="wMall" class="primary">Trung tâm thương mại</button><button id="wHome">Nhà của tôi</button><button id="wMyShop">Cửa hàng của tôi</button><button id="wMarket">Chợ người chơi</button><button id="wGoEast">Tới vùng đất mới</button><button id="wSea">Ra đại dương</button></div>
+      <h2>Nông trại & lái thuyền</h2>
+      <div class="row"><button id="xFarm">Nông trại</button><button id="xRace">Đua thú</button><button id="boatBtn">Lên thuyền</button><button id="dismountBtn" hidden>Xuống khỏi thú</button><button id="xSports">Tới khu thể thao</button></div>
+      <p class="legend">Bấm thẳng lên bản đồ cũng được: cây đàn trong phòng nhạc, từng bàn cờ, sân bóng, các lều cắm trại, và khu thể thao, khu khinh khí cầu, Góc họa sĩ, Nông trại trên đồi thông phía trên rừng. "Lên thuyền" và cưỡi thú sẽ dùng bạn bạn đang chọn để điều khiển.</p>
+    </section>
+
+    <section class="box" aria-label="Mùa và thời tiết">
+      <h2>Mùa</h2>
+      <div class="row" id="seasons"></div>
+      <label class="chk"><input type="checkbox" id="autoSeason"> Tự đổi mùa sau mỗi 7 ngày</label>
+      <h2>Thời tiết</h2>
+      <div class="row" id="weathers"></div>
+      <label class="chk"><input type="checkbox" id="autoWeather" checked> Thời tiết tự thay đổi theo mùa</label>
+      <label class="chk"><input type="checkbox" id="mapClouds" checked> Mây bay và bóng mây trên bản đồ</label>
+      <p class="legend">Lốc xoáy cuốn người bay vòng vòng · động đất làm người ngã · sét đánh làm người bị giật điện · sóng thần đánh người trên bãi biển dạt lên bờ. Bạn đang điều khiển ai thì người đó cũng có thể bị.</p>
+    </section>
+
+    <section class="box" aria-label="Nhân vật">
+      <h2>Nhân vật</h2>
+      <div class="roster" id="roster"></div>
+    </section>
+
+    <section class="box" aria-label="Quan sát nhân vật">
+      <h2 id="inspTitle">Quan sát</h2>
+      <dl class="insp" id="insp"></dl>
+      <div class="row">
+        <button id="follow" aria-pressed="false">Camera theo dõi</button>
+        <button id="control" aria-pressed="false">Tự điều khiển</button>
+      </div>
+      <h2>Các bước gần đây</h2>
+      <ol class="steps" id="steps"></ol>
+    </section>
+
+    <section class="box" aria-label="Âm nhạc">
+      <h2>Âm nhạc trong trường</h2>
+      <div class="song">
+        <div class="disc" id="disc" aria-hidden="true"></div>
+        <div class="songmeta"><strong>Con đường bình phàm</strong><span>Hoa Thần Vũ</span><span class="now" id="songState">Chưa mở file bài hát</span></div>
+      </div>
+      <div class="row">
+        <label class="filebtn">Mở file bài hát<input type="file" id="file" accept="audio/*"></label>
+        <button id="clearFile" hidden>Bỏ file</button>
+        <a class="link" href="https://www.youtube.com/watch?v=YETtxwHNonY" target="_blank" rel="noopener">Mở bài này trên YouTube ↗</a>
+      </div>
+      <div class="row">
+        <button id="music" aria-pressed="false"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6 2h8v9.5a2.5 2.5 0 1 1-2-2.45V5H8v7.5A2.5 2.5 0 1 1 6 10.05z"/></svg><span>Bật nhạc</span></button>
+      </div>
+      <div class="row"><span class="now">Âm lượng</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.6" aria-label="Âm lượng"></div>
+      <label class="chk"><input type="checkbox" id="spatial" checked> Âm thanh theo vị trí: camera càng gần nơi phát nhạc thì càng to</label>
+      <div class="now" id="nowPlaying">Trang không phát được video YouTube bên trong. Muốn nghe bài này: mở link YouTube ở tab bên cạnh trong lúc xem trường, hoặc mở file bài hát có trên máy bạn để nhạc phát ngay trong trường và trong buổi biểu diễn. File chỉ được giữ trong trình duyệt của bạn. Khi chưa có file, trường phát giai điệu piano riêng.</div>
+    </section>
+
+    <section class="box" aria-label="Sổ theo dõi">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tabLog" aria-selected="true" aria-controls="paneLog">Nhật ký</button>
+        <button role="tab" id="tabAtt" aria-selected="false" aria-controls="paneAtt">Điểm danh</button>
+        <button role="tab" id="tabRep" aria-selected="false" aria-controls="paneRep">Báo cáo</button>
+      </div>
+      <div id="paneLog" role="tabpanel" aria-labelledby="tabLog">
+        <label class="chk" style="margin-bottom:6px"><input type="checkbox" id="onlySel"> Chỉ hiện việc của nhân vật đang chọn</label>
+        <div class="feedlog" id="feedlog"></div>
+      </div>
+      <div id="paneAtt" role="tabpanel" aria-labelledby="tabAtt" hidden></div>
+      <div id="paneRep" role="tabpanel" aria-labelledby="tabRep" hidden></div>
+    </section>
+  </aside>
+</div>
+
+<div class="modal" id="mChess" role="dialog" aria-modal="true" aria-labelledby="mChessT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mChessT">Cờ vua</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="chesswrap">
+      <div class="cboardwrap"><div class="cboard" id="cboard" aria-label="Bàn cờ"></div></div>
+      <div class="cside">
+        <div class="seg" id="cmodes"><button data-mode="local" aria-pressed="true">2 người 1 máy</button><button data-mode="ai" aria-pressed="false">Đấu với máy</button><button data-mode="online" aria-pressed="false">Online với bạn bè</button></div>
+        <div id="conline" hidden>
+          <div class="row"><input id="croom" maxlength="8" placeholder="Mã phòng" aria-label="Mã phòng"><button id="cjoin">Vào phòng</button><button id="cnew">Tạo phòng</button></div>
+          <div class="row"><button id="cseatW">Ngồi quân Trắng</button><button id="cseatB">Ngồi quân Đen</button></div>
+          <div class="now" id="conlineMsg">Đang kết nối...</div>
+        </div>
+        <div class="cstatus" id="cstatus" aria-live="polite">Lượt Trắng đi</div>
+        <div class="now" id="cplayers"></div>
+        <div class="row"><button id="cnewgame">Ván mới</button><button id="cundo">Đi lại</button><button id="cflip">Lật bàn cờ</button></div>
+        <ol class="cmoves" id="cmoves"></ol>
+        <p class="legend">Luật cờ đầy đủ: nhập thành, bắt tốt qua đường, phong cấp (tự lên Hậu), chiếu hết, hòa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mRubik" role="dialog" aria-modal="true" aria-labelledby="mRubikT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mRubikT">Rubik 3D</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="rubikwrap">
+      <canvas id="rubikCv" aria-label="Khối Rubik 3D: kéo trên một mặt để xoay tầng, kéo ở khoảng trống để xoay cả khối"></canvas>
+      <div class="rside">
+        <div class="rtimer" id="rtimer">00:00.0</div>
+        <div class="now" id="rstate">Kéo trên một mặt để xoay tầng đó. Kéo ở khoảng trống để xoay cả khối và nhìn mặt sau.</div>
+        <div class="rmoves" id="rmovebtns"></div>
+        <div class="row"><button id="rscramble" class="primary">Xáo trộn</button><button id="rsolve">Giải giúp</button><button id="rreset">Đặt lại</button></div>
+        <div class="now" id="rcount">0 bước</div>
+        <p class="legend">Phím: U D L R F B, giữ Shift để xoay ngược chiều.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mFish" role="dialog" aria-modal="true" aria-labelledby="mFishT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mFishT">Câu cá thư giãn</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="fishwrap">
+      <canvas id="fishCv" aria-label="Cảnh câu cá"></canvas>
+      <div class="fside">
+        <div class="seg"><button data-spot="sea" aria-pressed="true">Bến tàu ngoài biển</button><button data-spot="pond" aria-pressed="false">Hồ câu công viên</button></div>
+        <div class="cstatus" id="fstatus" aria-live="polite">Bấm Quăng câu để bắt đầu</div>
+        <div class="fbar"><span>Độ căng dây</span><div class="meter"><i id="ften"></i></div></div>
+        <div class="fbar"><span>Tiến độ kéo</span><div class="meter"><i id="fprog"></i></div></div>
+        <div class="row"><button id="fcast" class="primary">Quăng câu</button><button id="freel">Giữ để kéo dây</button></div>
+        <label class="chk"><input type="checkbox" id="frelax" checked> Thư giãn: không đứt dây</label>
+        <label class="chk"><input type="checkbox" id="fsound"> Âm thanh sóng biển</label>
+        <h2>Giỏ cá <span class="now" id="fcount"></span></h2>
+        <ul class="fbag" id="fbag"></ul>
+        <p class="legend">Phím Space: giữ để kéo dây. Ban đêm ngoài biển dễ câu được mực.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="mWatch" role="dialog" aria-modal="true" aria-labelledby="mWatchT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mWatchT">5 bàn cờ trong Khu cờ vua</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="seg" id="wtabs"><button>Bàn 1</button><button>Bàn 2</button><button>Bàn 3</button><button>Bàn 4</button><button>Bàn 5</button></div>
+    <div class="chesswrap">
+      <div class="cboardwrap"><div class="cboard" id="wboard" aria-label="Bàn cờ đang thi đấu"></div></div>
+      <div class="cside">
+        <div class="cstatus" id="wstatus" aria-live="polite"></div>
+        <div class="now" id="wplayers"></div>
+        <div class="now" id="wmoves"></div>
+        <button id="wplay" class="primary">Tự chơi một ván</button>
+        <p class="legend">Các bạn học sinh và bạn NPC ngồi đánh cờ thật bằng luật cờ vua đầy đủ. Mỗi nước đi có tiếng gõ quân, ăn quân, chiếu tướng.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mArcade" role="dialog" aria-modal="true" aria-labelledby="arcT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="arcT">Mini game</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="arcwrap">
+      <div class="arcmain"><canvas id="arcCv" tabindex="0" aria-label="Khung trò chơi"></canvas></div>
+      <div class="arcside">
+        <div class="seg" id="arcOpts"></div>
+        <div class="row"><button id="arcNew" class="primary">Chơi lại</button><button id="arcPause">Tạm dừng</button></div>
+        <p class="now" id="arcHelp"></p>
+        <div class="padrow">
+          <div id="arcPad" aria-label="Nút điều khiển cảm ứng">
+            <span></span><button data-k="Up" aria-label="Lên">▲</button><span></span>
+            <button data-k="Left" aria-label="Trái">◀</button><button data-k="Down" aria-label="Xuống">▼</button><button data-k="Right" aria-label="Phải">▶</button>
+          </div>
+          <div class="row"><button class="bigbtn" data-k="Act" id="arcAct">A</button><button class="bigbtn" data-k="Alt" id="arcAlt">B</button></div>
+        </div>
+        <p class="legend">A = Space (nhảy, sút, đốt lửa) · B = X (động tác, chuyền).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mFarm" role="dialog" aria-modal="true" aria-labelledby="mFarmT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mFarmT">Nông trại trên đồi</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="cstatus" id="farmSt" aria-live="polite"></div>
+    <div class="farmgrid">
+      <div><h2>Chăm sóc</h2>
+        <div class="row"><button id="ffeed" class="primary">Cho thú ăn</button><button id="fwater">Tưới cây</button><button id="fharvest">Thu hoạch</button></div>
+        <div class="mrow" style="margin-top:8px"><select id="fruitSel" aria-label="Chọn cây ăn trái"></select><button id="fplant">Trồng cây ăn trái</button></div>
+        <ul class="flist" id="farmPlots"></ul>
+        <p class="legend">Cây lớn dần: hạt giống, nảy mầm, cây non, cây lớn, ra hoa, có trái chín (khoảng 3 phút, tưới nước để nhanh hơn). Vườn được lưu trong trình duyệt.</p>
+      </div>
+      <div><h2>Cưỡi thú</h2>
+        <div class="row" id="frides"><button data-a="horse">Cưỡi ngựa</button><button data-a="buffalo">Cưỡi trâu</button><button data-a="camel">Cưỡi lạc đà</button><button data-a="ostrich">Cưỡi đà điểu</button><button id="fdismount" hidden>Xuống</button></div>
+        <p class="legend">Bạn đang chọn sẽ leo lên lưng thú và đi khắp bản đồ bằng phím mũi tên hoặc WASD. Ngựa và đà điểu chạy nhanh, trâu đi chậm.</p>
+        <h2>Trò chơi đua thú</h2>
+        <div class="mrow"><select id="fraceSel" aria-label="Chọn thú để đua"><option value="0">Ngựa</option><option value="1">Trâu</option><option value="2">Lạc đà</option><option value="3">Đà điểu</option></select><button id="frace" class="primary">Đua ngay</button></div>
+        <div class="row" style="margin-top:8px"><button id="fgo">Bay tới nông trại</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mCaro" role="dialog" aria-modal="true" aria-labelledby="mCaroT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mCaroT">Cờ caro</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="chesswrap">
+      <div class="cboardwrap"><canvas id="caroCv" aria-label="Bàn cờ caro 15 x 15"></canvas></div>
+      <div class="cside">
+        <div class="seg" id="caroModes"><button data-m="ai" aria-pressed="true">Đấu với máy</button><button data-m="two" aria-pressed="false">2 người 1 máy</button></div>
+        <div class="cstatus" id="caroSt" aria-live="polite"></div>
+        <div class="row"><button id="caroNew" class="primary">Ván mới</button><button id="caroUndo">Đi lại</button></div>
+        <label class="chk"><input type="checkbox" id="caroBlock"> Luật chặn 2 đầu (5 quân bị chặn cả hai đầu không tính thắng)</label>
+        <p class="legend">Ai xếp được 5 quân liên tiếp theo hàng ngang, dọc hoặc chéo trước thì thắng. Bạn đi X, máy đi O.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mGo" role="dialog" aria-modal="true" aria-labelledby="mGoT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mGoT">Cờ vây</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="chesswrap">
+      <div class="cboardwrap"><canvas id="goCv" aria-label="Bàn cờ vây"></canvas></div>
+      <div class="cside">
+        <div class="seg" id="goModes"><button data-m="ai" aria-pressed="true">Đấu với máy</button><button data-m="two" aria-pressed="false">2 người 1 máy</button></div>
+        <div class="seg" id="goSize"><button data-n="9" aria-pressed="true">9 x 9</button><button data-n="13" aria-pressed="false">13 x 13</button></div>
+        <div class="cstatus" id="goSt" aria-live="polite"></div>
+        <div class="row"><button id="goNewB" class="primary">Ván mới</button><button id="goPass">Bỏ lượt</button><button id="goUndo">Đi lại</button></div>
+        <p class="legend">Luật thật: quân hết khí bị bắt, cấm tự sát, cấm cướp ko ngay lập tức. Hai bên cùng bỏ lượt thì đếm điểm theo đất + quân, Trắng được cộng 6,5. Hãy bắt hết quân chết trước khi bỏ lượt.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mPaint" role="dialog" aria-modal="true" aria-labelledby="mPaintT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mPaintT">Góc họa sĩ</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="arcwrap">
+      <div class="arcmain"><canvas id="paintCv" aria-label="Khung vẽ tranh"></canvas></div>
+      <div class="arcside">
+        <div class="seg" id="ptools"><button data-t="brush" aria-pressed="true">Bút cọ</button><button data-t="water" aria-pressed="false">Màu nước</button><button data-t="spray" aria-pressed="false">Bình xịt</button><button data-t="fill" aria-pressed="false">Đổ màu</button><button data-t="eraser" aria-pressed="false">Tẩy</button></div>
+        <div class="ppal" id="ppal"></div>
+        <div class="mrow"><label class="chk">Màu khác <input type="color" id="pcolor" value="#ef4b4b"></label><label class="chk">Cỡ <input type="range" id="psize" min="2" max="48" value="10"></label></div>
+        <div class="row"><button id="pundo">Hoàn tác</button><button id="pclear">Xóa hết</button></div>
+        <div class="mrow"><input type="text" id="ptitle" maxlength="40" placeholder="Tên bức tranh" aria-label="Tên bức tranh"><select id="partist" aria-label="Họa sĩ"></select></div>
+        <div class="row"><button id="psave" class="primary">Treo lên phòng tranh</button><button id="pnpc">Để bạn NPC tự vẽ</button></div>
+        <p class="now" id="pstatus" aria-live="polite">Chọn tên họa sĩ rồi bấm "Để bạn NPC tự vẽ": bạn ấy sẽ tự sáng tác một bức mới, không bức nào giống bức nào.</p>
+      </div>
+    </div>
+    <h2>Phòng tranh</h2>
+    <div id="gallery"></div>
+  </div>
+</div>
+
+<div class="modal" id="mMusic" role="dialog" aria-modal="true" aria-labelledby="mMusicT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mMusicT">Phòng nhạc</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="mtabs" role="tablist"><button role="tab" id="mtPiano" aria-selected="true" aria-controls="mpPiano">Piano</button><button role="tab" id="mtGuitar" aria-selected="false" aria-controls="mpGuitar">Guitar</button></div>
+    <div id="mpPiano" role="tabpanel" aria-labelledby="mtPiano">
+      <div class="mrow"><select id="psheet" aria-label="Chọn bản nhạc"></select><button id="pdemo">Tự đàn</button><button id="pwait">Luyện chờ phím</button><button id="prhythm" class="primary">Chơi theo nhịp</button><button id="pstop">Dừng</button></div>
+      <div class="mrow"><label class="chk">Tốc độ <input type="range" id="ptempo" min="0.5" max="1.5" step="0.05" value="1"></label><span id="ptempoV" class="now">100%</span><label class="chk">Âm lượng <input type="range" id="pvol" min="0" max="1.5" step="0.05" value="0.8"></label><label class="chk"><input type="checkbox" id="psus"> Pedal giữ tiếng (giữ Space)</label><button id="poctDn" aria-label="Hạ một quãng tám">◀ Quãng 8</button><button id="poctUp" aria-label="Lên một quãng tám">Quãng 8 ▶</button></div>
+      <p class="now" id="pgstat" aria-live="polite">Đàn bằng chuột, chạm, hoặc bàn phím máy tính như các trang đàn piano online.</p>
+      <div id="pscroll"><canvas id="pfall" height="170"></canvas><div id="pkeys"></div></div>
+      <p class="now"><span id="poct"></span> · Hàng dưới Z S X D C V G B H N J M , L . ; / · Hàng trên Q 2 W 3 E R 5 T 6 Y 7 U I 9 O 0 P [ = ] · Mũi tên trái/phải đổi quãng 8.</p>
+      <p class="now credit" id="pload">Tiếng đàn sẽ được nạp khi bạn mở phòng nhạc.</p>
+      <details><summary>Thêm bản nhạc của bạn</summary>
+        <p class="legend">Viết từng nốt cách nhau bằng dấu cách: tên nốt + quãng 8 (C4 là Đô giữa, có thể dùng # hoặc b), sau dấu hai chấm là độ dài (1 = móc đơn, 2 = nốt đen, 4 = nốt trắng), dấu - là lặng, nối nhiều nốt bằng + để bấm hợp âm. Ví dụ: <code>E4 D4 C4 D4 E4 E4 E4:4 -:2 C4+E4+G4:4</code></p>
+        <div class="mrow"><input type="text" id="pstitle" maxlength="60" placeholder="Tên bản nhạc" aria-label="Tên bản nhạc"><label class="chk">Giây mỗi móc đơn <input type="number" id="psu" min="0.08" max="1" step="0.01" value="0.22"></label></div>
+        <textarea id="psnotes" aria-label="Các nốt nhạc" placeholder="C4 D4 E4 F4 G4:4"></textarea>
+        <button id="paddsheet">Thêm vào danh sách</button>
+        <p class="legend">Nhạc phim Ghibli (Joe Hisaishi) và nhạc của Yiruma vẫn còn bản quyền nên trường không đưa sẵn vào được. Nếu bạn có bản nhạc được phép dùng, hãy tự nhập ở đây để luyện.</p>
+      </details>
+    </div>
+    <div id="mpGuitar" role="tabpanel" aria-labelledby="mtGuitar" hidden>
+      <div id="gchords" aria-label="Hợp âm"></div>
+      <canvas id="gfret" width="760" height="220" aria-label="Cần đàn guitar, bấm vào dây để gảy"></canvas>
+      <div class="row"><button id="gdown" class="primary">Quạt xuống ↓</button><button id="gup">Quạt lên ↑</button><button id="gauto">Đệm tự động</button></div>
+      <div class="mrow"><select id="gprog" aria-label="Vòng hợp âm"></select><label class="chk">Nhịp <input type="range" id="gbpm" min="60" max="160" value="96"></label></div>
+      <p class="now">Phím số 1 → 0 chọn hợp âm · J hoặc mũi tên xuống: quạt xuống · K hoặc mũi tên lên: quạt lên · A S D F G H: gảy từng dây (từ dây Mi trầm tới Mi cao) · bấm vào dây trên cần đàn để gảy.</p>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="mLogin" role="dialog" aria-modal="true" aria-labelledby="mLoginT" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2 id="mLoginT">Tham gia Trường Rubik</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="login">
+      <p class="now">Tạo tên đăng nhập và mật khẩu để lưu level, tiền thưởng và đồ của bạn. Không dùng mật khẩu thật của bạn ở nơi khác nhé.</p>
+      <label class="fld">Tên đăng nhập<input id="lgName" maxlength="20" autocomplete="username"></label>
+      <label class="fld">Mật khẩu<input id="lgPass" type="password" maxlength="40" autocomplete="current-password"></label>
+      <div class="row"><button id="lgGo" class="primary">Đăng nhập</button><button id="lgNew">Tạo tài khoản mới</button><button id="lgGuest">Chỉ xem, chưa chơi</button></div>
+      <p class="now" id="lgMsg" aria-live="polite"></p>
+      <p class="legend">Tài khoản được lưu trên trình duyệt này; khi mở trên claude.ai còn được lưu online riêng tư để đăng nhập ở máy khác. Mật khẩu được mã hóa (PBKDF2) trước khi lưu.</p>
+    </div>
+  </div>
+</div>
+<div class="modal" id="mCreator" role="dialog" aria-modal="true" aria-labelledby="mCreatorT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mCreatorT">Chọn phong cách nhân vật</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="creator">
+      <canvas id="crPrev" width="220" height="240" aria-label="Xem trước nhân vật"></canvas>
+      <div class="crside">
+        <h2>Phong cách có sẵn</h2><div class="crpresets" id="crPresets"></div>
+        <h2>Màu da</h2><div class="ppal" id="crSkin"></div>
+        <h2>Kiểu tóc</h2><div class="seg" id="crHair"></div>
+        <h2>Màu tóc</h2><div class="ppal" id="crHairC"></div>
+        <h2>Màu áo</h2><div class="ppal" id="crShirt"></div>
+        <h2>Màu quần</h2><div class="ppal" id="crPants"></div>
+        <label class="chk"><input type="checkbox" id="crSkirt"> Mặc váy</label><label class="chk"><input type="checkbox" id="crGlass"> Đeo kính</label>
+        <button id="crDone" class="primary">Vào game</button>
+        <p class="legend">Quần áo sang trọng, mũ, trang sức, xe đạp, thú cưng và thuyền mua thêm ở Cửa hàng, mở khóa dần theo level.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="mProfile" role="dialog" aria-modal="true" aria-labelledby="mProfileT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mProfileT">Hồ sơ người chơi</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="farmgrid"><div><div id="pfInfo" class="pfinfo"></div><div class="row"><button id="pfShop" class="primary">Cửa hàng</button><button id="pfRestyle">Đổi phong cách</button><button id="pfLogout">Đăng xuất</button></div></div>
+    <div><h2>Túi đồ</h2><div id="pfInv" class="pfinv"></div><h2>Bảng xếp hạng</h2><div id="pfBoard"></div></div></div>
+  </div>
+</div>
+<div class="modal" id="mShop" role="dialog" aria-modal="true" aria-labelledby="mShopT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mShopT">Cửa hàng</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="cstatus" id="shopMoney"></div><div class="seg" id="shopTabs"></div><div class="shopgrid" id="shopGrid"></div>
+    <p class="legend">Đồ càng xịn càng cần level cao. Kiếm tiền từ mini game, Thế vận hội ($10 mỗi môn), nhiệm vụ ($10), câu cá, và đọc hết sách dài trên 100 trang ($100).</p>
+  </div>
+</div>
+<div class="modal" id="mLib" role="dialog" aria-modal="true" aria-labelledby="mLibT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mLibT">Thư viện Tri Thức</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="seg" id="libTabs"><button data-t="vn">Đọc trọn trong game</button><button data-t="vncomic">Truyện tranh đọc trọn</button><button data-t="books">Sách nổi tiếng (6.000 cuốn)</button><button data-t="comics">Sách tranh & truyện minh họa</button><button data-t="ai">Truyện tranh AI</button><button data-t="challenge">Thử thách đọc ($100)</button><button data-t="mine">Sách tôi đã đọc</button></div>
+    <div class="mrow" id="libFilters"><input type="text" id="libQ" placeholder="Tìm tên sách hoặc tác giả…" aria-label="Tìm sách"><select id="libCat" aria-label="Thể loại"></select><select id="libLang" aria-label="Ngôn ngữ"></select></div>
+    <p class="now" id="libCount"></p>
+    <div class="liblist" id="libList"></div>
+    <div id="libComic" hidden><div class="mrow"><b id="comicTitle"></b><button id="comicPrev">◀ Tập trước</button><button id="comicNext">Tập sau ▶</button><button id="comicRand">Tập ngẫu nhiên</button></div><canvas id="comicCv" width="960" height="300" aria-label="Truyện tranh 4 khung"></canvas><p class="legend">Truyện tranh 4 khung về các bạn trong trường, tự sinh ra nên có hàng nghìn tập.</p></div>
+    <p class="legend">Sách và truyện minh họa lấy từ Project Gutenberg (sách đã hết bản quyền, đọc miễn phí). Bấm "Đọc trực tuyến" để mở sách trong tab mới, đọc xong quay lại làm bài kiểm tra 10 câu. Sách trên 100 trang: đúng cả 10 câu được $100.</p>
+  </div>
+</div>
+<div class="modal" id="mBookQuiz" role="dialog" aria-modal="true" aria-labelledby="mBookQuizT" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2 id="mBookQuizT">Bài kiểm tra đọc sách</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <h3 id="bqTitle" class="bqt"></h3><p class="now" id="bqMsg" aria-live="polite"></p><div id="bqBody"></div>
+  </div>
+</div>
+<div class="modal" id="mZen" role="dialog" aria-modal="true" aria-labelledby="mZenT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mZenT">Vườn thiền tĩnh tâm</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="arcwrap"><div class="arcmain"><canvas id="zenCv" aria-label="Vòng tròn hướng dẫn hít thở"></canvas></div>
+    <div class="arcside"><label class="fld">Kiểu thở<select id="zpat"><option value="478">4-7-8 thư giãn</option><option value="box">Hình vuông 4-4-4-4</option><option value="calm">Cân bằng 5-5</option><option value="deep">Hít 4 thở 6</option></select></label>
+      <label class="fld">Thời gian<select id="zlen"><option value="1">1 phút</option><option value="3" selected>3 phút</option><option value="5">5 phút</option><option value="10">10 phút</option></select></label>
+      <div id="zlayers"><label class="chk"><input type="checkbox" data-l="music" checked> Nhạc thiền du dương</label><label class="chk"><input type="checkbox" data-l="bell" checked> Chuông xoay</label><label class="chk"><input type="checkbox" data-l="stream" checked> Suối chảy</label><label class="chk"><input type="checkbox" data-l="birds" checked> Chim hót</label><label class="chk"><input type="checkbox" data-l="rain"> Mưa nhẹ</label></div>
+      <label class="chk">Âm lượng <input type="range" id="zvol" min="0" max="1" step="0.05" value="0.7"></label>
+      <button id="zgo" class="primary">Bắt đầu thiền</button><p class="legend">Ngồi thẳng, thả lỏng vai, hít thở theo vòng tròn. Hoàn thành buổi thiền được EXP và $10 (nhiệm vụ).</p></div></div>
+  </div>
+</div>
+<div class="modal" id="mOly" role="dialog" aria-modal="true" aria-labelledby="mOlyT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mOlyT">Thế vận hội Trường Rubik</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="olygrid" id="olyGrid"></div><p class="legend">Mỗi môn thi xong được EXP và $10, huy chương vàng thêm $10. Nhiều môn mở khóa theo level.</p>
+  </div>
+</div>
+<div class="modal" id="mLab" role="dialog" aria-modal="true" aria-labelledby="mLabT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mLabT">Phòng Rubik</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="seg" id="labKinds"><button data-k="2">2×2</button><button data-k="3">3×3</button><button data-k="4">4×4</button><button data-k="5">5×5</button><button data-k="pyra">Tam giác Pyraminx</button></div>
+    <div class="arcwrap"><div class="arcmain"><canvas id="labCv" aria-label="Khối Rubik, kéo để xoay góc nhìn"></canvas></div>
+    <div class="arcside"><div class="rtimer" id="labTimer">0.0 s</div><p class="now" id="labState"></p><div class="lcoach" id="labCoach" aria-live="polite"></div><h2>Bảng công thức</h2><div class="formula" id="labFormula"></div>
+      <div class="row"><button id="labScr" class="primary">Xáo trộn</button><button id="labSolve">Giải giúp</button><button id="labUndo">Lùi 1 bước</button><button id="labReset">Đặt lại</button></div>
+      <div class="rmoves" id="labMoves"></div>
+      <div class="mrow"><input type="text" id="labAlg" placeholder="Nhập công thức, ví dụ R U R' U'" aria-label="Công thức"><button id="labAlgGo">Chạy</button></div>
+      <p class="legend">Kéo trên khối để xoay góc nhìn. Phím U D L R F B, giữ Shift để xoay ngược.</p></div></div>
+    <h2>Hướng dẫn xoay theo công thức</h2><div class="tuts" id="labTut"></div>
+  </div>
+</div>
+<div class="modal" id="mChessLearn" role="dialog" aria-modal="true" aria-labelledby="mChessLearnT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mChessLearnT">Lớp học cờ vua</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="seg" id="clTabs"></div>
+    <div class="chesswrap"><div class="cboardwrap"><div class="cboard" id="clBoard" aria-label="Bàn cờ bài học"></div></div>
+    <div class="cside"><p id="clText" class="cltext"></p><p class="cstatus" id="clMsg" aria-live="polite"></p><button id="clReset">Làm lại</button></div></div>
+  </div>
+</div>
+<div class="modal" id="mFishDeep" role="dialog" aria-modal="true" aria-labelledby="mFishDeepT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mFishDeepT">Câu cá biển sâu</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <p class="now" id="dfZone"></p>
+    <div class="arcwrap"><div class="arcmain"><canvas id="dfCv" aria-label="Cảnh câu cá dưới biển"></canvas></div>
+    <div class="arcside"><div class="row"><button id="dfNext" class="primary">Câu tiếp</button></div>
+      <p class="legend">Giữ chuột hoặc Space để lấy đà rồi thả để quăng. Mồi chìm dần, cá tới gần sẽ cắn: bấm ngay để giật. Khi kéo cá: giữ để thu dây, thả ra khi dây căng đỏ để không bị đứt. Cá mệt dần thì kéo vào.</p>
+      <h2>Bộ sưu tập loài cá <span class="now" id="dfCount"></span></h2><ul class="fbag" id="dfDex"></ul></div></div>
+  </div>
+</div>
+<div class="modal" id="mPop" role="dialog" aria-modal="true" aria-labelledby="mPopT" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2 id="mPopT">Thầy đố vui</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <h3 id="popQ" class="bqt"></h3><div id="popOpts" class="bqopts"></div><p class="cstatus" id="popMsg" aria-live="polite"></p>
+  </div>
+</div>
+<div class="modal" id="mLobby" role="dialog" aria-modal="true" aria-labelledby="mLobbyT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mLobbyT">Đấu trường online</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <p class="now" id="lbMsg" aria-live="polite"></p>
+    <div class="farmgrid"><div><h2>Tìm trận nhanh</h2><div class="seg" id="lbSeek"><button data-g="caro">Cờ caro</button><button data-g="c4">Cờ thả 4</button><button data-g="math">Đấu toán</button><button data-g="chess">Cờ vua</button></div>
+      <div id="lbInv"></div><h2>Người đang online <span class="now" id="lbCount"></span></h2><div id="lbList"></div></div>
+    <div><h2>Trò chuyện</h2><div class="lbchat" id="lbChat"></div><div class="mrow"><input type="text" id="lbText" maxlength="140" placeholder="Nhắn cho mọi người…" aria-label="Tin nhắn"><button id="lbSend">Gửi</button></div>
+      <p class="legend">Người chơi cùng phải mở trang này trên claude.ai và có quyền Contributor trở lên mới gửi lời mời, nước đi và tin nhắn được.</p></div></div>
+  </div>
+</div>
+<div class="modal" id="mC4" role="dialog" aria-modal="true" aria-labelledby="mC4T" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mC4T">Cờ thả 4</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="chesswrap"><div class="cboardwrap"><canvas id="c4Cv" aria-label="Bàn cờ thả 4, bấm vào cột để thả quân"></canvas></div>
+    <div class="cside"><div class="seg" id="c4Modes"><button data-m="ai">Đấu máy</button><button data-m="two">2 người 1 máy</button></div><div class="cstatus" id="c4St" aria-live="polite"></div><button id="c4New" class="primary">Ván mới</button><p class="legend">Thả quân vào cột, ai có 4 quân liền nhau (ngang, dọc, chéo) trước thì thắng.</p></div></div>
+  </div>
+</div>
+<div class="modal" id="mOAQ" role="dialog" aria-modal="true" aria-labelledby="mOAQT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mOAQT">Ô ăn quan</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="seg" id="oqModes"><button data-m="ai" aria-pressed="true">Đấu máy</button><button data-m="two" aria-pressed="false">2 người 1 máy</button></div>
+    <canvas id="oqCv" aria-label="Bàn ô ăn quan"></canvas><div class="row" id="oqDirs" hidden><button id="oqL" class="primary">◀ Rải sang trái</button><button id="oqR" class="primary">Rải sang phải ▶</button></div>
+    <p class="cstatus" id="oqSt" aria-live="polite"></p><p class="legend">Chọn một ô dân bên mình, rải từng viên theo một hướng. Ô kế tiếp còn quân thì bốc lên rải tiếp; gặp một ô trống rồi tới ô có quân thì ăn hết ô đó (ăn liên tiếp được). Hết quân ở hai ô quan thì kết thúc, mỗi quan tính 10 điểm.</p>
+  </div>
+</div>
+<div class="modal" id="mSudoku" role="dialog" aria-modal="true" aria-labelledby="mSudokuT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mSudokuT">Sudoku</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="seg" id="sdkDiff"><button data-d="0">Dễ</button><button data-d="1" aria-pressed="true">Vừa</button><button data-d="2">Khó</button></div>
+    <div class="chesswrap"><div class="sdkgrid" id="sdkGrid"></div><div class="cside"><div class="cstatus" id="sdkSt"></div><div class="sdkpad" id="sdkPad"></div><p class="legend">Điền số 1–9 sao cho mỗi hàng, cột và khối 3×3 đều có đủ 1–9 không trùng.</p></div></div>
+  </div>
+</div>
+<div class="modal" id="mMath" role="dialog" aria-modal="true" aria-labelledby="mMathT" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2 id="mMathT">Toán nhanh</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="rtimer" id="mqTime"></div><h3 id="mqQ" class="mqq"></h3><div id="mqOpts" class="bqopts"></div><p class="cstatus" id="mqScore"></p><button id="mqNew">Chơi lại</button>
+  </div>
+</div>
+<div class="modal" id="mMemory" role="dialog" aria-modal="true" aria-labelledby="mMemoryT" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2 id="mMemoryT">Lật thẻ nhớ</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="memgrid" id="memGrid"></div><p class="cstatus" id="memSt"></p><button id="memNew" class="primary">Ván mới</button>
+  </div>
+</div>
+<div class="modal" id="mAcademy" role="dialog" aria-modal="true" aria-labelledby="mAcademyT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mAcademyT">Học viện trí tuệ</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="olygrid" id="acGrid"></div>
+  </div>
+</div>
+<div class="modal" id="mHall" role="dialog" aria-modal="true" aria-labelledby="mHallT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mHallT">Nhà game 2 người</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="olygrid" id="hallGrid"></div><p class="legend">Chơi 2 người trên cùng một máy (bàn phím chia đôi) hoặc đấu với máy. Vào Đấu trường online để thi với người chơi khác.</p>
+  </div>
+</div>
+
+<div class="modal" id="mMall" role="dialog" aria-modal="true" aria-labelledby="mMallT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mMallT">Trung tâm thương mại Rubik</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="cstatus" id="mallMoney"></div><div class="seg" id="mallTabs"></div>
+    <div class="mrow"><input type="text" id="mallQ" placeholder="Tìm sản phẩm…" aria-label="Tìm sản phẩm"><select id="mallSty" aria-label="Phong cách"></select><select id="mallCol" aria-label="Màu sắc"></select><select id="mallSort" aria-label="Sắp xếp"><option value="price">Giá thấp → cao</option><option value="pricedesc">Giá cao → thấp</option><option value="name">Theo tên</option></select></div>
+    <p class="now" id="mallCount"></p><div class="shopgrid" id="mallGrid"></div>
+    <div class="row"><button id="mallPrev">◀ Trang trước</button><button id="mallNext">Trang sau ▶</button></div>
+    <p class="legend">10 phong cách (Hiện đại, Bắc Âu, Đồng quê, Nhật Bản, Nhiệt đới, Công nghiệp, Kẹo ngọt, Cổ điển, Hoàng gia, Vũ trụ) × 16 màu như ngoài đời. Đồ càng sang càng cần level cao và phải hoàn thành sách (đúng 10/10 câu) ở Thư viện.</p>
+  </div>
+</div>
+<div class="modal" id="mRoom" role="dialog" aria-modal="true" aria-labelledby="mRoomT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mRoomT"><span id="roomT">Nhà của tôi</span></h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <p class="now" id="roomInfo"></p>
+    <div class="arcwrap"><div class="arcmain"><canvas id="roomCv" aria-label="Căn phòng, bấm để đặt và kéo để di chuyển đồ"></canvas>
+      <div class="row" id="roomSelBox" hidden><button id="roomFlip">Lật ngang</button><button id="roomStore">Cất vào túi (Delete)</button></div></div>
+    <div class="arcside"><div id="roomBagBox"><h2>Túi đồ trang trí</h2><div class="roombag" id="roomBag"></div><div class="row"><button id="roomResetWF" hidden>Gỡ giấy dán tường & sàn</button></div></div>
+      <div id="roomShopBox" hidden><h2>Cửa hàng</h2><label class="fld">Tên cửa hàng<input id="shopName" maxlength="24"></label>
+        <p class="now" id="shopStats"></p><label class="fld">Món muốn bán<select id="listItem"></select></label><label class="fld">Giá bán ($)<input id="listPrice" type="number" min="1" value="500"></label>
+        <div class="row"><button id="listAdd" class="primary">Bày bán</button><button id="listQuick">Bán nhanh cho trung tâm (50%)</button></div><div id="listBox"></div>
+        <p class="legend">Người chơi khác mua với giá bạn đặt. Khách NPC chỉ mua khi giá không quá 85% giá gốc.</p></div>
+    </div></div>
+    <div id="roomVisit" hidden></div>
+  </div>
+</div>
+<div class="modal" id="mMarket" role="dialog" aria-modal="true" aria-labelledby="mMarketT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mMarketT">Chợ người chơi</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <p class="cstatus" id="mkMoney"></p><p class="now" id="mkMsg" aria-live="polite"></p>
+    <div class="seg" id="mkTabs"><button data-t="shops">Cửa hàng người chơi</button><button data-t="homes">Ghé nhà bạn bè</button><button data-t="trade">Đổi đồ trực tiếp</button><button data-t="gift">Tặng quà</button><button data-t="mail">Hộp thư & đơn hàng</button></div>
+    <div class="row"><button id="mkMyShop" class="primary">Mở / decor cửa hàng của tôi</button><button id="mkMall">Trung tâm thương mại</button></div>
+    <div id="mkBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="mReader" role="dialog" aria-modal="true" aria-labelledby="mReaderT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mReaderT"><span id="rdTitle">Sách</span></h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <p class="now" id="rdAuthor"></p>
+    <div class="rdbar"><i id="rdBar"></i></div>
+    <div class="rdpage"><div class="rdtext" id="rdText" tabindex="0"></div></div>
+    <div class="row rdctl"><button id="rdPrev">◀ Trang trước</button><span class="now" id="rdPage"></span><button id="rdNext" class="primary">Trang sau ▶</button><button id="rdSmall" aria-label="Chữ nhỏ hơn">A−</button><button id="rdBig" aria-label="Chữ to hơn">A+</button><button id="rdSpeak">Nghe đọc</button><button id="rdQuiz">Làm bài kiểm tra 10 câu</button><a id="rdExt" class="btnlink" target="_blank" rel="noopener" hidden>Mở trên Gutenberg</a></div>
+    <p class="legend">Phím mũi tên trái/phải để lật trang, hoặc bấm vào lề trái/phải của trang sách. Trang đang đọc được lưu lại.</p>
+  </div>
+</div>
+<div class="modal" id="mComic" role="dialog" aria-modal="true" aria-labelledby="mComicT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mComicT"><span id="cbTitle">Truyện tranh</span></h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <canvas id="cbCv" aria-label="Trang truyện tranh"></canvas>
+    <div class="row"><button id="cbPrev">◀ Trang trước</button><span class="now" id="cbPage"></span><button id="cbNext" class="primary">Trang sau ▶</button></div>
+  </div>
+</div>
+
+<div class="modal" id="mMissile" role="dialog" aria-modal="true" aria-labelledby="mMissileT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mMissileT">Hầm tên lửa đạn đạo ngầm · Tàu hải quân</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <canvas id="msCv" class="v16cv" width="1280" height="640" aria-label="Cảnh phóng tên lửa vào tàu hải tặc"></canvas>
+    <div class="row"><button id="msFire" class="primary big">🚀 PHÓNG TÊN LỬA</button><span class="now" id="msInfo"></span></div>
+  </div>
+</div>
+<div class="modal" id="mHouse" role="dialog" aria-modal="true" aria-labelledby="mHouseT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mHouseT"><span id="mHouseT">Ngôi nhà</span></h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <canvas id="hsCv" class="v16cv" width="960" height="580" aria-label="Nội thất ngôi nhà"></canvas>
+    <div class="row"><span class="now" id="hsNote"></span><b class="now" id="hsNear"></b></div>
+  </div>
+</div>
+<div class="modal" id="mGarden" role="dialog" aria-modal="true" aria-labelledby="mGardenT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mGardenT">Khu vườn mở bán</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <p class="now" id="gMoney"></p>
+    <canvas id="gCv" class="v16cv" width="960" height="520" aria-label="Các luống vườn, bấm để gieo, tưới, thu hoạch"></canvas>
+    <div class="seg v16seeds" id="gSeeds"></div>
+    <div class="row"><button id="gBuySeed" class="primary"></button><button id="gBuyBed"></button></div>
+    <p class="legend">Chọn loại hạt, bấm luống trống để gieo. Bấm luống đang lớn để tưới (tối đa 3 lần, cây lớn nhanh hơn). Khi thanh vàng đầy, bấm để thu hoạch và bán.</p>
+  </div>
+</div>
+<div class="modal" id="mScope" role="dialog" aria-modal="true" aria-labelledby="mScopeT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mScopeT">Kính viễn vọng · Hệ Mặt Trời</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <canvas id="scCv" class="v16cv" width="900" height="520" aria-label="Hệ Mặt Trời, bấm hành tinh để phóng to"></canvas>
+    <p class="legend">Bấm vào một hành tinh để phóng to và tìm hiểu. Đã ngắm: <b id="scCnt">0</b>/8</p>
+  </div>
+</div>
+<div class="modal" id="mChal" role="dialog" aria-modal="true" aria-labelledby="mChalT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mChalT">Bàn cờ Ikigai · Thách đấu</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="v16chal" id="chBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="mBigMap" role="dialog" aria-modal="true" aria-labelledby="mBigMapT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mBigMapT">Bản đồ Trường Rubik</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <canvas id="bmCv" class="v16cv bmcv" width="1100" height="640" aria-label="Bản đồ lớn: lăn chuột để phóng to, kéo để di chuyển, bấm một điểm để chỉ đường"></canvas>
+    <div class="row"><b class="now" id="bmInfo">Chưa chọn điểm đến</b><button id="bmGo" class="primary" disabled>Tự đi tới đó</button><button id="bmClear">Xóa đường</button></div>
+    <p class="legend">Hoặc chọn nhanh một địa điểm:</p><div class="bmdests" id="bmDests"></div>
+  </div>
+</div>
+
+<div class="modal" id="mSet" role="dialog" aria-modal="true" aria-labelledby="mSetT" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2 id="mSetT">Cài đặt</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <section class="stsec"><h3>Âm thanh</h3>
+      <div class="strow"><span>Âm lượng nhạc & hiệu ứng</span><span><input type="range" id="stVol" min="0" max="1" step="0.05" aria-label="Âm lượng"> <b id="stVolN"></b></span></div>
+      <label class="strow"><span>Âm thanh nền theo từng nơi</span><input type="checkbox" id="stAmb"></label></section>
+    <section class="stsec"><h3>Thời gian, thời tiết, mùa</h3>
+      <label class="strow"><span>Giờ thật: đồng hồ game chạy đúng giờ máy của bạn</span><input type="checkbox" id="stReal"></label>
+      <label class="strow"><span>Thời tiết đổi ngẫu nhiên mỗi giờ</span><input type="checkbox" id="stWeather"></label>
+      <label class="strow"><span>Mùa thay đổi theo từng ngày (xuân → hạ → thu → đông)</span><input type="checkbox" id="stSeason"></label>
+      <p class="now" id="stNow"></p></section>
+    <section class="stsec"><h3>Hiển thị</h3>
+      <label class="strow"><span>Bản đồ tròn góc phải</span><input type="checkbox" id="stMini"></label>
+      <label class="strow"><span>Bảng nhiệm vụ bên phải</span><input type="checkbox" id="stTrack"></label>
+      <label class="strow"><span>Lời dạy của Người Thầy Ánh Sáng</span><input type="checkbox" id="stMentor"></label>
+      <label class="strow" id="stOwnerRow" hidden><span>Bảng điều khiển mô phỏng (chỉ chủ game thấy)</span><input type="checkbox" id="stOwner"></label></section>
+    <section class="stsec"><h3>Phím tắt <small>(bấm vào phím để đổi)</small></h3><div id="stKeys"></div><button id="stReset">Khôi phục phím mặc định</button></section>
+  </div>
+</div>
+
+<div class="modal" id="mMenu" role="dialog" aria-modal="true" aria-labelledby="mMenuT" hidden>
+  <div class="mbox wide">
+    <div class="mhead"><h2 id="mMenuT">Menu trò chơi</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <div class="menubody" id="menuBody"></div>
+  </div>
+</div>
+<div class="modal" id="mMissions" role="dialog" aria-modal="true" aria-labelledby="mMissionsT" hidden>
+  <div class="mbox">
+    <div class="mhead"><h2 id="mMissionsT">Nhiệm vụ</h2><button class="mclose" data-close aria-label="Đóng">×</button></div>
+    <p class="now">Tiến độ được lưu trong trình duyệt của bạn.</p>
+    <ul class="mlist" id="mlist"></ul>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<div id="rsBoot" style="position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#0b1028;color:#ffd23f;font:24px VT323,monospace">Đang tải The Rubik School…</div>
+<script>
+// Game code lives in the js/ files below (in this order). They are joined and run as ONE program.
+// To add a feature: make a new file and put it in the list right BEFORE 'js/main.js'.
+(() => {
+const FILES = [
+  'js/core/world.js',
+  'js/core/state-agents.js',
+  'js/core/events-brains.js',
+  'js/core/weather-sim-camera.js',
+  'js/map.js',
+  'js/core/loop.js',
+  'js/ui/ui-music-missions.js',
+  'js/games/chess.js',
+  'js/games/rubik3d.js',
+  'js/games/fishing.js',
+  'js/core/start.js',
+  'js/ext/shared.js',
+  'js/data/piano-samples.js',
+  'js/ext/shared-2.js',
+  'js/games/chess-tables.js',
+  'js/world/farm-zones.js',
+  'js/player/control-boat-riding.js',
+  'js/games/arcade.js',
+  'js/games/caro-go.js',
+  'js/games/art-music.js',
+  'js/ext/glue.js',
+  'js/shop.js',
+  'js/world/east-lands.js',
+  'js/games/library.js',
+  'js/games/olympics.js',
+  'js/games/rubik-lab.js',
+  'js/games/fishing-boat.js',
+  'js/online.js',
+  'js/shop-mall-market.js',
+  'js/player/autowalk.js',
+  'js/games/reader-books.js',
+  'js/data/books-text.js',
+  'js/games/reader-books-2.js',
+  'js/world/street-mentors.js',
+  'js/games/rubik-formula.js',
+  'js/ext/v16-world-extras.js',
+  'js/ext/v17-sky.js',
+  'js/ext/v18-minimap.js',
+  'js/ext/v19-royal-library.js',
+  'js/ext/v20-round-zones.js',
+  'js/ext/v21-settings-time.js',
+  'js/ext/v22-owner-console.js',
+  'js/ext/v23-mobile.js',
+  'js/ext/v24-phone-polish.js',
+  'js/ext/v25-night-lights.js',
+  'js/ext/v26-performance.js',
+  'js/ext/v27-hud.js',
+  'js/ext/v32-phone-ui.js',
+  'js/ext/v33-observatory.js',
+  'js/ext/v34-swipe.js',
+  'js/ext/v35-polish.js',
+  'js/npc-hosts.js',
+  'js/ext/v37-top-hud.js',
+  'js/main.js'
+];
+const boot = document.getElementById('rsBoot');
+Promise.all(FILES.map(f => fetch(f, {cache:'no-cache'}).then(r => { if(!r.ok) throw new Error(f + ' (' + r.status + ')'); return r.text(); })))
+  .then(parts => {
+    const code = "window.__RS_RAN = 1;\n(() => {\n'use strict';\n" + parts.join('\n') + "\n})();\n//# sourceURL=rubik-school-game.js";
+    const sc = document.createElement('script'); sc.textContent = code; document.body.appendChild(sc);
+    if(window.__RS_RAN){ boot.remove(); return; }
+    // fallback 1: run it from a blob file; fallback 2: eval
+    const bl = document.createElement('script'); bl.src = URL.createObjectURL(new Blob([code], {type:'text/javascript'}));
+    bl.onload = () => { if(!window.__RS_RAN) (0, eval)(code); boot.remove(); };
+    bl.onerror = () => { try { (0, eval)(code); boot.remove(); } catch(e){ boot.textContent = 'Không chạy được game: ' + e.message; } };
+    document.body.appendChild(bl);
+  })
+  .catch(e => { boot.textContent = 'Không tải được game: ' + e.message + '. Hãy tải lại trang.'; console.error(e); });
+})();
+</script>
