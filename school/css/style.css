@@ -764,3 +764,29 @@ body:not(.v32phone) .v40ic{display:grid;position:fixed;left:16px;bottom:96px;wid
 .v40rep{display:flex;flex-direction:column;gap:8px;font-size:14px}.v40row{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.06)}.v40row small{color:rgba(247,245,239,.65)}
 #cboard .v40hint{box-shadow:inset 0 0 0 4px #3FD4A0!important;animation:v40h 1s ease-in-out infinite}
 @keyframes v40h{50%{box-shadow:inset 0 0 0 4px rgba(63,212,160,.35)}}
+/* ===== EXT46 (v41): travel column on the right edge ===== */
+#v41Col{position:absolute;z-index:6;right:max(10px, env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:12px;transition:opacity .6s}
+#v41Col[hidden]{display:none!important}
+.v41b{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;min-height:0;padding:0;background:none!important;border:0!important;box-shadow:none!important;color:#F7F5EF!important;font-family:"Nunito",system-ui,sans-serif}
+.v41b .ic{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:rgba(11,16,32,.72);border:1px solid rgba(255,255,255,.12);box-shadow:0 4px 12px rgba(0,0,0,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:transform .12s,border-color .2s,box-shadow .2s}
+.v41b small{font-size:11px;font-weight:700;line-height:1;text-shadow:0 1px 3px rgba(0,0,0,.8);white-space:nowrap}
+.v41b:active .ic{transform:scale(.94)}
+.v41b.on .ic{border:2px solid #E8C27A;box-shadow:0 0 16px rgba(232,194,122,.55),0 4px 12px rgba(0,0,0,.35)}
+.v41b.on small{color:#E8C27A}
+.v41b:disabled{opacity:.35;cursor:not-allowed}
+#stage.v32idle #v41Col{opacity:.25}
+@media (orientation:landscape) and (max-height:500px){#v41Col{top:auto;transform:none;bottom:calc(max(10px, env(safe-area-inset-bottom)) + 4px);gap:8px}.v41b .ic{width:46px;height:46px}.v41b small{font-size:10px}}
+@media (min-width:900px) and (min-height:501px){#v41Col{top:auto;transform:none;bottom:24px;right:20px}}
+#v41Card{position:absolute;z-index:8;right:calc(max(10px, env(safe-area-inset-right)) + 66px);top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:8px;max-width:min(320px, calc(100vw - 100px));background:rgba(11,16,32,.94);border:1px solid rgba(232,194,122,.6);border-radius:16px;padding:8px 8px 8px 12px;font-family:"Nunito",sans-serif;color:#F7F5EF;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+#v41Card[hidden]{display:none!important}
+#v41Card div{display:flex;flex-direction:column;min-width:0}#v41Card b{font-size:14px}#v41Card small{font-size:12px;color:rgba(247,245,239,.7)}
+#v41Card .v41go{min-height:40px;padding:0 12px;border-radius:999px;border:0;background:#E8C27A!important;color:#0B1020!important;font-weight:800;white-space:nowrap}
+#v41Card .v41no{min-width:32px;min-height:32px;padding:0;border-radius:50%;background:rgba(255,255,255,.08)!important;border:0;color:#F7F5EF!important}
+@media (orientation:landscape) and (max-height:500px){#v41Card{top:auto;transform:none;bottom:calc(max(10px, env(safe-area-inset-bottom)) + 40px)}}
+@media (min-width:900px) and (min-height:501px){#v41Card{top:auto;transform:none;bottom:40px;right:96px}}
+/* duplicates removed: left 🎈/🚲 icons and the "⋯ Thêm" travel buttons */
+body.v32phone #v35Fly,body.v32phone #v35Bike{display:none!important}
+body.v32phone .v40ic{top:calc(var(--v32t) + 98px)!important}
+#quick #hBike,#quick #hBoat,#quick #hFly,#quick #dismountBtn,section #boatBtn,section #dismountBtn{display:none!important}
+@media (orientation:landscape) and (max-height:500px){#v41Col{gap:5px}.v41b .ic{width:44px;height:44px}.v41b{gap:2px}}
+@media (min-width:900px) and (min-height:501px){#v41Col{right:256px}#v41Card{right:330px}}

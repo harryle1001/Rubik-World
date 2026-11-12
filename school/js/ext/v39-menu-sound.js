@@ -129,8 +129,8 @@ function v39Hooks(){
   v32Items = v39MainItems; v32SubItems = v39Sub;
   v32Sub = function(kind){ const titles = {games:['Mini Games', 'Trò chơi'], events:['Events', 'Sự kiện'], time:['Time', 'Thời gian'], season:['Seasons & Weather', 'Mùa & thời tiết'], owner:['Owner', 'Chủ game'], emotes:['Emotes', 'Biểu cảm']}[kind] || ['', ''];
     $('#v32Back').hidden = false; const h = $('#v32Title'); h.innerHTML = '<b></b> <small></small>'; h.querySelector('b').textContent = titles[0]; h.querySelector('small').textContent = titles[1];
-    let t = $('#v39Tabs'); if(!t){ t = document.createElement('div'); t.id = 'v39Tabs'; h.after(t); } t.hidden = kind !== 'games'; if(kind === 'games') v39Tabs(); v39Grid($('#v32Grid'), v39Sub(kind)); };
-  v32Home = function(){ $('#v32Back').hidden = true; $('#v32Title').textContent = ''; const t = $('#v39Tabs'); if(t) t.hidden = true; v32Chips(); v39Grid($('#v32Grid'), v39MainItems()); };
+    let t = $('#v39Tabs'); if(!t){ t = document.createElement('div'); t.id = 'v39Tabs'; h.after(t); } t.hidden = kind !== 'games'; if(kind === 'games') v39Tabs(); v39Grid($('#v32Grid'), v32SubItems(kind)); };
+  v32Home = function(){ $('#v32Back').hidden = true; $('#v32Title').textContent = ''; const t = $('#v39Tabs'); if(t) t.hidden = true; v32Chips(); v39Grid($('#v32Grid'), v32Items()); };
   v32Chips = function(){ const c = $('#v32Chips'); if(!c) return; c.innerHTML = ''; [[season, `${V39_SEASON_EN[season]} · ${SEASONS[season].name}`, 'season'], [weather, `${V39_WEATHER_EN[weather]} · ${WEATHERS[weather].name}`, 'season'], ['clock', `${fmt(clock)} ×${V25.mode === 'stop' ? '0' : V25.mode.slice(1)}`, 'time']].forEach(([ic, t, k]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'v32chip v39chip'; b.innerHTML = v39Ic(ic, 18) + '<span></span>'; b.querySelector('span').textContent = t; b.onclick = () => v32Sub(k); c.appendChild(b); }); };
   const mt = v32MenuToggle; v32MenuToggle = function(on){ const was = V32.menuOpen; mt(on); if(V32.menuOpen !== was) v39Sfx(V32.menuOpen ? 'open' : 'close'); };
   v35Chips = function(){};
