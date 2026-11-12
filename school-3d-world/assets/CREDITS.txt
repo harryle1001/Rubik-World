@@ -1,0 +1,15 @@
+The Rubik School — sound credits
+================================
+
+assets/sfx/*.mp3 (except k-*.mp3)
+  From "uisfx" 0.4.0 (soft theme), https://github.com/romainsimon/uisfx
+  Audio license: Creative Commons CC0 1.0 Universal (public domain dedication).
+  https://creativecommons.org/publicdomain/zero/1.0/
+
+assets/sfx/k-*.mp3 (coin, step, land, impact, gem, confirm)
+  Kenney sound packs (https://www.kenney.nl): Impact Sounds, Interface Sounds, RPG Audio.
+  License: Creative Commons Zero, CC0. Taken from the CC0 selection in
+  "@netforge/asset-library-files" 0.2.0 (library/audio/sfx).
+
+All files were converted to mono MP3 at 64 kbps. Bike bell, birds, waves and wind are
+synthesized in the browser with the Web Audio API (no files).
