@@ -520,11 +520,12 @@ function drawLion(a, by){
   rect('#f4f4f4', a.dir*2 - 10, -20 + by + flap, 20, 4); rect('#2fbf71', a.dir*2 - 3, -46 + by + flap, 6, 6);
 }
 function drawBody(a, swim){
-  const by = swim ? -6 : 0, st = a.moving ? (Math.floor(a.walk) % 2) : 0;
+  const ph = a.moving ? Math.floor(a.walk*1.5) % 6 : 0, st = a.moving ? (Math.floor(a.walk) % 2) : 0, lA = a.moving ? [0,1,2,2,1,0][ph] : 0, lB = a.moving ? [2,1,0,0,1,2][ph] : 0, aw = a.moving ? [1,1,0,-1,-1,0][ph] : 0;
+  const by = (swim ? -6 : 0) + (a.moving && (ph === 1 || ph === 4) ? -1 : 0);
   if(!swim){
     rect('rgba(0,0,0,.25)', -8, -2, 16, 4);
     if(a.skirt){ rect(a.pants, -6, -12, 12, 9); rect('#222', -5, -3, 4, 3); rect('#222', 1, -3, 4, 3); }
-    else { rect(a.pants, -5, -10, 4, 8 - st*2); rect(a.pants, 1, -10, 4, 8 - (a.moving ? (1-st)*2 : 0)); rect('#222', -5, -2 - st*2, 4, 2); rect('#222', 1, -2 - (a.moving ? (1-st)*2 : 0), 4, 2); }
+    else { rect(a.pants, -5, -10, 4, 8 - lA); rect(a.pants, 1, -10, 4, 8 - lB); rect('#222', -5, -2 - lA, 4, 2); rect('#222', 1, -2 - lB, 4, 2); }
   }
   if(a.lion === 'tail') return;
   if(a.lion === 'head'){ drawLion(a, by); return; }
@@ -537,7 +538,7 @@ function drawBody(a, swim){
     ctx.fillStyle = '#e02424'; ctx.beginPath(); ctx.moveTo(-3,-21+by); ctx.lineTo(3,-21+by); ctx.lineTo(0,-15+by); ctx.fill();
     if(a.saoDo){ rect('#c62828', a.dir>0 ? 5 : -8, -19 + by, 3, 5); rect('#ffd23f', a.dir>0 ? 6 : -7, -18 + by, 1, 1); }
   }
-  rect(a.skin, -8, -20 + by, 2, 8); rect(a.skin, 6, -20 + by, 2, 8);
+  rect(a.skin, -8, -20 + by + aw, 2, 8); rect(a.skin, 6, -20 + by - aw, 2, 8);
   rect(a.skin, -5, -31 + by, 10, 10);
   rect(a.hair, -6, -33 + by, 12, 4);
   if(a.long){ rect(a.hair, -6, -31 + by, 2, 11); rect(a.hair, 4, -31 + by, 2, 11); }

@@ -21,8 +21,8 @@ function frame(now){
       const nx = c.x + dx/L*sp*dtR, ny = c.y + dy/L*sp*dtR;
       if(canMove(c.x, c.y, nx, ny)){ c.x = nx; c.y = ny; }
       else if(canMove(c.x, c.y, nx, c.y)) c.x = nx; else if(canMove(c.x, c.y, c.x, ny)) c.y = ny;
-      if(dx) c.dir = dx < 0 ? -1 : 1; c.walk += dtR*10;
-    }
+      if(dx) c.dir = dx < 0 ? -1 : 1; c.walk += dtR*10; c._gx = dx/L*sp; c._gy = dy/L*sp;
+    } else if(Math.abs(c._gx || 0) + Math.abs(c._gy || 0) > 10){ const k = Math.pow(.002, dtR); c._gx *= k; c._gy *= k; const nx = c.x + c._gx*dtR, ny = c.y + c._gy*dtR; if(canMove(c.x, c.y, nx, ny)){ c.x = nx; c.y = ny; c.moving = true; c.walk += dtR*7; } else c._gx = c._gy = 0; } else c._gx = c._gy = 0;
   } else if(c) c.moving = false;
   immTick(dtR);
   if(followCam && selected && selected.visible && !immersive){ const tx = selected.inSub ? sub.x : selected.x, ty = (selected.inSub ? sub.y : selected.y) - 20 - (selected.flying ? selected.lift : 0); cam.x += (tx - cam.x)*Math.min(1, dtR*5); cam.y += (ty - cam.y)*Math.min(1, dtR*5); clampCam(); }

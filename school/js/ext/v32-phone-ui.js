@@ -15,7 +15,7 @@ function v32Logo(){
   const [rx, ry] = iso(1.5, 1.5, 3); g.fillStyle = '#b71c1c'; g.beginPath(); g.moveTo(rx - 34, ry - 4); g.lineTo(rx, ry - 34); g.lineTo(rx + 34, ry - 4); g.closePath(); g.fill(); g.strokeStyle = '#0a0f22'; g.lineWidth = 3; g.stroke();
   g.fillStyle = '#fff8e1'; g.fillRect(rx - 22, ry - 6, 44, 12); g.strokeRect(rx - 22, ry - 6, 44, 12); g.fillStyle = '#5d4037'; g.fillRect(rx - 4, ry - 4, 8, 10); g.fillStyle = '#0a0f22'; g.fillRect(rx - 1, ry - 58, 2, 26); g.fillStyle = '#ef4b4b'; g.fillRect(rx + 1, ry - 58, 16, 10);
   g.textBaseline = 'middle'; g.font = '46px Bungee, "Arial Black", sans-serif';
-  [['THE RUBIK', 104], ['SCHOOL', 164]].forEach(([t, y], k) => { g.fillStyle = 'rgba(0,0,0,.45)'; g.fillText(t, 262, y + 6); g.lineWidth = 9; g.strokeStyle = '#0a0f22'; g.strokeText(t, 256, y); g.fillStyle = k ? '#ffd23f' : '#ffffff'; g.fillText(t, 256, y); });
+  [['THE RUBIK', 104], ['SCHOOL', 164]].forEach(([t, y], k) => { g.fillStyle = 'rgba(0,0,0,.45)'; g.fillText(t, 262, y + 6); g.lineWidth = 9; g.strokeStyle = '#0a0f22'; g.strokeText(t, 256, y); g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 14; g.shadowOffsetY = 4; g.fillStyle = k ? '#E8C27A' : '#F7F5EF'; g.fillText(t, 256, y); g.shadowColor = 'transparent'; });
   V32.logo = c.toDataURL('image/png'); return V32.logo;
 }
 // ---------- 4. A* navigation on a walkable grid built once from the game's own movement rules ----------
