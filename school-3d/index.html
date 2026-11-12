@@ -1,0 +1,20 @@
+<title>Rubik School 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@600;700;800&family=VT323&display=swap">
+<link rel="stylesheet" href="css/ui.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<canvas id="c3d" aria-label="Thế giới 3D Rubik School"></canvas>
+<div id="boot">Đang dựng hòn đảo Rubik School 3D…</div>
+<div id="hud"><div class="chip"><b id="hudName">Bạn</b><span id="hudLv">Level 1</span><span id="hudMoney">$0</span></div><div class="chip small" id="hudTime"></div></div>
+<button id="menuBtn" class="round gold" aria-label="Menu">☰</button>
+<div id="leftCol"><button id="bMount" class="round" aria-label="Thú cưỡi">🐎</button><button id="bFly" class="round" hidden aria-label="Bay">🪽</button><button id="bUp" class="round" hidden aria-label="Bay lên">▲</button><button id="bDown" class="round" hidden aria-label="Hạ xuống">▼</button></div>
+<button id="bJump" class="round big" aria-label="Nhảy">⤒</button>
+<button id="bCar" class="pill" hidden>🚃 Lên xe</button>
+<div id="placeCard" hidden></div>
+<div id="buildBar" hidden><div id="bKinds"></div><div id="bCols"></div><button id="bUndo">↶ Hoàn tác</button><button id="bShot">📷 Chụp</button><button id="bDone" class="gold">Xong</button></div>
+<div id="joy" hidden><i></i></div>
+<div id="toast"></div>
+<div id="perf" hidden></div>
+<div id="menu" hidden><div class="mh"><button id="menuBack" hidden aria-label="Quay lại">←</button><div class="logo">RUBIK <span>SCHOOL</span> 3D</div><button id="menuClose" aria-label="Đóng">✕</button></div><h3 id="menuTitle"></h3><div id="menuGrid"></div><p class="hint">Nhấn giữ một ô để nghe tiếng Anh</p></div>
+<div id="mg" hidden><div class="mgTop"><button id="mgClose" aria-label="Thoát mini game">✕</button></div><div id="mgBody"></div></div>
+<script type="module" src="js/main.js"></script>
