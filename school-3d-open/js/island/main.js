@@ -5,6 +5,7 @@ import { buildTerrain, buildSea, buildSky, buildTrees, buildGrass, sky_t } from 
 import { buildSchool, buildBrain, buildSports, LAMPS, MOVERS } from './zones.js';
 import { buildPlayground, buildFarm } from './zones2.js';
 import { buildPlaza, KIOSKS } from './zones3.js';
+import { buildLandmarks, bridgeTop, LIGHT } from './zones4.js';
 import { buildPeople, updateNPC, drawPeople, PEOPLE } from './people.js';
 import { buildAnimals, updateAnimals, buildTraffic, updateTraffic, MOUNTS, BIKES, CARRIAGE } from './creatures.js';
 import { P, initPlayer, updatePlayer, mountUp, dismount, toggleFly, nearCarriage, boardCarriage, jump, setOnPlace, setGroundTap, setFloor } from './player.js';
@@ -25,7 +26,7 @@ const sun = new THREE.DirectionalLight('#fff4e0', 2.2); sun.shadow.camera.left =
 const nightLights = [0, 1, 2, 3].map(() => { const l = new THREE.PointLight('#ffcf7a', 0, 22, 1.6); scene.add(l); return l; });
 // ---------- world ----------
 const terrain = buildTerrain(scene); const {sea, foam} = buildSea(scene); const skyDome = buildSky(scene); buildTrees(scene); const grass = buildGrass(scene);
-buildSchool(scene); buildBrain(scene); buildSports(scene); buildPlayground(scene); buildFarm(scene); buildPlaza(scene);
+buildSchool(scene); buildBrain(scene); buildSports(scene); buildPlayground(scene); buildFarm(scene); buildPlaza(scene); buildLandmarks(scene);
 const people = buildPeople(scene, 31); buildAnimals(scene); buildTraffic(scene, people); buildPhysics(scene); buildInit(scene);
 const me = people[0]; initPlayer(scene, camera, me, terrain); camera.position.set(0, 12, 60);
 // night halos for every lamp (one Points draw)
@@ -53,8 +54,9 @@ setMenu(sub => {
   if(sub === 'time') return {title:'Time · Thời gian', list:[['🌅', 'Morning', 'Sáng 7:00', 420], ['☀️', 'Noon', 'Trưa 12:00', 720], ['🌇', 'Afternoon', 'Chiều 16:30', 990], ['🌙', 'Evening', 'Tối 20:00', 1200]].map(([ic, en, vi, m]) => ({ic, en, vi, ac:AC.system, f:() => { CLOCK.min = m; lighting(); hud(); }})).concat([{ic:'⏩', en:'+30 min', vi:'Tua 30 phút', ac:AC.system, stay:true, f:() => { CLOCK.min += 30; }}, {ic:'⏩', en:'+60 min', vi:'Tua 60 phút', ac:AC.system, stay:true, f:() => { CLOCK.min += 60; }}, {ic:'☔', en:'Weather', vi:WN[WEATHER.k][1], ac:AC.world, stay:true, f:() => setWeather({sun:'cloud', cloud:'rain', rain:'sun'}[WEATHER.k])}])};
   if(sub === 'settings') return {title:'Settings · Cài đặt', list:[['auto', 'Auto', 'Tự động'], ['low', 'Low', 'Thấp'], ['med', 'Medium', 'Vừa'], ['high', 'High', 'Cao']].map(([k, en, vi]) => ({ic:'🎚️', en:'Quality ' + en, vi:'Chất lượng ' + vi, ac:AC.system, on:Q.level === k, stay:true, f:() => { Q.level = k; store.set('quality', k); applyQuality(); }})).concat([{ic:'📊', en:'Performance', vi:PERF.on ? 'Đang hiện' : 'Đang ẩn', ac:AC.system, stay:true, f:() => { PERF.on = !PERF.on; store.set('perf', PERF.on); }}, {ic:store.get('mute', false) ? '🔇' : '🔊', en:'Sound', vi:store.get('mute', false) ? 'Đang tắt' : 'Đang bật', ac:AC.system, stay:true, f:() => store.set('mute', !store.get('mute', false))}])};
   if(sub && sub.startsWith('2d:')) return school2D(sub.slice(3));
+  if(sub === 'places') return {title:'Places · Địa danh', list:[['🏫', 'School', 'Trường học', 0, 30], ['🎪', 'Games Plaza', 'Quảng trường Trò chơi', 110, 140], ['🏮', 'Old Town', 'Phố cổ', -340, 340], ['🕰️', 'Clock Tower', 'Tháp đồng hồ', -236, 344], ['🛕', 'Pagoda Tower', 'Tháp chùa cổ', 340, 400], ['🌬️', 'Windmill Hill', 'Đồi cối xay gió', 300, -300], ['🌉', 'Covered Bridge', 'Cầu ngói', -262, -280], ['🗼', 'Lighthouse', 'Ngọn hải đăng', null, null], ['🌾', 'Farm', 'Nông trại', 0, -280], ['🎡', 'Playground', 'Khu vui chơi', 0, 260], ['⚽', 'Stadium', 'Sân vận động', 300, -10]].map(([ic, en, vi, x, z]) => ({ic, en, vi, ac:AC.world, f:() => { if(x == null){ x = LIGHT.x; z = LIGHT.z; } if(P.mount && MOUNTS[P.mount].sea) dismount(); P.x = x; P.z = z; P.y = heightAt(x, z) + 1; P.vx = P.vz = P.vy = 0; P.target = null; toast(`${ic} ${vi}`); }}))};
   if(sub === 'plaza') return {title:'School Games · Trò chơi của trường', list:KIOSKS.map(([k, en, vi, ic]) => ({ic, en, vi, ac:AC.play, sub:'2d:' + k}))};
-  return [{ic:'🎪', en:'School Games', vi:'Mọi trò chơi & tiện ích', ac:AC.play, sub:'plaza'}, {ic:'🐎', en:'Mounts', vi:'Thú cưỡi', ac:AC.world, sub:'mounts'}, {ic:'🌾', en:'Farm Games', vi:'Trò chơi nông trại', ac:AC.world, sub:'games'}, {ic:'🕒', en:'Time', vi:'Thời gian', ac:AC.system, sub:'time'},
+  return [{ic:'🎪', en:'School Games', vi:'Mọi trò chơi & tiện ích', ac:AC.play, sub:'plaza'}, {ic:'🧭', en:'Places', vi:'Đi nhanh tới địa danh', ac:AC.world, sub:'places'}, {ic:'🐎', en:'Mounts', vi:'Thú cưỡi', ac:AC.world, sub:'mounts'}, {ic:'🌾', en:'Farm Games', vi:'Trò chơi nông trại', ac:AC.world, sub:'games'}, {ic:'🕒', en:'Time', vi:'Thời gian', ac:AC.system, sub:'time'},
     {ic:'🧱', en:'Build Zone', vi:'Khu sáng tạo', ac:AC.play, f:() => goPlace('build')}, {ic:'⚽', en:'Stadium', vi:'Sân vận động', ac:AC.sports, f:() => goPlace('kick')}, {ic:'🚃', en:'Carriage', vi:'Xe ngựa quanh đảo', ac:AC.world, f:() => toast('Xe ngựa chạy vòng quanh đảo, dừng 8 giây ở 4 trạm. Đứng gần trạm và bấm "Lên xe".')},
     {ic:'🏫', en:'School', vi:'Về trường', ac:AC.brain, f:() => { P.target = [0, 30]; }}, {ic:'⚙️', en:'Settings', vi:'Cài đặt', ac:AC.system, sub:'settings'}, {ic:'🗺️', en:'School Map', vi:'Bản đồ trường Rubik', ac:AC.world, f:() => window.RS && window.RS.leaveIsland()}];
 });
@@ -66,7 +68,7 @@ function goPlace(game){ const p = PLACES.find(q => q.game === game); if(p){ P.ta
 function usePlace(p){ if(p.game && p.game.startsWith('2d:')){ openMenu(p.game); return; } if(p.game === 'turtle'){ mountUp('turtle'); syncButtons(); toast('Cưỡi rùa biển: dùng joystick để bơi.'); return; } if(p.game === 'kick'){ toast('Chạy vào quả bóng để sút! Bóng và thùng gỗ có vật lý thật.'); return; } if(p.game === 'build'){ BUILD.on = !BUILD.on; syncButtons(); toast(BUILD.on ? 'Chế độ Sáng tạo: chạm sàn trong khu để đặt khối.' : 'Đã tắt chế độ Sáng tạo.'); return; } MG.start(p.game); }
 setOnPlace(usePlace);
 setGroundTap(pt => { if(!BUILD.on || !inBuild(pt.x, pt.z)) return false; buildPlace(pt.x, pt.z, P.camYaw); SFX.tap(); return true; });
-setFloor((x, z, y) => { const t = buildTop(x, z); if(t > -1e8 && y > t - .6){ if(springUnder(x, z, t) && P.vy <= 0 && y - t < .05){ P.vy = 13; SFX.ok(); } return t; } return -1e9; });
+setFloor((x, z, y) => { const bt = bridgeTop(x, z); if(bt > -1e8 && y > bt - 1.2) return bt; const t = buildTop(x, z); if(t > -1e8 && y > t - .6){ if(springUnder(x, z, t) && P.vy <= 0 && y - t < .05){ P.vy = 13; SFX.ok(); } return t; } return -1e9; });
 // ---------- contextual buttons ----------
 function syncButtons(){ const M = P.mount ? MOUNTS[P.mount] : null; $('#bFly').hidden = !(M && M.fly); $('#bFly').classList.toggle('on', P.fly); $('#bUp').hidden = $('#bDown').hidden = !P.fly; $('#bMount').classList.toggle('on', !!P.mount); $('#buildBar').hidden = !BUILD.on; }
 function bindButtons(){

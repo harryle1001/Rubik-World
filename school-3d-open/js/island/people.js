@@ -9,7 +9,7 @@ export const PEOPLE = [];
 const SKIN = ['#f2c9a0', '#e0ac69', '#c68642', '#f1d4b3', '#8d5524'], HAIR = ['#22140c', '#3b2416', '#6d4c2e', '#111', '#a0522d', '#d4a017'], SHIRT = ['#ef4b4b', '#3d7bff', '#2fbf71', '#ffd23f', '#ff8a2b', '#b06bff', '#f4f4f4', '#00bcd4', '#e91e63'], PANTS = ['#24356b', '#37474f', '#5d4037', '#212121', '#1a237e'];
 const NAMES = ['Minh', 'Lan', 'Khoa', 'Vy', 'Huy', 'Nhi', 'Long', 'Thảo', 'Bảo', 'Mai', 'Phong', 'Linh', 'Quân', 'Hà', 'Tú', 'Ngọc', 'Đạt', 'An', 'Cô Mai', 'Thầy Đức', 'Bác Năm'];
 // places NPCs walk between, by time of day
-export const POI = { school:[[0, -10], [-20, -30], [20, -30], [10, 0], [-12, -45], [15, -45]], canteen:[[-62, 34], [-55, 40]], brain:[[-300, -20], [-300, 40], [-290, 120], [-210, -60], [-200, 100]], sports:[[300, -60], [215, 40], [370, 40], [300, 175]], play:[[0, 290], [-20, 300], [70, 320], [-60, 290], [0, 395], [55, 410]], farm:[[-110, -275], [0, -360], [120, -275], [100, -420], [-140, -400]] };
+export const POI = { school:[[0, -10], [-20, -30], [20, -30], [10, 0], [-12, -45], [15, -45]], canteen:[[-62, 34], [-55, 40]], brain:[[-300, -20], [-300, 40], [-290, 120], [-210, -60], [-200, 100]], sports:[[300, -60], [215, 40], [370, 40], [300, 175]], play:[[0, 290], [-20, 300], [70, 320], [-60, 290], [0, 395], [55, 410]], farm:[[-110, -275], [0, -360], [120, -275], [100, -420], [-140, -400]], town:[[-320, 340], [-280, 340], [-240, 340], [-300, 342], [-260, 338]] };
 let IM = {}, N = 0;
 export function buildPeople(scene, count){
   N = count + 1; const mk = (g, n, mat = MAT.solid) => { const m = new THREE.InstancedMesh(g, mat, n); m.frustumCulled = false; m.castShadow = mat === MAT.solid; scene.add(m); return m; };
@@ -24,7 +24,7 @@ export function buildPeople(scene, count){
   return PEOPLE;
 }
 // NPC brains: walk to a place that fits the hour, idle, sometimes trip and get up again
-function pickTarget(p, hour, r){ const k = hour < 7 ? 'play' : hour < 11 ? 'school' : hour < 12.5 ? 'canteen' : hour < 16 ? ['brain', 'sports', 'farm', 'school'][p.i % 4] : hour < 20 ? ['play', 'sports', 'farm'][p.i % 3] : 'play'; const L = POI[k], q = L[Math.floor(r()*L.length)]; return [q[0] + (r() - .5)*12, q[1] + (r() - .5)*12]; }
+function pickTarget(p, hour, r){ const k = hour < 7 ? 'play' : hour < 11 ? 'school' : hour < 12.5 ? 'canteen' : hour < 16 ? ['brain', 'sports', 'farm', 'school', 'town'][p.i % 5] : hour < 20 ? ['play', 'sports', 'farm', 'town'][p.i % 4] : 'play'; const L = POI[k], q = L[Math.floor(r()*L.length)]; return [q[0] + (r() - .5)*12, q[1] + (r() - .5)*12]; }
 const R = Math.random;
 export function updateNPC(p, dt, hour){
   if(p.ride || p.hidden) return;

@@ -31,7 +31,7 @@ export function heightAt(x, z){
   return h*land + (-5)*(1 - land) + (land < 1 ? -2*(1 - land) : 0);
 }
 // areas kept flat for buildings/fields
-export const FLAT = [[0, -20, 120], [-300, 0, 110], [300, -60, 120], [0, 300, 130], [0, -330, 170], [300, 200, 90], [-300, 160, 70], [110, 110, 36]];
+export const FLAT = [[0, -20, 120], [-300, 0, 110], [300, -60, 120], [0, 300, 130], [0, -330, 170], [300, 200, 90], [-300, 160, 70], [110, 110, 36], [-280, 340, 62], [340, 380, 34], [300, -322, 44]];
 export const SEA_LEVEL = 0;
 
 // ---------- coloured primitives (non-indexed, vertex colours) ----------

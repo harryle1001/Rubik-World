@@ -72,6 +72,9 @@ function finish(dt, sp, t = 0){
   if(P.mg){ const M = MOUNTS[P.mount]; P.mg.position.set(P.x, P.y + (M.sea ? -.2 : 0), P.z); P.mg.rotation.y = P.yaw; P.mg.rotation.z = P.fly ? -Math.max(-.4, Math.min(.4, (P.vx*Math.cos(P.yaw) - P.vz*Math.sin(P.yaw))*.03)) : 0; animMount(P.mg, t, sp, P.fly); p.y = P.y + M.h; p.roll = P.mg.rotation.z; }
   else p.y = P.y - (P.swim ? .9 : 0);
   // camera follows
-  const tgtY = p.y + 1.6, cd = P.camDist*(P.fly ? 1.6 : 1), ch = Math.cos(P.camPitch), cxp = P.x + Math.sin(P.camYaw)*cd*ch, czp = P.z + Math.cos(P.camYaw)*cd*ch; let cyp = tgtY + Math.sin(P.camPitch)*cd;
+  const tgtY = p.y + 1.6, ch = Math.cos(P.camPitch); let cd = P.camDist*(P.fly ? 1.6 : 1);
+  // keep the camera out of walls: pull it in while it would sit inside a building (narrow streets)
+  if(!P.fly && Math.sin(P.camPitch)*cd < 9) for(let k=0;k<8 && cd > 3 && blocked(P.x + Math.sin(P.camYaw)*cd*ch, P.z + Math.cos(P.camYaw)*cd*ch, .4);k++) cd *= .8;
+  const cxp = P.x + Math.sin(P.camYaw)*cd*ch, czp = P.z + Math.cos(P.camYaw)*cd*ch; let cyp = tgtY + Math.sin(P.camPitch)*cd;
   cyp = Math.max(cyp, heightAt(cxp, czp) + 1.2, .8); const k = Math.min(1, dt*6); camera.position.x += (cxp - camera.position.x)*k; camera.position.y += (cyp - camera.position.y)*k; camera.position.z += (czp - camera.position.z)*k; fwd.set(P.x, tgtY, P.z); camera.lookAt(fwd);
 }
