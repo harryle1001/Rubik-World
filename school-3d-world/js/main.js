@@ -11,11 +11,14 @@ extFinalInit();
     get PLAYER(){ return PLAYER; }, get agents(){ return agents; }, get npcs(){ return npcs; }, get cars(){ return cars; }, get ships(){ return ships; }, npcShown,
     R, HOUSES, TREES, FOREST_TREES, LIGHTHOUSE, ROOMS:['rubik', 'chess', 'music', 'hall', 'rubikyard', 'office', 'elec'], W, H, NY,
     get cam(){ return cam; }, get clock(){ return clock; }, get season(){ return season; }, get weather(){ return weather; }, get cw(){ return cw; }, get ch(){ return ch; }, get DPR(){ return DPR; },
-    covered(){ try { return v39Covered(); } catch(e){ return false; } },
+    covered(){ if(RS.islandOn) return true; try { return v39Covered(); } catch(e){ return false; } },
+    get prof(){ return PROF; }, reward(e, m, w, q){ return reward(e, m, w, q); }, save(){ try { saveProfile(); renderProfHud(); } catch(e){} }, toast(t){ toast(t); }, PIER_END,
+    extraTiles:[], extraDoors:[], islandOn:false,
     bake(tc, x0, y0, x1, y1, sc){ withCtx(tc, () => { const vb = VB; ctx.setTransform(sc, 0, 0, sc, -x0*sc, -y0*sc); ctx.imageSmoothingEnabled = false; VB = {x0, y0, x1, y1};
       for(const f of [drawGround, () => v20Soft(), drawForestDyn, drawSea, drawBuildings, () => v20Rooms()]) { try { f(); } catch(e){} } VB = vb; }); },
     setProj(tw, ts){ toWorld = tw; toScreen = ts; },
     enable3D(){ const old = render; render = function(dt){ if(RS.covered()) return; ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, cw, ch); VB = {x0:cam.x - 2600, x1:cam.x + 2600, y0:cam.y - 2000, y1:cam.y + 2000}; try { RS.hook3D && RS.hook3D(dt); } catch(e){ console.warn('3d', e); } try { drawLabels(); } catch(e){} }; RS.render2D = old; }
   };
+  { const mi = v32Items; v32Items = function(){ return mi().concat(RS.extraTiles); }; const vd = v36Doors; v36Doors = function(d){ vd(d); for(const x of RS.extraDoors) d.push(x); }; }
   window.dispatchEvent(new Event('rs-ready'));
 })();
