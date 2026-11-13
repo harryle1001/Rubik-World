@@ -26,6 +26,9 @@ extFinalInit();
     items2D(){ const skip = ['Map', 'Mini Games', 'Open World', 'Rubik Island', 'Pirate Port', 'Ride a Bike', 'Boat', 'Fly', 'Emotes', 'Seasons & Weather', 'Time']; return v32Items().filter(it => !skip.includes(it.en)); },
     games2D(tab){ V39.tab = tab; return v32SubItems('games'); },
     sub2D(k){ return v32SubItems(k); },
+    btn2D(id){ const b = document.getElementById(id); if(!b){ toast('Chưa mở được mục này.'); return false; } RS.run2D({f:() => b.click()}); return true; },
+    door2D(t){ const d = DOORS().find(q => q.n.includes(t)); if(!d) return false; if(PLAYER){ PLAYER.x = d.x; PLAYER.y = d.y + 14; } RS.run2D({f:d.f}); return true; },
+    tile2D(en){ return v32Items().find(it => it.en === en) || null; },
     run2D(it){ try { it.f(); } catch(e){ console.warn(e); } setTimeout(() => { if(!RS.islandOn) return; const vis = !!document.querySelector('.modal:not([hidden]), #v32Map:not([hidden]), #v40Quiz:not([hidden]), #v40Rep:not([hidden]), #v43J:not([hidden])') || (document.querySelector('#v40Coach') && document.querySelector('#v40Coach').offsetParent);
       if(!vis && RS.leaveIsland){ RS.leaveIsland(); toast('Mở ở bản đồ trường Rubik ✨'); } }, 450); }
   });

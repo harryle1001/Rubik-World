@@ -21,6 +21,7 @@ export const STREAM = [[-160, -520], [-200, -430], [-250, -330], [-240, -240], [
 export function streamDist(x, z){ let best = 1e9; for(let i=0;i<STREAM.length - 1;i++){ const [ax, az] = STREAM[i], [bx, bz] = STREAM[i + 1], dx = bx - ax, dz = bz - az, t = Math.max(0, Math.min(1, ((x - ax)*dx + (z - az)*dz)/(dx*dx + dz*dz))); const px = ax + dx*t, pz = az + dz*t; best = Math.min(best, Math.hypot(x - px, z - pz)); } return best; }
 const g2 = (x, z, cx, cz, s) => Math.exp(-((x - cx)**2 + (z - cz)**2)/(2*s*s));
 export function heightAt(x, z){
+  if(z > 740){ const ce = Math.hypot(x/560, (z - 1180)/380); if(ce < 1.04){ const land = Math.min(1, (1.04 - ce)*14); return 1.5*land + (-5)*(1 - land); } }   // Rubik City island
   const r = Math.hypot(x, z), e = edgeR(x, z), land = Math.min(1, Math.max(0, (e - r)/50));
   let h = 1.2 + (fbm(x*.006, z*.006) - .5)*3;
   h += 30*g2(x, z, -150, -560, 110) + 22*g2(x, z, 160, -560, 90);           // northern hills (stream source)

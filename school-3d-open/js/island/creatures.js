@@ -28,7 +28,7 @@ const M = new THREE.Matrix4(), B = new THREE.Matrix4(), L = new THREE.Matrix4(),
 export function updateAnimals(dt, px, pz){
   const cnt = {};
   for(const a of ANIMALS){ const S = SPECIES[a.k]; let moving = false;
-    const dp = Math.hypot(a.x - px, a.z - pz); if(dp < 4 && a.k !== 'cow'){ a.t = [a.x + (a.x - px)/dp*8, a.z + (a.z - pz)/dp*8]; a.flee = 1; }
+    const dp = Math.hypot(a.x - px, a.z - pz); if(dp < 4 && a.k !== 'cow' && !(a.tame > performance.now())){ a.t = [a.x + (a.x - px)/dp*8, a.z + (a.z - pz)/dp*8]; a.flee = 1; }
     if(!a.t){ a.wait -= dt; if(a.wait <= 0){ const ang = Math.random()*6.28, d = Math.random()*a.rad*.8; a.t = [a.cx + Math.cos(ang)*d, a.cz + Math.sin(ang)*d*.7]; } }
     else { const dx = a.t[0] - a.x, dz = a.t[1] - a.z, d = Math.hypot(dx, dz); if(d < .5){ a.t = null; a.wait = 2 + Math.random()*6; a.flee = 0; } else { const sp = a.sp*(a.flee ? 3 : 1); a.x += dx/d*sp*dt; a.z += dz/d*sp*dt; a.yaw = Math.atan2(dx, dz); a.walk += dt*sp*5; moving = true; } }
     const A = AIM[a.k], y = heightAt(a.x, a.z), hop = a.k === 'chicken' && moving ? Math.abs(Math.sin(a.walk))*.08 : 0;

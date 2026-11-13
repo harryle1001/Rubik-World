@@ -26,9 +26,11 @@ function bindInput(){
 }
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 let groundTap = null; export const setGroundTap = f => { groundTap = f; }; let floorFn = null; export const setFloor = f => { floorFn = f; };
+export const TAP_HOOKS = [];   // (cx, cy, camera, ray) => true when the tap was used (feed animals, plant…)
 export let onPlace = null; export const setOnPlace = f => { onPlace = f; };
 function tapAt(cx, cy){
   ndc.set(cx/innerWidth*2 - 1, -(cy/innerHeight)*2 + 1); ray.setFromCamera(ndc, camera);
+  for(const h of TAP_HOOKS){ try { if(h(cx, cy, camera, ray)) return; } catch(e){ console.warn(e); } }
   // signs first (closest place whose screen position is near the tap)
   let best = null, bd = 60; const v = new THREE.Vector3(); for(const p of PLACES){ v.set(p.x, heightAt(p.x, p.z) + 2.6, p.z).project(camera); if(v.z > 1) continue; const sx = (v.x + 1)/2*innerWidth, sy = (1 - v.y)/2*innerHeight, d = Math.hypot(sx - cx, sy - cy); if(d < bd){ bd = d; best = p; } }
   if(best){ walkTo(best.x, best.z + 3, () => onPlace && onPlace(best)); return; }
@@ -54,13 +56,13 @@ export function updatePlayer(dt, t){
   const L = Math.hypot(ix, iz); if(L > 1){ ix /= L; iz /= L; }
   // input is relative to the camera
   const s = Math.sin(P.camYaw), c = Math.cos(P.camYaw), wx = tw ? tw[0] : ix*c + iz*s, wz = tw ? tw[1] : -ix*s + iz*c;
-  const M = P.mount ? MOUNTS[P.mount] : null, run = M ? M.sp*1.15 : (k.ShiftLeft ? 8.6 : 5.9), want = Math.min(1, Math.hypot(wx, wz))*run;
+  const M = P.mount ? MOUNTS[P.mount] : null, run = M ? M.sp*1.3 : (k.ShiftLeft ? 10.5 : 7.6), want = Math.min(1, Math.hypot(wx, wz))*run;
   const acc = (want > .1 ? 10 : 14)*dt; P.vx += (wx*run - P.vx)*Math.min(1, acc); P.vz += (wz*run - P.vz)*Math.min(1, acc);
   let sp = Math.hypot(P.vx, P.vz); if(sp < .08 && want < .1){ P.vx = P.vz = 0; sp = 0; } if(sp > .05){ const nx = P.x + P.vx*dt, nz = P.z + P.vz*dt, r = Math.hypot(nx, nz), lim = 900;
-    const okXY = (x, z) => { if(Math.hypot(x, z) > lim) return false; if(P.fly) return true; const h = heightAt(x, z); if(M && M.sea) return h < -.4; if(M && !M.sea && h < -1.6) return false; return !blocked(x, z, M ? .9 : .45); };
+    const okXY = (x, z) => { if(Math.hypot(x, z) > lim && ((x - 0)/640)**2 + ((z - 1180)/460)**2 > 1) return false; if(P.fly) return true; const h = heightAt(x, z); if(M && M.sea) return h < -.4; if(M && !M.sea && h < -1.6) return false; return !blocked(x, z, M ? .9 : .45); };
     if(okXY(nx, nz)){ P.x = nx; P.z = nz; } else if(okXY(nx, P.z)) P.x = nx; else if(okXY(P.x, nz)) P.z = nz; else { P.vx *= .3; P.vz *= .3; }
     const ty = Math.atan2(P.vx, P.vz); let d = ty - P.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); if(sp > .4) P.yaw += d*Math.min(1, dt*12); }
-  const gh = heightAt(P.x, P.z); P.swim = !M && gh < -1.2;
+  const gh = heightAt(P.x, P.z); P.swim = !M && gh < -1.2 && !(floorFn && floorFn(P.x, P.z, P.y) > -1e8);
   if(P.fly){ P.alt = Math.max(2, Math.min(170, P.alt + P.up*12*dt + (iz < -.2 && !P.up ? 0 : 0))); P.y = Math.max(gh, 0) + P.alt; }
   else if(M && M.sea){ P.y = -.25 + Math.sin(t*1.5)*.08; }
   else if(P.swim){ P.y = -1.3 + Math.sin(t*2)*.1; P.vy = 0; P.ground = true; }
