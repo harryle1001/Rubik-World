@@ -17,6 +17,7 @@ app.get('/manifest.webmanifest', (req, res) => { res.type('application/manifest+
 app.use(express.static(path.join(ROOT, 'client')));
 app.use('/assets', express.static(path.join(ROOT, 'public', 'assets')));
 app.get('/lib/phaser.min.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'phaser', 'dist', 'phaser.min.js')));
+app.use('/lib/three', express.static(path.join(ROOT, 'node_modules', 'three')));
 app.get('/lib/chess.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'chess.js', 'chess.js')));
 const server = http.createServer(app);
 const io = new Server(server);
