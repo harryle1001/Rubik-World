@@ -8,7 +8,7 @@
 // Toạ độ: 2D (x, y) pixel → 3D (TX + x*S, Y, TZ + y*S). Muốn dời cả thị trấn: sửa TX, TZ.
 import * as THREE from 'three';
 import { toon, gradientMap } from './style.js';
-import { loadHero, driveHero, STUDENTS } from './characters.js';
+import { createTownPeople } from './town-people.js';
 
 export const S = 0.05, TX = -40, TZ = -140, TOWN_Y = 1.2;
 const Y_MIN = -620, Y_MAX = 900, X_MAX = 10400;      // phần đất liền của bản đồ 2D
@@ -147,27 +147,9 @@ export function createSchoolTown(ctx) {
   town.goSchool = () => { if (!town.gate) { ctx.toast('Trường Rubik đang tải…'); return; } ctx.player.teleport(town.gate[0], town.gate[1] + 6); ctx.player.pos.y = TOWN_Y; ctx.toast('🏫 Chào mừng đến Trường Rubik!'); };
 
   // ---------- Học sinh, thầy cô, khách: lấy vị trí từ mô phỏng của trường ----------
-  const POOL = ctx.lowEnd ? 14 : 24, pool = [], loading = new Set();
-  function updatePeople(dt) {
-    const RS = town.RS, p = ctx.player.pos; if (!RS) return;
-    const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
-    const near = list.filter(a => a.y > Y_MIN).map(a => [a, Math.hypot(X3(a.x) - p.x, Z3(Math.max(a.y, Y_MIN)) - p.z)]).filter(q => q[1] < 70).sort((a, b) => a[1] - b[1]).slice(0, POOL).map(q => q[0]);
-    const want = new Set(near);
-    for (const e of pool) if (e.a && !want.has(e.a)) { e.a = null; e.hero && (e.hero.model.visible = false); }
-    for (const a of near) {
-      if (pool.some(e => e.a === a)) continue;
-      let e = pool.find(e => !e.a && e.hero);
-      if (!e && pool.length + loading.size < POOL) { const id = Symbol(); loading.add(id); const kind = STUDENTS[(a.idx ?? a.id ?? pool.length) % STUDENTS.length]; loadHero(kind, a.student === false ? 1.6 : 1.25).then(h => { loading.delete(id); if (!h) return; h.model.visible = false; scene.add(h.model); pool.push({ hero: h, a: null, st: {}, px: 0, pz: 0, yaw: 0 }); }); continue; }
-      if (e) { e.a = a; e.px = X3(a.x); e.pz = Z3(a.y); e.hero.model.visible = true; }
-    }
-    for (const e of pool) {
-      if (!e.a) continue; const a = e.a, x = X3(a.x), z = Z3(Math.max(a.y, Y_MIN)), dx = x - e.px, dz = z - e.pz, sp = Math.hypot(dx, dz) / Math.max(dt, 1e-3);
-      if (Math.abs(dx) + Math.abs(dz) > 0.01) { const t = Math.atan2(dx, dz); let d = t - e.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); e.yaw += d * Math.min(1, dt * 8); }
-      e.px = x; e.pz = z; const m = e.hero.model; m.position.set(x, ctx.groundExtra(x, z, 9) > -50 ? ctx.groundExtra(x, z, 9) : TOWN_Y, z); m.rotation.y = e.yaw;
-      driveHero(e.hero, { speed: a.moving ? Math.max(1.2, Math.min(sp, 8)) : 0, grounded: true, walk: 5.5, sitting: !!(a.cycling || a.boat) });
-      e.hero.anim.update(dt);
-    }
-  }
+  // (trang phục theo vai trò, pool, hoạt ảnh, tên trên đầu → town-people.js)
+  const people = createTownPeople(ctx, { X3, Z3, Y_MIN, TOWN_Y, POOL: ctx.lowEnd ? 14 : 24 });
+  function updatePeople(dt) { if (town.RS) people(dt, town.RS); }
 
   // ---------- Mỗi khung hình ----------
   const hudSchool = document.getElementById('school');
