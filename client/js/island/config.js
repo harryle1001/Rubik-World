@@ -15,6 +15,7 @@ export const CFG = {
   time: { dayLengthSec: 480, startHour: 15.5 },
   island: { radius: 70, size: 220, segments: isMobile ? 110 : 150, waterLevel: 0 },
   counts: { trees: isMobile ? 140 : 220, pines: isMobile ? 70 : 110, rocks: 90, grass: isMobile ? 7000 : 14000 },
+  clearings: [[0, 10, 16], [0, -6, 13]], // [x, z, bán kính]: chỗ không mọc cây/cỏ (bãi xuất phát, đền)
   player: { walk: 5.5, run: 9.5, jump: 7.5, gravity: 22 },
   camera: { distance: 8, height: 2.4, pitch: 0.35, follow: 7 },
   toon: { steps: [0.35, 0.7, 1.0] },   // 3 bậc sáng của MeshToonMaterial

@@ -104,7 +104,8 @@ export function createTerrain(scene) {
   }
 
   // chỗ đặt cây/đá: trên cạn, không quá dốc, tránh bãi xuất phát
-  const spot = (minH = W + 1.4) => { for (let k = 0; k < 40; k++) { const a = rand() * 6.283, r = Math.sqrt(rand()) * R * 1.05, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && Math.hypot(x, z - 10) > 16) return [x, h, z]; } return null; };
+  const clear = (x, z) => CFG.clearings.every(([cx, cz, r]) => Math.hypot(x - cx, z - cz) > r);
+  const spot = (minH = W + 1.4) => { for (let k = 0; k < 40; k++) { const a = rand() * 6.283, r = Math.sqrt(rand()) * R * 1.05, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z)) return [x, h, z]; } return null; };
   const colliders = [];
   const o = new THREE.Object3D(), tint = new THREE.Color();
   function instanced(parts, count, place) {
@@ -131,7 +132,7 @@ export function createTerrain(scene) {
   const chunks = new Map(), CH = 24;
   for (let i = 0; i < CFG.counts.grass; i++) {
     const a = rand() * 6.283, r = Math.sqrt(rand()) * R, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z);
-    if (h < W + 1.0 || slopeAt(x, z) > 0.8) continue;
+    if (h < W + 1.0 || slopeAt(x, z) > 0.8 || Math.hypot(x, z + 6) < 9) continue;
     const k = Math.floor(x / CH) + ',' + Math.floor(z / CH); if (!chunks.has(k)) chunks.set(k, []); chunks.get(k).push([x, h, z]);
   }
   const grass = [];

@@ -11,10 +11,20 @@
 #bJump{width:84px;height:84px;background:#3d8f4acc}
 @media (pointer:fine){.btns{display:none}}
 canvas{touch-action:none}
+#inv{position:fixed;right:12px;top:12px;color:#fff;font:700 16px system-ui;text-shadow:0 1px 3px #000}
+#bAct{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);padding:14px 22px;border-radius:30px;border:2px solid #fff;background:#f0a23a;color:#2a1a0a;font:800 17px system-ui;box-shadow:0 6px 20px #0005}
+[hidden]{display:none!important}
+#quiz{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#0a1a2acc;padding:14px}
+#quiz .card{width:min(100%,520px);background:#fff8ec;color:#3a2a1a;border-radius:22px;padding:18px;border-top:8px solid #3d8f4a;text-align:center}
+#quiz .sub{margin:0;font-weight:700;opacity:.65;font-size:13px}#quiz h3{font-size:19px;margin:10px 0 14px}#quiz .big{font-size:60px}
+#quiz .ch{display:grid;grid-template-columns:1fr 1fr;gap:9px}#quiz button{padding:13px 10px;border-radius:12px;border:2px solid transparent;background:#efe3cc;font:700 15px system-ui;color:#3a2a1a}
+#quiz button.ok{background:#c9efc9;border-color:#3fa36b}#quiz button.bad{background:#ffd0c8;border-color:#d2553f}#quiz .ex{font-size:15px;line-height:1.5}#quiz .ex button,#qOk{margin-top:10px;width:100%;background:#f0a23a}
+@media(max-width:420px){#quiz .ch{grid-template-columns:1fr}}
 #info{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#0009;color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:.3s;pointer-events:none;text-align:center}</style>
 <script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script>
 </head><body>
 <div id="hud">🏝️ Đảo Rubik</div><div id="info"></div>
+<div id="inv"></div><button id="bAct" hidden></button>
 <div id="joy"><div id="knob"></div></div>
 <div class="btns"><button id="bRun">Chạy</button><button id="bJump">Nhảy</button></div>
 <script type="module" src="/js/ocean.js"></script>
