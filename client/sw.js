@@ -1,7 +1,7 @@
 // Service worker: caches the game shell so the app opens instantly and shows a friendly page when offline.
-const CACHE = 'truong-rubik-v1';
-const SHELL = ['/', '/index.html', '/offline.html', '/css/style.css', '/js/shared.js', '/js/avatar.js', '/js/world.js', '/js/ui.js', '/js/extras.js', '/js/editor.js', '/js/main.js', '/js/pwa.js',
-  '/lib/phaser.min.js', '/lib/chess.js', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
+const CACHE = 'truong-rubik-v2';
+const SHELL = ['/', '/index.html', '/offline.html', '/css/style.css', '/js/shared.js', '/js/avatar.js', '/js/engine3d.js', '/js/avatar3d.js', '/js/world.js', '/js/ui.js', '/js/extras.js', '/js/editor.js', '/js/main.js', '/js/pwa.js',
+  '/lib/three/three.module.min.js', '/lib/three-addons/loaders/GLTFLoader.js', '/lib/three-addons/utils/BufferGeometryUtils.js', '/lib/three-addons/geometries/RoundedBoxGeometry.js', '/lib/chess.js', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

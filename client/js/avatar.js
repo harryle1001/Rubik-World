@@ -1,4 +1,4 @@
-// Drawing helpers shared by Phaser (Graphics) and plain <canvas> previews.
+// 2D drawing helpers for <canvas> previews (login, shop, inventory). The game world itself is 3D (avatar3d.js).
 const hexNum = h => parseInt(String(h || '#888888').replace('#', ''), 16);
 function shadeHex(hex, k){ const n = hexNum(hex); let r = n >> 16, g = (n >> 8) & 255, b = n & 255; const f = v => Math.max(0, Math.min(255, Math.round(k > 0 ? v + (255 - v)*k : v*(1 + k)))); return '#' + [f(r), f(g), f(b)].map(v => v.toString(16).padStart(2, '0')).join(''); }
 // adapter over Phaser.GameObjects.Graphics

@@ -72,8 +72,8 @@ const UI = {
   },
   punch(scene){
     const now = Date.now(); scene.combo = now - (scene.lastPunch || 0) < 900 ? (scene.combo || 0) + 1 : 1; scene.lastPunch = now;
-    if(scene.bag) scene.tweens.add({targets:scene.bag, angle:{from:(scene.me.x < scene.bag.x ? 14 : -14), to:0}, duration:400, ease:'Elastic.easeOut'});
-    Snd.noise(.12, 600, .5); scene.cameras.main.shake(80, .003);
+    if(scene.bag) scene.bag.userData.kick = scene.me.x < scene.bag.userData.x ? -1 : 1;
+    Snd.noise(.12, 600, .5); E3.shake(.08, .06);
     UI.toast(`Combo x${scene.combo}${scene.combo >= 10 ? ' · Tuyệt vời!' : ''}`); if(scene.combo === 10) NET.reward('gym', 'Combo 10 cú đấm');
   },
 

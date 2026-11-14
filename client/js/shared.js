@@ -1,6 +1,6 @@
 // Shared data for server (Node) and client (browser): zones, exits, signposts, shop catalog, crops.
 (function(root){
-  // Each zone is its own Phaser scene load ("trang riêng") so the world stays light.
+  // Each zone is its own 3D scene load ("trang riêng") so the world stays light.
   // w,h = world size in px. walk = walkable rectangle. exits lead to other zones.
   const ZONES = {
     lophoc:   {name:'Lớp học đầu tiên', w:1400, h:900, spawn:[700, 640], walk:[60, 230, 1340, 860], theme:'class',

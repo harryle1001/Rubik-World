@@ -1,8 +1,9 @@
 # Builds stylised low-poly scenery for Rubik World, exports .glb and renders 2D sprites.
-# Run: blender -b -P tools/blender/scenery.py -- <out_dir>
+# Run: blender -b -P tools/blender/scenery.py -- client            (models -> client/models/*.glb)
+#      blender -b -P tools/blender/scenery.py -- <dir> --sprites  (also render 2D sprites)
 import bpy, bmesh, math, random, sys, os
 from mathutils import Vector
-OUT = sys.argv[sys.argv.index('--') + 1] if '--' in sys.argv else '/tmp/rw3d'
+OUT = sys.argv[sys.argv.index('--') + 1] if '--' in sys.argv else 'client'
 os.makedirs(OUT + '/sprites', exist_ok=True); os.makedirs(OUT + '/models', exist_ok=True)
 random.seed(7)
 
@@ -98,10 +99,65 @@ def school():
     p.append(ico(.35, (2.2, -1.53, 1.85), mat('#ffffff'), 0, (1, .3, 1), 2))
     return group('school', p)
 
-BUILD = dict(oak=oak, pine=pine, sakura=sakura, palm=palm, bush=bush, bench=bench, lamp=lamp, school=school)
+def rock():
+    return group('rock', [ico(.6, (0, 0, .25), mat('#9e9e9e'), .18, (1.2, 1, .7)), ico(.35, (.55, .2, .15), mat('#bdbdbd'), .2, (1, 1, .8))])
+def flowers():
+    p = [cyl(.75, .7, .18, (0, 0, 0), mat('#6d4c41'), 12)]
+    for k in range(18):
+        a = k*2.4; r = .15 + (k % 6)*.1; x, y = math.cos(a)*r, math.sin(a)*r
+        p.append(cyl(.015, .015, .3, (x, y, .15), mat('#388e3c'), 4))
+        p.append(ico(.08, (x, y, .48), mat(['#ff6f91', '#ffd23f', '#ffffff', '#ba68c8', '#ff8a65'][k % 5]), .1))
+    return group('flowers', p)
+def fountain():
+    S = mat('#e6e0d3', .6); W = mat('#4fc3f7', .05)
+    p = [cyl(1.6, 1.7, .5, (0, 0, 0), S, 16), cyl(1.4, 1.4, .05, (0, 0, .42), W, 16), cyl(.18, .22, 1.2, (0, 0, .4), S, 8),
+         cyl(.7, .4, .2, (0, 0, 1.5), S, 12), cyl(.6, .6, .04, (0, 0, 1.66), W, 12), cyl(.08, .1, .5, (0, 0, 1.6), S, 6), ico(.18, (0, 0, 2.2), mat('#e1f5fe', .05), 0, (1, 1, 1), 2)]
+    return group('fountain', p)
+def statue():
+    S = mat('#f4f1ea', .5)
+    return group('statue', [box((1, 1, .5), (0, 0, .25), mat('#cfc6b4')), cyl(.28, .35, 1.3, (0, 0, .5), S, 8), ico(.25, (0, 0, 2.05), S, 0, (1, 1, 1), 2),
+                            cyl(.06, .06, .7, (.35, 0, 1.3), S, 6), ico(.12, (.35, 0, 2.05), mat('#ffd23f', .3, .5), 0)])
+def chest():
+    Wd = mat('#8d6e4a'); Au = mat('#ffd23f', .3)
+    p = [box((.9, .6, .45), (0, 0, .225), Wd)]
+    bpy.ops.mesh.primitive_cylinder_add(vertices=10, radius=.3, depth=.9, location=(0, 0, .45), rotation=(0, math.pi/2, 0)); c = bpy.context.object; c.scale = (1, 1, 1)
+    p.append(finish(c, mat('#6d4c2e')))
+    for x in (-.35, .35): p.append(box((.06, .64, .5), (x, 0, .3), Au))
+    p.append(box((.14, .05, .16), (0, -.31, .45), Au))
+    return group('chest', p)
+def hull(L, Wd, H, col, deck):
+    bpy.ops.mesh.primitive_cube_add(size=1); h = bpy.context.object; h.scale = (L, Wd, H); bpy.ops.object.transform_apply(scale=True)
+    for v in h.data.vertices:
+        if v.co.x > L*.3: v.co.y *= .25 if v.co.x > L*.45 else .7
+        if v.co.z < 0: v.co.y *= .55; v.co.x *= .85
+    h.location = (0, 0, H*.2); finish(h, mat(col))
+    return [h, box((L*.86, Wd*.8, .06), (-.05*L, 0, H*.72), mat(deck))]
+def sailboat():
+    p = hull(3, 1.1, .7, '#fafafa', '#a1887f') + [box((3.05, 1.12, .08), (0, 0, .35), mat('#ef4b4b')), cyl(.05, .04, 3.2, (-.2, 0, .5), mat('#5d4037'), 6)]
+    bpy.ops.mesh.primitive_plane_add(size=1); s = bpy.context.object
+    for v in s.data.vertices: v.co = Vector((-.2 + (v.co.x + .5)*1.4*(0 if v.co.y > 0 else 1), 0, .9 + (v.co.y + .5)*2.6))
+    s.data.vertices[0].co = Vector((-.15, 0, .9)); s.data.vertices[1].co = Vector((1.3, 0, .9)); s.data.vertices[2].co = Vector((-.15, 0, 3.6)); s.data.vertices[3].co = Vector((-.15, 0, 3.6))
+    finish(s, mat('#ffffff')); s.modifiers.new('s', 'SOLIDIFY').thickness = .03; bpy.context.view_layer.objects.active = s; bpy.ops.object.modifier_apply(modifier='s'); p.append(s)
+    return group('sailboat', p)
+def warship():
+    G1, G2 = mat('#607d8b', .5), mat('#78909c', .5)
+    p = hull(7, 1.8, 1.1, '#546e7a', '#90a4ae') + [box((2, 1.2, .8), (-.6, 0, 1.2), G1), box((1, .9, .7), (-.7, 0, 1.9), G2), box((.6, .6, .5), (-.8, 0, 2.5), mat('#37474f'))]
+    p += [cyl(.05, .05, 1.6, (-.9, 0, 2.6), mat('#37474f'), 6), box((.3, .02, .2), (-.9, .02, 4.05), mat('#e53935'))]
+    p += [box((.8, .5, .3), (1.6, 0, 1.0), G1), box((1.2, .12, .12), (2.3, 0, 1.1), mat('#37474f'))]
+    p += [box((.5, .7, .4), (-2.6, 0, 1.0), G1), box((.05, .9, .05), (-.7, 0, 2.3), mat('#ffd23f'))]
+    return group('warship', p)
+def pirate():
+    Wd = mat('#4e342e')
+    p = hull(5, 1.6, 1.0, '#3e2723', '#8d6e4a') + [box((1, 1.5, .8), (-1.9, 0, 1.0), Wd), cyl(.07, .06, 4, (.3, 0, .6), mat('#5d4037'), 6), cyl(.06, .05, 3, (-1.2, 0, .9), mat('#5d4037'), 6)]
+    for (x, z, w, h) in [(.3, 2.2, 1.6, 1.6), (-1.2, 2.3, 1.2, 1.2)]:
+        p.append(box((.04, w, h), (x + .05, 0, z), mat('#212121')))
+    p.append(box((.02, .5, .35), (.3, 0, 4.4), mat('#212121'))); p.append(ico(.12, (.33, 0, 2.4), mat('#fafafa'), 0, (1, 1, 1), 2))
+    return group('pirate', p)
+
+BUILD = dict(oak=oak, pine=pine, sakura=sakura, palm=palm, bush=bush, bench=bench, lamp=lamp, school=school, rock=rock, flowers=flowers, fountain=fountain, statue=statue, chest=chest, sailboat=sailboat, warship=warship, pirate=pirate)
 objs = {}
 for i, (n, f) in enumerate(BUILD.items()):
-    o = f(); o.location = (i*8, 0, 0); objs[n] = o
+    o = f(); o.location = (i*10, 0, 0); objs[n] = o
     for x in objs.values(): x.hide_render = x is not o
     o.select_set(True); bpy.context.view_layer.objects.active = o
 for n, o in objs.items():
@@ -110,6 +166,7 @@ for n, o in objs.items():
     bpy.ops.export_scene.gltf(filepath=f'{OUT}/models/{n}.glb', use_selection=True, export_apply=True)
     o.location = loc
 
+if '--sprites' not in sys.argv: sys.exit(0)
 # ---- sprite rendering: orthographic 3/4 camera matching the game's top-down-front view ----
 sc = bpy.context.scene; sc.render.engine = 'CYCLES'; sc.cycles.device = 'CPU'; sc.cycles.samples = 48; sc.cycles.use_denoising = True
 sc.render.film_transparent = True; sc.render.image_settings.file_format = 'PNG'; sc.render.image_settings.color_mode = 'RGBA'

@@ -1,6 +1,6 @@
 # Thế giới Trường Rubik · Multiplayer
 
-Game web nhiều người chơi thời gian thực: **Node.js + Express + Socket.io + Phaser 3**.
+Game web 3D nhiều người chơi thời gian thực: **Node.js + Express + Socket.io + Three.js**.
 
 ```bash
 npm install
@@ -13,16 +13,19 @@ Mở 2 tab (hoặc 2 máy cùng mạng) vào cùng địa chỉ để thấy nha
 ## Cấu trúc
 - `server/index.js`: Express phục vụ client, Socket.io đồng bộ người chơi, sao, xu, vườn, mua hàng, cờ vua (server quyết định kết quả).
 - `client/js/shared.js`: dữ liệu dùng chung cho server và client (khu vực, lối ra, cửa hàng, cây trồng).
-- `client/js/avatar.js`: vẽ nhân vật, 8 mẫu xe đạp và mũ (dùng cho Phaser và canvas xem trước).
-- `client/js/world.js`: vẽ từng khu như một trang riêng, gồm mây cá voi và mây sóng, vệ tinh, đại bàng, vẹt, cảnh bắn tên lửa và nông trại cộng sinh (đàn cừu tự lùa theo chó chăn cừu).
+- `client/js/engine3d.js`: lõi 3D (Three.js): camera bám theo nhân vật, bầu trời, nước biển gợn sóng, bóng đổ, chữ nổi, nạp model `.glb`, hiệu ứng hạt, làm mờ nhà khi che nhân vật.
+- `client/js/avatar3d.js`: nhân vật 3D theo màu và kiểu tóc người chơi chọn, mũ, 8 mẫu xe đạp 3D.
+- `client/js/avatar.js`: hình 2D xem trước nhân vật và món hàng (màn đăng nhập, cửa hàng, túi đồ).
+- `client/js/world.js`: dựng 18 khu 3D (biển, rừng, đồi đêm sao, nông trại, nhà 5 phong cách...), cảnh bắn tên lửa và nông trại cộng sinh (đàn cừu tự lùa theo chó chăn cừu).
+- `client/models/*.glb`: model cây, ghế, đèn, đá, đài phun nước, tàu thuyền... dựng bằng Blender từ script `tools/blender/scenery.py` (`blender -b -P tools/blender/scenery.py -- client`).
 - `client/js/ui.js`: các bảng HTML (cửa hàng chọn màu, vườn, cờ vua, kính viễn vọng, piano, vẽ tranh).
 - `client/js/extras.js`: cần điều khiển cảm ứng, bản đồ nhỏ, Người Thầy Ánh Sáng ở mỗi khu, âm thanh môi trường tạo bằng WebAudio.
-- `client/js/main.js`: đăng nhập, kết nối socket, `ZoneScene` của Phaser.
+- `client/js/main.js`: đăng nhập, kết nối socket, khu 3D `Zone3D` (di chuyển, nhặt sao, tương tác, chuyển khu).
 - `public/assets/`: chỗ để ảnh và âm thanh riêng (phục vụ tại `/assets`).
 - `data/players.json`: tiến trình người chơi, lưu theo tên.
 
 ## Điều khiển
-Mũi tên/WASD: di chuyển · E hoặc bấm chuột: tương tác · Enter: chat · Esc: đóng bảng · M: bật/tắt bản đồ nhỏ.
+Mũi tên/WASD: di chuyển · E hoặc bấm chuột: tương tác · Enter: chat · Esc: đóng bảng · M: bật/tắt bản đồ nhỏ · Lăn chuột hoặc chụm 2 ngón: phóng to/thu nhỏ.
 
 Trên điện thoại/máy tính bảng: cần điều khiển ở góc trái dưới, nút **E** ở góc phải dưới, nút **Chat** để mở khung chat.
 

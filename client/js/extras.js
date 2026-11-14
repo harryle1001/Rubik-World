@@ -106,9 +106,10 @@ const EXTRAS = {
   zoneCreated(scene, Z){
     MINI.resize(Z); AMB.set(Z.theme);
     const m = MENTORS[Z.theme]; scene.mentor = null; if(!m) return;
-    const [x, y] = m.at, halo = scene.add.circle(x, y - 70, 22, 0xfff59d, .35).setDepth(y - 1); scene.tweens.add({targets:halo, alpha:.1, scale:1.25, duration:1600, yoyo:true, repeat:-1, ease:'Sine.easeInOut'});
-    const g = scene.add.graphics().setDepth(y); drawAvatar(PG(g, x, y, AV), {skin:'#f2c9a0', hair:'#eeeeee', shirt:m.robe, pants:m.robe, hairStyle:'bun'}, {dir:-1});
-    scene.add.text(x, y - 84, '✦ ' + m.name, {fontFamily:'Segoe UI, Arial', fontSize:'14px', color:'#fff59d', backgroundColor:'rgba(40,30,0,.6)', padding:{x:5, y:2}}).setOrigin(.5, 1).setDepth(y + 5000);
+    const [x, y] = m.at, av = new Avatar3D({skin:'#f2c9a0', hair:'#eeeeee', shirt:m.robe, pants:m.robe, hairStyle:'bun'}); av.setName('✦ ' + m.name, true); av.g.position.set(x, 0, y);
+    const halo = new THREE.Mesh(new THREE.TorusGeometry(14, 2.4, 8, 28), E3.mat('#fff59d', {emit:1.5, flat:false})); halo.rotation.x = Math.PI/2; av.g.add(halo);
+    E3.ticks.push((dt, t) => { av.update(dt, false); halo.position.y = 96 + Math.sin(t*2)*3; halo.rotation.z = t; const me = scene.meAv; if(me && Math.hypot(me.x - x, me.y - y) < 260) av.faceTo(me.x - x, me.y - y, dt); });
+    scene.onLeave.push(() => av.dispose());
     scene.mentor = {x, y}; scene.world.interacts.push({x, y, r:90, label:'Trò chuyện với ' + m.name, act:() => EXTRAS.mentorTalk(m)});
   },
   tick(scene, dt){ MINI.t -= dt; if(MINI.t <= 0){ MINI.t = .2; MINI.draw(scene); } }

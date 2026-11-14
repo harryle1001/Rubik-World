@@ -16,7 +16,8 @@ app.get('/sw.js', (req, res) => { res.set('Cache-Control', 'no-cache'); res.send
 app.get('/manifest.webmanifest', (req, res) => { res.type('application/manifest+json'); res.sendFile(path.join(ROOT, 'client', 'manifest.webmanifest')); });
 app.use(express.static(path.join(ROOT, 'client')));
 app.use('/assets', express.static(path.join(ROOT, 'public', 'assets')));
-app.get('/lib/phaser.min.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'phaser', 'dist', 'phaser.min.js')));
+app.use('/lib/three', express.static(path.join(ROOT, 'node_modules', 'three', 'build')));
+app.use('/lib/three-addons', express.static(path.join(ROOT, 'node_modules', 'three', 'examples', 'jsm')));
 app.get('/lib/chess.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'chess.js', 'chess.js')));
 const server = http.createServer(app);
 const io = new Server(server);
