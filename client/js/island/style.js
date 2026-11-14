@@ -24,7 +24,13 @@ outlineMat.onBeforeCompile = sh => {
 };
 export function addOutline(root) {
   const list = []; root.traverse(o => { if (o.isMesh && !o.userData.outline) list.push(o); });
-  for (const o of list) { const e = new THREE.Mesh(o.geometry, outlineMat); e.userData.outline = true; e.castShadow = false; e.raycast = () => {}; o.add(e); }
+  for (const o of list) {
+    if (!o.visible) continue;
+    let e;
+    if (o.isSkinnedMesh) { e = new THREE.SkinnedMesh(o.geometry, outlineMat); e.bind(o.skeleton, o.bindMatrix); e.position.copy(o.position); e.quaternion.copy(o.quaternion); e.scale.copy(o.scale); o.parent.add(e); } // nhân vật có xương: viền cùng chuyển động
+    else { e = new THREE.Mesh(o.geometry, outlineMat); o.add(e); }
+    e.userData.outline = true; e.castShadow = false; e.frustumCulled = false; e.raycast = () => {};
+  }
 }
 
 // Chuyển mọi vật liệu của model (GLTF) sang toon, giữ màu/texture gốc

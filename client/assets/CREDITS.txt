@@ -1,0 +1,21 @@
+Đảo Rubik 3D — nguồn tài nguyên (đều là CC0 1.0: dùng tự do, kể cả thương mại, không bắt buộc ghi công; vẫn ghi để minh bạch)
+
+models/hero-*.glb (Knight, Rogue, Mage, Barbarian + 14 animation)
+  KayKit – Character Pack: Adventurers, Kay Lousberg — https://kaylousberg.itch.io/kaykit-adventurers
+  Nguồn tải: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0 (LICENSE: CC0 1.0)
+  Đã lược bớt animation và nén Meshopt bằng gltf-transform.
+
+models/animal-*.glb (hươu, cáo, ếch, mèo, cua, chó shiba – có animation), models/prop-*.glb (lửa trại, hoa, nấm, khúc gỗ, gốc cây, lều, pha lê, ngọc)
+  Quaternius (https://quaternius.com) và Kenney (https://kenney.nl), CC0 1.0
+  Lấy từ gói npm "@netforge/asset-library-files" 0.2.0 (bản đã tối ưu, có file NOTICE kiểm chứng giấy phép).
+
+models/den.glb, rua.glb, da.glb, ca*.glb, cay-*.glb, san-ho.glb: tự tạo bằng tools/blender/make_assets.py.
+
+audio/music-day.mp3   "Sunset Plains" — yoiyami — https://opengameart.org/content/sunset-plains (CC0)
+audio/music-night.mp3 "First Light Particles" — yoiyami — https://opengameart.org/content/first-light-particles-%E2%80%93-cc0-atmospheric-pianoambient-track (CC0)
+audio/amb-forest.mp3  "Forest Ambience" — TinyWorlds — https://opengameart.org/content/forest-ambience (CC0)
+audio/amb-wave*.mp3   "Beach Ocean Waves" — jasinski / qubodup — https://opengameart.org/content/beach-ocean-waves (CC0)
+audio/step-*.mp3      "Fantozzi's Footsteps (Grass/Sand & Stone)" — Fantozzi / qubodup — https://opengameart.org/content/fantozzis-footsteps-grasssand-stone (CC0)
+audio/sfx-*.mp3       Kenney sound packs (Interface, Impact, RPG Audio), CC0 — qua "@netforge/asset-library-files" 0.2.0
+
+Tất cả được chuyển sang MP3 mono/stereo bitrate thấp để tải nhanh trên điện thoại.

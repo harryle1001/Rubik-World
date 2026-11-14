@@ -9,6 +9,9 @@ import { scatterModel } from './island/models.js';
 import { createTemples } from './island/temple.js';
 import { createAudio } from './island/audio.js';
 import { createNet } from './island/net.js';
+import { createAnimals } from './island/animals.js';
+import { KINDS } from './island/characters.js';
+import { loadModel } from './island/models.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -27,6 +30,7 @@ ctx.toast = (t, ms = 3000) => { const el = document.getElementById('info'); el.i
 // tên & màu áo người chơi (lưu trên máy)
 ctx.playerName = localStorage.getItem('island.name') || ('Bạn nhỏ ' + Math.floor(100 + Math.random() * 900)); localStorage.setItem('island.name', ctx.playerName);
 ctx.hue = +(localStorage.getItem('island.hue') || Math.floor(Math.random() * 360)); localStorage.setItem('island.hue', ctx.hue);
+ctx.heroKind = KINDS[Math.floor(ctx.hue / 90) % KINDS.length]; // bộ đồ nhân vật theo màu đã chọn
 const player = ctx.player = createPlayer(ctx);
 
 // Model Blender (.glb): đá (Draco) và rùa (Meshopt) rải trên bãi cát
@@ -43,6 +47,20 @@ const player = ctx.player = createPlayer(ctx);
 const audio = ctx.audio = createAudio(ctx);
 const temples = createTemples(ctx);
 const net = ctx.net = createNet(ctx);
+const animals = ctx.animals = createAnimals(ctx);
+
+// Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại cạnh bãi xuất phát, hoa, nấm, gốc cây, pha lê quanh đền
+{
+  const put = (name, x, z, s = 1, ry = 0) => loadModel(name).then(m => { if (!m) return; m.position.set(x, terrain.heightAt(x, z), z); m.scale.setScalar(s); m.rotation.y = ry; scene.add(m); });
+  put('prop-campfire', 7, 14, 1.2); put('prop-tent', 11, 17, 2.2, -2.3); put('prop-log', 5.2, 16, 1.2, 0.4); put('prop-log', 8.8, 11.6, 1.2, 1.9);
+  ctx.colliders.push({ x: 7, z: 14, r: 0.8 }, { x: 11, z: 17, r: 1.6 });
+  for (const [x, z] of [[-6, -1], [6, -1], [-4.5, -12], [4.5, -12]]) put('prop-crystal', x, z, 1.4, x);
+  const rnd = () => { for (let k = 0; k < 30; k++) { const a = Math.random() * 6.283, r = 14 + Math.random() * 45, x = Math.cos(a) * r, z = Math.sin(a) * r; if (terrain.heightAt(x, z) > 1.5 && terrain.slopeAt(x, z) < 0.6) return [x, z]; } return null; };
+  const tf = (n, sMin, sMax) => Array.from({ length: n }, rnd).filter(Boolean).map(([x, z]) => [x, terrain.heightAt(x, z), z, sMin + Math.random() * (sMax - sMin), Math.random() * 6.28]);
+  scatterModel(scene, 'prop-flower-red', tf(60, 0.6, 1.1)); scatterModel(scene, 'prop-mushroom-red', tf(30, 0.5, 0.9));
+  const stumps = tf(12, 0.9, 1.3); scatterModel(scene, 'prop-stump', stumps); for (const [x, , z] of stumps) ctx.colliders.push({ x, z, r: 0.5 });
+}
+
 
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
 const clock = new THREE.Clock();
@@ -54,6 +72,7 @@ renderer.setAnimationLoop(() => {
   temples.update(dt, clock.elapsedTime);
   audio.update(dt, sky.state.night);
   net.update(dt);
+  animals.update(dt);
   sky.update(dt, camera, player.pos);
   post.render();
   quality(dt);

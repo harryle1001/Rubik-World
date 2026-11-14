@@ -57,7 +57,7 @@ export function createTemples(ctx) {
   addEventListener('keydown', e => { if (e.code === 'KeyE' && target) target(); });
 
   function solve(t) {
-    ctx.player.frozen = true;
+    ctx.player.frozen = true; ctx.player.emote && ctx.player.emote('Interact');
     ui.run(t.T, pickQuestions(t.T.subjects, t.T.need), ok => {
       ctx.player.frozen = false;
       if (!ok) return;
@@ -69,7 +69,7 @@ export function createTemples(ctx) {
   function openChest(t) {
     t.chestOpen = true; done[t.T.id + '-chest'] = 1; save(SAVE, done);
     const r = t.T.reward; inv[r.id] = inv[r.id] || { icon: r.icon, n: 0 }; inv[r.id].n++; save(INV, inv); showInv();
-    ctx.toast(`${r.icon} Bạn nhận được ${r.name}!`); ctx.sfx && ctx.sfx('win');
+    ctx.toast(`${r.icon} Bạn nhận được ${r.name}!`); ctx.sfx && ctx.sfx('win'); ctx.player.emote && ctx.player.emote('Cheer');
   }
 
   function update(dt, t) {

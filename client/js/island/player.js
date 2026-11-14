@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { CFG } from './config.js';
 import { toon, addOutline } from './style.js';
+import { loadHero, driveHero, emote } from './characters.js';
 
 const P = CFG.player, C = CFG.camera;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -63,7 +64,12 @@ export function createPlayer(ctx) {
   for (let i = 0; i < NDust; i++) dv.push(new THREE.Vector3());
   const puff = (n, spread) => { for (let k = 0; k < n; k++) { const i = di++ % NDust; dp.set([pos.x + (Math.random() - .5) * 0.4, pos.y + 0.1, pos.z + (Math.random() - .5) * 0.4], i * 3); dl[i] = 1; dv[i].set((Math.random() - .5) * spread, 0.6 + Math.random() * 0.8, (Math.random() - .5) * spread); } };
 
-  const self = { pos, cam, input, get rot() { return rot; }, frozen: false, speed: 0, root: h.root };
+  const self = { pos, cam, input, get rot() { return rot; }, frozen: false, speed: 0, root: h.root, get grounded() { return grounded; } };
+  // Nhân vật KayKit có animation: nạp xong thì thay cho nhân vật dựng bằng khối
+  let hero = null; const animState = {};
+  loadHero(ctx.heroKind || 'hero-knight').then(r => { if (!r) return; hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play('Idle', 0); });
+  self.emote = name => { if (hero) emote(hero.anim, animState, name); };
+  let stepT = 0;
   const want = new THREE.Vector3(), look = new THREE.Vector3(pos.x, pos.y + 1.5, pos.z), tmp = new THREE.Vector3();
   self.update = (dt) => {
     let ix = input.x, iz = input.z;
@@ -83,12 +89,15 @@ export function createPlayer(ctx) {
     if (terrain.heightAt(nx, nz) < CFG.island.waterLevel - 0.7) { nx = pos.x; nz = pos.z; vel.set(0, 0, 0); }
     pos.x = nx; pos.z = nz;
     const g = Math.max(terrain.heightAt(pos.x, pos.z), ctx.groundExtra ? ctx.groundExtra(pos.x, pos.z, pos.y) : -99);
-    if (input.jump && grounded && !self.frozen) { vy = P.jump; grounded = false; }
+    if (input.jump && grounded && !self.frozen) { vy = P.jump; grounded = false; ctx.sfx && ctx.sfx('jump'); }
     input.jump = false;
     vy -= P.gravity * dt; pos.y += vy * dt;
-    if (pos.y <= g) { if (!grounded && vy < -6) puff(8, 2.5); pos.y = g; vy = 0; grounded = true; } else if (pos.y > g + 0.3) grounded = false;
+    if (pos.y <= g) { if (!grounded && vy < -6) { puff(8, 2.5); ctx.sfx && ctx.sfx('land'); } pos.y = g; vy = 0; grounded = true; } else if (pos.y > g + 0.3) grounded = false;
 
-    // dáng chạy
+    // animation KayKit + tiếng bước chân
+    if (hero) { driveHero(hero.anim, { speed: self.speed, grounded, walk: P.walk, oneShot: animState.oneShot }); hero.anim.update(dt); }
+    if (grounded && self.speed > 0.8 && (stepT -= dt) <= 0) { stepT = self.speed > P.walk * 1.1 ? 0.3 : 0.42; ctx.sfx && ctx.sfx('step'); }
+    // dáng chạy (nhân vật dựng bằng khối, dùng khi chưa nạp xong model)
     phase += dt * self.speed * 2.1;
     const a = Math.min(1, self.speed / P.walk) * (running ? 1.0 : 0.7);
     h.root.position.copy(pos); h.root.rotation.y = rot;
