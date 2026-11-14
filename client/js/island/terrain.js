@@ -108,12 +108,19 @@ export function createTerrain(scene) {
   const spot = (minH = W + 1.4) => { for (let k = 0; k < 40; k++) { const a = rand() * 6.283, r = Math.sqrt(rand()) * R * 1.05, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z)) return [x, h, z]; } return null; };
   const colliders = [];
   const o = new THREE.Object3D(), tint = new THREE.Color();
-  function instanced(parts, count, place) {
-    const meshes = parts.map(([geo, mat]) => { const m = new THREE.InstancedMesh(geo, mat, count); m.castShadow = m.receiveShadow = true; scene.add(m); return m; });
-    let n = 0;
-    for (let i = 0; i < count; i++) { const p = place(); if (!p) continue; const [x, y, z, s, col] = p; o.position.set(x, y, z); o.rotation.set(0, rand() * 6.28, 0); o.scale.setScalar(s); o.updateMatrix(); for (const m of meshes) { m.setMatrixAt(n, o.matrix); m.setColorAt(n, tint.setHSL(0, 0, 1).offsetHSL((rand() - 0.5) * 0.04, 0, (rand() - 0.5) * 0.12)); } n++; }
-    for (const m of meshes) { m.count = n; m.computeBoundingSphere(); }
-    return meshes;
+  // LOD: mỗi loại có 2 bộ InstancedMesh — gần (đủ chi tiết, đổ bóng) và xa (hình đơn giản, không đổ bóng).
+  // Cứ 0.4 giây chia lại cây nào gần/xa theo vị trí người chơi; số draw call không đổi.
+  const lodSets = [];
+  function instanced(parts, count, place, farParts) {
+    const mk = (list, shadow) => list.map(([geo, mat]) => { const m = new THREE.InstancedMesh(geo, mat, count); m.castShadow = shadow; m.receiveShadow = true; m.frustumCulled = false; scene.add(m); return m; });
+    const near = mk(parts, true), far = farParts ? mk(farParts, false) : null;
+    const mats = [], cols = [];
+    for (let i = 0; i < count; i++) { const p = place(); if (!p) continue; const [x, y, z, s] = p; o.position.set(x, y, z); o.rotation.set(0, rand() * 6.28, 0); o.scale.setScalar(s); o.updateMatrix(); mats.push(o.matrix.clone()); cols.push(tint.setHSL(0, 0, 1).offsetHSL((rand() - 0.5) * 0.04, 0, (rand() - 0.5) * 0.12).clone()); }
+    const set = { near, far, mats, cols, at: new THREE.Vector3(1e9, 0, 0) };
+    const fill = (list, idx) => { list.forEach(m => { idx.forEach((k, j) => { m.setMatrixAt(j, mats[k]); m.setColorAt(j, cols[k]); }); m.count = idx.length; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; }); };
+    set.relayout = (p, dist) => { if (!far) { fill(near, mats.map((_, k) => k)); return; } const a = [], b = []; mats.forEach((m, k) => (Math.hypot(m.elements[12] - p.x, m.elements[14] - p.z) < dist ? a : b).push(k)); fill(near, a); fill(far, b); };
+    set.relayout(new THREE.Vector3(0, 0, 10), 50); lodSets.push(set);
+    return near;
   }
   // Cây tròn (thân + tán 3 khối), cây thông, đá
   const trunk = new THREE.CylinderGeometry(0.18, 0.28, 2.2, 6).translate(0, 1.1, 0);
@@ -121,8 +128,10 @@ export function createTerrain(scene) {
   const pine = mergeGeos([new THREE.ConeGeometry(1.4, 2.4, 7).translate(0, 2.2, 0), new THREE.ConeGeometry(1.05, 2, 7).translate(0, 3.4, 0), new THREE.ConeGeometry(0.7, 1.6, 7).translate(0, 4.5, 0)]);
   const trunkMat = toon('#7a5236'), leafMat = windy(new THREE.MeshToonMaterial({ color: '#4fae47', gradientMap }), 0.018), pineMat = windy(new THREE.MeshToonMaterial({ color: '#2f7d4a', gradientMap }), 0.014);
   const place = (sMin, sMax, colR) => () => { const p = spot(); if (!p) return null; const s = sMin + rand() * (sMax - sMin); colliders.push({ x: p[0], z: p[2], r: colR * s }); return [p[0], p[1] - 0.1, p[2], s]; };
-  instanced([[trunk, trunkMat], [crown, leafMat]], CFG.counts.trees, place(0.8, 1.4, 0.4));
-  instanced([[trunk, trunkMat], [pine, pineMat]], CFG.counts.pines, place(0.9, 1.5, 0.4));
+  const trunkFar = new THREE.CylinderGeometry(0.18, 0.28, 2.2, 4).translate(0, 1.1, 0);
+  const crownFar = new THREE.IcosahedronGeometry(1.6, 0).translate(0.05, 2.8, 0), pineFar = new THREE.ConeGeometry(1.4, 4.4, 5).translate(0, 3.0, 0);
+  instanced([[trunk, trunkMat], [crown, leafMat]], CFG.counts.trees, place(0.8, 1.4, 0.4), [[trunkFar, trunkMat], [crownFar, toon('#4fae47')]]);
+  instanced([[trunk, trunkMat], [pine, pineMat]], CFG.counts.pines, place(0.9, 1.5, 0.4), [[trunkFar, trunkMat], [pineFar, toon('#2f7d4a')]]);
   const rockGeo = new THREE.DodecahedronGeometry(1, 0);
   instanced([[rockGeo, toon('#a7a29a')]], CFG.counts.rocks, () => { const p = spot(W - 0.3); if (!p) return null; const s = 0.3 + rand() * 1.1; if (s > 0.8) colliders.push({ x: p[0], z: p[2], r: s * 0.9 }); return [p[0], p[1] + s * 0.1, p[2], s]; });
 
@@ -142,12 +151,16 @@ export function createTerrain(scene) {
     m.computeBoundingSphere(); m.receiveShadow = true; scene.add(m); grass.push({ m, x: cx / list.length, z: cz / list.length });
   }
 
-  let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65 };
+  let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55 };
   function update(dt, t, player) {
     WIND.uTime.value = t;
     if (player) WIND.uPlayer.value.copy(player);
-    if ((lodT += dt) > 0.3 && player) { lodT = 0; for (const c of grass) c.m.visible = Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist; }
+    if ((lodT += dt) > 0.4 && player) {
+      lodT = 0; for (const c of grass) c.m.visible = Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist;
+      for (const L of lodSets) if (L.at.distanceToSquared(player) > 9) { L.at.copy(player); L.relayout(player, state.treeDist); }
+    }
   }
+  state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
   return { heightAt, slopeAt, update, colliders, ground, waterMat, state };
 }
 

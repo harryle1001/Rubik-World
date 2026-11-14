@@ -56,4 +56,29 @@ renderer.setAnimationLoop(() => {
   net.update(dt);
   sky.update(dt, camera, player.pos);
   post.render();
+  quality(dt);
 });
+
+// ---------- Tự giảm/tăng chất lượng theo FPS ----------
+// mức 0: đầy đủ · 1: tắt bloom, giảm độ phân giải · 2: cỏ/cây chi tiết gần hơn, bóng nhỏ · 3: tắt bóng đổ
+let qLevel = 0, qT = performance.now(), qFrames = 0, qGood = 0;
+const base = { pr, grass: terrain.state.grassDist, tree: terrain.state.treeDist };
+function applyQuality() {
+  const L = qLevel;
+  pr = [base.pr, Math.min(base.pr, 1.15), 1.0, 0.85][L]; renderer.setPixelRatio(pr); post.setSize(innerWidth, innerHeight);
+  post.bloom.enabled = CFG.quality.bloom && L === 0;
+  terrain.state.grassDist = base.grass * (L >= 2 ? 0.6 : 1); terrain.state.treeDist = base.tree * (L >= 2 ? 0.7 : 1); terrain.state.relayoutAll(player.pos);
+  const ss = L >= 2 ? 512 : CFG.quality.shadowSize; if (sky.sun.shadow.mapSize.x !== ss) { sky.sun.shadow.mapSize.set(ss, ss); sky.sun.shadow.map?.dispose(); sky.sun.shadow.map = null; }
+  if (renderer.shadowMap.enabled !== (L < 3)) { renderer.shadowMap.enabled = L < 3; scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => m.needsUpdate = true); }); }
+  ctx.qualityLevel = L;
+}
+function quality(dt) {
+  qFrames++; const el = (performance.now() - qT) / 1000; if (el < 3) return;
+  const fps = qFrames / el; qFrames = 0; qT = performance.now(); ctx.fps = Math.round(fps);
+  if (fps < CFG.quality.lowFps && qLevel < 3) { qLevel++; qGood = 0; applyQuality(); }
+  else if (fps > CFG.quality.highFps && qLevel > 0 && ++qGood >= 3) { qLevel--; qGood = 0; applyQuality(); }
+}
+if (new URLSearchParams(location.search).has('low')) { qLevel = 2; applyQuality(); } // ?low: bắt đầu ở chất lượng thấp
+
+// ---------- Cache để mở nhanh/offline ----------
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});

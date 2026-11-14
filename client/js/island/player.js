@@ -104,6 +104,13 @@ export function createPlayer(ctx) {
     if (mag > 0.2 && performance.now() - cam.drag > 1500 && -iz > 0.2) { let d = rot + Math.PI - cam.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); cam.yaw += d * Math.min(1, dt * 1.2); }
     const cp = Math.cos(cam.pitch);
     want.set(pos.x + Math.sin(cam.yaw) * cam.dist * cp, pos.y + C.height + Math.sin(cam.pitch) * cam.dist, pos.z + Math.cos(cam.yaw) * cam.dist * cp);
+    // không cho camera chui vào tán cây: kéo camera lại gần nhân vật nếu vướng
+    const tx = pos.x, ty = pos.y + C.height, tz = pos.z;
+    for (const f of [1, 0.85, 0.7, 0.55, 0.4]) {
+      const cx = tx + (want.x - tx) * f, cy = ty + (want.y - ty) * f, cz = tz + (want.z - tz) * f; let hit = false;
+      for (const c of ctx.colliders) { const dx = cx - c.x, dz = cz - c.z; if (dx * dx + dz * dz < (c.r * 3.4 + 0.3) ** 2 && cy < terrain.heightAt(c.x, c.z) + 5.5) { hit = true; break; } }
+      if (!hit || f === 0.4) { want.set(cx, cy, cz); break; }
+    }
     want.y = Math.max(want.y, terrain.heightAt(want.x, want.z) + 0.8, CFG.island.waterLevel + 0.5);
     camera.position.lerp(want, 1 - Math.exp(-dt * C.follow));
     look.lerp(tmp.set(pos.x, pos.y + 1.4, pos.z), 1 - Math.exp(-dt * C.follow * 1.6)); camera.lookAt(look);
