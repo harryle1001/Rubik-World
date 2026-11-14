@@ -11,7 +11,8 @@
 #bJump{width:84px;height:84px;background:#3d8f4acc}
 @media (pointer:fine){.btns{display:none}}
 canvas{touch-action:none}
-#inv{position:fixed;right:12px;top:12px;color:#fff;font:700 16px system-ui;text-shadow:0 1px 3px #000}
+#bSound{position:fixed;right:12px;top:10px;width:42px;height:42px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:20px}
+#inv{position:fixed;right:64px;top:20px;color:#fff;font:700 16px system-ui;text-shadow:0 1px 3px #000}
 #bAct{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);padding:14px 22px;border-radius:30px;border:2px solid #fff;background:#f0a23a;color:#2a1a0a;font:800 17px system-ui;box-shadow:0 6px 20px #0005}
 [hidden]{display:none!important}
 #quiz{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#0a1a2acc;padding:14px}
@@ -24,7 +25,7 @@ canvas{touch-action:none}
 <script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script>
 </head><body>
 <div id="hud">🏝️ Đảo Rubik</div><div id="info"></div>
-<div id="inv"></div><button id="bAct" hidden></button>
+<button id="bSound" aria-label="Âm thanh">🔊</button><div id="inv"></div><button id="bAct" hidden></button>
 <div id="joy"><div id="knob"></div></div>
 <div class="btns"><button id="bRun">Chạy</button><button id="bJump">Nhảy</button></div>
 <script type="module" src="/js/ocean.js"></script>

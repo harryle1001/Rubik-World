@@ -7,6 +7,7 @@ import { createTerrain } from './island/terrain.js';
 import { createPlayer } from './island/player.js';
 import { scatterModel } from './island/models.js';
 import { createTemples } from './island/temple.js';
+import { createAudio } from './island/audio.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -35,6 +36,7 @@ const player = ctx.player = createPlayer(ctx);
   for (const [x, , z, s] of rocks) ctx.colliders.push({ x, z, r: 0.6 * s });
 }
 
+const audio = ctx.audio = createAudio(ctx);
 const temples = createTemples(ctx);
 
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
@@ -45,6 +47,7 @@ renderer.setAnimationLoop(() => {
   if (!ctx.freeCam) player.update(dt); // freeCam: camera tự do để gỡ lỗi
   terrain.update(dt, clock.elapsedTime, player.pos);
   temples.update(dt, clock.elapsedTime);
+  audio.update(dt, sky.state.night);
   sky.update(dt, camera, player.pos);
   post.render();
 });
