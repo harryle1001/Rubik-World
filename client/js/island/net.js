@@ -25,9 +25,11 @@ export function createNet(ctx) {
   function remove(id) { const o = others.get(id); if (!o) return; ctx.scene.remove(o.h.root); others.delete(id); setStatus(); }
 
   // nạp thư viện client của socket.io (server tự phục vụ ở /socket.io/socket.io.js)
-  const s = document.createElement('script'); s.src = '/socket.io/socket.io.js';
+  // trong app (Capacitor) thư viện có sẵn ở /lib và server ở xa: window.ISLAND_SERVER
+  const server = window.ISLAND_SERVER || '';
+  const s = document.createElement('script'); s.src = server ? '/lib/socket.io.min.js' : '/socket.io/socket.io.js';
   s.onload = () => {
-    sock = window.io('/island', { transports: ['websocket', 'polling'] });
+    sock = window.io(server + '/island', { transports: ['websocket', 'polling'] });
     sock.on('connect', () => { for (const id of [...others.keys()]) remove(id); sock.emit('join', { name: ctx.playerName, hue: ctx.hue }); setStatus(); });
     sock.on('disconnect', setStatus);
     sock.on('players', list => list.forEach(add));

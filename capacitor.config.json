@@ -1,0 +1,8 @@
+{
+  "appId": "vn.truongrubik.island",
+  "appName": "Đảo Rubik",
+  "webDir": "www",
+  "backgroundColor": "#2a3a74",
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never" }
+}

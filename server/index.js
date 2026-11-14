@@ -20,7 +20,8 @@ app.get('/lib/phaser.min.js', (req, res) => res.sendFile(path.join(ROOT, 'node_m
 app.use('/lib/three', express.static(path.join(ROOT, 'node_modules', 'three')));
 app.get('/lib/chess.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'chess.js', 'chess.js')));
 const server = http.createServer(app);
-const io = new Server(server);
+// cho phép app Capacitor (iOS: capacitor://localhost, Android: https://localhost) kết nối multiplayer
+const io = new Server(server, { cors: { origin: (o, cb) => cb(null, !o || /^(capacitor|https?):\/\/localhost(:\d+)?$/.test(o) || o === process.env.PUBLIC_ORIGIN) } });
 
 // ---------- persistence (by player name) ----------
 let saved = {};

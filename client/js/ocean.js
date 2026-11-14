@@ -81,4 +81,4 @@ function quality(dt) {
 if (new URLSearchParams(location.search).has('low')) { qLevel = 2; applyQuality(); } // ?low: bắt đầu ở chất lượng thấp
 
 // ---------- Cache để mở nhanh/offline ----------
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+if ('serviceWorker' in navigator && !window.ISLAND_SERVER) navigator.serviceWorker.register('/sw.js').catch(() => {});
