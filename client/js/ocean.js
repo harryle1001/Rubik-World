@@ -11,6 +11,7 @@ import { createAudio } from './island/audio.js';
 import { createNet } from './island/net.js';
 import { createAnimals } from './island/animals.js';
 import { createSchoolTown } from './island/school-town.js';
+import { createVehicles } from './island/vehicles.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 
@@ -59,6 +60,7 @@ const net = ctx.net = createNet(ctx);
 const animals = ctx.animals = createAnimals(ctx);
 ctx.sky = sky;
 const school = createSchoolTown(ctx);
+const vehicles = createVehicles(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
 document.getElementById('bMenu').onclick = () => school.menu();
 
@@ -87,6 +89,7 @@ renderer.setAnimationLoop(() => {
   net.update(dt);
   animals.update(dt);
   school.update(dt, clock.elapsedTime);
+  vehicles.update(dt);
   sky.update(dt, camera, player.pos);
   ctx.flushOffer();
   post.render();
