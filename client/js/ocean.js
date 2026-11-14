@@ -5,6 +5,7 @@ import { createSky } from './island/sky.js';
 import { createPost } from './island/post.js';
 import { createTerrain } from './island/terrain.js';
 import { createPlayer } from './island/player.js';
+import { scatterModel } from './island/models.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -20,12 +21,23 @@ const terrain = createTerrain(scene);
 const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
 const player = ctx.player = createPlayer(ctx);
 
+// Model Blender (.glb): đá (Draco) và rùa (Meshopt) rải trên bãi cát
+{
+  const beach = [], rocks = [];
+  for (let i = 0; i < 400 && (beach.length < 6 || rocks.length < 24); i++) {
+    const a = Math.random() * 6.283, r = 40 + Math.random() * 45, x = Math.cos(a) * r, z = Math.sin(a) * r, h = terrain.heightAt(x, z);
+    if (h > 0.25 && h < 1.2) (beach.length < 6 && i % 3 === 0 ? beach : rocks).push([x, h, z, 0.6 + Math.random() * 0.9, Math.random() * 6.28]);
+  }
+  scatterModel(scene, 'rua', beach); scatterModel(scene, 'da', rocks);
+  for (const [x, , z, s] of rocks) ctx.colliders.push({ x, z, r: 0.6 * s });
+}
+
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
 const clock = new THREE.Clock();
 window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
   const dt = Math.min(clock.getDelta(), 0.05);
-  player.update(dt);
+  if (!ctx.freeCam) player.update(dt); // freeCam: camera tự do để gỡ lỗi
   terrain.update(dt, clock.elapsedTime, player.pos);
   sky.update(dt, camera, player.pos);
   post.render();
