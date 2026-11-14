@@ -2,6 +2,7 @@
 // Phím: B lên/xuống xe đạp · R chuông xe · E lên thuyền khi ra mép nước / lên bờ · F khinh khí cầu (Space bay lên, Shift/C hạ xuống).
 // Điện thoại: nút 🚲 🎈 🔔 ⬆ ⬇ cạnh nút Chạy/Nhảy; lên xe/thuyền đỗ sẵn bằng nút hành động chung (ctx.offer).
 import * as THREE from 'three';
+import { BLOCKS } from './layout.js';
 import { CFG } from './config.js';
 import { toon, addOutline } from './style.js';
 import { mergeGeos } from './terrain.js';
@@ -64,7 +65,9 @@ function makeBoat(color) {
   for (let i = 0; i < col.count; i++) { if (n.getY(i) > 0.7) col.setXYZ(i, deck.r, deck.g, deck.b); else if (h.attributes.position.getY(i) > 0.1 && n.getY(i) > -0.3) col.setXYZ(i, white.r, white.g, white.b); }
   const rimL = [], rim = (s) => { for (let k = 0; k < 6; k++) { const z0 = -L / 2 + 0.25 + k * (L - 0.5) / 6, z1 = z0 + (L - 0.5) / 6; const wx = z => s * B / 2 * Math.pow(Math.max(0, 1 - (2 * z / L) ** 2), 0.7) + s * 0.02, yy = z => 0.27 + (2 * z / L) ** 2 * 0.22; rimL.push(tube([wx(z0), yy(z0), z0], [wx(z1), yy(z1), z1], 0.04, '#5c3a22', 4)); } };
   rim(-1); rim(1);
-  const parts = [h, ...rimL, paint(at(new THREE.BoxGeometry(B * 0.9, 0.06, 0.32), 0, 0.12, -0.35), '#a87445'), paint(at(new THREE.BoxGeometry(0.5, 0.06, 0.3), 0, 0.14, 1.0), '#a87445')];
+  const parts = [h, ...rimL, paint(at(new THREE.BoxGeometry(B * 0.9, 0.06, 0.32), 0, 0.12, -0.35), '#a87445'), paint(at(new THREE.BoxGeometry(0.5, 0.06, 0.3), 0, 0.14, 1.0), '#a87445'),
+    // cột buồm + cánh buồm tam giác (kiểu thuyền buồm nhỏ)
+    tube([0, 0.1, 0.55], [0, 2.9, 0.55], 0.045, '#8a5a34', 5), paint(at(new THREE.ConeGeometry(1, 2.3, 3).scale(0.05, 1, 0.82), 0, 1.55, 0.05), '#f4efe4'), paint(at(new THREE.ConeGeometry(1, 0.5, 3).scale(0.055, 1, 0.82 * 0.22), 0, 2.48, 0.39), color)];
   const body = mesh(parts); body.position.y = -0.18; g.add(body);
   const oars = [-1, 1].map(s => { // mái chèo xoay quanh cọc chèo
     const pv = new THREE.Group(); pv.position.set(s * 0.62, 0.12, 0.05);
@@ -119,7 +122,7 @@ export function createVehicles(ctx) {
     let nb = 0; // 4 xe dựng trước cổng, chỉ đặt chỗ có nền thị trấn và không vướng tường
     for (const dz of [4, 5.2, 6.4, 7.6]) for (const dx of [5, -5, 6.2, -6.2, 7.4, -7.4, 8.6]) { const x = gate[0] + dx, z = gate[1] + dz; if (nb < 4 && free(x, z) && all.every(v => Math.hypot(v.group.position.x - x, v.group.position.z - z) > 1.1)) park(makeBike(BIKE_COLORS[(++nb) % 5]), x, z, Math.PI / 2 * Math.sign(dx)); }
     let n = 0; // thuyền ở mép bãi cát của thị trấn
-    for (let x = -36; x < 476 && n < 3; x += 3) for (const [z, dz] of [[-170, -1], [-96, 1]]) {
+    for (let x = BLOCKS[0].r[0] + 10; x < BLOCKS[0].r[2] && n < 3; x += 3) for (const [z, dz] of [[BLOCKS[0].r[3] - 1, 1]]) {   // bãi biển phía nam trường (layout.js)
       if (n >= 3 || ctx.groundExtra(x, z - dz * 2, 9) < 0.9 || (ctx.surfaceAt && ctx.surfaceAt(x, z - dz * 2, 9) !== 'sand')) continue;
       let wz = z; for (let k = 0; k < 10 && !isWater(x, wz); k++) wz += dz;
       if (isWater(x, wz) && all.every(v => Math.hypot(v.group.position.x - x, v.group.position.z - wz) > 30)) { park(makeBoat(n % 2 ? '#3d8fd9' : '#d8452f'), x, wz + dz * 1.2, Math.PI / 2); n++; }

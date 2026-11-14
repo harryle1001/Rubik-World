@@ -50,7 +50,7 @@ export function createPlayer(ctx) {
   });
   const up = e => { if (e.pointerId === jid) { jid = null; input.x = input.z = 0; joy.style.opacity = 0; knob.style.transform = ''; } drags.delete(e.pointerId); };
   el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
-  el.addEventListener('wheel', e => { cam.dist = clamp(cam.dist + e.deltaY * 0.01, 4, 16); }, { passive: true });
+  el.addEventListener('wheel', e => { cam.dist = clamp(cam.dist + e.deltaY * 0.01, 5, 28); }, { passive: true });
   const hold = (id, k) => { const b = document.getElementById(id); if (!b) return; b.addEventListener('pointerdown', e => { e.preventDefault(); input[k] = true; }); for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) b.addEventListener(ev, () => { if (k === 'run') input.run = false; }); };
   hold('bJump', 'jump'); hold('bRun', 'run');
 

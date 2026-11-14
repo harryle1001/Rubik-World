@@ -29,7 +29,7 @@ function lookOf(a) {
 }
 const nameOf = a => a.kind ? (NPC_NAME[a.kind] || 'Người dân') : a.student !== false ? a.name : `${a.name} · ${String(a.role || '').split(',')[0]}`;
 
-export function createTownPeople(ctx, { X3, Z3, Y_MIN, TOWN_Y, POOL }) {
+export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
   const scene = ctx.scene, pool = [], loading = new Set(); ctx.townPeople = pool; // gỡ lỗi: __island.townPeople
   // Bảng tên: 1 sprite dùng chung, vẽ lại khi đổi người
   const tc = document.createElement('canvas'); tc.width = 512; tc.height = 80;
@@ -46,7 +46,7 @@ export function createTownPeople(ctx, { X3, Z3, Y_MIN, TOWN_Y, POOL }) {
   return function updatePeople(dt, RS) {
     const p = ctx.player.pos;
     const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
-    const near = list.filter(a => a.y > Y_MIN).map(a => [a, Math.hypot(X3(a.x) - p.x, Z3(a.y) - p.z)]).filter(q => q[1] < 70).sort((a, b) => a[1] - b[1]).slice(0, POOL).map(q => q[0]);
+    const near = list.filter(a => a.y > Y_MIN && a.y < Y_MAX).map(a => { const [x, z] = P(a.x, a.y); return [a, Math.hypot(x - p.x, z - p.z)]; }).filter(q => q[1] < 70).sort((a, b) => a[1] - b[1]).slice(0, POOL).map(q => q[0]);
     const want = new Set(near);
     for (const e of pool) if (e.a && !want.has(e.a)) { e.a = null; e.hero.model.visible = false; }
     for (const a of near) {
@@ -61,11 +61,11 @@ export function createTownPeople(ctx, { X3, Z3, Y_MIN, TOWN_Y, POOL }) {
         loadHero(L.kind, L.h, L.look).then(h => { loading.delete(id); if (!h) return; h.model.visible = false; scene.add(h.model); pool.push({ hero: h, key: L.key, a: null, st: {}, px: 0, pz: 0, yaw: 0, far: 0, greet: 0 }); });
         continue;
       }
-      if (e) { e.a = a; e.px = X3(a.x); e.pz = Z3(a.y); e.yaw = a.dir < 0 ? -Math.PI / 2 : Math.PI / 2; e.hero.model.visible = true; }
+      if (e) { e.a = a; [e.px, e.pz] = P(a.x, a.y); e.yaw = a.dir < 0 ? -Math.PI / 2 : Math.PI / 2; e.hero.model.visible = true; }
     }
     let best = null, bd = 4.5; const now = performance.now();
     for (const e of pool) {
-      if (!e.a) continue; const a = e.a, x = X3(a.x), z = Z3(a.y), dx = x - e.px, dz = z - e.pz, sp = Math.hypot(dx, dz) / Math.max(dt, 1e-3);
+      if (!e.a) continue; const a = e.a, [x, z] = P(a.x, a.y), dx = x - e.px, dz = z - e.pz, sp = Math.hypot(dx, dz) / Math.max(dt, 1e-3);
       const dist = Math.hypot(x - p.x, z - p.z), moving = a.moving && sp > 0.05;
       const sit = a.cycling || a.boat || a.kind === 'bike' ? 'drive' : /sun|picnic|camp|fishing/.test(a.kind || '') ? 'sit' : false;
       let face = null;
