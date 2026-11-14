@@ -35,7 +35,7 @@ export function createSky(scene) {
   const r = CFG.quality.shadowRange; Object.assign(sun.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: 1, far: 200 });
   sun.shadow.mapSize.set(CFG.quality.shadowSize, CFG.quality.shadowSize); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.04;
   scene.add(sun, sun.target);
-  scene.fog = new THREE.Fog('#bfe6f6', 60, 260);
+  scene.fog = new THREE.Fog('#bfe6f6', 110, 380);
 
   // Mây: cụm khối tròn toon trắng trôi chậm
   const clouds = new THREE.Group(); scene.add(clouds);

@@ -5,10 +5,10 @@
 //   - Cửa vào (77 cửa): đứng gần bấm E/nút → mở đúng mini game/bảng của trường → doors
 //   - Học sinh, thầy cô, khách du lịch đi lại theo thời khóa biểu → updatePeople()
 //   - Cầu nối đảo ↔ trường; nút "🏫 Đến trường"; giờ trong ngày theo đồng hồ của trường
-// Toạ độ: 2D (x, y) pixel → 3D (TX + x*S, Y, TZ + y*S). Muốn dời cả thị trấn: sửa TX, TZ.
+// Toạ độ: 2D (x, y) pixel → 3D qua layout.js (bản đồ 2D cắt thành khối, đặt quanh đảo; cổng trường ở giữa thế giới).
 import * as THREE from 'three';
 import { toon, gradientMap } from './style.js';
-import { loadHero, driveHero, STUDENTS } from './characters.js';
+import { createTownPeople } from './town-people.js';
 import { S, TOWN_Y, BLOCKS, LAND, to3, to2, GATE3, SPAWN, rectDist } from './layout.js';
 import { buildTownArchitecture } from './town-buildings.js';
 export { S, TOWN_Y };
@@ -132,32 +132,15 @@ export function createSchoolTown(ctx) {
   town.goSchool = () => { ctx.player.teleport(SPAWN[0], SPAWN[1]); ctx.player.pos.y = TOWN_Y; ctx.toast('🏫 Chào mừng đến Trường Rubik!'); };
 
   // ---------- Học sinh, thầy cô, khách: lấy vị trí từ mô phỏng của trường ----------
-  const POOL = ctx.lowEnd ? 14 : 24, pool = [], loading = new Set();
-  function updatePeople(dt) {
-    const RS = town.RS, p = ctx.player.pos; if (!RS) return;
-    const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
-    const near = list.filter(a => a.y > Y_MIN && a.y < Y_MAX).map(a => { const [x, z] = P(a.x, a.y); return [a, Math.hypot(x - p.x, z - p.z)]; }).filter(q => q[1] < 70).sort((a, b) => a[1] - b[1]).slice(0, POOL).map(q => q[0]);
-    const want = new Set(near);
-    for (const e of pool) if (e.a && !want.has(e.a)) { e.a = null; e.hero && (e.hero.model.visible = false); }
-    for (const a of near) {
-      if (pool.some(e => e.a === a)) continue;
-      let e = pool.find(e => !e.a && e.hero);
-      if (!e && pool.length + loading.size < POOL) { const id = Symbol(); loading.add(id); const kind = STUDENTS[(a.idx ?? a.id ?? pool.length) % STUDENTS.length]; loadHero(kind, a.student === false ? 1.6 : 1.25).then(h => { loading.delete(id); if (!h) return; h.model.visible = false; scene.add(h.model); pool.push({ hero: h, a: null, st: {}, px: 0, pz: 0, yaw: 0 }); }); continue; }
-      if (e) { e.a = a; [e.px, e.pz] = P(a.x, a.y); e.hero.model.visible = true; }
-    }
-    for (const e of pool) {
-      if (!e.a) continue; const a = e.a, [x, z] = P(a.x, a.y), dx = x - e.px, dz = z - e.pz, sp = Math.hypot(dx, dz) / Math.max(dt, 1e-3);
-      if (Math.abs(dx) + Math.abs(dz) > 0.01) { const t = Math.atan2(dx, dz); let d = t - e.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); e.yaw += d * Math.min(1, dt * 8); }
-      e.px = x; e.pz = z; const m = e.hero.model; m.position.set(x, ctx.groundExtra(x, z, 9) > -50 ? ctx.groundExtra(x, z, 9) : TOWN_Y, z); m.rotation.y = e.yaw;
-      driveHero(e.hero, { speed: a.moving ? Math.max(1.2, Math.min(sp, 8)) : 0, grounded: true, walk: 5.5, sitting: !!(a.cycling || a.boat) });
-      e.hero.anim.update(dt);
-    }
-  }
+  // (trang phục theo vai trò, pool, hoạt ảnh, tên trên đầu → town-people.js)
+  const people = createTownPeople(ctx, { P, Y_MIN, Y_MAX, TOWN_Y, POOL: ctx.lowEnd ? 14 : 24 });
+  function updatePeople(dt) { if (town.RS) people(dt, town.RS); }
 
   // ---------- Mỗi khung hình ----------
   const hudSchool = document.getElementById('school');
   function update(dt, t) {
     if (town.ring) town.ring.material.opacity = 0.55 + 0.35 * Math.sin(t * 3);
+    if (town.arch) town.arch.update(ctx.player.pos, t, dt);
     if (!town.RS) return;
     // giờ trong ngày theo đồng hồ trường (để giờ học, ngày/đêm khớp nhau)
     if (ctx.sky && typeof town.RS.clock === 'number') ctx.sky.state.hour = ((town.RS.clock / 60) % 24 + 24) % 24;

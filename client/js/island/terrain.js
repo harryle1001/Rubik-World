@@ -53,7 +53,7 @@ export function createTerrain(scene) {
   // ---------- Mặt đất (toon, màu theo độ cao/độ dốc) ----------
   const g = new THREE.PlaneGeometry(SX, SZ, NX, NZ); g.rotateX(-Math.PI / 2); g.translate(CX, 0, CZ);
   const pos = g.attributes.position, col = new Float32Array(pos.count * 3);
-  const cSand = new THREE.Color('#ecd9a0'), cG1 = new THREE.Color('#6fbf4a'), cG2 = new THREE.Color('#9bd256'), cRock = new THREE.Color('#9a9488'), cDeep = new THREE.Color('#c8b27a'), c = new THREE.Color();
+  const cSand = new THREE.Color('#f5d6a3'), cG1 = new THREE.Color('#6fbf4a'), cG2 = new THREE.Color('#9bd256'), cRock = new THREE.Color('#9a9488'), cDeep = new THREE.Color('#c8b27a'), c = new THREE.Color();
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), z = pos.getZ(i), h = H[Math.round((z - WORLD.z0) / step) * (NX + 1) + Math.round((x - WORLD.x0) / step)];
     pos.setY(i, h);
@@ -73,7 +73,7 @@ export function createTerrain(scene) {
   const hTex = new THREE.DataTexture(hd, TS, TS, THREE.RedFormat); hTex.magFilter = hTex.minFilter = THREE.LinearFilter; hTex.needsUpdate = true;
   const waterMat = new THREE.ShaderMaterial({
     transparent: true, fog: true,
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#5fd3d6') }, uDeep: { value: new THREE.Color('#1f6fa8') }, uLight: { value: 1 } }]),
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 } }]),
     vertexShader: `varying vec3 vW;
 #include <fog_pars_vertex>
       void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; vec4 mvPosition = viewMatrix*w; gl_Position = projectionMatrix*mvPosition;
