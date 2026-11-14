@@ -73,3 +73,5 @@ body.editing #game{outline:4px dashed var(--y);outline-offset:-4px}
 #edKinds button{font-size:13px;padding:4px 8px}
 .edprices{display:flex;flex-direction:column;gap:2px;max-height:260px;overflow:auto}.edprices label,#edSigns label,#ed_names>label,#edSignRow{display:flex;justify-content:space-between;gap:6px;font-size:13px;align-items:center}
 .edprices input{width:90px}#edSigns input,#edZone,#edSignText{flex:1;min-width:0}
+
+.go3d{display:inline-block;margin-top:10px;padding:10px 16px;border-radius:12px;background:linear-gradient(180deg,#ffcf7a,#f0a23a);color:#3a2414;font-weight:700;text-decoration:none}

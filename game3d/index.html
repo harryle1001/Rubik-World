@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>Thế Giới Rubik 3D</title>
+<meta name="description" content="Thế giới mở 3D cho học sinh: vừa khám phá, vừa học Toán, Lịch sử, Tiếng Anh, Khoa học, Địa lý.">
+<meta name="theme-color" content="#2b2340">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">{ "imports": { "three": "./lib/three.module.min.js" } }</script>
+</head>
+<body>
+<div id="game"></div>
+
+<div id="loading"><div class="ld"><div class="logo">🌏</div><h1>Thế Giới Rubik 3D</h1><p id="ldText">Đang tải…</p><div class="bar"><i></i></div></div></div>
+
+<div id="hud">
+  <div class="top">
+    <a class="pill" href="../" title="Về trang chính" aria-label="Về trang chính">🏠</a>
+    <div class="pill res"><span>🪵 <b id="hWood">0</b></span><span>⭐ <b id="hStar">0</b></span></div>
+    <div class="pill time" id="hTime">--:--</div>
+    <div class="sp"></div>
+    <button class="pill" id="bSound" aria-label="Bật/tắt âm thanh">🔊</button>
+    <button class="pill" id="bInv">🎒<span class="lbl"> Túi đồ</span></button>
+    <button class="pill" id="bBuild">🔨<span class="lbl"> Xây</span></button>
+  </div>
+  <div id="joy" aria-hidden="true"><div id="joyK"></div></div>
+  <div class="actions">
+    <button id="bChop" class="act" hidden>🪓<small>Chặt</small></button>
+    <button id="bBike" class="act" hidden>🚲<small>Lên xe</small></button>
+    <button id="bRun" class="act">🏃<small>Chạy</small></button>
+  </div>
+  <div id="toasts" aria-live="polite"></div>
+</div>
+
+<div id="buildBar" hidden>
+  <div class="blocks" id="bbBlocks"></div>
+  <div class="bbtn"><button id="bbRot">⟳ Xoay</button><button id="bbRemove">✖ Gỡ</button><button id="bbPlace" class="primary">✔ Đặt</button><button id="bbExit">Xong</button></div>
+</div>
+
+<div id="inv" class="panel" hidden>
+  <header><h2>🎒 Túi đồ</h2><button id="invClose" class="x" aria-label="Đóng">×</button></header>
+  <div id="invGrid" class="grid"></div>
+  <p id="invInfo" class="info"></p>
+  <h3>🔨 Đổi gỗ lấy khối xây</h3>
+  <div id="invCraft"></div>
+</div>
+
+<div id="area" hidden>
+  <div class="card">
+    <header><div><h2 id="areaTitle"></h2><p id="areaSub"></p></div><button id="areaClose" class="x" aria-label="Rời khu">×</button></header>
+    <div id="areaBody"></div>
+  </div>
+</div>
+
+<div id="areaLabel"><h2></h2><p></p></div>
+<div id="fade"></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

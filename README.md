@@ -10,6 +10,8 @@ npm run dev        # tự khởi động lại server khi sửa code
 
 Mở 2 tab (hoặc 2 máy cùng mạng) vào cùng địa chỉ để thấy nhau di chuyển.
 
+**Game 3D thế giới mở** là dự án riêng trong thư mục `game3d/` (xem `game3d/README.md`). Website chỉ có nút dẫn vào `/game3d/`.
+
 ## Cấu trúc
 - `server/index.js`: Express phục vụ client, Socket.io đồng bộ người chơi, sao, xu, vườn, mua hàng, cờ vua (server quyết định kết quả).
 - `client/js/shared.js`: dữ liệu dùng chung cho server và client (khu vực, lối ra, cửa hàng, cây trồng).
