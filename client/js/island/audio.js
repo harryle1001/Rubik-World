@@ -2,6 +2,7 @@
 // - Thêm nơi phát âm thanh lặp:  ctx.addSoundZone({ file, x, y, z, ref, vol, when })      when: 'day' | 'night' | 'school' | undefined
 // - Thêm âm thanh thỉnh thoảng (chim, hải âu, chuông…): ctx.addSoundSpot({ files, x, y, z, ref, vol, every:[giây_min, giây_max], when })
 // - Mặt đất dưới chân: ctx.surfaceAt(x, z) → 'grass' | 'sand' | 'wood' | 'stone' | 'gravel' | 'mud' (school-town.js có thể thay)
+// - Nhạc nền theo khu: ctx.addMusicZone({ file, x, z, r })  — vào khu nào nghe nhạc khu đó, chuyển mượt
 // - Tắt/bật tiếng: phím M. File: client/assets/audio/ (nguồn: client/assets/CREDITS.txt)
 import * as THREE from 'three';
 
@@ -18,10 +19,11 @@ export function createAudio(ctx) {
   let ready = false; const loader = new THREE.AudioLoader(), buf = {};
   const load = n => buf[n] || (buf[n] = new Promise(res => loader.load(DIR + n + '.mp3', res, undefined, () => res(null))));
   const dayMusic = new THREE.Audio(listener), nightMusic = new THREE.Audio(listener);
-  const zones = [], spots = [];
+  const zones = [], spots = [], musics = [];
   const isOn = (when, st) => !when || (when === 'day' ? st.night < 0.5 : when === 'night' ? st.night >= 0.5 : when === 'school' ? st.night < 0.5 && st.school : true);
 
   ctx.addSoundZone = z => { zones.push(Object.assign({ y: 1, ref: 6, vol: 0.8, a: null }, z)); };
+  ctx.addMusicZone = m => { musics.push(Object.assign({ r: 25, vol: 0.32, a: null, w: 0 }, m)); };
   ctx.addSoundSpot = s => { spots.push(Object.assign({ y: 2, ref: 8, vol: 0.7, every: [4, 10], t: Math.random() * 5, a: null }, s)); };
   ctx.surfaceAt = ctx.surfaceAt || ((x, z) => { const h = terrain.heightAt(x, z); return h < 1.3 ? 'sand' : terrain.slopeAt(x, z) > 0.9 ? 'gravel' : 'grass'; });
 
@@ -41,18 +43,23 @@ export function createAudio(ctx) {
       ctx.addSoundSpot({ files: ['sfx-chirp'], x, y: h + 6, z, ref: 7, vol: 0.5, every: [6, 15], when: 'day' });
     });
   }
+  // nhạc theo khu trên đảo (CC0, phong cách êm dịu/phiêu lưu)
+  ctx.addMusicZone({ file: 'bgm-home', x: 4, z: 12, r: 18 });          // bãi xuất phát, khu cắm trại
+  ctx.addMusicZone({ file: 'bgm-temple', x: 0, z: -6, r: 13, vol: 0.28 }); // Đền Tri Thức
+  ctx.addMusicZone({ file: 'bgm-meadow', x: 30, z: 25, r: 45 });       // đồi cỏ, rừng của đảo
+  ctx.addMusicZone({ file: 'bgm-meadow', x: -30, z: 20, r: 40 });
+  ctx.addMusicZone({ file: 'bgm-beach', x: 0, z: 0, r: 999, vol: 0.22 }); // nền chung của đảo (bờ biển)
   ctx.addSoundZone({ file: 'amb-fire', x: 7, y: 0.5 + terrain.heightAt(7, 14), z: 14, ref: 2.5, vol: 1 });           // lửa trại
   ctx.addSoundSpot({ files: ['sfx-bell1', 'sfx-bell2'], x: 0, y: 4 + terrain.heightAt(0, -8), z: -8, ref: 6, vol: 0.55, every: [5, 11] }); // chuông gió ở đền
   ctx.addSoundSpot({ files: ['sfx-bee'], x: 6, y: terrain.heightAt(6, -1) + 1, z: -1, ref: 3, vol: 0.4, every: [6, 12], when: 'day' }); // ong quanh pha lê hoa
 
   async function init() {
     if (ready) return; ready = true;
-    const [day, night] = await Promise.all([load('music-day'), load('music-night')]);
-    for (const [a, b] of [[dayMusic, day], [nightMusic, night]]) if (b) { a.setBuffer(b); a.setLoop(true); a.setVolume(0); a.play(); }
+    const night = await load('music-night'); if (night) { nightMusic.setBuffer(night); nightMusic.setLoop(true); nightMusic.setVolume(0); nightMusic.play(); }
     Object.values(STEPS).flat().concat(Object.values(SFX).flat()).forEach(load); // tải trước
   }
-  const start = () => { if (!on) return; listener.context.resume(); init(); };
-  addEventListener('pointerdown', start, { once: true }); addEventListener('keydown', start, { once: true });
+  const start = () => { if (!on) return; if (listener.context.state !== 'running') listener.context.resume(); init(); };
+  addEventListener('pointerdown', start); addEventListener('keydown', start); // bật ở mọi lần chạm (trình duyệt chỉ cho phát âm thanh sau khi người chơi chạm)
   const setOn = v => { on = v; try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {} if (on) start(); listener.setMasterVolume(on ? 1 : 0); ctx.toast && ctx.toast(on ? '🔊 Bật âm thanh' : '🔇 Tắt âm thanh', 1200); };
   addEventListener('keydown', e => { if (e.code === 'KeyM') setOn(!on); });
   if (!on) listener.setMasterVolume(0);
@@ -73,9 +80,15 @@ export function createAudio(ctx) {
   let zoneT = 0;
   function update(dt, st) {
     if (!ready) return;
-    if (dayMusic.buffer) dayMusic.setVolume(0.16 * (1 - st.night));
-    if (nightMusic.buffer) nightMusic.setVolume(0.22 * st.night);
     const p = ctx.player.pos;
+    if (nightMusic.buffer) nightMusic.setVolume(0.22 * st.night);
+    // nhạc theo khu: khu nhỏ (gần nhất) thắng khu lớn; chuyển mượt
+    let best = null, bs = Infinity; for (const m of musics) { const d = Math.hypot(m.x - p.x, m.z - p.z); if (d < m.r && m.r < bs) { bs = m.r; best = m; } }
+    for (const m of musics) {
+      const want = m === best ? m.vol * (1 - st.night * 0.85) : 0; m.w += (want - m.w) * Math.min(1, dt * 0.6);
+      if (m.w > 0.01 && !m.a && !m.loading) { m.loading = true; load(m.file).then(b => { m.loading = false; if (!b) return; m.a = new THREE.Audio(listener); m.a.setBuffer(b); m.a.setLoop(true); m.a.setVolume(0); m.a.play(); }); }
+      if (m.a) { m.a.setVolume(m.w); if (m.w < 0.005 && m !== best) { m.a.stop(); m.a = null; } }
+    }
     // vùng âm thanh lặp: chỉ bật khi ở gần và đúng thời điểm (ngày/đêm/giờ học)
     if ((zoneT -= dt) <= 0) {
       zoneT = 0.5;
@@ -92,5 +105,5 @@ export function createAudio(ctx) {
       load(s.files[Math.floor(Math.random() * s.files.length)]).then(b => { if (!b) return; if (!s.a) s.a = make(b, s.x, s.y, s.z, s.ref, s.vol, false); else s.a.setBuffer(b); if (s.a.isPlaying) s.a.stop(); s.a.setPlaybackRate(0.9 + Math.random() * 0.2); s.a.play(); });
     }
   }
-  return { update, listener, start, get on() { return on; }, get ready() { return ready; }, setOn };
+  return { update, listener, start, get on() { return on; }, get ready() { return ready; }, setOn, get music() { return musics.filter(m => m.w > 0.05).map(m => m.file + ':' + m.w.toFixed(2)).join(' '); } };
 }

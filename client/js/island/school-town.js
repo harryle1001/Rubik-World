@@ -30,7 +30,7 @@ export function createSchoolTown(ctx) {
   fr.src = '/school/index.html?embed=1'; fr.title = 'Trường Rubik';
   fr.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;z-index:25;background:transparent;pointer-events:none;color-scheme:dark';
   fr.setAttribute('allowtransparency', 'true'); document.body.appendChild(fr);
-  const waitRS = setInterval(() => { const w = fr.contentWindow; if (w && w.RS && w.RS.doors) { clearInterval(waitRS); town.RS = w.RS; town.win = w; build(); } }, 300);
+  const waitRS = setInterval(() => { const w = fr.contentWindow; if (w && w.RS && w.RS.doors) { clearInterval(waitRS); town.RS = w.RS; town.win = w; w.addEventListener('pointerdown', () => ctx.audio && ctx.audio.start()); build(); } }, 300);
 
   // ---------- Nền thị trấn (nối với đảo bằng cầu) ----------
   const x0 = X3(0), x1 = X3(X_MAX), z0 = Z3(Y_MIN), z1 = Z3(Y_MAX);
@@ -110,6 +110,11 @@ export function createSchoolTown(ctx) {
     // âm thanh từng khu (chỉ phát khi đến gần)
     const C = r => [X3(r.x + r.w / 2), Z3(r.y + r.h / 2)], Z = (file, r, o = {}) => { if (!r || !r.w) return; const [x, z] = C(r); ctx.addSoundZone(Object.assign({ file, x, y: TOWN_Y + 1.5, z, ref: Math.max(4, Math.min(12, r.w * S / 3)), vol: 0.7 }, o)); };
     const Sp = (files, r, o = {}) => { if (!r || !r.w) return; const [x, z] = C(r); ctx.addSoundSpot(Object.assign({ files, x, y: TOWN_Y + 2, z, ref: 8, vol: 0.6 }, o)); };
+    // nhạc theo khu của thị trấn trường
+    const M = (file, r, o = {}) => { if (!r || !r.w) return; const [x, z] = C(r); ctx.addMusicZone(Object.assign({ file, x, z, r: Math.max(r.w, r.h) * S * 0.6 + 8 }, o)); };
+    ctx.addMusicZone({ file: 'bgm-school', x: X3(1000), z: Z3(380), r: 75 });                       // khu trường học
+    M('bgm-town', R.dalat, { r: 60 }); M('bgm-market', R.lake); M('bgm-market', R.picnic); M('bgm-garden', R.flowerfield); M('bgm-garden', R.garden);
+    M('bgm-farm', R.farm); M('bgm-explore', R.hills, { r: 70 }); M('bgm-explore', R.forest, { r: 70 }); M('bgm-temple', R.zen); M('bgm-home', R.rubikpark);
     Z('music-night', R.music, { vol: 0.5, ref: 5, when: 'day' });                                   // phòng nhạc: tiếng đàn piano
     for (const k of ['rubikyard', 'field', 'attend']) Z('amb-children', R[k], { when: 'school' });   // sân trường giờ ra chơi
     if (RS.GATE) ctx.addSoundZone({ file: 'amb-children', x: X3(RS.GATE[0] + 300), y: TOWN_Y + 1.5, z: Z3(RS.GATE[1]), ref: 8, vol: 0.6, when: 'school' });
