@@ -23,7 +23,7 @@ export function createNet(ctx) {
     const o = { h, name: p.name, from: new THREE.Vector3(p.x, p.y, p.z), to: new THREE.Vector3(p.x, p.y, p.z), r: p.r, s: 0, t: 1, phase: 0 };
     h.root.position.copy(o.to); others.set(p.id, o); setStatus();
     // bộ đồ KayKit theo màu áo người đó chọn (hiệp sĩ / đạo tặc / pháp sư / chiến binh)
-    loadHero(KINDS[Math.floor((p.hue || 0) / 90) % KINDS.length]).then(r => { if (!r || !others.has(p.id)) return; o.hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play('Idle', 0); });
+    loadHero(KINDS[Math.floor((p.hue || 0) / 30) % KINDS.length]).then(r => { if (!r || !others.has(p.id)) return; o.hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
   }
   function remove(id) { const o = others.get(id); if (!o) return; ctx.scene.remove(o.h.root); others.delete(id); setStatus(); }
 
@@ -53,7 +53,7 @@ export function createNet(ctx) {
       o.t = Math.min(1, o.t + dt / 0.1); const root = o.h.root;
       root.position.lerpVectors(o.from, o.to, o.t);
       let d = o.r - root.rotation.y; d = Math.atan2(Math.sin(d), Math.cos(d)); root.rotation.y += d * Math.min(1, dt * 10);
-      if (o.hero) { driveHero(o.hero.anim, { speed: o.s, grounded: Math.abs(o.to.y - o.from.y) < 0.6 }); if (root.position.distanceToSquared(ctx.player.pos) < 3600) o.hero.anim.update(dt); continue; }
+      if (o.hero) { driveHero(o.hero, { speed: o.s, grounded: Math.abs(o.to.y - o.from.y) < 0.6 }); if (root.position.distanceToSquared(ctx.player.pos) < 3600) o.hero.anim.update(dt); continue; }
       o.phase += dt * o.s * 2.1; const a = Math.min(1, o.s / 5.5) * 0.8;
       o.h.legL.rotation.x = Math.sin(o.phase) * a; o.h.legR.rotation.x = -Math.sin(o.phase) * a; o.h.armL.rotation.x = -Math.sin(o.phase) * a; o.h.armR.rotation.x = Math.sin(o.phase) * a;
     }

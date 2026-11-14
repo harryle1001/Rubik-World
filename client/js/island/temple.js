@@ -52,12 +52,10 @@ export function createTemples(ctx) {
   }
 
   // nút hành động (gần bia → Giải đố; gần rương khi cổng đã mở → Mở rương)
-  const act = document.getElementById('bAct'); let target = null;
-  act.onclick = () => target && target();
-  addEventListener('keydown', e => { if (e.code === 'KeyE' && target) target(); });
+  let target = null; // nút hành động dùng chung: ctx.offer() (ocean.js)
 
   function solve(t) {
-    ctx.player.frozen = true; ctx.player.emote && ctx.player.emote('Interact');
+    ctx.player.frozen = true; ctx.player.emote && ctx.player.emote('interact');
     ui.run(t.T, pickQuestions(t.T.subjects, t.T.need), ok => {
       ctx.player.frozen = false;
       if (!ok) return;
@@ -69,7 +67,7 @@ export function createTemples(ctx) {
   function openChest(t) {
     t.chestOpen = true; done[t.T.id + '-chest'] = 1; save(SAVE, done);
     const r = t.T.reward; inv[r.id] = inv[r.id] || { icon: r.icon, n: 0 }; inv[r.id].n++; save(INV, inv); showInv();
-    ctx.toast(`${r.icon} Bạn nhận được ${r.name}!`); ctx.sfx && ctx.sfx('win'); ctx.player.emote && ctx.player.emote('Cheer');
+    ctx.toast(`${r.icon} Bạn nhận được ${r.name}!`); ctx.sfx && ctx.sfx('win'); ctx.player.emote && ctx.player.emote('cheer');
   }
 
   function update(dt, t) {
@@ -81,7 +79,7 @@ export function createTemples(ctx) {
       if (!L.opened && Math.hypot(p.x - L.steleW.x, p.z - L.steleW.z) < 2.6) { target = () => solve(L); label = '📜 Giải đố'; }
       if (L.opened && !L.chestOpen && Math.hypot(p.x - L.chestW.x, p.z - L.chestW.z) < 2.2) { target = () => openChest(L); label = '🎁 Mở rương'; }
     }
-    act.hidden = !target || ui.open; act.textContent = label;
+    if (target && !ui.open) ctx.offer(label, target);
   }
   return { update };
 }

@@ -84,7 +84,7 @@ export function createTerrain(scene) {
       }`,
   });
   waterMat.uniforms.uH.value = hTex; waterMat.uniforms.uTime = WIND.uTime;
-  const water = new THREE.Mesh(new THREE.PlaneGeometry(900, 900).rotateX(-Math.PI / 2), waterMat); water.position.y = W; scene.add(water);
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600).rotateX(-Math.PI / 2), waterMat); water.position.y = W; scene.add(water);
 
   // ---------- Vật liệu lay theo gió (cây, cỏ) ----------
   function windy(mat, amp, push = 0) {

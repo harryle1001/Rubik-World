@@ -67,8 +67,8 @@ export function createPlayer(ctx) {
   const self = { pos, cam, input, get rot() { return rot; }, frozen: false, speed: 0, root: h.root, get grounded() { return grounded; } };
   // Nhân vật KayKit có animation: nạp xong thì thay cho nhân vật dựng bằng khối
   let hero = null; const animState = {};
-  loadHero(ctx.heroKind || 'hero-knight').then(r => { if (!r) return; hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play('Idle', 0); });
-  self.emote = name => { if (hero) emote(hero.anim, animState, name); };
+  loadHero(ctx.heroKind || 'student-male-a').then(r => { if (!r) return; hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
+  self.emote = name => { if (hero) emote(hero, animState, name); };
   let stepT = 0;
   const want = new THREE.Vector3(), look = new THREE.Vector3(pos.x, pos.y + 1.5, pos.z), tmp = new THREE.Vector3();
   self.update = (dt) => {
@@ -86,7 +86,14 @@ export function createPlayer(ctx) {
     // di chuyển + va chạm cây/đá + không ra nước sâu
     let nx = pos.x + vel.x * dt, nz = pos.z + vel.z * dt;
     for (const c of ctx.colliders) { const dx = nx - c.x, dz = nz - c.z, rr = c.r + 0.35, d2 = dx * dx + dz * dz; if (d2 < rr * rr && d2 < 100) { const d = Math.sqrt(d2) || 1e-3; nx = c.x + dx / d * rr; nz = c.z + dz / d * rr; } }
-    if (terrain.heightAt(nx, nz) < CFG.island.waterLevel - 0.7) { nx = pos.x; nz = pos.z; vel.set(0, 0, 0); }
+    // tường/nhà hình hộp (ctx.boxes: {x0,z0,x1,z1,top}) — đẩy ra theo cạnh gần nhất
+    for (const b of ctx.boxes || []) {
+      const r = 0.35; if (nx < b.x0 - r || nx > b.x1 + r || nz < b.z0 - r || nz > b.z1 + r || pos.y > b.top) continue;
+      const pl = nx - (b.x0 - r), pr = (b.x1 + r) - nx, pt = nz - (b.z0 - r), pb = (b.z1 + r) - nz, m = Math.min(pl, pr, pt, pb);
+      if (m === pl) nx = b.x0 - r; else if (m === pr) nx = b.x1 + r; else if (m === pt) nz = b.z0 - r; else nz = b.z1 + r;
+    }
+    const sup = (x, z) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, pos.y) : -99);
+    if (sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = pos.x; nz = pos.z; vel.set(0, 0, 0); }
     pos.x = nx; pos.z = nz;
     const g = Math.max(terrain.heightAt(pos.x, pos.z), ctx.groundExtra ? ctx.groundExtra(pos.x, pos.z, pos.y) : -99);
     if (input.jump && grounded && !self.frozen) { vy = P.jump; grounded = false; ctx.sfx && ctx.sfx('jump'); }
@@ -95,7 +102,7 @@ export function createPlayer(ctx) {
     if (pos.y <= g) { if (!grounded && vy < -6) { puff(8, 2.5); ctx.sfx && ctx.sfx('land'); } pos.y = g; vy = 0; grounded = true; } else if (pos.y > g + 0.3) grounded = false;
 
     // animation KayKit + tiếng bước chân
-    if (hero) { driveHero(hero.anim, { speed: self.speed, grounded, walk: P.walk, oneShot: animState.oneShot }); hero.anim.update(dt); }
+    if (hero) { driveHero(hero, { speed: self.speed, grounded, walk: P.walk, oneShot: animState.oneShot }); hero.anim.update(dt); }
     if (grounded && self.speed > 0.8 && (stepT -= dt) <= 0) { stepT = self.speed > P.walk * 1.1 ? 0.3 : 0.42; ctx.sfx && ctx.sfx('step'); }
     // dáng chạy (nhân vật dựng bằng khối, dùng khi chưa nạp xong model)
     phase += dt * self.speed * 2.1;
@@ -120,7 +127,7 @@ export function createPlayer(ctx) {
       for (const c of ctx.colliders) { const dx = cx - c.x, dz = cz - c.z; if (dx * dx + dz * dz < (c.r * 3.4 + 0.3) ** 2 && cy < terrain.heightAt(c.x, c.z) + 5.5) { hit = true; break; } }
       if (!hit || f === 0.4) { want.set(cx, cy, cz); break; }
     }
-    want.y = Math.max(want.y, terrain.heightAt(want.x, want.z) + 0.8, CFG.island.waterLevel + 0.5);
+    want.y = Math.max(want.y, terrain.heightAt(want.x, want.z) + 0.8, (ctx.groundExtra ? ctx.groundExtra(want.x, want.z, 99) : -99) + 0.8, CFG.island.waterLevel + 0.5);
     camera.position.lerp(want, 1 - Math.exp(-dt * C.follow));
     look.lerp(tmp.set(pos.x, pos.y + 1.4, pos.z), 1 - Math.exp(-dt * C.follow * 1.6)); camera.lookAt(look);
   };

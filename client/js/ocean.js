@@ -10,6 +10,7 @@ import { createTemples } from './island/temple.js';
 import { createAudio } from './island/audio.js';
 import { createNet } from './island/net.js';
 import { createAnimals } from './island/animals.js';
+import { createSchoolTown } from './island/school-town.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 
@@ -25,12 +26,20 @@ const post = createPost(renderer, scene, camera);
 
 const terrain = createTerrain(scene);
 const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
+// Nút hành động dùng chung (E hoặc nút giữa màn hình): mỗi khung hình các phần gọi ctx.offer(nhãn, hàm, độ ưu tiên)
+{
+  const act = document.getElementById('bAct'); let best = null, cur = null;
+  ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) best = { label, fn, pri }; };
+  ctx.flushOffer = () => { cur = best; best = null; act.hidden = !cur || ctx.player.frozen; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
+  act.onclick = () => cur && cur.fn();
+  addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
+}
 // thông báo ngắn
 ctx.toast = (t, ms = 3000) => { const el = document.getElementById('info'); el.innerHTML = t; el.style.opacity = 1; clearTimeout(ctx._tt); ctx._tt = setTimeout(() => el.style.opacity = 0, ms); };
 // tên & màu áo người chơi (lưu trên máy)
 ctx.playerName = localStorage.getItem('island.name') || ('Bạn nhỏ ' + Math.floor(100 + Math.random() * 900)); localStorage.setItem('island.name', ctx.playerName);
 ctx.hue = +(localStorage.getItem('island.hue') || Math.floor(Math.random() * 360)); localStorage.setItem('island.hue', ctx.hue);
-ctx.heroKind = KINDS[Math.floor(ctx.hue / 90) % KINDS.length]; // bộ đồ nhân vật theo màu đã chọn
+ctx.heroKind = KINDS[Math.floor(ctx.hue / 30) % KINDS.length]; // học sinh (12 kiểu) theo màu đã chọn
 const player = ctx.player = createPlayer(ctx);
 
 // Model Blender (.glb): đá (Draco) và rùa (Meshopt) rải trên bãi cát
@@ -48,6 +57,10 @@ const audio = ctx.audio = createAudio(ctx);
 const temples = createTemples(ctx);
 const net = ctx.net = createNet(ctx);
 const animals = ctx.animals = createAnimals(ctx);
+ctx.sky = sky;
+const school = createSchoolTown(ctx);
+document.getElementById('bSchool').onclick = () => school.goSchool();
+document.getElementById('bMenu').onclick = () => school.menu();
 
 // Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại cạnh bãi xuất phát, hoa, nấm, gốc cây, pha lê quanh đền
 {
@@ -73,7 +86,9 @@ renderer.setAnimationLoop(() => {
   audio.update(dt, sky.state.night);
   net.update(dt);
   animals.update(dt);
+  school.update(dt, clock.elapsedTime);
   sky.update(dt, camera, player.pos);
+  ctx.flushOffer();
   post.render();
   quality(dt);
 });

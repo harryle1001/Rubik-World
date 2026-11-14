@@ -1,7 +1,7 @@
 // Service worker: caches the game shell so the app opens instantly and shows a friendly page when offline.
 const CACHE = 'truong-rubik-v3';
 // Đảo 3D: file nạp sẵn; model .glb, three.js, bộ giải nén Draco được cache khi dùng lần đầu
-const ISLAND = ['/ocean.html', '/js/ocean.js', ...['config', 'style', 'sky', 'post', 'terrain', 'player', 'models', 'quiz-data', 'temple', 'audio', 'net', 'characters', 'animals'].map(n => `/js/island/${n}.js`),
+const ISLAND = ['/ocean.html', '/js/ocean.js', ...['config', 'style', 'sky', 'post', 'terrain', 'player', 'models', 'quiz-data', 'temple', 'audio', 'net', 'characters', 'animals', 'school-town'].map(n => `/js/island/${n}.js`),
   '/lib/three/build/three.module.js', ...['den', 'rua', 'da'].map(n => `/assets/models/${n}.glb`),
   ...['postprocessing/EffectComposer', 'postprocessing/RenderPass', 'postprocessing/UnrealBloomPass', 'postprocessing/ShaderPass', 'postprocessing/OutputPass', 'postprocessing/MaskPass', 'postprocessing/Pass',
     'shaders/CopyShader', 'shaders/LuminosityHighPassShader', 'shaders/OutputShader', 'loaders/GLTFLoader', 'loaders/DRACOLoader', 'libs/meshopt_decoder.module', 'utils/BufferGeometryUtils', 'libs/draco/gltf/draco_wasm_wrapper'].map(n => `/lib/three/examples/jsm/${n}.js`),
