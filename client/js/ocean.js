@@ -83,7 +83,7 @@ renderer.setAnimationLoop(() => {
   if (!ctx.freeCam) player.update(dt); // freeCam: camera tự do để gỡ lỗi
   terrain.update(dt, clock.elapsedTime, player.pos);
   temples.update(dt, clock.elapsedTime);
-  audio.update(dt, sky.state.night);
+  audio.update(dt, { night: sky.state.night, school: !!ctx.schoolHours });
   net.update(dt);
   animals.update(dt);
   school.update(dt, clock.elapsedTime);

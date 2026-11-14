@@ -12,7 +12,7 @@
 @media (pointer:fine){.btns{display:none}}
 canvas{touch-action:none}
 #hud{line-height:1.5}
-#hud,#bAct,.btns,.topbtns,#joy,#bSound,#inv,#info{z-index:26}body.rs-modal #bAct,body.rs-modal .btns,body.rs-modal .topbtns,body.rs-modal #joy,body.rs-modal #bSound,body.rs-modal #inv{display:none}.topbtns{position:fixed;left:12px;top:56px;display:flex;gap:8px;z-index:5}.topbtns button{padding:8px 12px;border-radius:18px;border:2px solid #fff8;background:#1b1626aa;color:#fff;font:700 14px system-ui}
+#hud,#bAct,.btns,.topbtns,#joy,#bSound,#inv,#info{z-index:26}body.rs-modal #bAct,body.rs-modal .btns,body.rs-modal .topbtns,body.rs-modal #joy,body.rs-modal #bSound,body.rs-modal #inv{display:none}.topbtns{position:fixed;left:max(12px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));display:flex;gap:8px;z-index:26;opacity:.85}.topbtns button{padding:8px 12px;border-radius:18px;border:2px solid #fff8;background:#1b1626aa;color:#fff;font:700 14px system-ui}
 #bSound{position:fixed;right:12px;top:10px;width:42px;height:42px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:20px}
 #inv{position:fixed;right:64px;top:20px;color:#fff;font:700 16px system-ui;text-shadow:0 1px 3px #000}
 #bAct{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);padding:14px 22px;border-radius:30px;border:2px solid #fff;background:#f0a23a;color:#2a1a0a;font:800 17px system-ui;box-shadow:0 6px 20px #0005}
@@ -26,9 +26,8 @@ canvas{touch-action:none}
 #info{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#0009;color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:.3s;pointer-events:none;text-align:center}</style>
 <script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script>
 </head><body>
-<div id="hud">🏝️ Đảo Rubik · <span id="online"></span><br><span id="school">🏫 Trường Rubik đang mở cửa…</span></div>
 <div class="topbtns"><button id="bSchool">🏫 Đến trường</button><button id="bMenu">📚 Menu trường</button></div><div id="info"></div>
-<button id="bSound" aria-label="Âm thanh">🔊</button><div id="inv"></div><button id="bAct" hidden></button>
+<button id="bAct" hidden></button>
 <div id="joy"><div id="knob"></div></div>
 <div class="btns"><button id="bRun">Chạy</button><button id="bJump">Nhảy</button></div>
 <script type="module" src="/js/ocean.js"></script>

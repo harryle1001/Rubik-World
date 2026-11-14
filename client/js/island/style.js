@@ -37,7 +37,7 @@ export function addOutline(root) {
 export function toonify(root) {
   root.traverse(o => {
     if (!o.isMesh) return;
-    const m = o.material; o.material = new THREE.MeshToonMaterial({ color: m.color || 0xffffff, map: m.map || null, gradientMap, vertexColors: !!o.geometry.attributes.color });
+    const m = o.material; o.material = new THREE.MeshToonMaterial({ name: m.name, color: m.color || 0xffffff, map: m.map || null, gradientMap, vertexColors: !!o.geometry.attributes.color });
     o.castShadow = o.receiveShadow = true;
   });
   return root;

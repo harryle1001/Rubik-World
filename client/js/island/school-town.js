@@ -107,6 +107,30 @@ export function createSchoolTown(ctx) {
     town.doors = RS.doors().filter(d => d.y > Y_MIN && d.y < Y_MAX && d.x >= 0 && d.x <= X_MAX).map(d => ({ d, x: X3(d.x), z: Z3(d.y) }));
     const ring = new THREE.InstancedMesh(new THREE.RingGeometry(0.7, 0.95, 24).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#ffd27a', transparent: true, opacity: 0.85, depthWrite: false }), town.doors.length);
     const o = new THREE.Object3D(); town.doors.forEach((q, i) => { o.position.set(q.x, TOWN_Y + 0.05, q.z); o.updateMatrix(); ring.setMatrixAt(i, o.matrix); }); scene.add(ring); town.ring = ring;
+    // âm thanh từng khu (chỉ phát khi đến gần)
+    const C = r => [X3(r.x + r.w / 2), Z3(r.y + r.h / 2)], Z = (file, r, o = {}) => { if (!r || !r.w) return; const [x, z] = C(r); ctx.addSoundZone(Object.assign({ file, x, y: TOWN_Y + 1.5, z, ref: Math.max(4, Math.min(12, r.w * S / 3)), vol: 0.7 }, o)); };
+    const Sp = (files, r, o = {}) => { if (!r || !r.w) return; const [x, z] = C(r); ctx.addSoundSpot(Object.assign({ files, x, y: TOWN_Y + 2, z, ref: 8, vol: 0.6 }, o)); };
+    Z('music-night', R.music, { vol: 0.5, ref: 5, when: 'day' });                                   // phòng nhạc: tiếng đàn piano
+    for (const k of ['rubikyard', 'field', 'attend']) Z('amb-children', R[k], { when: 'school' });   // sân trường giờ ra chơi
+    if (RS.GATE) ctx.addSoundZone({ file: 'amb-children', x: X3(RS.GATE[0] + 300), y: TOWN_Y + 1.5, z: Z3(RS.GATE[1]), ref: 8, vol: 0.6, when: 'school' });
+    Z('amb-crowd', R.hall, { vol: 0.35, when: 'school' }); Z('amb-crowd', R.dalat, { vol: 0.4, when: 'day' }); Z('amb-crowd', R.picnic, { vol: 0.3, when: 'day' });
+    for (const k of ['pond', 'lake', 'lotus']) { Z('amb-river', R[k], { vol: 0.6 }); Z('amb-crickets', R[k], { when: 'night' }); }
+    if (R.hills) for (let i = 0; i < 4; i++) ctx.addSoundZone({ file: i ? 'amb-birds' : 'amb-river', x: X3(R.hills.x + R.hills.w * (i + 0.5) / 4), y: TOWN_Y + 4, z: Z3(R.hills.y + R.hills.h / 2), ref: 10, vol: 0.8, when: i ? 'day' : undefined });
+    if (R.forest) for (let i = 0; i < 4; i++) { const x = X3(R.forest.x + R.forest.w * (i + 0.5) / 4), z = Z3(R.forest.y + R.forest.h / 2); ctx.addSoundZone({ file: 'amb-birds2', x, y: TOWN_Y + 5, z, ref: 10, vol: 0.7, when: 'day' }); ctx.addSoundZone({ file: 'amb-crickets', x, y: TOWN_Y + 1, z, ref: 10, vol: 0.6, when: 'night' }); }
+    for (const k of ['flowerfield', 'garden']) Sp(['sfx-bee'], R[k], { every: [3, 7], when: 'day', ref: 6, vol: 0.5 });
+    Sp(['sfx-sheep'], R.farm, { every: [5, 12] }); Sp(['sfx-dog'], R.farm, { every: [12, 25], vol: 0.5 }); Z('amb-birds', R.farm, { vol: 0.5, when: 'day' });
+    Sp(['sfx-chirp'], R.rubikpark, { every: [5, 12], when: 'day' }); Sp(['sfx-chirp'], R.garden, { every: [6, 14], when: 'day' });
+    for (let x = 200; x < X_MAX; x += 1200) { ctx.addSoundZone({ file: x % 2400 ? 'amb-wave1' : 'amb-wave2', x: X3(x), y: TOWN_Y, z: Z3(Y_MAX) + 1, ref: 7, vol: 0.9 }); ctx.addSoundSpot({ files: ['sfx-gull1', 'sfx-gull2'], x: X3(x), y: TOWN_Y + 8, z: Z3(Y_MAX) + 6, ref: 12, vol: 0.45, every: [10, 25], when: 'day' }); }
+    ctx.addSoundZone({ file: 'amb-river', x: bridge.x, y: 0, z: (bridge.za + bridge.zb) / 2, ref: 6, vol: 0.7 });   // nước chảy dưới cầu
+    // mặt đất dưới chân → tiếng bước chân
+    const SURF = { rubik: 'wood', chess: 'wood', music: 'wood', hall: 'wood', office: 'wood', elec: 'wood', yard: 'stone', attend: 'stone', giantchess: 'stone', rubikpark: 'stone', skate: 'stone', patin: 'stone', basket: 'stone', road: 'stone', dalat: 'stone', art: 'stone', beach: 'sand', farm: 'mud', pond: 'mud', lake: 'mud', lotus: 'mud', ski: 'sand', north: 'grass' };
+    const prevSurf = ctx.surfaceAt;
+    ctx.surfaceAt = (x, z, y) => {
+      if (Math.abs(x - bridge.x) < bridge.w && z < bridge.za && z > bridge.zb) return 'wood';
+      if (x > x0 && x < x1 && z > z0 && z < z1 && (y == null || y > TOWN_Y - 0.3)) { let r = 'yard'; try { r = RS.regionAt(X2(x), Y2(z)); } catch (e) {} return SURF[r] || 'grass'; }
+      if (Math.hypot(x, z + 6) < 6.5) return 'stone'; // nền đền
+      return prevSurf(x, z, y);
+    };
     town.ready = true; ctx.toast && ctx.toast('🏫 Trường Rubik đã sẵn sàng ở phía bắc đảo — đi qua cầu hoặc bấm "Đến trường"');
   }
 
@@ -128,7 +152,7 @@ export function createSchoolTown(ctx) {
     for (const a of near) {
       if (pool.some(e => e.a === a)) continue;
       let e = pool.find(e => !e.a && e.hero);
-      if (!e && pool.length + loading.size < POOL) { const id = Symbol(); loading.add(id); const kind = STUDENTS[(a.idx ?? a.id ?? pool.length) % STUDENTS.length]; loadHero(kind, a.student === false ? 1.75 : 1.4).then(h => { loading.delete(id); if (!h) return; h.model.visible = false; scene.add(h.model); pool.push({ hero: h, a: null, st: {}, px: 0, pz: 0, yaw: 0 }); }); continue; }
+      if (!e && pool.length + loading.size < POOL) { const id = Symbol(); loading.add(id); const kind = STUDENTS[(a.idx ?? a.id ?? pool.length) % STUDENTS.length]; loadHero(kind, a.student === false ? 1.6 : 1.25).then(h => { loading.delete(id); if (!h) return; h.model.visible = false; scene.add(h.model); pool.push({ hero: h, a: null, st: {}, px: 0, pz: 0, yaw: 0 }); }); continue; }
       if (e) { e.a = a; e.px = X3(a.x); e.pz = Z3(a.y); e.hero.model.visible = true; }
     }
     for (const e of pool) {
@@ -151,7 +175,7 @@ export function createSchoolTown(ctx) {
     if ((checkT -= dt) <= 0) {
       checkT = 0.25; const m = isModal();
       if (m !== modalOpen) { modalOpen = m; fr.style.pointerEvents = m ? 'auto' : 'none'; ctx.player.frozen = m; document.body.classList.toggle('rs-modal', m); if (!m) { fr.blur(); window.focus(); } }
-      try { const d = fr.contentDocument; if (hudSchool) hudSchool.textContent = `${d.getElementById('hudClock').textContent} · ${d.getElementById('hudPeriod').textContent}`; } catch (e) {}
+      try { const d = fr.contentDocument, per = d.getElementById('hudPeriod').textContent; ctx.schoolHours = !/Ngoài giờ|Nghỉ|Tối|Đêm/i.test(per); if (hudSchool) hudSchool.textContent = `${d.getElementById('hudClock').textContent} · ${per}`; } catch (e) {}
     }
     // cửa gần nhất
     const p = ctx.player.pos; let best = null, bd = 2.2;

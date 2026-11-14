@@ -5,7 +5,7 @@ models/hero-*.glb (Knight, Rogue, Mage, Barbarian + 14 animation)
   Nguồn tải: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0 (LICENSE: CC0 1.0)
   Đã lược bớt animation và nén Meshopt bằng gltf-transform.
 
-models/student-*.glb (12 học sinh nam/nữ, 32 animation): Kenney Mini Characters 1.0, CC0 — https://kenney.nl/assets/mini-characters (qua "@netforge/asset-library-files")
+models/student-*.glb (12 học sinh chibi; code tô lại áo trắng, quần xanh, thêm khăn quàng đỏ, cặp sách): Kenney Mini Characters 1.0, CC0 — https://kenney.nl/assets/mini-characters (qua "@netforge/asset-library-files")
 
 models/animal-*.glb (hươu, cáo, ếch, mèo, cua, chó shiba – có animation), models/prop-*.glb (lửa trại, hoa, nấm, khúc gỗ, gốc cây, lều, pha lê, ngọc)
   Quaternius (https://quaternius.com) và Kenney (https://kenney.nl), CC0 1.0
@@ -15,9 +15,23 @@ models/den.glb, rua.glb, da.glb, ca*.glb, cay-*.glb, san-ho.glb: tự tạo bằ
 
 audio/music-day.mp3   "Sunset Plains" — yoiyami — https://opengameart.org/content/sunset-plains (CC0)
 audio/music-night.mp3 "First Light Particles" — yoiyami — https://opengameart.org/content/first-light-particles-%E2%80%93-cc0-atmospheric-pianoambient-track (CC0)
-audio/amb-forest.mp3  "Forest Ambience" — TinyWorlds — https://opengameart.org/content/forest-ambience (CC0)
 audio/amb-wave*.mp3   "Beach Ocean Waves" — jasinski / qubodup — https://opengameart.org/content/beach-ocean-waves (CC0)
 audio/step-*.mp3      "Fantozzi's Footsteps (Grass/Sand & Stone)" — Fantozzi / qubodup — https://opengameart.org/content/fantozzis-footsteps-grasssand-stone (CC0)
 audio/sfx-*.mp3       Kenney sound packs (Interface, Impact, RPG Audio), CC0 — qua "@netforge/asset-library-files" 0.2.0
 
 Tất cả được chuyển sang MP3 mono/stereo bitrate thấp để tải nhanh trên điện thoại.
+
+Âm thanh theo vị trí (OpenGameArt, CC0):
+audio/amb-birds.mp3, amb-river.mp3   "Park Ambiences" — https://opengameart.org/content/park-ambiences
+audio/amb-birds2.mp3                 "Ambient Bird Sounds" — isaiah658 — https://opengameart.org/content/ambient-bird-sounds
+audio/sfx-chirp.mp3                  "Bird chirping sounds" — https://opengameart.org/content/bird-chirping-sounds
+audio/amb-crickets.mp3               "Crickets ambient noise (loopable)" — https://opengameart.org/content/crickets-ambient-noise-loopable
+audio/amb-fire.mp3                   "Fireplace sound loop" — https://opengameart.org/content/fireplace-sound-loop
+audio/amb-children.mp3               "Children voices" — https://opengameart.org/content/children-voices
+audio/amb-crowd.mp3                  "Crowd shouting/speaking ambience" — https://opengameart.org/content/crowd-shoutingspeaking-ambience
+audio/sfx-gull*.mp3                  "Solo seagull sound effects" — https://opengameart.org/content/solo-seagull-sound-effects
+audio/sfx-dog.mp3                    "Dog barking mono" — https://opengameart.org/content/dog-barking-mono
+audio/sfx-sheep.mp3                  "Sheep baa" — https://opengameart.org/content/sheep-baa
+audio/sfx-bee.mp3                    "Insect sounds" — https://opengameart.org/content/insect-sounds
+audio/sfx-bell*.mp3                  "Bell dings/chimes" — https://opengameart.org/content/bell-dingschimes
+audio/step-wood*, leaves*, stone01, gravel, mud02  "Different steps on wood, stone, leaves, gravel and mud" — https://opengameart.org/content/different-steps-on-wood-stone-leaves-gravel-and-mud

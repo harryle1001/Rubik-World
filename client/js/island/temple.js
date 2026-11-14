@@ -15,7 +15,7 @@ const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } cat
 export function createTemples(ctx) {
   const { scene, terrain } = ctx; const done = load(SAVE), inv = load(INV);
   const ui = buildUI(); const list = [];
-  const invEl = document.getElementById('inv'); const showInv = () => { invEl.textContent = Object.values(inv).map(i => `${i.icon} ${i.n}`).join('  ') || ''; }; showInv();
+  const invEl = document.getElementById('inv'); const showInv = () => { if (invEl) invEl.textContent = Object.values(inv).map(i => `${i.icon} ${i.n}`).join('  ') || ''; }; showInv();
 
   for (const T of TEMPLES) {
     const y = terrain.heightAt(T.x, T.z), g = new THREE.Group(); g.position.set(T.x, y, T.z); g.rotation.y = T.rot; scene.add(g);
