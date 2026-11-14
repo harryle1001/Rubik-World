@@ -78,9 +78,26 @@ const bp = new Float32Array(300 * 3); for (let i = 0; i < 300; i++) { bp[i * 3] 
 bubbles.geometry.setAttribute('position', new THREE.BufferAttribute(bp, 3)); scene.add(bubbles);
 
 // Nạp model Blender (.glb) nếu có: đặt file vào client/assets/models/ rồi thêm vào danh sách dưới
-const MODELS = [/* { url: '/assets/models/ca-map.glb', pos: [0, 3, 0], scale: 1 } */];
+// Model Blender (.glb, tạo bằng tools/blender/make_assets.py) thay cho hình dựng bằng code
 const loader = new GLTFLoader();
-for (const m of MODELS) loader.load(m.url, g => { g.scene.position.set(...m.pos); g.scene.scale.setScalar(m.scale || 1); scene.add(g.scene); });
+const load = n => new Promise(res => loader.load(`/assets/models/${n}.glb`, g => res(g.scene), undefined, () => res(null)));
+Promise.all(['san-ho', 'ca', 'ca-map', 'rua', 'da', 'den'].map(load)).then(([sanho, ca, camap, rua, da, den]) => {
+  if (!sanho || !ca || !camap || !rua) return; // thiếu file thì giữ bản dựng bằng code
+  scene.remove(coral); for (const c of creatures) scene.remove(c); creatures.length = 0;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  for (let i = 0; i < 45; i++) { // san hô và đá rải đáy biển
+    const o = (i % 6 === 0 && da ? da : sanho).clone(), a = rnd(0, 6.28), r = rnd(4, 26);
+    o.position.set(Math.cos(a) * r, 0, Math.sin(a) * r); o.rotation.y = rnd(0, 6.28); o.scale.setScalar(rnd(0.9, 1.8)); scene.add(o);
+  }
+  if (den) { den.scale.setScalar(1.5); den.position.set(-6, -0.3, -4); den.rotation.x = 0; scene.add(den); }
+  const spawn = (src, sc, name, fact, r, sp, y) => {
+    const g = new THREE.Group(), body = src.clone(); g.add(body); g.scale.setScalar(sc);
+    g.userData = { name, fact, tail: body, r, a: rnd(0, 6.28), sp, y, ph: rnd(0, 6) }; scene.add(g); creatures.push(g);
+  };
+  for (let i = 0; i < 18; i++) spawn(ca, rnd(0.7, 1.2), 'Cá nhiệt đới', 'Cá thở bằng mang: mang lọc oxy hòa tan trong nước.', rnd(5, 19), rnd(0.15, 0.4), rnd(2, 9));
+  spawn(camap, 1.6, 'Cá mập', 'Cá mập là cá sụn, không có xương cứng; bộ xương làm bằng sụn.', 16, 0.1, 6);
+  spawn(rua, 1.2, 'Rùa biển', 'Rùa biển thở bằng phổi nên phải nổi lên mặt nước để lấy không khí.', 10, 0.07, 4);
+});
 
 // Chạm để học
 const ray = new THREE.Raycaster(), info = document.getElementById('info'); let hide;
