@@ -178,6 +178,25 @@ io.on('connection', socket => {
     if (!p) return; persist(p); players.delete(socket.id); io.to(p.zone).emit('left', p.id); io.emit('system', `${p.name} đã rời game.`);
   });
 });
+// ---------- Đảo Rubik 3D (ocean.html): namespace riêng /island, chỉ đồng bộ vị trí người chơi ----------
+const island = io.of('/island'), islanders = new Map();
+const num = (v, lo, hi) => (Number.isFinite(+v) ? Math.max(lo, Math.min(hi, +v)) : 0);
+island.on('connection', socket => {
+  let me = null, last = 0;
+  socket.on('join', d => {
+    if (me) return;
+    me = { id: socket.id, name: clean(d && d.name, 18) || 'Bạn mới', hue: num(d && d.hue, 0, 360), x: 0, y: 0, z: 10, r: 0, s: 0 };
+    islanders.set(socket.id, me);
+    socket.emit('players', [...islanders.values()].filter(p => p.id !== socket.id));
+    socket.broadcast.emit('joined', me);
+  });
+  socket.on('m', d => {
+    const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
+    me.x = num(d.x, -150, 150); me.y = num(d.y, -20, 60); me.z = num(d.z, -150, 150); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);
+    socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
+  });
+  socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
+});
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
 server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); });

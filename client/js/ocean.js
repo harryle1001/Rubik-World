@@ -8,6 +8,7 @@ import { createPlayer } from './island/player.js';
 import { scatterModel } from './island/models.js';
 import { createTemples } from './island/temple.js';
 import { createAudio } from './island/audio.js';
+import { createNet } from './island/net.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -23,6 +24,9 @@ const terrain = createTerrain(scene);
 const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
 // thông báo ngắn
 ctx.toast = (t, ms = 3000) => { const el = document.getElementById('info'); el.innerHTML = t; el.style.opacity = 1; clearTimeout(ctx._tt); ctx._tt = setTimeout(() => el.style.opacity = 0, ms); };
+// tên & màu áo người chơi (lưu trên máy)
+ctx.playerName = localStorage.getItem('island.name') || ('Bạn nhỏ ' + Math.floor(100 + Math.random() * 900)); localStorage.setItem('island.name', ctx.playerName);
+ctx.hue = +(localStorage.getItem('island.hue') || Math.floor(Math.random() * 360)); localStorage.setItem('island.hue', ctx.hue);
 const player = ctx.player = createPlayer(ctx);
 
 // Model Blender (.glb): đá (Draco) và rùa (Meshopt) rải trên bãi cát
@@ -38,6 +42,7 @@ const player = ctx.player = createPlayer(ctx);
 
 const audio = ctx.audio = createAudio(ctx);
 const temples = createTemples(ctx);
+const net = ctx.net = createNet(ctx);
 
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
 const clock = new THREE.Clock();
@@ -48,6 +53,7 @@ renderer.setAnimationLoop(() => {
   terrain.update(dt, clock.elapsedTime, player.pos);
   temples.update(dt, clock.elapsedTime);
   audio.update(dt, sky.state.night);
+  net.update(dt);
   sky.update(dt, camera, player.pos);
   post.render();
 });

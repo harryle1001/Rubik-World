@@ -7,15 +7,16 @@ import { toon, addOutline } from './style.js';
 const P = CFG.player, C = CFG.camera;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
-function makeHero() {
+export function makeHero(hue = 128) {
+  const shirt = new THREE.Color().setHSL(hue / 360, 0.4, 0.4).getStyle();
   const root = new THREE.Group(), body = new THREE.Group(); root.add(body);
   const part = (geo, col, x, y, z, parent = body) => { const m = new THREE.Mesh(geo, toon(col)); m.position.set(x, y, z); m.castShadow = true; parent.add(m); return m; };
   const limb = (x, y, len, col) => { const g = new THREE.Group(); g.position.set(x, y, 0); body.add(g); part(new THREE.CapsuleGeometry(0.11, len, 3, 8), col, 0, -len / 2 - 0.05, 0, g); return g; };
-  part(new THREE.CapsuleGeometry(0.3, 0.45, 4, 10), '#3d8f4a', 0, 1.05, 0);              // áo xanh lá kiểu hiệp sĩ
+  part(new THREE.CapsuleGeometry(0.3, 0.45, 4, 10), shirt, 0, 1.05, 0);              // áo xanh lá kiểu hiệp sĩ
   part(new THREE.CylinderGeometry(0.33, 0.33, 0.08, 12), '#6b4a2b', 0, 0.9, 0);           // thắt lưng
   part(new THREE.SphereGeometry(0.32, 16, 12), '#f2c9a0', 0, 1.72, 0);                    // đầu
   part(new THREE.SphereGeometry(0.33, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), '#e8b84a', 0, 1.76, -0.03); // tóc vàng
-  const hat = part(new THREE.ConeGeometry(0.3, 0.75, 10), '#3d8f4a', 0, 2.1, -0.12); hat.rotation.x = -0.5; // mũ nhọn
+  const hat = part(new THREE.ConeGeometry(0.3, 0.75, 10), shirt, 0, 2.1, -0.12); hat.rotation.x = -0.5; // mũ nhọn
   for (const s of [-1, 1]) part(new THREE.SphereGeometry(0.045, 6, 6), '#1b1626', s * 0.11, 1.75, 0.29);
   part(new THREE.BoxGeometry(0.34, 0.42, 0.12), '#8a5a34', 0, 1.15, -0.32);                // khiên gỗ sau lưng
   const legL = limb(-0.14, 0.72, 0.42, '#6b4a2b'), legR = limb(0.14, 0.72, 0.42, '#6b4a2b');
@@ -26,7 +27,7 @@ function makeHero() {
 
 export function createPlayer(ctx) {
   const { scene, camera, terrain, renderer } = ctx;
-  const h = makeHero(); scene.add(h.root);
+  const h = makeHero(ctx.hue); scene.add(h.root);
   const pos = new THREE.Vector3(0, 0, 10); pos.y = terrain.heightAt(pos.x, pos.z);
   const vel = new THREE.Vector3(); let vy = 0, grounded = true, rot = Math.PI, phase = 0;
   const cam = { yaw: 0, pitch: C.pitch, dist: C.distance, drag: -9 };
