@@ -4,9 +4,18 @@
 <title>Đảo Rubik 3D</title>
 <style>html,body{margin:0;height:100%;overflow:hidden;background:#2a3a74;font-family:system-ui,sans-serif}
 #hud{position:fixed;left:12px;top:12px;color:#d8f6ff;font-size:14px;text-shadow:0 1px 3px #000;pointer-events:none}
+#joy{position:fixed;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;background:#fff2;border:2px solid #fff6;opacity:0;pointer-events:none;transition:opacity .15s}
+#knob{position:absolute;left:30px;top:30px;width:50px;height:50px;border-radius:50%;background:#fffc}
+.btns{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));display:flex;gap:12px;align-items:flex-end}
+.btns button{width:70px;height:70px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;color:#fff;font:700 13px system-ui;touch-action:none;-webkit-user-select:none;user-select:none}
+#bJump{width:84px;height:84px;background:#3d8f4acc}
+@media (pointer:fine){.btns{display:none}}
+canvas{touch-action:none}
 #info{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#0009;color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:.3s;pointer-events:none;text-align:center}</style>
 <script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script>
 </head><body>
 <div id="hud">🏝️ Đảo Rubik</div><div id="info"></div>
+<div id="joy"><div id="knob"></div></div>
+<div class="btns"><button id="bRun">Chạy</button><button id="bJump">Nhảy</button></div>
 <script type="module" src="/js/ocean.js"></script>
 </body></html>
