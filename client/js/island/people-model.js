@@ -179,7 +179,14 @@ export function buildPerson(J, look) {
     // cổ áo sơ mi + khuy + túi ngực
     for (const k of [-1, 1]) add(new THREE.ConeGeometry(0.06, 0.1, 3).rotateX(Math.PI).scale(1, 1, 0.3), 'chest', shirt, at(ch.x + k * 0.065, sy + 0.025, ch.z + 0.112, 0.35, 0, k * 0.55));
     for (let i = 0; i < 3; i++) add(ell(0.012, 0.012, 0.006, 5, 3), 'chest', '#c9ced8', at(ch.x, sy - 0.13 - i * 0.075, ch.z + 0.136), true);
-    add(box(0.09, 0.085, 0.01), 'chest', new THREE.Color(shirt).offsetHSL(0, 0, -0.05).getStyle(), at(ch.x + 0.11, sy - 0.12, ch.z + 0.136), true);
+    add(box(0.09, 0.085, 0.01), 'chest', new THREE.Color(shirt).offsetHSL(0, 0, -0.05).getStyle(), at(ch.x + 0.085, sy - 0.14, ch.z + 0.136), true);
+  }
+  if (L.scarf) { // học sinh: bảng tên trên ngực phải + phù hiệu trường (xanh, viền vàng) trên tay áo trái
+    add(box(0.1, 0.035, 0.008), 'chest', '#ffffff', at(ch.x - 0.085, sy - 0.13, ch.z + 0.139), true);
+    add(box(0.07, 0.008, 0.009), 'chest', '#2b6cb0', at(ch.x - 0.085, sy - 0.13, ch.z + 0.141), true);
+    const a = J.upperarml, e = J.lowerarml, m = a.clone().lerp(e, 0.3);
+    add(ell(0.04, 0.04, 0.012, 6, 3).rotateX(Math.PI / 2), 'upperarml', '#ffd23f', at(m.x, m.y, m.z + 0.08), true);
+    add(ell(0.03, 0.03, 0.012, 6, 3).rotateX(Math.PI / 2), 'upperarml', '#2b6cb0', at(m.x, m.y + 0.003, m.z + 0.084), true);
   }
   if (L.tie) add(new THREE.ConeGeometry(0.035, 0.24, 4).rotateX(Math.PI).scale(1, 1, 0.3), 'chest', L.tie, at(ch.x, sy - 0.1, ch.z + 0.142), true);
   // khăn quàng đỏ: vòng cổ + nút + 2 vạt
@@ -218,8 +225,8 @@ export function buildPerson(J, look) {
     add(rbox(0.26, 0.15, 0.06, 0.2, 1), 'chest', bc.clone().offsetHSL(0, 0, 0.08).getStyle(), at(ch.x, by - 0.09, bz - 0.09));
     add(box(0.08, 0.04, 0.02), 'chest', '#ffd23f', at(ch.x, by + 0.1, bz - 0.09), true);
     for (const k of [-1, 1]) {
-      add(box(0.045, 0.3, 0.02), 'chest', '#2b2b38', at(ch.x + k * 0.12, sy - 0.17, ch.z + 0.138), true);
-      add(box(0.05, 0.03, 0.3), 'chest', '#2b2b38', at(ch.x + k * 0.12, sy + 0.065, ch.z - 0.01), true);
+      add(box(0.045, 0.3, 0.02), 'chest', '#2b2b38', at(ch.x + k * 0.155, sy - 0.17, ch.z + 0.136), true);
+      add(box(0.05, 0.03, 0.3), 'chest', '#2b2b38', at(ch.x + k * 0.155, sy + 0.065, ch.z - 0.01), true);
     }
   }
   // --- vật cầm tay (tay phải: x âm) ---
