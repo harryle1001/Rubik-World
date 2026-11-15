@@ -68,7 +68,7 @@ export function createTemples(ctx) {
   }
   function openChest(t) {
     t.chestOpen = true; done[t.T.id + '-chest'] = 1; save(SAVE, done);
-    const r = t.T.reward; inv[r.id] = inv[r.id] || { icon: r.icon, n: 0 }; inv[r.id].n++; save(INV, inv); showInv();
+    const r = t.T.reward; Object.assign(inv, load(INV)); inv[r.id] = inv[r.id] || { icon: r.icon, n: 0 }; inv[r.id].n++; save(INV, inv); showInv();
     ctx.toast(`${r.icon} Bạn nhận được ${r.name}!`); ctx.sfx && ctx.sfx('win'); ctx.player.emote && ctx.player.emote('cheer');
   }
 

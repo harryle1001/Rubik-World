@@ -23,6 +23,7 @@ import { createEasterEggs } from './island/easter-eggs.js';
 import { createDt } from './island/motion.js';
 import { createAmbience } from './island/ambience.js';
 import { createSealife } from './island/sealife.js';
+import { createTreasure } from './island/treasure.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -77,6 +78,7 @@ const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông,
 const eggs = ctx.eggs = createEasterEggs(ctx); // 13 bí mật: khối Rubik vàng, pháo hoa π, cá voi… (📖 Sổ bí mật)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 const sealife = ctx.sealife = createSealife(ctx); // thế giới biển: san hô, đàn cá, sứa, rùa, cá đuối, cá heo, Bách khoa biển
+const treasure = ctx.treasure = createTreasure(ctx); // 13 rương kho báu dưới đáy biển + câu đố biển + mảnh bản đồ (HUD 🧰)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
@@ -116,6 +118,7 @@ renderer.setAnimationLoop(() => {
   eggs.update(dt, clock.elapsedTime);
   ambience.update(dt);
   sealife.update(dt);
+  treasure.update(dt);
   ctx.flushOffer();
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
