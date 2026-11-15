@@ -11,6 +11,7 @@ import { BLOCKS, EXTRA, blockOf2D, SPAWN, WORLD, PHI, ISLAND_R, ZONES_N, zoneAng
 import { Batch, DetailGrid, createLife, detailMats } from './decor.js';
 import { buildSchoolZone, rubikCube as rubikCubeReal } from './zone-school.js';
 import { buildZoneEast } from './zone-east.js';
+import { buildExtraZones, buildBoats, placePalms } from './zone-extra.js';
 
 const _o = new THREE.Object3D(), _c = new THREE.Color();
 const shade = (hex, l) => '#' + new THREE.Color(hex).offsetHSL(0, 0, l).getHexString();
@@ -246,103 +247,13 @@ export function buildTownArchitecture(ctx, RS, env) {
     if (posts) for (let u = -L / 2 + 0.2; u <= L / 2; u += 2.4) for (const s of [-1, 1]) { const px = along ? cx + s * (w / 2 - 0.1) : cx + u, pz = along ? cz + u : cz + s * (d / 2 - 0.1); b.cyl(0.13, 0.13, y + 2.2, px, -2.2, pz, '#6b4a2b', 6); }
     ctx.decks.push({ x0, x1, z0, z1, y });
   };
-  const hut = (b, x, z, y, r, wall, roofC) => { addFootC(x, z, r * 1.1); b.cyl(r * 0.9, r, 2.0, x, y, z, wall, 8); b.cone(r * 1.45, 1.6, x, y + 2.0, z, roofC, 8); b.box(0.8, 1.4, 0.1, x, y, z + r * 0.95, '#6b4a2b'); };
-  const dome = (b, x, z, y, r, col = '#dfe9ee') => { addFootC(x, z, r * 1.05); b.cyl(r, r, 0.5, x, y, z, '#b07a48', 10); b.push(new THREE.SphereGeometry(r * 0.95, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2), col, x, y + 0.5, z, 0, 0, 0, 1, 0.75, 1); b.cyl(r * 0.3, r * 0.3, 0.15, x, y + 0.5 + r * 0.7, z, '#7fd0e8', 8); b.box(1.0, 1.6, 0.1, x, y + 0.5, z + r * 0.93, '#6b4a2b'); };
   // không trồng cây chắn tầm nhìn lúc vừa vào game (điểm xuất phát + đoạn camera phía sau)
   const clearView = (x, z) => Math.hypot(x - SPAWN[0], z - SPAWN[1]) > 9 && !(x > SPAWN[0] - 16 && x < SPAWN[0] + 3 && Math.abs(z - SPAWN[1]) < 5);
   const palmAt = (x, z, y, s = 1) => clearView(x, z) && palms.push({ x, z, y, s: s * (0.85 + rnd() * 0.4), ry: rnd() * 6.28, lean: 0.15 + rnd() * 0.25 });
 
-  // --- E. Làng nổi trên biển: nhà mái vòm trên sàn gỗ, cầu tàu nối vào bờ nam của đảo, đèn lồng, thuyền buồm ---
-  if (ZR.E) {
-    const b = B.E = new Batch('E'), [x0, z0, x1, z1] = ZR.E, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, y = 1.1;
-    let sz = 30; while (sz < z0 && hgt(cx, sz) > 0.2) sz += 1;             // bờ nam của đảo
-    measure(b, 'village', () => {
-      // (đã bỏ cầu tàu nối đảo với làng nổi — đến làng bằng thuyền)
-      deck(b, cx - 8, cz - 8, cx + 8, cz + 8, y, true, '#c08a52'); dome(b, cx, cz, y, 6.2, '#e8f1f4');      // nhà vòm trung tâm
-      signAt(b, atlas.sign('LÀNG NỔI TRÊN BIỂN', '#1d5c7a', '#fff', '#ffd36e'), 4.4, 0.55, cx, y + 3.2, cz + 6.3);
-      const pods = [[-22, -6], [22, -6], [-26, 16], [26, 16], [-10, 26], [10, 26]];
-      for (const [dx, dz] of pods) {
-        const px = cx + dx, pz = cz + dz; deck(b, px - 4.5, pz - 4.5, px + 4.5, pz + 4.5, y);
-        if (Math.abs(dx) > 15) deck(b, Math.min(cx + Math.sign(dx) * 8, px - Math.sign(dx) * 4.5), pz - 1, Math.max(cx + Math.sign(dx) * 8, px - Math.sign(dx) * 4.5), pz + 1, y, false);   // lối ngang
-        else deck(b, px - 1, Math.min(cz + 8, pz - 4.5), px + 1, Math.max(cz + 8, pz - 4.5), y, false);
-        (dx + dz) % 4 ? dome(b, px, pz, y, 3.4) : hut(b, px, pz, y, 2.6, '#f2c99a', '#d9542b');
-        lamp(b, px + 3.6, pz + 3.6, y); palmAt(px - 3.4, pz - 3.4, y, 0.8);
-      }
-      deck(b, cx + 6, cz + 2, cx + 22, cz + 4, y, false); deck(b, cx - 22, cz + 2, cx - 6, cz + 4, y, false);
-      for (const [dx, dz] of [[-14, -14], [16, -16], [0, 36], [-30, 30]]) boatsDeco.push([cx + dx, cz + dz, rnd() * 6.28, ['#d8452f', '#3d8fd9', '#f2a23a'][boatsDeco.length % 3]]);
-    });
-  }
-  // --- F. Công viên Safari: đường mòn uốn lượn, suối, thú (hươu cao cổ, ngựa vằn, voi, nai), chòi lá, cây dừa ---
-  if (ZR.F) {
-    const b = B.F = new Batch('F'), [x0, z0, x1, z1] = ZR.F, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
-    measure(b, 'safari', () => {
-      b.plane(x1 - x0, z1 - z0, cx, Y + 0.01, cz, '#7cc45a', 0, -Math.PI / 2);
-      for (let i = 0; i <= 60; i++) { const t = i / 60, x = x0 + 6 + t * (x1 - x0 - 12), z = cz + Math.sin(t * 9) * 18, a = Math.atan2(9 * 18 / (x1 - x0), 1) * Math.cos(t * 9); b.box(2.6, 0.04, 2.2, x, Y + 0.01, z, '#e3d3b0', -a + Math.PI / 2 * 0); }
-      for (let i = 0; i <= 50; i++) { const t = i / 50, z = z0 + 4 + t * (z1 - z0 - 8), x = cx + 20 + Math.sin(t * 7 + 1) * 10; b.box(3.2, 0.03, 2.4, x, Y + 0.02, z, '#5fc8d8'); if (i % 4 === 0) b.ball(0.45, x + 1.9, Y + 0.2, z, '#b5aea3', 1.2, 0.6, 1); }
-      const giraffe = (x, z, ry) => b.group(x, Y, z, ry, () => { for (const [u, v] of [[-0.35, -0.6], [0.35, -0.6], [-0.35, 0.6], [0.35, 0.6]]) b.box(0.18, 1.6, 0.18, u, 0, v, '#e8b74a'); b.box(0.9, 0.8, 1.7, 0, 1.6, 0, '#f2c14e'); b.box(0.35, 2.0, 0.35, 0, 2.2, 0.75, '#f2c14e', 0, 0.35); b.box(0.42, 0.42, 0.8, 0, 4.0, 1.4, '#f2c14e'); for (let i = 0; i < 5; i++) b.box(0.3, 0.3, 0.05, (i % 2 - 0.5) * 0.5, 1.8 + (i % 3) * 0.2, -0.6 + i * 0.3, '#9a5b2e'); });
-      const zebra = (x, z, ry) => b.group(x, Y, z, ry, () => { for (const [u, v] of [[-0.25, -0.5], [0.25, -0.5], [-0.25, 0.5], [0.25, 0.5]]) b.box(0.14, 0.8, 0.14, u, 0, v, '#ffffff'); b.box(0.7, 0.65, 1.4, 0, 0.8, 0, '#ffffff'); for (let i = 0; i < 5; i++) b.box(0.72, 0.66, 0.08, 0, 0.8, -0.55 + i * 0.27, '#2b2633'); b.box(0.32, 0.65, 0.5, 0, 1.25, 0.8, '#ffffff', 0, -0.5); });
-      const elephant = (x, z, ry) => b.group(x, Y, z, ry, () => { for (const [u, v] of [[-0.5, -0.7], [0.5, -0.7], [-0.5, 0.7], [0.5, 0.7]]) b.box(0.45, 1.1, 0.45, u, 0, v, '#9aa0a8'); b.box(1.5, 1.3, 2.2, 0, 1.0, 0, '#a8aeb6'); b.box(1.0, 1.0, 0.9, 0, 1.5, 1.4, '#a8aeb6'); for (const s of [-1, 1]) b.box(0.08, 0.9, 0.8, s * 0.6, 1.6, 1.3, '#9aa0a8'); b.box(0.25, 1.2, 0.25, 0, 0.5, 1.95, '#9aa0a8', 0, 0.2); });
-      const deer = (x, z, ry) => b.group(x, Y, z, ry, () => { for (const [u, v] of [[-0.18, -0.35], [0.18, -0.35], [-0.18, 0.35], [0.18, 0.35]]) b.box(0.1, 0.6, 0.1, u, 0, v, '#b57a45'); b.box(0.45, 0.4, 0.95, 0, 0.6, 0, '#c98a52'); b.box(0.24, 0.4, 0.35, 0, 0.95, 0.5, '#c98a52', 0, -0.4); b.box(0.5, 0.05, 0.05, 0, 1.3, 0.55, '#7a5230'); });
-      const herds = [[giraffe, 4], [zebra, 6], [elephant, 3], [deer, 7]];
-      herds.forEach(([fn, n], k) => { const hx = x0 + 15 + (k % 2) * 55, hz = z0 + 18 + Math.floor(k / 2) * 55; for (let i = 0; i < n; i++) fn(hx + rnd() * 18, hz + rnd() * 18, rnd() * 6.28); });
-      // hàng rào gỗ quanh 4 bãi thú
-      for (let k = 0; k < 4; k++) { const hx = x0 + 11 + (k % 2) * 55, hz = z0 + 14 + Math.floor(k / 2) * 55; for (const [ax, az, bx2, bz2] of [[hx, hz, hx + 26, hz], [hx, hz + 26, hx + 26, hz + 26], [hx, hz, hx, hz + 26], [hx + 26, hz, hx + 26, hz + 26]]) { const L = Math.hypot(bx2 - ax, bz2 - az), ry = Math.atan2(bx2 - ax, bz2 - az) - Math.PI / 2; b.group((ax + bx2) / 2, Y, (az + bz2) / 2, ry, () => { for (let u = -L / 2; u <= L / 2; u += 3) b.box(0.18, 1.0, 0.18, u, 0, 0, '#8a5a34'); b.box(L, 0.1, 0.07, 0, 0.75, 0, '#a87445'); }); } }
-      for (let i = 0; i < 4; i++) hut(b, x1 - 12 - i * 7, z0 + 8, Y, 2.2, '#c9a45c', '#a8743f');
-      b.group(x1 - 2, Y, cz, Math.PI / 2, () => { for (const s of [-1, 1]) { b.box(0.6, 4.2, 0.6, s * 3, 0, 0, '#6b4a2b'); } b.box(7, 0.6, 0.5, 0, 4.2, 0, '#8a5a34'); signAt(b, atlas.sign('CÔNG VIÊN SAFARI', '#3f6b2a', '#fff', '#e8c45a'), 5.2, 0.6, 0, 4.5, 0.3); });
-      for (let i = 0; i < 26; i++) { const x = x0 + 4 + rnd() * (x1 - x0 - 8), z = z0 + 4 + rnd() * (z1 - z0 - 8); if (Math.abs(z - (cz + Math.sin((x - x0 - 6) / (x1 - x0 - 12) * 9) * 18)) > 4) (i % 3 ? palmAt : (xx, zz) => trees.push([xx, zz, 'leaf', 1.2 + rnd() * 0.4]))(x, z, Y); }
-    });
-  }
-  // --- G. Học viện Hoa Phượng (kiểu khuôn viên đối xứng, mái ngói cam 4 mái, sân phun nước, sân tennis, dãy biệt thự) ---
-  if (ZR.G) {
-    const b = B.G = new Batch('G'), [x0, z0, x1, z1] = ZR.G, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, OR = '#e8763a', WH = '#f6efe2';
-    const blk = (x, z, w, d, h, name) => { b.box(w, h, d, x, Y, z, WH); b.box(w + 0.1, 0.3, d + 0.1, x, Y, z, '#cdbfa5'); b.hip(w + 1.2, Math.min(w, d) * 0.35, d + 1.2, x, Y + h, z, OR); for (let u = -w / 2 + 1.2; u < w / 2 - 0.6; u += 1.8) for (let f = 0; f < Math.floor(h / 2.2); f++) for (const s of [-1, 1]) b.plane(0.9, 1.1, x + u, Y + 1.3 + f * 2.2, z + s * (d / 2 + 0.02), '#4f86b8', s < 0 ? Math.PI : 0); ctx.boxes.push({ x0: x - w / 2, x1: x + w / 2, z0: z - d / 2, z1: z + d / 2, top: Y + h }); };
-    measure(b, 'academy', () => {
-      b.plane(x1 - x0, z1 - z0, cx, Y + 0.01, cz, '#8fcf6a', 0, -Math.PI / 2);
-      b.box(10, 0.04, z1 - z0, cx, Y + 0.01, cz, '#e9e2d2'); b.box(x1 - x0, 0.04, 6, cx, Y + 0.012, cz + 10, '#d6d0c4');
-      // nhà chính: 2 khối + khối giữa + sảnh, đối xứng
-      for (const s of [-1, 1]) blk(cx + s * 12, cz - 14, 14, 12, 6.6);
-      blk(cx, cz - 2, 18, 9, 6.6); blk(cx, cz + 4.5, 6, 5, 4.4);
-      signAt(b, atlas.sign('HỌC VIỆN HOA PHƯỢNG', '#8a2b1e', '#fff3c4', '#e9b949'), 5.6, 0.62, cx, Y + 3.5, cz + 7.05);
-      // sân phun nước + bồn hoa hình cá
-      b.cyl(3.2, 3.4, 0.5, cx, Y, cz + 16, '#e2dccc', 12); b.cyl(2.8, 2.8, 0.06, cx, Y + 0.45, cz + 16, '#5fc8e8', 12); b.cyl(0.4, 0.6, 1.6, cx, Y, cz + 16, '#e2dccc', 8); b.ball(0.5, cx, Y + 1.9, cz + 16, '#bfe9f6');
-      for (const s of [-1, 1]) { b.push(new THREE.SphereGeometry(1, 8, 4), '#3f8f3a', cx + s * 16, Y + 0.3, cz + 26, 0, 0, 0, 6, 0.4, 2); b.cone(1.6, 2.4, cx + s * 22.5, Y + 0.05, cz + 26, '#3f8f3a', 3, s * Math.PI / 2); }
-      // khu bên trái: nhà chữ U + sân tennis
-      blk(x0 + 12, z0 + 10, 16, 4, 4.4); blk(x0 + 5, z0 + 18, 4, 14, 4.4); blk(x0 + 19, z0 + 18, 4, 14, 4.4);
-      for (let i = 0; i < 2; i++) { const tx = x0 + 8 + i * 9, tz = cz + 10; b.box(8, 0.05, 13, tx, Y + 0.01, tz, '#3fa7c8'); b.box(8, 0.06, 0.08, tx, Y + 0.02, tz, '#ffffff'); b.box(8.2, 1.0, 0.05, tx, Y, tz, '#2b2633'); }
-      // khu bên phải: nhà vuông mái chóp + vườn tròn
-      blk(x1 - 16, z0 + 10, 9, 9, 5.5); b.cyl(7, 7, 0.06, x1 - 16, Y + 0.01, cz + 8, '#bfe39a', 16); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.28; b.ball(0.7, x1 - 16 + Math.cos(a) * 5, Y + 0.6, cz + 8 + Math.sin(a) * 5, ['#e85d8a', '#f5c518', '#e8392f'][i % 3]); }
-      // dãy biệt thự mái cam phía nam
-      for (let i = 0; i < 8; i++) { const vx = x0 + 9 + i * ((x1 - x0 - 18) / 7), vz = z1 - 9; if (Math.abs(vx - cx) < 7) continue; blk(vx, vz, 7, 6, 3.6); }
-      for (let i = 0; i < 14; i++) trees.push([x0 + 3 + i * (x1 - x0 - 6) / 13, z0 + 2.5, i % 2 ? 'phuong' : 'leaf', 1.1]);
-      for (let i = 0; i < 10; i++) palmAt(cx + (i % 2 ? 1 : -1) * 6.5, cz + 10 + Math.floor(i / 2) * 5, Y, 1.0);
-    });
-  }
-  // --- H. Resort Biển Xanh: khách sạn bậc thang, hồ bơi, chòi bát giác, dù bãi biển, biệt thự trên đồi ---
-  if (ZR.H) {
-    const b = B.H = new Batch('H'), [x0, z0, x1, z1] = ZR.H, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, sandZ = z1 - 18;
-    measure(b, 'resort', () => {
-      b.plane(x1 - x0, sandZ - z0, cx, Y + 0.01, (z0 + sandZ) / 2, '#8fcf6a', 0, -Math.PI / 2); b.plane(x1 - x0, z1 - sandZ, cx, Y + 0.012, (sandZ + z1) / 2, '#f3d29a', 0, -Math.PI / 2);
-      // khách sạn: khối chính + khối bậc thang + mái xanh
-      const hx = cx - 8, hz = z0 + 14;
-      b.box(30, 14, 9, hx, Y, hz, '#f4f6f8'); for (let f = 0; f < 6; f++) for (let u = -13.5; u <= 13.5; u += 1.8) b.plane(1.3, 1.4, hx + u, Y + 1.6 + f * 2.2, hz + 4.52, (f + Math.round(u)) % 3 ? '#7fc4e8' : '#a9dcf2');
-      b.box(30.6, 0.5, 9.6, hx, Y + 14, hz, '#9ad26e');
-      for (let i = 0; i < 5; i++) b.box(7, 12 - i * 2.4, 6, hx + 19 + i * 0.01, Y, hz + i * 2.2 - 2, i % 2 ? '#ffffff' : '#eef3f6');
-      b.box(10, 6, 8, hx - 20, Y, hz + 1, '#e8f1f4'); b.plane(9, 5, hx - 20, Y + 3, hz + 5.02, '#8fd0ea');
-      ctx.boxes.push({ x0: hx - 25, x1: hx + 23, z0: hz - 4.5, z1: hz + 6, top: Y + 14 });
-      signAt(b, atlas.sign('RESORT BIỂN XANH', '#1d5c7a', '#fff', '#ffd36e'), 5.6, 0.6, hx, Y + 4.4, hz + 4.6);
-      // hồ bơi uốn lượn + ghế nằm
-      for (const [px, pz, rx, rz] of [[cx - 14, cz + 2, 7, 4], [cx + 4, cz + 4, 5, 3.4], [cx + 18, cz + 1, 4, 3]]) { b.push(new THREE.CircleGeometry(1, 16).rotateX(-Math.PI / 2), '#e8e2d4', px, Y + 0.02, pz, 0, 0, 0, rx + 0.8, 1, rz + 0.8); b.push(new THREE.CircleGeometry(1, 16).rotateX(-Math.PI / 2), '#3fd0e8', px, Y + 0.04, pz, 0, 0, 0, rx, 1, rz); }
-      for (let i = 0; i < 10; i++) b.box(0.7, 0.3, 1.8, cx - 22 + i * 4.5, Y, cz + 9, '#ffffff');
-      // chòi bát giác trên bãi biển + dù che nắng
-      const gx = x0 + 18, gz = z1 - 6; b.cyl(4, 4, 0.4, gx, Y, gz, '#c08a52', 8); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.28; b.box(0.25, 2.6, 0.25, gx + Math.cos(a) * 3.6, Y + 0.4, gz + Math.sin(a) * 3.6, '#8a5a34'); } b.cone(5, 2.2, gx, Y + 3, gz, '#8a6a3a', 8); b.cone(1.2, 1.0, gx, Y + 5, gz, '#7a5a2a', 8);
-      for (let i = 0; i < 9; i++) { const ux = x0 + 32 + i * 9, uz = z1 - 8 + (i % 2) * 4; b.cyl(0.05, 0.05, 2.2, ux, Y, uz, '#ffffff', 5); b.cone(1.5, 0.6, ux, Y + 2.0, uz, ['#e8392f', '#f5c518', '#3d8fd9'][i % 3], 8); b.box(0.6, 0.15, 1.6, ux + 1.2, Y + 0.25, uz, '#ffffff'); }
-      // biệt thự nhỏ trên đồi phía sau (mái đỏ)
-      for (let i = 0; i < 6; i++) addFoot(x0 + 5.5 + i * 20, z0 - 1.5, x0 + 10.5 + i * 20, z0 + 2.5);
-      for (let i = 0; i < 6; i++) b.group(x0 + 8 + i * 20, Y, z0 + 2.5, 0, () => house(b, 5, 4, { wall: '#fff6e8', roof: '#c4452f', trim: '#ffffff', floors: 2, roofT: 'hip', balcony: true }));
-      for (let i = 0; i < 18; i++) palmAt(x0 + 4 + rnd() * (x1 - x0 - 8), sandZ - 6 + rnd() * 14, Y, 1.1);
-      if (hgt(x1 - 20, z1 + 18) < -0.5) { deck(b, x1 - 22, z1 - 1, x1 - 19, z1 + 22, 1.1); lamp(b, x1 - 18.9, z1 + 10, 1.1); boatsDeco.push([x1 - 16, z1 + 18, 0.4, '#3d8fd9']); }   // cầu tàu chỉ khi phía trước là biển
-    });
-  }
+  // E Làng nổi · F Safari · G Học viện Hoa Phượng · H Resort + cầu gỗ/đá/cỏ bờ biển: xem zone-extra.js
+  const extra = buildExtraZones(ctx, { B, ZR, ALL, Y, DG, atlas, signAt, measure, trees, rnd, low, palmAt, addFoot, addFootC });
+
   // ================= VÒNG NHÀ Ở QUANH TRƯỜNG: đường vòng (π), 8 đường hướng tâm (2π/8), lô đất có sân vườn (φ) =================
   measure(B.ground, 'ring-roads', () => {
     const G = B.ground, rIn = RING_ROAD_R - ROAD_W / 2, rOut = RING_ROAD_R + ROAD_W / 2;
@@ -495,23 +406,16 @@ export function buildTownArchitecture(ctx, RS, env) {
   inst(new THREE.ConeGeometry(0.22, 0.4, 5), toon('#ff9ec4'), flowers, ([x, z]) => set(x + 0.1, Y + 0.12, z, 1, 0), false, false);
   inst(new THREE.ConeGeometry(0.16, 0.42, 4).translate(0, 0.21, 0), toon('#ffffff'), fl.map(([x, z, col]) => ({ x, z, col })), q => set(q.x, Y, q.z, 1, q.x), false, false);
 
-  // cây dừa: model kit CC0 (tree_palm) qua terrain.nature
-  if (palms.length) ctx.terrain.nature.add('palm', palms.map(q => [q.x, q.y - 0.05, q.z, q.s * 4.0, q.ry]));
-  // thuyền buồm neo (trang trí, nhấp nhô nhẹ trong update)
-  const decoBoats = [];
-  if (boatsDeco.length) {
-    const bb = new Batch('boat'); bb.group(0, 0, 0, 0, () => { bb.box(1.3, 0.5, 3.2, 0, -0.2, 0, '#ffffff'); bb.box(1.1, 0.06, 2.8, 0, 0.3, 0, '#a87445'); bb.cyl(0.05, 0.05, 3.2, 0, 0.3, 0.5, '#8a5a34', 5); bb.push(new THREE.ConeGeometry(1, 2.6, 3).scale(0.05, 1, 0.9), '#f4efe4', 0, 1.9, 0.05); });
-    const bg = mergeGeometries(bb.geos);
-    for (const [x, z, ry, col] of boatsDeco) { const m = new THREE.Mesh(bg, mat); m.position.set(x, 0, z); m.rotation.y = ry; m.castShadow = true; const band = new THREE.Mesh(new THREE.BoxGeometry(1.34, 0.16, 3.0), toon(col)); band.position.y = 0.05; m.add(band); addOutline(m); scene.add(m); decoBoats.push(m); out.push(m); }
-  }
+  // cây dừa (model kit, chia ô 70 m) + model kit của 4 khu ven biển; thuyền neo (model kit, nhấp nhô)
+  placePalms(scene, palms); extra.place(scene);
+  const boats = buildBoats(scene, [...boatsDeco.map(([x, z, ry]) => [x, z, ry, 'boat_sail_a', 1.3]), ...extra.boats]);
   // ẩn công trình ở quá xa (sau sương mù) để giữ FPS
-  for (const m of decoBoats) m.updateMatrixWorld();
-  const far = out.filter(m => m.isMesh && m.geometry && !decoBoats.includes(m)).map(m => { if (!m.geometry.boundingSphere) m.geometry.computeBoundingSphere(); const c = m.geometry.boundingSphere.center.clone().applyMatrix4(m.matrixWorld); return { m, c, r: m.geometry.boundingSphere.radius }; });
+  const far = out.filter(m => m.isMesh && m.geometry && !m.isInstancedMesh).map(m => { if (!m.geometry.boundingSphere) m.geometry.computeBoundingSphere(); const c = m.geometry.boundingSphere.center.clone().applyMatrix4(m.matrixWorld); return { m, c, r: m.geometry.boundingSphere.radius }; });
   let upT = 0;
   function update(p, t, dt = 0.016) {
     life.update(t, p);
     SZ.update(p, dt);
-    for (const [i, m] of decoBoats.entries()) { m.position.y = Math.sin(t * 1.4 + i) * 0.08; m.rotation.z = Math.sin(t * 1.1 + i * 2) * 0.05; }
+    boats.update(t);
     if ((upT -= dt) > 0) return; upT = 0.3; DG.update(p, 60);
     const fogFar = (scene.fog && scene.fog.far) || 300;
     for (const q of far) if (!q.m.isInstancedMesh) q.m.visible = q.c.distanceTo(p) - q.r < fogFar + 10;
