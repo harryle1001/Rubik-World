@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { toon, addOutline, outlineMat, gradientMap } from './style.js';
-import { BLOCKS, EXTRA, blockOf2D } from './layout.js';
+import { BLOCKS, EXTRA, blockOf2D, SPAWN } from './layout.js';
 
 const _o = new THREE.Object3D(), _m = new THREE.Matrix4(), _c = new THREE.Color();
 const RUBIK_COL = ['#e8392f', '#2f9e44', '#2b63d9', '#f5c518', '#ff8a1f', '#ffffff'];
@@ -453,7 +453,9 @@ export function buildTownArchitecture(ctx, RS, env) {
   };
   const hut = (b, x, z, y, r, wall, roofC) => { b.cyl(r * 0.9, r, 2.0, x, y, z, wall, 8); b.cone(r * 1.45, 1.6, x, y + 2.0, z, roofC, 8); b.box(0.8, 1.4, 0.1, x, y, z + r * 0.95, '#6b4a2b'); };
   const dome = (b, x, z, y, r, col = '#dfe9ee') => { b.cyl(r, r, 0.5, x, y, z, '#b07a48', 10); b.push(new THREE.SphereGeometry(r * 0.95, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2), col, x, y + 0.5, z, 0, 0, 0, 1, 0.75, 1); b.cyl(r * 0.3, r * 0.3, 0.15, x, y + 0.5 + r * 0.7, z, '#7fd0e8', 8); b.box(1.0, 1.6, 0.1, x, y + 0.5, z + r * 0.93, '#6b4a2b'); };
-  const palmAt = (x, z, y, s = 1) => palms.push({ x, z, y, s: s * (0.85 + rnd() * 0.4), ry: rnd() * 6.28, lean: 0.15 + rnd() * 0.25 });
+  // không trồng cây chắn tầm nhìn lúc vừa vào game (điểm xuất phát + đoạn camera phía sau)
+  const clearView = (x, z) => Math.hypot(x - SPAWN[0], z - SPAWN[1]) > 9 && !(x > SPAWN[0] - 16 && x < SPAWN[0] + 3 && Math.abs(z - SPAWN[1]) < 5);
+  const palmAt = (x, z, y, s = 1) => clearView(x, z) && palms.push({ x, z, y, s: s * (0.85 + rnd() * 0.4), ry: rnd() * 6.28, lean: 0.15 + rnd() * 0.25 });
 
   // --- E. Làng nổi trên biển: nhà mái vòm trên sàn gỗ, cầu tàu nối vào bờ nam của đảo, đèn lồng, thuyền buồm ---
   if (ZR.E) {

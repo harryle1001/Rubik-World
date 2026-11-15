@@ -137,6 +137,7 @@ export function createPlayer(ctx) {
     for (const f of [1, 0.85, 0.7, 0.55, 0.4]) {
       const cx = tx + (want.x - tx) * f, cy = ty + (want.y - ty) * f, cz = tz + (want.z - tz) * f; let hit = false;
       for (const c of ctx.colliders) { const dx = cx - c.x, dz = cz - c.z; if (dx * dx + dz * dz < (c.r * 3.4 + 0.3) ** 2 && cy < terrain.heightAt(c.x, c.z) + 5.5) { hit = true; break; } }
+      if (!hit) for (const b of ctx.boxes || []) if (cx > b.x0 - 0.3 && cx < b.x1 + 0.3 && cz > b.z0 - 0.3 && cz < b.z1 + 0.3 && cy < b.top + 0.5) { hit = true; break; } // không cho camera chui vào nhà
       if (!hit || f === 0.4) { want.set(cx, cy, cz); break; }
     }
     want.y = Math.max(want.y, terrain.heightAt(want.x, want.z) + 0.8, (ctx.groundExtra ? ctx.groundExtra(want.x, want.z, 99) : -99) + 0.8, CFG.island.waterLevel + 0.5);
