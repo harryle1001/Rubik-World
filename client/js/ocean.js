@@ -99,7 +99,7 @@ registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên v
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
-player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
+player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 18; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
 document.getElementById('bMenu').onclick = () => school.menu();
 
 // Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại, hoa, nấm, gốc cây, pha lê quanh đền (khu I rừng & đền, layout.js)
