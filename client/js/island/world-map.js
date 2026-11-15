@@ -10,7 +10,7 @@ import { WORLD, BLOCKS, EXTRA, to2, to3 } from './layout.js';
 const B = WORLD; // khung thế giới (m), theo bố cục layout.js
 const EXTRA_COL = { F: '#c9c27a', G: '#e9cfa0', H: '#f1dca2' };
 const PPM = 2, NEAR = 60;                       // ảnh nền: 2 điểm ảnh / mét; "Gần tôi": 60 m
-const ANIMAL_ICON = { 'animal-deer': '🦌', 'animal-fox': '🦊', 'animal-shiba': '🐕', 'animal-cat': '🐈', 'animal-frog': '🐸', 'animal-crab': '🦀' };
+const ANIMAL_ICON = { gull: '🕊️', sparrow: '🐦', butterfly: '🦋', fish: '🐟', 'animal-deer': '🦌', 'animal-fox': '🦊', 'animal-shiba': '🐕', 'animal-cat': '🐈', 'animal-frog': '🐸', 'animal-crab': '🦀' };
 const NPC_ICON = { swim: '🏊', surf: '🏄', sun: '😎', bike: '🚲', camp: '⛺', picnic: '🧺', fishing: '🎣', walk: '🚶', kite: '🪁' };
 const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', sun: 'Khách du lịch', bike: 'Người đạp xe', camp: 'Bạn cắm trại', picnic: 'Dã ngoại', fishing: 'Bác câu cá', walk: 'Người đi dạo', kite: 'Bạn thả diều' };
 const OPT_KEY = 'island.mapOpts';
@@ -172,7 +172,7 @@ body.rs-modal #bMap{display:none}`;
       const fs = Math.max(11, Math.min(18, ext / 6)), T = L.n.toUpperCase(); g.font = `900 ${fs}px system-ui`; if (free(X, Y, g.measureText(T).width / 2 + 4, fs * 0.7)) text(T, X, Y, fs);
     }
     // con vật
-    if (opts.animals && ctx.animals) for (const A of ctx.animals.list) {
+    if (opts.animals && ctx.animals) for (const A of ctx.animals.list.concat(ctx.animals.flocks || [])) {
       const q = A.root.position; if (!inView(q.x, q.z) || !near(q.x, q.z)) continue; const X = sx(q.x), Y = sy(q.z);
       if (!free(X, Y, 12)) continue; bubble(X, Y, ANIMAL_ICON[A.S.id] || '🐾', 13); icons.push({ x: X, y: Y, t: `${ANIMAL_ICON[A.S.id] || ''} ${A.S.name}: ${A.S.fact}` });
     }
