@@ -112,16 +112,40 @@ export function houseAt(x, z, m = 0) { for (const L of HOUSE_LOTS) { const [u, v
 export const LAGOON = { x: 0, z: A[3], r: LAGOON_R };
 export const lagoonDist = (x, z) => z < LAGOON.z ? 1e9 : Math.hypot(x - LAGOON.x, z - LAGOON.z) - LAGOON.r;
 // đất bằng ở cao độ TOWN_Y ngoài các khu (đường, lô đất) — terrain.js làm phẳng, school-town.js cho đứng đúng cao độ
-export const onFlat = (x, z, m = 0) => roadDist(x, z) < ROAD_W / 2 + m || !!lotAt(x, z, m);
+export const onFlat = (x, z, m = 0) => roadDist(x, z) < ROAD_W / 2 + m || !!lotAt(x, z, m) || !!meadowAt(x, z, m) || pathDist(x, z) < PATH_W / 2 + m;
 // khoảng cách tới vùng làm phẳng (0 = ở trong): đĩa thị trấn quanh trường + dải đường hướng tâm
 export const TOWN_DISC = LOT_R0 + LOT_L + 8;
 export function flatDist(x, z) {
   let d = Math.max(0, Math.hypot(x, z) - TOWN_DISC);
   for (const R of RADIALS) { const t = clamp(x * R.c + z * R.s, R.r0, R.r1); d = Math.min(d, Math.max(0, Math.hypot(x - R.c * t, z - R.s * t) - ROAD_W / 2 - 1)); }
+  for (const M of MEADOWS) d = Math.min(d, Math.max(0, Math.hypot(x - M.x, z - M.z) - M.r - 1));
+  d = Math.min(d, Math.max(0, pathDist(x, z) - PATH_W / 2 - 1));
   return d;
 }
-// VÙNG CẤM TRỒNG CÂY/ĐÁ/HOA ngẫu nhiên: trong khu, lô đất, đường (+ lề), hồ, sân đền, điểm xuất phát
+// VƯỜN TRÒN (π) ở bãi cỏ giữa thị trấn và các khu: 8 vườn ở góc giữa 2 đường hướng tâm (zoneAngle + π/8),
+// bán kính MEADOW_R = 8 m (Fibonacci), đặt ở vòng gần nhất còn trống (không chạm khu, lô, đường)
+export const MEADOW_R = 8;
+export const MEADOWS = [];
+for (let k = 0; k < ZONES_N; k++) {
+  const a = zoneAngle(k) + PI / ZONES_N;
+  for (const r of [152, 146, 160, 168, 140, 176]) {
+    const [x, z] = polar(r, a), m = MEADOW_R + 3;
+    if (landDist(x, z) > m && !lotAt(x, z, m) && roadDist(x, z) > ROAD_W / 2 + m && Math.hypot(x, z) < ISLAND_R * 0.78 && Math.hypot(x - TEMPLE_C[0], z - TEMPLE_C[1]) > 30 + m) { MEADOWS.push({ k, a, x, z, r: MEADOW_R }); break; }
+  }
+}
+export const meadowAt = (x, z, m = 0) => MEADOWS.find(q => Math.hypot(x - q.x, z - q.z) < q.r + m);
+// lối mòn nối mỗi vườn tròn ra đường hướng tâm gần nhất (không có đường cụt)
+const segDist = (x, z, ax, az, bx, bz) => { const dx = bx - ax, dz = bz - az, t = clamp(((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz || 1), 0, 1); return Math.hypot(x - ax - dx * t, z - az - dz * t); };
+for (const M of MEADOWS) {
+  let best = null; for (const R of RADIALS) { const t = clamp(M.x * R.c + M.z * R.s, R.r0, R.r1), d = Math.hypot(M.x - R.c * t, M.z - R.s * t); if (!best || d < best.d) best = { d, x: R.c * t, z: R.s * t }; }
+  const ux = (best.x - M.x) / best.d, uz = (best.z - M.z) / best.d;
+  M.path = { ax: M.x + ux * M.r * 0.7, az: M.z + uz * M.r * 0.7, bx: best.x - ux * ROAD_W / 2, bz: best.z - uz * ROAD_W / 2, ry: Math.atan2(ux, uz) };
+}
+export const PATH_W = 1.6;
+export const pathDist = (x, z) => { let d = 1e9; for (const M of MEADOWS) d = Math.min(d, segDist(x, z, M.path.ax, M.path.az, M.path.bx, M.path.bz)); return d; };
+// VÙNG CẤM TRỒNG CÂY/ĐÁ/HOA ngẫu nhiên: trong khu, lô đất, đường (+ lề), hồ, sân đền, vườn tròn
 export function blocked(x, z, m = 0) {
+  if (meadowAt(x, z, m) || pathDist(x, z) < PATH_W / 2 + m + 0.5) return true;
   if (landDist(x, z) <= m) return true;
   if (lotAt(x, z, m)) return true;
   if (roadDist(x, z) < ROAD_W / 2 + m + 1) return true;

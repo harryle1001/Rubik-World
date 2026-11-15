@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { toon, addOutline, outlineMat, gradientMap } from './style.js';
 import { BLOCKS, EXTRA, blockOf2D, SPAWN, WORLD, PHI, ISLAND_R, ZONES_N, zoneAngle, LOTS, LOTS_N, HOUSE_LOTS, GARDEN_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1, LOT_W, LOT_L, LOT_BACK,
-  RING_ROAD_R, ROAD_W, RADIALS, LAGOON, blocked, houseAt, roadDist, lagoonDist } from './layout.js';
+  RING_ROAD_R, ROAD_W, RADIALS, LAGOON, MEADOWS, lotAt, landDist, pathDist, PATH_W, blocked, houseAt, roadDist, lagoonDist } from './layout.js';
 import { Batch, DetailGrid, createLife, detailMats } from './decor.js';
 import { buildSchoolZone, rubikCube as rubikCubeReal } from './zone-school.js';
 import { buildZoneEast } from './zone-east.js';
@@ -77,7 +77,7 @@ export function buildTownArchitecture(ctx, RS, env) {
   const extraMeshes = [];   // mesh riêng (bảng thông tin) — gộp vào danh sách xuất ở cuối
   const footC = []; const addFootC = (x, z, r) => footC.push([x, z, r]);
   const inRect = (q, x, z, m) => x > q[0] - m && x < q[2] + m && z > q[1] - m && z < q[3] + m;
-  const isBuilt = (x, z, m = 0.6) => foot.some(q => inRect(q, x, z, m)) || footC.some(([cx, cz, r]) => Math.hypot(x - cx, z - cz) < r + m) || ctx.boxes.some(q => x > q.x0 - m && x < q.x1 + m && z > q.z0 - m && z < q.z1 + m) || !!houseAt(x, z, m) || roadDist(x, z) < ROAD_W / 2 + m;
+  const isBuilt = (x, z, m = 0.6) => foot.some(q => inRect(q, x, z, m)) || footC.some(([cx, cz, r]) => Math.hypot(x - cx, z - cz) < r + m) || ctx.boxes.some(q => x > q.x0 - m && x < q.x1 + m && z > q.z0 - m && z < q.z1 + m) || !!houseAt(x, z, m) || roadDist(x, z) < ROAD_W / 2 + m || pathDist(x, z) < PATH_W / 2 + m;
 
   const lamp = (b, x, z, y = Y) => { b.box(0.16, 2.6, 0.16, x, y, z, '#6b4a2b'); b.box(0.7, 0.12, 0.12, x + 0.3, y + 2.5, z, '#6b4a2b'); b.box(0.32, 0.42, 0.32, x + 0.58, y + 2.0, z, '#ffd36e'); b.hip(0.42, 0.2, 0.42, x + 0.58, y + 2.42, z, '#6b4a2b'); };
   // ================= LỚP HỌC: xem zone-school.js (rubikCube/chessPiece dùng chung) =================
@@ -144,9 +144,9 @@ export function buildTownArchitecture(ctx, RS, env) {
       else { g.push(new THREE.CircleGeometry(1, 24).rotateX(-Math.PI / 2), '#d8cdb5', 0, 0.02, 1.5, 0, 0, 0, 5.4, 1, 5.4); for (let v = 1.5 + 5.4, k = 0; v < hl - 0.3; v += 0.85, k++) g.box(1.15, 0.05, 0.6, 0, 0.012, v, k % 2 ? '#d8cdb5' : '#cfc2a6'); }
     });
     b.group(L.cx, Y, L.cz, L.ry, () => {
-      // bờ giậu (chừa cổng rộng 2,2 m ở mặt tiền)
-      b.box(LOT_W, 0.55, 0.45, 0, 0, -hl + 0.22, '#4f9a3a');
-      for (const sd of [-1, 1]) { b.box(0.45, 0.55, LOT_L, sd * (hw - 0.22), 0, 0, '#4f9a3a'); b.box(hw - gate, 0.55, 0.45, sd * (gate + (hw - gate) / 2), 0, hl - 0.22, '#4f9a3a'); b.box(0.35, 0.9, 0.35, sd * gate, 0, hl - 0.22, '#e9e2d2'); }
+      // lô mở (thế giới mở, không rào chắn): chỉ viền đá thấp sát đất + bụi tròn ở 4 góc, đi vào từ mọi phía
+      for (const sd of [-1, 1]) { b.box(0.25, 0.1, LOT_L, sd * (hw - 0.12), 0, 0, '#cfc6b4'); b.ball(0.7, sd * (hw - 0.7), 0.45, -hl + 0.7, '#4f9a3a', 1, 0.75, 1); b.ball(0.7, sd * (hw - 0.7), 0.45, hl - 0.7, '#4f9a3a', 1, 0.75, 1); }
+      b.box(LOT_W, 0.1, 0.25, 0, 0, -hl + 0.12, '#cfc6b4');
       if (withHouse) {
         for (const sd of [-1, 1]) { b.box(3.2, 0.3, 0.9, sd * 3.6, 0, HOUSE_V1 + 0.8, '#a9744a'); const d = DG.follow(b); for (let i = 0; i < 6; i++) d.ball(0.24, sd * (2.35 + i * 0.5), 0.45, HOUSE_V1 + 0.8, ['#e8392f', '#f5c518', '#e85d8a', '#ffffff'][(i + L.j) % 4], 1, 0.8, 1); }
         b.group(-hw + 1.6, 0, HOUSE_V1 + 7, Math.PI / 2, () => { b.box(1.8, 0.14, 0.55, 0, 0.42, 0, '#bdb8ae'); for (const sd of [-1, 1]) b.box(0.18, 0.42, 0.5, sd * 0.7, 0, 0, '#a19c93'); });   // ghế đá
@@ -164,9 +164,35 @@ export function buildTownArchitecture(ctx, RS, env) {
     }
   };
   measure(B.parks, 'lots', () => { for (const L of HOUSE_LOTS) lotGarden(L, !!L.house); for (const L of GARDEN_LOTS) lotGarden(L, false); });
-  // bờ giậu & nền nhà là chướng ngại: va chạm thấp cho bờ giậu (vòng tròn nhỏ dọc 3 cạnh, chừa cổng)
-  for (const L of LOTS) { for (let v = -LOT_L / 2 + 0.6; v < LOT_L / 2; v += 1.2) for (const sd of [-1, 1]) { const [x, z] = lotToWorld(L, sd * (LOT_W / 2 - 0.22), v); ctx.colliders.push({ x, z, r: 0.35 }); }
-    for (let u = -LOT_W / 2 + 0.4; u < LOT_W / 2; u += 1.1) { const [x, z] = lotToWorld(L, u, -LOT_L / 2 + 0.22); ctx.colliders.push({ x, z, r: 0.35 }); if (Math.abs(u) > 1.6) { const [x2, z2] = lotToWorld(L, u, LOT_L / 2 - 0.22); ctx.colliders.push({ x: x2, z: z2, r: 0.35 }); } } }
+  // HÀNG CÂY & ĐÈN dọc đường vòng và 8 đường hướng tâm (cách nhau ≈ 13 m — Fibonacci), tránh lô, khu, hồ, nút giao
+  {
+    const okTree = (x, z) => !lotAt(x, z, 1.5) && landDist(x, z) > 2 && lagoonDist(x, z) > 3 && roadDist(x, z) > ROAD_W / 2 + 1.2 && pathDist(x, z) > PATH_W / 2 + 1.5;
+    const nRing = 42;   // 2π·R / 42 ≈ 13 m
+    for (const [rr, kind] of [[RING_ROAD_R - ROAD_W / 2 - 2.2, 'phuong'], [RING_ROAD_R + ROAD_W / 2 + 2.2, 'leaf']]) for (let i = 0; i < nRing; i++) {
+      const a = (i + 0.5) / nRing * Math.PI * 2, x = Math.cos(a) * rr, z = Math.sin(a) * rr;
+      if (RADIALS.some(R => Math.abs(Math.atan2(Math.sin(a - R.a), Math.cos(a - R.a))) * rr < 7)) continue;
+      if (okTree(x, z)) trees.push([x, z, kind, 0.95 + rnd() * 0.15]);
+    }
+    for (const R of RADIALS) {
+      const px = -R.s, pz = R.c, off = ROAD_W / 2 + 2.2;
+      for (let t = R.r0 + 6, k = 0; t < R.r1 - 6; t += 13, k++) {
+        if (Math.abs(t - RING_ROAD_R) < 9) continue;
+        for (const sd of [-1, 1]) { const x = R.c * t + px * sd * off, z = R.s * t + pz * sd * off; if (okTree(x, z)) trees.push([x, z, k % 2 ? 'leaf' : 'phuong', 0.95 + rnd() * 0.15]); }
+        if (k % 2 === 0 && t > RING_ROAD_R + 12) { const sd = k % 4 ? 1 : -1, x = R.c * (t + 6.5) + px * sd * (ROAD_W / 2 + 0.8), z = R.s * (t + 6.5) + pz * sd * (ROAD_W / 2 + 0.8); if (lagoonDist(x, z) > 2 && landDist(x, z) > 2) lamp(B.parks, x, z); }
+      }
+    }
+  }
+  // VƯỜN TRÒN (π) ở bãi cỏ trống giữa thị trấn và các khu: lối sỏi tròn, vòng hoa, cây phượng ở tâm, 3 ghế cách nhau 2π/3
+  measure(B.parks, 'meadows', () => { for (const M of MEADOWS) {
+    const g = B.ground, b = B.parks, d = DG.follow(null);
+    g.push(new THREE.CircleGeometry(M.r, 32).rotateX(-Math.PI / 2), '#a6d97f', M.x, Y + 0.012, M.z);
+    g.push(new THREE.RingGeometry(M.r * 0.62, M.r * 0.62 + 1.3, 40, 1).rotateX(-Math.PI / 2), '#d8cdb5', M.x, Y + 0.02, M.z);
+    // lối nối vào đường gần nhất (hướng về tâm thế giới)
+    { const P = M.path, L = Math.hypot(P.bx - P.ax, P.bz - P.az), ux = (P.bx - P.ax) / L, uz = (P.bz - P.az) / L, t0 = M.r * 0.62 + 1.3 - M.r * 0.7; for (let t = t0, k = 0; t < L + 0.3; t += 0.85, k++) g.box(1.2, 0.05, 0.6, P.ax + ux * t, Y + 0.012, P.az + uz * t, k % 2 ? '#d8cdb5' : '#cfc2a6', P.ry); }
+    for (let i = 0; i < 34; i++) { const a = i / 34 * Math.PI * 2, r = M.r * 0.88; d.ball(0.26, M.x + Math.cos(a) * r, Y + 0.28, M.z + Math.sin(a) * r, ['#e8392f', '#f5c518', '#e85d8a', '#9b59d0', '#ffffff'][(i + M.k) % 5], 1, 0.8, 1); }
+    trees.push([M.x, M.z, M.k % 2 ? 'phuong' : 'leaf', 1.25]);
+    for (let i = 0; i < 3; i++) { const a = M.a + Math.PI / 3 + i * 2 * Math.PI / 3, r = M.r * 0.62 - 1.1; b.group(M.x + Math.cos(a) * r, Y, M.z + Math.sin(a) * r, Math.atan2(-Math.cos(a), -Math.sin(a)), () => { b.box(1.8, 0.14, 0.55, 0, 0.42, 0, '#bdb8ae'); for (const s2 of [-1, 1]) b.box(0.18, 0.42, 0.5, s2 * 0.7, 0, 0, '#a19c93'); }); addFoot(M.x + Math.cos(a) * r - 1, M.z + Math.sin(a) * r - 1, M.x + Math.cos(a) * r + 1, M.z + Math.sin(a) * r + 1); }
+  } });
 
   // BẢNG THÔNG TIN ở quảng trường trước cổng: tỷ lệ vàng φ và số π (nội dung học)
   if (RS.GATE) {
