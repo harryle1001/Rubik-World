@@ -5,6 +5,7 @@ import { CFG } from './config.js';
 import { gradientMap, toon } from './style.js';
 import { LAND, WORLD, FLAT, rectDist, SPAWN, ISLAND_R, TEMPLE_C, blocked, flatDist, lagoonDist, roadDist, houseAt, ROAD_W } from './layout.js';
 import { loadModel } from './models.js';
+import { createOceanWater } from './ocean-water.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 // ---------- noise ----------
@@ -82,49 +83,12 @@ export function createTerrain(scene) {
   const ground = new THREE.Mesh(g, new THREE.MeshToonMaterial({ vertexColors: true, gradientMap })); ground.receiveShadow = true; ground.name = 'ground';
   scene.add(ground);
 
-  // ---------- Nước: màu theo độ sâu + bọt trắng ở bờ (đọc bản đồ độ cao, không cần depth texture) ----------
+  // ---------- Nước: bản đồ độ cao (độ sâu) cho shader nước + cá + hạt ----------
   const TS = 256, hd = new Uint8Array(TS * TS);
   for (let j = 0; j < TS; j++) for (let i = 0; i < TS; i++) hd[j * TS + i] = Math.max(0, Math.min(255, Math.round((heightAt(WORLD.x0 + (i + 0.5) / TS * SX, WORLD.z0 + (j + 0.5) / TS * SZ) + 8) * 12)));
   const hTex = new THREE.DataTexture(hd, TS, TS, THREE.RedFormat); hTex.magFilter = hTex.minFilter = THREE.LinearFilter; hTex.needsUpdate = true;
-  const waterMat = new THREE.ShaderMaterial({
-    transparent: true, fog: true, depthWrite: false,   // không ghi độ sâu: cá dưới nước (ambience.js) vẫn vẽ lên được
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 }, uSunW: { value: new THREE.Vector3(0, 1, 0) }, uSunC: { value: new THREE.Color('#fff') }, uSkyH: { value: new THREE.Color('#bfe6f6') }, uPlayer: { value: null } }]), // uSun*/uSkyH: ambience.js nối với bầu trời
-    vertexShader: `varying vec3 vW;
-#include <fog_pars_vertex>
-      void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; vec4 mvPosition = viewMatrix*w; gl_Position = projectionMatrix*mvPosition;
-#include <fog_vertex>
-      }`,
-    fragmentShader: `uniform sampler2D uH; uniform vec2 uMin, uSize; uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uPlayer; uniform float uLight; uniform float uTime; varying vec3 vW;
-#include <fog_pars_fragment>
-      void main(){
-        vec2 uv = (vW.xz - uMin) / uSize;
-        float h = (uv.x < 0. || uv.x > 1. || uv.y < 0. || uv.y > 1.) ? -8. : texture2D(uH, uv).r * 255. / 12. - 8.;
-        float depth = max(0., -h);
-        vec3 c = mix(uShallow, uDeep, smoothstep(0.3, 5., depth));
-        c = mix(c, uDeep*0.8, step(3.5, depth)*0.35);             // dải màu kiểu toon
-        float ca = sin(vW.x*0.9 + uTime*0.8) * sin(vW.z*0.8 - uTime*0.6) + sin((vW.x + vW.z)*0.45 + uTime*0.5);
-        c += vec3(0.1, 0.16, 0.12) * smoothstep(1.0, 1.7, ca) * (1. - smoothstep(0.4, 3., depth));   // vân sáng đáy nước nông
-        float wave = sin(depth*5. - uTime*1.6 + sin(vW.x*0.3+uTime)*0.6);
-        float foam = step(depth, 0.35) + step(0.75, wave) * (1. - smoothstep(0.4, 1.4, depth));
-        float sparkle = step(0.993, sin(vW.x*1.7 + uTime*1.3)*sin(vW.z*1.9 - uTime*1.1));
-        // sóng vỗ bờ: từng đợt sóng dâng lên rồi rút, để lại viền bọt trắng
-        float surge = 0.5 + 0.5 * sin(uTime * 0.9 + vW.x * 0.045 + vW.z * 0.035);
-        foam += smoothstep(0.14, 0., abs(depth - 0.25 - surge * 0.9)) * (1. - smoothstep(1.1, 1.5, depth)) * (0.4 + 0.6 * step(0.5, fract(vW.x * 0.7 + vW.z * 0.5 + uTime * 0.2)));
-        // gợn tròn quanh chân khi lội nước
-        float pd = length(vW.xz - uPlayer.xz), wade = step(uPlayer.y, 0.55) * step(-1.6, uPlayer.y);
-        foam += smoothstep(0.7, 1., sin(pd * 5.5 - uTime * 4.5)) * (1. - smoothstep(0.4, 2.6, pd)) * wade * 0.8;
-        // phản chiếu: chân trời phản lên mặt nước khi nhìn xiên + lấp lánh nắng
-        vec3 V = normalize(cameraPosition - vW), N = normalize(vec3(sin(vW.x * 0.9 + uTime * 1.3) * 0.06 + sin(vW.z * 1.7 - uTime) * 0.04, 1., sin(vW.z * 0.8 - uTime * 1.1) * 0.06));
-        float fres = pow(1. - max(V.y, 0.), 4.);
-        c = mix(c, uSkyH, fres * 0.45);
-        c += uSunC * pow(max(dot(reflect(-uSunW, N), V), 0.), 90.) * 0.9 * step(0.02, uSunW.y);
-        c = mix(c, vec3(1.), clamp(foam, 0., 1.)*0.85) + sparkle*0.25;
-        gl_FragColor = vec4(c * uLight, max(mix(0.52, 0.95, smoothstep(0., 2.8, depth)), clamp(foam, 0., 1.) * 0.9));   // nông: trong thấy cát
-#include <fog_fragment>
-      }`,
-  });
-  waterMat.uniforms.uH.value = hTex; waterMat.uniforms.uTime = WIND.uTime; waterMat.uniforms.uPlayer = WIND.uPlayer;
-  const water = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600).rotateX(-Math.PI / 2), waterMat); water.position.y = W; scene.add(water);
+  // sóng Gerstner + lưới theo camera: ocean-water.js
+  const ocean = createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND }), waterMat = ocean.mat;
 
   // ---------- Vật liệu lay theo gió (cây, cỏ) ----------
   function windy(mat, amp, push = 0) {
@@ -212,7 +176,7 @@ export function createTerrain(scene) {
 
   let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55 };
   function update(dt, t, player) {
-    WIND.uTime.value = t;
+    WIND.uTime.value = t; ocean.update();
     if (player) WIND.uPlayer.value.copy(player);
     if ((lodT += dt) > 0.4 && player) {
       lodT = 0; for (const c of grass) c.m.visible = Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist;
@@ -220,7 +184,7 @@ export function createTerrain(scene) {
     }
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
-  return { heightAt, slopeAt, update, colliders, ground, waterMat, state, plants, nature: { add: addNature } };
+  return { heightAt, slopeAt, update, colliders, ground, waterMat, waveHeight: ocean.waveHeight, waveNormal: ocean.waveNormal, water: ocean, state, plants, nature: { add: addNature } };
 }
 
 // Gộp nhiều geometry (cùng thuộc tính) thành 1

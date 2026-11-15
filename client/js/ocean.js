@@ -130,7 +130,7 @@ function applyQuality() {
   terrain.state.grassDist = base.grass * (L >= 2 ? 0.6 : 1); terrain.state.treeDist = base.tree * (L >= 2 ? 0.7 : 1); terrain.state.relayoutAll(player.pos);
   const ss = L >= 2 ? 512 : CFG.quality.shadowSize; if (sky.sun.shadow.mapSize.x !== ss) { sky.sun.shadow.mapSize.set(ss, ss); sky.sun.shadow.map?.dispose(); sky.sun.shadow.map = null; }
   if (renderer.shadowMap.enabled !== (L < 3)) { renderer.shadowMap.enabled = L < 3; scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => m.needsUpdate = true); }); }
-  ctx.qualityLevel = L;
+  ctx.qualityLevel = L; terrain.water.setQuality(L);   // máy yếu: ít lớp sóng hơn
 }
 function quality(dt) {
   qFrames++; const el = (performance.now() - qT) / 1000; if (el < 3) return;
