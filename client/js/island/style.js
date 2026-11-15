@@ -18,9 +18,11 @@ export function toon(color, opts = {}) {
 
 // Viền: vẽ lại mặt sau, đẩy đỉnh theo pháp tuyến ra ngoài
 export const outlineMat = new THREE.MeshBasicMaterial({ color: CFG.outline.color, side: THREE.BackSide });
+// độ dày theo khoảng cách tới camera (chuẩn CFG.outline.ref m): gần không thô, xa không mất nét; kẹp trong [1/φ, φ²]
 outlineMat.onBeforeCompile = sh => {
   sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
-    transformed += normalize(normal) * ${CFG.outline.thickness.toFixed(3)};`);
+    float oD = -(modelViewMatrix * vec4(transformed, 1.)).z;
+    transformed += normalize(normal) * ${CFG.outline.thickness.toFixed(3)} * clamp(oD / ${CFG.outline.ref.toFixed(1)}, 0.618, 2.618);`);
 };
 export function addOutline(root) {
   const list = []; root.traverse(o => { if (o.isMesh && !o.userData.outline) list.push(o); });
