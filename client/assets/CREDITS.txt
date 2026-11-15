@@ -5,7 +5,9 @@ models/hero-*.glb (Knight, Rogue, Mage, Barbarian + 14 animation)
   Nguồn tải: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0 (LICENSE: CC0 1.0)
   Đã lược bớt animation và nén Meshopt bằng gltf-transform.
 
-models/student-*.glb (12 học sinh chibi; code tô lại áo trắng, quần xanh, thêm khăn quàng đỏ, cặp sách): Kenney Mini Characters 1.0, CC0 — https://kenney.nl/assets/mini-characters (qua "@netforge/asset-library-files")
+Nhân vật học sinh/thầy cô/người dân hiện tại (client/js/island/people-model.js): khối low-poly tự dựng bằng code, gắn lên bộ xương + animation của models/hero-rogue.glb (KayKit Adventurers, CC0) ở trên.
+
+models/student-*.glb (KHÔNG còn dùng trong game — bản cũ: 12 học sinh chibi; code tô lại áo trắng, quần xanh, thêm khăn quàng đỏ, cặp sách): Kenney Mini Characters 1.0, CC0 — https://kenney.nl/assets/mini-characters (qua "@netforge/asset-library-files")
 
 models/animal-*.glb (hươu, cáo, ếch, mèo, cua, chó shiba – có animation), models/prop-*.glb (lửa trại, hoa, nấm, khúc gỗ, gốc cây, lều, pha lê, ngọc)
   Quaternius (https://quaternius.com) và Kenney (https://kenney.nl), CC0 1.0
@@ -44,7 +46,6 @@ audio/bgm-explore    "Medieval: Exploration" — RandomMind — https://opengame
 audio/bgm-farm       "Summers" — symphony — https://opengameart.org/content/summers
 audio/bgm-temple     "Oriental" — shadowfire452 — https://opengameart.org/content/oriental
 
-models/kit/*.glb (cây, bụi, đá, hoa, hàng rào, thùng, nhà building_a–h, xe, thú nhỏ…)
-  Quaternius (https://quaternius.com) và Kenney (https://kenney.nl), CC0 1.0
-  Lấy từ gói npm "@netforge/asset-library-files" 0.2.0, thư mục library/lowpoly (NOTICE trong gói ghi rõ giấy phép CC0).
-models/kit/kart_a–e.glb (xe kart, khu Rubik Kart): Kenney Car Kit — https://kenney.nl/assets/car-kit, CC0 1.0 (cùng gói npm trên, library/lowpoly).
+Thời tiết (weather.js): tiếng mưa, gió, sấm tự tổng hợp bằng Web Audio (nhiễu lọc) — không dùng file âm thanh.
+
+Âm thanh môi trường của ambience.js (chuông chùa, trống trường, gà gáy, ve sầu, tiếng rao xe bánh mì/kem, cá quẫy nước, lội nước): tự tổng hợp bằng Web Audio trong code, không dùng file — không có bản quyền.
