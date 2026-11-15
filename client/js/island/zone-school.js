@@ -385,7 +385,7 @@ export function buildSchoolZone(a) {
       const inside = p.x > r.x0 && p.x < r.x1 && p.z > r.z0 && p.z < r.z1, tgt = inside ? 0 : 1;
       if (r.op === tgt) continue;
       r.op = Math.max(0, Math.min(1, r.op + (tgt - r.op > 0 ? 1 : -1) * dt * 3)); if (Math.abs(r.op - tgt) < 0.02) r.op = tgt;
-      r.mat.opacity = r.op; r.mat.depthWrite = r.op > 0.98; r.m.visible = r.op > 0.01; r.m.castShadow = r.op > 0.5;
+      r.mat.opacity = r.op; r.mat.depthWrite = r.op > 0.98; r.mat.visible = r.op > 0.01;   // material.visible: không đụng m.visible (town-buildings dùng để ẩn vật ở xa) r.m.castShadow = r.op > 0.5;
     }
   }
   return { meshes, flagAt, update };
