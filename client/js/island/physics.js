@@ -158,31 +158,24 @@ export function createPhysics(ctx) {
   // ---------- Đặt đồ vật ----------
   const free = (x, z) => { const N = grid.near(x, z); return !N.boxes.some(B => x > B.x0 - 0.8 && x < B.x1 + 0.8 && z > B.z0 - 0.8 && z < B.z1 + 0.8) && !N.cols.some(c => Math.hypot(c.x - x, c.z - z) < c.r + 0.8); };
   const tryAdd = (kind, x, z) => free(x, z) && sup(x, z, 99) > W - 0.2 ? add(kind, x, z) : null;
-  { // bãi xuất phát trước cổng trường: thùng gỗ xếp chồng, vài quả bóng, đá nhỏ
-    const [sx, sz] = SPAWN;
-    tryAdd('ball', sx - 3, sz + 3);
-    for (const [dx, dz] of [[-4, -4], [-4.85, -4], [-4.4, -4.85]]) tryAdd('crate', sx + dx, sz + dz);
-    const c = bodies.filter(b => b.kind === 'crate'); if (c.length >= 3) { c[2].pos.set(c[0].pos.x - 0.42, c[0].pos.y + 0.82, c[0].pos.z - 0.1); }
-    tryAdd('beach', sx - 6, sz + 1.5);
-    for (let i = 0; i < 6; i++) { const a = i * 1.1, rr = 5 + i * 0.7; tryAdd('stone', sx + Math.cos(a) * rr, sz + Math.sin(a) * rr); }
-  }
-  { // bãi cát quanh đảo cũ: bóng bãi biển, đá cuội, thùng trôi dạt
+  // quảng trường trước cổng trường để trống (mẫu chuẩn sạch sẽ): bóng ở sân thể thao, thùng/đá/bóng bãi biển ở bãi cát
+  { // bãi cát quanh đảo cũ: bóng bãi biển, đá cuội, thùng trôi dạt (5 · 8 · 3 — Fibonacci)
     let nb = 0, ns = 0, nc = 0;
-    for (let i = 0; i < 300 && (nb < 4 || ns < 8 || nc < 3); i++) {
+    for (let i = 0; i < 300 && (nb < 5 || ns < 8 || nc < 3); i++) {
       const a = (i * 2.399) % 6.283, r = 45 + (i * 7.3) % 40, x = Math.cos(a) * r, z = Math.sin(a) * r, h = terrain.heightAt(x, z);
-      if (h < 0.3 || h > 1.3 || terrain.slopeAt(x, z) > 0.5) continue;
-      if (nb < 4 && i % 3 === 0) nb += !!tryAdd('beach', x, z); else if (ns < 8 && i % 3 === 1) ns += !!tryAdd('stone', x, z); else if (nc < 3) nc += !!tryAdd('crate', x, z);
+      if (h < 0.3 || h > 1.3 || terrain.slopeAt(x, z) > 0.5 || Math.hypot(x - SPAWN[0], z - SPAWN[1]) < 34) continue;   // chừa quảng trường cổng trường
+      if (nb < 5 && i % 3 === 0) nb += !!tryAdd('beach', x, z); else if (ns < 8 && i % 3 === 1) ns += !!tryAdd('stone', x, z); else if (nc < 3) nc += !!tryAdd('crate', x, z);
     }
   }
   // sân bóng đá: chờ dữ liệu trường (iframe) rồi đặt bóng giữa sân
   const waitField = setInterval(() => {
     const RS = document.querySelector('iframe[title="Trường Rubik"]')?.contentWindow?.RS, f = RS && RS.R && RS.R.field; if (!RS || !RS.R) return; clearInterval(waitField); if (!f) return;
-    const [x, z] = to3(f.x + f.w / 2, f.y + f.h / 2); add('ball', x, z, TOWN_Y); add('ball', x + 4, z + 2, TOWN_Y);
+    const [x, z] = to3(f.x + f.w / 2, f.y + f.h / 2); add('ball', x, z, TOWN_Y); add('ball', x + 4, z + 2, TOWN_Y); add('ball', x - 5, z - 3, TOWN_Y);
     ctx.fieldCenter = [x, z];
   }, 500);
 
   // ---------- Mỗi khung hình ----------
-  let simT = 0;
+  let simT = 0; const seen = {};
   function update(dt) {
     const pl = ctx.player, P = pl.pos, L = ctx.qualityLevel || 0, R2 = SIM[L] ** 2, flying = pl.vehicle && pl.vehicle.fly;
     // chọn vật đang thức (gần người chơi, tối đa MAXN)
@@ -194,6 +187,8 @@ export function createPhysics(ctx) {
       b.sleep = false; act.push(b);
       if (b.kind !== 'crate' && d2 < nd * nd) { nd = Math.sqrt(d2); near = b; }
     }
+    for (const k in meshes) seen[k] = false; for (const b of bodies) if (!seen[b.kind] && (b.pos.x - P.x) ** 2 + (b.pos.z - P.z) ** 2 < 89 * 89) seen[b.kind] = true;
+    for (const k in meshes) meshes[k].visible = seen[k];   // loại vật không có trong 89 m → không tốn draw call
     solid.length = 0; for (const b of act) if (b.kind === 'crate') solid.push(b);
     let vmax = 0; for (const b of act) vmax = Math.max(vmax, b.vel.lengthSq());
     const sub = Math.min(4, Math.max(L === 0 ? 2 : 1, Math.ceil(Math.sqrt(vmax) * dt / 0.18))), h = dt / sub; // vật bay nhanh: chia nhỏ bước để không xuyên tường mỏng

@@ -120,8 +120,8 @@ export function createVehicles(ctx) {
   function placeTown() {
     const gate = ctx.school && ctx.school.gate; if (!gate) return; townDone = true;
     const free = (x, z) => ctx.groundExtra(x, z, 9) > 0.9 && [[0, 0], [1.2, 0], [-1.2, 0], [0, 1.2], [0, -1.2]].every(([a, b]) => ctx.groundExtra(x + a, z + b, 9) > 0.9) && !(ctx.boxes || []).some(b => x > b.x0 - 1 && x < b.x1 + 1 && z > b.z0 - 1 && z < b.z1 + 1);
-    let nb = 0; // 4 xe dựng trước cổng, chỉ đặt chỗ có nền thị trấn và không vướng tường
-    for (const dz of [4, 5.2, 6.4, 7.6]) for (const dx of [5, -5, 6.2, -6.2, 7.4, -7.4, 8.6]) { const x = gate[0] + dx, z = gate[1] + dz; if (nb < 4 && free(x, z) && all.every(v => Math.hypot(v.group.position.x - x, v.group.position.z - z) > 1.1)) park(makeBike(BIKE_COLORS[(++nb) % 5]), x, z, Math.PI / 2 * Math.sign(dx)); }
+    let nb = 0; // 2 xe dựng sát mép quảng trường trước cổng (để quảng trường thoáng), chỉ đặt chỗ có nền thị trấn và không vướng tường
+    for (const dz of [7.6, 6.4, 5.2, 4]) for (const dx of [8.6, 7.4, -7.4, 6.2, -6.2, 5, -5]) { const x = gate[0] + dx, z = gate[1] + dz; if (nb < 2 && free(x, z) && all.every(v => Math.hypot(v.group.position.x - x, v.group.position.z - z) > 1.1)) park(makeBike(BIKE_COLORS[(++nb) % 5]), x, z, Math.PI / 2 * Math.sign(dx)); }
     let n = 0; // thuyền ở mép bãi cát của thị trấn
     for (let x = BLOCKS[0].r[0] + 10; x < BLOCKS[0].r[2] && n < 3; x += 3) for (const [z, dz] of [[BLOCKS[0].r[3] - 1, 1]]) {   // bãi biển phía nam trường (layout.js)
       if (n >= 3 || ctx.groundExtra(x, z - dz * 2, 9) < 0.9 || (ctx.surfaceAt && ctx.surfaceAt(x, z - dz * 2, 9) !== 'sand')) continue;
