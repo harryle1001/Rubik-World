@@ -78,14 +78,14 @@ export function createTerrain(scene) {
   for (let j = 0; j < TS; j++) for (let i = 0; i < TS; i++) hd[j * TS + i] = Math.max(0, Math.min(255, Math.round((heightAt(WORLD.x0 + (i + 0.5) / TS * SX, WORLD.z0 + (j + 0.5) / TS * SZ) + 8) * 12)));
   const hTex = new THREE.DataTexture(hd, TS, TS, THREE.RedFormat); hTex.magFilter = hTex.minFilter = THREE.LinearFilter; hTex.needsUpdate = true;
   const waterMat = new THREE.ShaderMaterial({
-    transparent: true, fog: true,
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 } }]),
+    transparent: true, fog: true, depthWrite: false,   // không ghi độ sâu: cá dưới nước (ambience.js) vẫn vẽ lên được
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 }, uSunW: { value: new THREE.Vector3(0, 1, 0) }, uSunC: { value: new THREE.Color('#fff') }, uSkyH: { value: new THREE.Color('#bfe6f6') }, uPlayer: { value: null } }]), // uSun*/uSkyH: ambience.js nối với bầu trời
     vertexShader: `varying vec3 vW;
 #include <fog_pars_vertex>
       void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; vec4 mvPosition = viewMatrix*w; gl_Position = projectionMatrix*mvPosition;
 #include <fog_vertex>
       }`,
-    fragmentShader: `uniform sampler2D uH; uniform vec2 uMin, uSize; uniform vec3 uShallow, uDeep; uniform float uLight; uniform float uTime; varying vec3 vW;
+    fragmentShader: `uniform sampler2D uH; uniform vec2 uMin, uSize; uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uPlayer; uniform float uLight; uniform float uTime; varying vec3 vW;
 #include <fog_pars_fragment>
       void main(){
         vec2 uv = (vW.xz - uMin) / uSize;
@@ -96,12 +96,23 @@ export function createTerrain(scene) {
         float wave = sin(depth*5. - uTime*1.6 + sin(vW.x*0.3+uTime)*0.6);
         float foam = step(depth, 0.35) + step(0.75, wave) * (1. - smoothstep(0.4, 1.4, depth));
         float sparkle = step(0.985, sin(vW.x*1.7 + uTime*1.3)*sin(vW.z*1.9 - uTime*1.1));
+        // sóng vỗ bờ: từng đợt sóng dâng lên rồi rút, để lại viền bọt trắng
+        float surge = 0.5 + 0.5 * sin(uTime * 0.9 + vW.x * 0.045 + vW.z * 0.035);
+        foam += smoothstep(0.14, 0., abs(depth - 0.25 - surge * 0.9)) * (1. - smoothstep(1.1, 1.5, depth)) * (0.4 + 0.6 * step(0.5, fract(vW.x * 0.7 + vW.z * 0.5 + uTime * 0.2)));
+        // gợn tròn quanh chân khi lội nước
+        float pd = length(vW.xz - uPlayer.xz), wade = step(uPlayer.y, 0.55) * step(-1.6, uPlayer.y);
+        foam += smoothstep(0.7, 1., sin(pd * 5.5 - uTime * 4.5)) * (1. - smoothstep(0.4, 2.6, pd)) * wade * 0.8;
+        // phản chiếu: chân trời phản lên mặt nước khi nhìn xiên + lấp lánh nắng
+        vec3 V = normalize(cameraPosition - vW), N = normalize(vec3(sin(vW.x * 0.9 + uTime * 1.3) * 0.06 + sin(vW.z * 1.7 - uTime) * 0.04, 1., sin(vW.z * 0.8 - uTime * 1.1) * 0.06));
+        float fres = pow(1. - max(V.y, 0.), 4.);
+        c = mix(c, uSkyH, fres * 0.45);
+        c += uSunC * pow(max(dot(reflect(-uSunW, N), V), 0.), 90.) * 0.9 * step(0.02, uSunW.y);
         c = mix(c, vec3(1.), clamp(foam, 0., 1.)*0.85) + sparkle*0.25;
-        gl_FragColor = vec4(c * uLight, mix(0.75, 0.95, smoothstep(0., 3., depth)));
+        gl_FragColor = vec4(c * uLight, mix(0.68, 0.95, smoothstep(0., 3., depth)));
 #include <fog_fragment>
       }`,
   });
-  waterMat.uniforms.uH.value = hTex; waterMat.uniforms.uTime = WIND.uTime;
+  waterMat.uniforms.uH.value = hTex; waterMat.uniforms.uTime = WIND.uTime; waterMat.uniforms.uPlayer = WIND.uPlayer;
   const water = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600).rotateX(-Math.PI / 2), waterMat); water.position.y = W; scene.add(water);
 
   // ---------- Vật liệu lay theo gió (cây, cỏ) ----------
