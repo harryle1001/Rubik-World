@@ -12,6 +12,8 @@ import { createNet } from './island/net.js';
 import { createAnimals } from './island/animals.js';
 import { createSchoolTown } from './island/school-town.js';
 import { createVehicles } from './island/vehicles.js';
+import { createMounts } from './island/mounts.js';
+import { createMap } from './island/map.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 
@@ -31,7 +33,7 @@ const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
 {
   const act = document.getElementById('bAct'); let best = null, cur = null;
   ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) best = { label, fn, pri }; };
-  ctx.flushOffer = () => { cur = best; best = null; act.hidden = !cur || ctx.player.frozen; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
+  ctx.flushOffer = () => { cur = best; best = null; act.hidden = !cur || ctx.player.frozen; if (cur && act._l !== cur.label) { act._l = cur.label; act.innerHTML = cur.label; } }; // nhãn có thể chứa biểu tượng SVG
   act.onclick = () => cur && cur.fn();
   addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
 }
@@ -61,6 +63,8 @@ const animals = ctx.animals = createAnimals(ctx);
 ctx.sky = sky;
 const school = createSchoolTown(ctx);
 const vehicles = createVehicles(ctx);
+const mounts = createMounts(ctx);
+createMap(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
 document.getElementById('bMenu').onclick = () => school.menu();
 
@@ -90,6 +94,7 @@ renderer.setAnimationLoop(() => {
   animals.update(dt);
   school.update(dt, clock.elapsedTime);
   vehicles.update(dt);
+  mounts.update(dt);
   sky.update(dt, camera, player.pos);
   ctx.flushOffer();
   post.render();

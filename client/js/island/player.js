@@ -35,6 +35,7 @@ export function createPlayer(ctx) {
   const keys = new Set(), input = { x: 0, z: 0, run: false, jump: false };
   addEventListener('keydown', e => { keys.add(e.code); if (e.code === 'Space') input.jump = true; });
   addEventListener('keyup', e => keys.delete(e.code));
+  addEventListener('blur', () => keys.clear()); // đổi cửa sổ: không bị kẹt phím
 
   // ---- Joystick (nửa trái) + xoay camera (nửa phải / chuột) ----
   const el = renderer.domElement, joy = document.getElementById('joy'), knob = document.getElementById('knob');
@@ -69,7 +70,7 @@ export function createPlayer(ctx) {
   let hero = null; const animState = {};
   loadHero(ctx.heroKind || 'student-male-a').then(r => { if (!r) return; hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
   self.emote = name => { if (hero) emote(hero, animState, name); };
-  let stepT = 0;
+  let stepT = 0, kx = 0, kz = 0;
   const want = new THREE.Vector3(), look = new THREE.Vector3(pos.x, pos.y + 1.5, pos.z), tmp = new THREE.Vector3();
   // Phương tiện (vehicles.js gán): self.vehicle = { speed, turn, accel, water, fly, lift, anim, seat, camAdd, maxAlt } hoặc null
   self.vehicle = null; self.vel = vel; self.setRot = r => { rot = r; };
@@ -77,9 +78,13 @@ export function createPlayer(ctx) {
   Object.defineProperty(self, 'vy', { get: () => vy, set: v => { vy = v; } });
   self.update = (dt) => {
     const V = self.vehicle;
-    let ix = input.x, iz = input.z;
-    if (keys.has('KeyA') || keys.has('ArrowLeft')) ix -= 1; if (keys.has('KeyD') || keys.has('ArrowRight')) ix += 1;
-    if (keys.has('KeyW') || keys.has('ArrowUp')) iz -= 1; if (keys.has('KeyS') || keys.has('ArrowDown')) iz += 1;
+    // phím WASD/mũi tên: tăng/giảm dần (mượt như cần analog), joystick cộng thêm
+    let tx = 0, tz = 0;
+    if (keys.has('KeyA') || keys.has('ArrowLeft')) tx -= 1; if (keys.has('KeyD') || keys.has('ArrowRight')) tx += 1;
+    if (keys.has('KeyW') || keys.has('ArrowUp')) tz -= 1; if (keys.has('KeyS') || keys.has('ArrowDown')) tz += 1;
+    const tl = Math.hypot(tx, tz); if (tl > 1) { tx /= tl; tz /= tl; }
+    const ks = 1 - Math.exp(-dt * (tl ? 9 : 12)); kx += (tx - kx) * ks; kz += (tz - kz) * ks; if (Math.abs(kx) < 0.01 && !tx) kx = 0; if (Math.abs(kz) < 0.01 && !tz) kz = 0;
+    let ix = input.x + kx, iz = input.z + kz;
     const mag = self.frozen ? 0 : Math.min(1, Math.hypot(ix, iz)), n = Math.hypot(ix, iz) || 1;
     const running = input.run || keys.has('ShiftLeft') || keys.has('ShiftRight') || (input.x * input.x + input.z * input.z > 0.9);
     const sp = (V ? V.speed : running ? P.run : P.walk) * mag;
@@ -133,9 +138,9 @@ export function createPlayer(ctx) {
     const cp = Math.cos(cam.pitch);
     const cd = cam.dist + (V ? V.camAdd || 0 : 0); want.set(pos.x + Math.sin(cam.yaw) * cd * cp, pos.y + C.height + Math.sin(cam.pitch) * cd, pos.z + Math.cos(cam.yaw) * cd * cp);
     // không cho camera chui vào tán cây: kéo camera lại gần nhân vật nếu vướng
-    const tx = pos.x, ty = pos.y + C.height, tz = pos.z;
+    const cx0 = pos.x, ty = pos.y + C.height, cz0 = pos.z;
     for (const f of [1, 0.85, 0.7, 0.55, 0.4]) {
-      const cx = tx + (want.x - tx) * f, cy = ty + (want.y - ty) * f, cz = tz + (want.z - tz) * f; let hit = false;
+      const cx = cx0 + (want.x - cx0) * f, cy = ty + (want.y - ty) * f, cz = cz0 + (want.z - cz0) * f; let hit = false;
       for (const c of ctx.colliders) { const dx = cx - c.x, dz = cz - c.z; if (dx * dx + dz * dz < (c.r * 3.4 + 0.3) ** 2 && cy < terrain.heightAt(c.x, c.z) + 5.5) { hit = true; break; } }
       if (!hit || f === 0.4) { want.set(cx, cy, cz); break; }
     }
