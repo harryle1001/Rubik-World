@@ -23,6 +23,8 @@ import { createWeather } from './island/weather.js';
 import { createEasterEggs } from './island/easter-eggs.js';
 import { createDt } from './island/motion.js';
 import { createAmbience } from './island/ambience.js';
+import { createLiving } from './island/living.js';
+import { createSkyshow } from './island/skyshow.js';
 import { createDive } from './island/dive.js';
 import { createMiniGameHost } from './island/mg/host.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
@@ -85,6 +87,8 @@ const eggs = ctx.eggs = createEasterEggs(ctx); // 13 bí mật: khối Rubik và
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
+const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao băng, mây ti, chế độ ngắm trời ⭐ (skyshow.js)
+const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
@@ -124,6 +128,8 @@ renderer.setAnimationLoop(() => {
   weather.update(dt, clock.elapsedTime);
   eggs.update(dt, clock.elapsedTime);
   ambience.update(dt);
+  living.update(dt);
+  skyshow.update(dt); // sau player/sky: chế độ ngắm trời đặt lại camera
   dive.update(dt); // sau ambience: ghi đè sương/màu khi dưới nước
   mg.update(dt, clock.elapsedTime);
   ctx.flushOffer();
