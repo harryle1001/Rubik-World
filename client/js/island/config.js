@@ -5,13 +5,13 @@ export const CFG = {
   isMobile,
   seed: 7,
   quality: {
-    maxPixelRatio: 1.5,                 // giới hạn pixelRatio
+    maxPixelRatio: isMobile ? 1.5 : 2,  // giới hạn pixelRatio (máy tính 2: sắc nét)
     shadowSize: isMobile ? 1024 : 2048,
     shadowRange: 40,
-    msaa: isMobile ? 0 : 4,             // khử răng cưa trong hậu kỳ (chỉ máy tính)
+    msaa: isMobile ? 2 : 4,             // khử răng cưa MSAA trong hậu kỳ (GPU điện thoại dạng tile: 2x rẻ)
     bloom: !isMobile, bloomStrength: 0.22, bloomRadius: 0.45, bloomThreshold: 0.9,   // điện thoại: tắt bloom cho mượt
     vignette: 0.2,
-    exposure: 0.92, saturation: 1.1, contrast: 1.1, warmth: 0.03,   // chỉnh màu hậu kỳ (ấm, tươi nhẹ)
+    exposure: 0.92, saturation: 1.04, contrast: 1.06, warmth: 0.015,   // chỉnh màu hậu kỳ (ấm, tươi nhẹ)
     lowFps: 40, highFps: 57,            // tự giảm / tăng chất lượng theo FPS
   },
   time: { dayLengthSec: 480, startHour: 10.5 },
