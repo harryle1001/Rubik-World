@@ -136,7 +136,8 @@ export function createTerrain(scene) {
 
   // đáy biển nối dài ra khơi ngoài lưới địa hình (lặn xa bờ không thấy khoảng trống) — 1 mặt phẳng, thấp hơn đáy sâu nhất 0,3 m
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(1597, 1597).rotateX(-Math.PI / 2), new THREE.MeshToonMaterial({ color: new THREE.Color('#e6cc9a').lerp(cAbyss, 0.7), gradientMap }));
-  floor.position.set(CX, -6.3, CZ); floor.receiveShadow = true; floor.name = 'seafloor'; scene.add(floor);
+  floor.position.set(CX, -6.3, CZ); floor.receiveShadow = true; floor.name = 'seafloor'; floor.visible = false; scene.add(floor);
+  addEventListener('island:underwater', e => { floor.visible = e.detail; });   // chỉ vẽ khi lặn (trên mặt nước: nước sâu đục, không thấy) → không tốn draw call
 
   // ---------- Nước: bản đồ độ cao (độ sâu) cho shader nước + cá + hạt ----------
   const TS = 256, hd = new Uint8Array(TS * TS);
