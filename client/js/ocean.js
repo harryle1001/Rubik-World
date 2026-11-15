@@ -23,6 +23,7 @@ import { createWeather } from './island/weather.js';
 import { createEasterEggs } from './island/easter-eggs.js';
 import { createDt } from './island/motion.js';
 import { createAmbience } from './island/ambience.js';
+import { createDive } from './island/dive.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -76,6 +77,7 @@ const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lă
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 13 bí mật: khối Rubik vàng, pháo hoa π, cá voi… (📖 Sổ bí mật)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
+const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
@@ -115,6 +117,7 @@ renderer.setAnimationLoop(() => {
   weather.update(dt, clock.elapsedTime);
   eggs.update(dt, clock.elapsedTime);
   ambience.update(dt);
+  dive.update(dt); // sau ambience: ghi đè sương/màu khi dưới nước
   ctx.flushOffer();
   brightness.update();
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D

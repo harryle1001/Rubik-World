@@ -99,7 +99,8 @@ export function createPlayer(ctx) {
     if (keys.has('KeyW') || keys.has('ArrowUp')) iz -= 1; if (keys.has('KeyS') || keys.has('ArrowDown')) iz += 1;
     const mag = self.frozen ? 0 : Math.min(1, Math.hypot(ix, iz)), n = Math.hypot(ix, iz) || 1;
     const running = input.run || keys.has('ShiftLeft') || keys.has('ShiftRight') || (input.x * input.x + input.z * input.z > 0.9);
-    const sp = (V ? V.speed : running ? P.run : P.walk) * mag;
+    const D = ctx.dive, swim = !V && D && D.swimming;   // bơi/lặn (dive.js)
+    const sp = (V ? V.speed : swim ? D.speed : running ? P.run : P.walk) * mag;
     const fx = -Math.sin(cam.yaw), fz = -Math.cos(cam.yaw), mx = (Math.cos(cam.yaw) * ix - fx * iz) / n, mz = (-Math.sin(cam.yaw) * ix - fz * iz) / n;
     // quán tính mềm: tăng tốc ≈ φ⁴/s, hãm ≈ φ⁵/s, trên không φ²/s
     const k = ease(V ? V.accel : !grounded ? AIR : mag > 0.05 ? ACC : DEC, dt);
@@ -140,20 +141,21 @@ export function createPlayer(ctx) {
         if (!(V && V.water)) { const lim = pos.y + STEP; if (sup(nx, nz, lim) > lim) { if (sup(nx, oz, lim) <= lim) nz = oz; else if (sup(ox, nz, lim) <= lim) nx = ox; else { nx = ox; nz = oz; } } }
       }
       if (V && V.water) { if (sup(nx, nz) > CFG.island.waterLevel - 0.3) { nx = ox; nz = oz; vel.multiplyScalar(0.3); } } // thuyền: chỉ đi trên nước
-      else if (!fly && sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = ox; nz = oz; vel.set(0, 0, 0); }
+      else if (!fly && !D && sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = ox; nz = oz; vel.set(0, 0, 0); } // có dive.js thì được xuống nước bơi
       pos.x = nx; pos.z = nz;
     }
     // mặt đỡ: địa hình, sàn thị trấn, nóc hộp thấp đang đứng trên
     let g = sup(pos.x, pos.z, pos.y);
     if (!fly) for (const b of near(pos.x, pos.z).boxes) if (b.top <= pos.y + BSTEP && b.top > g && pos.x > b.x0 - 0.15 && pos.x < b.x1 + 0.15 && pos.z > b.z0 - 0.15 && pos.z < b.z1 + 0.15) g = b.top;
     if (!fly && ctx.physics) for (const b of ctx.physics.solid) { const t = b.pos.y + b.K.r - 0.02; if (t > g && pos.y >= t - 0.3 && Math.abs(pos.x - b.pos.x) < 0.5 && Math.abs(pos.z - b.pos.z) < 0.5) g = t; }
-    if (input.jump && grounded && !self.frozen && !V) { vy = P.jump; grounded = false; ctx.sfx && ctx.sfx('jump'); }
+    if (input.jump && grounded && !self.frozen && !V && !(D && D.swimming)) { vy = P.jump; grounded = false; ctx.sfx && ctx.sfx('jump'); }
     input.jump = false;
     if (V && V.water) { pos.y = V.waterY(pos.x, pos.z); vy = 0; grounded = true; }
     else if (V && V.fly) { // khinh khí cầu: bay lơ lửng, V.lift = tốc độ lên/xuống mong muốn
       vy += (V.lift - vy) * Math.min(1, dt * 1.5); pos.y = Math.min(V.maxAlt, pos.y + vy * dt);
       const floor = Math.max(g, CFG.island.waterLevel + 0.6); if (pos.y <= floor) { pos.y = floor; vy = Math.max(0, vy); grounded = g >= floor - 0.01; } else grounded = false;
-    } else {
+    } else if (D && D.step(dt, g)) { vy = 0; grounded = true; }   // đang bơi/lặn: dive.js lo độ cao
+    else {
     vy -= P.gravity * dt; pos.y += vy * dt;
     if (pos.y <= g) {
       if (!grounded) impact = -vy;
@@ -213,9 +215,10 @@ export function createPlayer(ctx) {
     yawF = damp(yawF, follow ? wrapAngle(rot + Math.PI - cam.yaw) * (0.5 + Math.min(PHI, self.speed / P.walk)) / PHI : 0, yawFSt, T.soft, dt); cam.yaw += yawF * dt;
     // điểm nhìn: cao φ m trên chân, nhìn trước theo hướng chạy (vận tốc × 1/φ³ s); trên không bám độ cao chậm hơn (nhảy không làm rung camera)
     tmp.set(pos.x + vel.x * CAM.lead, pos.y + CAM.height, pos.z + vel.z * CAM.lead);
-    if (snapCam) { pivot.copy(tmp); pivV.set(0, 0, 0); pyS.v = 0; camDist = colDist = cam.dist + (V ? V.camAdd || 0 : 0); distSt.v = colSt.v = 0; ext = 0; }
+    const cAdd = (V ? V.camAdd || 0 : 0) + (D ? D.camAdd : 0);
+    if (snapCam) { pivot.copy(tmp); pivV.set(0, 0, 0); pyS.v = 0; camDist = colDist = cam.dist + cAdd; distSt.v = colSt.v = 0; ext = 0; }
     else { const py = damp(pivot.y, tmp.y, pyS, grounded || V ? T.quick : T.slow, dt); dampV3(pivot, tmp, pivV, T.quick, dt); pivot.y = py; }
-    camDist = damp(camDist, cam.dist + (V ? V.camAdd || 0 : 0), distSt, T.slow, dt); // lên/xuống xe, thuyền, khinh khí cầu: lùi/tiến mượt
+    camDist = damp(camDist, cam.dist + cAdd, distSt, T.slow, dt); // lên/xuống xe, thuyền, khinh khí cầu: lùi/tiến mượt
     const cp = Math.cos(cam.pitch), dx = Math.sin(cam.yaw) * cp, dy = Math.sin(cam.pitch), dz = Math.cos(cam.yaw) * cp;
     // né cây/nhà: thử các nấc khoảng cách, co vào nhanh (1/φ⁵ s), giãn ra chậm (1/φ² s) → không nhảy cóc
     let fit = 0.4;
@@ -227,8 +230,9 @@ export function createPlayer(ctx) {
     }
     const wc = camDist * fit; colDist = snapCam ? wc : damp(colDist, wc, colSt, wc < colDist ? T.fast : T.slow, dt); if (colDist > camDist) colDist = camDist;
     let cx = pivot.x + dx * colDist, cy = pivot.y + dy * colDist, cz = pivot.z + dz * colDist;
-    const need = Math.max(terrain.heightAt(cx, cz) + 0.8, (ctx.groundExtra ? ctx.groundExtra(cx, cz, 99) : -99) + 0.8, CFG.island.waterLevel + 0.5);
+    const need = Math.max(terrain.heightAt(cx, cz) + 0.8, (ctx.groundExtra ? ctx.groundExtra(cx, cz, 99) : -99) + 0.8, D && D.diving ? -99 : CFG.island.waterLevel + 0.5);
     camLift = damp(camLift, Math.max(0, need - cy), liftSt, need - cy > camLift ? T.fast : T.soft, dt); cy = Math.max(cy + camLift, need - 0.3);
+    if (D && D.diving) cy = Math.max(Math.min(cy, D.ceil), need - 0.3);   // lặn: camera ở dưới mặt nước, không xuyên đáy
     // camera vừa do phần khác điều khiển (máy bay) → hoà dần từ vị trí cũ về quỹ đạo (≈ 1/φ s)
     if (!snapCam && camera.position.distanceToSquared(lastCam) > 1e-4) { ext = 1; extSt.v = 0; extPos.copy(camera.position); extQ.copy(camera.quaternion); }
     camera.position.set(cx, cy, cz); camera.lookAt(pivot);
