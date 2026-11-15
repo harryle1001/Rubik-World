@@ -113,7 +113,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       else if (e.partner && e.partner.a) face = Math.atan2(e.partner.px - x, e.partner.pz - z); // nói chuyện: quay vào nhau
       else if (dist < 4 && !sit) face = Math.atan2(p.x - x, p.z - z); // đứng gần → quay về phía người chơi
       if (face !== null) e.yaw = dampAngle(e.yaw, face, e.ky, T.soft, dt, 2 * Math.PI); else e.ky.v = 0; // rẽ mềm, quay tối đa 1 vòng/s
-      e.px = x; e.pz = z; const m = e.hero.model, gy = groundY(gx, gz); m.position.set(gx, gy + (e.seat ? SEAT_Y : 0), gz); m.rotation.y = e.yaw;
+      e.px = x; e.pz = z; const m = e.hero.model, gy = groundY(gx, gz); m.position.set(gx, gy + (e.seat ? SEAT_Y : 0), gz); m.rotation.y = e.yaw; m.visible = !(ctx.mgHide && ctx.mgHide(gx, gz));   // khu mini game: ẩn người đi ngang
       // đứng nói chuyện: 2 người đứng yên cách nhau < 1.8 m (kiểm tra thưa, 0.6 s/lần)
       if (doTalk) {
         e.partner = null;

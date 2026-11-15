@@ -24,6 +24,9 @@ import { createEasterEggs } from './island/easter-eggs.js';
 import { createDt } from './island/motion.js';
 import { createAmbience } from './island/ambience.js';
 import { createDive } from './island/dive.js';
+import { createMiniGameHost } from './island/mg/host.js';
+// mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
+import { register as regBoard } from './island/mg/board/index.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -70,6 +73,8 @@ const net = ctx.net = createNet(ctx);
 const animals = ctx.animals = createAnimals(ctx);
 ctx.sky = sky;
 const school = createSchoolTown(ctx);
+const mg = ctx.mg = createMiniGameHost(ctx); // khung mini game 3D (mg/host.js); mỗi nhóm đăng ký game của mình:
+regBoard(ctx);
 const worldMap = ctx.worldMap = createWorldMap(ctx); // bản đồ: phím M / nút 🗺️
 const vehicles = createVehicles(ctx);
 const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
@@ -118,6 +123,7 @@ renderer.setAnimationLoop(() => {
   eggs.update(dt, clock.elapsedTime);
   ambience.update(dt);
   dive.update(dt); // sau ambience: ghi đè sương/màu khi dưới nước
+  mg.update(dt, clock.elapsedTime);
   ctx.flushOffer();
   brightness.update();
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
