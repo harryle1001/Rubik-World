@@ -191,6 +191,7 @@ function quality(dt) {
 // gỡ lỗi/đo: __island.setQuality(L, khoá) — khoá = không tự đổi mức nữa
 let qLock = false; ctx.setQuality = (L, lock = true) => { qLevel = L; qLock = lock; applyQuality(); };
 if (new URLSearchParams(location.search).has('low')) { qLevel = 2; applyQuality(); } // ?low: bắt đầu ở chất lượng thấp
+else if (CFG.isMobile) { qLevel = 1; applyQuality(); } // điện thoại: bắt đầu ở mức 1 (không bloom, độ phân giải vừa) rồi tự lên/xuống theo FPS
 
 // ---------- Cache để mở nhanh/offline ----------
 if ('serviceWorker' in navigator && !window.ISLAND_SERVER) navigator.serviceWorker.register('/sw.js').catch(() => {});

@@ -785,6 +785,12 @@ if (/[?&]embed=1/.test(location.search)) {
   const fwd = e => { if (!document.querySelector('.modal:not([hidden])') && parent !== window) parent.dispatchEvent(new KeyboardEvent(e.type, { code: e.code, key: e.key })); };
   addEventListener('keydown', fwd); addEventListener('keyup', fwd);
   window.addEventListener('rs-ready', () => { const RS = window.RS; RS.islandOn = true; RS.embedded = true; try { RS.enable3D(); } catch (e) {} });
+  // vào Đảo 3D: không bật hộp đăng nhập lúc mở game (tự chọn "Chỉ xem"), người chơi vẫn đăng nhập được từ 📚 Menu trường sau đó
+  const t0 = Date.now(), autoGuest = setInterval(() => {
+    const g = document.getElementById('lgGuest'), m = g && g.closest('.modal');
+    if (m && !m.hidden && getComputedStyle(m).display !== 'none') g.click();
+    if (Date.now() - t0 > 90000) clearInterval(autoGuest);
+  }, 300);
 }
 </script>
 <style>
