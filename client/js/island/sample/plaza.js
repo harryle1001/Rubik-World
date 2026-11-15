@@ -101,7 +101,7 @@ export function buildPlaza({ ctx, env, addFoot = () => {} }) {
       const [x, z] = at(r0 + 1, a + 0.0175); if (x > A[0] - 0.2 || onRoad(x, z, 0.8) || onPath(x, z, 0.9)) continue;
       const edge = Math.min(1, (A[0] - 0.2 - x) / 3), w = W * (0.62 + 0.38 * Math.sin(a * 5) * 0.5 + 0.19) * edge;
       F.push(annulus(r0, r0 + w, a, a + 0.036, 0, 1), C.bed, cx, Math.max(hgt(x, z), Y - 0.12) + 0.03, cz);
-      const n = Math.round(w * 3.2); for (let i = 0; i < n; i++) { const rr = r0 + 0.2 + rnd() * (w - 0.3), aa = a + rnd() * 0.035, [fx, fz] = at(rr, aa), band = Math.floor((a * 8 / PI) % 5); if (nearTree(fx, fz, 1.85)) continue;
+      const n = Math.round(w * (low ? 1.4 : 2.4)); for (let i = 0; i < n; i++) { const rr = r0 + 0.2 + rnd() * (w - 0.3), aa = a + rnd() * 0.035, [fx, fz] = at(rr, aa), band = Math.floor((a * 8 / PI) % 5); if (nearTree(fx, fz, 1.85)) continue;
         if (rnd() < 0.3) F.ball(0.22 + rnd() * 0.16, fx, Y + 0.12, fz, C.leaf[(i + band) % 4], 1.2, 0.8, 1.2);
         else F.ball(0.11 + rnd() * 0.05, fx, Y + 0.22 + rnd() * 0.12, fz, C.flower[(band + (rnd() < 0.2 ? 2 : 0)) % 6]); }
       // hoa thưa dần ra bãi cỏ
@@ -121,10 +121,10 @@ export function buildPlaza({ ctx, env, addFoot = () => {} }) {
 
   // khối con bo góc (InstancedMesh, 1 draw call) + miếng dán lõm nhẹ (1 draw call, màu theo instance)
   const cubeGroup = new THREE.Object3D(); cubeGroup.position.set(cx, cubeY, cz); cubeGroup.rotation.y = PI / 4; cubeGroup.updateMatrix();
-  const cubieGeo = new RoundedBoxGeometry(q * 0.97, q * 0.97, q * 0.97, 3, q * 0.12);
+  const cubieGeo = new RoundedBoxGeometry(q * 0.97, q * 0.97, q * 0.97, low ? 1 : 2, q * 0.12);
   const body = new THREE.InstancedMesh(cubieGeo, new THREE.MeshPhongMaterial({ color: '#141218', specular: '#4a4a55', shininess: 70 }), 27);
   // miếng dán: vuông bo góc, tâm lõm vào trong (pháp tuyến nghiêng về tâm để bóng đổ nhẹ trong lòng)
-  const stickerGeo = (() => { const sz = q * 0.82, rc = sz * 0.2, N = 8, ring = [];
+  const stickerGeo = (() => { const sz = q * 0.82, rc = sz * 0.2, N = 4, ring = [];
     for (let c = 0; c < 4; c++) { const ox = (c === 0 || c === 3 ? 1 : -1) * (sz / 2 - rc), oy = (c < 2 ? 1 : -1) * (sz / 2 - rc); for (let i = 0; i <= N; i++) { const t = (c * PI / 2) + i / N * PI / 2; ring.push([ox + Math.cos(t) * rc, oy + Math.sin(t) * rc]); } }
     const pos = [], nor = [], dep = 0.006, tilt = 0.32, pushV = (x, y, k) => { const d = Math.hypot(x, y) || 1; pos.push(x, y, -dep * (1 - k)); nor.push(-x / d * tilt * k, -y / d * tilt * k, 1); };
     for (let i = 0; i < ring.length; i++) { const [ax, ay] = ring[i], [bx, by] = ring[(i + 1) % ring.length];
