@@ -23,11 +23,14 @@ import { createWeather } from './island/weather.js';
 import { createEasterEggs } from './island/easter-eggs.js';
 import { createDt } from './island/motion.js';
 import { createAmbience } from './island/ambience.js';
+import { createLiving } from './island/living.js';
+import { createSkyshow } from './island/skyshow.js';
 import { createDive } from './island/dive.js';
 import { createMiniGameHost } from './island/mg/host.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
+import { register as registerSport } from './island/mg/sport/index.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -81,11 +84,14 @@ const vehicles = createVehicles(ctx);
 const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
-const eggs = ctx.eggs = createEasterEggs(ctx); // 13 bí mật: khối Rubik vàng, pháo hoa π, cá voi… (📖 Sổ bí mật)
+const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
+const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao băng, mây ti, chế độ ngắm trời ⭐ (skyshow.js)
+const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
+registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
@@ -124,11 +130,17 @@ renderer.setAnimationLoop(() => {
   weather.update(dt, clock.elapsedTime);
   eggs.update(dt, clock.elapsedTime);
   ambience.update(dt);
+  living.update(dt);
+  skyshow.update(dt); // sau player/sky: chế độ ngắm trời đặt lại camera
   dive.update(dt); // sau ambience: ghi đè sương/màu khi dưới nước
   mg.update(dt, clock.elapsedTime);
   ctx.flushOffer();
   brightness.update();
   unfreezeGuard(dt);
+  // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong
+  // → không khựng lần đầu khi quay camera/đi tới khu mới (three chỉ biên dịch lúc vật thể lần đầu vào khung hình)
+  // chờ người chơi đóng bảng đăng nhập 2D (biên dịch chặn luồng chính → bảng đăng nhập bật lại, khoá nhân vật)
+  if (!ctx.warmed && school.ready && !player.frozen && !document.body.classList.contains('rs-modal') && (ctx.warmT = (ctx.warmT || 0) + dt) > 1.618) { ctx.warmed = true; renderer.compileAsync(scene, camera).catch(() => {}); }
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
   quality(dt);

@@ -16,7 +16,22 @@ const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a
 let seed = CFG.seed; export const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
 
 // Uniform dùng chung cho gió và cỏ rẽ
-export const WIND = { uTime: { value: 0 }, uPlayer: { value: new THREE.Vector3(0, -99, 0) }, uWind: { value: 0 } }; // uWind 0..1: gió mạnh (weather.js)
+export const WIND = { uTime: { value: 0 }, uPlayer: { value: new THREE.Vector3(0, -99, 0) }, uWind: { value: 0 }, // uWind 0..1: gió mạnh (weather.js)
+  uGust: { value: new THREE.Vector4(0.93, 0.37, 0, 0) },   // living.js: xy hướng gió · z cơn giật 0..1 · w pha dải gió
+  uMov: { value: Array.from({ length: 6 }, () => new THREE.Vector4(0, -99, 0, 0)) },   // living.js: người chơi/xe/thú làm cỏ rẽ (xyz, bán kính)
+  uShk: { value: Array.from({ length: 4 }, () => new THREE.Vector4(0, 0, 0, -99)) } }; // living.js: cây bị va/rung (x, z, biên độ, lúc bắt đầu)
+// GLSL dùng chung: gió có hướng + cơn giật trôi qua đồng cỏ, rẽ cỏ quanh vật di chuyển, cây rung khi bị va (đổi thế giới → hệ bản sao)
+const WIND_GLSL = `uniform float uTime, uWind; uniform vec3 uPlayer; uniform vec4 uGust; uniform vec4 uMov[6]; uniform vec4 uShk[4];
+  vec3 toL(vec3 w){ vec3 c0 = instanceMatrix[0].xyz; return vec3(dot(w, c0), dot(w, instanceMatrix[1].xyz), dot(w, instanceMatrix[2].xyz)) / dot(c0, c0); }
+  vec2 windOff(vec3 ip){ vec2 d = uGust.xy;
+    float fl = sin(uTime*1.7 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.3 + ip.x)*0.3;
+    float gust = uGust.z * smoothstep(0.1, 1., sin(dot(ip.xz, d)*0.1 - uTime*1.618 - uGust.w));
+    return d * (fl*(1. + uWind*1.6) + uWind*(1.2 + 0.6*sin(uTime*0.9 + ip.x*0.06)) + gust*2.6) + vec2(d.y, -d.x) * fl * 0.3; }
+  vec3 movPush(vec3 ip){ vec3 o = vec3(0.); for (int i = 0; i < 6; i++){ vec4 m = uMov[i]; vec2 dd = ip.xz - m.xz; float L = length(dd);
+    float k = (1. - smoothstep(0.15*m.w, m.w, L)) * step(abs(ip.y - m.y), 1.5) * step(0.01, m.w); o.xz += dd / (L + 1e-3) * k; o.y = max(o.y, k); } return o; }
+  vec2 shake(vec3 ip){ vec2 o = vec2(0.); for (int i = 0; i < 4; i++){ vec4 s = uShk[i]; float e = uTime - s.w;
+    o += vec2(sin(e*13.), cos(e*10.7)) * s.z * exp(-e*2.6) * step(0., e) * (1. - smoothstep(0.4, 2.6, length(ip.xz - s.xy))); } return o; }
+`;
 
 const R = ISLAND_R;   // bán kính đảo theo bố cục hình tròn (layout.js)
 // Độ cao: đảo tròn hơi méo, đồi thoải giữa các khu, ra rìa chìm xuống biển
@@ -134,14 +149,11 @@ export function createTerrain(scene) {
   function windy(mat, amp, push = 0) {
     mat.onBeforeCompile = sh => {
       Object.assign(sh.uniforms, WIND);
-      sh.vertexShader = 'uniform float uTime; uniform vec3 uPlayer; uniform float uWind;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
-        vec3 ip = (modelMatrix * instanceMatrix * vec4(0.,0.,0.,1.)).xyz;
+      sh.vertexShader = WIND_GLSL + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+        vec3 ip = (modelMatrix * instanceMatrix * vec4(0.,0.,0.,1.)).xyz, c0 = instanceMatrix[0].xyz;
         float hh = max(position.y, 0.);
-        float sw = (sin(uTime*1.8 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.4 + ip.x)*0.3) * (1. + uWind*1.6) + uWind*(1.2 + 0.6*sin(uTime*0.9 + ip.x*0.06));
-        transformed.x += sw * ${amp.toFixed(3)} * hh; transformed.z += sw * ${(amp * 0.6).toFixed(3)} * hh;
-        ${push ? `vec2 d = ip.xz - uPlayer.xz; float L = length(d); float k = (1. - smoothstep(0.2, 1.4, L)) * step(abs(ip.y - uPlayer.y), 1.5);
-        vec2 dl = normalize(vec2(dot(d, instanceMatrix[0].xz), dot(d, instanceMatrix[2].xz)) + 1e-4); // hướng rẽ trong hệ của ngọn cỏ
-        transformed.xz += dl * k * hh * 0.9; transformed.y -= k * hh * 0.35;` : ''}`);
+        vec2 wo = windOff(ip); transformed += toL(vec3(wo.x, 0., wo.y)) * length(c0) * ${amp.toFixed(3)} * hh;
+        ${push ? `vec3 mp = movPush(ip); transformed += toL(vec3(mp.x, 0., mp.z)) * hh * 0.9; transformed.y -= mp.y * hh * 0.35;` : ''}`);
     };
     mat.customProgramCacheKey = () => 'windy' + amp + push;
     return mat;
@@ -152,6 +164,7 @@ export function createTerrain(scene) {
   const clear = (x, z, m = 4) => !blocked(x, z, m);
   // 40% dồn vào rừng quanh đền (khu I), còn lại rải khắp đảo
   const spot = (minH = W + 1.4, m = 4) => { for (let k = 0; k < 40; k++) { const forest = rand() < 0.4, a = rand() * 6.283, r = forest ? 18 + Math.sqrt(rand()) * 62 : Math.sqrt(rand()) * R * 1.02, x = (forest ? TEMPLE_C[0] : 0) + Math.cos(a) * r, z = (forest ? TEMPLE_C[1] : 0) + Math.sin(a) * r, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z, m)) return [x, h, z]; } return null; };
+  const trunks = [];   // [x, y, z, tỷ lệ] mọi cây có gió (living.js: rung cây, lá rơi)
   const plants = [];   // [x, z, bán kính, loại] — để kiểm tra không mọc trùng kiến trúc
   const colliders = [];
   const o = new THREE.Object3D(), tint = new THREE.Color();
@@ -183,7 +196,7 @@ export function createTerrain(scene) {
   // thêm vật: [x, y, z, tỷ lệ, xoay, màu (tô lên phần lá/hoa/đá)] — dùng được từ file khác qua terrain.nature.add()
   function addNature(kind, list) {
     const set = KS[kind] || kitSet(kind), def = NATURE[kind];
-    for (const [x, y, z, s, ry, col] of list) { o.position.set(x, y, z); o.rotation.set(0, ry ?? rand() * 6.28, 0); o.scale.setScalar(s); o.updateMatrix(); set.items.push({ m: o.matrix.clone(), c: new THREE.Color(col || pick(def.tints)).offsetHSL(0, 0, (rand() - 0.5) * 0.06) }); }
+    for (const [x, y, z, s, ry, col] of list) { if (def.wind && /tree|pine|palm/.test(def.type)) trunks.push([x, y, z, s]); o.position.set(x, y, z); o.rotation.set(0, ry ?? rand() * 6.28, 0); o.scale.setScalar(s); o.updateMatrix(); set.items.push({ m: o.matrix.clone(), c: new THREE.Color(col || pick(def.tints)).offsetHSL(0, 0, (rand() - 0.5) * 0.06) }); }
     set.build(); return set;
   }
   const plant = (kind, n, sMin, sMax, colR, minH, m = 4) => { const list = []; for (let i = 0; i < n; i++) { const p = spot(minH, m); if (!p) continue; const s = sMin + rand() * (sMax - sMin); if (colR) colliders.push({ x: p[0], z: p[2], r: colR * s }); plants.push([p[0], p[2], NATURE[kind].r * s, NATURE[kind].type]); list.push([p[0], p[1] - 0.08, p[2], s]); } addNature(kind, list); };
@@ -224,7 +237,7 @@ export function createTerrain(scene) {
     }
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
-  return { heightAt, slopeAt, update, colliders, ground, waterMat, waveHeight: ocean.waveHeight, waveNormal: ocean.waveNormal, water: ocean, state, plants, nature: { add: addNature } };
+  return { heightAt, slopeAt, update, colliders, ground, waterMat, waveHeight: ocean.waveHeight, waveNormal: ocean.waveNormal, water: ocean, state, plants, trunks, nature: { add: addNature } };
 }
 
 // Gộp nhiều geometry (cùng thuộc tính) thành 1
@@ -254,7 +267,7 @@ export const NATURE = {
   rockL:    { type: 'rock', r: 0.45, model: 'rock_large', parts: ['stone', 'moss'], tints: ['#b9b0a1', '#aaa293', '#c2b9aa'], shadow: true, far: true, dist: 'tree' },
   rockT:    { type: 'rock', r: 0.45, model: 'rock_tall', parts: ['stone', 'moss', 'stoneLt'], tints: ['#b9b0a1', '#a9a297'], shadow: true, far: true, dist: 'tree' },
   pebbles:  { type: 'rock', r: 0.3, model: 'rock_small', parts: ['moss', 'stone'], tints: ['#c2b9aa', '#a9a297', '#d0c7b8'], copies: 4, spread: 0.35, dist: 55 },
-  bush:     { type: 'bush', r: 0.3, model: 'bush_large', parts: ['leaf'], tints: ['#6fb85a', '#5faa4e', '#7cc35e', '#4f9a4a'], copies: 2, spread: 0.25, wind: 0.05, dist: 70 },
+  bush:     { type: 'bush', r: 0.3, model: 'bush_large', parts: ['leaf'], tints: ['#6fb85a', '#5faa4e', '#7cc35e', '#4f9a4a'], copies: 2, spread: 0.25, wind: 0.05, push: 0.5, dist: 70 },
   flowers:  { type: 'flower', r: 0.3, model: 'flower_red', parts: ['stem', 'petal'], tints: ['#ff8fa8', '#ffd35a', '#ffffff', '#c9a3ff', '#ff7a5c'], copies: 6, spread: 0.45, wind: 0.12, push: 1, dist: 'grass' },
   mushrooms:{ type: 'plant', r: 0.2, model: 'mushroom_red', parts: ['cap', 'stalk'], tints: ['#e8453c', '#f07a3a', '#c9864f'], copies: 3, spread: 0.25, dist: 45 },
   stump:    { type: 'plant', r: 0.25, model: 'stump', parts: ['wood', 'woodIn'], tints: ['#ffffff'], dist: 60 },
@@ -305,18 +318,16 @@ export function natureMat(wind = 0, push = 0) {
   const mat = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap });
   mat.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, WIND);
-    sh.vertexShader = 'attribute float tint; uniform float uTime; uniform vec3 uPlayer; uniform float uWind;\n' + sh.vertexShader
+    sh.vertexShader = 'attribute float tint;\n' + WIND_GLSL + sh.vertexShader
       .replace('#include <color_vertex>', `vColor = vec3(1.); vColor *= color;
         #ifdef USE_INSTANCING_COLOR
           vColor *= mix(vec3(1.), instanceColor.xyz, tint);
         #endif`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>
-        ${wind ? `vec3 ip = (modelMatrix * instanceMatrix * vec4(0.,0.,0.,1.)).xyz;
-        float hh = max(position.y, 0.); hh *= hh;
-        float sw = (sin(uTime*1.6 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.1 + ip.x)*0.3) * (1. + uWind*1.6) + uWind*(1.2 + 0.6*sin(uTime*0.9 + ip.x*0.06));
-        transformed.x += sw * ${wind.toFixed(3)} * hh; transformed.z += sw * ${(wind * 0.6).toFixed(3)} * hh;` : ''}
-        ${push ? `vec2 d = ip.xz - uPlayer.xz; float k = (1. - smoothstep(0.3, 1.6, length(d))) * step(abs(ip.y - uPlayer.y), 1.5);
-        transformed.y -= k * max(position.y, 0.) * 0.5;` : ''}`);
+        vec3 ip = (modelMatrix * instanceMatrix * vec4(0.,0.,0.,1.)).xyz;
+        ${wind ? `float hh = max(position.y, 0.); hh *= hh;
+        vec2 wo = windOff(ip) * ${wind.toFixed(3)} + shake(ip) * ${(wind * 1.618).toFixed(3)}; transformed += toL(vec3(wo.x, 0., wo.y)) * length(instanceMatrix[0].xyz) * hh;` : ''}
+        ${push ? `vec3 mp = movPush(ip); transformed += toL(vec3(mp.x, 0., mp.z)) * max(position.y, 0.) * ${(0.7 * push).toFixed(3)}; transformed.y -= mp.y * max(position.y, 0.) * 0.4;` : ''}`);
   };
   mat.customProgramCacheKey = () => 'nature' + key;
   natCache.set(key, mat); return mat;

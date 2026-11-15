@@ -8,6 +8,8 @@ import * as THREE from 'three';
 import { LIGHTS, CHIMNEYS, GLOW_MATS, Batch } from './decor.js';
 import { PHI, FIB, TOWN_Y, RING_ROAD_R, ROAD_W, TEMPLE_C, HOUSE_LOTS, HOUSE_W, LOT_L, LOT_BACK, lotToWorld } from './layout.js';
 import { WIND } from './terrain.js';
+import { gradientMap } from './style.js';
+import { createYardLife } from './yard-life.js';
 
 const MOTES = [610, 377, 233, 0];            // số hạt theo mức chất lượng (Fibonacci)
 const BOX = 34;                              // hạt quấn quanh người chơi trong ô 34 m (Fibonacci)
@@ -133,9 +135,44 @@ export function createAmbience(ctx) {
         for (let k = 0; k < 3; k++) b.cyl(0.05, 0.05, 0.8, 0.75, 0.05 + k * 0.1, -0.1 + k * 0.08, '#7a5236', 5, 0.2 * k, 0, Math.PI / 2); // bó củi
       });
       ctx.colliders.push({ x, z, r: 0.6 }); STOVE.push(new THREE.Vector3(x, y + 0.85, z));
+      // dây phơi quần áo: 2 cọc tre + dây, áo quần treo bay theo gió (mesh riêng bên dưới)
+      b.group(x, y, z, Lt.ry || 0, () => { for (const u of LINE_U) b.cyl(0.04, 0.05, LINE_H + 0.1, u, 0, LINE_V, '#c9a45c', 5); b.box(LINE_U[1] - LINE_U[0], 0.02, 0.02, (LINE_U[0] + LINE_U[1]) / 2, LINE_H, LINE_V, '#e8e2d0'); });
+      clothes(x, y, z, Lt.ry || 0);
     }
     const m = b.mesh(new THREE.MeshLambertMaterial({ vertexColors: true }), false); if (m) { m.receiveShadow = false; scene.add(m); }
+    if (CL.pos.length) {
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(CL.pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(CL.nor, 3));
+      g.setAttribute('color', new THREE.Float32BufferAttribute(CL.col, 3)); g.setAttribute('flap', new THREE.Float32BufferAttribute(CL.flap, 1));
+      const cm = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap, side: THREE.DoubleSide });
+      cm.onBeforeCompile = sh => {   // vạt áo càng xa dây càng bay mạnh; gió to (weather) → bay phần phật
+        Object.assign(sh.uniforms, WIND);
+        sh.vertexShader = 'uniform float uTime, uWind; attribute float flap;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+          float fw = sin(uTime * (3.2 + uWind * 4.) + position.x * 1.9 + position.z * 1.3 + flap * 2.) * (0.05 + uWind * 0.16) + uWind * 0.22 + 0.04;
+          transformed += objectNormal * fw * flap; transformed.y += abs(fw) * flap * 0.25;`);
+      };
+      cm.customProgramCacheKey = () => 'clothes';
+      const cmesh = new THREE.Mesh(g, cm); cmesh.castShadow = true; cmesh.frustumCulled = false; scene.add(cmesh);
+    }
     return m;
+  }
+  // áo quần trên dây: lưới 2×3 ô, trên cùng gắn dây (flap 0) → dưới cùng bay tự do (flap 1)
+  const LINE_U = [-9.6, -2.4], LINE_V = -1.3, LINE_H = 1.9, CL = { pos: [], nor: [], col: [], flap: [] };
+  const CLOTH = [[0.62, 0.68, '#f4f4f0'], [0.5, 0.82, '#2b4f8c'], [0.8, 0.28, '#e8392f'], [0.58, 0.62, '#9fd3ea'], [0.44, 0.78, '#3b3f4a'], [0.6, 0.6, '#ffd36e']];   // áo trắng, quần xanh, khăn quàng đỏ…
+  const _m4 = new THREE.Matrix4(), _q = new THREE.Quaternion(), _n3 = new THREE.Matrix3();
+  function clothes(x, y, z, ry) {
+    _m4.compose(_v.set(x, y, z), _q.setFromAxisAngle(_v.clone().set(0, 1, 0), ry), new THREE.Vector3(1, 1, 1)); _n3.getNormalMatrix(_m4);
+    let u = LINE_U[0] + 0.5, k = Math.floor(Math.abs(x * 7 + z * 3)) % CLOTH.length;
+    while (u < LINE_U[1] - 0.6) {
+      const [w, h, col] = CLOTH[k++ % CLOTH.length]; _c.set(col);
+      const g = new THREE.PlaneGeometry(w, h, 2, 3).toNonIndexed().translate(u + w / 2, LINE_H - h / 2, LINE_V);
+      const P = g.attributes.position, N = g.attributes.normal;
+      for (let i = 0; i < P.count; i++) {
+        CL.flap.push((LINE_H - P.getY(i)) / h);
+        _v.fromBufferAttribute(P, i).applyMatrix4(_m4); CL.pos.push(_v.x, _v.y, _v.z);
+        _v.fromBufferAttribute(N, i).applyMatrix3(_n3).normalize(); CL.nor.push(_v.x, _v.y, _v.z); CL.col.push(_c.r, _c.g, _c.b);
+      }
+      u += w + 0.25 + (k % 3) * 0.12;
+    }
   }
   function pickChimneys(p) {
     const near = SRC().map(c => [c.distanceToSquared(p), c]).filter(q => q[0] < 89 * 89).sort((a, b) => a[0] - b[0]).slice(0, CHIM_MAX);
@@ -221,6 +258,7 @@ export function createAmbience(ctx) {
   // ---------- Kiến thức đúng lúc: mỗi điều 1 lần, cách nhau ≥ 55 giây ----------
   const told = new Set(); let factT = 20;
   const fact = (k, txt) => { if (told.has(k) || factT > 0 || !ctx.toast) return; told.add(k); factT = 55; ctx.toast(txt || FACT[k], 7000); };
+  const yard = createYardLife(ctx, fact);   // học sinh nhảy dây, đá cầu ở quảng trường trước cổng trường
 
   // ---------- Cập nhật ----------
   const st = { lastH: sky.state.hour, school: undefined, bellT: 20, roosterDay: -1, jingleT: [4, 9] };
@@ -301,6 +339,7 @@ export function createAmbience(ctx) {
       if (h > 5.2 && h < 6.6 && st.roosterDay !== S.day && SRC().length) { st.roosterDay = S.day; const c = SRC().reduce((b, c) => (c.distanceToSquared(p) < b.distanceToSquared(p) ? c : b)); SND.rooster(c.x, c.y + 0.5, c.z); }
     }
     st.school = !!ctx.schoolHours;
+    yard.update(dt, t, day, W);
 
     // trăng, hoàng hôn, tia nắng
     if (night > 0.9 && W.c < 0.5) fact('moon', FACT.moon(MOON[Math.round(S.moonPhase * 8) % 8]));
@@ -313,6 +352,8 @@ export function createAmbience(ctx) {
   function grade(S, W, q, day, night) {
     const G = ctx.post && ctx.post.grade; if (!G) return;
     const golden = S.low * day;
+    // làm nét: luôn nhẹ; mạnh hơn khi máy đang vẽ dưới độ phân giải màn hình (pixelRatio bị hạ) → hết nhoè
+    if (G.uSharp) G.uSharp.value = Math.min(0.62, 0.2 + 0.55 * Math.max(0, devicePixelRatio / renderer.getPixelRatio() - 1));
     // gain: sáng ấm lúc giờ vàng, lam nhạt ban đêm; lift: nâng vùng tối một chút về phía lam (đêm không đen kịt)
     _c.setRGB(1, 1, 1).lerp(warm, golden * 0.22).lerp(cool, night * 0.25); G.uGain.value.set(_c.r, _c.g, _c.b).multiplyScalar(1 + golden * 0.04);
     _c.copy(night0).multiplyScalar(night * 0.6 + 0.08 * W.f); G.uLift.value.set(_c.r, _c.g, _c.b);
@@ -325,5 +366,5 @@ export function createAmbience(ctx) {
     G.uRayCol.value.copy(sky.sun.color).lerp(_c.set('#ffffff'), 0.3);
     if (G.uRays.value > 0.25 && onScr < 0.6) fact('rays');
   }
-  return { update, motes, smoke, mist, fish, carts, lights: L, stoves: STOVE };
+  return { update, motes, smoke, mist, fish, carts, lights: L, stoves: STOVE, yard };
 }
