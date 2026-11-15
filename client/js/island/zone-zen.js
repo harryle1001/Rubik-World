@@ -146,8 +146,8 @@ export function buildZen({ ctx, low = false }) {
   measure('vườn đá cát', () => {
     const { u, v, r } = GARDEN, hy = (du, dv) => H(u + du, v + dv);
     inFrameG(() => {
-      G.push(drape(new THREE.RingGeometry(0.01, r, 28, 5).rotateX(-Math.PI / 2).translate(u, 0, v), 0.07), '#efe4cc');
-      const ring = (cu, cv, rr) => G.push(drape(new THREE.RingGeometry(rr - 0.045, rr + 0.045, Math.max(12, Math.round(rr * 6))).rotateX(-Math.PI / 2).translate(cu, 0, cv), 0.085), '#d6c6a4');
+      G.push(drape(new THREE.RingGeometry(0.01, r, 28, 5).rotateX(-Math.PI / 2).translate(u, 0, v), 0.13), '#efe4cc');
+      const ring = (cu, cv, rr) => G.push(drape(new THREE.RingGeometry(rr - 0.045, rr + 0.045, Math.max(12, Math.round(rr * 6))).rotateX(-Math.PI / 2).translate(cu, 0, cv), 0.145), '#d6c6a4');
       for (let k = 1; k <= 8; k++) { const rr = 1.3 + k * 0.42; if (rr < r - 0.25) ring(u, v, rr); }
       for (const [du, dv, sc] of [[-r * 0.5, r * 0.32, 0.62], [r * 0.38, -r * 0.45, 0.38]]) for (let k = 1; k <= 3; k++) ring(u + du, v + dv, sc * 1.2 + k * 0.3);
     });
