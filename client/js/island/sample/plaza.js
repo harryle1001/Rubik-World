@@ -193,9 +193,43 @@ export function buildPlaza({ ctx, env, addFoot = () => {} }) {
     ctx.colliders.push({ x, z, r: 1.7 });
   }
 
+  // ================= BẢNG "THỊ TRẤN XÂY BẰNG TOÁN" (mép bắc, đứng thẳng, quay về tâm) =================
+  const atlasC = document.createElement('canvas'); atlasC.width = 1024; atlasC.height = 768; const k = atlasC.getContext('2d');
+  { k.fillStyle = '#fff6df'; k.fillRect(0, 0, 1024, 640); k.strokeStyle = '#7a5a2e'; k.lineWidth = 14; k.strokeRect(7, 7, 1010, 626); k.strokeStyle = '#c9974f'; k.lineWidth = 3; k.strokeRect(24, 24, 976, 592);
+    k.fillStyle = '#7a1f2b'; k.font = 'bold 50px system-ui'; k.textAlign = 'center'; k.fillText('Thị trấn của chúng mình xây bằng Toán!', 512, 84);
+    k.textAlign = 'left'; const line = (t, x, y, f = '29px system-ui', col = '#3b2a1e') => { k.font = f; k.fillStyle = col; k.fillText(t, x, y, 450); };
+    line('φ  Tỷ lệ vàng ≈ 1,618', 44, 150, 'bold 40px system-ui', '#b5432f');
+    ['Dãy Fibonacci: 1, 1, 2, 3, 5, 8, 13, 21…', 'mỗi số = tổng 2 số liền trước.', 'Lấy số sau chia số trước → gần 1,618.', `Mỗi lô đất: ${LOT_W} m × ${LOT_L} m (34 : 21 ≈ φ)`, `Ngôi nhà: ${HOUSE_W.toFixed(0)} m × ${HOUSE_D.toFixed(0)} m (13 : 8 ≈ φ)`, `Quảng trường: bán kính ${R} m, có 8 cột đèn.`].forEach((t, i) => line(t, 44, 202 + i * 48));
+    line('π  Số Pi ≈ 3,14', 540, 150, 'bold 40px system-ui', '#2b63d9');
+    ['Chu vi hình tròn = π × đường kính.', `Đường vòng quanh trường: bán kính ${RING_ROAD_R} m`, `→ dài 2 × π × ${RING_ROAD_R} ≈ ${Math.round(2 * PI * RING_ROAD_R)} m.`, `${ZONES_N} khu vui chơi cách đều 2π/${ZONES_N} = 45°.`, `${LOTS_N} lô đất cách đều 2π/${LOTS_N} = 22,5°.`, 'Vòng quanh quảng trường dài ≈ 82 m!'].forEach((t, i) => line(t, 540, 202 + i * 48));
+    k.strokeStyle = '#e9b949'; k.lineWidth = 5; k.beginPath(); for (let t = 0; t < 12.6; t += 0.05) { const r = 3 * Math.pow(PHI, t * 2 / PI); const x = 300 + Math.cos(t) * r, y = 568 - Math.sin(t) * r * 0.9; t ? k.lineTo(x, y) : k.moveTo(x, y); if (r > 62) break; } k.stroke();
+    k.strokeStyle = '#2b63d9'; k.beginPath(); k.arc(770, 566, 50, 0, PI * 2); k.stroke(); k.beginPath(); k.moveTo(720, 566); k.lineTo(820, 566); k.stroke(); k.fillStyle = '#2b63d9'; k.font = 'bold 26px system-ui'; k.fillText('d', 762, 558);
+    // bảng đồng chân tượng (dải dưới atlas)
+    k.fillStyle = '#8a6434'; k.fillRect(0, 640, 1024, 128); k.strokeStyle = '#e8c27a'; k.lineWidth = 6; k.strokeRect(8, 648, 1008, 112);
+    k.fillStyle = '#fff1c9'; k.textAlign = 'center'; k.font = 'bold 44px system-ui'; k.fillText('KHỐI RUBIK 3 × 3', 512, 698); k.font = '28px system-ui'; k.fillText('43 tỉ tỉ cách xếp — chỉ 1 cách đúng!', 512, 744); }
+  const tex = new THREE.CanvasTexture(atlasC); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  const boardA = PI * 0.36, [bx, bz] = at(R + 0.25, boardA), bry = Math.atan2(cx - bx, cz - bz);   // mặt bảng quay về tâm
+  const W = 4.85, Hh = W / PHI, by = Y + 1.05 + Hh / 2;   // khung 4,85 × 3 m (tỷ lệ φ)
+  S.group(bx, Y, bz, bry, () => {
+    S.box(W + 0.36, Hh + 0.36, 0.16, 0, 1.05 - 0.18, -0.02, '#7a5432');                         // khung gỗ
+    S.box(W + 0.5, 0.12, 0.3, 0, 1.05 + Hh + 0.16, -0.02, C.gold2);                              // gờ trên
+    S.prism(W + 1.0, 0.62, 0.9, 0, 1.05 + Hh + 0.28, -0.02, '#b9502f');                          // mái ngói nhỏ
+    for (const sx of [-1, 1]) { S.box(0.42, 0.3, 0.42, sx * (W / 2 + 0.3), -0.05, -0.02, C.stone2); S.box(0.26, 1.05 + Hh + 0.3, 0.26, sx * (W / 2 + 0.3), 0.2, -0.02, '#6b4a2b'); S.ball(0.12, sx * (W / 2 + 0.3), 1.05 + Hh + 0.62, -0.02, C.gold); }
+    S.box(W * 0.62, 0.42, 0.5, 0, -0.05, 0.7, C.stone2);                                          // bậc đá nhỏ để đứng đọc
+  });
+  ctx.colliders.push({ x: bx + Math.cos(bry) * (W / 2 + 0.3), z: bz - Math.sin(bry) * (W / 2 + 0.3), r: 0.35 }, { x: bx - Math.cos(bry) * (W / 2 + 0.3), z: bz + Math.sin(bry) * (W / 2 + 0.3), r: 0.35 });
+  // 2 tấm chữ (bảng + bảng đồng chân tượng) chung 1 texture → 1 draw call
+  const textGeo = (() => { const mk = (w, h, v0, v1, x, y, z, ry) => { const g = new THREE.PlaneGeometry(w, h), uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setY(i, v0 + uv.getY(i) * (v1 - v0)); g.rotateY(ry).translate(x, y, z); return g; };
+    const [px, pz] = at(2.1, PI);
+    return [mk(W, Hh, 128 / 768, 1, bx + Math.sin(bry) * 0.07, by, bz + Math.cos(bry) * 0.07, bry), mk(1.4, 0.175, 0, 128 / 768, px, yP + 0.62, pz, -PI / 2)]; })();
+  const textMesh = new THREE.Mesh(mergeTwo(textGeo), new THREE.MeshToonMaterial({ map: tex, gradientMap }));
+  textMesh.name = 'plaza-text'; textMesh.receiveShadow = true; scene.add(textMesh);
+  const info = `<b>φ – Tỷ lệ vàng ≈ 1,618</b><br>Dãy Fibonacci 1, 1, 2, 3, 5, 8, 13, 21… (mỗi số bằng tổng 2 số liền trước). Chia số sau cho số trước: 21 : 13 ≈ 1,615 — càng về sau càng gần φ. Mỗi lô đất ở đây rộng ${LOT_W} m, sâu ${LOT_L} m; ngôi nhà ${HOUSE_W.toFixed(0)} × ${HOUSE_D.toFixed(0)} m.<br><br><b>Quảng trường trước cổng</b><br>Bán kính ${R} m (số Fibonacci). Hoa văn giữa sân xếp theo góc vàng 137,5° như hạt hoa hướng dương: đếm thử sẽ thấy 13 và 21 vòng xoắn! Tượng Rubik cạnh φ² ≈ 2,62 m, mỗi ¼ vòng xoay mất φ³ ≈ 4,24 giây.<br><br><b>π – Số Pi ≈ 3,14</b><br>Chu vi hình tròn = π × đường kính. Đường vòng quanh trường có bán kính ${RING_ROAD_R} m nên dài khoảng ${Math.round(2 * PI * RING_ROAD_R)} m. ${ZONES_N} khu vui chơi xếp đều trên vòng tròn, mỗi khu cách nhau 2π/${ZONES_N} = 45°.`;
+  env.infoBoard = { x: bx, z: bz, html: info };
+
   // ================= GỘP THÀNH MESH =================
   const mat = toon('#ffffff', { vertexColors: true }), glow = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }); GLOW_MATS.push(glow);
-  const meshes = [body, stick];
+  const meshes = [body, stick, textMesh];
   const add = (b, m, shadow) => { const me = b.mesh(m, shadow); if (!me) return null; me.name = b.name; scene.add(me); meshes.push(me); return me; };
   add(G, mat, false); const st = add(S, mat, true); add(F, mat, false); add(L, glow, false);
   if (st && !low) { const ol = new THREE.MeshBasicMaterial({ color: '#4a3548', side: THREE.BackSide }); ol.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n transformed += normalize(normal) * 0.022;'); }; const e = new THREE.Mesh(st.geometry, ol); e.raycast = () => {}; e.castShadow = false; e.name = 'plaza-outline'; st.add(e); meshes.push(e); }
