@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { CFG } from './config.js';
 import { gradientMap, toon } from './style.js';
-import { LAND, WORLD, FLAT, rectDist } from './layout.js';
+import { LAND, WORLD, FLAT, rectDist, SPAWN } from './layout.js';
 
 // ---------- noise ----------
 const hash = (x, y) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -26,10 +26,11 @@ export function rawHeight(x, z) {
   const h = hills * (1 - plaza * 0.85) + plaza * 0.85 * 2.5;
   let out = h * land - 6 * (1 - land);
   // các khu quanh đảo (layout.js): đất bằng trong khu, đồi thấp + bãi cát ở viền, nối liền nhau thành 1 vùng đất
+  { const ds = Math.hypot(x - SPAWN[0], z - SPAWN[1]); if (ds < 32) out = Math.min(out, FLAT + (out - FLAT) * smooth(12, 32, ds)); }   // không để đồi che cổng trường lúc vào game
   let d = 1e9; for (const r of LAND) d = Math.min(d, rectDist(r, x, z));
   if (d < 40) {
     const n = fbm(x * 0.03 + 3, z * 0.03 - 7), m = 1 - smooth(13, 20 + 9 * n, d);
-    const zh = (FLAT + n * 7 * smooth(3, 13, d)) * m - 6 * (1 - m);
+    const zh = (FLAT + n * 7 * smooth(3, 13, d) * smooth(14, 40, Math.hypot(x - SPAWN[0], z - SPAWN[1]))) * m - 6 * (1 - m);   // đồi thấp dần gần điểm xuất phát (không che tầm nhìn)
     out = Math.max(out, zh);
     const w = 1 - smooth(0, 5, d); out = out + (FLAT - out) * w;
   }
