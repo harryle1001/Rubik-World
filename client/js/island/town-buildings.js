@@ -645,7 +645,7 @@ export function buildTownArchitecture(ctx, RS, env) {
   let flagTex = null; if (flagAt) { const c = document.createElement('canvas'); c.width = 96; c.height = 64; const k = c.getContext('2d'); k.fillStyle = '#da251d'; k.fillRect(0, 0, 96, 64); k.fillStyle = '#ffde00'; k.beginPath(); for (let i = 0; i < 10; i++) { const r2 = i % 2 ? 9 : 22, a = -Math.PI / 2 + i * Math.PI / 5; k.lineTo(48 + Math.cos(a) * r2, 34 + Math.sin(a) * r2); } k.fill(); flagTex = new THREE.CanvasTexture(c); flagTex.colorSpace = THREE.SRGBColorSpace; }
   const life = createLife(scene, { butterflies: flies, gulls, flag: flagAt && Object.assign({ tex: flagTex }, flagAt) });
 
-  const east = buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, nearDoor });   // khối C & D (zone-east.js)
+  const east = buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, nearDoor, rubikCube });   // khối C & D (zone-east.js)
   // ================= XUẤT RA SCENE =================
   const mat = toon('#ffffff', { vertexColors: true }), out = [...extraMeshes];
   for (const k of Object.keys(B)) { const m = B[k].mesh(mat, k !== 'ground'); if (!m) continue; if (k !== 'ground') addOutline(m); scene.add(m); out.push(m); }

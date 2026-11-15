@@ -3,7 +3,9 @@
 // Gọi 1 lần từ town-buildings.js (trước "XUẤT RA SCENE"). Dùng chung Batch của town-buildings (B.*) để gộp draw call:
 //   B.eastC / B.eastD  công trình (có viền) · B.ground  nền, đường, vạch (không viền) · DG  chi tiết nhỏ gần người chơi
 //   + 3 mesh riêng: mặt nước (hồ thiền, hồ bơi, hồ cá), khối phát sáng (màn hình, đèn, neon), bảng chữ (atlas riêng của khu đông)
-//   + model kit nướng sẵn (karts), hàng rào kit (InstancedMesh).
+//   + model kit nướng sẵn (karts).
+// Phong cách: kiến trúc mềm (thân nhà bo cạnh, trụ tròn, mái vòm/mái cong), KHÔNG hàng rào/rào chắn (thế giới mở);
+// tỷ lệ theo φ (PHI): nhà rộng/sâu ≈ φ, tầng trên/tầng dưới ≈ 1/φ.
 // Toạ độ: P(x2, y2, gợi ý x) đổi 2D → 3D; mặt tiền công trình quay ra cửa (RS.doors) và đường đi; va chạm đẩy vào ctx.boxes.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -11,6 +13,8 @@ import { toon, addOutline } from './style.js';
 import { Batch } from './decor.js';
 import { loadModel } from './models.js';
 import { KIT } from './kit.js';
+import { BLOCKS, PHI } from './layout.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 // Bảng màu (docs/art-style.md)
 const K = {
@@ -69,11 +73,11 @@ async function bakeKit(scene, name, list, out, shadow = true, skip = null) {   /
   for (const { mat, geos } of byMat.values()) { const m = new THREE.Mesh(mergeGeometries(geos), mat); m.castShadow = shadow; m.receiveShadow = true; m.name = 'east-kit-' + name; scene.add(m); out.push(m); }
 }
 
-export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, nearDoor }) {
+export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, nearDoor, rubikCube }) {
   const { scene } = ctx, { P, S, Y } = env, R = RS.R;
   const need = ['library', 'zen', 'stadium', 'academy', 'shopst', 'hall2p', 'plaza', 'pstreet', 'botanic', 'pool', 'archery', 'gym', 'arena', 'kart'];
   if (!need.some(k => R[k])) return null;
-  const out = [], atlas = eastAtlas();
+  const out = [], atlas = eastAtlas(), BC = BLOCKS.find(q => q.id === 'C').r, BD = BLOCKS.find(q => q.id === 'D').r;
   B.eastC = B.eastC || new Batch('eastC'); B.eastD = B.eastD || new Batch('eastD');
   const G = B.ground, W = new Batch('east-water'), L = new Batch('east-glow'), d = DG;
   const boxes = ctx.boxes, collide = (x0, z0, x1, z1, h = 6) => boxes.push({ x0: Math.min(x0, x1), x1: Math.max(x0, x1), z0: Math.min(z0, z1), z1: Math.max(z0, z1), top: Y + h });
@@ -92,9 +96,13 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
 
   // ---------- Bộ chi tiết kiến trúc (toạ độ cục bộ, +z = mặt tiền) ----------
   // thân nhà bo cạnh: chân đá, gờ mái, trụ góc
+  // khối bo cạnh (y0 = đáy)
+  const rbox = (b, w, h, dd, x, y0, z, col, r = 0.3, ry = 0) => b.push(new RoundedBoxGeometry(w, h, dd, 1, Math.min(r, w / 2.2, h / 2.2, dd / 2.2)), col, x, y0 + h / 2, z, ry);
+  // mái cong (vòm bán trụ, sống mái dọc trục x cục bộ): rộng w, cao h, sâu d
+  const barrel = (b, w, h, dd, x, y0, z, col, ry = 0) => b.push(new THREE.CylinderGeometry(dd / 2, dd / 2, w, 12, 1, false, 0, PI), col, x, y0, z, ry, 0, PI / 2, h / (dd / 2), 1, 1);
   const body = (b, w, h, dd, wall, trim = K.white, x = 0, z = 0) => {
-    b.box(w + 0.3, 0.45, dd + 0.3, x, 0, z, K.stoneD); b.box(w, h, dd, x, 0, z, wall); b.box(w + 0.35, 0.28, dd + 0.35, x, h - 0.1, z, trim);
-    for (const sx of [-1, 1]) for (const sz of [-1, 1]) b.box(0.38, h - 0.3, 0.38, x + sx * w / 2, 0.3, z + sz * dd / 2, trim);
+    rbox(b, w + 0.3, 0.5, dd + 0.3, x, 0, z, K.stoneD, 0.2); rbox(b, w, h, dd, x, 0, z, wall, Math.min(0.6, w / 8, dd / 8)); rbox(b, w + 0.35, 0.3, dd + 0.35, x, h - 0.12, z, trim, 0.14);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) b.cyl(0.22, 0.24, h - 0.3, x + sx * (w / 2 - 0.05), 0.3, z + sz * (dd / 2 - 0.05), trim, 8);
   };
   const win = (b, x, y, z, w = 1.1, h = 1.3, col = K.glass) => { b.box(w + 0.22, h + 0.22, 0.08, x, y - 0.11, z, K.white); b.box(w, h, 0.12, x, y, z + 0.01, col); b.box(0.07, h, 0.15, x, y, z + 0.01, K.white); b.box(w + 0.4, 0.1, 0.25, x, y - 0.18, z + 0.08, K.white); };
   const doorF = (b, x, z, w = 1.4, h = 2.3, col = '#8a5a34') => { b.box(w + 0.3, h + 0.2, 0.1, x, 0.4, z, K.white); b.box(w, h, 0.16, x, 0.4, z + 0.01, col); b.box(0.08, 0.08, 0.2, x + w * 0.3, 1.5, z + 0.05, K.yellow); };
@@ -112,11 +120,11 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
   {
     const strip = (x0, x1, z0, z1) => { pave(x0, z0, x1, z1, '#d8cdb8', 0.025); G.box(x1 - x0, 0.06, 0.25, (x0 + x1) / 2, Y, z0 + 0.12, K.stoneD); G.box(x1 - x0, 0.06, 0.25, (x0 + x1) / 2, Y, z1 - 0.12, K.stoneD); for (let x = x0 + 1; x < x1; x += 2.2) d.box(1.1, 0.012, 0.12, x, Y + 0.03, (z0 + z1) / 2, '#f4efe4'); };
     const c = rect('library'), a = rect('academy'), p = rect('plaza'), k = rect('kart');
-    if (c && a) { strip(c.x0 - 3, 270, a.z1 + 0.3, c.z0 - 0.3); strip(c.x0 - 3, 270, c.z1 + 0.6, c.z1 + 4.4); }
-    if (p && k) { strip(214, 344, p.z1 + 0.3, k.z0 - 0.3); strip(214, 344, k.z1 + 0.6, k.z1 + 3.6); }
+    if (c && a) { strip(BC[0] + 2, BC[2] - 0.5, a.z1 + 0.3, c.z0 - 0.3); strip(BC[0] + 2, BC[2] - 0.5, c.z1 + 0.6, c.z1 + 4.4); }
+    if (p && k) { strip(BD[0] + 0.3, BD[2] - 0.3, p.z1 + 0.3, k.z0 - 0.3); strip(BD[0] + 0.3, BD[2] - 0.3, k.z1 + 0.6, k.z1 + 3.6); }
     // đèn đường + cây hai bên phố
-    if (c && a) for (let x = 147; x < 268; x += 12) { streetLamp(B.eastC, x, a.z1 + 0.9); if (rnd() < 0.7) tree(x + 6, c.z1 + 4.9, 'leaf', 0.8); }
-    if (p && k) for (let x = 218; x < 342; x += 12) streetLamp(B.eastD, x, p.z1 + 0.9);
+    if (c && a) for (let x = BC[0] + 7; x < BC[2] - 2; x += 13) { streetLamp(B.eastC, x, a.z1 + 0.9); if (rnd() < 0.7) tree(x + 6, c.z1 + 4.9, 'leaf', 0.8); }
+    if (p && k) for (let x = BD[0] + 4; x < BD[2] - 2; x += 13) streetLamp(B.eastD, x, p.z1 + 0.9);
   }
 
   // ================= KHỐI C — HÀNG BẮC: Học viện · Phố mua sắm · Nhà game 2 người =================
@@ -144,7 +152,7 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
     for (let i = 0; i < 6; i++) { const x = fx - 4.5 + i * 1.8; collide(x - 0.4, fz + 1.8, x + 0.4, fz + 2.6, 6.6); }
     // tượng cú mèo trên chồng sách + 2 bồn hoa + hàng rào cây xén
     b.group(fx - 7, Y, fz + 3.5, 0, () => { b.box(1.8, 0.5, 1.4, 0, 0, 0, '#2b63d9'); b.box(1.7, 0.45, 1.3, 0.1, 0.5, 0, '#e8453c', 0.2); b.box(1.6, 0.45, 1.2, 0, 0.95, 0, '#2f9e44', -0.1); b.ball(0.75, 0, 2.05, 0, '#b07a48', 1, 1.2, 0.9); b.ball(0.26, -0.28, 2.55, 0.55, K.white); b.ball(0.26, 0.28, 2.55, 0.55, K.white); b.ball(0.12, -0.28, 2.55, 0.75, K.ink); b.ball(0.12, 0.28, 2.55, 0.75, K.ink); b.cone(0.12, 0.3, 0, 2.3, 0.75, K.yellow, 4); });
-    b.group(fx + 7, Y, fz + 3.5, 0.4, () => { b.box(1.4, 0.5, 1.4, 0, 0, 0, K.stone); const C6 = ['#e8392f', '#2f9e44', '#2b63d9', '#f5c518', '#ff8a1f', '#ffffff']; for (let i = 0; i < 9; i++) b.box(0.58, 0.58, 0.04, -0.6 + (i % 3) * 0.6, 0.55 + Math.floor(i / 3) * 0.6, 0.92, C6[i % 6]); b.box(1.8, 1.8, 1.8, 0, 0.5, 0, '#2b2633'); });
+    b.cyl(1.0, 1.15, 0.5, fx + 7, Y, fz + 3.5, K.stone, 12); if (rubikCube) rubikCube(b, fx + 7, Y + 0.5 + 1.6 * 0.87, fz + 3.5, 1.6, 0.4, true);
     for (const s of [-1, 1]) { for (let i = 0; i < 4; i++) bush(d, fx + s * (4 + i * 2.2), fz + 0.8, 0.8); planter(d, fx + s * 2.6, fz + 1.2, s > 0 ? '#ff8ac2' : K.yellow); }
     flowers(ac.x0 + 1, fz + 2, fx - 9, ac.z1 - 1, 30); flowers(fx + 9, fz + 2, ac.x1 - 1, ac.z1 - 1, 30);
     for (const [x, z] of [[ac.x0 + 2, ac.z0 + 2], [ac.x1 - 2, ac.z0 + 2], [ac.x0 + 1.5, fz - 4], [ac.x1 - 1.5, fz - 4]]) tree(x, z, 'leaf', 1.1);
@@ -162,7 +170,7 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
       const x = sh.x0 + 1 + sw * (i + 0.5), w = sw - 0.6, h = 5 + (i % 2) * 1.2;
       b.group(x, Y, fz - 4.5, 0, () => {
         body(b, w, h, 8.5, wall, K.white);
-        if (i % 2) b.prism(w + 0.4, 2.2, 9, 0, h + 0.1, 0, i === 3 ? K.tileD : K.tile, PI / 2); else { b.box(w + 0.5, 0.5, 9, 0, h + 0.1, 0, K.white); for (let j = 0; j < 5; j++) b.box(w * 0.18, 0.4, 0.4, -w / 2 + w * (j + 0.5) / 5, h + 0.6, 4.3, j % 2 ? wall : K.white); }
+        if (i % 2) barrel(b, 9, 2.0, w + 0.4, 0, h + 0.1, 0, i === 3 ? K.tileD : K.tile, PI / 2); else { b.box(w + 0.5, 0.5, 9, 0, h + 0.1, 0, K.white); for (let j = 0; j < 5; j++) b.box(w * 0.18, 0.4, 0.4, -w / 2 + w * (j + 0.5) / 5, h + 0.6, 4.3, j % 2 ? wall : K.white); }
         b.box(w * 0.7, 2.2, 0.12, -w * 0.12, 0.6, 4.26, K.glass); b.box(w * 0.72, 0.12, 0.2, -w * 0.12, 2.8, 4.28, K.white);
         doorF(b, w * 0.36, 4.26, 1.1, 2.3, acc);
         win(b, -w * 0.2, 3.7, 4.26, 1.0, 1.0); win(b, w * 0.25, 3.7, 4.26, 1.0, 1.0);
@@ -298,7 +306,7 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
   // --- Sân vận động Olympic: đường chạy đỏ 6 làn, sân cỏ sọc + khung thành, khán đài bậc, 4 cột đèn, cổng vòng tròn Olympic ---
   const st = rect('stadium');
   if (st) measure(b, 'stadium', () => {
-    const x1 = Math.min(st.x1, 269.5), cx = (st.x0 + x1) / 2, cz = st.z0 + 16.5, half = (x1 - st.x0) / 2 - 12.2, Ro = 11.6, Ri = 8.2;
+    const x1 = Math.min(st.x1, BC[2] - 0.5), cx = (st.x0 + x1) / 2, cz = st.z0 + 16.5, half = (x1 - st.x0) / 2 - 12.2, Ro = 11.6, Ri = 8.2;
     lawn(st.x0 + 0.3, st.z0 + 0.3, x1, st.z1 - 0.3, K.grass2);
     // đường chạy: 2 đoạn thẳng + 2 bán nguyệt
     for (const s of [-1, 1]) { G.box(half * 2, 0.04, Ro - Ri, cx, Y, cz + s * (Ri + Ro) / 2, '#c8553d'); ring(G, Ri, Ro, cx + s * half, Y + 0.042, cz, '#c8553d', s > 0 ? -PI / 2 : PI / 2, PI, 18); }
@@ -331,7 +339,7 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
   // --- Quảng trường lễ hội: 4 bàn cờ Ikigai, sân khấu, dây đèn lồng, đài phun nước, gian hàng ---
   const pl = rect('plaza');
   if (pl) measure(e, 'plaza', () => {
-    const x0 = Math.max(pl.x0, 214.3);
+    const x0 = Math.max(pl.x0, BD[0] + 0.3);
     pave(x0, pl.z0 + 0.5, pl.x1 - 0.5, pl.z1 - 0.3, '#ecd9b8');
     for (let x = x0 + 1.5; x < pl.x1; x += 3) d.box(0.06, 0.012, pl.d - 1.5, x, Y + 0.03, pl.cz, '#dcc6a0');
     for (let z = pl.z0 + 1.5; z < pl.z1; z += 3) d.box(pl.x1 - x0 - 1, 0.012, 0.06, (x0 + pl.x1) / 2, Y + 0.03, z, '#dcc6a0');
@@ -390,11 +398,11 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
     for (let i = 0; i < 8; i++) {
       const X0 = 8760 + (i % 4) * 215, Y0 = i < 4 ? -500 : -265, [px0, pz0] = at(X0, Y0), pw = 195 * S, pd = 200 * S, cx = px0 + pw / 2;
       const dr = doorsP.find(q => Math.abs(q.p[0] - cx) < 2 && Math.abs(q.p[1] - (pz0 + pd)) < 1.5), fz = (dr ? dr.p[1] : pz0 + pd) - 1.2;   // mặt tiền ngay sau cửa
-      const w = 6.2 + (i % 3) * 0.6, dd = 5.2, h = 3.4 + (i % 2) * 1.3, wall = WALL[i], roof = ROOF[i];
+      const w = 6.2 + (i % 3) * 0.6, dd = w / PHI, h = 3.4 + (i % 2) * 1.3, wall = WALL[i], roof = ROOF[i];
       pave(cx - 0.8, fz, cx + 0.8, pz0 + pd + 0.2, K.pave);
       e.group(cx, Y, fz - dd / 2, 0, () => {
         body(e, w, h, dd, wall, K.white);
-        if (i % 2) e.prism(w + 0.6, 2.0, dd + 0.8, 0, h + 0.1, 0, roof, PI / 2); else e.hip(w + 0.8, 2.0, dd + 0.8, 0, h + 0.1, 0, roof);
+        if (i % 2) barrel(e, w + 0.7, 2.0, dd + 0.8, 0, h + 0.1, 0, roof); else e.push(new THREE.SphereGeometry(1, 10, 4, 0, 2 * PI, 0, PI / 2), roof, 0, h + 0.1, 0, 0, 0, 0, (w + 0.8) * 0.62, 2.0, (dd + 0.8) * 0.62);
         e.box(0.6, 1.4, 0.6, w * 0.28, h + 0.6, -0.8, K.stoneD);
         doorF(e, 0, dd / 2 + 0.02, 1.1, 2.1, ROOF[(i + 3) % 8]); for (const s of [-1, 1]) win(e, s * w * 0.3, 1.4, dd / 2 + 0.02, 1.0, 1.1);
         if (h > 4) win(e, 0, 3.4, dd / 2 + 0.02, 1.0, 0.9);
@@ -402,8 +410,8 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
         if (dr) sign(e, dr.n.replace('Nhà của ', 'Nhà '), 2.6, 0.42, 0, h - 0.55, dd / 2 + 0.06);
       });
       collide(cx - w / 2 - 0.2, fz - dd - 0.2, cx + w / 2 + 0.2, fz + 0.05, h + 1.5);
-      // hàng rào gỗ thấp chừa lối vào, hộp thư, bồn hoa
-      for (const s of [-1, 1]) { d.box(pw / 2 - 1.4, 0.5, 0.08, cx + s * (pw / 4 + 0.7), Y + 0.25, pz0 + pd - 0.4, K.white); for (let k = 0; k < 5; k++) d.box(0.1, 0.75, 0.1, cx + s * (1.2 + k * (pw / 2 - 1.4) / 4), Y, pz0 + pd - 0.4, K.white); }
+      // không rào: viền hoa & bụi thấp tự nhiên dọc mép lô, hộp thư
+      for (const s of [-1, 1]) for (let k = 0; k < 3; k++) bush(d, cx + s * (2.2 + k * 1.3), pz0 + pd - 0.6, 0.45, k % 2 ? '#5aa04a' : K.grassD);
       d.box(0.1, 1.0, 0.1, cx + 1.4, Y, pz0 + pd - 0.8, K.woodD); d.box(0.45, 0.32, 0.3, cx + 1.4, Y + 1.0, pz0 + pd - 0.8, ROOF[i]);
       bush(d, cx - w / 2 - 0.3, fz - 0.4, 0.6); flowers(cx + 1.2, fz + 0.1, cx + pw / 2 - 0.6, pz0 + pd - 0.8, 6); flowers(cx - pw / 2 + 0.6, fz + 0.1, cx - 1.2, pz0 + pd - 0.8, 6);
       if (i < 4) tree(px0 + 0.8, pz0 + 1.2, 'leaf', 0.8);
@@ -471,7 +479,7 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
     for (const [x, z, c] of [[po.x0 + 2, po.z1 - 2, K.red], [po.x1 - 2, po.z1 - 2, '#2b63d9']]) { e.cyl(0.05, 0.05, 2.4, x, Y, z, K.white, 4); e.cone(1.5, 0.6, x, Y + 2.2, z, c, 8); d.box(0.7, 0.1, 1.8, x + 1.3, Y + 0.35, z, K.white); }
   });
 
-  // --- Trường bắn cung: mái che vạch bắn, 5 bia trên giá, rơm, hàng rào gỗ (kit), cờ gió ---
+  // --- Trường bắn cung: mái che vạch bắn, 5 bia trên giá, rơm, cờ gió, sân mở ---
   const ar = rect('archery');
   if (ar) measure(e, 'archery', () => {
     lawn(ar.x0 + 0.3, ar.z0 + 0.3, ar.x1 - 0.3, ar.z1 - 0.3, '#8fcf6a');
@@ -486,14 +494,9 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
       d.box(1.6, 0.8, 0.9, x + 1.6, Y, z, '#e6c55e'); d.box(1.6, 0.06, 0.92, x + 1.6, Y + 0.5, z, '#c9a640');
       collide(x - 0.4, z - 1, x + 0.4, z + 1, 2.2);
     }
-    // cờ gió + hàng rào kit quanh sân (chừa lối vào phía tây)
+    // cờ gió (sân mở, không rào) + vài khóm cây làm nền sau bia
     e.cyl(0.05, 0.05, 4, ar.cx, Y, ar.z0 + 1, K.white, 4); glow(e, l => l.cone(0.3, 1.2, ar.cx + 0.6, Y + 3.6, ar.z0 + 1, '#ff8a1f', 5));
-    bakeKit(scene, 'fence', sz => {
-      const s = 2.0 / Math.max(sz.x, 0.01), seg = sz.x * s * 0.98, list = [];
-      for (let x = ar.x0 + 7 + seg / 2; x < ar.x1 - seg / 2; x += seg) { list.push([x, Y, ar.z0 + 0.4, s, 0]); list.push([x, Y, ar.z1 - 0.4, s, 0]); }
-      for (let z = ar.z0 + 0.4 + seg / 2; z < ar.z1 - seg / 2; z += seg) list.push([ar.x1 - 0.4, Y, z, s, PI / 2]);
-      return list;
-    }, out, false);
+    for (let z = ar.z0 + 2; z < ar.z1 - 1; z += 3.2) bush(d, ar.x1 - 0.8, z, 0.8);
   });
 
   // --- Nhà thi đấu thể dục dụng cụ: mái vòm cong, vách kính, vòng treo làm biểu tượng ---
@@ -540,7 +543,7 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
     for (const s of [-1, 1]) { e.cyl(0.1, 0.12, 4, cx + s * 9, Y, an.z1 - 2, K.ink, 6); glow(e, l => l.box(0.8, 2.6, 0.08, cx + s * 9 + 0.45, Y + 1.3, an.z1 - 2, s > 0 ? '#ff6ad5' : '#5af0ff')); }
   });
 
-  // --- Trường đua Rubik Kart: đường nhựa vòng chữ nhật bo góc, vạch trắng, kerb đỏ-trắng, chồng lốp, cổng xuất phát ô cờ,
+  // --- Trường đua Rubik Kart: đường nhựa vòng chữ nhật bo góc, vạch trắng, kerb đỏ-trắng, khóm hoa, cổng xuất phát ô cờ,
   //     khán đài trong sân, cờ đuôi nheo, 5 xe kart (kit) đỗ ở khu pit ---
   const ka = rect('kart');
   if (ka) measure(e, 'kart', () => {
@@ -567,8 +570,8 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
       glow(e, l => { for (let i = 0; i < 5; i++) l.ball(0.18, -1.6 + i * 0.8, 4.75, 0.3, i < 2 ? '#e8453c' : i < 4 ? '#ffd23f' : '#5af07a'); });
     });
     for (const s of [-1, 1]) collide(sx - 0.3, z1 + s * (tw / 2 + 0.8) - 0.3, sx + 0.3, z1 + s * (tw / 2 + 0.8) + 0.3, 5);
-    // chồng lốp ở 4 góc ngoài
-    for (const [cx, cz, t0] of corners) for (let i = 0; i <= 4; i++) { const a = t0 + i * PI / 8, rr = rc + tw / 2 + 1.4, x = cx + Math.cos(a) * rr, z = cz - Math.sin(a) * rr; for (let k = 0; k < 2; k++) e.cyl(0.42, 0.42, 0.3, x, Y + k * 0.3, z, k ? K.red : '#2b2633', 6); }
+    // không rào chắn: khóm hoa thấp ở 4 góc ngoài
+    for (const [cx, cz, t0] of corners) for (let i = 0; i <= 4; i++) { const a = t0 + i * PI / 8, rr = rc + tw / 2 + 1.6, x = cx + Math.cos(a) * rr, z = cz - Math.sin(a) * rr; bush(e, x, z, 0.55, i % 2 ? '#5aa04a' : K.grassD); e.ball(0.13, x + 0.2, Y + 0.6, z, ['#e8453c', '#f5c518', '#ff8ac2'][i % 3]); }
     // khán đài nhỏ trong sân (nhìn về đoạn nam) + mái che
     const gx = (x0 + x1) / 2 - 6, gz = (z0 + z1) / 2 + 1.5;
     e.group(gx, Y, gz, 0, () => { const SEAT = ['#e8453c', '#2b63d9', '#f5c518', '#2f9e44']; for (let i = 0; i < 3; i++) { e.box(14, 0.5 + i * 0.5, 0.9, 0, 0, 0.9 - i * 0.9, K.stone); for (let j = 0; j < 7; j++) e.box(1.8, 0.2, 0.45, -6 + j * 2, 0.5 + i * 0.5, 0.95 - i * 0.9, SEAT[(i + j) % 4]); } for (const s of [-1, 1]) e.box(0.2, 3.6, 0.2, s * 6.8, 0, -1.6, K.white); e.box(14.6, 0.2, 3.4, 0, 3.6, -0.3, K.white, 0, -0.1); });
