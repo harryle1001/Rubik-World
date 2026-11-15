@@ -124,7 +124,7 @@ export function createSealife(ctx) {
     const y = H(x, z), depth = W - y, c = CORAL[Math.floor(rand() * CORAL.length)], s = 0.7 + rand() * 0.6;
     const deep = Z.id === 'deep';
     switch (kind) {
-      case 'rock': rock(st, x, y, z, (0.6 + rand() * 1.4) * (Z.id === 'cave' ? 1.6 : 1), deep ? '#3e4a5a' : (rand() < 0.5 ? '#a9a297' : '#8d8a86')); break;
+      case 'rock': rock(st, x, y, z, (0.6 + rand() * 1.4) * (Z.id === 'cave' ? 1.6 : 1), deep ? '#8796b0' : (rand() < 0.5 ? '#a9a297' : '#8d8a86')); break;
       case 'brain': st.push(new THREE.IcosahedronGeometry(0.5, 1), c, x, y + 0.12 * s, z, 0, 0, 0, s, s / PHI, s); spots.sanho.push([x, y + 0.3, z]); break;
       case 'table': stick(st, x, y, z, x, y + 0.5 * s, z, 0.09 * s, '#e8b18a'); st.push(new THREE.CylinderGeometry(0.75 * s, 0.6 * s, 0.12, 9), c, x, y + 0.56 * s, z); spots.sanho.push([x, y + 0.5, z]); break;
       case 'branch': {   // san hô cành: thân + 5 cành mở theo góc vàng, đầu cành tròn
@@ -132,16 +132,24 @@ export function createSealife(ctx) {
         for (let k = 0; k < 5; k++) { const a = k * GOLDEN + rand(), t = 0.5 + rand() * 0.4, L = (0.5 + rand() * 0.4) * s, ex = x + Math.cos(a) * Math.sin(t) * L, ez = z + Math.sin(a) * Math.sin(t) * L, ey = y + h0 + Math.cos(t) * L;
           stick(st, x, y + h0 * 0.8, z, ex, ey, ez, 0.06 * s, c); st.push(new THREE.IcosahedronGeometry(0.07 * s, 0), c, ex, ey, ez); }
         spots.sanho.push([x, y + 0.5, z]); break; }
-      case 'fan': sw.push(new THREE.CircleGeometry(0.75 * s, 8, 0, PI), deep ? '#7a4fd0' : (rand() < 0.5 ? '#b14fd0' : '#e8453c'), x, y, z, rand() * 6.28); spots.sanho.push([x, y + 0.5, z]); break;
+      case 'fan': {   // quạt biển: 8 nhánh mảnh xoè trong 1 mặt phẳng, chẻ đôi ở đầu (lay theo nước)
+        const col = deep ? '#7a4fd0' : (rand() < 0.5 ? '#b14fd0' : '#e8453c'), ry = rand() * 6.28, ax = Math.cos(ry), az = -Math.sin(ry), L0 = 0.8 * s;
+        for (let k = 0; k < 8; k++) { const t = (k / 7 - 0.5) * 2.4, L = L0 * (0.75 + 0.25 * Math.cos(t)), mx = x + ax * Math.sin(t) * L * 0.55, my = y + Math.cos(t) * L * 0.55, mz = z + az * Math.sin(t) * L * 0.55;
+          stick(sw, x, y, z, mx, my, mz, 0.03, col, 3);
+          for (const d of [-0.18, 0.18]) stick(sw, mx, my, mz, x + ax * Math.sin(t + d) * L, y + Math.cos(t + d) * L, z + az * Math.sin(t + d) * L, 0.02, col, 3); }
+        spots.sanho.push([x, y + 0.5, z]); break; }
       case 'anem': {   // hải quỳ: đế + 13 xúc tu (lay theo nước) → có cá hề
         st.push(new THREE.CylinderGeometry(0.22, 0.28, 0.25, 7), '#c4507a', x, y + 0.12, z);
         for (let k = 0; k < 13; k++) { const a = k * GOLDEN, r = 0.06 + 0.16 * Math.sqrt(k / 13); sw.push(new THREE.ConeGeometry(0.04, 0.42, 3), rand() < 0.5 ? '#ff9fc4' : '#ffd0e4', x + Math.cos(a) * r, y + 0.42, z + Math.sin(a) * r, 0, Math.cos(a) * 0.4, Math.sin(a) * 0.4); }
         spots.haiquy.push([x, y + 0.4, z]); anemones.push({ x, y: y + 0.65, z, Z }); break; }
       case 'grass': { const n = 5 + Math.floor(rand() * 4); for (let k = 0; k < n; k++) { const a = rand() * 6.28, r = rand() * 0.3, h = 0.35 + rand() * 0.6; sw.push(new THREE.ConeGeometry(0.05, h, 3), rand() < 0.5 ? '#5fae5a' : '#7cc56a', x + Math.cos(a) * r, y + h / 2, z + Math.sin(a) * r, rand() * 3, (rand() - 0.5) * 0.4); } spots.cobien.push([x, y + 0.3, z]); break; }
-      case 'kelp': {   // tảo bẹ: 2 tấm lá chéo nhau cao gần tới mặt nước (chia đoạn để lay mềm)
-        const h = Math.max(1.5, depth * (0.55 + rand() * 0.35)), col = rand() < 0.5 ? '#6b8f2a' : '#8aa83a';
-        for (const ry of [0, PI / 2]) sw.push(new THREE.PlaneGeometry(0.42, h, 1, 6).translate(0, h / 2, 0), col, x, y, z, ry + rand() * 0.4);
-        stick(st, x, y, z, x, y + 0.3, z, 0.06, '#5a6b22'); spots.taobe.push([x, y + h * 0.4, z]); break; }
+      case 'kelp': {   // tảo bẹ: thân mảnh cao gần tới mặt nước, lá dài mọc so le theo góc vàng, cách nhau 0,62 m (1/φ), có bóng khí ở gốc lá
+        const h = Math.max(1.5, depth * (0.6 + rand() * 0.32)), col = rand() < 0.5 ? '#8db33a' : '#a9c94f';
+        stick(sw, x, y, z, x, y + h, z, 0.035, '#7a8f33', 4);
+        for (let yy = 0.4, k = 0; yy < h; yy += 1 / PHI, k++) { const a = k * GOLDEN + rand(), L = 0.6 + rand() * 0.5;
+          sw.push(new THREE.PlaneGeometry(0.2, L, 1, 2).translate(0, L / 2, 0), k % 2 ? col : '#bcd65e', x, y + yy, z, a, 0.55 + rand() * 0.3);
+          sw.push(new THREE.IcosahedronGeometry(0.045, 0), '#c2a744', x + Math.sin(a) * 0.04, y + yy, z + Math.cos(a) * 0.04); }
+        spots.taobe.push([x, y + h * 0.4, z]); break; }
       case 'star': { const col = ['#ff8a4c', '#e8453c', '#f5c518'][Math.floor(rand() * 3)], r0 = rand() * 6.28;
         for (let k = 0; k < 5; k++) { const a = r0 + k * 2 * PI / 5; st.push(new THREE.ConeGeometry(0.07, 0.3, 3), col, x + Math.cos(a) * 0.13, y + 0.03, z + Math.sin(a) * 0.13, -a + PI / 2, PI / 2, 0, 1, 1, 0.45); }
         spots.saobien.push([x, y + 0.1, z]); break; }
@@ -151,11 +159,20 @@ export function createSealife(ctx) {
       case 'shell': st.push(new THREE.ConeGeometry(0.09, 0.2, 6), rand() < 0.5 ? '#f6e2c8' : '#f6c7c0', x, y + 0.06, z, rand() * 6, PI / 2 - 0.3); break;
       case 'plank': st.push(new THREE.BoxGeometry(0.25, 0.06, 1.6 + rand()), '#6b4a2e', x, y + 0.1, z, rand() * 6.28, (rand() - 0.5) * 0.5, (rand() - 0.5) * 0.3); break;
       case 'glow': { const n = 3 + Math.floor(rand() * 3), col = GLOWC[Math.floor(rand() * GLOWC.length)];   // cụm ống phát sáng
-        for (let k = 0; k < n; k++) { const a = rand() * 6.28, r = rand() * 0.4, h = 0.4 + rand() * 1.1, px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r; stick(st, px, y, pz, px, y + h, pz, 0.05, '#2c3446'); gl.push(new THREE.IcosahedronGeometry(0.1, 0), col, px, y + h, pz); }
+        for (let k = 0; k < n; k++) { const a = rand() * 6.28, r = rand() * 0.4, h = 0.4 + rand() * 1.1, px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r; stick(st, px, y, pz, px, y + h, pz, 0.05, '#5d6b84'); gl.push(new THREE.IcosahedronGeometry(0.1, 0), col, px, y + h, pz); }
         spots.sanho.push([x, y + 0.6, z]); break; }
-      case 'tube': { const col = GLOWC[Math.floor(rand() * GLOWC.length)]; gl.push(new THREE.IcosahedronGeometry(0.4, 1), col, x, y + 0.1, z, 0, 0, 0, s, s / (PHI * PHI), s); rock(st, x, y, z, 0.8, '#2c3446'); break; }
+      case 'tube': { const col = GLOWC[Math.floor(rand() * GLOWC.length)]; gl.push(new THREE.IcosahedronGeometry(0.4, 1), col, x, y + 0.1, z, 0, 0, 0, s, s / (PHI * PHI), s); rock(st, x, y, z, 0.8, '#5d6b84'); break; }
     }
   }
+  const SAND = new THREE.Color('#b9985d');
+  function floorPatch(st, Z, col, R) {   // mảng nền màu riêng của vùng (tối dần vào giữa), mép răng cưa hoà vào cát
+    const RN = 8, SG = 34, c0 = new THREE.Color(col), P = [], pos = [], cl = [], cc = new THREE.Color();
+    for (let i = 0; i <= RN; i++) for (let j = 0; j < SG; j++) { const t = i / RN, a = j / SG * 2 * PI, rr = R * t * (0.8 + 0.35 * hash3(j, 1, 2, Z.x)), x = Z.x + Math.cos(a) * rr, z = Z.z + Math.sin(a) * rr; P.push([x, H(x, z) + 0.05 - (i === RN ? 0.12 : 0), z, Math.pow(t, 1.6)]); }
+    const V = (i, j) => P[i * SG + (j % SG)], put = v => { pos.push(v[0], v[1], v[2]); cc.copy(c0).lerp(SAND, v[3]); cl.push(cc.r, cc.g, cc.b); };
+    for (let i = 0; i < RN; i++) for (let j = 0; j < SG; j++) { const a = V(i, j), b = V(i + 1, j), c = V(i + 1, j + 1), d = V(i, j + 1); [a, c, b, a, d, c].forEach(put); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(cl, 3)); g.computeVertexNormals(); st.store(g);
+  }
+  const PATCH = { deep: '#4a6a96', cave: '#b0a492', kelp: '#c2b27a', reef: '#fff0c8' };
   function sway(mesh) {   // trọng số lay: càng cao khỏi đáy càng lay mạnh
     const p = mesh.geometry.attributes.position, a = new Float32Array(p.count);
     for (let i = 0; i < p.count; i++) a[i] = Math.pow(Math.min(1, Math.max(0, (p.getY(i) - H(p.getX(i), p.getZ(i))) / 5)), 1.2);
@@ -165,6 +182,7 @@ export function createSealife(ctx) {
   for (const Z of ZONES) {
     const st = new Batch('sea-' + Z.id), sw = new Batch('sea-sway'), gl = new Batch('sea-glow');
     const radial = [Z.x / (Math.hypot(Z.x, Z.z) || 1), Z.z / (Math.hypot(Z.x, Z.z) || 1)], perp = [-radial[1], radial[0]];
+    if (PATCH[Z.id]) floorPatch(st, Z, PATCH[Z.id], Z.r * 1.4);
     if (Z.id === 'cave') {   // hang đá: vòm 21 tảng đá (3 vòng × 7), lối vào nhìn về đảo; 5 cột đá cao theo Fibonacci
       const RA = Math.min(3.6, (W - Z.y) * 0.62);
       for (let s = -1; s <= 1; s++) for (let k = 0; k <= 6; k++) { const th = k / 6 * PI, x = Z.x + perp[0] * Math.cos(th) * RA + radial[0] * s * 2.4, z = Z.z + perp[1] * Math.cos(th) * RA + radial[1] * s * 2.4;
@@ -205,7 +223,7 @@ export function createSealife(ctx) {
     const rx = Z.r * (0.35 + rand() * 0.3) * rMul, rz = Z.r * (0.25 + rand() * 0.25) * rMul, sp = (0.9 + rand() * 0.6) / Math.max(3, rx), ph = rand() * 6.28;
     let floor = -99; for (let k = 0; k < 8; k++) { const t = k / 8 * 6.28; floor = Math.max(floor, H(Z.x + rx * Math.sin(t), Z.z + rz * Math.sin(2 * t) * 0.5)); }
     const y = Math.min(W - 1.3, floor + 1.4 + (W - 1.3 - floor - 1.4) * yUp * rand());
-    schools.push({ home: new THREE.Vector3(Z.x, y, Z.z), rx, rz, sp, ph, n: Math.round(n * (LOW ? 1 / PHI : 1)), col, size, Z });
+    schools.push({ home: new THREE.Vector3(Z.x, y, Z.z), rx, rz, sp, ph, n: Math.round(n * (LOW ? 1 / PHI : 1)), col, size: size * Math.sqrt(PHI), Z });   // cá to hơn thật √φ lần cho dễ nhìn
   };
   const z0 = n => ZONES.find(z => z.id === n);
   school(z0('lagoon'), 13, '#c9d6df', 0.26); school(z0('lagoon'), 8, '#ffd23f', 0.22, 0.6);

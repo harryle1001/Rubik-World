@@ -120,7 +120,7 @@ export function createTreasure(ctx) {
 
   function ask(c) {
     const q = pickQuestions(['bien'], 1)[0]; freeze(true); quiz.hidden = false; ctx.sfx && ctx.sfx('ui');
-    quiz.innerHTML = `<div class="card"><p class="sub">🧰 Rương kho báu ${c.i + 1}/${N} · ${c.s.zone.icon} ${c.s.zone.name}</p><h3>${q.q}</h3>
+    quiz.innerHTML = `<div class="card"><p class="sub">🧰 Rương kho báu số ${c.i + 1} · ${c.s.zone.icon} ${c.s.zone.name}</p><h3>${q.q}</h3>
       <div class="ch">${q.choices.map((t, k) => `<button data-k="${k}">${t}</button>`).join('')}</div><p class="ex">Trả lời đúng để mở rương nhé!</p><button class="later">Để sau</button></div>`;
     const close = () => { quiz.hidden = true; freeze(false); };
     quiz.querySelector('.later').onclick = close;
