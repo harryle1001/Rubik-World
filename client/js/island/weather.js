@@ -72,7 +72,7 @@ export function createWeather(ctx) {
   bow.frustumCulled = false; bow.visible = false; bow.renderOrder = 1; scene.add(bow);
 
   // ---------- Mặt đất ướt + vũng nước (vá shader nền đất) ----------
-  const WET = { uWet: { value: 0 }, uRainNow: { value: 0 }, uWT: WIND.uTime };
+  const WET = { uWet: { value: 0 }, uRainNow: { value: 0 }, uWT: WIND.uTime, uCloudSh: { value: 0 } }; // uCloudSh: bóng mây trôi trên mặt đất
   const patched = new Set(); let scanT = 0, scans = 0;
   function patchGrounds() {
     scene.traverse(o => {
@@ -82,7 +82,12 @@ export function createWeather(ctx) {
       m.onBeforeCompile = sh => {
         Object.assign(sh.uniforms, WET);
         sh.vertexShader = 'varying vec3 vWP; varying float vUp;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n vWP = (modelMatrix * vec4(transformed, 1.)).xyz; vUp = normalize(mat3(modelMatrix) * objectNormal).y;');
-        sh.fragmentShader = 'uniform float uWet, uRainNow, uWT; varying vec3 vWP; varying float vUp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+        sh.fragmentShader = 'uniform float uWet, uRainNow, uWT, uCloudSh; varying vec3 vWP; varying float vUp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+          if (uCloudSh > 0.01) {   // bóng mây: vệt tối mềm trôi theo gió
+            vec2 cq = vWP.xz * 0.018 + vec2(uWT * 0.035, uWT * 0.012);
+            float cn = sin(cq.x * 1.7 + sin(cq.y * 1.3) * 1.9) * sin(cq.y * 1.9 + sin(cq.x * 0.9) * 2.2);
+            diffuseColor.rgb *= 1. - uCloudSh * smoothstep(0.25, 0.6, cn);
+          }
           if (uWet > 0.01 && vUp > 0.6) {   // chỉ mặt hướng lên (nền, sân, mái), tường không đọng nước
             float n = sin(vWP.x*0.47 + sin(vWP.z*0.31)*2.1) * sin(vWP.z*0.43 + sin(vWP.x*0.29)*2.3);
             float pud = smoothstep(0.9 - uWet*0.2, 0.93 - uWet*0.2, n*0.5+0.5);
@@ -139,7 +144,7 @@ export function createWeather(ctx) {
     // ánh sáng & màu trời (sky.js vừa đặt theo giờ, ở đây chỉ phủ thêm thời tiết)
     S.sun.intensity *= 1 - 0.78 * cur.c; S.hemi.intensity *= 1 - 0.3 * cur.c;
     S.U.uTop.value.lerp(grey, cur.c * 0.6 * day); S.U.uHor.value.lerp(grey, cur.c * 0.45 * day); S.U.uSunCol.value.multiplyScalar(1 - cur.c * 0.9);
-    S.cloudMat.color.setScalar(1 - cur.c * 0.45); S.cloudMat.emissiveIntensity *= 1 - cur.c * 0.6;
+    S.cloudMat.color.copy(S.state.cloudTint).multiplyScalar(1 - cur.c * 0.45); S.cloudMat.emissiveIntensity *= 1 - cur.c * 0.6;
     const nVis = Math.round(5 + cur.c * 9); S.clouds.children.forEach((c, i) => { c.visible = i < nVis; c.position.x += cur.w * 5 * dt; });
     // sương mù: kéo gần + màu xám nhạt
     scene.fog.near = lerp(lerp(fogBase.near, 45, cur.c * 0.5 + cur.r * 0.3), 6, cur.f); scene.fog.far = lerp(lerp(fogBase.far, 200, cur.r), 75, cur.f);
@@ -152,7 +157,7 @@ export function createWeather(ctx) {
     // mưa
     rain.visible = cur.r > 0.01; RU.uRain.value = cur.r; RU.uTime.value = t; RU.uCam.value.copy(camera.position); RU.uLight.value = 0.45 + 0.55 * day;
     RU.uWind.value.set(1, 0.4).multiplyScalar(cur.w * 2.2); rg.setDrawRange(0, DROPS[L] * 2);
-    WET.uWet.value = cur.wet; WET.uRainNow.value = cur.r;
+    WET.uWet.value = cur.wet; WET.uRainNow.value = cur.r; WET.uCloudSh.value = (ctx.qualityLevel || 0) >= 3 ? 0 : day * (1 - S.state.low * 0.6) * (0.1 + cur.c * 0.22) * (1 - cur.r * 0.8);
     if ((scanT -= dt) <= 0 && scans < 25) { scanT = 3; scans++; patchGrounds(); } // nền thị trấn dựng sau → quét vài lần
 
     // giông: chớp lóe + sấm đến muộn theo khoảng cách (ánh sáng nhanh hơn âm thanh)
