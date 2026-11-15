@@ -1,5 +1,6 @@
 // sky.js — Trời gradient, mặt trời/trăng, sao, sương mù xa, ánh sáng theo giờ (ngày đêm), mây trôi.
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { CFG } from './config.js';
 import { toon } from './style.js';
 
@@ -42,8 +43,9 @@ export function createSky(scene) {
   const cm = toon('#ffffff', { fog: false, emissive: '#ffffff', emissiveIntensity: 0.25 });
   const blob = new THREE.IcosahedronGeometry(1, 1);
   for (let i = 0; i < 14; i++) {
-    const g = new THREE.Group(), n = 3 + (i % 3);
-    for (let k = 0; k < n; k++) { const m = new THREE.Mesh(blob, cm); const s = 3 + Math.random() * 3; m.scale.set(s, s * 0.6, s); m.position.set(k * 4 - n * 2, Math.random(), Math.random() * 3); g.add(m); }
+    const n = 3 + (i % 3), parts = [];   // gộp các khối của 1 đám mây thành 1 mesh (ít draw call)
+    for (let k = 0; k < n; k++) { const s = 3 + Math.random() * 3; parts.push(blob.clone().scale(s, s * 0.6, s).translate(k * 4 - n * 2, Math.random(), Math.random() * 3)); }
+    const g = new THREE.Mesh(mergeGeometries(parts), cm);
     const a = Math.random() * 6.28, d = 60 + Math.random() * 150; g.position.set(Math.cos(a) * d, 45 + Math.random() * 25, Math.sin(a) * d); g.userData.v = 1 + Math.random() * 1.5;
     clouds.add(g);
   }

@@ -47,7 +47,7 @@ export function createSchoolTown(ctx) {
     const c = document.createElement('canvas'); c.width = 512; c.height = 96; const k = c.getContext('2d');
     k.font = 'bold 44px system-ui'; const w = Math.min(500, k.measureText(text).width + 40);
     k.fillStyle = 'rgba(27,22,38,.75)'; k.beginPath(); k.roundRect((512 - w) / 2, 12, w, 72, 30); k.fill(); k.fillStyle = '#fff'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(text, 256, 49, 480);
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false })); sp.scale.set(5.3 * scale, 1 * scale, 1); sp.position.set(x, y, z); scene.add(sp); return sp;
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false })); sp.scale.set(5.3 * scale, 1 * scale, 1); sp.position.set(x, y, z); scene.add(sp); (town.labels = town.labels || []).push(sp); return sp;
   };
   function build() {
     const RS = town.RS, R = RS.R;
@@ -141,6 +141,7 @@ export function createSchoolTown(ctx) {
   function update(dt, t) {
     if (town.ring) town.ring.material.opacity = 0.55 + 0.35 * Math.sin(t * 3);
     if (town.arch) town.arch.update(ctx.player.pos, t, dt);
+    if (town.labels) { const p = ctx.player.pos; for (const sp of town.labels) sp.visible = Math.abs(sp.position.x - p.x) + Math.abs(sp.position.z - p.z) < 70; }   // nhãn chữ chỉ hiện khi ở gần
     if (!town.RS) return;
     // giờ trong ngày theo đồng hồ trường (để giờ học, ngày/đêm khớp nhau)
     if (ctx.sky && typeof town.RS.clock === 'number') ctx.sky.state.hour = ((town.RS.clock / 60) % 24 + 24) % 24;
@@ -154,7 +155,7 @@ export function createSchoolTown(ctx) {
     const p = ctx.player.pos; let best = null, bd = 2.2;
     for (const q of town.doors) { const d = Math.abs(q.x - p.x) + Math.abs(q.z - p.z); if (d < bd) { bd = d; best = q; } }
     if (best) ctx.offer('🚪 ' + best.d.n.split('·')[0].trim(), () => town.enter(best), 2);
-    if (best !== nearDoor) { nearDoor = best; if (nameTag) { scene.remove(nameTag); nameTag = null; } if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8); }
+    if (best !== nearDoor) { nearDoor = best; if (nameTag) { scene.remove(nameTag); town.labels.splice(town.labels.indexOf(nameTag), 1); nameTag = null; } if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8); }
     updatePeople(dt);
   }
   ctx.school = town;
