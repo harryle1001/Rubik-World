@@ -4,13 +4,12 @@
 import * as THREE from 'three';
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 import { loadHero, STUDENTS } from '../js/island/characters.js';
-import { loadAnimated } from '../js/island/models.js';
 const b64 = u => { let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
 const LIST = [
-  ...STUDENTS.map((k, i) => ({ file: k.replace('student-', 'hoc-sinh-'), kind: k, h: 1.25, look: { role: 'student', bag: ['#3d7bd9','#e0564a','#4caf6a','#f2b134','#9a5ad6','#2bb3b3'][i % 6], acc: k.includes('female') ? ['bow','clip','glasses',null,'bow','clip'][i/2|0] : (i === 4 ? 'glasses' : null), bowColor: ['#ff5a8a','#ffd23f','#7fd1ff','#ff8a2b','#b06bff'][i % 5] } })),
-  { file: 'co-giao-ao-dai', kind: 'student-female-c', h: 1.55, look: { role: 'teacher', shirt: '#e8a0b8', aodai: true, prop: 'book', propColor: '#c0392b' } },
-  { file: 'thay-giao', kind: 'student-male-d', h: 1.6, look: { role: 'teacher', shirt: '#9fc3e8', pants: '#3a3a44', glasses: true, prop: 'clip' } },
-  { file: 'bac-bao-ve', kind: 'student-male-b', h: 1.6, look: { role: 'adult', shirt: '#5a7a4a', pants: '#3a4a2a', cap: '#3a4a2a', brim: '#2a3a1a' } },
+  ...STUDENTS.map(k => ({ file: k.replace('student-', 'hoc-sinh-'), kind: k, h: 1.55 })),
+  { file: 'co-giao-ao-dai', kind: 'student-female-c', h: 1.78, look: { role: 'teacher', shirt: '#e8a0b8', aodai: true, prop: 'book', propColor: '#c0392b' } },
+  { file: 'thay-giao', kind: 'student-male-d', h: 1.82, look: { role: 'teacher', shirt: '#9fc3e8', pants: '#3a3a44', glasses: true, prop: 'clip', tie: '#b03a3a' } },
+  { file: 'bac-bao-ve', kind: 'student-male-b', h: 1.82, look: { role: 'adult', shirt: '#5a7a4a', pants: '#3a4a2a', cap: '#3a4a2a', brim: '#2a3a1a' } },
 ];
 window.exportAll = async () => {
   const out = {}, ex = new GLTFExporter();
@@ -21,7 +20,7 @@ window.exportAll = async () => {
     for (const o of kill) o.parent.remove(o);
     m.traverse(o => { if (!o.isMesh) return; const s = o.material; o.material = new THREE.MeshStandardMaterial({ name: s.name || (s.color ? '#' + s.color.getHexString() : 'mat'), color: s.color ? s.color.clone() : 0xffffff, map: s.map || null, vertexColors: !!s.vertexColors, roughness: 0.9, metalness: 0 }); });
     m.name = L.file;
-    const clips = (await loadAnimated(L.kind)).animations.map(c => { c = c.clone(); c.name = c.name.split('|').pop(); return c; });
+    const clips = [...new Set(Object.values(hero.anim.actions))].map(a => a.getClip()); // animation đã chỉnh theo dáng mới (không lặp tên phụ)
     const buf = await ex.parseAsync(m, { binary: true, animations: clips });
     out[L.file] = b64(new Uint8Array(buf));
   }
