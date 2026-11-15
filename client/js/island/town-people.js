@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { loadHero, driveHero, emote, setOutline, lookAtTarget } from './characters.js';
 import { CFG } from './config.js';
 
-const V = 'abcdef';
+const V = 'abcdef', SEAT_Y = 0.56; // mặt ghế đá (town-buildings.js: chân 0.42 + mặt 0.14)
 const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', sun: 'Khách du lịch', bike: 'Người đạp xe', camp: 'Bạn cắm trại', picnic: 'Gia đình dã ngoại', fishing: 'Bác câu cá', walk: 'Người đi dạo', kite: 'Bạn thả diều' };
 const hash = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
 
@@ -17,16 +17,16 @@ function lookOf(a) {
   const kind = `student-${female ? 'female' : 'male'}-${V[(a.kind ? a.idx : hash(a.id || a.name)) % 6]}`;
   let look;
   if (a.kind) { // NPC: người dân / khách
-    look = { role: 'adult', shirt: a.shirt, pants: a.pants, prop: a.kind === 'fishing' ? 'rod' : null, hat: a.kind === 'sun' || a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 2) ? '#e8c873' : null, glasses: a.kind === 'sun' };
+    look = { role: 'adult', shirt: a.shirt, pants: a.pants, prop: a.kind === 'fishing' ? 'rod' : null, hat: a.kind === 'sun' || a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 2) ? '#e8c873' : null, hatStyle: a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 4 === 1) ? 'nonla' : null, sun: a.kind === 'sun' };
   } else if (a.student !== false) {
     const hs = hash(a.id || a.name), girl = !!a.long, r = hs % 10; // phụ kiện cố định theo từng bạn
     look = { role: 'student', bag: a.bag, acc: girl ? (r < 5 ? 'bow' : r < 7 ? 'clip' : r < 8 ? 'glasses' : null) : (r < 2 ? 'glasses' : null), bowColor: ['#ff5a8a', '#ffd23f', '#7fd1ff', '#ff8a2b', '#b06bff'][hs % 5] };
   } else {
     const teacher = /giáo viên|giám hiệu|văn thư/i.test(a.role || '');
     const prop = { cube: 'book', bolt: 'book', eye: 'book', paper: 'clip', clip: 'clip', camcorder: 'cam' }[a.icon] || null;
-    look = { role: teacher ? 'teacher' : 'adult', shirt: a.shirt, pants: a.pants, aodai: !!a.aodai, skirt: !!a.skirt && !a.aodai, cap: a.cap || null, brim: a.brim || null, glasses: !!a.glasses, prop, propColor: a.shirt };
+    look = { role: teacher ? 'teacher' : 'adult', shirt: a.shirt, pants: a.pants, aodai: !!a.aodai, skirt: !!a.skirt && !a.aodai, cap: a.cap || null, brim: a.brim || null, glasses: !!a.glasses, prop, propColor: a.shirt, tie: teacher && !female && hash(a.id || a.name) % 2 ? '#b03a3a' : null };
   }
-  const h = look.role === 'student' ? 1.25 : a.kind ? 1.5 + (a.idx % 3) * 0.06 : 1.6;
+  const h = look.role === 'student' ? 1.48 + (hash(a.id || a.name) % 3) * 0.05 : a.kind ? 1.7 + (a.idx % 3) * 0.06 : 1.78; // học sinh 1.48–1.58 m, người lớn 1.7–1.82 m
   return { kind, look, h, key: kind + JSON.stringify(look) + h };
 }
 const nameOf = a => a.kind ? (NPC_NAME[a.kind] || 'Người dân') : a.student !== false ? a.name : `${a.name} · ${String(a.role || '').split(',')[0]}`;
@@ -87,7 +87,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       if (!e.a) continue; const a = e.a, [x, z] = P(a.x, a.y), dx = x - e.px, dz = z - e.pz;
       const raw = Math.hypot(dx, dz) / Math.max(dt, 1e-3); e.spd = (e.spd || 0) + (Math.min(raw, 9) - (e.spd || 0)) * Math.min(1, dt * 6); // tốc độ làm mượt (mô phỏng 2D giật)
       const dist = Math.hypot(x - p.x, z - p.z), moving = a.moving && e.spd > 0.2;
-      let sit = a.cycling || a.boat || a.kind === 'bike' ? 'drive' : /sun|picnic|camp|fishing/.test(a.kind || '') ? 'sit' : false;
+      let sit = a.cycling || a.boat || a.kind === 'bike' ? 'drive' : /sun|picnic|camp|fishing/.test(a.kind || '') ? 'floor' : false; // floor: ngồi bệt trên cát/cỏ
       // ghế đá: đứng yên gần ghế trống → ngồi; đi tiếp → đứng dậy
       if (moving || sit) { if (e.seat) { e.seat.by = null; e.seat = null; } }
       else if (!e.seat && doTalk && !a.kind) { const st = seats.find(q => !q.by && Math.hypot(q.x - x, q.z - z) < 2.2); if (st) { st.by = e; e.seat = st; } }
@@ -97,7 +97,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       else if (e.partner && e.partner.a) face = Math.atan2(e.partner.px - x, e.partner.pz - z); // nói chuyện: quay vào nhau
       else if (dist < 4 && !sit) face = Math.atan2(p.x - x, p.z - z); // đứng gần → quay về phía người chơi
       if (face !== null) { let d = face - e.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); e.yaw += d * Math.min(1, dt * 5); }
-      e.px = x; e.pz = z; const m = e.hero.model, gy = groundY(gx, gz); m.position.set(gx, gy + (e.seat ? 0.12 : 0), gz); m.rotation.y = e.yaw;
+      e.px = x; e.pz = z; const m = e.hero.model, gy = groundY(gx, gz); m.position.set(gx, gy + (e.seat ? SEAT_Y : 0), gz); m.rotation.y = e.yaw;
       // đứng nói chuyện: 2 người đứng yên cách nhau < 1.8 m (kiểm tra thưa, 0.6 s/lần)
       if (doTalk) {
         e.partner = null;
