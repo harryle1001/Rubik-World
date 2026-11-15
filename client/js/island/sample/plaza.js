@@ -1,0 +1,159 @@
+// sample/plaza.js — QUẢNG TRƯỜNG MẪU TRƯỚC CỔNG TRƯỜNG (khu mẫu chuẩn để nhân phong cách ra các khu khác)
+// Bố cục theo π và φ: sân tròn bán kính R = 13 m (Fibonacci), tâm nằm trên trục cổng.
+//   • tâm: TƯỢNG RUBIK 3×3 thật (27 khối con bo góc + 54 miếng dán lõm nhẹ), tầng trên xoay ¼ vòng mỗi φ³ ≈ 4,24 s
+//   • nền: khảm hướng dương (góc vàng 137,5°, lộ 13 & 21 vòng xoắn Fibonacci) → vòng đồng R/φ² → xoắn ốc vàng → vòng R/φ
+//   • 8 đèn cổ điển cao φ³ ≈ 4,24 m cách đều 2π/8; 4 ghế đá cong nhìn về tượng; 2 cây đa cổ thụ có bồn tròn trên vòng R/φ
+//   • viền đá + bậc thềm thấp + bồn hoa hình lưỡi liềm chuyển dần ra bãi cỏ; lối đi toả ra theo góc vàng; không rào chắn
+//   • bảng "Thị trấn xây bằng Toán" đứng thẳng ở mép bắc, quay về tâm (không che cổng)
+// Hiệu năng: 8 draw call (nền · khối đá · viền khối · cây hoa · đèn phát sáng · thân Rubik · miếng dán · chữ); chi tiết nhỏ không đổ bóng.
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { Batch, GLOW_MATS } from '../decor.js';
+import { toon, gradientMap } from '../style.js';
+import { PHI, PI, FIB, GATE3, BLOCKS, LOT_W, LOT_L, HOUSE_W, HOUSE_D, HOUSE_V1, RING_ROAD_R, ROAD_W, ZONES_N, LOTS_N } from '../layout.js';
+
+const GA = PI * (3 - Math.sqrt(5));          // góc vàng ≈ 137,5°
+const R = FIB[6];                             // 13 m (Fibonacci)
+// tâm quảng trường: trên trục cổng, mép đông chạm bậc cổng (bậc cổng nhô ~3 m)
+export const PLAZA = { x: GATE3[0] - 3 - R, z: GATE3[1], R };
+const C = {
+  grout: '#cbbd9e', pave: '#ebe2cf', pave2: '#e3d7bf', pave3: '#ddcfb2', border: '#c2b291', step: '#d6cab0',
+  gold: '#d9b373', gold3: '#cfa462', gold2: '#b98a49', bronze: '#9b7340', mosaic: '#efe5cf', stone: '#ebe3d2', stone2: '#d2c7b1',
+  iron: '#2e2935', lantern: '#ffe28a', bark: '#6d5641', soil: '#6a4e36', bed: '#5f8a3e', leaf: ['#4f9a4a', '#5fae55', '#478d44', '#6bb85c'],
+  flower: ['#e8453c', '#f5c518', '#ffffff', '#e85d8a', '#9b59d0', '#ff8a1f'],
+};
+// màu chuẩn Rubik: +y trắng, -y vàng, +x đỏ, -x cam, +z xanh lá, -z xanh dương
+const RUBIK = { py: '#f4f4ee', ny: '#ffd21f', px: '#d3242c', nx: '#ff6a13', pz: '#15a04f', nz: '#1f5fd1' };
+
+// ---------- hình học phụ ----------
+// hình vành khuyên (sector) nằm ngang, mặt hướng lên; a: góc theo (cos a, sin a) trên mặt x–z
+function annulus(r0, r1, a0, a1, y, n) {
+  n = n || Math.max(2, Math.ceil((a1 - a0) * r1 / 0.45)); const p = [];
+  for (let i = 0; i < n; i++) {
+    const t0 = a0 + (a1 - a0) * i / n, t1 = a0 + (a1 - a0) * (i + 1) / n, c0 = Math.cos(t0), s0 = Math.sin(t0), c1 = Math.cos(t1), s1 = Math.sin(t1);
+    const A = [r0 * c0, y, r0 * s0], B = [r1 * c0, y, r1 * s0], Cc = [r1 * c1, y, r1 * s1], D = [r0 * c1, y, r0 * s1];
+    p.push(...A, ...Cc, ...B, ...A, ...D, ...Cc);
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); return g;
+}
+// dải xoắn: pts = [[r, a, w], ...] → dải phẳng rộng w dọc đường cong
+function ribbon(pts, y) {
+  const p = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [ra, aa, wa] = pts[i], [rb, ab, wb] = pts[i + 1], q = (r, a) => [r * Math.cos(a), y, r * Math.sin(a)];
+    const A = q(ra - wa / 2, aa), B = q(ra + wa / 2, aa), Cc = q(rb + wb / 2, ab), D = q(rb - wb / 2, ab);
+    p.push(...A, ...Cc, ...B, ...A, ...D, ...Cc);
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); return g;
+}
+// tiện tròn (LatheGeometry) từ biên dạng [[r, y], ...]; a0..a1 = cung (mặc định cả vòng)
+const lathe = (pts, seg = 32, a0 = 0, a1 = 2 * PI) => new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r, y)), seg, PI / 2 - a1, a1 - a0);
+
+export function buildPlaza({ ctx, env, addFoot = () => {} }) {
+  const { scene } = ctx, Y = env.Y, hgt = (x, z) => ctx.terrain ? ctx.terrain.heightAt(x, z) : Y - 0.15, { x: cx, z: cz } = PLAZA, low = !!ctx.lowEnd;
+  const G = new Batch('plaza-ground'), S = new Batch('plaza-stone'), F = new Batch('plaza-flora'), L = new Batch('plaza-glow');
+  const TREE_A = [PI * 0.58, -PI * 0.52], nearTree = (x, z, m) => TREE_A.some(a => Math.hypot(x - cx - (R + PHI * PHI) * Math.cos(a), z - cz - (R + PHI * PHI) * Math.sin(a)) < m);
+  const at = (r, a) => [cx + r * Math.cos(a), cz + r * Math.sin(a)];
+  let seed = 1618; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const yP = Y + 0.06;                                   // mặt sân lát
+  const R1 = R / PHI, R2 = R / PHI / PHI, R3 = R / PHI ** 3;   // 8,03 · 4,97 · 3,07 m
+  const A = BLOCKS[0].r;
+  // đường hướng tâm phía tây (z = 0, rộng ROAD_W) đi qua mép tây-nam sân; lối đi đối xứng ở góc +GA
+  const roadZ = 0, pathA = GA, pathW = ROAD_W / PHI;
+  const onRoad = (x, z, m = 0) => x < A[0] + 1 && Math.abs(z - roadZ) < ROAD_W / 2 + m;
+  const onPath = (x, z, m = 0) => { const dx = x - cx, dz = z - cz, u = dx * Math.cos(pathA) + dz * Math.sin(pathA), v = -dx * Math.sin(pathA) + dz * Math.cos(pathA); return u > R && Math.abs(v) < pathW / 2 + m; };
+
+  // ================= NỀN: viền, bậc thềm, mạch lát =================
+  // bậc thềm thấp + gờ viền bo tròn (tiện tròn) → không cạnh cụt
+  S.push(lathe([[R + 0.95, Y - 0.32], [R + 0.66, Y - 0.06], [R + 0.62, Y - 0.04], [R + 0.02, Y - 0.04], [R, Y - 0.02]], 96), C.step, cx, 0, cz);
+  G.push(lathe([[R + 0.01, Y - 0.03], [R, Y + 0.07], [R - 0.08, Y + 0.1], [R - 0.5, Y + 0.1], [R - 0.56, yP - 0.01]], 96), C.border, cx, 0, cz);
+  G.push(new THREE.CircleGeometry(R - 0.5, 96).rotateX(-PI / 2), C.grout, cx, yP - 0.004, cz);
+  // vành gạch đồng tâm (mạch lát lộ màu vữa), 2 vùng: R/φ² → R/φ và R/φ → R
+  const inArm = () => false;
+  const courses = (r0, r1) => { const n = Math.max(1, Math.round((r1 - r0) / (1 / PHI))), w = (r1 - r0) / n;
+    for (let i = 0; i < n; i++) { const ra = r0 + i * w + 0.025, rb = r0 + (i + 1) * w - 0.025, m = Math.max(8, Math.round(2 * PI * (ra + rb) / 2 / (w * PHI))), off = (i % 2) * PI / m;
+      for (let j = 0; j < m; j++) { const a0 = off + j * 2 * PI / m, a1 = a0 + 2 * PI / m - 0.05 / ((ra + rb) / 2), k = rnd(), arm = inArm((ra + rb) / 2, (a0 + a1) / 2); G.push(annulus(ra, rb, a0, a1, 0, 2), arm ? (k < 0.5 ? C.gold : C.gold3) : k < 0.45 ? C.pave : k < 0.85 ? C.pave2 : C.pave3, cx, yP, cz); } } };
+  courses(R2 + 0.32, R1 - 0.2); courses(R1 + 0.2, R - 0.56);
+  // vòng đồng R/φ² và vòng đá sẫm R/φ (ghế và cây đứng trên vòng này)
+  G.push(annulus(R2, R2 + 0.32, 0, 2 * PI, 0, 96), C.bronze, cx, yP + 0.002, cz);
+  G.push(annulus(R1 - 0.2, R1 + 0.2, 0, 2 * PI, 0, 96), C.border, cx, yP + 0.002, cz);
+  // khảm hướng dương trong vòng R/φ²: hạt thứ i ở r = c√i, góc i·137,5° — tô đậm 2 họ vòng xoắn 13 và 21 (Fibonacci)
+  { const c = 0.29, i0 = Math.ceil((2.5 / c) ** 2), i1 = Math.floor(((R2 - 0.08) / c) ** 2);
+    G.push(new THREE.CircleGeometry(R2, 64).rotateX(-PI / 2), C.grout, cx, yP - 0.002, cz);
+    for (let i = i0; i <= i1; i++) { const r = c * Math.sqrt(i), a = i * GA, col = i % 21 === 0 ? C.gold : i % 13 === 0 ? C.bronze : (i % 2 ? C.mosaic : C.pave2);
+      G.push(new THREE.CircleGeometry(c * 0.46, 6).rotateX(-PI / 2), col, cx + r * Math.cos(a), yP + 0.001, cz + r * Math.sin(a), a); } }
+
+  // xoắn ốc vàng khảm đá: r = r0·φ^(2θ/π) (mỗi ¼ vòng lớn gấp φ) — 2 nhánh đối xứng từ vòng R/φ² nở dần ra mép sân, viền chỉ đồng
+  for (const a0 of [PI * 0.62, PI * 1.62]) { const r0 = R2 + 0.32, th1 = PI / 2 * Math.log((R - 0.75) / r0) / Math.log(PHI), mid = [], eL = [], eR = [];
+    for (let i = 0; i <= 120; i++) { const t = th1 * i / 120, r = r0 * PHI ** (2 * t / PI), f = Math.min(1, Math.sqrt(t / 0.9)), w = 0.11 * r * f, a = a0 + t;
+      mid.push([r, a, w]); eL.push([r - w / 2, a, 0.06 * f]); eR.push([r + w / 2, a, 0.06 * f]); }
+    G.push(ribbon(mid, 0), C.gold, cx, yP + 0.004, cz); G.push(ribbon(eL, 0), C.bronze, cx, yP + 0.006, cz); G.push(ribbon(eR, 0), C.bronze, cx, yP + 0.006, cz); }
+
+  // ================= LỐI ĐI TOẢ RA (góc vàng) =================
+  { const dx = Math.cos(pathA), dz = Math.sin(pathA), b = cx * dx + cz * dz, rr = RING_ROAD_R - ROAD_W / 2 + 0.3, t1 = -b + Math.sqrt(b * b - (cx * cx + cz * cz - rr * rr)), ry = Math.atan2(dx, dz);
+    for (let t = R + 0.5, k = 0; t < t1; t += 0.62, k++) G.box(pathW, 0.06, 0.56, cx + dx * (t + 0.28), Y - 0.02, cz + dz * (t + 0.28), k % 2 ? C.pave2 : C.pave, ry);
+    for (const s of [-1, 1]) G.box(0.22, 0.1, t1 - R - 0.4, cx + dx * (R + 0.4 + t1) / 2 - dz * s * (pathW / 2 + 0.11), Y - 0.04, cz + dz * (R + 0.4 + t1) / 2 + dx * s * (pathW / 2 + 0.11), C.border, ry);
+    addFoot(Math.min(cx + dx * R, cx + dx * t1) - 2, Math.min(cz + dz * R, cz + dz * t1) - 2, Math.max(cx + dx * R, cx + dx * t1) + 2, Math.max(cz + dz * R, cz + dz * t1) + 2); }
+
+  // ================= BỒN HOA LƯỠI LIỀM: chuyển mềm từ bậc thềm ra bãi cỏ =================
+  { const r0 = R + 0.7, W = PHI * PHI;   // bề rộng bồn ≈ φ² = 2,6 m
+    for (let a = PI * 0.38; a < PI * 1.62; a += 0.035) {
+      const [x, z] = at(r0 + 1, a + 0.0175); if (x > A[0] - 0.2 || onRoad(x, z, 0.8) || onPath(x, z, 0.9)) continue;
+      const edge = Math.min(1, (A[0] - 0.2 - x) / 3), w = W * (0.62 + 0.38 * Math.sin(a * 5) * 0.5 + 0.19) * edge;
+      F.push(annulus(r0, r0 + w, a, a + 0.036, 0, 1), C.bed, cx, Math.max(hgt(x, z), Y - 0.12) + 0.03, cz);
+      const n = Math.round(w * 3.2); for (let i = 0; i < n; i++) { const rr = r0 + 0.2 + rnd() * (w - 0.3), aa = a + rnd() * 0.035, [fx, fz] = at(rr, aa), band = Math.floor((a * 8 / PI) % 5); if (nearTree(fx, fz, 1.85)) continue;
+        if (rnd() < 0.3) F.ball(0.22 + rnd() * 0.16, fx, Y + 0.12, fz, C.leaf[(i + band) % 4], 1.2, 0.8, 1.2);
+        else F.ball(0.11 + rnd() * 0.05, fx, Y + 0.22 + rnd() * 0.12, fz, C.flower[(band + (rnd() < 0.2 ? 2 : 0)) % 6]); }
+      // hoa thưa dần ra bãi cỏ
+      for (let i = 0; i < 2; i++) { const rr = r0 + w + Math.pow(rnd(), 2) * 5, [fx, fz] = at(rr, a + rnd() * 0.035); if (rnd() < 0.5 && !onRoad(fx, fz, 0.5) && !onPath(fx, fz, 0.5)) F.ball(0.09, fx, hgt(fx, fz) + 0.05, fz, C.flower[(i + Math.floor(a * 3)) % 6]); }
+    }
+  }
+
+  // ================= 8 ĐÈN CỔ ĐIỂN (cách đều 2π/8, cao φ³) =================
+  const lampAt = (x, z) => {
+    S.push(lathe([[0.3, 0], [0.3, 0.16], [0.22, 0.24], [0.17, 0.46], [0.11, 0.62], [0.09, 0.72], [0, 0.72]], 8), C.iron, x, Y, z);
+    S.cyl(0.055, 0.075, 2.62, x, Y + 0.72, z, C.iron, 8);
+    for (const y of [0.74, 2.0, 3.3]) S.cyl(0.1, 0.1, 0.07, x, Y + y, z, C.gold, 8);
+    S.box(0.44, 0.05, 0.44, x, Y + 3.37, z, C.iron);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) S.box(0.035, 0.6, 0.035, x + sx * 0.19, Y + 3.42, z + sz * 0.19, C.iron);
+    S.box(0.5, 0.05, 0.5, x, Y + 4.0, z, C.iron); S.hip(0.66, 0.3, 0.66, x, Y + 4.05, z, C.iron); S.ball(0.07, x, Y + 4.4, z, C.gold);
+    L.box(0.32, 0.56, 0.32, x, Y + 3.43, z, C.lantern);
+    ctx.colliders.push({ x, z, r: 0.3 });
+  };
+  for (let k = 0; k < FIB[5]; k++) { const [x, z] = at(R - 1.0, PI / 8 + k * PI / 4); lampAt(x, z); }
+
+  // ================= 4 GHẾ ĐÁ CONG (trên vòng R/φ² + 1,3, nhìn về tượng) =================
+  for (const a of [PI * 0.23, -PI * 0.23, PI * 0.77, -PI * 0.77]) {
+    const rb = R2 + 1.45, half = 1.7 / rb;   // cung dài ≈ 3,4 m
+    S.push(lathe([[rb - 0.3, 0.4], [rb + 0.3, 0.4], [rb + 0.3, 0.52], [rb - 0.3, 0.52], [rb - 0.3, 0.4]], 12, a - half, a + half), C.stone, cx, yP, cz);
+    for (const t of [-0.8, 0, 0.8]) { const aa = a + half * t, [x, z] = at(rb, aa); S.box(0.46, 0.4, 0.2, x, yP, z, C.stone2, -aa); ctx.colliders.push({ x, z, r: 0.35 }); }
+    for (const t of [-1, 1]) { const aa = a + t * half, [x, z] = at(rb, aa); S.box(0.62, 0.14, 0.08, x, yP + 0.4, z, C.stone2, -aa); }   // bịt 2 đầu ghế
+  }
+
+  // ================= 2 CÂY ĐA CỔ THỤ (bồn tròn ở mép bắc & nam, cách tâm R + φ² — tán che mép sân, không chắn tầm nhìn vào cổng) =================
+  for (const a of TREE_A) {
+    const [x, z] = at(R + PHI * PHI, a), sc = a > 0 ? 1 : 0.92;
+    S.push(lathe([[1.7, -0.02], [1.7, 0.4], [1.62, 0.48], [1.42, 0.48], [1.42, 0.36]], 32), C.stone, x, yP, z);
+    G.push(new THREE.CircleGeometry(1.42, 24).rotateX(-PI / 2), C.soil, x, yP + 0.37, z);
+    for (let i = 0; i < 13; i++) { const r = 0.9 + rnd() * 0.45, aa = i * GA; F.ball(0.13, x + Math.cos(aa) * r, yP + 0.42, z + Math.sin(aa) * r, i % 3 ? C.leaf[i % 4] : C.flower[i % 6], 1.3, 0.6, 1.3); }
+    S.push(lathe([[0.82 * sc, 0.3], [0.62 * sc, 0.5], [0.48 * sc, 1.0], [0.42 * sc, 2.3], [0.3 * sc, 2.9], [0, 3.0]], 9), C.bark, x, yP, z);
+    for (let i = 0; i < 5; i++) { const aa = a + i * 2 * PI / 5 + 0.3; S.cyl(0.1, 0.24, 1.2, x + Math.cos(aa) * 0.8, yP - 0.1, z + Math.sin(aa) * 0.8, C.bark, 5, PI / 2 - aa, -1.0, 0); }   // rễ nổi
+    for (let i = 0; i < 3; i++) { const aa = a + 0.5 + i * 2 * PI / 3, L2 = 2.6 * sc; S.push(new THREE.CylinderGeometry(0.16, 0.26, L2, 6).translate(0, L2 / 2, 0), C.bark, x, yP + 2.2, z, -aa + PI / 2, 0.75, 0); }
+    // tán rộng: 1 + 8 cụm lá xếp theo góc vàng (Fibonacci)
+    S.push(new THREE.IcosahedronGeometry(2.4 * sc, 1), C.leaf[0], x, yP + 5.6 * sc, z, 0, 0, 0, 1.3, 0.62, 1.3);
+    for (let i = 1; i <= 8; i++) { const r = 3.2 * sc * Math.sqrt(i / 8), aa = a + i * GA, rad = (1.5 + rnd() * 0.5) * sc;
+      S.push(new THREE.IcosahedronGeometry(rad, 1), C.leaf[i % 4], x + Math.cos(aa) * r, yP + (4.7 + 0.5 * Math.sin(i * 2.1)) * sc, z + Math.sin(aa) * r, rnd() * 3, 0, 0, 1.25, 0.7, 1.25); }
+    ctx.colliders.push({ x, z, r: 1.7 });
+  }
+
+  // ================= GỘP THÀNH MESH =================
+  const mat = toon('#ffffff', { vertexColors: true }), glow = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }); GLOW_MATS.push(glow);
+  const meshes = [];
+  const add = (b, m, shadow) => { const me = b.mesh(m, shadow); if (!me) return null; me.name = b.name; scene.add(me); meshes.push(me); return me; };
+  add(G, mat, false); const st = add(S, mat, true); add(F, mat, false); add(L, glow, false);
+  if (st && !low) { const ol = new THREE.MeshBasicMaterial({ color: '#4a3548', side: THREE.BackSide }); ol.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n transformed += normalize(normal) * 0.022;'); }; const e = new THREE.Mesh(st.geometry, ol); e.raycast = () => {}; e.castShadow = false; e.name = 'plaza-outline'; st.add(e); meshes.push(e); }
+  addFoot(cx - R - 4, cz - R - 4, cx + R + 1, cz + R + 4);
+  ctx.plaza = { meshes, PLAZA, drawCalls: meshes.length };
+  return { meshes };
+}
+function mergeTwo([a, b]) { const g = new THREE.BufferGeometry(); for (const k of ['position', 'normal', 'uv']) { const A = a.attributes[k].array, B = b.attributes[k].array, out = new Float32Array(A.length + B.length); out.set(A); out.set(B, A.length); g.setAttribute(k, new THREE.BufferAttribute(out, a.attributes[k].itemSize)); } const ia = a.index.array, ib = b.index.array, idx = []; for (const i of ia) idx.push(i); for (const i of ib) idx.push(i + a.attributes.position.count); g.setIndex(idx); return g; }

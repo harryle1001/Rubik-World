@@ -11,6 +11,7 @@ import { toon } from './style.js';
 import { BLOCKS } from './layout.js';
 import { Batch } from './decor.js';
 import { placeKit } from './kit.js';
+import { buildPlaza } from './sample/plaza.js';
 
 // bảng màu (docs/art-style.md)
 const C = {
@@ -243,15 +244,7 @@ export function buildSchoolZone(a) {
         b.box(2.8, 0.42, 1.2, s * 8.2, 0, 2.0, stone2); for (let i = 0; i < 4; i++) b.ball(0.32, s * (7.2 + i * 0.65), 0.6, 2.0, '#5aa04a', 1, 0.7, 1);
       }
     }));
-    // quảng trường: nền đá dịu, đường viền, hoa văn tròn trước cổng, lối đi chính
-    { const A = BLOCKS[0].r, x0 = A[0] + 0.5, x1 = gx - 1.2, cxp = (x0 + x1) / 2, w = x1 - x0;
-      GB.box(w, 0.04, 26, cxp, Y, gz, '#e6dcc4'); addFoot(x0, gz - 13, gx + 4, gz + 13);
-      for (const s of [-1, 1]) GB.box(w, 0.06, 0.35, cxp, Y, gz + s * 12.8, '#c4b48f');
-      GB.box(w, 0.05, 3.6, cxp, Y, gz, '#d6c39b'); for (const s of [-1, 1]) GB.box(w, 0.07, 0.25, cxp, Y, gz + s * 1.9, '#b89c6e');
-      GB.push(new THREE.RingGeometry(3.2, 4.2, 24).rotateX(-Math.PI / 2), '#cdb68a', x1 - 6, Y + 0.07, gz); GB.push(new THREE.RingGeometry(1.0, 1.5, 16).rotateX(-Math.PI / 2), '#b89c6e', x1 - 6, Y + 0.075, gz);
-      DG.follow(null); for (let x = x0 + 1, k = 0; x < x1; x += 2.4, k++) for (const s of [-1, 1]) DG.box(1.0, 0.012, 3.6, x, Y + 0.05, gz + s * 7.5, k % 2 ? '#d8cbaa' : '#e0d4b6');
-      for (const s of [-1, 1]) { for (let x = x0 + 1.5; x < x1 - 0.5; x += 2.6) kit('bush', x, Y, gz + s * 11.8, 1.05 + rnd() * 0.2, rnd() * 6); lampPost(GB, x0 + 3, gz + s * 4.2); lampPost(GB, x1 - 2.5, gz + s * 4.2); stoneBench(GB, x1 - 9, gz + s * 9.5, 0); }
-    }
+    buildPlaza({ ctx, env, addFoot });   // quảng trường tròn + tượng Rubik + bảng Toán: sample/plaza.js
     for (const s of [-1, 1]) { const z = gz - s * 3.3; ctx.boxes.push({ x0: gx - 0.9, x1: gx + 0.9, z0: z - 0.9, z1: z + 0.9, top: Y + 7.5 }); col(gx, gz - s * 12.6, 0.5, Y + 3); }
     if (D.BOOTH) { const x = X3(D.BOOTH[0]), z = Z3(D.BOOTH[1]), b = GB;   // chốt bảo vệ: nhà nhỏ tường kem, cửa sổ, mái ngói
       b.box(2.0, 0.3, 2.0, x, Y, z, C.plinth); b.box(1.8, 2.1, 1.8, x, Y + 0.3, z, ROOM.hall.wall); b.box(1.9, 0.18, 1.9, x, Y + 2.3, z, C.trim);

@@ -5,6 +5,7 @@ import { CFG } from './config.js';
 import { gradientMap, toon } from './style.js';
 import { LAND, WORLD, FLAT, rectDist, SPAWN, ISLAND_R, TEMPLE_C, blocked, flatDist, lagoonDist, roadDist, houseAt, ROAD_W } from './layout.js';
 import { loadModel } from './models.js';
+import { PLAZA } from './sample/plaza.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 // ---------- noise ----------
@@ -155,7 +156,7 @@ export function createTerrain(scene) {
 
   // chỗ đặt cây/đá: trên cạn, không quá dốc, tránh bãi xuất phát
   // không bao giờ mọc trong khu, lô đất, đường, hồ, sân đền (layout.js: blocked) — lề 4 m
-  const clear = (x, z, m = 4) => !blocked(x, z, m);
+  const clear = (x, z, m = 4) => !blocked(x, z, m) && Math.hypot(x - PLAZA.x, z - PLAZA.z) > PLAZA.R + 3 + m;   // không mọc trên quảng trường
   // 40% dồn vào rừng quanh đền (khu I), còn lại rải khắp đảo
   const spot = (minH = W + 1.4, m = 4) => { for (let k = 0; k < 40; k++) { const forest = rand() < 0.4, a = rand() * 6.283, r = forest ? 18 + Math.sqrt(rand()) * 62 : Math.sqrt(rand()) * R * 1.02, x = (forest ? TEMPLE_C[0] : 0) + Math.cos(a) * r, z = (forest ? TEMPLE_C[1] : 0) + Math.sin(a) * r, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z, m)) return [x, h, z]; } return null; };
   const plants = [];   // [x, z, bán kính, loại] — để kiểm tra không mọc trùng kiến trúc
@@ -210,7 +211,7 @@ export function createTerrain(scene) {
   const chunks = new Map(), CH = 24;
   for (let i = 0; i < CFG.counts.grass; i++) {
     const a = rand() * 6.283, r = Math.sqrt(rand()) * R, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z);
-    if (h < W + 1.0 || slopeAt(x, z) > 0.8 || LAND.some(r => rectDist(r, x, z) < 2) || roadDist(x, z) < ROAD_W / 2 + 0.6 || houseAt(x, z, 0.6) || lagoonDist(x, z) < 1 || Math.hypot(x - TEMPLE_C[0], z - TEMPLE_C[1]) < 9) continue;
+    if (h < W + 1.0 || slopeAt(x, z) > 0.8 || LAND.some(r => rectDist(r, x, z) < 2) || roadDist(x, z) < ROAD_W / 2 + 0.6 || houseAt(x, z, 0.6) || lagoonDist(x, z) < 1 || Math.hypot(x - TEMPLE_C[0], z - TEMPLE_C[1]) < 9 || Math.hypot(x - PLAZA.x, z - PLAZA.z) < PLAZA.R + 0.8) continue;
     const k = Math.floor(x / CH) + ',' + Math.floor(z / CH); if (!chunks.has(k)) chunks.set(k, []); chunks.get(k).push([x, h, z]);
   }
   const grass = [];
