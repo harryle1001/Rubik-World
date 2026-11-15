@@ -13,6 +13,7 @@ import { createAnimals } from './island/animals.js';
 import { createSchoolTown } from './island/school-town.js';
 import { SPAWN, landDist } from './island/layout.js';
 import { createVehicles } from './island/vehicles.js';
+import { createAircraft } from './island/aircraft.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 
@@ -62,6 +63,7 @@ const animals = ctx.animals = createAnimals(ctx);
 ctx.sky = sky;
 const school = createSchoolTown(ctx);
 const vehicles = createVehicles(ctx);
+const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
@@ -93,6 +95,7 @@ renderer.setAnimationLoop(() => {
   animals.update(dt);
   school.update(dt, clock.elapsedTime);
   vehicles.update(dt);
+  aircraft.update(dt, clock.elapsedTime);
   sky.update(dt, camera, player.pos);
   ctx.flushOffer();
   post.render();

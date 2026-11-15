@@ -17,6 +17,7 @@ export const EXTRA = [
   { id: 'F', name: 'Công viên Safari',        r: [-205, -55, -95, 45] },
   { id: 'G', name: 'Học viện Hoa Phượng',     r: [-160, -165, -40, -95] },
   { id: 'H', name: 'Resort Biển Xanh',        r: [205, 52, 330, 112] },
+  { id: 'K', name: 'Sân bay Cánh Diều',       r: [80, 58, 200, 100] },
   { id: 'E', name: 'Làng nổi trên biển',      r: [-55, 92, 55, 160], sea: true },
 ];
 export const LAND = [...BLOCKS.map(b => b.r), ...EXTRA.filter(e => !e.sea).map(e => e.r)];
