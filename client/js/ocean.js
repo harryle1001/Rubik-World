@@ -11,6 +11,7 @@ import { createAudio } from './island/audio.js';
 import { createNet } from './island/net.js';
 import { createAnimals } from './island/animals.js';
 import { createSchoolTown } from './island/school-town.js';
+import { createWorldMap } from './island/world-map.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 
@@ -59,6 +60,7 @@ const net = ctx.net = createNet(ctx);
 const animals = ctx.animals = createAnimals(ctx);
 ctx.sky = sky;
 const school = createSchoolTown(ctx);
+const worldMap = ctx.worldMap = createWorldMap(ctx); // bản đồ: phím M / nút 🗺️
 document.getElementById('bSchool').onclick = () => school.goSchool();
 document.getElementById('bMenu').onclick = () => school.menu();
 
@@ -89,7 +91,8 @@ renderer.setAnimationLoop(() => {
   school.update(dt, clock.elapsedTime);
   sky.update(dt, camera, player.pos);
   ctx.flushOffer();
-  post.render();
+  if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
+  worldMap.update();
   quality(dt);
 });
 

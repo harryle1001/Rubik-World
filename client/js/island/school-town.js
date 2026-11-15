@@ -11,9 +11,9 @@ import { toon, gradientMap } from './style.js';
 import { createTownPeople } from './town-people.js';
 
 export const S = 0.05, TX = -40, TZ = -140, TOWN_Y = 1.2;
-const Y_MIN = -620, Y_MAX = 900, X_MAX = 10400;      // phần đất liền của bản đồ 2D
+export const Y_MIN = -620, Y_MAX = 900, X_MAX = 10400;      // phần đất liền của bản đồ 2D
 const X3 = x => TX + x * S, Z3 = y => TZ + y * S, X2 = x => (x - TX) / S, Y2 = z => (z - TZ) / S;
-const REGION_COL = {
+export const REGION_COL = {
   yard: '#d8ccb0', road: '#9a948c', beach: '#ecd9a0', north: '#8cc46e', rubik: '#efe2c4', chess: '#efe2c4', music: '#efe2c4', hall: '#e9d8b4', office: '#efe2c4', elec: '#efe2c4',
   attend: '#e2d2a8', rubikyard: '#dcc99a', field: '#4fa64a', giantchess: '#ece6d6', rubikpark: '#9bd26e', pond: '#4aa3c8', lake: '#4aa3c8', lotus: '#5aa8a0',
   flowerfield: '#f0b3c8', bpad: '#b9d68a', skate: '#a5b0bf', patin: '#a5b0bf', basket: '#c98a5a', ski: '#f4f8fb', art: '#e6c79a', farm: '#b08850',
@@ -36,6 +36,7 @@ export function createSchoolTown(ctx) {
   const x0 = X3(0), x1 = X3(X_MAX), z0 = Z3(Y_MIN), z1 = Z3(Y_MAX);
   let shoreZ = -30; while (shoreZ > -110 && terrain.heightAt(0, shoreZ) > 0.6) shoreZ -= 1; // bờ bắc của đảo
   const bridge = { x: 0, za: shoreZ + 3, zb: z1 + 1.5, ya: terrain.heightAt(0, shoreZ + 3), w: 1.9 };
+  town.bridge = bridge; town.bounds = { x0, x1, z0, z1 }; // cho bản đồ (world-map.js)
   const prevExtra = ctx.groundExtra;
   ctx.groundExtra = (x, z, y) => {
     let h = prevExtra ? prevExtra(x, z, y) : -99;

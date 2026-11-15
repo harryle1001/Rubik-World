@@ -3,7 +3,7 @@
 // - Thêm âm thanh thỉnh thoảng (chim, hải âu, chuông…): ctx.addSoundSpot({ files, x, y, z, ref, vol, every:[giây_min, giây_max], when })
 // - Mặt đất dưới chân: ctx.surfaceAt(x, z) → 'grass' | 'sand' | 'wood' | 'stone' | 'gravel' | 'mud' (school-town.js có thể thay)
 // - Nhạc nền theo khu: ctx.addMusicZone({ file, x, z, r })  — vào khu nào nghe nhạc khu đó, chuyển mượt
-// - Tắt/bật tiếng: phím M. File: client/assets/audio/ (nguồn: client/assets/CREDITS.txt)
+// - Tắt/bật tiếng: phím N (phím M mở bản đồ). File: client/assets/audio/ (nguồn: client/assets/CREDITS.txt)
 import * as THREE from 'three';
 
 const KEY = 'island.sound', DIR = '/assets/audio/', ACTIVE = 55; // chỉ phát nguồn trong bán kính ACTIVE m (nhẹ máy)
@@ -61,7 +61,7 @@ export function createAudio(ctx) {
   const start = () => { if (!on) return; if (listener.context.state !== 'running') listener.context.resume(); init(); };
   addEventListener('pointerdown', start); addEventListener('keydown', start); // bật ở mọi lần chạm (trình duyệt chỉ cho phát âm thanh sau khi người chơi chạm)
   const setOn = v => { on = v; try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {} if (on) start(); listener.setMasterVolume(on ? 1 : 0); ctx.toast && ctx.toast(on ? '🔊 Bật âm thanh' : '🔇 Tắt âm thanh', 1200); };
-  addEventListener('keydown', e => { if (e.code === 'KeyM') setOn(!on); });
+  addEventListener('keydown', e => { if (e.code === 'KeyN') setOn(!on); });
   if (!on) listener.setMasterVolume(0);
 
   const make = (b, x, y, z, ref, vol, loop) => { const a = new THREE.PositionalAudio(listener); a.panner.panningModel = 'equalpower'; a.setBuffer(b); a.setLoop(loop); a.setRefDistance(ref); a.setRolloffFactor(1.8); a.setMaxDistance(ACTIVE); a.setVolume(vol); const o = new THREE.Object3D(); o.position.set(x, y, z); o.add(a); scene.add(o); return a; };
