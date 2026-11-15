@@ -115,6 +115,9 @@ renderer.setAnimationLoop(() => {
   ambience.update(dt);
   ctx.flushOffer();
   unfreezeGuard(dt);
+  // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong
+  // → không khựng lần đầu khi quay camera/đi tới khu mới (three chỉ biên dịch lúc vật thể lần đầu vào khung hình)
+  if (!ctx.warmed && school.ready) { ctx.warmed = true; renderer.compileAsync(scene, camera).catch(() => {}); }
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
   quality(dt);
