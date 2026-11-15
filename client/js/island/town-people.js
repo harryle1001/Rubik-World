@@ -12,13 +12,19 @@ const V = 'abcdef', SEAT_Y = 0.56; // mặt ghế đá (town-buildings.js: chân
 const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', sun: 'Khách du lịch', bike: 'Người đạp xe', camp: 'Bạn cắm trại', picnic: 'Gia đình dã ngoại', fishing: 'Bác câu cá', walk: 'Người đi dạo', kite: 'Bạn thả diều' };
 const hash = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
 
+// Trang phục người dân đa dạng theo việc đang làm (cố định theo idx): áo thun sọc, quần đùi, váy liền, người già tóc bạc
+const STRIPE = ['#ffffff', '#ffd23f', '#2b6cb0', '#e0564a', null];
+function npcStyle(a, female) {
+  const i = a.idx || 0, beach = /swim|surf|sun/.test(a.kind);
+  return { tee: beach || a.kind === 'bike' || a.kind === 'kite' || i % 3 === 0, stripe: STRIPE[i % 5], shorts: beach || a.kind === 'kite' || (a.kind === 'camp' && i % 2), dress: female && (a.kind === 'picnic' || a.kind === 'walk') && i % 2 === 0, old: (a.kind === 'fishing' || a.kind === 'walk') && i % 5 === 2 };
+}
 // Phân loại 1 người → model + trang phục (key: người có cùng key dùng lại được model của nhau)
 function lookOf(a) {
   const female = !!(a.long || a.skirt || a.aodai);
   const kind = `student-${female ? 'female' : 'male'}-${V[(a.kind ? a.idx : hash(a.id || a.name)) % 6]}`;
   let look;
   if (a.kind) { // NPC: người dân / khách
-    look = { role: 'adult', shirt: a.shirt, pants: a.pants, prop: a.kind === 'fishing' ? 'rod' : null, hat: a.kind === 'sun' || a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 2) ? '#e8c873' : null, hatStyle: a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 4 === 1) ? 'nonla' : null, sun: a.kind === 'sun' };
+    look = { role: 'adult', shirt: a.shirt, pants: a.pants, prop: a.kind === 'fishing' ? 'rod' : null, hat: a.kind === 'sun' || a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 2) ? '#e8c873' : null, hatStyle: a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 4 === 1) ? 'nonla' : null, sun: a.kind === 'sun', ...npcStyle(a, female) };
   } else if (a.student !== false) {
     const hs = hash(a.id || a.name), girl = !!a.long, r = hs % 10; // phụ kiện cố định theo từng bạn
     look = { role: 'student', bag: a.bag, acc: girl ? (r < 5 ? 'bow' : r < 7 ? 'clip' : r < 8 ? 'glasses' : null) : (r < 2 ? 'glasses' : null), bowColor: ['#ff5a8a', '#ffd23f', '#7fd1ff', '#ff8a2b', '#b06bff'][hs % 5] };

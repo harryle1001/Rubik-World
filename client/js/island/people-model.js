@@ -11,8 +11,17 @@ export const RIG = 'hero-rogue'; // chỉ lấy xương + animation, bỏ toàn 
 const DEFORM = ['hips', 'spine', 'chest', 'head', 'upperarml', 'lowerarml', 'wristl', 'handl', 'upperarmr', 'lowerarmr', 'wristr', 'handr', 'upperlegl', 'lowerlegl', 'footl', 'toesl', 'upperlegr', 'lowerlegr', 'footr', 'toesr'];
 const BI = Object.fromEntries(DEFORM.map((n, i) => [n, i]));
 const LEG = 0.374, ARM_DOWN = 0.6, ARM_CLIPS = /^(Idle|Walking_A|Running_A|Jump_|Sit_Floor|Hit_A|Dodge)/;                               // đùi + cẳng chân (theo trục đứng) của KayKit
-export const BUILD = { kid: { KL: 1.5, KA: 1.12, HS: 1 }, adult: { KL: 1.72, KA: 1.2, HS: 0.86 } };
+// Tỷ lệ cơ thể theo φ (1,618): trẻ em hông ≈ 0,4 chiều cao (≈ 1/φ² + đầu to dễ thương), người lớn hông ≈ 0,47; đầu trẻ ≈ 1/4, người lớn ≈ 1/φ³ ≈ 0,236 chiều cao
+export const BUILD = { kid: { KL: 1.9, KA: 1.18, HS: 0.94, SW: 1 }, adult: { KL: 2.1, KA: 1.26, HS: 0.8, SW: 1.08 } };
 export const MAT = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap });
+// Vật liệu chi tiết (mắt, miệng…): chớp mắt bằng shader — đỉnh của mắt (thuộc tính blink = tâm mắt theo y) co về tâm theo uBlink.
+// Mỗi người 1 vật liệu (cùng 1 chương trình shader, chỉ khác giá trị uBlink): mat.userData.blink.value = 0..1
+const DSH = '#include <begin_vertex>\n  if (blink > 0.0) transformed.y = blink + (transformed.y - blink) * uBlink;\n  else if (blink < 0.0) { transformed.y = -blink + (transformed.y + blink) * uBlink; transformed.z -= (1.0 - uBlink) * 0.03; }';
+export function detailMat() {
+  const m = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap }), u = { value: 1 }; m.userData.blink = u;
+  m.onBeforeCompile = sh => { sh.uniforms.uBlink = u; sh.vertexShader = 'attribute float blink;\nuniform float uBlink;\n' + sh.vertexShader.replace('#include <begin_vertex>', DSH); };
+  m.customProgramCacheKey = () => 'person-detail'; return m;
+}
 
 // ---------- Xương + animation ----------
 // Kéo dài chân/tay trên bộ xương (tư thế gốc) của 1 bản sao
@@ -73,7 +82,7 @@ function headNo(src) {
 
 // ---------- Khối hình cơ bản ----------
 const col = new THREE.Color();
-function prep(geo, color, bone) {
+function prep(geo, color, bone, eyeY = 0) {
   geo.deleteAttribute('uv'); if (geo.attributes.uv1) geo.deleteAttribute('uv1');
   if (!geo.attributes.normal) geo.computeVertexNormals();
   const n = geo.attributes.position.count, c = new Uint8Array(n * 3), si = new Uint16Array(n * 4), sw = new Uint8Array(n * 4);
@@ -82,6 +91,7 @@ function prep(geo, color, bone) {
   geo.setAttribute('color', new THREE.BufferAttribute(c, 3, true));
   geo.setAttribute('skinIndex', new THREE.BufferAttribute(si, 4));
   geo.setAttribute('skinWeight', new THREE.BufferAttribute(sw, 4, true));
+  geo.setAttribute('blink', new THREE.BufferAttribute(new Float32Array(n).fill(eyeY), 1));
   if (!geo.index) geo.setIndex([...Array(n).keys()]);
   return geo;
 }
@@ -104,11 +114,11 @@ const at = (x, y, z, rx = 0, ry = 0, rz = 0) => M.compose(V.set(x, y, z), Q.setF
 const along = (a, b, t = 0.5) => M.compose(V.copy(a).lerp(b, t), Q.setFromUnitVectors(_y, b.clone().sub(a).normalize()), S.set(1, 1, 1));
 
 // ---------- Dựng 1 nhân vật ----------
-// look: { gender:'m'|'f', adult, skin, hair, hairStyle, shirt, pants, skirt, aodai, longSleeve, belt, shoes, sole, bag, scarf, acc, accColor, glasses, sun, cap, brim, hat, hatStyle, tie, prop, propColor }
+// look: { gender:'m'|'f', adult, skin, hair, hairStyle, shirt, pants, skirt, dress, tee, stripe, shorts, aodai, longSleeve, belt, shoes, sole, bag, scarf, acc, accColor, glasses, sun, cap, brim, hat, hatStyle, tie, prop, propColor }
 export function buildPerson(J, look) {
   const L = look, B = L.adult ? BUILD.adult : BUILD.kid, HS = B.HS;
   const body = [], det = [];
-  const add = (geo, bone, color, m, detail) => { geo.applyMatrix4(m); (detail ? det : body).push(prep(geo, color, BI[bone])); };
+  const add = (geo, bone, color, m, detail, eyeY) => { geo.applyMatrix4(m); (detail ? det : body).push(prep(geo, color, BI[bone], eyeY)); };
   const skin = L.skin || '#f3c9a2', hair = L.hair || '#231915', shirt = L.shirt || '#f7f7f2', pants = L.pants || '#1f2a5a';
   const skinD = new THREE.Color(skin).offsetHSL(0, 0.05, -0.08).getStyle();
   // --- đầu ---
@@ -122,9 +132,9 @@ export function buildPerson(J, look) {
     const ex = Hc.x + k * 0.1 * HS, ez = zs(ex, ey), ry = Math.asin(k * 0.1 * HS / hr.x) * 0.9;
     if (L.sun) add(ell(0.075 * HS, 0.05 * HS, 0.02, 8, 4), 'head', '#1a1a22', at(ex, ey + 0.005, ez + 0.012, 0, ry, 0), true);
     else {
-      add(ell(0.043 * HS, 0.062 * HS, 0.02, 8, 5), 'head', '#2a1a1e', at(ex, ey, ez - 0.006, 0, ry, 0), true);
-      add(ell(0.017 * HS, 0.02 * HS, 0.01, 5, 3), 'head', '#ffffff', at(ex + k * 0.012 * HS, ey + 0.024 * HS, ez + 0.01, 0, ry, 0), true);
-      add(ell(0.008 * HS, 0.009 * HS, 0.006, 4, 2), 'head', '#ffffff', at(ex - k * 0.014 * HS, ey - 0.026 * HS, ez + 0.009, 0, ry, 0), true);
+      add(ell(0.043 * HS, 0.062 * HS, 0.02, 8, 5), 'head', '#2a1a1e', at(ex, ey, ez - 0.006, 0, ry, 0), true, ey);
+      add(ell(0.017 * HS, 0.02 * HS, 0.01, 5, 3), 'head', '#ffffff', at(ex + k * 0.012 * HS, ey + 0.024 * HS, ez + 0.01, 0, ry, 0), true, -ey);
+      add(ell(0.008 * HS, 0.009 * HS, 0.006, 4, 2), 'head', '#ffffff', at(ex - k * 0.014 * HS, ey - 0.026 * HS, ez + 0.009, 0, ry, 0), true, -ey);
       add(ell(0.036 * HS, 0.018 * HS, 0.006, 6, 3), 'head', '#f39a9a', at(Hc.x + k * 0.17 * HS, ey - 0.07 * HS, zs(Hc.x + k * 0.17 * HS, ey - 0.07 * HS) - 0.005, 0, ry * 1.6, 0), true);
     }
     add(box(0.07 * HS, 0.016 * HS, 0.018), 'head', hair, at(ex, ey + 0.095 * HS, zs(ex, ey + 0.095 * HS) - 0.002, 0, ry, -k * 0.12), true);
@@ -152,14 +162,19 @@ export function buildPerson(J, look) {
   const ua = J.upperarml, sy = ua.y, sp = J.spine, ch = J.chest, ulg = J.upperlegl;
   add(new THREE.CylinderGeometry(0.06, 0.068, 0.16, 8), 'chest', skin, at(hj.x, hj.y - 0.02, hj.z));
   const top = L.aodai ? L.shirt : shirt;
-  add(rbox(0.44, 0.34, 0.27, 0.11), 'chest', top, at(ch.x, sy - 0.1, ch.z));
+  const SW = L.gender === 'f' ? 1 : B.SW; // vai nam giới người lớn rộng hơn
+  add(rbox(0.44 * SW, 0.34, 0.27, 0.11), 'chest', top, at(ch.x, sy - 0.1, ch.z));
   add(rbox(0.4, 0.28, 0.25, 0.1), 'spine', top, at(sp.x, sp.y + 0.09, sp.z));
-  if (L.skirt) add(pleats(0.24, 0.34, 0.32, 16), 'hips', pants, at(ulg.x * 0 + J.hips.x, ulg.y - 0.07, J.hips.z));
+  if (L.dress) add(pleats(0.23, 0.37, 0.5, 16), 'hips', shirt, at(J.hips.x, ulg.y - 0.15, J.hips.z)); // váy liền: chân váy dài tới gối, cùng màu áo
+  else if (L.skirt) add(pleats(0.24, 0.34, 0.32, 16), 'hips', pants, at(J.hips.x, ulg.y - 0.07, J.hips.z));
   else add(rbox(0.46, 0.22, 0.27, 0.1), 'hips', L.aodai ? '#f4f1ea' : pants, at(J.hips.x, ulg.y + 0.02, J.hips.z));
   if (L.belt) { add(rbox(0.47, 0.05, 0.28, 0.4), 'hips', L.belt, at(J.hips.x, ulg.y + 0.105, J.hips.z)); add(box(0.07, 0.045, 0.02), 'hips', '#e0b84a', at(J.hips.x, ulg.y + 0.105, J.hips.z + 0.142), true); }
   if (L.aodai) { // áo dài: 2 vạt trước/sau dài quá gối, cổ cao
     for (const z of [0.13, -0.13]) add(new THREE.CylinderGeometry(0.19, 0.23, 0.62, 4, 1).rotateY(Math.PI / 4).scale(1, 1, 0.12), 'hips', L.shirt, at(J.hips.x, ulg.y - 0.24, J.hips.z + z, z > 0 ? -0.06 : 0.06));
     add(new THREE.CylinderGeometry(0.075, 0.08, 0.07, 10), 'chest', L.shirt, at(hj.x, hj.y - 0.015, hj.z));
+  } else if (L.tee || L.dress) { // áo thun / váy liền: cổ tròn + 1 sọc ngang
+    add(new THREE.TorusGeometry(0.085, 0.018, 3, 10).rotateX(Math.PI / 2), 'chest', new THREE.Color(shirt).offsetHSL(0, 0, -0.12).getStyle(), at(hj.x, sy + 0.05, hj.z + 0.015));
+    if (L.stripe) add(rbox(0.452 * SW, 0.06, 0.282, 0.03), 'chest', L.stripe, at(ch.x, sy - 0.15, ch.z), true);
   } else {
     // cổ áo sơ mi + khuy + túi ngực
     for (const k of [-1, 1]) add(new THREE.ConeGeometry(0.06, 0.1, 3).rotateX(Math.PI).scale(1, 1, 0.3), 'chest', shirt, at(ch.x + k * 0.065, sy + 0.025, ch.z + 0.112, 0.35, 0, k * 0.55));
@@ -186,10 +201,10 @@ export function buildPerson(J, look) {
   }
   // --- chân ---
   for (const s of 'lr') {
-    const a = J['upperleg' + s], kn = J['lowerleg' + s], an = J['foot' + s], bare = L.skirt;
-    const lc = bare ? skin : (L.aodai ? '#f4f1ea' : pants), r1 = bare ? 0.07 : 0.1, r2 = bare ? 0.062 : 0.088;
+    const a = J['upperleg' + s], kn = J['lowerleg' + s], an = J['foot' + s], bare = L.skirt || L.dress, shin = bare || L.shorts;
+    const lc = bare ? skin : (L.aodai ? '#f4f1ea' : pants), r1 = bare ? 0.07 : 0.1, r2 = shin ? 0.062 : 0.088;
     add(capsule(r1, a.distanceTo(kn) * 0.9), 'upperleg' + s, lc, along(a, kn));
-    add(capsule(r2, kn.distanceTo(an) * 0.88), 'lowerleg' + s, lc, along(kn, an));
+    add(capsule(r2, kn.distanceTo(an) * 0.88), 'lowerleg' + s, shin ? skin : lc, along(kn, an)); // quần đùi: cẳng chân trần
     add(new THREE.CylinderGeometry(0.072, 0.07, bare ? 0.16 : 0.06, 8), 'lowerleg' + s, '#f4f4f0', at(an.x, an.y + (bare ? 0.09 : 0.045), an.z));
     const shoe = L.shoes || '#2a2630';
     add(rbox(0.16, 0.12, 0.3, 0.06), 'foot' + s, shoe, at(an.x, 0.07, an.z + 0.06));
@@ -212,7 +227,7 @@ export function buildPerson(J, look) {
   if (L.prop === 'book') { add(rbox(0.06, 0.26, 0.2, 0.15), 'handr', L.propColor || '#c0392b', at(hr_.x - 0.02, hr_.y - 0.06, hr_.z + 0.04, 0, 0, Math.PI / 2)); add(box(0.063, 0.24, 0.18), 'handr', '#fff7e0', at(hr_.x - 0.02, hr_.y - 0.06, hr_.z + 0.05, 0, 0, Math.PI / 2), true); }
   else if (L.prop === 'clip') { add(rbox(0.03, 0.28, 0.21, 0.15), 'handr', '#8a5a34', at(hr_.x - 0.02, hr_.y - 0.05, hr_.z + 0.04, 0, 0, Math.PI / 2)); add(box(0.033, 0.22, 0.17), 'handr', '#ffffff', at(hr_.x - 0.02, hr_.y - 0.05, hr_.z + 0.045, 0, 0, Math.PI / 2), true); }
   else if (L.prop === 'cam') { add(rbox(0.18, 0.13, 0.26, 0.15), 'handr', '#2a2a33', at(hr_.x, hr_.y - 0.09, hr_.z + 0.06)); add(new THREE.CylinderGeometry(0.04, 0.04, 0.05, 8).rotateX(Math.PI / 2), 'handr', '#7fd1ff', at(hr_.x, hr_.y - 0.09, hr_.z + 0.2), true); }
-  else if (L.prop === 'rod') { const d = new THREE.Vector3(0.55, 0, 0.83); add(new THREE.CylinderGeometry(0.012, 0.022, 1.7, 4), 'handr', '#6b4a2b', along(hr_.clone().addScaledVector(d, -0.15), hr_.clone().addScaledVector(d, 1.55))); } // tay buông: cần chĩa ra trước, chếch lên
+  else if (L.prop === 'rod') { const d = new THREE.Vector3(0.7, 0, 0.71); add(new THREE.CylinderGeometry(0.012, 0.022, 1.7, 4), 'handr', '#6b4a2b', along(hr_.clone().addScaledVector(d, -0.15), hr_.clone().addScaledVector(d, 1.55))); } // tay buông: cần chĩa ra trước, chếch lên
   const geoB = mergeGeometries(body), geoD = det.length ? mergeGeometries(det) : null;
   geoB.computeBoundingBox(); geoB.computeBoundingSphere(); if (geoD) geoD.computeBoundingSphere();
   return { body: geoB, detail: geoD, tris: (geoB.index.count + (geoD ? geoD.index.count : 0)) / 3, top: geoB.boundingBox.max.y };
@@ -263,6 +278,6 @@ export function skinTo(model, G) {
   const bones = DEFORM.map(n => model.getObjectByName(n)), skel = new THREE.Skeleton(bones);
   const mk = (geo, name) => { const m = new THREE.SkinnedMesh(geo, MAT); m.name = name; m.bind(skel, new THREE.Matrix4()); m.frustumCulled = false; m.castShadow = true; model.add(m); return m; };
   const b = mk(G.body, 'person-body'); let d = null;
-  if (G.detail) { d = mk(G.detail, 'person-detail'); d.userData.outline = true; d.castShadow = false; }
+  if (G.detail) { d = mk(G.detail, 'person-detail'); d.material = detailMat(); d.userData.outline = true; d.castShadow = false; }
   return { body: b, detail: d };
 }
