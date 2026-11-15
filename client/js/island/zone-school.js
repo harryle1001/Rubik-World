@@ -70,7 +70,7 @@ function hipRoof(b, x0, z0, x1, z1, y, h) {
 // KHỐI RUBIK GIỐNG THẬT (dùng chung mọi khu): 26 khối con vát góc (44 tam giác/khối) thân đen + 54 miếng dán nhỏ hơn mặt (lõm trong viền vát)
 // ≈ 1.250 tam giác. Gốc (x, y, z) = tâm khối; s = cạnh; tilt = đứng trên 1 góc. Có thể gọi cho Batch hoặc DetailGrid.
 let cubieGeo = null;
-export function rubikCube(b, x, y, z, s, ry = 0, tilt = false) {
+export function rubikCube(b, x, y, z, s, ry = 0, tilt = false, lite = false) {   // lite: khối con hộp thường (≈ 420 tam giác) cho biểu tượng nhỏ
   if (!cubieGeo) { const h = 0.5, a = 0.41, pts = []; for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) pts.push(new THREE.Vector3(sx * h, sy * a, sz * a), new THREE.Vector3(sx * a, sy * h, sz * a), new THREE.Vector3(sx * a, sy * a, sz * h)); cubieGeo = new ConvexGeometry(pts); }
   const pre = b.pre; _o.position.set(x, y, z); _o.rotation.set(tilt ? 0.615 : 0, ry, tilt ? Math.PI / 4 : 0, 'YXZ'); _o.scale.set(1, 1, 1); _o.updateMatrix();
   b.pre = pre ? pre.clone().multiply(_o.matrix) : _o.matrix.clone();
@@ -79,7 +79,7 @@ export function rubikCube(b, x, y, z, s, ry = 0, tilt = false) {
   const FC = { pz: '#e8392f', nz: '#ff8a1f', px: '#2b63d9', nx: '#2f9e44', py: '#ffffff', ny: '#f5c518' }, ALT = Object.values(FC);
   for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (let k = -1; k <= 1; k++) {
     if (!i && !j && !k) continue;
-    const cx = i * q, cy = j * q, cz = k * q; b.push(cubieGeo.clone(), '#17151d', cx, cy, cz, 0, 0, 0, q * 0.98, q * 0.98, q * 0.98);
+    const cx = i * q, cy = j * q, cz = k * q; b.push(lite ? new THREE.BoxGeometry(1, 1, 1) : cubieGeo.clone(), '#17151d', cx, cy, cz, 0, 0, 0, q * 0.98, q * 0.98, q * 0.98);
     const mix = (i * 7 + j * 3 + k * 5 + 21) % 5 === 0;
     const st = (key, px, py, pz, ryy, rxx) => b.plane(q * 0.8, q * 0.8, cx + px, cy + py, cz + pz, mix ? ALT[(i + j + k + 9) % 6] : FC[key], ryy, rxx);
     if (k === 1) st('pz', 0, 0, f, 0, 0); if (k === -1) st('nz', 0, 0, -f, Math.PI, 0);
@@ -150,9 +150,10 @@ export function buildSchoolZone(a) {
     }
     for (const [x, z] of [[ax, az], [bx, az], [ax, bz], [bx, bz]]) b.box(0.56, H + 0.12, 0.56, x, Y, z, C.trim);   // trụ góc
     // sàn trong lớp (gạch men) — thấy khi mái mờ đi
-    GR.box(bx - ax - 0.2, 0.04, bz - az - 0.2, cx, Y, cz, st.yard ? C.cement : C.floor); addFoot(ax - 1.5 - (side === 'l' ? VD + 1 : 0), az - 1.5 - (side === 't' ? VD + 1 : 0), bx + 1.5 + (side === 'r' ? VD + 1 : 0), bz + 1.5 + (side === 'b' ? VD + 1 : 0));
+    GR.box(bx - ax - 0.2, 0.04, bz - az - 0.2, cx, Y, cz, st.yard ? C.cement : C.floor);
 
     const big = id === 'hall', VD = 2.2;   // VD: độ sâu hành lang
+    addFoot(ax - 1.5 - (side === 'l' ? VD + 1 : 0), az - 1.5 - (side === 't' ? VD + 1 : 0), bx + 1.5 + (side === 'r' ? VD + 1 : 0), bz + 1.5 + (side === 'b' ? VD + 1 : 0));
     const ox = side === 'l' ? ax : side === 'r' ? bx : dx, oz = side === 't' ? az : side === 'b' ? bz : dz;
     const faceL = side === 't' || side === 'b' ? bx - ax : bz - az, du = side === 't' ? -(dx - cx) : side === 'b' ? dx - cx : side === 'l' ? dz - cz : -(dz - cz);
     // hành lang cột dọc mặt tiền (gốc cục bộ = giữa mặt tiền, +z ra ngoài)
@@ -174,14 +175,14 @@ export function buildSchoolZone(a) {
       b.box(2 * gap, H - 2.75, T + 0.04, 0, 2.75, 0, C.trim);
       for (const s of [-1, 1]) b.box(0.08, 2.6, 1.3, s * (gap - 0.12), 0.05, -0.8, st.yard ? C.iron : C.door);
       b.box(2 * gap + 0.6, 0.12, 1.0, 0, 0, st.yard ? 0.5 : VD + 0.7, C.stone);
-      if (st.yard) { for (const s of [-1, 1]) { b.box(0.7, H + 0.9, 0.7, s * (gap + 0.35), 0, 0, C.trim); b.box(0.9, 0.2, 0.9, s * (gap + 0.35), H + 0.9, 0, st.acc); } b.box(2 * gap + 1.4, 0.5, 0.4, 0, H + 0.4, 0, st.acc); signAt(b, atlas.sign(st.sign[0], st.sign[1]), 3.4, 0.42, 0, H + 0.65, 0.22); rubikCube(b, 0, H + 2.1, 0, 1.2, 0.5, true); return; }
+      if (st.yard) { for (const s of [-1, 1]) { b.box(0.7, H + 0.9, 0.7, s * (gap + 0.35), 0, 0, C.trim); b.box(0.9, 0.2, 0.9, s * (gap + 0.35), H + 0.9, 0, st.acc); } b.box(2 * gap + 1.4, 0.5, 0.4, 0, H + 0.4, 0, st.acc); signAt(b, atlas.sign(st.sign[0], st.sign[1]), 3.4, 0.42, 0, H + 0.65, 0.22); rubikCube(b, 0, H + 2.1, 0, 1.2, 0.5, true, true); return; }
       const gh = big ? 2.3 : 1.5, gy = H + 0.02;
       b.prism(pd + 0.5, gh, pw + 0.4, 0, gy, pd / 2 - 0.1, C.roof, Math.PI / 2);
       b.prism(pd + 0.1, gh * 0.75, pw - 0.6, 0, gy + 0.02, pd / 2 - 0.05, st.wall, Math.PI / 2);
       b.box(pw + 0.5, 0.2, 0.2, 0, gy - 0.2, pd - 0.08, C.fascia);
       signAt(b, atlas.sign(st.sign[0], st.sign[1]), big ? 5.0 : 3.3, big ? 0.62 : 0.42, 0, H - 0.47, VD + 0.23);
       const topY = gy + gh, tz = pd / 2 - 0.1;
-      if (id === 'rubik') rubikCube(b, 0, topY + 0.9, tz, 1.4, 0.5, true);
+      if (id === 'rubik') rubikCube(b, 0, topY + 0.9, tz, 1.4, 0.5, true, true);
       else if (id === 'chess') { chessPiece(b, 'k', -0.7, tz, 0.95, 'w', topY - 0.25); chessPiece(b, 'n', 0.8, tz, 0.8, 'b', topY - 0.35); }
       else if (id === 'music') musicNote(b, 0, topY + 0.15, tz, 0.85, '#2b2633');
       else if (id === 'hall') { b.cyl(0.75, 0.75, 0.14, 0, gy + 0.85, pd - 0.2, C.trim, 12, 0, Math.PI / 2); b.cyl(0.6, 0.6, 0.16, 0, gy + 0.85, pd - 0.17, '#2b2633', 12, 0, Math.PI / 2); b.box(0.06, 0.45, 0.04, 0, gy + 0.85, pd - 0.07, C.trim); b.box(0.32, 0.06, 0.04, 0.12, gy + 1.05, pd - 0.07, C.trim); b.ball(0.2, 0, topY + 0.15, tz, C.gold); }
@@ -193,7 +194,7 @@ export function buildSchoolZone(a) {
       const opp = { b: 't', t: 'b', l: 'r', r: 'l' }[side], [px, pz, qx, qz] = sides[opp], wl = (opp === 't' || opp === 'b' ? r.w : r.h) * S;
       b.group((px + qx) / 2, Y, (pz + qz) / 2, FACE[opp] + Math.PI, () => { b.box(Math.min(6, wl * 0.4), 1.5, 0.08, 0, 1.2, T / 2 + 0.05, '#2f5d3f'); b.box(Math.min(6.2, wl * 0.4 + 0.2), 0.1, 0.18, 0, 1.12, T / 2 + 0.1, '#b9824f'); });
     }
-    if (id === 'rubik' || id === 'elec') for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) { const x = cx - 4 + i * 4, z = cz - 1.6 + j * 2.6; b.box(1.8, 0.08, 0.7, x, Y + 0.72, z, '#c9955f'); b.box(1.6, 0.72, 0.1, x, Y, z, '#8a5a34'); b.box(1.6, 0.42, 0.4, x, Y, z + 0.7, id === 'rubik' ? '#3d7be0' : '#2f7f6f'); }
+    if (id === 'rubik' || id === 'elec') for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) { const x = cx - 2 + i * 4, z = cz - 1.6 + j * 2.6; b.box(1.8, 0.08, 0.7, x, Y + 0.72, z, '#c9955f'); b.box(1.6, 0.72, 0.1, x, Y, z, '#8a5a34'); b.box(1.6, 0.42, 0.4, x, Y, z + 0.7, id === 'rubik' ? '#3d7be0' : '#2f7f6f'); }
     if (id === 'chess' && D.CHESS_T) for (const [x2, y2] of D.CHESS_T) { const x = X3(x2), z = Z3(y2); b.box(1.3, 0.08, 1.3, x, Y + 0.75, z, '#f4efe4'); b.box(0.66, 0.02, 0.66, x - 0.33, Y + 0.83, z - 0.33, '#2b2633'); b.box(0.66, 0.02, 0.66, x + 0.33, Y + 0.83, z + 0.33, '#2b2633'); b.box(0.2, 0.75, 0.2, x, Y, z, '#5a3a22'); }
     if (id === 'music' && D.MUSIC_SPOTS) { const [x2, y2] = D.MUSIC_SPOTS.piano, x = X3(x2), z = Z3(y2); b.box(2.0, 1.0, 0.8, x, Y, z, '#1b1626'); b.box(2.0, 0.06, 0.32, x, Y + 0.85, z + 0.5, '#ffffff'); b.box(0.8, 0.5, 0.4, x, Y, z + 1.0, '#5a3a22'); }
     if (id === 'hall') { b.box(5, 0.6, (bz - az) * 0.6, bx - 2.8, Y, cz, '#b9824f'); for (let i = 0; i < 4; i++) b.box(r.w * S * 0.45, 0.45, 0.5, cx - 1.5, Y, Z3(r.y + 300 + i * 68), '#a0522d'); }
@@ -358,7 +359,7 @@ export function buildSchoolZone(a) {
   }
   // cây phượng: thân + tán lá xanh + chùm hoa đỏ (InstancedMesh)
   if (phuong.length) {
-    const g0 = g => { g.deleteAttribute('uv'); return g.toNonIndexed(); };
+    const g0 = g => { g.deleteAttribute('uv'); return g.index ? g.toNonIndexed() : g; };
     const trunk = mergeGeometries([new THREE.CylinderGeometry(0.16, 0.26, 2.0, 6).translate(0, 1.0, 0), new THREE.CylinderGeometry(0.08, 0.12, 1.4, 5).rotateZ(0.9).translate(0.6, 2.1, 0), new THREE.CylinderGeometry(0.08, 0.12, 1.4, 5).rotateZ(-0.9).translate(-0.6, 2.1, 0.1)].map(g0));
     const blob = (r, x, y, z, sy = 0.45) => new THREE.IcosahedronGeometry(r, 0).scale(1, sy, 1).translate(x, y, z);
     const green = mergeGeometries([blob(1.7, 0, 2.6, 0), blob(1.2, 1.3, 2.45, 0.4), blob(1.2, -1.3, 2.5, -0.3), blob(1.1, 0.2, 2.45, 1.3), blob(1.1, -0.2, 2.5, -1.3)].map(g0));

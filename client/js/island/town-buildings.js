@@ -173,6 +173,59 @@ export function buildTownArchitecture(ctx, RS, env) {
   }
 
   // ================= KHU MỞ =================
+  // Quảng trường cờ khổng lồ: bàn cờ 8×8 + quân cờ to
+  if (D.GBOARD) {
+    const g = D.GBOARD, b = B.ground, s = g.s * S, bx = X3(g.x), bz = Z3(g.y), n = 8;
+    b.box(s * n + 0.8, 0.1, s * n + 0.8, bx + s * n / 2, Y, bz + s * n / 2, '#8a6a44');
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) b.plane(s, s, bx + (i + 0.5) * s, Y + 0.11, bz + (j + 0.5) * s, (i + j) % 2 ? '#3d3747' : '#f4efe4', 0, -Math.PI / 2);
+    const P = [['r', 0, 0, 'b'], ['k', 4, 0, 'b'], ['n', 6, 2, 'b'], ['p', 3, 3, 'b'], ['p', 5, 1, 'b'], ['q', 3, 6, 'w'], ['p', 4, 4, 'w'], ['p', 2, 5, 'w'], ['n', 5, 5, 'w'], ['k', 6, 7, 'w'], ['r', 0, 7, 'w']];
+    measure(B.parks, 'chess-pieces', () => { for (const [k, i, j, c] of P) { const x = bx + (i + 0.5) * s, z = bz + (j + 0.5) * s, h = chessPiece(B.parks, k, x, z, 1.15, c, Y + 0.11); ctx.boxes.push({ x0: x - 0.6, x1: x + 0.6, z0: z - 0.6, z1: z + 0.6, top: Y + 0.11 + h }); } });
+  }
+  // Tượng đài Rubik: bệ 2 bậc + khối Rubik khổng lồ đứng trên một góc + bồn hoa
+  if (D.RMON) {
+    const x = X3(D.RMON[0]), z = Z3(D.RMON[1]), b = B.parks;
+    measure(b, 'rubik-statue', () => {
+      b.cyl(3.4, 3.6, 0.3, x, Y, z, '#cfc6b4', 12); b.box(3.2, 0.8, 3.2, x, Y + 0.3, z, '#e2dccc'); b.box(2.4, 0.6, 2.4, x, Y + 1.1, z, '#f4efe4');
+      rubikCube(b, x, Y + 1.7 + 2.6 * 0.87 + 0.05, z, 3.0, 0.3, true);
+      for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6; b.ball(0.35, x + Math.cos(a) * 3.0, Y + 0.45, z + Math.sin(a) * 3.0, RUBIK_COL[i % 6], 1, 0.7, 1); }
+    });
+    ctx.boxes.push({ x0: x - 1.6, x1: x + 1.6, z0: z - 1.6, z1: z + 1.6, top: Y + 1.7 });
+  }
+  // Hồ nước (hồ câu, hồ Koi, đầm sen): mặt nước toon hình elip + viền đá + lá sen + bến gỗ
+  const pads = [], flowers = [], waters = [];
+  const lake = (e, padN, flowerN) => {
+    if (!e) return; const x = X3(e.cx), z = Z3(e.cy), rx = e.rx * S, rz = e.ry * S;
+    waters.push([x, z, rx, rz]);
+    B.ground.push(new THREE.RingGeometry(1, 1.12, 28).rotateX(-Math.PI / 2), '#cfc6b4', x, Y + 0.02, z, 0, 0, 0, rx, 1, rz);
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2 + rnd() * 0.2; B.parks.ball(0.25 + rnd() * 0.25, x + Math.cos(a) * rx * 1.08, Y + 0.1, z + Math.sin(a) * rz * 1.08, rnd() < 0.5 ? '#9a948c' : '#b5aea3', 1.3, 0.6, 1); }
+    for (let i = 0; i < padN; i++) { const a = rnd() * Math.PI * 2, q = Math.sqrt(rnd()) * 0.85; pads.push([x + Math.cos(a) * rx * q, z + Math.sin(a) * rz * q, 0.45 + rnd() * 0.35]); if (i < flowerN) flowers.push(pads[pads.length - 1]); }
+  };
+  lake(D.POND, 10, 0); lake(D.LAKE, 14, 3); lake(D.LOTUS, low ? 30 : 46, low ? 12 : 22);
+  if (D.POND) { const x = X3(D.POND.cx), z = Z3(D.POND.cy + D.POND.ry), b = B.parks; b.box(1.4, 0.12, 4.2, x, Y + 0.12, z - 1.2, '#a87445'); for (const s of [-1, 1]) for (let i = 0; i < 3; i++) b.box(0.15, 0.6, 0.15, x + s * 0.65, Y - 0.3, z - 3 + i * 1.4, '#6b4a2b'); }
+  if (D.LAKE) for (let i = 0; i < 7; i++) { const a = i * 0.9, x = X3(D.LAKE.cx) + Math.cos(a) * D.LAKE.rx * S * 0.5, z = Z3(D.LAKE.cy) + Math.sin(a) * D.LAKE.ry * S * 0.5; B.parks.box(0.5, 0.06, 0.18, x, Y + 0.05, z, i % 3 ? '#ff8a1f' : '#ffffff', a); }
+  for (const [x2, y2, col] of D.TENTS || []) { const x = X3(x2), z = Z3(y2); if (nearDoor(x, z, 1.5)) continue; B.parks.prism(1.9, 1.3, 1.7, x, Y, z, col, Math.atan2(X3(D.LAKE.cx) - x, Z3(D.LAKE.cy) - z) + Math.PI / 2); B.parks.box(0.08, 0.9, 0.05, x, Y, z, '#2b2633', Math.atan2(X3(D.LAKE.cx) - x, Z3(D.LAKE.cy) - z) + Math.PI / 2); }
+  // Nông trại: chuồng đỏ, luống rau, hàng rào gỗ (chừa lối vào phía nam)
+  if (R.farm) {
+    const f = R.farm, b = B.farm, fx0 = X3(f.x), fx1 = X3(f.x + f.w), fz0 = Z3(f.y), fz1 = Z3(f.y + f.h);
+    measure(b, 'barn', () => b.group(X3(f.x + 100), Y, Z3(f.y + 130), 0, () => {
+      b.box(8, 3.2, 6, 0, 0, -3, '#c0392b'); b.prism(8.6, 2.2, 6.8, 0, 3.2, -3, '#5a3a22');
+      b.box(2.6, 2.6, 0.1, 0, 0, 0.02, '#f4efe4'); b.box(2.2, 2.2, 0.12, 0, 0.1, 0.05, '#8e2b22'); b.box(2.9, 0.12, 0.14, 0, 1.2, 0.08, '#f4efe4', 0, 0, 0.75); b.box(2.9, 0.12, 0.14, 0, 1.2, 0.08, '#f4efe4', 0, 0, -0.75);
+      b.box(1.0, 0.9, 0.1, 0, 3.6, 0.42, '#f4efe4'); b.cyl(1.0, 1.0, 1.0, 5.4, 0, -1.5, '#e8c45a', 8, 0, Math.PI / 2); b.cyl(0.9, 0.9, 0.9, 5.4, 0, 0.6, '#d9b44a', 8, 0, Math.PI / 2);
+    }));
+    ctx.boxes.push({ x0: X3(f.x + 100) - 4, x1: X3(f.x + 100) + 4, z0: Z3(f.y + 130) - 6, z1: Z3(f.y + 130), top: Y + 4 });
+    const crops = ['#3f8f3a', '#6cbf4a', '#e8392f', '#ff8a1f', '#7fbf3a'];
+    for (let r = 0; r < 6; r++) {
+      const z = Z3(f.y + 70 + r * 58), x0 = X3(f.x + 300), x1 = X3(f.x + 820); if (nearDoor((x0 + x1) / 2, z, 1)) continue;
+      b.box(x1 - x0, 0.28, 1.2, (x0 + x1) / 2, Y, z, '#7a5230');
+      for (let x = x0 + 0.4; x < x1 - 0.3; x += 0.8) { if (nearDoor(x, z, 1.2)) continue; const c = crops[r % crops.length]; b.ball(0.28, x, Y + 0.45, z, '#4f9a3a', 1, 0.8, 1); if (c !== '#3f8f3a' && c !== '#6cbf4a') b.ball(0.12, x + 0.1, Y + 0.62, z + 0.1, c); }
+    }
+    const fence = (ax, az, bx2, bz2) => { const L = Math.hypot(bx2 - ax, bz2 - az), ry = Math.atan2(bx2 - ax, bz2 - az) - Math.PI / 2; b.group((ax + bx2) / 2, Y, (az + bz2) / 2, ry, () => { for (let u = -L / 2; u <= L / 2 + 0.01; u += 2) b.box(0.16, 1.1, 0.16, u, 0, 0, '#8a5a34'); b.box(L, 0.1, 0.06, 0, 0.45, 0, '#a87445'); b.box(L, 0.1, 0.06, 0, 0.85, 0, '#a87445'); }); };
+    const gA = X3(4440), gB = X3(4800);
+    fence(fx0, fz0, fx1, fz0); fence(fx0, fz0, fx0, fz1); fence(fx1, fz0, fx1, fz1); fence(fx0, fz1, gA, fz1); fence(gB, fz1, fx1, fz1);
+    for (const gx of [gA, gB]) { b.box(0.3, 2.2, 0.3, gx, Y, fz1, '#6b4a2b'); }
+    b.box(gB - gA + 0.3, 0.3, 0.3, (gA + gB) / 2, Y + 2.2, fz1, '#6b4a2b');
+    signAt(b, atlas.sign('NÔNG TRẠI', '#5a3a22', '#fff', '#e8c45a'), 3.2, 0.42, (gA + gB) / 2, Y + 2.85, fz1 + 0.05);
+  }
   // Rừng thông, đồi thông, công viên: cây (InstancedMesh)
   for (const [x2, y2, k] of D.FOREST_TREES || []) if (!low || rnd() < 0.6) trees.push([X3(x2), Z3(y2), k === 'pine' ? 'pine' : 'leaf', 0.9 + rnd() * 0.5]);
   if (R.hills) { const h = R.hills; for (let y2 = h.y + 40; y2 < h.y + h.h - 20; y2 += low ? 90 : 64) for (let x2 = h.x + 30; x2 < h.x + h.w; x2 += low ? 90 : 64) { const px = x2 + (rnd() - 0.5) * 50, py = y2 + (rnd() - 0.5) * 40; if (reg(px, py) === 'hills' && !nearDoor(X3(px), Z3(py), 3)) trees.push([X3(px), Z3(py), 'pine', 0.9 + rnd() * 0.6]); } }
