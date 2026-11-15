@@ -128,10 +128,21 @@ renderer.setAnimationLoop(() => {
   mg.update(dt, clock.elapsedTime);
   ctx.flushOffer();
   brightness.update();
+  unfreezeGuard(dt);
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
   quality(dt);
 });
+
+// ---------- Lưới an toàn: nhân vật bị khoá (player.frozen) mà không còn bảng nào mở → mở khoá ----------
+// Cờ frozen dùng chung (bảng trường, bản đồ, câu đố đền, sổ bí mật, bảng φ & π); bên này đóng/mở chồng lên bên kia
+// (vd. mở bản đồ khi bảng trường đang mở → đóng bản đồ khôi phục frozen = true) làm nhân vật đứng yên mãi.
+let frzT = 0;
+function unfreezeGuard(dt) {
+  if (!player.frozen) { frzT = 0; return; }
+  if ((frzT += dt) < 1) return; frzT = 0;
+  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden])')) player.frozen = false;
+}
 
 // ---------- Tự giảm/tăng chất lượng theo FPS ----------
 // mức 0: đầy đủ · 1: tắt bloom, giảm độ phân giải · 2: cỏ/cây chi tiết gần hơn, bóng nhỏ · 3: tắt bóng đổ
@@ -140,7 +151,7 @@ const base = { pr, grass: terrain.state.grassDist, tree: terrain.state.treeDist 
 function applyQuality() {
   const L = qLevel;
   pr = [base.pr, Math.min(base.pr, 1.15), 1.0, 0.85][L]; renderer.setPixelRatio(pr); post.setSize(innerWidth, innerHeight);
-  post.bloom.enabled = CFG.quality.bloom && L === 0;
+  post.bloom.enabled = CFG.quality.bloom && L === 0; post.setMSAA(L >= 2 ? 0 : CFG.quality.msaa);
   terrain.state.grassDist = base.grass * (L >= 2 ? 0.6 : 1); terrain.state.treeDist = base.tree * (L >= 2 ? 0.7 : 1); terrain.state.relayoutAll(player.pos);
   const ss = L >= 2 ? 512 : CFG.quality.shadowSize; if (sky.sun.shadow.mapSize.x !== ss) { sky.sun.shadow.mapSize.set(ss, ss); sky.sun.shadow.map?.dispose(); sky.sun.shadow.map = null; }
   if (renderer.shadowMap.enabled !== (L < 3)) { renderer.shadowMap.enabled = L < 3; scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => m.needsUpdate = true); }); }
@@ -150,7 +161,8 @@ function quality(dt) {
   qFrames++; const el = (performance.now() - qT) / 1000; if (el < 3) return;
   const fps = qFrames / el; qFrames = 0; qT = performance.now(); ctx.fps = Math.round(fps);
   if (fps < CFG.quality.lowFps && qLevel < 3) { qLevel++; qGood = 0; applyQuality(); }
-  else if (fps > CFG.quality.highFps && qLevel > 0 && ++qGood >= 3) { qLevel--; qGood = 0; applyQuality(); }
+  // không quay lại từ mức 3: bật/tắt bóng đổ phải biên dịch lại mọi shader (khựng vài giây) → nếu dao động 2↔3 sẽ giật liên tục
+  else if (fps > CFG.quality.highFps && qLevel > 0 && qLevel < 3 && ++qGood >= 3) { qLevel--; qGood = 0; applyQuality(); }
 }
 if (new URLSearchParams(location.search).has('low')) { qLevel = 2; applyQuality(); } // ?low: bắt đầu ở chất lượng thấp
 

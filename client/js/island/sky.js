@@ -32,7 +32,7 @@ export function createSky(scene) {
         float y = max(d.y, 0.);
         vec3 c = mix(uHor, mix(uHor, uTop, 0.45), smoothstep(0.0, 0.18, y));   // dải sáng mờ sát chân trời
         c = mix(c, uTop, smoothstep(0.12, 0.85, y));                          // lên đỉnh đậm dần (3 tầng)
-        c = mix(c, uHor * 0.92, smoothstep(0.0, -0.25, d.y));
+        c = mix(c, uHor * 0.92, 1. - smoothstep(-0.25, 0.0, d.y));   // (cạnh smoothstep phải tăng dần: ngược thứ tự là không xác định)
         float s = max(dot(d, uSun), 0.);
         // quầng bình minh/hoàng hôn: dải sáng ấm ôm chân trời phía mặt trời (mặt trời càng thấp càng rộng)
         float low = smoothstep(-0.22, 0.02, uSun.y) * (1. - smoothstep(0.05, 0.4, uSun.y));
@@ -42,7 +42,7 @@ export function createSky(scene) {
         // sao lấp lánh + dải Ngân Hà mờ
         vec3 cell = floor(d * 240.); float r = h(cell), up = smoothstep(0.05, 0.3, d.y);
         c += step(0.9975, r) * uNight * up * (0.55 + 0.45 * sin(uTime * (1.5 + r * 6.) + r * 50.));
-        float mw = exp(-pow(dot(d, normalize(vec3(0.35, 0.25, -0.9))) * 5., 2.)) * (0.65 + 0.35 * sin(d.x * 23. + sin(d.z * 17.) * 2.) * sin(d.y * 19. - d.z * 11.));
+        float mk = dot(d, normalize(vec3(0.35, 0.25, -0.9))) * 5., mw = exp(-mk * mk) * (0.65 + 0.35 * sin(d.x * 23. + sin(d.z * 17.) * 2.) * sin(d.y * 19. - d.z * 11.));
         c += vec3(0.07, 0.065, 0.11) * mw * uNight * up;
         // trăng có pha: chỗ sáng = phần được Mặt Trời chiếu (pha 0 trăng non · 0.5 trăng tròn)
         float m = dot(d, uMoon);

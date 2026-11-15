@@ -173,13 +173,15 @@ export function createAircraft(ctx) {
     p.push(part(cyl(1.1, 1.1, 0.2, 16), '#fafafa', tx, GY + 8.5, tz + 2.45, Math.PI / 2)); p.push(part(cyl(1.25, 1.25, 0.15, 16), '#e2b33c', tx, GY + 8.5, tz + 2.38, Math.PI / 2));
     p.push(part(box(0.1, 0.8, 0.05), '#222', tx, GY + 8.75, tz + 2.6)); p.push(part(box(0.6, 0.1, 0.05), '#222', tx + 0.25, GY + 8.5, tz + 2.6));
     ctx.boxes && ctx.boxes.push({ x0: gx - 10, z0: gz - 4.5, x1: gx + 10, z1: gz + 4.5, top: GY + 8 });
-    // ống gió + thùng xăng + hàng rào thấp
+    // ống gió + thùng xăng + bụi cây xén thấp ven sân bay (thế giới mở: không hàng rào)
     const wx = RWY.x0 + 10, wz = RWY.z - RWY.w / 2 - 5;
     p.push(part(cyl(0.08, 0.1, 5, 6), '#ddd', wx, GY + 2.5, wz));
     for (let i = 0; i < 5; i++) p.push(part(box(0.6, 0.6, 0.6), '#555', AIR[0] + 58 + (i % 3) * 0.7, GY + 0.3 + (i > 2) * 0.6, AIR[1] + 16));
     for (let i = 0; i < 4; i++) p.push(part(cyl(0.35, 0.35, 0.9, 8), i % 2 ? '#c8302a' : '#2f6db0', AIR[0] + 62 + i * 0.8, GY + 0.45, AIR[1] + 17));
-    for (let x = AIR[0]; x <= AIR[2]; x += 4) p.push(part(box(0.12, 0.9, 0.12), '#f4f0e6', x, GY + 0.45, AIR[3] - 0.5));
-    p.push(part(box(AIR[2] - AIR[0], 0.1, 0.08), '#f4f0e6', cx, GY + 0.8, AIR[3] - 0.5));
+    for (let x = AIR[0] + 2.5, k = 0; x <= AIR[2] - 2.5; x += 5, k++) {   // khóm xén 3,1 m (≈ 5/φ), chừa lối 1,9 m để đi qua
+      p.push(part(box(3.1, 0.55, 0.75), '#4f9a4a', x, GY + 0.28, AIR[3] - 0.5)); p.push(part(box(2.9, 0.14, 0.6), '#63ab50', x, GY + 0.6, AIR[3] - 0.5));
+      if (k % 3 === 1) p.push(part(box(0.5, 0.12, 0.5), ['#e85d8a', '#f5c518', '#ffffff'][k % 3], x, GY + 0.7, AIR[3] - 0.5));
+    }
     air.add(meshOf(p));
     // ống gió (đung đưa theo gió)
     const sock = meshOf([part(new THREE.CylinderGeometry(0.45, 0.2, 2.6, 8, 1, true), '#f07a2a', 0, -1.3, 0), part(new THREE.CylinderGeometry(0.33, 0.29, 0.5, 8, 1, true), '#fafafa', 0, -1.3, 0)]);
