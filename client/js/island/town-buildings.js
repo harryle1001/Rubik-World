@@ -539,19 +539,20 @@ export function buildTownArchitecture(ctx, RS, env) {
     for (const [x2, y2] of D.LAMPS || []) { const [x, z] = at(x2, y2); d.glow(() => d.box(0.24, 0.32, 0.24, x, Y + 3.24, z, '#ffe28a')); }
     // ven hồ: lau sậy
     for (const e of [D.POND, D.LAKE, D.LOTUS]) { if (!e) continue; const [cx, cz] = at(e.cx, e.cy), rx = e.rx * S, rz = e.ry * S; for (let i = 0; i < 40; i++) { const a = rnd() * 6.28, k = 0.93 + rnd() * 0.08; const x = cx + Math.cos(a) * rx * k, z = cz + Math.sin(a) * rz * k; for (let j = 0; j < 3; j++) d.cone(0.06, 0.9 + rnd() * 0.5, x + (j - 1) * 0.15, Y, z + (rnd() - 0.5) * 0.3, j % 2 ? '#6f9f3a' : '#8fbf4a', 3); if (i % 3 === 0) d.box(0.06, 0.2, 0.06, x, Y + 1.2, z, '#7a5230'); } }
-    // thiên nhiên quanh đảo và giữa các khu: bụi cây có hoa, cụm hoa, cỏ cao, đá ven bờ
-    const H_ = (x, z) => ctx.terrain.heightAt(x, z), SL = (x, z) => ctx.terrain.slopeAt(x, z);
-    const N = low ? 1400 : 2600, W0 = -240, W1 = 370, Z0 = -200, Z1 = 190;
+    // thiên nhiên quanh đảo và giữa các khu: bụi cây, cụm hoa, nấm, đá ven bờ — model kit CC0, instancing theo khoảng cách (terrain.nature)
+    const H_ = (x, z) => ctx.terrain.heightAt(x, z), SL = (x, z) => ctx.terrain.slopeAt(x, z), NA = ctx.terrain.nature;
+    const N = low ? 1400 : 2600, W0 = -240, W1 = 370, Z0 = -200, Z1 = 190, L = { bush: [], flowers: [], mushrooms: [], rockL: [], pebbles: [] };
     for (let i = 0; i < N; i++) {
       const x = W0 + rnd() * (W1 - W0), z = Z0 + rnd() * (Z1 - Z0), h = H_(x, z); if (h < 0.15) continue;
       let inside = false; for (const r of ALL) if (x > r[0] - 1 && x < r[2] + 1 && z > r[1] - 1 && z < r[3] + 1) { inside = true; break; } if (inside) continue;
-      if (h < 0.9) { if (rnd() < 0.5) d.push(new THREE.DodecahedronGeometry(0.3 + rnd() * 0.6, 0), rnd() < 0.5 ? '#a7a29a' : '#bdb6aa', x, h, z, rnd() * 6, 0, 0, 1.2, 0.7, 1); continue; }
+      if (h < 0.9) { if (rnd() < 0.5) (rnd() < 0.3 ? L.rockL : L.pebbles).push([x, h - 0.1, z, 1.2 + rnd() * 1.6]); continue; }   // đá ven bờ
       if (SL(x, z) > 0.8) continue;
       const k = rnd();
-      if (k < 0.35) { const c = ['#4f9a3a', '#5aa04a', '#3f8a3a'][i % 3]; d.ball(0.6, x, h + 0.35, z, c, 1.2, 0.8, 1.1); d.ball(0.45, x + 0.5, h + 0.25, z + 0.2, c, 1, 0.8, 1); if (i % 2) d.ball(0.12, x + 0.2, h + 0.85, z + 0.3, ['#e85d8a', '#f5c518', '#ffffff'][i % 3]); }
-      else if (k < 0.7) { for (let j = 0; j < 5; j++) { const fx = x + (rnd() - 0.5) * 1.2, fz = z + (rnd() - 0.5) * 1.2; d.cone(0.03, 0.4, fx, h, fz, '#5aa04a', 3); d.ball(0.1, fx, h + 0.42, fz, ['#e8392f', '#f5c518', '#e85d8a', '#ffffff', '#9b59d0'][(i + j) % 5]); } }
-      else { for (let j = 0; j < 4; j++) d.cone(0.09, 0.7 + rnd() * 0.5, x + (rnd() - 0.5) * 0.6, h, z + (rnd() - 0.5) * 0.6, j % 2 ? '#7cb84a' : '#9ccf5a', 3); }
+      if (k < 0.4) L.bush.push([x, h - 0.05, z, 2.6 + rnd() * 1.8]);
+      else if (k < 0.85) L.flowers.push([x, h - 0.03, z, 1.8 + rnd() * 0.9]);
+      else L.mushrooms.push([x, h - 0.03, z, 2.2 + rnd() * 1.0]);
     }
+    if (NA) for (const k of Object.keys(L)) NA.add(k, L[k]);
   }
   // sự sống: bướm ở vườn hoa/safari/học viện, hải âu trên biển, cờ bay
   const flies = [];
@@ -580,30 +581,23 @@ export function buildTownArchitecture(ctx, RS, env) {
     return im;
   };
   const set = (x, y, z, s, ry = 0) => (q, o) => { o.position.set(x, y, z); o.rotation.set(0, ry, 0); o.scale.set(s, s, s); };
-  const LEAF = ['#5aa04a', '#6cb84f', '#4f9a3a', '#7cc45a'], PHUONG = ['#e8452f', '#f05a2b', '#e83a3a'], PINE = ['#2f7a4a', '#3a8a52', '#2b6b44'];
-  const T2 = trees.map(([x, z, k, s]) => ({ x, z, k, s, ry: rnd() * 6.28, col: (k === 'pine' ? PINE : k === 'phuong' ? PHUONG : LEAF)[Math.floor(rnd() * 3)] }));
-  const trunkGeo = new THREE.CylinderGeometry(0.12, 0.2, 1.4, 5).translate(0, 0.7, 0);
-  const crownGeo = mergeGeometries([new THREE.IcosahedronGeometry(1.0, 0).translate(0, 2.1, 0), new THREE.IcosahedronGeometry(0.7, 0).translate(0.55, 1.75, 0.2), new THREE.IcosahedronGeometry(0.65, 0).translate(-0.5, 1.85, -0.3), new THREE.IcosahedronGeometry(0.55, 0).translate(0.1, 2.85, 0.1)].map(g => { g.deleteAttribute('uv'); return g; }));
-  const pineGeo = mergeGeometries([new THREE.ConeGeometry(1.1, 1.8, 7).translate(0, 1.9, 0), new THREE.ConeGeometry(0.8, 1.5, 7).translate(0, 2.8, 0), new THREE.ConeGeometry(0.5, 1.1, 7).translate(0, 3.6, 0)].map(g => g.toNonIndexed()).map(g => { g.deleteAttribute('uv'); g.computeVertexNormals(); return g; }));
-  inst(trunkGeo, toon('#7a5230'), T2, q => set(q.x, Y, q.z, q.s * (q.k === 'pine' ? 1.1 : 1), q.ry), false);
-  const leafy = T2.filter(q => q.k !== 'pine'), pines = T2.filter(q => q.k === 'pine');
-  inst(crownGeo, toon('#ffffff'), leafy, q => set(q.x, Y, q.z, q.s, q.ry), true);
-  inst(pineGeo, toon('#ffffff'), pines, q => set(q.x, Y, q.z, q.s, q.ry), true);
+  const LEAF = ['#7cc35e', '#6fb85a', '#8fcf6a', '#5faa4e'], PHUONG = ['#e8553f', '#f06a3b', '#e24a3a'], PINE = ['#3f8f55', '#4a9a5a', '#367f4c'];
+  // cây của thị trấn: model kit CC0 (tán tròn / phượng đỏ / thông) qua terrain.nature — instancing + LOD gần/xa dùng chung với cây đảo
+  { const NA = ctx.terrain.nature, T = { oak: [], fat: [], round: [], pine: [], pineTall: [] };
+    for (const [x, z, k, s] of trees) {
+      const ry = rnd() * 6.28;
+      if (k === 'pine') (rnd() < 0.5 ? T.pine : T.pineTall).push([x, Y - 0.05, z, s * 3.2, ry, PINE[Math.floor(rnd() * 3)]]);
+      else if (k === 'phuong') T.round.push([x, Y - 0.05, z, s * 2.4, ry, PHUONG[Math.floor(rnd() * 3)]]);
+      else (rnd() < 0.6 ? T.oak : T.fat).push([x, Y - 0.05, z, s * 3.1, ry, LEAF[Math.floor(rnd() * 4)]]);
+    }
+    for (const k of Object.keys(T)) if (T[k].length) NA.add(k, T[k]);
+  }
   inst(new THREE.CylinderGeometry(1, 1, 0.04, 7), toon('#4f9a3a'), pads, ([x, z, s]) => set(x, Y + 0.07, z, s, x * 3), false, false);
   inst(new THREE.ConeGeometry(0.22, 0.4, 5), toon('#ff9ec4'), flowers, ([x, z]) => set(x + 0.1, Y + 0.12, z, 1, 0), false, false);
   inst(new THREE.ConeGeometry(0.16, 0.42, 4).translate(0, 0.21, 0), toon('#ffffff'), fl.map(([x, z, col]) => ({ x, z, col })), q => set(q.x, Y, q.z, 1, q.x), false, false);
 
-  // cây dừa: thân cong (4 đốt) + 7 tàu lá (InstancedMesh, có viền)
-  if (palms.length) {
-    const seg = [], frond = [];
-    for (let i = 0; i < 4; i++) seg.push(new THREE.CylinderGeometry(0.16 - i * 0.02, 0.2 - i * 0.02, 1.25, 6).translate(i * i * 0.09, 0.62 + i * 1.18, 0));
-    for (let i = 0; i < 7; i++) { const g = new THREE.BoxGeometry(0.5, 0.06, 2.4).translate(0, 0, 1.15); g.rotateX(0.38).rotateY(i / 7 * 6.28); g.translate(0.85, 4.75, 0); frond.push(g); }
-    const tg = mergeGeometries(seg.map(g => { g.deleteAttribute('uv'); return g.toNonIndexed(); })), fg = mergeGeometries(frond.map(g => { g.deleteAttribute('uv'); return g.toNonIndexed(); }));
-    fg.computeVertexNormals();
-    const pset = q => (q2, o) => { o.position.set(q.x, q.y, q.z); o.rotation.set(0, q.ry, 0); o.scale.set(q.s, q.s, q.s); };
-    inst(tg, toon('#9a6a3e'), palms, pset, false);
-    inst(fg, toon('#ffffff'), palms.map(q => Object.assign({}, q, { col: ['#4fae47', '#5cbf4a', '#3f9a42'][Math.floor(rnd() * 3)] })), pset, true);
-  }
+  // cây dừa: model kit CC0 (tree_palm) qua terrain.nature
+  if (palms.length) ctx.terrain.nature.add('palm', palms.map(q => [q.x, q.y - 0.05, q.z, q.s * 4.0, q.ry]));
   // thuyền buồm neo (trang trí, nhấp nhô nhẹ trong update)
   const decoBoats = [];
   if (boatsDeco.length) {

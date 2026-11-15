@@ -1,9 +1,12 @@
 // terrain.js — Đảo: đồi lượn sóng, bãi cát, nước có bọt ở bờ, cây & đá (InstancedMesh), cỏ lay theo gió.
-// - Hình dáng đảo: rawHeight()   - Màu đất: colorAt()   - Số lượng cây/đá/cỏ: CFG.counts (config.js)
+// - Hình dáng đảo: rawHeight()   - Màu đất: vòng lặp màu đỉnh   - Cây/đá/hoa: model kit (NATURE)   - Số lượng cây/đá/cỏ: CFG.counts (config.js)
 import * as THREE from 'three';
 import { CFG } from './config.js';
 import { gradientMap, toon } from './style.js';
 import { LAND, WORLD, FLAT, rectDist, SPAWN } from './layout.js';
+import { loadModel } from './models.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { SKY_U } from './sky.js';
 
 // ---------- noise ----------
 const hash = (x, y) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -54,14 +57,19 @@ export function createTerrain(scene) {
   // ---------- Mặt đất (toon, màu theo độ cao/độ dốc) ----------
   const g = new THREE.PlaneGeometry(SX, SZ, NX, NZ); g.rotateX(-Math.PI / 2); g.translate(CX, 0, CZ);
   const pos = g.attributes.position, col = new Float32Array(pos.count * 3);
-  const cSand = new THREE.Color('#f5d6a3'), cG1 = new THREE.Color('#6fbf4a'), cG2 = new THREE.Color('#9bd256'), cRock = new THREE.Color('#9a9488'), cDeep = new THREE.Color('#c8b27a'), c = new THREE.Color();
+  // bảng màu docs/art-style.md: cát hồng-kem, cát ướt, cỏ tươi có mảng sáng/tối, đá ấm
+  const cSand = new THREE.Color('#f3d6a8'), cWet = new THREE.Color('#e8c391'), cG1 = new THREE.Color('#63ab50'), cG2 = new THREE.Color('#84c362'), cG3 = new THREE.Color('#4f9a4a'), cMeadow = new THREE.Color('#9fcf6c');
+  const cRock = new THREE.Color('#b3aa9b'), cDeep = new THREE.Color('#e6cc9a'), c = new THREE.Color();
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), z = pos.getZ(i), h = H[Math.round((z - WORLD.z0) / step) * (NX + 1) + Math.round((x - WORLD.x0) / step)];
     pos.setY(i, h);
-    c.copy(cG1).lerp(cG2, fbm(x * 0.06, z * 0.06));
-    c.lerp(cSand, 1 - smooth(W + 0.6, W + 1.6, h));
-    if (h < W - 0.5) c.copy(cDeep);
-    c.lerp(cRock, smooth(0.9, 1.5, slopeAt(x, z)) * 0.9);
+    c.copy(cG1).lerp(cG2, fbm(x * 0.05, z * 0.05));
+    const patch = fbm(x * 0.018 + 40, z * 0.018 - 13);
+    c.lerp(cG3, smooth(0.55, 0.78, patch) * 0.55).lerp(cMeadow, smooth(0.6, 0.85, 1 - patch) * 0.35);   // mảng cỏ đậm (rừng) / đồng cỏ sáng
+    c.lerp(cSand, 1 - smooth(W + 0.7, W + 1.7, h));
+    c.lerp(cWet, 1 - smooth(W + 0.05, W + 0.6, h));      // dải cát ướt sát mép nước
+    if (h < W - 0.05) c.copy(cDeep).lerp(cWet, smooth(-3, -0.05, h) * 0.5);
+    c.lerp(cRock, smooth(0.9, 1.5, slopeAt(x, z)) * 0.85);
     col.set([c.r, c.g, c.b], i * 3);
   }
   g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
@@ -74,29 +82,37 @@ export function createTerrain(scene) {
   const hTex = new THREE.DataTexture(hd, TS, TS, THREE.RedFormat); hTex.magFilter = hTex.minFilter = THREE.LinearFilter; hTex.needsUpdate = true;
   const waterMat = new THREE.ShaderMaterial({
     transparent: true, fog: true,
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 } }]),
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') } }]),
     vertexShader: `varying vec3 vW;
 #include <fog_pars_vertex>
       void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; vec4 mvPosition = viewMatrix*w; gl_Position = projectionMatrix*mvPosition;
 #include <fog_vertex>
       }`,
-    fragmentShader: `uniform sampler2D uH; uniform vec2 uMin, uSize; uniform vec3 uShallow, uDeep; uniform float uLight; uniform float uTime; varying vec3 vW;
+    // màu theo độ sâu (xanh ngọc trong → xanh sâu), vân sáng đáy nước, phản chiếu trời ở góc nghiêng,
+    // sóng bờ: các dải bọt chạy vào bờ theo thời gian + viền bọt lăn tăn sát mép cát
+    fragmentShader: `uniform sampler2D uH; uniform vec2 uMin, uSize; uniform vec3 uShallow, uDeep, uSkyHor; uniform float uLight; uniform float uTime; varying vec3 vW;
 #include <fog_pars_fragment>
       void main(){
         vec2 uv = (vW.xz - uMin) / uSize;
         float h = (uv.x < 0. || uv.x > 1. || uv.y < 0. || uv.y > 1.) ? -8. : texture2D(uH, uv).r * 255. / 12. - 8.;
         float depth = max(0., -h);
-        vec3 c = mix(uShallow, uDeep, smoothstep(0.3, 5., depth));
-        c = mix(c, uDeep*0.8, step(3.5, depth)*0.35);             // dải màu kiểu toon
-        float wave = sin(depth*5. - uTime*1.6 + sin(vW.x*0.3+uTime)*0.6);
-        float foam = step(depth, 0.35) + step(0.75, wave) * (1. - smoothstep(0.4, 1.4, depth));
-        float sparkle = step(0.985, sin(vW.x*1.7 + uTime*1.3)*sin(vW.z*1.9 - uTime*1.1));
-        c = mix(c, vec3(1.), clamp(foam, 0., 1.)*0.85) + sparkle*0.25;
-        gl_FragColor = vec4(c * uLight, mix(0.75, 0.95, smoothstep(0., 3., depth)));
+        vec3 c = mix(uShallow, uDeep, smoothstep(0.2, 6., depth));
+        c = mix(c, uDeep * 0.82, step(4.5, depth) * 0.3);                       // dải màu kiểu toon
+        float ca = sin(vW.x*0.9 + uTime*0.8) * sin(vW.z*0.8 - uTime*0.6) + sin((vW.x + vW.z)*0.45 + uTime*0.5);
+        c += vec3(0.1, 0.16, 0.12) * smoothstep(1.0, 1.7, ca) * (1. - smoothstep(0.4, 3., depth));   // vân sáng đáy nước nông
+        vec3 V = normalize(cameraPosition - vW); float fr = pow(1. - max(V.y, 0.), 4.);
+        c = mix(c, uSkyHor, fr * 0.5);
+        float n = sin(vW.x*0.21 + sin(vW.z*0.17)*2.) * 0.5 + sin(vW.z*0.23 - vW.x*0.11) * 0.5;
+        float crest = smoothstep(0.86, 0.98, sin(depth*3.4 + uTime*1.1 + n*0.9));   // dải sóng tiến vào bờ
+        float foam = crest * (1. - smoothstep(0.25, 1.6, depth)) * (0.65 + 0.35*sin(vW.x*1.3 + vW.z*0.7));
+        foam = max(foam, 1. - smoothstep(0.04, 0.2 + 0.08*sin(uTime*1.4 + n*3.), depth));   // viền bọt sát mép
+        float sparkle = step(0.994, sin(vW.x*1.7 + uTime*1.3) * sin(vW.z*1.9 - uTime*1.1)) * smoothstep(1., 4., depth);
+        c = mix(c, vec3(1.), clamp(foam, 0., 1.) * 0.9) + sparkle * 0.3;
+        gl_FragColor = vec4(c * uLight, max(mix(0.5, 0.94, smoothstep(0., 2.6, depth)), foam * 0.95));
 #include <fog_fragment>
       }`,
   });
-  waterMat.uniforms.uH.value = hTex; waterMat.uniforms.uTime = WIND.uTime;
+  waterMat.uniforms.uH.value = hTex; waterMat.uniforms.uTime = WIND.uTime; Object.assign(waterMat.uniforms, SKY_U);
   const water = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600).rotateX(-Math.PI / 2), waterMat); water.position.y = W; scene.add(water);
 
   // ---------- Vật liệu lay theo gió (cây, cỏ) ----------
@@ -122,46 +138,63 @@ export function createTerrain(scene) {
   const spot = (minH = W + 1.4) => { for (let k = 0; k < 40; k++) { const isl = rand() < 0.55, a = rand() * 6.283, r = Math.sqrt(rand()) * R * 1.05, x = isl ? Math.cos(a) * r : WORLD.x0 + rand() * SX, z = isl ? Math.sin(a) * r : WORLD.z0 + rand() * SZ, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z)) return [x, h, z]; } return null; };
   const colliders = [];
   const o = new THREE.Object3D(), tint = new THREE.Color();
-  // LOD: mỗi loại có 2 bộ InstancedMesh — gần (đủ chi tiết, đổ bóng) và xa (hình đơn giản, không đổ bóng).
-  // Cứ 0.4 giây chia lại cây nào gần/xa theo vị trí người chơi; số draw call không đổi.
-  const lodSets = [];
-  function instanced(parts, count, place, farParts) {
-    const mk = (list, shadow) => list.map(([geo, mat]) => { const m = new THREE.InstancedMesh(geo, mat, count); m.castShadow = shadow; m.receiveShadow = true; m.frustumCulled = false; scene.add(m); return m; });
-    const near = mk(parts, true), far = farParts ? mk(farParts, false) : null;
-    const mats = [], cols = [];
-    for (let i = 0; i < count; i++) { const p = place(); if (!p) continue; const [x, y, z, s] = p; o.position.set(x, y, z); o.rotation.set(0, rand() * 6.28, 0); o.scale.setScalar(s); o.updateMatrix(); mats.push(o.matrix.clone()); cols.push(tint.setHSL(0, 0, 1).offsetHSL((rand() - 0.5) * 0.04, 0, (rand() - 0.5) * 0.12).clone()); }
-    const set = { near, far, mats, cols, at: new THREE.Vector3(1e9, 0, 0) };
-    const fill = (list, idx) => { list.forEach(m => { idx.forEach((k, j) => { m.setMatrixAt(j, mats[k]); m.setColorAt(j, cols[k]); }); m.count = idx.length; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; }); };
-    set.relayout = (p, dist) => { if (!far) { fill(near, mats.map((_, k) => k)); return; } const a = [], b = []; mats.forEach((m, k) => (Math.hypot(m.elements[12] - p.x, m.elements[14] - p.z) < dist ? a : b).push(k)); fill(near, a); fill(far, b); };
-    set.relayout(new THREE.Vector3(0, 0, 10), 50); lodSets.push(set);
-    return near;
+  // ---------- Thiên nhiên bằng model kit CC0 (cây, bụi, đá, hoa, nấm, gốc cây, khúc gỗ) ----------
+  // Mỗi loại = 1 InstancedMesh "gần" (đổ bóng nếu là cây) + tuỳ chọn 1 InstancedMesh "xa" (không đổ bóng).
+  // Cứ 0.4 giây (khi người chơi đi > 3 m) chia lại vật nào gần/xa/ẩn; số draw call không đổi.
+  const lodSets = [], KS = {};
+  const pick = a => a[Math.floor(rand() * a.length)];
+  function kitSet(kind, items = []) {
+    const def = NATURE[kind], mat = natureMat(def.wind || 0, def.push || 0);
+    const set = { kind, items, near: null, far: null, cap: 0, at: new THREE.Vector3(1e9, 0, 0), last: new THREE.Vector3(0, 0, 10) };
+    const mk = (geo, shadow) => { const m = new THREE.InstancedMesh(geo, mat, set.cap); m.castShadow = shadow; m.receiveShadow = true; m.frustumCulled = false; m.name = 'nature-' + kind; scene.add(m); return m; };
+    set.build = () => {
+      if (!set.geo || !items.length) return;
+      if (set.cap >= items.length) return set.relayout(set.last);
+      for (const m of [set.near, set.far]) if (m) { scene.remove(m); m.dispose(); }
+      set.cap = Math.ceil(items.length * 1.1); set.near = mk(set.geo, !!def.shadow); set.far = def.far ? mk(set.geo, false) : null; set.relayout(set.last);
+    };
+    const fill = (m, idx) => { idx.forEach((k, j) => { m.setMatrixAt(j, items[k].m); m.setColorAt(j, items[k].c); }); m.count = idx.length; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
+    set.relayout = p => {
+      set.last.copy(p); if (!set.near) return;
+      const dNear = def.dist === 'tree' ? state.treeDist : def.dist === 'grass' ? state.grassDist : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = [], b = [];
+      items.forEach((q, k) => { const d = Math.hypot(q.m.elements[12] - p.x, q.m.elements[14] - p.z); if (d < dNear) a.push(k); else if (set.far && d < dFar) b.push(k); });
+      fill(set.near, a); if (set.far) fill(set.far, b);
+    };
+    kitGeo(kind).then(g => { set.geo = g; set.build(); });
+    lodSets.push(set); KS[kind] = set; return set;
   }
-  // Cây tròn (thân + tán 3 khối), cây thông, đá
-  const trunk = new THREE.CylinderGeometry(0.18, 0.28, 2.2, 6).translate(0, 1.1, 0);
-  const crown = (() => { const parts = [[0, 2.9, 0, 1.3], [0.7, 2.5, 0.3, 0.9], [-0.6, 2.6, -0.2, 0.95]].map(([x, y, z, r]) => new THREE.IcosahedronGeometry(r, 1).translate(x, y, z)); return mergeGeos(parts); })();
-  const pine = mergeGeos([new THREE.ConeGeometry(1.4, 2.4, 7).translate(0, 2.2, 0), new THREE.ConeGeometry(1.05, 2, 7).translate(0, 3.4, 0), new THREE.ConeGeometry(0.7, 1.6, 7).translate(0, 4.5, 0)]);
-  const trunkMat = toon('#7a5236'), leafMat = windy(new THREE.MeshToonMaterial({ color: '#4fae47', gradientMap }), 0.018), pineMat = windy(new THREE.MeshToonMaterial({ color: '#2f7d4a', gradientMap }), 0.014);
-  const place = (sMin, sMax, colR) => () => { const p = spot(); if (!p) return null; const s = sMin + rand() * (sMax - sMin); colliders.push({ x: p[0], z: p[2], r: colR * s }); return [p[0], p[1] - 0.1, p[2], s]; };
-  const trunkFar = new THREE.CylinderGeometry(0.18, 0.28, 2.2, 4).translate(0, 1.1, 0);
-  const crownFar = new THREE.IcosahedronGeometry(1.6, 0).translate(0.05, 2.8, 0), pineFar = new THREE.ConeGeometry(1.4, 4.4, 5).translate(0, 3.0, 0);
-  instanced([[trunk, trunkMat], [crown, leafMat]], CFG.counts.trees, place(0.8, 1.4, 0.4), [[trunkFar, trunkMat], [crownFar, toon('#4fae47')]]);
-  instanced([[trunk, trunkMat], [pine, pineMat]], CFG.counts.pines, place(0.9, 1.5, 0.4), [[trunkFar, trunkMat], [pineFar, toon('#2f7d4a')]]);
-  const rockGeo = new THREE.DodecahedronGeometry(1, 0);
-  instanced([[rockGeo, toon('#a7a29a')]], CFG.counts.rocks, () => { const p = spot(W - 0.3); if (!p) return null; const s = 0.3 + rand() * 1.1; if (s > 0.8) colliders.push({ x: p[0], z: p[2], r: s * 0.9 }); return [p[0], p[1] + s * 0.1, p[2], s]; });
+  // thêm vật: [x, y, z, tỷ lệ, xoay, màu (tô lên phần lá/hoa/đá)] — dùng được từ file khác qua terrain.nature.add()
+  function addNature(kind, list) {
+    const set = KS[kind] || kitSet(kind), def = NATURE[kind];
+    for (const [x, y, z, s, ry, col] of list) { o.position.set(x, y, z); o.rotation.set(0, ry ?? rand() * 6.28, 0); o.scale.setScalar(s); o.updateMatrix(); set.items.push({ m: o.matrix.clone(), c: new THREE.Color(col || pick(def.tints)).offsetHSL(0, 0, (rand() - 0.5) * 0.06) }); }
+    set.build(); return set;
+  }
+  const plant = (kind, n, sMin, sMax, colR, minH) => { const list = []; for (let i = 0; i < n; i++) { const p = spot(minH); if (!p) continue; const s = sMin + rand() * (sMax - sMin); if (colR) colliders.push({ x: p[0], z: p[2], r: colR * s }); list.push([p[0], p[1] - 0.08, p[2], s]); } addNature(kind, list); };
+  // cây tán tròn (3 kiểu) và cây thông (2 kiểu) — tỷ lệ theo kích thước model kit (~1.2–1.6 m gốc)
+  const nT = CFG.counts.trees, nP = CFG.counts.pines;
+  plant('oak', Math.round(nT * 0.3), 4.0, 5.6, 0.1); plant('fat', Math.round(nT * 0.35), 4.2, 5.6, 0.1); plant('round', Math.round(nT * 0.35), 3.4, 4.6, 0.1);
+  plant('pine', Math.round(nP * 0.6), 3.4, 4.8, 0.1); plant('pineTall', Math.round(nP * 0.4), 3.6, 5.0, 0.08);
+  // đá: to (có va chạm), dựng đứng, sỏi ven bờ
+  plant('rockL', Math.round(CFG.counts.rocks * 0.45), 1.6, 3.6, 0.45, W - 0.3); plant('rockT', Math.round(CFG.counts.rocks * 0.2), 1.4, 2.6, 0.4, W - 0.2);
+  plant('pebbles', Math.round(CFG.counts.rocks * 0.6), 2.0, 3.5, 0, W - 0.4);
+  // tầng thấp: bụi, cụm hoa, nấm, gốc cây, khúc gỗ (không đổ bóng, chỉ hiện gần)
+  plant('bush', CFG.isMobile ? 160 : 260, 2.4, 4.2, 0); plant('flowers', CFG.isMobile ? 220 : 380, 1.8, 2.6, 0); plant('mushrooms', 70, 2.2, 3.2, 0);
+  plant('stump', 40, 2.4, 3.2, 0.3); plant('log', 28, 2.0, 2.8, 0.5);
 
   // ---------- Cỏ: chia ô, ô xa thì ẩn (LOD) ----------
   const blade = (() => { const geos = []; for (let i = 0; i < 3; i++) { const b = new THREE.BufferGeometry(); b.setAttribute('position', new THREE.Float32BufferAttribute([-0.07, 0, 0, 0.07, 0, 0, 0, 0.55, 0], 3)); b.setAttribute('color', new THREE.Float32BufferAttribute([0.25, 0.5, 0.2, 0.25, 0.5, 0.2, 0.75, 0.95, 0.45], 3)); b.rotateY(i * 1.05); b.translate((i - 1) * 0.06, 0, 0); geos.push(b); } const m = mergeGeos(geos); m.computeVertexNormals(); return m; })();
   const grassMat = windy(new THREE.MeshToonMaterial({ vertexColors: true, gradientMap, side: THREE.DoubleSide }), 0.22, 1);
   const chunks = new Map(), CH = 24;
-  for (let i = 0; i < CFG.counts.grass; i++) {
-    const a = rand() * 6.283, r = Math.sqrt(rand()) * R, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z);
+  const nIsl = CFG.counts.grass, nAll = Math.round(nIsl * 1.5);   // thêm 50% cỏ trên đồi giữa các khu
+  for (let i = 0; i < nAll; i++) {
+    const a = rand() * 6.283, r = Math.sqrt(rand()) * R, isl = i < nIsl, x = isl ? Math.cos(a) * r : WORLD.x0 + rand() * SX, z = isl ? Math.sin(a) * r : WORLD.z0 + rand() * SZ, h = heightAt(x, z);
     if (h < W + 1.0 || slopeAt(x, z) > 0.8 || Math.hypot(x, z + 6) < 9 || LAND.some(r => rectDist(r, x, z) < 2)) continue;
     const k = Math.floor(x / CH) + ',' + Math.floor(z / CH); if (!chunks.has(k)) chunks.set(k, []); chunks.get(k).push([x, h, z]);
   }
   const grass = [];
   for (const list of chunks.values()) {
     const m = new THREE.InstancedMesh(blade, grassMat, list.length); let cx = 0, cz = 0;
-    list.forEach(([x, y, z], i) => { o.position.set(x, y - 0.02, z); o.rotation.set(0, rand() * 6.28, 0); const s = 0.8 + rand() * 0.7; o.scale.set(s, s * (0.7 + rand() * 0.6), s); o.updateMatrix(); m.setMatrixAt(i, o.matrix); m.setColorAt(i, tint.setHSL(0.28 + rand() * 0.05, 0.5, 0.5 + rand() * 0.2)); cx += x; cz += z; });
+    list.forEach(([x, y, z], i) => { o.position.set(x, y - 0.02, z); o.rotation.set(0, rand() * 6.28, 0); const s = 0.8 + rand() * 0.7; o.scale.set(s, s * (0.7 + rand() * 0.6), s); o.updateMatrix(); m.setMatrixAt(i, o.matrix); m.setColorAt(i, tint.setHSL(0.25 + rand() * 0.06, 0.5, 0.52 + rand() * 0.2)); cx += x; cz += z; });
     m.computeBoundingSphere(); m.receiveShadow = true; scene.add(m); grass.push({ m, x: cx / list.length, z: cz / list.length });
   }
 
@@ -175,7 +208,7 @@ export function createTerrain(scene) {
     }
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
-  return { heightAt, slopeAt, update, colliders, ground, waterMat, state };
+  return { heightAt, slopeAt, update, colliders, ground, waterMat, state, nature: { add: addNature } };
 }
 
 // Gộp nhiều geometry (cùng thuộc tính) thành 1
@@ -186,4 +219,89 @@ export function mergeGeos(list) {
   for (const k of attrs) { const size = geos[0].attributes[k].itemSize; const arr = new Float32Array(geos.reduce((s, g) => s + g.attributes[k].count * size, 0)); let o = 0; for (const g of geos) { arr.set(g.attributes[k].array, o); o += g.attributes[k].array.length; } out.setAttribute(k, new THREE.BufferAttribute(arr, size)); }
   if (!out.attributes.normal) out.computeVertexNormals();
   return out;
+}
+
+// ---------- Model kit cho thiên nhiên (client/assets/models/kit, CC0 — xem CREDITS.txt) ----------
+// parts: vai trò từng phần của model (theo thứ tự trong file .glb) → màu nền + có nhận màu riêng từng cây (tint) không
+const ROLE = {
+  leaf: ['#ffffff', 1], wood: ['#8a5a34', 0], woodIn: ['#e2c59a', 0], stone: ['#ffffff', 1], moss: ['#7fb85a', 0], stoneLt: ['#efe8da', 0],
+  stem: ['#5aa04a', 0], petal: ['#ffffff', 1], cap: ['#ffffff', 1], stalk: ['#fbf1de', 0],
+};
+const LEAF = ['#7cc35e', '#6fb85a', '#8fcf6a', '#5faa4e'], PINE = ['#3f8f55', '#4a9a5a', '#367f4c'];
+export const NATURE = {
+  oak:      { model: 'tree_oak', parts: ['leaf', 'wood'], tints: LEAF, wind: 0.035, shadow: true, far: true, dist: 'tree' },
+  fat:      { model: 'tree_fat', parts: ['leaf', 'wood'], tints: ['#7cc35e', '#8fcf6a', '#6fb85a'], wind: 0.03, shadow: true, far: true, dist: 'tree' },
+  round:    { model: 'tree_dark', parts: ['wood', 'leaf'], tints: ['#5faa4e', '#4f9a4a', '#6fb85a'], wind: 0.03, shadow: true, far: true, dist: 'tree' },
+  pine:     { model: 'tree_pine', parts: ['leaf', 'wood'], tints: PINE, wind: 0.02, shadow: true, far: true, dist: 'tree' },
+  pineTall: { model: 'tree_pine_tall', parts: ['wood', 'leaf'], tints: PINE, wind: 0.02, shadow: true, far: true, dist: 'tree' },
+  palm:     { model: 'tree_palm', parts: ['leaf', 'wood'], tints: ['#5cbf4a', '#4fae47', '#6cc456'], wind: 0.04, shadow: true, far: true, dist: 'tree' },
+  rockL:    { model: 'rock_large', parts: ['stone', 'moss'], tints: ['#b9b0a1', '#aaa293', '#c2b9aa'], shadow: true, far: true, dist: 'tree' },
+  rockT:    { model: 'rock_tall', parts: ['stone', 'moss', 'stoneLt'], tints: ['#b9b0a1', '#a9a297'], shadow: true, far: true, dist: 'tree' },
+  pebbles:  { model: 'rock_small', parts: ['moss', 'stone'], tints: ['#c2b9aa', '#a9a297', '#d0c7b8'], copies: 4, spread: 0.35, dist: 55 },
+  bush:     { model: 'bush_large', parts: ['leaf'], tints: ['#6fb85a', '#5faa4e', '#7cc35e', '#4f9a4a'], copies: 2, spread: 0.25, wind: 0.05, dist: 70 },
+  flowers:  { model: 'flower_red', parts: ['stem', 'petal'], tints: ['#ff8fa8', '#ffd35a', '#ffffff', '#c9a3ff', '#ff7a5c'], copies: 6, spread: 0.45, wind: 0.12, push: 1, dist: 'grass' },
+  mushrooms:{ model: 'mushroom_red', parts: ['cap', 'stalk'], tints: ['#e8453c', '#f07a3a', '#c9864f'], copies: 3, spread: 0.25, dist: 45 },
+  stump:    { model: 'stump', parts: ['wood', 'woodIn'], tints: ['#ffffff'], dist: 60 },
+  log:      { model: 'log', parts: ['wood', 'woodIn'], tints: ['#ffffff'], dist: 60 },
+};
+const geoCache = new Map();
+// Gộp các phần của model thành 1 geometry có màu theo đỉnh + thuộc tính 'tint' (phần nào nhận màu riêng của từng bản sao)
+export function kitGeo(kind) {
+  if (geoCache.has(kind)) return geoCache.get(kind);
+  const def = NATURE[kind];
+  const p = loadModel('kit/' + def.model).then(src => {
+    if (!src) return null;
+    src.updateMatrixWorld(true); const parts = []; let i = 0; const c = new THREE.Color();
+    src.traverse(m => {
+      if (!m.isMesh) return;
+      let g = m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone();
+      for (const k of Object.keys(g.attributes)) {   // model nén meshopt: số nguyên chuẩn hoá → đổi sang Float32 trước khi biến đổi
+        if (k !== 'position' && k !== 'normal') { g.deleteAttribute(k); continue; }
+        const a = g.attributes[k], f = new Float32Array(a.count * 3); for (let j = 0; j < a.count; j++) f.set([a.getX(j), a.getY(j), a.getZ(j)], j * 3);
+        g.setAttribute(k, new THREE.BufferAttribute(f, 3));
+      }
+      g.applyMatrix4(m.matrixWorld);
+      const [hex, t] = ROLE[def.parts[i++] || 'stone'] || ROLE.stone; c.set(hex); const n = g.attributes.position.count;
+      g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(n * 3).map((_, j) => [c.r, c.g, c.b][j % 3]), 3));
+      g.setAttribute('tint', new THREE.BufferAttribute(new Float32Array(n).fill(t), 1));
+      parts.push(g);
+    });
+    let geo = mergeGeometries(parts);
+    if (def.copies) {   // cụm nhiều bản nhỏ (hoa, sỏi, bụi, nấm): 1 bản sao = cả cụm → ít draw call
+      const list = [], m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3(); let r = 1;
+      const rr = () => (r = (r * 16807) % 2147483647) / 2147483647;
+      for (let k = 0; k < def.copies; k++) {
+        const a = k / def.copies * 6.28 + rr(), d = k ? def.spread * (0.5 + rr() * 0.6) : 0, s = 0.65 + rr() * 0.5;
+        m4.compose(new THREE.Vector3(Math.cos(a) * d, 0, Math.sin(a) * d), q.setFromEuler(e.set(0, rr() * 6.28, 0)), sc.setScalar(k ? s : 1));
+        list.push(geo.clone().applyMatrix4(m4));
+      }
+      geo = mergeGeometries(list);
+    }
+    geo.computeBoundingSphere(); return geo;
+  });
+  geoCache.set(kind, p); return p;
+}
+// Vật liệu toon dùng màu theo đỉnh; màu riêng từng bản sao chỉ tô lên phần 'tint' (lá, hoa, đá) — thân cây giữ màu gỗ.
+// wind: lay theo gió (tăng theo độ cao); push: rẽ ra khi người chơi đi qua (hoa, cỏ)
+const natCache = new Map();
+export function natureMat(wind = 0, push = 0) {
+  const key = wind + ':' + push; if (natCache.has(key)) return natCache.get(key);
+  const mat = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap });
+  mat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, WIND);
+    sh.vertexShader = 'attribute float tint; uniform float uTime; uniform vec3 uPlayer;\n' + sh.vertexShader
+      .replace('#include <color_vertex>', `vColor = vec3(1.); vColor *= color;
+        #ifdef USE_INSTANCING_COLOR
+          vColor *= mix(vec3(1.), instanceColor.xyz, tint);
+        #endif`)
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+        ${wind ? `vec3 ip = (modelMatrix * instanceMatrix * vec4(0.,0.,0.,1.)).xyz;
+        float hh = max(position.y, 0.); hh *= hh;
+        float sw = sin(uTime*1.6 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.1 + ip.x)*0.3;
+        transformed.x += sw * ${wind.toFixed(3)} * hh; transformed.z += sw * ${(wind * 0.6).toFixed(3)} * hh;` : ''}
+        ${push ? `vec2 d = ip.xz - uPlayer.xz; float k = (1. - smoothstep(0.3, 1.6, length(d))) * step(abs(ip.y - uPlayer.y), 1.5);
+        transformed.y -= k * max(position.y, 0.) * 0.5;` : ''}`);
+  };
+  mat.customProgramCacheKey = () => 'nature' + key;
+  natCache.set(key, mat); return mat;
 }
