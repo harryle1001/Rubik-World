@@ -143,7 +143,7 @@ export function createSchoolTown(ctx) {
   // ---------- Bảng thông tin tỷ lệ vàng & số π (quảng trường trước cổng) ----------
   let infoEl = null;
   function showInfo() {
-    if (!infoEl) { infoEl = document.createElement('div'); infoEl.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:31;max-width:min(92vw,560px);background:#fff6df;color:#3b2a1e;border:4px solid #7a5a2e;border-radius:18px;padding:18px 20px 14px;font:16px/1.5 system-ui;box-shadow:0 8px 30px #0008'; document.body.appendChild(infoEl); }
+    if (!infoEl) { infoEl = document.createElement('div'); infoEl.id = 'townInfo'; infoEl.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:31;max-width:min(92vw,560px);background:#fff6df;color:#3b2a1e;border:4px solid #7a5a2e;border-radius:18px;padding:18px 20px 14px;font:16px/1.5 system-ui;box-shadow:0 8px 30px #0008'; document.body.appendChild(infoEl); }
     infoEl.innerHTML = town.info.html + '<div style="text-align:center;margin-top:12px"><button style="font:800 15px system-ui;padding:8px 22px;border-radius:20px;border:2px solid #7a5a2e;background:#ffd36e">Hiểu rồi!</button></div>';
     infoEl.hidden = false; ctx.player.frozen = true; infoEl.querySelector('button').onclick = () => { infoEl.hidden = true; ctx.player.frozen = false; };
   }
