@@ -7,7 +7,16 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { toon, gradientMap } from './style.js';
 
-const _o = new THREE.Object3D(), _m = new THREE.Matrix4(), _c = new THREE.Color(), _v = new THREE.Vector3();
+const _o = new THREE.Object3D(), _m = new THREE.Matrix4(), _c = new THREE.Color(), _v = new THREE.Vector3(), _b = new THREE.Box3();
+// Sổ ghi vị trí đèn & ống khói khi dựng (ambience.js dùng: quầng sáng đèn ban đêm, khói bếp)
+export const LIGHTS = [], CHIMNEYS = [], GLOW_MATS = [];
+const LAMP_COLS = new Set(['#ffd36e', '#ffe9a8', '#fff3c4', '#ffe28a']), CHIM_COL = '#9a5b3e';
+function note(g, col, glow) {
+  if (!(glow || LAMP_COLS.has(col) || col === CHIM_COL)) return;
+  g.computeBoundingBox(); _b.copy(g.boundingBox); const sx = _b.max.x - _b.min.x, sy = _b.max.y - _b.min.y, sz = _b.max.z - _b.min.z;
+  if (col === CHIM_COL) { if (sy > 1.2 && sy < 1.6 && sx < 0.6 && sz < 0.6) CHIMNEYS.push(new THREE.Vector3((_b.min.x + _b.max.x) / 2, _b.max.y, (_b.min.z + _b.max.z) / 2)); return; }
+  if (Math.max(sx, sy, sz) < 0.8) LIGHTS.push(_b.getCenter(new THREE.Vector3()));   // khối nhỏ màu vàng ấm = bóng đèn
+}
 
 export class Batch {
   constructor(name) { this.name = name; this.geos = []; this.pre = null; this.tris = 0; }
@@ -19,7 +28,7 @@ export class Batch {
     _m.copy(_o.matrix); if (this.pre) _m.premultiply(this.pre); g.applyMatrix4(_m); g.computeVertexNormals();
     _c.set(col); const n = g.attributes.position.count, a = new Float32Array(n * 3);
     for (let i = 0; i < n; i++) { a[i * 3] = _c.r; a[i * 3 + 1] = _c.g; a[i * 3 + 2] = _c.b; }
-    g.setAttribute('color', new THREE.BufferAttribute(a, 3)); this.tris += n / 3; return g;
+    g.setAttribute('color', new THREE.BufferAttribute(a, 3)); this.tris += n / 3; if (typeof col === 'string') note(g, col.toLowerCase(), this.glowMode); return g;
   }
   store(g) { this.geos.push(g); }
   push(...a) { this.store(this.make(...a)); return this; }
@@ -74,7 +83,7 @@ export class DetailGrid extends Batch {
   update(p, radius = 60) { const r = radius + this.cell * 0.7; for (const q of this.list) q.grp.visible = Math.hypot(q.x - p.x, q.z - p.z) < r; }
 }
 // vật liệu cho chi tiết: toon tô màu đỉnh + phát sáng (không cần đèn thật)
-export const detailMats = () => [toon('#ffffff', { vertexColors: true }), new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false })];
+export const detailMats = () => { const g = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }); GLOW_MATS.push(g); return [toon('#ffffff', { vertexColors: true }), g]; };   // GLOW_MATS: ambience.js làm sáng dần khi tối
 
 // ---------- Sự sống: bướm (theo vườn hoa), chim hải âu (theo biển), lá cờ bay ----------
 export function createLife(scene, { butterflies = [], gulls = [], flag = null }) {

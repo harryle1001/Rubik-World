@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8">
+<script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script></head><body>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+import { loadHero, STUDENTS } from '../js/island/characters.js';
+const b64 = u => { let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+const LIST = [
+  ...STUDENTS.map(k => ({ file: k.replace('student-', 'hoc-sinh-'), kind: k, h: 1.55 })),
+  { file: 'co-giao-ao-dai', kind: 'student-female-c', h: 1.78, look: { role: 'teacher', shirt: '#e8a0b8', aodai: true, prop: 'book', propColor: '#c0392b' } },
+  { file: 'thay-giao', kind: 'student-male-d', h: 1.82, look: { role: 'teacher', shirt: '#9fc3e8', pants: '#3a3a44', glasses: true, prop: 'clip', tie: '#b03a3a' } },
+  { file: 'bac-bao-ve', kind: 'student-male-b', h: 1.82, look: { role: 'adult', shirt: '#5a7a4a', pants: '#3a4a2a', cap: '#3a4a2a', brim: '#2a3a1a' } },
+];
+window.exportAll = async () => {
+  const out = {}, ex = new GLTFExporter();
+  for (const L of LIST) {
+    const hero = await loadHero(L.kind, L.h, L.look); if (!hero) { out[L.file] = null; continue; }
+    const m = hero.model, kill = [];
+    m.traverse(o => { if (o.isMesh && o.material && o.material.side === THREE.BackSide) kill.push(o); });
+    for (const o of kill) o.parent.remove(o);
+    m.traverse(o => { if (!o.isMesh) return; const s = o.material; o.material = new THREE.MeshStandardMaterial({ name: s.name || (s.color ? '#' + s.color.getHexString() : 'mat'), color: s.color ? s.color.clone() : 0xffffff, map: s.map || null, vertexColors: !!s.vertexColors, roughness: 0.9, metalness: 0 }); });
+    m.name = L.file;
+    const clips = [...new Set(Object.values(hero.anim.actions))].map(a => a.getClip()); // animation đã chỉnh theo dáng mới (không lặp tên phụ)
+    const buf = await ex.parseAsync(m, { binary: true, animations: clips });
+    out[L.file] = b64(new Uint8Array(buf));
+  }
+  return out;
+};
+window.ready = true;
+</script></body></html>
