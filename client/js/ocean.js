@@ -19,6 +19,7 @@ import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
 import { createWeather } from './island/weather.js';
+import { createAmbience } from './island/ambience.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -70,6 +71,7 @@ const vehicles = createVehicles(ctx);
 const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
+const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
@@ -106,6 +108,7 @@ renderer.setAnimationLoop(() => {
   aircraft.update(dt, clock.elapsedTime);
   sky.update(dt, camera, player.pos);
   weather.update(dt, clock.elapsedTime);
+  ambience.update(dt);
   ctx.flushOffer();
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();

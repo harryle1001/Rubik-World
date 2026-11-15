@@ -78,7 +78,7 @@ export function createAudio(ctx) {
     if (!on || listener.context.state !== 'running') return;
     if (SYNTH[kind]) return SYNTH[kind](listener.context, listener.getInput());
     let list = SFX[kind], vol = VOL[kind] ?? 0.5;
-    if (kind === 'step') { const p = ctx.player.pos, s = ctx.surfaceAt(p.x, p.z, p.y); list = STEPS[s] || STEPS.grass; vol = STEP_VOL[s] ?? 0.4; }
+    if (kind === 'step') { const p = ctx.player.pos; if (p.y < 0.35 && terrain.heightAt(p.x, p.z) < 0.15) return noiseBurst(listener.context, listener.getInput(), 0.25, 'bandpass', 700 + Math.random() * 500, 0.22, 0.9); const s = ctx.surfaceAt(p.x, p.z, p.y); list = STEPS[s] || STEPS.grass; vol = STEP_VOL[s] ?? 0.4; }   // lội nước: tiếng lõm bõm
     if (!list) return;
     const b = await load(list[Math.floor(Math.random() * list.length)]); if (!b) return;
     const ac = listener.context, s = ac.createBufferSource(), g = ac.createGain(); s.buffer = b; s.playbackRate.value = 0.9 + Math.random() * 0.2; g.gain.value = vol;
