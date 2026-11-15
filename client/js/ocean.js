@@ -28,6 +28,7 @@ import { createTreasure } from './island/treasure.js';
 import { createLiving } from './island/living.js';
 import { createSkyshow } from './island/skyshow.js';
 import { createDive } from './island/dive.js';
+import { createPerf } from './island/perf.js';
 import { createMiniGameHost } from './island/mg/host.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { register as regBoard } from './island/mg/board/index.js';
@@ -69,7 +70,7 @@ const player = ctx.player = createPlayer(ctx);
     const a = Math.random() * 6.283, r = ISLAND_R * (0.7 + Math.random() * 0.35), x = Math.cos(a) * r, z = Math.sin(a) * r, h = terrain.heightAt(x, z);
     if (h > 0.25 && h < 1.2 && !blocked(x, z, 4)) (beach.length < 6 && i % 3 === 0 ? beach : rocks).push([x, h, z, 0.6 + Math.random() * 0.9, Math.random() * 6.28]);
   }
-  scatterModel(scene, 'rua', beach); scatterModel(scene, 'da', rocks);
+  scatterModel(scene, 'rua', beach, 55); scatterModel(scene, 'da', rocks, 55);
   for (const [x, , z, s] of rocks) ctx.colliders.push({ x, z, r: 0.6 * s });
 }
 
@@ -110,13 +111,14 @@ document.getElementById('bMenu').onclick = () => school.menu();
   for (const [u, v] of [[-6, 5], [6, 5], [-4.5, -6], [4.5, -6]]) put('prop-crystal', ...T(u, v), 1.4, u);
   const rnd = () => { for (let k = 0; k < 30; k++) { const a = Math.random() * 6.283, r = 18 + Math.random() * 55, x = TX + Math.cos(a) * r, z = TZ + Math.sin(a) * r; if (terrain.heightAt(x, z) > 1.5 && terrain.slopeAt(x, z) < 0.6 && !blocked(x, z, 1)) return [x, z]; } return null; };
   const tf = (n, sMin, sMax) => Array.from({ length: n }, rnd).filter(Boolean).map(([x, z]) => [x, terrain.heightAt(x, z), z, sMin + Math.random() * (sMax - sMin), Math.random() * 6.28]);
-  scatterModel(scene, 'prop-flower-red', tf(60, 0.6, 1.1)); scatterModel(scene, 'prop-mushroom-red', tf(30, 0.5, 0.9));
-  const stumps = tf(12, 0.9, 1.3); scatterModel(scene, 'prop-stump', stumps); for (const [x, , z] of stumps) ctx.colliders.push({ x, z, r: 0.5 });
+  scatterModel(scene, 'prop-flower-red', tf(60, 0.6, 1.1), 55); scatterModel(scene, 'prop-mushroom-red', tf(30, 0.5, 0.9), 55);
+  const stumps = tf(12, 0.9, 1.3); scatterModel(scene, 'prop-stump', stumps, 55); for (const [x, , z] of stumps) ctx.colliders.push({ x, z, r: 0.5 });
 }
 
 
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
 const clock = new THREE.Clock(), stepDt = createDt();
+const perf = ctx.perf = createPerf(ctx); // cắt vật nhỏ ở xa, viền, người/thú ngoài khung hình (perf.js)
 window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
   const dt = stepDt(clock.getDelta()); // dt ổn định (motion.js): làm mượt khi FPS dao động, giới hạn bước
@@ -142,6 +144,7 @@ renderer.setAnimationLoop(() => {
   treasure.update(dt);
   ctx.flushOffer();
   brightness.update();
+  perf.update(dt);
   unfreezeGuard(dt);
   // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong
   // → không khựng lần đầu khi quay camera/đi tới khu mới (three chỉ biên dịch lúc vật thể lần đầu vào khung hình)
@@ -170,18 +173,23 @@ function applyQuality() {
   const L = qLevel;
   pr = [base.pr, Math.min(base.pr, 1.15), 1.0, 0.85][L]; renderer.setPixelRatio(pr); post.setSize(innerWidth, innerHeight);
   post.bloom.enabled = CFG.quality.bloom && L === 0; post.setMSAA(L >= 2 ? 0 : CFG.quality.msaa);
-  terrain.state.grassDist = base.grass * (L >= 2 ? 0.6 : 1); terrain.state.treeDist = base.tree * (L >= 2 ? 0.7 : 1); terrain.state.relayoutAll(player.pos);
+  terrain.state.grassDist = base.grass * (L >= 2 ? 0.6 : 1); terrain.state.treeDist = base.tree * (L >= 2 ? 0.7 : 1); terrain.state.shadows = L < 3; terrain.state.relayoutAll(player.pos);
   const ss = L >= 2 ? 512 : CFG.quality.shadowSize; if (sky.sun.shadow.mapSize.x !== ss) { sky.sun.shadow.mapSize.set(ss, ss); sky.sun.shadow.map?.dispose(); sky.sun.shadow.map = null; }
   if (renderer.shadowMap.enabled !== (L < 3)) { renderer.shadowMap.enabled = L < 3; scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => m.needsUpdate = true); }); }
   ctx.qualityLevel = L; terrain.water.setQuality(L);   // máy yếu: ít lớp sóng hơn
+  ctx.perfScale = [1, 1, 0.786, 0.618][L];   // perf.js: vật nhỏ ẩn sớm hơn ở mức thấp (1/√φ, 1/φ)
 }
 function quality(dt) {
-  qFrames++; const el = (performance.now() - qT) / 1000; if (el < 3) return;
+  if (qLock) return;
+  // điện thoại: xét mỗi 2 s (nhanh hơn máy tính 3 s); FPS rất thấp (< lowFps/φ ≈ 25) → hạ 2 mức một lần
+  qFrames++; const el = (performance.now() - qT) / 1000; if (el < (CFG.isMobile ? 2 : 3)) return;
   const fps = qFrames / el; qFrames = 0; qT = performance.now(); ctx.fps = Math.round(fps);
-  if (fps < CFG.quality.lowFps && qLevel < 3) { qLevel++; qGood = 0; applyQuality(); }
+  if (fps < CFG.quality.lowFps && qLevel < 3) { qLevel = Math.min(3, qLevel + (fps < CFG.quality.lowFps / 1.618 ? 2 : 1)); qGood = 0; applyQuality(); }
   // không quay lại từ mức 3: bật/tắt bóng đổ phải biên dịch lại mọi shader (khựng vài giây) → nếu dao động 2↔3 sẽ giật liên tục
   else if (fps > CFG.quality.highFps && qLevel > 0 && qLevel < 3 && ++qGood >= 3) { qLevel--; qGood = 0; applyQuality(); }
 }
+// gỡ lỗi/đo: __island.setQuality(L, khoá) — khoá = không tự đổi mức nữa
+let qLock = false; ctx.setQuality = (L, lock = true) => { qLevel = L; qLock = lock; applyQuality(); };
 if (new URLSearchParams(location.search).has('low')) { qLevel = 2; applyQuality(); } // ?low: bắt đầu ở chất lượng thấp
 
 // ---------- Cache để mở nhanh/offline ----------

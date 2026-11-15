@@ -80,7 +80,11 @@ export class DetailGrid extends Batch {
     }
     this.cells.clear(); return this;
   }
-  update(p, radius = 60) { const r = radius + this.cell * 0.7; for (const q of this.list) q.grp.visible = Math.hypot(q.x - p.x, q.z - p.z) < r; }
+  // chi tiết thường hiện trong radius/√φ + nửa ô (~75 m); khối phát sáng (đèn đêm) giữ tầm xa cũ để không "tắt" đột ngột
+  update(p, radius = 60) {
+    const r = radius + this.cell * 0.7, rb = radius * 0.786 + this.cell * 0.7;
+    for (const q of this.list) { const d = Math.hypot(q.x - p.x, q.z - p.z); q.grp.visible = d < r; const b = q.grp.children[0]; if (b && b.receiveShadow) b.visible = d < rb; }
+  }
 }
 // vật liệu cho chi tiết: toon tô màu đỉnh + phát sáng (không cần đèn thật)
 export const detailMats = () => { const g = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }); GLOW_MATS.push(g); return [toon('#ffffff', { vertexColors: true }), g]; };   // GLOW_MATS: ambience.js làm sáng dần khi tối

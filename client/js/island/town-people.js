@@ -6,6 +6,7 @@
 import * as THREE from 'three';
 import { loadHero, driveHero, emote, setOutline, lookAtTarget } from './characters.js';
 import { CFG } from './config.js';
+import { toon } from './style.js';
 import { T, damp, dampAngle } from './motion.js';
 
 const V = 'abcdef', SEAT_Y = 0.56; // mặt ghế đá (town-buildings.js: chân 0.42 + mặt 0.14)
@@ -67,6 +68,21 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
     k.fillStyle = '#fff'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(text, 262, 41, 440); tag.material.map.needsUpdate = true;
   };
   const groundY = (x, z) => { const g = ctx.groundExtra(x, z, 9); return g > -50 ? g : TOWN_Y; };
+  // LOD xa (> 34 m, Fibonacci): người đứng/đi thay bằng hình khối đơn giản (chân · áo · mặt · tóc = 4 khúc trụ 8 cạnh),
+  // tất cả gộp vào 1 InstancedMesh → mọi người ở xa chỉ tốn 1 draw call (trước: 1–3 call mỗi người). Người ngồi vẫn dùng model đầy đủ.
+  const LOD_D = 34, imp = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 8).translate(0, 0.5, 0), toon('#ffffff'), POOL * 4);
+  imp.count = 0; imp.visible = false; imp.frustumCulled = false; imp.name = 'person-lod'; imp.castShadow = false; imp.receiveShadow = true; scene.add(imp);
+  const _io = new THREE.Object3D(), _ic = new THREE.Color(), SKIN = '#f2c9a0', HAIR = '#2a1d17';
+  const impPart = (i, x, y, z, yaw, y0, hh, w, d, col) => { _io.position.set(x, y + y0, z); _io.rotation.set(0, yaw, 0); _io.scale.set(w, hh, d); _io.updateMatrix(); imp.setMatrixAt(i, _io.matrix); imp.setColorAt(i, _ic.set(col)); };
+  function impPut(e, x, y, z, yaw, bob) {
+    const L = e.a._look3d, h = L.h || 1.6, lk = L.look, stu = lk.role === 'student', i = imp.count; if (i + 4 > POOL * 4) return;
+    const shirt = stu ? '#f4f4f0' : lk.aodai ? (lk.shirt || '#f4f4f0') : (lk.shirt || '#7fa7d9'), pants = stu ? '#2b3a67' : lk.aodai ? shirt : (lk.pants || '#3a3f55');
+    impPart(i, x, y, z, yaw, 0, h * 0.47 + bob, h * 0.17, h * 0.12, pants);
+    impPart(i + 1, x, y, z, yaw, h * 0.45 + bob, h * 0.33, h * 0.26, h * 0.16, shirt);
+    impPart(i + 2, x, y, z, yaw, h * 0.78 + bob, h * 0.15, h * 0.15, h * 0.15, SKIN);
+    impPart(i + 3, x, y, z, yaw, h * 0.9 + bob, h * 0.07, h * 0.17, h * 0.17, lk.cap || HAIR);
+    imp.count = i + 4;
+  }
 
   return function updatePeople(dt, RS) {
     const t0 = performance.now(), p = ctx.player.pos;
@@ -88,7 +104,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       }
       if (e) { e.a = a; [e.px, e.pz] = P(a.x, a.y); e.kx.v = e.kz.v = e.ky.v = e.ox = e.oz = e.kox.v = e.koz.v = 0; e.yaw = a.dir < 0 ? -Math.PI / 2 : Math.PI / 2; e.hero.model.visible = true; }
     }
-    let best = null, bd = 4.5; const now = performance.now(); talkT -= dt;
+    let best = null, bd = 4.5; const now = performance.now(); talkT -= dt; imp.count = 0;
     const doTalk = talkT <= 0; if (doTalk) talkT = 0.6;
     // tránh nhau: người đang đi lách nhẹ khỏi người gần (≤ 1/φ m mỗi bên), độ lệch qua lò xo nên không giật
     for (const e of pool) { if (!e.a) continue; e.sx = 0; e.sz = 0; }
@@ -122,6 +138,10 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       }
       // người chơi lại gần (≤3 m) → gật đầu / vẫy tay + bong bóng chào, 25 giây 1 lần
       if (dist < 3 && !moving && !sit && now > e.greet) { const role = a._look3d.look.role; e.greet = now + 25000; emote(e.hero, e.st, 'cheer'); const g = GREET[role] || GREET.adult; say(e, g[(Math.random() * g.length) | 0]); }
+      if (dist > LOD_D && !sit && !e.seat && m.visible) {   // xa: hình khối LOD, bỏ qua animation (dồn thời gian cho lúc lại gần)
+        m.visible = false; impPut(e, gx, gy, gz, e.yaw, moving ? Math.abs(Math.sin(now * 0.012 + e.tick)) * 0.05 : 0); e.far = Math.min(1, (e.far || 0) + dt);
+        setOutline(e.hero, false); continue;
+      }
       driveHero(e.hero, { speed: moving ? e.spd : 0, grounded: true, walk: 5.5, sitting: sit, oneShot: e.st.oneShot });
       // LOD: < 35 m cập nhật animation mỗi khung hình (+ quay đầu nhìn người chơi khi < 6 m); xa hơn: 1/3 khung hình; viền chỉ < 18 m
       if (dist < NEAR_ANIM) { e.hero.anim.update(dt + (e.far || 0)); e.far = 0; let lt = null; if (dist < 6 && !e.seat) lt = p; else if (e.partner && dist < 15) { lt = e.lp || (e.lp = { x: 0, z: 0 }); lt.x = e.partner.px; lt.z = e.partner.pz; } lookAtTarget(e.hero, lt, e.st, dt); }
@@ -129,6 +149,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       setOutline(e.hero, dist < OUTLINE);
       if (dist < bd) { bd = dist; best = e; }
     }
+    imp.visible = imp.count > 0; if (imp.count) { imp.instanceMatrix.needsUpdate = true; imp.instanceColor.needsUpdate = true; }
     for (const b of bubbles) if (b.t > 0) { b.t -= dt; const e = b.e; if (!e || !e.a) { b.t = 0; } else { b.sp.position.set(e.hero.model.position.x, e.hero.model.position.y + e.a._look3d.h + 0.95 + (2.2 - b.t) * 0.12, e.hero.model.position.z); b.sp.material.opacity = Math.min(1, b.t * 2.5); } if (b.t <= 0) { b.sp.visible = false; b.e = null; } }
     // tên trên đầu người gần nhất
     if (best) {
