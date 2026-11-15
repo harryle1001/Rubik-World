@@ -65,6 +65,7 @@ export function createTerrain(scene) {
   // bảng màu docs/art-style.md: cát hồng-kem, cát ướt, cỏ tươi có mảng sáng/tối, đá ấm
   const cSand = new THREE.Color('#f3d6a8'), cWet = new THREE.Color('#e8c391'), cG1 = new THREE.Color('#63ab50'), cG2 = new THREE.Color('#84c362'), cG3 = new THREE.Color('#4f9a4a'), cMeadow = new THREE.Color('#9fcf6c');
   const cRock = new THREE.Color('#b3aa9b'), cDeep = new THREE.Color('#e6cc9a'), c = new THREE.Color();
+  const cWeed = new THREE.Color('#7f9a4c'), cReef = new THREE.Color('#a89a86'), cAbyss = new THREE.Color('#5f8290');
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), z = pos.getZ(i), h = H[Math.round((z - WORLD.z0) / step) * (NX + 1) + Math.round((x - WORLD.x0) / step)];
     pos.setY(i, h);
@@ -75,12 +76,37 @@ export function createTerrain(scene) {
       c.lerp(cSand, 1 - smooth(W + 0.7, W + 1.7, h));
       c.lerp(cWet, 1 - smooth(W + 0.05, W + 0.6, h));      // dải cát ướt sát mép nước
     }
-    if (h < W - 0.05) c.copy(cDeep).lerp(cWet, smooth(-3, -0.05, h) * 0.5);
+    if (h < W - 0.05) {   // đáy biển: cát ướt → cát đáy → thảm rong / đá ngầm → vùng sâu tối dần
+      const d = W - h;
+      c.copy(cWet).lerp(cDeep, smooth(0.05, 1.5, d));
+      c.lerp(cWeed, smooth(0.58, 0.72, fbm(x * 0.045 + 70, z * 0.045 - 30)) * smooth(1, 2.6, d) * 0.75);
+      c.lerp(cReef, smooth(0.62, 0.8, fbm(x * 0.08 - 20, z * 0.08 + 50)) * smooth(0.5, 1.6, d) * 0.6);
+      c.lerp(cAbyss, smooth(2.6, 6.5, d) * 0.7);
+    }
     c.lerp(cRock, smooth(0.9, 1.5, slopeAt(x, z)) * 0.85);
     col.set([c.r, c.g, c.b], i * 3);
   }
   g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
-  const ground = new THREE.Mesh(g, new THREE.MeshToonMaterial({ vertexColors: true, gradientMap })); ground.receiveShadow = true; ground.name = 'ground';
+  const groundMat = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap });
+  // đáy biển: gợn cát (sóng cát song song bờ) + vân sáng khúc xạ (caustics) lay động dưới nước nông — chỉ vài phép sin/điểm ảnh
+  groundMat.onBeforeCompile = sh => {
+    sh.uniforms.uTime = WIND.uTime;
+    sh.vertexShader = 'varying vec3 vWp;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vWp = (modelMatrix * vec4(transformed, 1.)).xyz;');
+    sh.fragmentShader = 'uniform float uTime; varying vec3 vWp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+      float sd = ${W.toFixed(2)} - vWp.y;
+      if (sd > 0.03) {
+        vec2 q = vWp.xz;
+        float rip = sin(dot(q, vec2(0.62, 0.79)) * 4.2 + sin(dot(q, vec2(-0.79, 0.62)) * 0.7) * 1.8);
+        diffuseColor.rgb *= 1. - 0.06 * rip * smoothstep(0.03, 0.4, sd) * (1. - smoothstep(3., 6., sd));
+        vec2 p = q * 0.55;
+        float c1 = abs(sin(p.x + sin(p.y * 1.3 + uTime * 0.9) * 1.4 + uTime * 0.6) + sin(p.y * 1.1 + sin(p.x * 0.8 - uTime * 0.7) * 1.3 - uTime * 0.5));
+        float c2 = abs(sin(p.x * 1.618 - p.y * 0.9 + sin(p.y * 1.7 - uTime) * 1.1 + uTime * 0.8));
+        float cs = (1. - smoothstep(0., 0.35, c1)) + (1. - smoothstep(0., 0.25, c2)) * 0.6;
+        diffuseColor.rgb += vec3(0.32, 0.36, 0.3) * cs * smoothstep(0.05, 0.5, sd) * (1. - smoothstep(1.5, 5., sd));
+      }`);
+  };
+  groundMat.customProgramCacheKey = () => 'seabed';
+  const ground = new THREE.Mesh(g, groundMat); ground.receiveShadow = true; ground.name = 'ground';
   scene.add(ground);
 
   // ---------- Nước: bản đồ độ cao (độ sâu) cho shader nước + cá + hạt ----------
