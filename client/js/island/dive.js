@@ -199,6 +199,15 @@ export function createDive(ctx) {
   // ---------- Mỗi khung hình (sau ambience): dưỡng khí, tư thế, hiệu ứng, góc nhìn dưới nước ----------
   const fogC = new THREE.Color(), shallow = new THREE.Color('#39c6b8'), deep = new THREE.Color('#0a3557'), night = new THREE.Color('#06152a'), _c = new THREE.Color();
   let saved = null;
+  // Kiến thức khoa học lồng vào lúc lặn (mỗi điều 1 lần, theo độ sâu)
+  const FACTS = [
+    [1, '🔵 Vì sao dưới nước ngả xanh? Nước hút ánh sáng đỏ trước, nên càng sâu càng chỉ còn màu xanh lam.'],
+    [3, '🫧 Bong bóng khí luôn bay lên vì khí nhẹ hơn nước (lực đẩy Ác-si-mét).'],
+    [5, '🌊 Cứ xuống sâu 10 m, áp suất nước tăng thêm khoảng 1 atm — tai sẽ thấy ù ù.'],
+    [2, '✨ Vệt sáng lung linh dưới đáy là caustics: mặt nước gợn sóng bẻ cong và gom ánh nắng lại.'],
+  ];
+  let factI = 0, factT = 5;
+  function learn(dt) { if (factI >= FACTS.length || (factT -= dt) > 0 || S.depth < FACTS[factI][0]) return; ctx.toast && ctx.toast(FACTS[factI++][1], 6000); factT = 13; }
   S.update = dt => {
     const p = pl.pos, t = WIND.uTime.value; sinceSplash += dt;
     if (pl.vehicle) S.swimming = S.diving = false;
@@ -229,13 +238,15 @@ export function createDive(ctx) {
     // bong bóng khi lặn, bọt nước khi bơi
     if (S.diving && (bubT -= dt) <= 0) { bubT = 0.25 + Math.random() * 0.5; const n = 1 + (Math.random() * 3 | 0), hx = p.x + Math.sin(pl.rot) * 0.8, hz = p.z + Math.cos(pl.rot) * 0.8; for (let k = 0; k < n; k++) emit(hx + (Math.random() - .5) * 0.2, p.y + 0.4 + k * 0.15, hz + (Math.random() - .5) * 0.2, 0, 0, 1.1 + Math.random() * 0.6, 0); }
     if (S.swimming && !S.diving && pl.speed > 0.6 && (foamT -= dt) <= 0) { foamT = 0.07; const bx = p.x - Math.sin(pl.rot) * 0.6, bz = p.z - Math.cos(pl.rot) * 0.6; emit(bx + (Math.random() - .5) * 0.6, surf(bx, bz) + 0.04, bz + (Math.random() - .5) * 0.6, 1, (Math.random() - .5) * 0.8, 0, (Math.random() - .5) * 0.8); }
-    for (let i = 0; i < NB; i++) if (bl[i] > 0) {
+    let alive = 0;
+    for (let i = 0; i < NB; i++) if (bl[i] > 0) { alive++;
       const j = i * 3; bp[j] += bv[j] * dt; bp[j + 1] += bv[j + 1] * dt; bp[j + 2] += bv[j + 2] * dt;
       if (bk[i] === 0) { bp[j] += Math.sin(t * 7 + i) * 0.004; bl[i] -= dt * 0.12; if (bp[j + 1] > surf(bp[j], bp[j + 2]) - 0.05) bl[i] = 0; }
       else { bv[j + 1] -= 9 * dt; const sy = surf(bp[j], bp[j + 2]) + 0.04; if (bp[j + 1] < sy) { bp[j + 1] = sy; bv[j + 1] = 0; bv[j] *= 0.96; bv[j + 2] *= 0.96; } bl[i] -= dt * 0.8; }
       if (bl[i] < 0) bl[i] = 0;
     }
-    bg.attributes.position.needsUpdate = bg.attributes.life.needsUpdate = bg.attributes.kind.needsUpdate = true;
+    bubbles.visible = alive > 0;   // không có hạt → không tốn draw call
+    if (alive) bg.attributes.position.needsUpdate = bg.attributes.life.needsUpdate = bg.attributes.kind.needsUpdate = true;
 
     // ---------- Góc nhìn dưới nước ----------
     const cs = surf(camera.position.x, camera.position.z), uw = camera.position.y < cs - 0.05;
@@ -247,6 +258,7 @@ export function createDive(ctx) {
       else if (saved) { if (G) G.uAmt.value = saved.amt; camera.far = saved.far; camera.updateProjectionMatrix(); }
     }
     if (!uw) return;
+    learn(dt);
     const sky = ctx.sky, nt = sky ? sky.state.night : 0, day = 1 - nt;
     const d = Math.max(0, cs - camera.position.y), k = clamp(d / FOG_DEEP, 0, 1);
     fogC.copy(shallow).lerp(deep, Math.pow(k, 0.7)).lerp(night, nt * 0.85);
