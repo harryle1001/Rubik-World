@@ -12,7 +12,6 @@ Agent đọc file này mỗi lần chạy, làm lần lượt các việc từ �
 
 ## Việc tiếp theo
 0. Rà soát toàn bộ game và áp tỷ lệ vàng φ vào những chỗ chưa có: HUD/nút/cỡ chữ, camera, tỷ lệ cơ thể nhân vật (people-model.js), kích thước kiến trúc trường và các khu, máy bay/sân bay, đồ vật vật lý. Chia nhỏ nếu nhiều.
-1. (BỎ QUA — phiên "chuyển động mượt" đang làm camera, nhân vật, thú; phiên "môi trường immersive" đang làm sky/post/audio/decor; phiên "easter egg" làm easter-eggs.js. Agent tránh sửa các file này cho tới khi chúng được ghép.)
 2. Hiệu năng điện thoại: giảm draw call trước cổng trường xuống < 150 (gộp mesh, tắt bóng vật nhỏ, LOD người ở xa).
 3. Cập nhật Xưởng Nhân Vật (https://claude.ai/artifact/Gkr6gn9gZRPL6dtLym67Fr) sang nhân vật dáng Zelda mới (people-model.js).
 4. Nhiệm vụ học tập: bảng nhiệm vụ hằng ngày (đi tới 3 khu, trả lời 3 câu đố của thầy cô, thu thập 5 viên pha lê) có phần thưởng.
