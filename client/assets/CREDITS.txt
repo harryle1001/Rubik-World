@@ -43,3 +43,7 @@ audio/bgm-market     "Medieval: Market Day" — RandomMind — https://opengamea
 audio/bgm-explore    "Medieval: Exploration" — RandomMind — https://opengameart.org/content/medieval-exploration
 audio/bgm-farm       "Summers" — symphony — https://opengameart.org/content/summers
 audio/bgm-temple     "Oriental" — shadowfire452 — https://opengameart.org/content/oriental
+
+models/kit/*.glb (cây, bụi, đá, hoa, hàng rào, thùng, nhà building_a–h, xe, thú nhỏ…)
+  Quaternius (https://quaternius.com) và Kenney (https://kenney.nl), CC0 1.0
+  Lấy từ gói npm "@netforge/asset-library-files" 0.2.0, thư mục library/lowpoly (NOTICE trong gói ghi rõ giấy phép CC0).
