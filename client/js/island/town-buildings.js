@@ -9,7 +9,7 @@ import { toon, addOutline, outlineMat, gradientMap } from './style.js';
 import { BLOCKS, EXTRA, blockOf2D, SPAWN, WORLD, PHI, ISLAND_R, ZONES_N, zoneAngle, LOTS, LOTS_N, HOUSE_LOTS, GARDEN_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1, LOT_W, LOT_L, LOT_BACK,
   RING_ROAD_R, ROAD_W, RADIALS, LAGOON, blocked, houseAt, roadDist, lagoonDist } from './layout.js';
 import { Batch, DetailGrid, createLife, detailMats } from './decor.js';
-import { buildSchoolZone } from './zone-school.js';
+import { buildSchoolZone, rubikCube as rubikCubeReal } from './zone-school.js';
 
 const _o = new THREE.Object3D(), _c = new THREE.Color();
 const shade = (hex, l) => '#' + new THREE.Color(hex).offsetHSL(0, 0, l).getHexString();
@@ -75,17 +75,7 @@ export function buildTownArchitecture(ctx, RS, env) {
 
   const lamp = (b, x, z, y = Y) => { b.box(0.16, 2.6, 0.16, x, y, z, '#6b4a2b'); b.box(0.7, 0.12, 0.12, x + 0.3, y + 2.5, z, '#6b4a2b'); b.box(0.32, 0.42, 0.32, x + 0.58, y + 2.0, z, '#ffd36e'); b.hip(0.42, 0.2, 0.42, x + 0.58, y + 2.42, z, '#6b4a2b'); };
   // ================= LỚP HỌC: xem zone-school.js (rubikCube/chessPiece dùng chung) =================
-  function rubikCube(b, x, y, z, s, ry = 0, tilt = false) {   // khối Rubik: lõi đen + 9 ô màu mỗi mặt (mặt phẳng → ít tam giác)
-    const pre = b.pre; _o.position.set(x, y, z); _o.rotation.set(tilt ? 0.615 : 0, ry, tilt ? Math.PI / 4 : 0, 'YXZ'); _o.scale.set(1, 1, 1); _o.updateMatrix();
-    b.pre = pre ? pre.clone().multiply(_o.matrix) : _o.matrix.clone();
-    b.box(s, s, s, 0, -s / 2, 0, '#1b1626');
-    const q = s / 3, f = s / 2 + 0.01, faces = [[0, 0, 0], [Math.PI / 2, 0, 1], [Math.PI, 0, 2], [-Math.PI / 2, 0, 3], [0, -Math.PI / 2, 4], [0, Math.PI / 2, 5]];
-    for (const [fy, fx, ci] of faces) for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
-      const lu = (i - 1) * q, lv = (j - 1) * q; const p = new THREE.Vector3(lu, lv, f).applyEuler(new THREE.Euler(fx, fy, 0, 'YXZ'));
-      b.plane(q * 0.86, q * 0.86, p.x, p.y, p.z, RUBIK_COL[(ci + (i * j + i) % 4 === 0 ? 0 : ci) % 6], fy, fx);
-    }
-    b.pre = pre;
-  }
+  const rubikCube = rubikCubeReal;   // khối Rubik 27 khối con: zone-school.js
   function chessPiece(b, kind, x, z, s, col, y0 = Y) {   // quân cờ to (vòng tròn 8 cạnh)
     const dark = col === 'b', c = dark ? '#2b2633' : '#f4efe4', c2 = dark ? '#3d3747' : '#ffffff';
     b.cyl(0.55 * s, 0.62 * s, 0.25 * s, x, y0, z, c, 8);
@@ -163,7 +153,7 @@ export function buildTownArchitecture(ctx, RS, env) {
 
   // ================= DỰNG =================
   // KHU TRƯỜNG (lớp học, cổng, quảng trường, cột cờ, sân trường, sân chơi, sân bóng): zone-school.js
-  const SZ = buildSchoolZone({ ctx, RS, env, D, atlas, signAt, measure, budget, X3, Z3, DG, nearDoor, inRoom, rnd, rubikCube, chessPiece }); flagAt = SZ.flagAt;
+  const SZ = buildSchoolZone({ ctx, RS, env, D, atlas, signAt, measure, budget, X3, Z3, DG, nearDoor, inRoom, rnd, chessPiece, addFoot }); flagAt = SZ.flagAt;
 
   // nhà ở: mỗi nhà 1 lô đất trên vòng quanh trường (layout.js), nền HOUSE_W × HOUSE_D ≈ lô/φ, mặt tiền nhìn về đường vòng
   for (const L of HOUSE_LOTS) {

@@ -6,6 +6,7 @@
 // Va chạm tường lớp/cửa mini game do school-town.js lo; ở đây chỉ thêm cột hành lang, cổng, cầu trượt vào ctx.boxes.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { toon } from './style.js';
 import { BLOCKS } from './layout.js';
 import { Batch } from './decor.js';
@@ -47,7 +48,7 @@ function hipRoof(b, x0, z0, x1, z1, y, h) {
   const w = x1 - x0, d = z1 - z0, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, alongX = w >= d, r = Math.abs(w - d) / 2;
   const R0 = alongX ? [cx - r, y + h, cz] : [cx, y + h, cz - r], R1 = alongX ? [cx + r, y + h, cz] : [cx, y + h, cz + r];
   const top = p => (alongX ? (p[0] < cx ? R0 : R1) : (p[2] < cz ? R0 : R1));
-  const c = [[x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1]], N = 5, L = (P, Q, t) => [P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * t, P[2] + (Q[2] - P[2]) * t];
+  const c = [[x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1]], N = 5, L = (P, Q, t) => [P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * Math.pow(t, 1.6), P[2] + (Q[2] - P[2]) * t];   // mái cong kiểu ngói ta
   for (let e = 0; e < 4; e++) {
     const A = c[e], B = c[(e + 1) % 4], TA = top(A), TB = top(B);
     for (let i = 0; i < N; i++) {
@@ -66,8 +67,30 @@ function hipRoof(b, x0, z0, x1, z1, y, h) {
   b.ball(0.22, R0[0], y + h + 0.05, R0[2], C.ridge); b.ball(0.22, R1[0], y + h + 0.05, R1[2], C.ridge);
 }
 
+// KHỐI RUBIK GIỐNG THẬT (dùng chung mọi khu): 26 khối con vát góc (44 tam giác/khối) thân đen + 54 miếng dán nhỏ hơn mặt (lõm trong viền vát)
+// ≈ 1.250 tam giác. Gốc (x, y, z) = tâm khối; s = cạnh; tilt = đứng trên 1 góc. Có thể gọi cho Batch hoặc DetailGrid.
+let cubieGeo = null;
+export function rubikCube(b, x, y, z, s, ry = 0, tilt = false) {
+  if (!cubieGeo) { const h = 0.5, a = 0.41, pts = []; for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) pts.push(new THREE.Vector3(sx * h, sy * a, sz * a), new THREE.Vector3(sx * a, sy * h, sz * a), new THREE.Vector3(sx * a, sy * a, sz * h)); cubieGeo = new ConvexGeometry(pts); }
+  const pre = b.pre; _o.position.set(x, y, z); _o.rotation.set(tilt ? 0.615 : 0, ry, tilt ? Math.PI / 4 : 0, 'YXZ'); _o.scale.set(1, 1, 1); _o.updateMatrix();
+  b.pre = pre ? pre.clone().multiply(_o.matrix) : _o.matrix.clone();
+  const q = s / 3, f = q * 0.5 + 0.004;
+  // màu mặt: +z đỏ, -z cam, +x xanh dương, -x xanh lá, +y trắng, -y vàng (tráo vài ô cho trông như đang xoay dở)
+  const FC = { pz: '#e8392f', nz: '#ff8a1f', px: '#2b63d9', nx: '#2f9e44', py: '#ffffff', ny: '#f5c518' }, ALT = Object.values(FC);
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (let k = -1; k <= 1; k++) {
+    if (!i && !j && !k) continue;
+    const cx = i * q, cy = j * q, cz = k * q; b.push(cubieGeo.clone(), '#17151d', cx, cy, cz, 0, 0, 0, q * 0.98, q * 0.98, q * 0.98);
+    const mix = (i * 7 + j * 3 + k * 5 + 21) % 5 === 0;
+    const st = (key, px, py, pz, ryy, rxx) => b.plane(q * 0.8, q * 0.8, cx + px, cy + py, cz + pz, mix ? ALT[(i + j + k + 9) % 6] : FC[key], ryy, rxx);
+    if (k === 1) st('pz', 0, 0, f, 0, 0); if (k === -1) st('nz', 0, 0, -f, Math.PI, 0);
+    if (i === 1) st('px', f, 0, 0, Math.PI / 2, 0); if (i === -1) st('nx', -f, 0, 0, -Math.PI / 2, 0);
+    if (j === 1) st('py', 0, f, 0, 0, -Math.PI / 2); if (j === -1) st('ny', 0, -f, 0, 0, Math.PI / 2);
+  }
+  b.pre = pre;
+}
+
 export function buildSchoolZone(a) {
-  const { ctx, RS, env, D, atlas, signAt, measure, budget, X3, Z3, DG, nearDoor, inRoom, rnd, rubikCube, chessPiece } = a;
+  const { ctx, RS, env, D, atlas, signAt, measure, budget, X3, Z3, DG, nearDoor, inRoom, rnd, chessPiece } = a, addFoot = a.addFoot || (() => {});
   const { scene } = ctx, { P, S, Y, H, T, gap } = env, R = RS.R, low = !!ctx.lowEnd;
   const SB = new Batch('school'), GB = new Batch('gate'), GR = new Batch('school-ground');
   const roofs = [], meshes = [], kits = {}, phuong = [];
@@ -127,7 +150,7 @@ export function buildSchoolZone(a) {
     }
     for (const [x, z] of [[ax, az], [bx, az], [ax, bz], [bx, bz]]) b.box(0.56, H + 0.12, 0.56, x, Y, z, C.trim);   // trụ góc
     // sàn trong lớp (gạch men) — thấy khi mái mờ đi
-    GR.box(bx - ax - 0.2, 0.04, bz - az - 0.2, cx, Y, cz, st.yard ? C.cement : C.floor);
+    GR.box(bx - ax - 0.2, 0.04, bz - az - 0.2, cx, Y, cz, st.yard ? C.cement : C.floor); addFoot(ax - 1.5 - (side === 'l' ? VD + 1 : 0), az - 1.5 - (side === 't' ? VD + 1 : 0), bx + 1.5 + (side === 'r' ? VD + 1 : 0), bz + 1.5 + (side === 'b' ? VD + 1 : 0));
 
     const big = id === 'hall', VD = 2.2;   // VD: độ sâu hành lang
     const ox = side === 'l' ? ax : side === 'r' ? bx : dx, oz = side === 't' ? az : side === 'b' ? bz : dz;
@@ -139,7 +162,8 @@ export function buildSchoolZone(a) {
       const n = Math.max(2, Math.round(faceL / 3.2));
       for (let i = 0; i <= n; i++) {
         const u = -faceL / 2 + i * faceL / n; if (Math.abs(u - du) < gap + 0.7) continue;
-        b.box(0.5, 0.3, 0.5, u, 0, VD, C.plinth); b.box(0.32, H - 0.3, 0.32, u, 0.3, VD, C.trim); b.box(0.46, 0.16, 0.46, u, H - 0.36, VD, st.acc);
+        b.cyl(0.3, 0.34, 0.3, u, 0, VD, C.plinth, 8); b.cyl(0.17, 0.2, H - 0.3, u, 0.3, VD, C.trim, 8); b.cyl(0.28, 0.2, 0.18, u, H - 0.38, VD, st.acc, 8);
+        const un = u + faceL / n; if (i < n && !big && Math.abs(un - du) >= gap + 0.7) b.push(new THREE.TorusGeometry(faceL / n / 2 - 0.15, 0.1, 3, 8, Math.PI), C.trim, (u + un) / 2, H - 0.95 - (faceL / n / 2 - 0.15) * 0.45, VD, 0, 0, 0, 1, 0.45, 1);
         _v.set(u, 0, VD).applyMatrix4(b.pre); col(_v.x, _v.z, 0.22);
       }
       if (!big) { b.box(faceL + 0.2, 0.5, 0.06, 0, H - 0.72, VD + 0.18, st.acc); }   // diềm hành lang màu riêng của lớp
@@ -209,15 +233,7 @@ export function buildSchoolZone(a) {
       rubikCube(b, 0, 9.55, 0.3, 0.8, 0.6, true);
       signAt(b, atlas.sign('TRƯỜNG RUBIK', '#7a1f2b', '#ffe08a', C.gold), 6.2, 0.8, 0, 6.75, 1.02);
       signAt(b, atlas.sign('Học – Chơi – Khám phá', '#1f3b63', '#fff', C.gold), 3.4, 0.4, 0, 5.15, 1.0);
-      for (const s of [-1, 1]) b.group(s * 2.4, 0, -0.2, s * 1.25, () => {     // cổng sắt 2 cánh mở vào trong
-        for (let u = 0.15; u < 2.3; u += 0.3) { b.box(0.06, 3.2, 0.06, -s * u, 0, 0, C.iron); b.cone(0.07, 0.22, -s * u, 3.2, 0, C.gold, 4); }
-        for (const y of [0.3, 1.6, 2.9]) b.box(2.4, 0.08, 0.08, -s * 1.2, y, 0, C.iron);
-        b.push(new THREE.TorusGeometry(0.45, 0.05, 4, 10), C.gold, -s * 1.2, 2.25, 0);
-      });
-      for (const s of [-1, 1]) {   // tường rào: chân đá, song sắt mũi vàng, trụ nhỏ có đèn; bồn hoa đá thay tượng
-        b.box(8.4, 1.0, 0.7, s * 8.4, 0, 0, stone2); b.box(8.6, 0.16, 0.85, s * 8.4, 1.0, 0, stone);
-        for (let u = 4.6; u < 12.3; u += 0.4) { b.box(0.05, 1.5, 0.05, s * u, 1.16, 0, C.iron); b.cone(0.06, 0.18, s * u, 2.66, 0, C.gold, 4); }
-        b.box(8.4, 0.06, 0.06, s * 8.4, 2.3, 0, C.iron);
+      for (const s of [-1, 1]) {   // không rào, không cổng sắt: trụ đèn đứng riêng, bình hoa đá, bồn hoa
         b.box(0.95, 3.0, 0.95, s * 12.6, 0, 0, stone); b.box(1.15, 0.25, 1.15, s * 12.6, 3.0, 0, stone2); b.hip(0.75, 0.42, 0.75, s * 12.6, 3.85, 0, C.iron);
         DG.glow(() => { DG.pre = b.pre; DG.box(0.42, 0.55, 0.42, s * 12.6, 3.25, 0, C.lantern); DG.pre = null; });
         b.box(1.5, 0.6, 1.5, s * 5.3, 0, 2.6, stone2); b.cyl(0.55, 0.38, 0.75, s * 5.3, 0.6, 2.6, stone, 8); b.ball(0.62, s * 5.3, 1.55, 2.6, '#5aa04a', 1, 0.75, 1);   // bình hoa đá lớn
@@ -227,14 +243,14 @@ export function buildSchoolZone(a) {
     }));
     // quảng trường: nền đá dịu, đường viền, hoa văn tròn trước cổng, lối đi chính
     { const A = BLOCKS[0].r, x0 = A[0] + 0.5, x1 = gx - 1.2, cxp = (x0 + x1) / 2, w = x1 - x0;
-      GB.box(w, 0.04, 26, cxp, Y, gz, '#e6dcc4');
+      GB.box(w, 0.04, 26, cxp, Y, gz, '#e6dcc4'); addFoot(x0, gz - 13, gx + 4, gz + 13);
       for (const s of [-1, 1]) GB.box(w, 0.06, 0.35, cxp, Y, gz + s * 12.8, '#c4b48f');
       GB.box(w, 0.05, 3.6, cxp, Y, gz, '#d6c39b'); for (const s of [-1, 1]) GB.box(w, 0.07, 0.25, cxp, Y, gz + s * 1.9, '#b89c6e');
       GB.push(new THREE.RingGeometry(3.2, 4.2, 24).rotateX(-Math.PI / 2), '#cdb68a', x1 - 6, Y + 0.07, gz); GB.push(new THREE.RingGeometry(1.0, 1.5, 16).rotateX(-Math.PI / 2), '#b89c6e', x1 - 6, Y + 0.075, gz);
       DG.follow(null); for (let x = x0 + 1, k = 0; x < x1; x += 2.4, k++) for (const s of [-1, 1]) DG.box(1.0, 0.012, 3.6, x, Y + 0.05, gz + s * 7.5, k % 2 ? '#d8cbaa' : '#e0d4b6');
       for (const s of [-1, 1]) { for (let x = x0 + 1.5; x < x1 - 0.5; x += 2.6) kit('bush', x, Y, gz + s * 11.8, 1.05 + rnd() * 0.2, rnd() * 6); lampPost(GB, x0 + 3, gz + s * 4.2); lampPost(GB, x1 - 2.5, gz + s * 4.2); stoneBench(GB, x1 - 9, gz + s * 9.5, 0); }
     }
-    for (const s of [-1, 1]) { const z = gz - s * 3.3; ctx.boxes.push({ x0: gx - 0.9, x1: gx + 0.9, z0: z - 0.9, z1: z + 0.9, top: Y + 7.5 }); const z0 = gz - s * 4.2, z1 = gz - s * 13.1; ctx.boxes.push({ x0: gx - 0.4, x1: gx + 0.4, z0: Math.min(z0, z1), z1: Math.max(z0, z1), top: Y + 2.8 }); }
+    for (const s of [-1, 1]) { const z = gz - s * 3.3; ctx.boxes.push({ x0: gx - 0.9, x1: gx + 0.9, z0: z - 0.9, z1: z + 0.9, top: Y + 7.5 }); col(gx, gz - s * 12.6, 0.5, Y + 3); }
     if (D.BOOTH) { const x = X3(D.BOOTH[0]), z = Z3(D.BOOTH[1]), b = GB;   // chốt bảo vệ: nhà nhỏ tường kem, cửa sổ, mái ngói
       b.box(2.0, 0.3, 2.0, x, Y, z, C.plinth); b.box(1.8, 2.1, 1.8, x, Y + 0.3, z, ROOM.hall.wall); b.box(1.9, 0.18, 1.9, x, Y + 2.3, z, C.trim);
       b.plane(1.1, 0.75, x - 0.91, Y + 1.6, z, C.glass, -Math.PI / 2); b.plane(1.3, 0.95, x - 0.905, Y + 1.6, z, C.trim, -Math.PI / 2);
@@ -253,7 +269,7 @@ export function buildSchoolZone(a) {
   }
   if (R.attend) {   // sân xi măng: ô nhảy lò cò, ô ăn quan, vòng tròn
     const r = R.attend, x0 = X3(r.x), z0 = Z3(r.y), x1 = X3(r.x + r.w), z1 = Z3(r.y + r.h), cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, d = DG.follow(null), py = Y + 0.065, line = (w, dd, x, z, c = C.paint) => d.box(w, 0.01, dd, x, py, z, c);
-    GR.box(x1 - x0, 0.05, z1 - z0, cx, Y, cz, C.cement); for (const [w, dd, x, z] of [[x1 - x0, 0.2, cx, z0], [x1 - x0, 0.2, cx, z1], [0.2, z1 - z0, x0, cz], [0.2, z1 - z0, x1, cz]]) GR.box(w, 0.09, dd, x, Y, z, C.curb);
+    GR.box(x1 - x0, 0.05, z1 - z0, cx, Y, cz, C.cement); addFoot(x0, z0, x1, z1); for (const [w, dd, x, z] of [[x1 - x0, 0.2, cx, z0], [x1 - x0, 0.2, cx, z1], [0.2, z1 - z0, x0, cz], [0.2, z1 - z0, x1, cz]]) GR.box(w, 0.09, dd, x, Y, z, C.curb);
     const hx = x0 + 3, hz = cz + 1, HC = ['#f28b82', '#fbd06b', '#8fd0a8', '#8fb8ee'];
     [[0, 0], [1, 0], [2, -0.5], [2, 0.5], [3, 0], [4, -0.5], [4, 0.5], [5, 0]].forEach(([i, j], k) => { line(0.95, 0.95, hx + i * 1.0, hz + j * 1.0); d.box(0.8, 0.012, 0.8, hx + i * 1.0, py + 0.005, hz + j * 1.0, HC[k % 4]); });
     d.push(new THREE.RingGeometry(1.0, 1.3, 7).rotateX(-Math.PI / 2), '#8fb8ee', hx + 6.4, py + 0.008, hz);
@@ -265,7 +281,7 @@ export function buildSchoolZone(a) {
   // ================= SÂN TRƯỜNG: bồn cây phượng, ghế đá, đèn, lối đi, vỉa hè, bảng tin, thùng rác, xe kem, sân chơi =================
   for (const [x2, y2] of D.TREES || []) {
     const x = X3(x2), z = Z3(y2); if (nearDoor(x, z, 2.5)) continue;
-    phuong.push([x, z, 1.05 + rnd() * 0.3]);
+    phuong.push([x, z, 1.05 + rnd() * 0.3]); addFoot(x - 1.4, z - 1.4, x + 1.4, z + 2.4);
     SB.cyl(1.25, 1.35, 0.45, x, Y, z, C.stone, 8); GR.cyl(1.08, 1.08, 0.04, x, Y + 0.43, z, '#7a5a3a', 8);
     if (x2 < 1600) stoneBench(SB, x, z + 1.95, 0);
   }
@@ -297,7 +313,7 @@ export function buildSchoolZone(a) {
     for (const [x2, y2] of [[200, 435], [500, 435], [1100, 435], [860, 760]]) { const [x, z] = at(x2 + 70, y2); d.cyl(0.25, 0.22, 0.75, x, Y, z, '#4f9a7a', 8); d.cyl(0.27, 0.27, 0.07, x, Y + 0.75, z, '#3f7a62', 8); }
     // sân chơi: nền cao su, xích đu, cầu trượt, bập bênh
     { const [px, pz] = at(910, 830), b = SB;
-      GR.box(11, 0.05, 5.4, px, Y, pz, '#e8a27c'); for (const s of [-1, 1]) GR.box(11.2, 0.12, 0.18, px, Y, pz + s * 2.75, C.curb);
+      GR.box(11, 0.05, 5.4, px, Y, pz, '#e8a27c'); addFoot(px - 5.6, pz - 2.8, px + 5.6, pz + 2.8); for (const s of [-1, 1]) GR.box(11.2, 0.12, 0.18, px, Y, pz + s * 2.75, C.curb);
       b.group(px - 3.2, Y, pz, 0, () => {   // xích đu 2 ghế
         for (const s of [-1, 1]) for (const t of [-1, 1]) b.box(0.12, 2.6, 0.12, s * 1.6, 0, t * 0.55, '#e8453c', 0, t * 0.2);
         b.box(3.5, 0.12, 0.12, 0, 2.48, 0, '#f5c518');
@@ -317,7 +333,7 @@ export function buildSchoolZone(a) {
   // ================= SÂN BÓNG ĐÁ =================
   if (R.field) {
     const f = R.field, b = GR, x0 = X3(f.x + 20), x1 = X3(f.x + f.w - 20), z0 = Z3(f.y + 20), z1 = Z3(f.y + f.h - 20), cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, L = x1 - x0, W = z1 - z0, ly = Y + 0.03;
-    b.box(L + 2.4, 0.04, W + 2.4, cx, Y - 0.01, cz, '#c97a5a');   // đường chạy quanh sân
+    b.box(L + 2.4, 0.04, W + 2.4, cx, Y - 0.01, cz, '#c97a5a'); addFoot(x0 - 1.2, z0 - 1.2, x1 + 1.2, z1 + 3.4);   // đường chạy quanh sân
     for (let i = 0; i < 10; i++) b.plane(L / 10, W, x0 + (i + 0.5) * L / 10, Y + 0.035, cz, i % 2 ? '#7cc45a' : '#8fcf6a', 0, -Math.PI / 2);
     const line = (w, d, x, z) => b.box(w, 0.02, d, x, ly + 0.01, z, '#ffffff');
     line(L, 0.12, cx, z0); line(L, 0.12, cx, z1); line(0.12, W, x0, cz); line(0.12, W, x1, cz); line(0.12, W, cx, cz);
