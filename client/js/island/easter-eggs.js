@@ -1,4 +1,4 @@
-// easter-eggs.js — 13 BÍ MẬT (số Fibonacci) giấu khắp Đảo Rubik: tìm thấy thì học thêm 1 điều hay.
+// easter-eggs.js — 21 BÍ MẬT (số Fibonacci) giấu khắp Đảo Rubik: tìm thấy thì học thêm 1 điều hay.
 // Tự chứa: ocean.js chỉ gọi createEasterEggs(ctx) và eggs.update(dt, t). Tiến độ lưu localStorage 'island.eggs'.
 // Hiệu năng (điện thoại): tối đa 8 draw call — khối Rubik (InstancedMesh), hạt sáng (1 Points dùng chung cho pháo hoa,
 // đom đóm, chòm sao, xoắn ốc…), vòng mây (InstancedMesh), đồ tĩnh gộp 1 mesh, bia chữ, cá voi, ông Bụt, hoa hướng dương.
@@ -28,6 +28,15 @@ const EGGS = [
   { id: 'but',     icon: '🧙', name: 'Ông Bụt dưới gốc đa',    hint: 'Trong rừng Đền có cây đa nghìn năm. Ngày xưa ai khóc thì Bụt hiện lên…', learn: 'Bụt là nhân vật hiền hậu trong truyện cổ tích Việt Nam, như Tấm Cám.' },
   { id: 'stele',   icon: '🪨', name: 'Bia đá chữ Hán',         hint: 'Bên đường vào Học viện Hoa Phượng có tấm bia đá khắc chữ cổ.', learn: 'Ông cha ta dùng chữ Hán, rồi sáng tạo chữ Nôm để ghi tiếng Việt; nay ta dùng chữ Quốc ngữ.' },
   { id: 'seed',    icon: '🌱', name: 'Hạt giống thần',         hint: 'Ở vườn cộng đồng phía Nam trường có túi hạt giống chờ người gieo.', learn: 'Quang hợp: lá dùng ánh sáng + nước + khí CO₂ để làm đường nuôi cây và nhả khí O₂.' },
+  // ---- đợt 2: 14 → 21 (số Fibonacci) ----
+  { id: 'sundial', icon: '☀️', name: 'Đồng hồ mặt trời',       hint: 'Gần cổng trường có một chiếc đồng hồ không cần pin, chỉ cần nắng.', learn: 'Trái Đất tự quay 360° trong 24 giờ: mỗi giờ bóng nắng xoay 15°.' },
+  { id: 'cuckoo',  icon: '🐦', name: 'Chim cu 12 giờ trưa',    hint: 'Cột đồng hồ cạnh cổng trường: đứng gần đó đúng 12 giờ trưa…', learn: 'Giữa trưa Mặt Trời lên cao nhất, bóng ngắn nhất. Kim giờ quay 2 vòng mỗi ngày.' },
+  { id: 'well',    icon: '🪣', name: 'Giếng vọng',             hint: 'Trên đồi phía Bắc, giữa Phố Đà Lạt và rừng Đền, có một cái giếng cổ biết "trả lời".', learn: 'Âm thanh đi khoảng 343 m mỗi giây; tiếng vọng là âm dội lại từ vật cản.' },
+  { id: 'hanoi',   icon: '🗼', name: 'Tháp Hà Nội',            hint: 'Trên đồi gần Thư viện có trò xếp đĩa rất nổi tiếng mang tên thủ đô nước ta.', learn: 'Tháp n đĩa cần ít nhất 2ⁿ − 1 bước: 3 đĩa → 7 bước, 64 đĩa → hơn 18 tỷ tỷ bước!' },
+  { id: 'meteor',  icon: '🌠', name: 'Ước sao băng',           hint: 'Ban đêm ngắm trời thật lâu, thấy sao băng thì bấm ước ngay!', learn: 'Sao băng là mảnh đá vũ trụ nhỏ bốc cháy khi lao vào bầu khí quyển, ở độ cao khoảng 100 km.' },
+  { id: 'bottle',  icon: '🍾', name: 'Chai thông điệp',        hint: 'Sóng đã đánh dạt một chiếc chai vào bãi biển phía Nam.', learn: 'Dòng hải lưu có thể đưa một chiếc chai trôi hàng nghìn km qua đại dương.' },
+  { id: 'fossil',  icon: '🐚', name: 'Hoá thạch cúc đá',       hint: 'Trên đỉnh đồi phía Đông Nam (sau Thể thao & Rubik Kart) có hòn đá in hình xoắn ốc.', learn: 'Hoá thạch là dấu vết sinh vật xưa hoá đá qua hàng triệu năm.' },
+  { id: 'lantern', icon: '🏮', name: 'Đèn hoa đăng',           hint: 'Ban đêm ra bờ hồ bán nguyệt sau trường thả đèn hoa đăng.', learn: 'Mặt Trăng không tự sáng mà phản chiếu ánh Mặt Trời; một vòng pha trăng dài khoảng 29,5 ngày.' },
 ];
 const RUBIK_FACTS = [
   'Khối Rubik 3×3 có hơn <b>43 tỷ tỷ</b> cách xáo trộn (4,3 × 10¹⁹)!',
@@ -54,6 +63,13 @@ const CUBES = [
 const HILL = [-96, 200], SCOPE = [-92.5, 201.5], TURTLE = [-99, -238], BANYAN = [-150, -126], STELE = [-101, 110];
 const SEED = lotToWorld(GARDEN_LOTS[1], 5.5, 8);   // góc vườn cộng đồng phía Nam (tránh đài phun nước giữa vườn)
 const RINGS = [[0, 58, 223], [-158, 52, -158], [158, 66, -158]];
+// đợt 2: vị trí (đã dò chỗ trống bằng Playwright)
+const SUNDIAL = [-71, 21], CUCKOO = [-71.7, 0], WELL = [-60, -150], HANOI = [128.6, -105.8], FOSSIL = [148, 48];
+const LETTERS = [
+  'Xin chào! Mình là <b>Aiko</b> ở <b>Nhật Bản</b>. Nước mình có hơn 6.800 hòn đảo và núi Phú Sĩ cao 3.776 m. Bạn ở đâu thế?',
+  'Chào bạn! Mình là <b>Miguel</b> ở <b>Philippines</b> — đất nước có hơn <b>7.000 hòn đảo</b>, là hàng xóm của Việt Nam qua Biển Đông.',
+  'Hello! Mình là <b>Ruby</b> ở <b>Úc</b>. Khi Việt Nam đang hè thì bên mình là mùa đông, vì Úc nằm ở <b>Nam bán cầu</b>!',
+];
 const TURTLE_TALES = [
   'Năm <b>938</b>, Ngô Quyền cắm cọc gỗ dưới sông Bạch Đằng, chờ thủy triều rút để đánh tan quân Nam Hán.',
   'Năm <b>1010</b>, vua Lý Thái Tổ dời đô từ Hoa Lư ra Đại La, đặt tên là <b>Thăng Long</b> — nay là Hà Nội.',
@@ -189,7 +205,7 @@ export function createEasterEggs(ctx) {
     const e = EGGS.find(q => q.id === id), n = count();
     ctx.toast(`🎉 <b>Bí mật ${n}/${EGGS.length}: ${e.icon} ${e.name}</b>${extra ? '<br>' + extra : ''}<br><small>💡 ${e.learn}</small>`, 7000);
     fanfare(); ctx.player.emote && ctx.player.emote('cheer');
-    if (n === EGGS.length) later(7.5, () => { ctx.toast('🏆 <b>Bạn đã tìm đủ 13 bí mật của Đảo Rubik!</b><br>13 cũng là một số Fibonacci. Bạn là <b>Nhà Thám Hiểm φ</b>!', 9000); fireworks(); });
+    if (n === EGGS.length) later(7.5, () => { ctx.toast(`🏆 <b>Bạn đã tìm đủ ${EGGS.length} bí mật của Đảo Rubik!</b><br>${EGGS.length} cũng là một số Fibonacci. Bạn là <b>Nhà Thám Hiểm φ</b>!`, 9000); fireworks(); });
     return true;
   }
   label();
@@ -307,6 +323,42 @@ export function createEasterEggs(ctx) {
       part(new THREE.ConeGeometry(0.07, 0.14, 4), '#e08a3a', 0.47, 0.45, -0.07), part(new THREE.ConeGeometry(0.07, 0.14, 4), '#e08a3a', 0.47, 0.45, 0.17),
       part(cyl(0.05, 0.05, 0.7, 5), '#c46a2a', -0.45, 0.12, 0.25, 0, 0.8, Math.PI / 2), part(box(0.5, 0.06, 0.08), '#a85a1a', 0, 0.42, 0)], x, y, z, L ? L.ry : 0);
   }
+  // ---- đợt 2: đồ tĩnh (gộp chung mesh tĩnh, không thêm draw call) ----
+  const BOTTLE = (() => { for (let r = 340; r > 200; r -= 0.5) { const x = 6, z = r, h = H(x, z); if (h > 0.35) return [x, z - 1.5]; } return [6, 285]; })();   // mép cát bãi biển phía Nam
+  { // đồng hồ mặt trời: mặt số 12 vạch + kim bóng (gnomon) chỉ hướng Bắc
+    const [x, z] = SUNDIAL, L = [part(cyl(1.2, 1.35, 0.6, 13), '#cfc6b4', 0, 0.3, 0), part(cyl(1.25, 1.25, 0.06, 21), '#efe6d0', 0, 0.63, 0)];
+    for (let k = 0; k < 12; k++) { const a = k * TAU / 12; L.push(part(box(0.06, 0.04, 0.3), '#6b4a2b', Math.sin(a) * 1.02, 0.67, -Math.cos(a) * 1.02, 0, -a, 0)); }
+    L.push(part(box(0.05, 0.55, 1.1), '#b8862e', 0, 0.86, 0.05, -0.36));   // kim bóng nghiêng theo vĩ độ (~20°), chỉ hướng Bắc
+    st.push(...place(L, x, TOWN_Y, z)); ctx.colliders.push({ x, z, r: 1.3 });
+  }
+  { // cột đồng hồ chim cu: cột gỗ, hộp đồng hồ mái nhọn, mặt số, cửa sổ nhỏ
+    const [x, z] = CUCKOO;
+    st.push(...place([part(cyl(0.12, 0.15, 2.6, 6), '#6b4a2b', 0, 1.3, 0), part(box(1.0, 1.1, 0.6), '#8a5a34', 0, 3.1, 0), part(new THREE.ConeGeometry(0.85, 0.6, 4), '#5a3a22', 0, 3.95, 0, 0, Math.PI / 4),
+      part(cyl(0.34, 0.34, 0.05, 13), '#fff4d6', 0, 3.05, 0.31, Math.PI / 2), part(box(0.04, 0.26, 0.02), '#222', 0, 3.15, 0.35), part(box(0.18, 0.04, 0.02), '#222', 0.07, 3.05, 0.35),
+      part(box(0.3, 0.26, 0.04), '#2a1a0e', 0, 3.5, 0.31), part(box(0.05, 0.5, 0.05), '#e2b33c', -0.15, 2.3, 0.3), part(box(0.05, 0.4, 0.05), '#e2b33c', 0.15, 2.35, 0.3)], x, TOWN_Y, z, -Math.PI / 2));
+    ctx.colliders.push({ x, z, r: 0.6 });
+  }
+  { // giếng cổ: thành đá tròn, 2 cột, mái nhỏ, gàu
+    const [x, z] = WELL, y = H(x, z) - 0.1, L = [part(cyl(1.1, 1.2, 0.9, 13), '#9a958a', 0, 0.45, 0), part(cyl(0.85, 0.85, 0.05, 13), '#1a2a3a', 0, 0.86, 0)];
+    for (const sx of [-1, 1]) L.push(part(box(0.14, 2.2, 0.14), '#6b4a2b', sx * 1.0, 1.1, 0));
+    L.push(part(box(2.5, 0.08, 1.4), '#7a3b2e', 0, 2.3, 0.35, 0.5), part(box(2.5, 0.08, 1.4), '#7a3b2e', 0, 2.3, -0.35, -0.5), part(cyl(0.06, 0.06, 2.0, 6), '#5a3a22', 0, 1.8, 0, 0, 0, Math.PI / 2), part(cyl(0.18, 0.14, 0.3, 8), '#8a6a3a', 0.3, 1.3, 0));
+    st.push(...place(L, x, y, z, 0.6)); ctx.colliders.push({ x, z, r: 1.3 });
+  }
+  { // Tháp Hà Nội: bệ gỗ, 3 cọc, 3 đĩa (to → nhỏ) ở cọc trái
+    const [x, z] = HANOI, y = H(x, z) - 0.05, L = [part(box(4.2, 0.3, 1.3), '#8a5a34', 0, 0.15, 0)];
+    for (const k of [-1, 0, 1]) L.push(part(cyl(0.07, 0.07, 1.6, 6), '#e8d2a8', k * 1.4, 1.0, 0));
+    [['#e8453c', 0.6], ['#f2c14e', 0.45], ['#3d8fd9', 0.3]].forEach(([c, r], i) => L.push(part(cyl(r, r, 0.22, 13), c, -1.4, 0.42 + i * 0.23, 0)));
+    st.push(...place(L, x, y, z, 0.4)); ctx.colliders.push({ x, z, r: 1.6 });
+  }
+  { // chai thông điệp nằm trên cát
+    const [x, z] = BOTTLE, y = H(x, z) + 0.12;
+    st.push(...place([part(cyl(0.13, 0.13, 0.5, 8), '#3f9a6a', 0, 0, 0, 0, 0, Math.PI / 2), part(cyl(0.05, 0.1, 0.18, 8), '#3f9a6a', 0.33, 0, 0, 0, 0, Math.PI / 2), part(cyl(0.05, 0.05, 0.08, 6), '#c49a6a', 0.45, 0, 0, 0, 0, Math.PI / 2), part(box(0.3, 0.12, 0.12), '#f2e6c0', -0.02, 0, 0)], x, y, z, 0.7, 1.6));
+  }
+  { // hòn đá có hoá thạch cúc đá (ammonite): xoắn ốc vàng nổi trên mặt đá
+    const [x, z] = FOSSIL, y = H(x, z) - 0.3, L = [part(new THREE.IcosahedronGeometry(1.3, 0), '#8f8a80', 0, 0.9, 0, 0, 0, 0, 1.3, 1, 1)];
+    for (let k = 0; k < 34; k++) { const th = k * 0.32, r = 0.08 * Math.pow(PHI, 2 * th / Math.PI); if (r > 0.75) break; L.push(part(ball(0.035 + r * 0.09, 5, 4), '#d8c8a0', Math.cos(th) * r, 1.0 + Math.sin(th) * r, 1.05)); }
+    st.push(...place(L, x, y, z, Math.PI / 3)); ctx.colliders.push({ x, z, r: 1.6 });
+  }
   let statics = null;
   const buildStatics = () => { statics = meshOf([...st, ...buildCat()]); scene.add(statics); };
 
@@ -419,6 +471,47 @@ export function createEasterEggs(ctx) {
     if (best) { ctx.toast('⭐ ' + best.name, 3500); tone(1319, 0.4, 'sine', 0.08); }
   });
 
+  // ================= ĐỢT 2: hàm hỗ trợ =================
+  const hhmm = h => `${Math.floor(h)} giờ ${String(Math.floor((h % 1) * 60)).padStart(2, '0')}`;
+  // Tháp Hà Nội: trò chơi trong khung sổ (bấm cọc nguồn rồi cọc đích)
+  function hanoiGame() {
+    const pegs = [[3, 2, 1], [], []], COL = ['', '#3d8fd9', '#f2c14e', '#e8453c']; let pick = -1, moves = 0; player.frozen = true;
+    const draw = (msg = '') => {
+      book.innerHTML = `<div class="card"><h3>🗼 Tháp Hà Nội</h3><p>Chuyển cả 3 đĩa sang <b>cọc phải</b>. Mỗi lần 1 đĩa, <b>không đặt đĩa to lên đĩa nhỏ</b>.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${pegs.map((pg, i) => `<button data-p="${i}" style="height:144px;display:flex;flex-direction:column-reverse;align-items:center;justify-content:flex-start;gap:3px;padding:8px 4px;${pick === i ? 'outline:3px solid #e2763c' : ''}">${pg.map(d => `<i style="display:block;height:21px;width:${d * 29}%;border-radius:8px;background:${COL[d]}"></i>`).join('')}</button>`).join('')}</div>
+        <p style="text-align:center;margin:8px 0 0">Số bước: <b>${moves}</b> ${msg}</p><button class="x" id="eggX">Đóng</button></div>`;
+      book.hidden = false; book.querySelector('#eggX').onclick = close;
+      book.querySelectorAll('[data-p]').forEach(b => b.onclick = () => {
+        const i = +b.dataset.p;
+        if (pick < 0) { if (pegs[i].length) pick = i; return draw(); }
+        const from = pegs[pick], d = from[from.length - 1], to = pegs[i];
+        if (i !== pick && (!to.length || to[to.length - 1] > d)) { to.push(from.pop()); moves++; tone(330 + d * 110, 0.2, 'triangle', 0.08); }
+        else if (i !== pick) { pick = -1; return draw('· ❌ Không được đặt đĩa to lên đĩa nhỏ!'); }
+        pick = -1;
+        if (pegs[2].length === 3) { draw(moves === 7 ? '· 🏆 Hoàn hảo!' : '· ✅ Xong!'); later(0.6, () => { close(); give('hanoi', moves === 7 ? `Chỉ ${moves} bước — đúng số ít nhất 2³ − 1 = 7!` : `Bạn dùng ${moves} bước. Thử lại xem có làm được trong 7 bước không?`); }); return; }
+        draw();
+      });
+    };
+    draw();
+  }
+  // sao băng: vệt sáng ngang trời trước mặt, có 4 giây để ước
+  let meteorT = 34 + Math.random() * 55, wishT = 0;
+  function meteor() {
+    const fx = -Math.sin(player.cam.yaw), fz = -Math.cos(player.cam.yaw), rx = -fz, rz = fx, d = 160, side = Math.random() < 0.5 ? -1 : 1;
+    const x0 = player.pos.x + fx * d - rx * side * 60, z0 = player.pos.z + fz * d - rz * side * 60, y0 = player.pos.y + 55 + Math.random() * 13;
+    for (let k = 0; k < 34; k++) later(k * 0.03, () => { const t = k / 34; spawn(x0 + rx * side * 110 * t, y0 - 21 * t, z0 + rz * side * 110 * t, 0, -0.5, 0, 0.9, k > 28 ? '#ffffff' : '#cfe3ff', 2.6 - t, 0, 0, 0); });
+    wishT = 4.5; tone(1760, 0.6, 'sine', 0.04, 880);
+  }
+  // đèn hoa đăng: 21 đèn trôi chậm trên hồ bán nguyệt
+  const LAG = [0, 39 + 21];
+  function lanterns() {
+    for (let k = 0; k < 21; k++) later(k * 0.15, () => { const a = Math.random() * Math.PI, r = 5 + Math.random() * 21; spawn(Math.cos(a) * r, TOWN_Y - 0.35, LAG[1] - 21 + Math.sin(a) * r * 0.8, (Math.random() - 0.5) * 0.3, 0.01, (Math.random() - 0.5) * 0.3, 55, k % 3 ? '#ffb347' : '#ff6a5a', 1.4, 0, 0.05, 2.5); });
+    const ph = ctx.sky && ctx.sky.state.moonPhase, lit = ctx.sky && ctx.sky.state.moonLit;
+    const name = ph == null ? '' : lit > 0.95 ? 'trăng tròn (rằm) 🌕' : lit < 0.05 ? 'trăng non (mồng một) 🌑' : ph < 0.5 ? `trăng đang lớn dần (${Math.round(lit * 100)}% sáng) 🌔` : `trăng đang khuyết dần (${Math.round(lit * 100)}% sáng) 🌖`;
+    ctx.toast(`🏮 Đèn hoa đăng trôi lung linh trên hồ.${name ? '<br>Hôm nay (theo lịch thật) là <b>' + name + '</b>.' : ''}`, 6000);
+    later(6.2, () => give('lantern'));
+  }
+
   // ================= CẬP NHẬT =================
   let tipFly = false, stillT = 0, lastP = new THREE.Vector3().copy(player.pos), fireflyT = 0, tick = 0, catT = 0, ready = false, readyT = 0;
   function update(dt, t) {
@@ -501,6 +594,39 @@ export function createEasterEggs(ctx) {
       }
     }
 
+    // ---- đợt 2 ----
+    if (near(SUNDIAL[0], SUNDIAL[1], 3.2)) ctx.offer('☀️ Xem đồng hồ mặt trời', () => {
+      if (night > 0.5 || hour < 6 || hour > 18) return ctx.toast('🌙 Đồng hồ mặt trời chỉ chạy khi có nắng: ban đêm không có bóng! Ngày mai quay lại nhé.', 4000);
+      ctx.toast(`☀️ Bóng của kim chỉ khoảng <b>${hhmm(hour)}</b>. Mỗi giờ bóng xoay <b>15°</b> vì Trái Đất tự quay 360° trong 24 giờ.`, 6500); later(6.6, () => give('sundial'));
+    }, 3);
+    if (near(CUCKOO[0], CUCKOO[1], 34)) {
+      const noon = hour >= 11.95 && hour < 12.4;
+      if (noon && !S.found.cuckoo && !self._cu) {
+        self._cu = true; const [x, z] = CUCKOO;
+        for (let k = 0; k < 12; k++) later(k * 0.55, () => { tone(659, 0.22, 'sine', 0.12, 0, 0); tone(523, 0.3, 'sine', 0.12, 0, 0.24); spawn(x, TOWN_Y + 3.5, z, (Math.random() - 0.5) * 2, 1.5, (Math.random() - 0.5) * 2, 1.2, '#ffe14a', 0.5, 1); });
+        ctx.toast('🐦 <b>Cúc cu! Cúc cu!</b> Chú chim cu ló ra gáy đủ <b>12 tiếng</b>: 12 giờ trưa!', 6000); later(6.8, () => give('cuckoo'));
+      }
+      if (near(CUCKOO[0], CUCKOO[1], 3)) ctx.offer('🕛 Xem đồng hồ', () => ctx.toast(`🕛 Bây giờ là <b>${hhmm(hour)}</b>. ${S.found.cuckoo ? 'Chim cu đang ngủ trong tổ.' : 'Nghe nói đúng <b>12 giờ trưa</b> có điều bất ngờ…'}`, 4500), 2);
+    }
+    if (near(WELL[0], WELL[1], 3)) ctx.offer('🗣️ Gọi "A lô!" xuống giếng', () => {
+      for (const [at, v] of [[0, 0.14], [0.2, 0.07], [0.4, 0.035]]) { tone(392, 0.18, 'square', v * 0.6, 0, at); tone(523, 0.22, 'square', v * 0.6, 0, at + 0.16); }
+      ctx.toast('🪣 "A lô… lô… lô…" Tiếng vọng về sau <b>0,2 giây</b>.<br>Âm thanh đi 343 m/giây, đi xuống rồi lên: độ sâu ≈ 343 × 0,2 ÷ 2 ≈ <b>34 m</b> (lại là số Fibonacci!)', 8000);
+      later(8.2, () => give('well'));
+    }, 3);
+    if (near(HANOI[0], HANOI[1], 3.4)) ctx.offer('🗼 Chơi Tháp Hà Nội', hanoiGame, 3);
+    if (near(BOTTLE[0], BOTTLE[1], 3)) ctx.offer('📜 Mở chai thông điệp', () => {
+      const i = (S.letter = (S.letter || 0) + 1) - 1; save(); tone(880, 0.3, 'triangle', 0.08);
+      ctx.toast(`📜 ${LETTERS[i % LETTERS.length]}<br><small>(Nhớ: đừng xả rác ra biển nhé — chai này là để học thôi!)</small>`, 8000);
+      if (!S.found.bottle) later(8.2, () => give('bottle'));
+    }, 3);
+    if (near(FOSSIL[0], FOSSIL[1], 3.6)) ctx.offer('🔍 Xem hoá thạch', () => {
+      ctx.toast('🐚 Hoá thạch <b>cúc đá (ammonite)</b>: loài sống ở biển, tuyệt chủng cùng khủng long khoảng <b>66 triệu năm</b> trước. Thấy hoá thạch biển trên đồi nghĩa là xưa kia nơi đây từng là <b>đáy biển</b>!', 8500);
+      later(8.6, () => give('fossil'));
+    }, 3);
+    if (night > 0.6 && !flying && (meteorT -= dt) <= 0) { meteorT = 55 + Math.random() * 89; meteor(); }
+    if (wishT > 0) { wishT -= dt; ctx.offer('🌠 Ước điều ước!', () => { wishT = 0; sparkle(p.x, p.y + 2, p.z, 34, '#cfe3ff'); give('meteor', 'Điều ước của bạn đã bay lên cùng sao băng ✨') || ctx.toast('🌠 Lại một điều ước nữa!', 2500); }, 8); }
+    if (night > 0.5 && Math.hypot(p.x - LAG[0], p.z - LAG[1]) < 30 && (self._lanT = (self._lanT || 0) - dt) <= 0) ctx.offer('🏮 Thả đèn hoa đăng', () => { self._lanT = 21; lanterns(); }, 2);
+
     updateWhale(dt);
     updateParticles(dt, t);
   }
@@ -508,7 +634,7 @@ export function createEasterEggs(ctx) {
   const self = {
     update, get found() { return S.found; }, give, cubes: CUBES, fireworks, sunflowerBloom, whale: () => whaleJump(true), showStars, openBook,
     reset: () => { for (const k of Object.keys(S)) delete S[k]; Object.assign(S, { found: {}, cubes: [], ring: [], tale: 0 }); save(); label(); },
-    get particles() { return pTop; }, get cat() { return cat; }, paint, grow: () => { S.seed = Date.now() - GROW * 1000; save(); }, summonBut,
+    get particles() { return pTop; }, get cat() { return cat; }, paint, grow: () => { S.seed = Date.now() - GROW * 1000; save(); }, summonBut, meteor, lanterns, hanoiGame,
     meshes: () => [cubes, points, ringMesh, statics, stelePlane, flower, whale, but],
   };
   return self;
