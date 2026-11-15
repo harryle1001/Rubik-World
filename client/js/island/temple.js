@@ -4,9 +4,11 @@ import * as THREE from 'three';
 import { toon, addOutline } from './style.js';
 import { loadModel } from './models.js';
 import { pickQuestions } from './quiz-data.js';
+import { TEMPLE_C } from './layout.js';
 
 export const TEMPLES = [
-  { id: 'den-tri-thuc', name: 'Đền Tri Thức', x: 0, z: -6, rot: 0, subjects: ['toan', 'khoahoc'], need: 3, reward: { id: 'ngoc', name: 'Ngọc Tri Thức', icon: '💎' } },
+  { id: 'den-tri-thuc', name: 'Đền Tri Thức', x: TEMPLE_C[0], z: TEMPLE_C[1], rot: Math.PI / 4,   // khu I (rừng & đền), cổng nhìn về Trường Rubik
+    subjects: ['toan', 'khoahoc'], need: 3, reward: { id: 'ngoc', name: 'Ngọc Tri Thức', icon: '💎' } },
 ];
 const SAVE = 'island.temples', INV = 'island.inventory';
 const load = k => { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } };
