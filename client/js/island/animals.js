@@ -45,10 +45,9 @@ export function createAnimals(ctx) {
   function update(dt) {
     const p = ctx.player.pos;
     for (const A of list) {
-      if (A.ridden) continue; // đang được cưỡi (mounts.js điều khiển)
       const d = A.root.position.distanceTo(p);
       if (d > 70) { A.root.visible = false; continue; } A.root.visible = true; // ở xa: không cập nhật (LOD)
-      if (A.S.shy && d < A.S.shy && ctx.player.speed > 3 && !A.fleeing) { // đi chậm lại gần thì thú không sợ (để cưỡi) // chạy ra xa người chơi
+      if (A.S.shy && d < A.S.shy && !A.fleeing) { // chạy ra xa người chơi
         v.subVectors(A.root.position, p).setY(0).normalize().multiplyScalar(10).add(A.root.position);
         if (ok(A.S, v.x, v.z)) { A.target = v.clone(); A.fleeing = true; A.wait = 0; }
       }

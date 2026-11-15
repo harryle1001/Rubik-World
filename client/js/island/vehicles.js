@@ -1,6 +1,6 @@
 // vehicles.js — Hệ thống cưỡi/đi phương tiện dùng chung: 🚲 20 kiểu xe đạp (bikes.js), ⛵ thuyền chèo, khinh khí cầu,
 // và thú cưỡi / phượng hoàng (mounts.js đăng ký qua ctx.vehicles.register).
-// Phím: E tương tác (lên/xuống mọi thứ) · B xe đạp · V đổi kiểu xe · R chuông · F khinh khí cầu · P gọi phượng hoàng
+// Phím: E tương tác (lên/xuống mọi thứ) · B xe đạp · V đổi kiểu xe · R chuông · F khinh khí cầu · H huýt sáo gọi thú cưỡi (mounts.js)
 //       Shift chạy nhanh · khi bay: Space lên, C/Ctrl xuống. Điện thoại: các nút cạnh Chạy/Nhảy.
 import * as THREE from 'three';
 import { CFG } from './config.js';
@@ -101,7 +101,7 @@ export function createVehicles(ctx) {
   const ui = id => document.getElementById(id);
   function setUI() {
     const t = cur && cur.type, fly = cur && cur.mode.fly;
-    ui('bBike').textContent = t === 'bike' ? '🚶' : '🚲'; ui('bBalloon').innerHTML = t === 'balloon' ? '🚶' : ICON.balloon; ui('bPhoenix').innerHTML = t === 'phoenix' ? '🚶' : ICON.phoenix;
+    ui('bBike').textContent = t === 'bike' ? '🚶' : '🚲'; ui('bBalloon').innerHTML = t === 'balloon' ? '🚶' : ICON.balloon;
     ui('bBell').hidden = ui('bStyle').hidden = t !== 'bike'; ui('bUp').hidden = ui('bDown').hidden = !fly;
     ui('bJump').hidden = !!t; ui('bRun').hidden = !!t && !cur.mode.boost; ui('bRun').textContent = t ? 'Nhanh' : 'Chạy';
   }
@@ -201,7 +201,7 @@ export function createVehicles(ctx) {
 
     if (!cur) {
       if (pl.frozen) return;
-      const v = nearestAny(); if (v) ctx.offer(v.label, () => v.type === 'boat' ? mount(v) : v.type === 'balloon' ? toggleBalloon() : mount(v), 3);
+      const v = nearestAny(); if (v) { if (v.offer) v.offer(); else ctx.offer(v.label, () => v.type === 'balloon' ? toggleBalloon() : mount(v), 3); } // thú cưỡi tự quyết định nhãn (thuần phục / cưỡi)
       if ((scanT -= dt) <= 0) { scanT = 0.25; edge = onLand() && p.y < W + 3.5 && pl.grounded ? findAround(isWater, 1.5, 4.5) : null; }
       if (edge) { const e = edge; ctx.offer('⛵ Lên thuyền', () => boardBoatAt(e), 1); }
       return;
