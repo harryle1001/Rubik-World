@@ -7,7 +7,7 @@
 import * as THREE from 'three';
 import { toon } from './style.js';
 import { CFG } from './config.js';
-import { LAND } from './layout.js';
+import { LAND, TEMPLE_C } from './layout.js';
 
 const ACTIVE = 70;
 export const FAUNA_INFO = {
@@ -29,7 +29,7 @@ export function createFauna(ctx) {
   const { scene, terrain } = ctx, mob = CFG.isMobile, o = new THREE.Object3D(), zero = new THREE.Matrix4().makeScale(0, 0, 0);
   const groups = [], kinds = {};
   const rand = (a, b) => a + Math.random() * (b - a);
-  const landPt = (cond, tries = 80) => { for (let k = 0; k < tries; k++) { const r = LAND[(Math.random() * LAND.length) | 0], useIsland = Math.random() < 0.4; const x = useIsland ? rand(-60, 60) : rand(r[0], r[2]), z = useIsland ? rand(-60, 60) : rand(r[1], r[3]); if (cond(terrain.heightAt(x, z), x, z)) return [x, z]; } return null; };
+  const landPt = (cond, tries = 80) => { for (let k = 0; k < tries; k++) { const r = LAND[(Math.random() * LAND.length) | 0], useIsland = Math.random() < 0.4; const x = useIsland ? TEMPLE_C[0] + rand(-60, 60) : rand(r[0], r[2]), z = useIsland ? TEMPLE_C[1] + rand(-60, 60) : rand(r[1], r[3]); if (cond(terrain.heightAt(x, z), x, z)) return [x, z]; } return null; };
 
   function kind(key, parts, n) { // parts: [[geo, color], …] → mỗi phần 1 InstancedMesh
     const meshes = parts.map(([geo, col]) => { const m = new THREE.InstancedMesh(geo, toon(col, { side: THREE.DoubleSide }), n); m.castShadow = key !== 'butterfly'; m.frustumCulled = false; for (let i = 0; i < n; i++) m.setMatrixAt(i, zero); scene.add(m); return m; });

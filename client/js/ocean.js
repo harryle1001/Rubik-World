@@ -12,7 +12,7 @@ import { createNet } from './island/net.js';
 import { createAnimals } from './island/animals.js';
 import { createSchoolTown } from './island/school-town.js';
 import { createWorldMap } from './island/world-map.js';
-import { SPAWN, landDist } from './island/layout.js';
+import { SPAWN, landDist, blocked, ISLAND_R, TEMPLE_C } from './island/layout.js';
 import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
 import { KINDS } from './island/characters.js';
@@ -51,9 +51,9 @@ const player = ctx.player = createPlayer(ctx);
 // Model Blender (.glb): đá (Draco) và rùa (Meshopt) rải trên bãi cát
 {
   const beach = [], rocks = [];
-  for (let i = 0; i < 400 && (beach.length < 6 || rocks.length < 24); i++) {
-    const a = Math.random() * 6.283, r = 40 + Math.random() * 45, x = Math.cos(a) * r, z = Math.sin(a) * r, h = terrain.heightAt(x, z);
-    if (h > 0.25 && h < 1.2 && landDist(x, z) > 4) (beach.length < 6 && i % 3 === 0 ? beach : rocks).push([x, h, z, 0.6 + Math.random() * 0.9, Math.random() * 6.28]);
+  for (let i = 0; i < 1200 && (beach.length < 6 || rocks.length < 24); i++) {
+    const a = Math.random() * 6.283, r = ISLAND_R * (0.7 + Math.random() * 0.35), x = Math.cos(a) * r, z = Math.sin(a) * r, h = terrain.heightAt(x, z);
+    if (h > 0.25 && h < 1.2 && !blocked(x, z, 4)) (beach.length < 6 && i % 3 === 0 ? beach : rocks).push([x, h, z, 0.6 + Math.random() * 0.9, Math.random() * 6.28]);
   }
   scatterModel(scene, 'rua', beach); scatterModel(scene, 'da', rocks);
   for (const [x, , z, s] of rocks) ctx.colliders.push({ x, z, r: 0.6 * s });
@@ -75,13 +75,14 @@ document.getElementById('bSchool').onclick = () => school.goSchool();
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
 document.getElementById('bMenu').onclick = () => school.menu();
 
-// Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại cạnh bãi xuất phát, hoa, nấm, gốc cây, pha lê quanh đền
+// Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại, hoa, nấm, gốc cây, pha lê quanh đền (khu I rừng & đền, layout.js)
 {
+  const [TX, TZ] = TEMPLE_C, ux = Math.SQRT1_2, uz = Math.SQRT1_2, T = (u, v) => [TX + u * uz + v * ux, TZ - u * ux + v * uz];   // u ngang, v hướng về trường
   const put = (name, x, z, s = 1, ry = 0) => loadModel(name).then(m => { if (!m) return; m.position.set(x, terrain.heightAt(x, z), z); m.scale.setScalar(s); m.rotation.y = ry; scene.add(m); });
-  put('prop-campfire', 7, 14, 1.2); put('prop-tent', 11, 17, 2.2, -2.3); put('prop-log', 5.2, 16, 1.2, 0.4); put('prop-log', 8.8, 11.6, 1.2, 1.9);
-  ctx.colliders.push({ x: 7, z: 14, r: 0.8 }, { x: 11, z: 17, r: 1.6 });
-  for (const [x, z] of [[-6, -1], [6, -1], [-4.5, -12], [4.5, -12]]) put('prop-crystal', x, z, 1.4, x);
-  const rnd = () => { for (let k = 0; k < 30; k++) { const a = Math.random() * 6.283, r = 14 + Math.random() * 45, x = Math.cos(a) * r, z = Math.sin(a) * r; if (terrain.heightAt(x, z) > 1.5 && terrain.slopeAt(x, z) < 0.6) return [x, z]; } return null; };
+  const [cfx, cfz] = T(11, 15), [tnx, tnz] = T(15, 18); put('prop-campfire', cfx, cfz, 1.2); put('prop-tent', tnx, tnz, 2.2, -2.3); put('prop-log', ...T(9.2, 17), 1.2, 0.4); put('prop-log', ...T(12.8, 12.6), 1.2, 1.9);
+  ctx.colliders.push({ x: cfx, z: cfz, r: 0.8 }, { x: tnx, z: tnz, r: 1.6 });
+  for (const [u, v] of [[-6, 5], [6, 5], [-4.5, -6], [4.5, -6]]) put('prop-crystal', ...T(u, v), 1.4, u);
+  const rnd = () => { for (let k = 0; k < 30; k++) { const a = Math.random() * 6.283, r = 18 + Math.random() * 55, x = TX + Math.cos(a) * r, z = TZ + Math.sin(a) * r; if (terrain.heightAt(x, z) > 1.5 && terrain.slopeAt(x, z) < 0.6 && !blocked(x, z, 1)) return [x, z]; } return null; };
   const tf = (n, sMin, sMax) => Array.from({ length: n }, rnd).filter(Boolean).map(([x, z]) => [x, terrain.heightAt(x, z), z, sMin + Math.random() * (sMax - sMin), Math.random() * 6.28]);
   scatterModel(scene, 'prop-flower-red', tf(60, 0.6, 1.1)); scatterModel(scene, 'prop-mushroom-red', tf(30, 0.5, 0.9));
   const stumps = tf(12, 0.9, 1.3); scatterModel(scene, 'prop-stump', stumps); for (const [x, , z] of stumps) ctx.colliders.push({ x, z, r: 0.5 });
