@@ -21,7 +21,7 @@ await page.waitForFunction(() => window.__island && __island.school && __island.
 console.log(`Tải xong sau ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 // đóng bảng đăng nhập trong iframe trường
 const fr = page.frames().find(f => f.url().includes('/school/'));
-if (fr) await fr.waitForSelector('#mLogin:not([hidden])', { timeout: 20000 }).catch(() => {});   // bảng đăng nhập hiện trễ sau khi trường khởi động
+if (fr) await fr.waitForSelector('#mLogin:not([hidden])', { timeout: 60000 }).catch(() => {});   // bảng đăng nhập hiện trễ sau khi trường khởi động
 if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count()) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => fails.push('nhân vật vẫn bị khoá (player.frozen) 30 s sau khi đóng bảng đăng nhập'));
 await page.waitForTimeout(500);

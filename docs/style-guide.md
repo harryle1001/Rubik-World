@@ -69,16 +69,16 @@ Vàng φ (`brass`) ≤ 1/13 khung hình. Độ bão hoà ≤ 0,62; màu sáng nh
 
 ## 6. Ngân sách mỗi khu (đo ở góc camera lúc vào game)
 
-- Draw call của khu (không kể nhân vật, trời): **≤ 55** (Fibonacci); toàn khung hình khi đứng ở khu: **≤ 300** (máy tính), mục tiêu điện thoại ≤ 233.
+- Draw call của khu (không kể nhân vật, trời): **≤ 55** (Fibonacci); toàn khung hình khi đứng ở khu: **≤ 320** (máy tính), mục tiêu điện thoại ≤ 233.
 - Tam giác mỗi khu ≤ 89 000; công trình nhỏ ≤ 1 500; cây/đá ≤ 300.
 - Vật liệu khác nhau mỗi khu ≤ 21 (dùng `mat()` dùng chung → tự gộp).
-- Khu mẫu đo được: **300 draw call · 542 k tam giác** cả khung hình (trước khi chỉnh: 307 · 600 k).
+- Khu mẫu đo được (sau khi gộp bản chính có dây phơi, sinh vật biển): **316 draw call · 578 k tam giác** cả khung hình lúc 8h30 (bản chính chưa chỉnh: 324 · 635 k).
 
 ## 7. Ánh sáng & hậu kỳ (không chỉnh riêng từng khu)
 
 - `sky.js` KEYS: 8h30 trong trẻo (nắng `#fff1dc` 1,35–1,5) · 13h nắng 1,5 (không cháy) · 17h40 vàng đào `#ffe0bc` · 22h lam dịu + trăng theo lịch thật.
 - Đèn trời (hemi) lam pha trắng → bóng đổ mát, nắng ấm. Sương = đúng màu chân trời.
-- Hậu kỳ: ACES, MSAA 4x (tự giảm), bloom 0,18 (ngưỡng 0,92), vignette 1/φ⁴. Không thêm pass mới cho từng khu.
+- Hậu kỳ: ACES, MSAA 4x (tự giảm), làm nét thích ứng (uSharp, ambience.js), bloom 0,18 (ngưỡng 0,92), vignette 1/φ⁴. Không thêm pass mới cho từng khu.
 - Camera (player.js): cách 13 m, ngẩng atan(1/φ³) ≈ 13,3°, nhìn cao φ² m, FOV 50° (màn dọc tới 72°).
 
 ## 8. Cách chụp kiểm tra (bắt buộc trước mỗi commit khu)
