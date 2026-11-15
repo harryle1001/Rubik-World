@@ -370,14 +370,14 @@ export function buildSchoolZone(a) {
     const mk = (geo, material, colOf) => {
       const im = new THREE.InstancedMesh(geo, material, phuong.length);
       phuong.forEach(([x, z, s], i) => { _o.position.set(x, Y + 0.4, z); _o.rotation.set(0, (x * 7 + z) % 6.28, 0); _o.scale.setScalar(s); _o.updateMatrix(); im.setMatrixAt(i, _o.matrix); if (colOf) im.setColorAt(i, new THREE.Color(colOf(i))); });
-      im.castShadow = true; im.receiveShadow = true; im.computeBoundingSphere(); scene.add(im); meshes.push(im); return im;
+      im.name = 'school-phuong'; im.castShadow = true; im.receiveShadow = true; im.computeBoundingSphere(); scene.add(im); meshes.push(im); return im;
     };
     mk(trunk, toon('#8a6a52'));
     mk(green, toon('#ffffff'), i => ['#5a9e4a', '#4f9a4a', '#62a852'][i % 3]);
     const rim = mk(red, toon('#ffffff'), i => REDS[i % 3]);
     const ol = new THREE.InstancedMesh(red, softOutline, phuong.length); ol.instanceMatrix = rim.instanceMatrix; ol.frustumCulled = false; ol.raycast = () => {}; scene.add(ol); meshes.push(ol);
   }
-  for (const [name, list] of Object.entries(kits)) placeKit(scene, name, list, { shadow: false });
+  for (const [name, list] of Object.entries(kits)) placeKit(scene, name, list, { shadow: false }).then(l => l.forEach(m => { m.name = 'school-kit-' + name; }));
 
   // mái mờ dần khi người chơi ở trong lớp/hành lang (để camera luôn thấy nhân vật)
   function update(p, dt = 0.016) {
