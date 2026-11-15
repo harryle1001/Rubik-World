@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><title>Kit preview</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{margin:0;background:#fbf1de;font:12px system-ui,sans-serif;color:#4a3a4f}#sheet{display:block}</style>
+<script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script>
+</head><body><canvas id="sheet"></canvas>
+<script type="module">
+// Bảng mẫu toàn bộ kit: /tools/kit-preview.html (?cols=12&cell=160&filter=house_)
+// Danh sách lấy từ /tools/kit-list.json (tạo khi chạy tools/kit-catalog). Dùng để render docs/shots/assets/catalog.png.
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+const q = new URLSearchParams(location.search), COLS = +q.get('cols') || 12, CELL = +q.get('cell') || 160, LBL = 18;
+let names = await (await fetch('/tools/kit-list.json')).json();
+if (q.get('filter')) names = names.filter(n => n.startsWith(q.get('filter')));
+const rows = Math.ceil(names.length / COLS), sheet = document.getElementById('sheet');
+sheet.width = COLS * CELL; sheet.height = rows * (CELL + LBL);
+const g = sheet.getContext('2d'); g.fillStyle = '#fbf1de'; g.fillRect(0, 0, sheet.width, sheet.height);
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
+r.setSize(CELL, CELL); r.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene();
+scene.add(new THREE.HemisphereLight(0xfff6e8, 0x8a7a6a, 1.6));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(3, 5, 4); scene.add(sun);
+const cam = new THREE.PerspectiveCamera(30, 1, 0.01, 1000);
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+for (let i = 0; i < names.length; i++) {
+  const gl = await new Promise(res => loader.load(`/assets/models/kit/${names[i]}.glb`, res, undefined, () => res(null)));
+  const x = (i % COLS) * CELL, y = Math.floor(i / COLS) * (CELL + LBL);
+  if (gl) {
+    const m = gl.scene; scene.add(m);
+    const box = new THREE.Box3().setFromObject(m), c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3());
+    const rad = Math.max(s.length() / 2, 0.01), d = rad / Math.sin(THREE.MathUtils.degToRad(15)) * 0.95;
+    cam.position.copy(c).add(new THREE.Vector3(1, 0.75, 1.15).normalize().multiplyScalar(d)); cam.lookAt(c);
+    cam.near = d / 100; cam.far = d * 10; cam.updateProjectionMatrix();
+    r.setClearColor(i % 2 ? 0xf3e4c8 : 0xf6ead4, 1); r.render(scene, cam);
+    g.drawImage(r.domElement, x, y);
+    scene.remove(m);
+    g.fillStyle = '#8a7a6a'; g.font = '10px system-ui'; g.fillText(`${s.x.toFixed(1)}×${s.y.toFixed(1)}×${s.z.toFixed(1)}`, x + 4, y + 12);
+  }
+  g.fillStyle = '#4a3a4f'; g.font = 'bold 11px system-ui'; g.fillText(names[i], x + 4, y + CELL + 13, CELL - 8);
+}
+document.title = 'done'; window.kitDone = true;
+</script></body></html>

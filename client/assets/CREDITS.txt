@@ -47,3 +47,21 @@ audio/bgm-temple     "Oriental" — shadowfire452 — https://opengameart.org/co
 models/kit/*.glb (cây, bụi, đá, hoa, hàng rào, thùng, nhà building_a–h, xe, thú nhỏ…)
   Quaternius (https://quaternius.com) và Kenney (https://kenney.nl), CC0 1.0
   Lấy từ gói npm "@netforge/asset-library-files" 0.2.0, thư mục library/lowpoly (NOTICE trong gói ghi rõ giấy phép CC0).
+
+models/kit/ đợt 2 (house_*, prop_*, boat_*, dock_*, bridge_*, plant_*, rock_*, fence_*, sport_*, farm_*, camp_*, vehicle_*) — danh sách & kích thước: docs/kit-catalog.md
+  Kenney (https://kenney.nl), CC0 1.0 — tải từ trang OpenGameArt chính thức của Kenney (mỗi trang ghi "CC0", kèm License.txt trong gói):
+    Fantasy Town Kit 2.0  https://opengameart.org/content/fantasy-town-kit
+    City Kit Suburban 2.0 https://opengameart.org/content/city-kit-suburban
+    City Kit Commercial 2.1 https://opengameart.org/content/city-kit-commercial
+    Watercraft Kit        https://opengameart.org/content/watercraft-kit
+    Pirate Kit 2.1        https://opengameart.org/content/pirate-kit
+    Survival Kit          https://opengameart.org/content/survival-kit
+    Holiday Kit           https://opengameart.org/content/holiday-kit
+    Graveyard Kit 5.0     https://opengameart.org/content/graveyard-kit
+    Mini Arena            https://opengameart.org/content/mini-arena
+    Minigolf Kit          https://opengameart.org/content/minigolf-kit
+    Mini Skate 2.0        https://opengameart.org/content/mini-skate
+    Nature Kit 2.1        https://opengameart.org/content/nature-kit
+    Platformer Kit        https://opengameart.org/content/platformer-kit
+    Car Kit 3.1           https://opengameart.org/content/car-kit
+  Đã chuẩn hoá bằng tools/kit/process.mjs (gltf-transform: gộp mesh, texture bảng màu 128 px, nén Meshopt).
