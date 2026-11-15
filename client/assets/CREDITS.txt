@@ -49,3 +49,42 @@ audio/bgm-temple     "Oriental" — shadowfire452 — https://opengameart.org/co
 Thời tiết (weather.js): tiếng mưa, gió, sấm tự tổng hợp bằng Web Audio (nhiễu lọc) — không dùng file âm thanh.
 
 Âm thanh môi trường của ambience.js (chuông chùa, trống trường, gà gáy, ve sầu, tiếng rao xe bánh mì/kem, cá quẫy nước, lội nước): tự tổng hợp bằng Web Audio trong code, không dùng file — không có bản quyền.
+
+models/kit/*.glb (cây, bụi, đá, hoa, hàng rào, thùng, nhà building_a–h, xe, thú nhỏ…)
+  Quaternius (https://quaternius.com) và Kenney (https://kenney.nl), CC0 1.0
+  Lấy từ gói npm "@netforge/asset-library-files" 0.2.0, thư mục library/lowpoly (NOTICE trong gói ghi rõ giấy phép CC0).
+
+models/kit/ đợt 2 (house_*, prop_*, boat_*, dock_*, bridge_*, plant_*, rock_*, fence_*, sport_*, farm_*, camp_*, vehicle_*) — danh sách & kích thước: docs/kit-catalog.md
+  Kenney (https://kenney.nl), CC0 1.0 — tải từ trang OpenGameArt chính thức của Kenney (mỗi trang ghi "CC0", kèm License.txt trong gói):
+    Fantasy Town Kit 2.0  https://opengameart.org/content/fantasy-town-kit
+    City Kit Suburban 2.0 https://opengameart.org/content/city-kit-suburban
+    City Kit Commercial 2.1 https://opengameart.org/content/city-kit-commercial
+    Watercraft Kit        https://opengameart.org/content/watercraft-kit
+    Pirate Kit 2.1        https://opengameart.org/content/pirate-kit
+    Survival Kit          https://opengameart.org/content/survival-kit
+    Holiday Kit           https://opengameart.org/content/holiday-kit
+    Graveyard Kit 5.0     https://opengameart.org/content/graveyard-kit
+    Mini Arena            https://opengameart.org/content/mini-arena
+    Minigolf Kit          https://opengameart.org/content/minigolf-kit
+    Mini Skate 2.0        https://opengameart.org/content/mini-skate
+    Nature Kit 2.1        https://opengameart.org/content/nature-kit
+    Platformer Kit        https://opengameart.org/content/platformer-kit
+    Car Kit 3.1           https://opengameart.org/content/car-kit
+  Đã chuẩn hoá bằng tools/kit/process.mjs (gltf-transform: gộp mesh, texture bảng màu 128 px, nén Meshopt).
+
+models/kit/ đợt 3 (furn_*, school_*, chess_*, music_*, play_*, house_city_*, prop_streetlight/trashcan/hydrant/…, plant_qt_*, rock_qt_*)
+  KayKit (Kay Lousberg), CC0 1.0 — Furniture Bits, City Builder Bits, Restaurant Bits; LICENSE.txt trong repo ghi "Creative Commons Zero, CC0"
+    https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0 (tải qua cdn.jsdelivr.net/gh), …/KayKit-City-Builder-Bits-1.0, …/KayKit-Restaurant-Bits-1.0
+  Quaternius Stylized Nature MegaKit, CC0 — https://opengameart.org/content/stylized-nature-megakit
+  OpenGameArt, đều CC0:
+    play_slide, play_swing, prop_bench_playground, plant_tree_play_*, plant_spruce_a, plant_bush_play_*, plant_flower_blue/white  "Playground" https://opengameart.org/content/playground
+    play_swing_b "Swing" https://opengameart.org/content/swing
+    sport_goal "Soccer goal" https://opengameart.org/content/soccergoal · sport_bench "Bench soccer" https://opengameart.org/content/bench-soccer
+    sport_ball_* "Sport bundle" https://opengameart.org/content/sport-bundle · sport_pingpong "Table tennis set" https://opengameart.org/content/table-tennis-set
+    chess_* "Stylized chess pieces" https://opengameart.org/content/stylized-chess-pieces (đã giản lược lưới)
+    music_guitar_classic "Classical guitar" https://opengameart.org/content/classical-guitar · music_trumpet "Low poly trumpet" https://opengameart.org/content/low-poly-trumpet
+    music_drums, music_guitar, music_guitar_electric, vehicle_bicycle "32 low poly models" https://opengameart.org/content/32-low-poly-models
+    school_chalkboard "Chalkboard pizarrón" https://opengameart.org/content/chalkboard-pizarrron · school_desk, school_chair "Banco escuela" https://opengameart.org/content/banco-escuela-school-table
+    prop_umbrella_cute "Cute umbrella" https://opengameart.org/content/cute-umbrella · prop_inner_tube "Inner tube" https://opengameart.org/content/inner-tube
+  Tự dựng bằng tools/kit/make_props.py (CC0 của dự án): sport_hoop, sport_net, sport_goal_mini, play_seesaw, prop_beach_umbrella, prop_swim_ring
+  house_suburb_*_warm: bản đổi màu mái (ngói cam) của Kenney City Kit Suburban.
