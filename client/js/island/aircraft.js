@@ -2,6 +2,7 @@
 // Người chơi lên máy bay đỗ ở sân bay, cất cánh trên đường băng và bay khắp bản đồ (camera thứ 3 bám đuôi).
 // Tự chứa: chỉ cần ocean.js gọi createAircraft(ctx) và aircraft.update(dt, t) sau vehicles.update.
 import * as THREE from 'three';
+import { T, dampV3 } from './motion.js';
 import { CFG } from './config.js';
 import { gradientMap, addOutline } from './style.js';
 import { mergeGeos } from './terrain.js';
@@ -263,7 +264,7 @@ export function createAircraft(ctx) {
   document.body.appendChild(hud);
 
   let me = null, phase = 'none', spd = 0, yaw = 0, pitch = 0, roll = 0, factT = 8, factI = Math.floor(Math.random() * FACTS.length), zoneName = '', hudT = 0, baseFov = camera.fov;
-  const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), tmp = new THREE.Vector3(), seatW = new THREE.Vector3();
+  const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), tmp = new THREE.Vector3(), seatW = new THREE.Vector3(), camV = new THREE.Vector3(), lookV = new THREE.Vector3();
   const setUI = on => {
     bBoost.hidden = !on; hud.style.display = on ? 'block' : 'none'; if (vbtns) vbtns.style.display = on ? 'none' : '';
     for (const id of ['bRun', 'bJump']) { const b = document.getElementById(id); if (b) b.hidden = on; }
@@ -275,7 +276,7 @@ export function createAircraft(ctx) {
     if (inAir(pl.group.position.x, pl.group.position.z)) { pl.group.position.set(RWY.x0 + 4, GY, RWY.z); yaw = Math.PI / 2; ctx.toast('🛫 Ra đường băng... cất cánh!', 2500); }
     else ctx.toast('🛫 Cất cánh!', 2000);
     player.vehicle = { speed: 0, turn: 0, accel: 4, fly: true, lift: 0, maxAlt: 999, anim: 'sit', seat: 0, seatZ: 0, camAdd: 0, plane: true };
-    camPos.copy(camera.position); camLook.copy(pl.group.position);
+    camPos.copy(camera.position); camLook.copy(pl.group.position); camV.set(0, 0, 0); lookV.set(0, 0, 0);
     setUI(true); if (myEng) { myEng.setVolume(0.35); myEng.isPlaying || myEng.play(); }
     setTimeout(() => ctx.toast('✈️ <b>Joystick/WASD</b>: ⬆ bay lên · ⬇ hạ thấp · ⬅➡ rẽ · <b>Shift/🚀</b> tăng tốc · <b>E</b> hạ cánh', 5000), 2600);
   }
@@ -283,7 +284,7 @@ export function createAircraft(ctx) {
     const pl = me; if (!pl) return; me = null; phase = 'none'; pl.parked = true; pl.yaw = yaw; pl.pitch = 0.1; pl.group.rotation.set(-0.1, yaw, 0);
     const p = pl.group.position, rx = -Math.cos(yaw), rz = Math.sin(yaw), x = p.x - rx * 4, z = p.z - rz * 4;
     player.vehicle = null; player.teleport(x, z, ground(x, z)); player.setRot && player.setRot(yaw); player.cam.yaw = yaw + Math.PI;
-    player.root.quaternion.identity(); player.root.rotation.y = yaw; camera.fov = baseFov; camera.updateProjectionMatrix();
+    player.root.quaternion.identity(); player.root.rotation.y = yaw; // FOV trở lại dần trong update(); camera người chơi tự hoà từ vị trí này (player.js)
     setUI(false); if (myEng && myEng.isPlaying) myEng.stop(); ctx.toast('🛬 Hạ cánh an toàn! Bấm <b>E</b> cạnh máy bay để bay tiếp.', 3000);
   }
   function land() {
@@ -324,6 +325,7 @@ export function createAircraft(ctx) {
     if (phase === 'fly') { if (P.y < floor + 5) { P.y += (floor + 5 - P.y) * Math.min(1, dt * 3); pitch = Math.max(pitch, 0.08); } P.y = Math.min(P.y, 150); }
     else if (phase === 'landing' && g2 < W + 0.3) P.y = Math.max(P.y, W + 3.5);
     else if (P.y < g2) P.y = g2;
+    if (phase === 'landing' && g2 >= W + 0.3 && P.y - g2 < 1.2) P.y = Math.max(g2, P.y - dt * (0.6 + (P.y - g2) * 1.5)); // sát đất: hạ êm xuống chạm bánh (trước đây có thể treo lơ lửng mãi)
     if (phase === 'landing' && P.y - g2 < 0.05 && spd < 0.6) return leave();
     const tilt = onGround ? -0.1 : 0;
     g.rotation.set(-pitch + tilt, yaw, onGround ? 0 : roll);
@@ -334,8 +336,8 @@ export function createAircraft(ctx) {
     // camera thứ 3 bám đuôi (cao, xa hơn khi tăng tốc)
     const fx = Math.sin(yaw), fz = Math.cos(yaw), D = boost ? 20 : 16, H = 5.5 + Math.max(0, -pitch) * 6;
     tmp.set(P.x - fx * D, P.y + H, P.z - fz * D); tmp.y = Math.max(tmp.y, ground(tmp.x, tmp.z) + 1.5, W + 1);
-    camPos.lerp(tmp, 1 - Math.exp(-dt * 3.5)); camera.position.copy(camPos);
-    camLook.lerp(tmp.set(P.x + fx * 8, P.y + 1.5 + pitch * 4, P.z + fz * 8), 1 - Math.exp(-dt * 6)); camera.lookAt(camLook);
+    dampV3(camPos, tmp, camV, T.soft, dt); camera.position.copy(camPos); // lò xo giảm chấn: bám đuôi mượt cả khi FPS dao động
+    dampV3(camLook, tmp.set(P.x + fx * 8, P.y + 1.5 + pitch * 4, P.z + fz * 8), lookV, T.quick, dt); camera.lookAt(camLook);
     const fov = baseFov + (spd / 36) * 12; if (Math.abs(camera.fov - fov) > 0.2) { camera.fov += (fov - camera.fov) * Math.min(1, dt * 2); camera.updateProjectionMatrix(); }
     if (myEng) myEng.setPlaybackRate(0.75 + spd / 40), myEng.setVolume(0.22 + (boost ? 0.15 : 0.08));
     // bảng đồng hồ: độ cao, tốc độ, hướng la bàn (Bắc = -z) + tên vùng đang bay qua
@@ -365,6 +367,7 @@ export function createAircraft(ctx) {
     if (ctx._sock) ctx._sock.rotation.y = 0.4 + Math.sin(t * 0.7) * 0.25;
     updateBirds(dt, t);
     if (me) { fly(dt, t); if (phase === 'fly') ctx.offer('🛬 Hạ cánh', land, 9); return; }
+    if (Math.abs(camera.fov - baseFov) > 0.05) { camera.fov += (baseFov - camera.fov) * Math.min(1, dt * 3); camera.updateProjectionMatrix(); } else if (camera.fov !== baseFov) { camera.fov = baseFov; camera.updateProjectionMatrix(); }
     // ở dưới đất: lời mời lên máy bay đỗ gần
     const pp = player.pos;
     if (!welcomed && inAir(pp.x, pp.z)) { welcomed = true; ctx.toast('✈️ <b>Sân bay Cánh Diều</b>: chọn 1 chiếc máy bay cổ điển, bấm <b>E</b> để bay khắp đảo!', 4500); }
