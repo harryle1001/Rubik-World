@@ -6,6 +6,7 @@ import { BLOCKS } from './layout.js';
 import { CFG } from './config.js';
 import { toon, addOutline } from './style.js';
 import { mergeGeos } from './terrain.js';
+import { T, damp, wrapAngle } from './motion.js';
 
 const W = CFG.island.waterLevel, P = CFG.player;
 const colorMat = toon('#ffffff', { vertexColors: true });
@@ -130,6 +131,7 @@ export function createVehicles(ctx) {
   }
 
   // ---------- Đi phương tiện ----------
+  const leanSt = { v: 0 }, rollSt = { v: 0 }, pitchSt = { v: 0 }; let lastRot = null, lastSp = 0, roll = 0, pitch = 0;
   let cur = null, mine = { bike: null, boat: null, balloon: null }, spin = 0, lean = 0, rowT = 0, wakeT = 0, bellT = 0, lift = 0, takeoff = 0, burnT = 0;
   const MODES = {
     bike: { speed: P.run * 1.35, turn: 5, accel: 2.6, anim: 'drive', seat: 0.42, seatZ: -0.22, camAdd: 1.5 },        // ~2.2 lần đi bộ
@@ -144,7 +146,7 @@ export function createVehicles(ctx) {
   }
   function mount(v) {
     if (cur || pl.frozen) return;
-    cur = v; const g = v.group;
+    cur = v; const g = v.group; lastRot = null; lastSp = 0; lean = roll = pitch = 0; leanSt.v = rollSt.v = pitchSt.v = 0;
     if (v.type === 'boat') pl.teleport(g.position.x, g.position.z, waterY(g.position.x, g.position.z));
     else pl.teleport(g.position.x, g.position.z, sup(g.position.x, g.position.z, g.position.y + 1));
     // quay người theo hướng xe
@@ -233,21 +235,23 @@ export function createVehicles(ctx) {
       if (edge) { const e = edge; ctx.offer('⛵ Lên thuyền', () => boardBoatAt(e), 1); }
       return;
     }
-    const g = cur.group, sp = pl.speed;
+    const g = cur.group, sp = pl.speed, wr = lastRot === null ? 0 : wrapAngle(pl.rot - lastRot) / Math.max(dt, 1e-3), acc = (sp - lastSp) / Math.max(dt, 1e-3); // tốc độ rẽ (rad/s), gia tốc
+    lastRot = pl.rot; lastSp = sp;
     if (cur.type === 'bike') {
       spin += sp * dt / WR; for (const w of cur.wheels) w.rotation.x = spin; cur.crank.rotation.x = spin * 0.55;
       // nghiêng khi rẽ: theo tốc độ quay của hướng đi
-      const turn = (pl.rot - (update.lastRot ?? pl.rot)); update.lastRot = pl.rot;
-      const want = THREE.MathUtils.clamp(-Math.atan2(Math.sin(turn), Math.cos(turn)) / Math.max(dt, 1e-3) * sp * 0.035, -0.4, 0.4);
-      lean += (want - lean) * Math.min(1, dt * 6); pl.root.rotation.z = lean;
-      const hero = pl.hero; if (hero) { const L = hero.model.getObjectByName('leg-left'), R = hero.model.getObjectByName('leg-right'), a = spin * 0.55; if (L && R) { L.rotateX(Math.sin(a) * 0.55 - 0.25); R.rotateX(-Math.sin(a) * 0.55 - 0.25); } }
+      lean = damp(lean, THREE.MathUtils.clamp(-wr * sp * 0.035, -0.4, 0.4), leanSt, T.quick, dt); pl.root.rotation.z = lean; // nghiêng vào cua (lò xo)
+      pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.012, -0.06, 0.04), pitchSt, T.soft, dt); pl.root.rotation.x = pitch;     // phanh: chúi đầu xe nhẹ
+      const hero = pl.hero; if (hero) { const L = (hero.model.getObjectByName('leg-left') || hero.model.getObjectByName('upperlegl')), R = (hero.model.getObjectByName('leg-right') || hero.model.getObjectByName('upperlegr')), a = spin * 0.55; if (L && R) { L.rotateX(Math.sin(a) * 0.55 - 0.25); R.rotateX(-Math.sin(a) * 0.55 - 0.25); } }
       ctx.offer('🚶 Xuống xe', dismount, 0.5);
       if (!onLand()) { /* xe không xuống nước: player.js đã chặn */ }
     } else if (cur.type === 'boat') {
       rowT += dt * (0.8 + Math.min(1, sp / 3) * 2.2) * (sp > 0.3 ? 1 : 0.25);
       cur.oars.forEach((o, i) => { const s = i ? 1 : -1; o.rotation.y = s * Math.sin(rowT * 2) * 0.55; o.rotation.z = s * (Math.cos(rowT * 2) * 0.18 - 0.05); });
       if (sp > 0.6 && Math.sin(rowT * 2) > 0.95 && (update.splashT ?? 0) < clock) { update.splashT = clock + 0.5; ctx.sfx('splash'); }
-      pl.root.rotation.z = Math.sin(clock * 1.3 + p.x) * 0.05; pl.root.rotation.x = Math.sin(clock * 1.7 + p.z) * 0.035;
+      // dập dềnh + nghiêng ra ngoài khi rẽ + ngóc mũi khi tăng tốc (lò xo, không giật)
+      roll = damp(roll, THREE.MathUtils.clamp(wr * sp * 0.025, -0.12, 0.12), rollSt, T.soft, dt); pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.04, -0.08, 0.06), pitchSt, T.slow, dt);
+      pl.root.rotation.z = Math.sin(clock * 1.3 + p.x) * 0.05 + roll; pl.root.rotation.x = Math.sin(clock * 1.7 + p.z) * 0.035 + pitch;
       if (sp > 0.5 && (wakeT -= dt) <= 0) { wakeT = 0.07; const i = wi++ % NW, r = pl.rot; wp.set([p.x - Math.sin(r) * 1.6 + (Math.random() - 0.5) * 0.5, W + 0.05, p.z - Math.cos(r) * 1.6 + (Math.random() - 0.5) * 0.5], i * 3); wl[i] = 1; wg.attributes.position.needsUpdate = true; }
       if ((scanT -= dt) <= 0) { scanT = 0.25; landPt = findAround(landOK, 1.2, 3.6); }
       if (landPt) { const L = landPt; ctx.offer('🏝️ Lên bờ', () => dismount(L), 4); }
@@ -256,7 +260,8 @@ export function createVehicles(ctx) {
       takeoff -= dt; const want = takeoff > 0 ? 3.5 : up ? 4 : down ? -3.5 : 0; lift += (want - lift) * Math.min(1, dt * 3); V.lift = lift;
       const burning = want > 0; cur.flame.visible = burning || Math.random() < 0.05; cur.flame.scale.set(1, (burning ? 1 : 0.4) * (0.8 + Math.random() * 0.4), 1);
       if (burning && (burnT -= dt) <= 0) { burnT = 0.9; ctx.sfx('burner'); }
-      pl.root.rotation.z = Math.sin(clock * 0.7) * 0.03 + (pl.speed / 6.5) * 0.02; pl.root.rotation.x = Math.sin(clock * 0.5) * 0.02;
+      roll = damp(roll, THREE.MathUtils.clamp(wr * 0.05, -0.06, 0.06), rollSt, T.lazy, dt); pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.03, -0.05, 0.05), pitchSt, T.lazy, dt); // giỏ treo đung đưa theo quán tính
+      pl.root.rotation.z = Math.sin(clock * 0.7) * 0.03 + (pl.speed / 6.5) * 0.02 + roll; pl.root.rotation.x = Math.sin(clock * 0.5) * 0.02 + pitch;
       if (pl.grounded && sup(p.x, p.z, p.y) > W) ctx.offer('🎈 Rời khinh khí cầu', toggleBalloon, 4);
       ctx.altitude = Math.round(p.y);
     }
