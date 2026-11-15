@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { loadAnimated, animator } from './models.js';
 import { addOutline, outlineMat } from './style.js';
 import { createFauna } from './fauna.js';
+import { T, damp, dampAngle } from './motion.js';
 import { TEMPLE_C, ISLAND_R, blocked } from './layout.js';
 
 const clean = n => n.split('|').pop(); // 'AnimalArmature|...|Walk' → 'Walk'
@@ -31,7 +32,7 @@ export function createAnimals(ctx) {
       addOutline(model); const outlines = []; model.traverse(o => { if (o.userData.outline && o.material === outlineMat) outlines.push(o); });
       const [x, z] = land(S.beach); root.position.set(x, terrain.heightAt(x, z), z); scene.add(root);
       const anim = animator(model, g.animations, clean);
-      const A = { S, root, anim, target: null, wait: Math.random() * 4, rot: Math.random() * 6.28, fleeing: false, outlines, outlineOn: true, far: 0, tick: i, sp: 0 };
+      const A = { S, root, anim, target: null, tgt: new THREE.Vector3(), wait: Math.random() * 4, rot: Math.random() * 6.28, fleeing: false, outlines, outlineOn: true, far: 0, tick: i, sp: 0, kr: { v: 0 }, ks: { v: 0 }, idle: S.idle[0] };
       anim.play(S.idle[0], 0); list.push(A);
     });
   });
@@ -49,30 +50,39 @@ export function createAnimals(ctx) {
   function update(dt) {
     const t0 = performance.now(), p = ctx.player.pos;
     fauna.update(dt, t0 / 1000);
+    for (const A of list) { // tránh nhau: đẩy nhẹ hướng đi khỏi con khác quá gần (tính thưa: chỉ con đang đi)
+      A.ax = A.az = 0; if (!A.target) continue;
+      for (const B of list) { if (B === A) continue; const ex = A.root.position.x - B.root.position.x, ez = A.root.position.z - B.root.position.z, d2 = ex * ex + ez * ez, R = (A.S.size + B.S.size) * 0.8; if (d2 < R * R && d2 > 1e-6) { const k = (R - Math.sqrt(d2)) / R; A.ax += ex * k; A.az += ez * k; } }
+    }
     for (const A of list) {
       const d = A.root.position.distanceTo(p);
       if (d > 70) { A.root.visible = false; continue; } A.root.visible = true; // ở xa: không cập nhật (LOD)
       const on = d < 18; if (A.outlineOn !== on) { A.outlineOn = on; for (const o of A.outlines) o.visible = on; } // viền chỉ cho thú gần
       // để ý người chơi: đứng lại, quay nhìn khi người chơi tới gần (trước khi bỏ chạy)
-      if (!A.target && !A.fleeing && d < (A.S.shy || 4) * 1.8) { const want = Math.atan2(p.x - A.root.position.x, p.z - A.root.position.z); let dr = want - A.rot; dr = Math.atan2(Math.sin(dr), Math.cos(dr)); A.rot += dr * Math.min(1, dt * 3); }
+      if (!A.target && !A.fleeing && d < (A.S.shy || 4) * 1.8) A.rot = dampAngle(A.rot, Math.atan2(p.x - A.root.position.x, p.z - A.root.position.z), A.kr, T.slow, dt, 3);
       if (A.S.shy && d < A.S.shy && !A.fleeing) { // chạy ra xa người chơi
         v.subVectors(A.root.position, p).setY(0).normalize().multiplyScalar(10).add(A.root.position);
-        if (ok(A.S, v.x, v.z)) { A.target = v.clone(); A.fleeing = true; A.wait = 0; }
+        if (ok(A.S, v.x, v.z)) { A.target = A.tgt.copy(v); A.fleeing = true; A.wait = 0; }
       }
       if (!A.target) {
         if ((A.wait -= dt) <= 0) {
           const a = Math.random() * 6.283, r = 4 + Math.random() * 8, tx = A.root.position.x + Math.cos(a) * r, tz = A.root.position.z + Math.sin(a) * r;
-          if (ok(A.S, tx, tz)) A.target = new THREE.Vector3(tx, 0, tz); else A.wait = 0.5;
+          if (ok(A.S, tx, tz)) A.target = A.tgt.set(tx, 0, tz); else A.wait = 0.5;
         }
-        A.anim.play(A.S.idle[Math.floor((A.wait * 7) % A.S.idle.length)] || A.S.idle[0], 0.4);
+        A.sp = damp(A.sp, 0, A.ks, T.soft, dt); // dừng có quán tính: trôi nốt vài bước rồi đứng
+        if (A.sp > 0.05) { A.root.position.x += Math.sin(A.rot) * A.sp * dt; A.root.position.z += Math.cos(A.rot) * A.sp * dt; const act = A.anim.play(A.S.walk, 0.3); if (act) act.timeScale = Math.max(0.4, A.sp / A.S.speed); }
+        else A.anim.play(A.idle, 0.4); // dáng đứng chọn 1 lần mỗi lần dừng (trước đây đổi liên tục mỗi khung hình)
       } else {
         const dx = A.target.x - A.root.position.x, dz = A.target.z - A.root.position.z, L = Math.hypot(dx, dz);
-        const spT = A.S.speed * (A.fleeing ? 2.6 : 1); A.sp += (spT - A.sp) * Math.min(1, dt * 3); const sp = A.sp; // tăng/giảm tốc mượt
-        if (L < 0.4) { A.target = null; A.fleeing = false; A.sp = 0; A.wait = 2 + Math.random() * 6; }
+        // lái mượt: quay đầu bằng lò xo (giới hạn tốc độ quay) → đi theo đường cong; chậm lại khi phải rẽ gắt hoặc sắp tới nơi
+        const want = Math.atan2(dx + A.ax * 2, dz + A.az * 2), dr = Math.atan2(Math.sin(want - A.rot), Math.cos(want - A.rot));
+        A.rot = dampAngle(A.rot, want, A.kr, A.fleeing ? T.quick : T.soft, dt, A.fleeing ? 6 : 3);
+        const base = A.S.speed * (A.fleeing ? 2.6 : 1), spT = base * Math.max(0.2, Math.cos(dr)) * Math.min(1, 0.3 + L / 2);
+        A.sp = damp(A.sp, spT, A.ks, T.slow, dt); const sp = A.sp; // tăng/giảm tốc mượt
+        A.root.position.x += Math.sin(A.rot) * sp * dt; A.root.position.z += Math.cos(A.rot) * sp * dt; // tới nơi vẫn trôi tiếp (không khựng 1 khung)
+        if (L < 0.4) { A.target = null; A.fleeing = false; A.wait = 2 + Math.random() * 6; A.idle = A.S.idle[(Math.random() * A.S.idle.length) | 0]; }
         else {
-          const want = Math.atan2(dx, dz); let dr = want - A.rot; dr = Math.atan2(Math.sin(dr), Math.cos(dr)); A.rot += dr * Math.min(1, dt * 5);
-          const step = Math.min(L, sp * dt); A.root.position.x += Math.sin(A.rot) * step; A.root.position.z += Math.cos(A.rot) * step;
-          const act = A.anim.play(A.fleeing ? A.S.run : A.S.walk, 0.3); if (act) act.timeScale = Math.max(0.5, Math.min(1.6, sp / spT)); // chân khớp tốc độ
+          const act = A.anim.play(A.fleeing ? A.S.run : A.S.walk, 0.3); if (act) act.timeScale = Math.max(0.4, Math.min(1.8, sp / base)); // chân khớp tốc độ
         }
       }
       A.root.position.y = terrain.heightAt(A.root.position.x, A.root.position.z); A.root.rotation.y = A.rot;

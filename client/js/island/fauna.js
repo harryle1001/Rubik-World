@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { toon } from './style.js';
 import { CFG } from './config.js';
 import { LAND, TEMPLE_C } from './layout.js';
+import { T, dampAngle } from './motion.js';
 
 const ACTIVE = 70;
 export const FAUNA_INFO = {
@@ -82,14 +83,16 @@ export function createFauna(ctx) {
         for (const m of g.members) {
           const gy = terrain.heightAt(m.x, m.z);
           if (g.state === 'fly') { // bay vòng cung tới chỗ mới
-            const dx = m.fx - m.x, dz = m.fz - m.z, L = Math.hypot(dx, dz); m.yaw = Math.atan2(dx, dz);
+            const dx = m.fx - m.x, dz = m.fz - m.z, L = Math.hypot(dx, dz); if (L > 0.3) m.yt = Math.atan2(dx, dz);
+            m.yaw = dampAngle(m.yaw, m.yt ?? m.yaw, m.ky || (m.ky = { v: 0 }), T.fast, dt, 12); // quay đầu mượt khi cất cánh
             if (L > 0.3) { const st = Math.min(L, 7 * dt); m.x += dx / L * st; m.z += dz / L * st; }
             m.y = Math.max(0, m.y + m.vy * dt); m.vy -= 3.2 * dt; if (L < 0.5 && m.vy < 0 && m.y <= 0.02) m.y = 0;
             put(g.K, m.i, m.x, gy + m.y + 0.08, m.z, m.yaw, 0, Math.sin(time * 28 + m.i) * 0.9);
           } else { // nhảy lò cò, mổ thóc
-            m.hop -= dt; if (m.hop <= 0) { m.hop = rand(0.4, 1.6); m.vy = 1.6; m.yaw += rand(-1.2, 1.2); }
+            m.hop -= dt; if (m.hop <= 0) { m.hop = rand(0.4, 1.6); m.vy = 1.6; m.yt = (m.yt ?? m.yaw) + rand(-1.2, 1.2); }
+            m.yaw = dampAngle(m.yaw, m.yt ?? m.yaw, m.ky || (m.ky = { v: 0 }), T.fast, dt, 12);
             m.y = Math.max(0, m.y + m.vy * dt); m.vy -= 9 * dt; if (m.y > 0) { m.x += Math.sin(m.yaw) * dt * 0.6; m.z += Math.cos(m.yaw) * dt * 0.6; }
-            if (Math.hypot(m.x - g.cx, m.z - g.cz) > 3) m.yaw = Math.atan2(g.cx - m.x, g.cz - m.z);
+            if (Math.hypot(m.x - g.cx, m.z - g.cz) > 3) m.yt = Math.atan2(g.cx - m.x, g.cz - m.z);
             const peck = m.y === 0 && Math.sin(time * 6 + m.i) > 0.7 ? 0.4 : 0;
             o.position.set(m.x, gy + m.y + 0.08, m.z); o.rotation.set(peck, m.yaw, 0, 'YXZ'); o.scale.setScalar(1); o.updateMatrix();
             g.K.meshes[0].setMatrixAt(m.i, o.matrix); g.K.meshes[1].setMatrixAt(m.i, o.matrix); g.K.meshes[2].setMatrixAt(m.i, o.matrix);

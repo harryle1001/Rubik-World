@@ -20,6 +20,7 @@ import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
 import { createWeather } from './island/weather.js';
 import { createEasterEggs } from './island/easter-eggs.js';
+import { createDt } from './island/motion.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -92,10 +93,10 @@ document.getElementById('bMenu').onclick = () => school.menu();
 
 
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
-const clock = new THREE.Clock();
+const clock = new THREE.Clock(), stepDt = createDt();
 window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
-  const dt = Math.min(clock.getDelta(), 0.05);
+  const dt = stepDt(clock.getDelta()); // dt ổn định (motion.js): làm mượt khi FPS dao động, giới hạn bước
   if (!ctx.freeCam) player.update(dt); // freeCam: camera tự do để gỡ lỗi
   physics.update(dt);
   terrain.update(dt, clock.elapsedTime, player.pos);

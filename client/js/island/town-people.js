@@ -6,6 +6,7 @@
 import * as THREE from 'three';
 import { loadHero, driveHero, emote, setOutline, lookAtTarget } from './characters.js';
 import { CFG } from './config.js';
+import { T, damp, dampAngle } from './motion.js';
 
 const V = 'abcdef', SEAT_Y = 0.56; // mặt ghế đá (town-buildings.js: chân 0.42 + mặt 0.14)
 const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', sun: 'Khách du lịch', bike: 'Người đạp xe', camp: 'Bạn cắm trại', picnic: 'Gia đình dã ngoại', fishing: 'Bác câu cá', walk: 'Người đi dạo', kite: 'Bạn thả diều' };
@@ -76,27 +77,36 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       }
       if (!e && pool.length + loading.size < POOL) {
         const id = Symbol(); loading.add(id);
-        loadHero(L.kind, L.h, L.look).then(h => { loading.delete(id); if (!h) return; h.npc = true; h.model.visible = false; scene.add(h.model); pool.push({ hero: h, key: L.key, a: null, st: {}, px: 0, pz: 0, yaw: 0, far: 0, greet: 0, tick: 0, spd: 0 }); });
+        loadHero(L.kind, L.h, L.look).then(h => { loading.delete(id); if (!h) return; h.npc = true; h.model.visible = false; scene.add(h.model); pool.push({ hero: h, key: L.key, a: null, st: {}, px: 0, pz: 0, yaw: 0, far: 0, greet: 0, tick: 0, spd: 0, kx: { v: 0 }, kz: { v: 0 }, ky: { v: 0 }, ox: 0, oz: 0, kox: { v: 0 }, koz: { v: 0 } }); });
         continue;
       }
-      if (e) { e.a = a; [e.px, e.pz] = P(a.x, a.y); e.yaw = a.dir < 0 ? -Math.PI / 2 : Math.PI / 2; e.hero.model.visible = true; }
+      if (e) { e.a = a; [e.px, e.pz] = P(a.x, a.y); e.kx.v = e.kz.v = e.ky.v = e.ox = e.oz = e.kox.v = e.koz.v = 0; e.yaw = a.dir < 0 ? -Math.PI / 2 : Math.PI / 2; e.hero.model.visible = true; }
     }
     let best = null, bd = 4.5; const now = performance.now(); talkT -= dt;
     const doTalk = talkT <= 0; if (doTalk) talkT = 0.6;
+    // tránh nhau: người đang đi lách nhẹ khỏi người gần (≤ 1/φ m mỗi bên), độ lệch qua lò xo nên không giật
+    for (const e of pool) { if (!e.a) continue; e.sx = 0; e.sz = 0; }
+    for (let i = 0; i < pool.length; i++) { const A = pool[i]; if (!A.a || A.seat) continue;
+      for (let j = i + 1; j < pool.length; j++) { const B = pool[j]; if (!B.a || B.seat) continue;
+        const ex = A.px - B.px, ez = A.pz - B.pz, d2 = ex * ex + ez * ez; if (d2 > 0.81 || d2 < 1e-6) continue; const d = Math.sqrt(d2), k = (0.9 - d) * 0.5 / d;
+        A.sx += ex * k; A.sz += ez * k; B.sx -= ex * k; B.sz -= ez * k; } }
     for (const e of pool) {
-      if (!e.a) continue; const a = e.a, [x, z] = P(a.x, a.y), dx = x - e.px, dz = z - e.pz;
-      const raw = Math.hypot(dx, dz) / Math.max(dt, 1e-3); e.spd = (e.spd || 0) + (Math.min(raw, 9) - (e.spd || 0)) * Math.min(1, dt * 6); // tốc độ làm mượt (mô phỏng 2D giật)
+      if (!e.a) continue; const a = e.a; let [x, z] = P(a.x, a.y);
+      // vị trí hiển thị: lò xo giảm chấn bám theo mô phỏng 2D (đi theo đường cong mượt, tăng/giảm tốc mềm); lệch xa > 4 m thì đặt lại
+      if (Math.hypot(x - e.px, z - e.pz) > 4) { e.kx.v = e.kz.v = 0; } else { x = damp(e.px, x, e.kx, T.soft, dt); z = damp(e.pz, z, e.kz, T.soft, dt); }
+      const dx = e.kx.v, dz = e.kz.v; e.spd = Math.min(9, Math.hypot(dx, dz));
+      e.ox = damp(e.ox, Math.max(-0.618, Math.min(0.618, e.sx)), e.kox, T.slow, dt); e.oz = damp(e.oz, Math.max(-0.618, Math.min(0.618, e.sz)), e.koz, T.slow, dt);
       const dist = Math.hypot(x - p.x, z - p.z), moving = a.moving && e.spd > 0.2;
       let sit = a.cycling || a.boat || a.kind === 'bike' ? 'drive' : /sun|picnic|camp|fishing/.test(a.kind || '') ? 'floor' : false; // floor: ngồi bệt trên cát/cỏ
       // ghế đá: đứng yên gần ghế trống → ngồi; đi tiếp → đứng dậy
       if (moving || sit) { if (e.seat) { e.seat.by = null; e.seat = null; } }
       else if (!e.seat && doTalk && !a.kind) { const st = seats.find(q => !q.by && Math.hypot(q.x - x, q.z - z) < 2.2); if (st) { st.by = e; e.seat = st; } }
-      let gx = x, gz = z, face = null;
+      let gx = x + e.ox, gz = z + e.oz, face = null;
       if (e.seat) { sit = 'sit'; gx = e.seat.x; gz = e.seat.z; face = 0; }
-      else if (Math.abs(dx) + Math.abs(dz) > 0.01) face = Math.atan2(dx, dz);
+      else if (e.spd > 0.25) face = Math.atan2(dx, dz);
       else if (e.partner && e.partner.a) face = Math.atan2(e.partner.px - x, e.partner.pz - z); // nói chuyện: quay vào nhau
       else if (dist < 4 && !sit) face = Math.atan2(p.x - x, p.z - z); // đứng gần → quay về phía người chơi
-      if (face !== null) { let d = face - e.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); e.yaw += d * Math.min(1, dt * 5); }
+      if (face !== null) e.yaw = dampAngle(e.yaw, face, e.ky, T.soft, dt, 2 * Math.PI); else e.ky.v = 0; // rẽ mềm, quay tối đa 1 vòng/s
       e.px = x; e.pz = z; const m = e.hero.model, gy = groundY(gx, gz); m.position.set(gx, gy + (e.seat ? SEAT_Y : 0), gz); m.rotation.y = e.yaw;
       // đứng nói chuyện: 2 người đứng yên cách nhau < 1.8 m (kiểm tra thưa, 0.6 s/lần)
       if (doTalk) {
@@ -108,7 +118,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       if (dist < 3 && !moving && !sit && now > e.greet) { const role = a._look3d.look.role; e.greet = now + 25000; emote(e.hero, e.st, 'cheer'); const g = GREET[role] || GREET.adult; say(e, g[(Math.random() * g.length) | 0]); }
       driveHero(e.hero, { speed: moving ? e.spd : 0, grounded: true, walk: 5.5, sitting: sit, oneShot: e.st.oneShot });
       // LOD: < 35 m cập nhật animation mỗi khung hình (+ quay đầu nhìn người chơi khi < 6 m); xa hơn: 1/3 khung hình; viền chỉ < 18 m
-      if (dist < NEAR_ANIM) { e.hero.anim.update(dt + (e.far || 0)); e.far = 0; lookAtTarget(e.hero, dist < 6 && !e.seat ? p : (e.partner && dist < 15 ? { x: e.partner.px, z: e.partner.pz } : null), e.st); }
+      if (dist < NEAR_ANIM) { e.hero.anim.update(dt + (e.far || 0)); e.far = 0; let lt = null; if (dist < 6 && !e.seat) lt = p; else if (e.partner && dist < 15) { lt = e.lp || (e.lp = { x: 0, z: 0 }); lt.x = e.partner.px; lt.z = e.partner.pz; } lookAtTarget(e.hero, lt, e.st, dt); }
       else { e.far = (e.far || 0) + dt; if (++e.tick % 3 === 0 || !e.tick) { e.hero.anim.update(e.far); e.far = 0; } }
       setOutline(e.hero, dist < OUTLINE);
       if (dist < bd) { bd = dist; best = e; }
