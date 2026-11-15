@@ -12,6 +12,7 @@ import { BLOCKS } from './layout.js';
 import { Batch } from './decor.js';
 import { placeKit } from './kit.js';
 import { buildGate } from './sample/gate.js';
+import { buildPlaza } from './sample/plaza.js';
 
 // bảng màu (docs/art-style.md)
 const C = {
@@ -216,6 +217,7 @@ export function buildSchoolZone(a) {
 
   // ================= CỔNG TRƯỜNG (hướng tây) + QUẢNG TRƯỜNG + CHỐT BẢO VỆ =================
   if (RS.GATE) buildGate({ ctx, RS, D, GB, X3, Z3, Y, C, ROOM, DG, atlas, signAt, measure, rubikCube, addFoot, kit, rnd, lampPost, stoneBench, col, scene, meshes });
+  buildPlaza({ ctx, env, addFoot });   // quảng trường tròn + tượng Rubik + bảng Toán: sample/plaza.js
 
   // ================= CỘT CỜ + SÂN CHÀO CỜ (sân xi măng kẻ vạch trò chơi) =================
   let flagAt = null;

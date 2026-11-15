@@ -195,29 +195,7 @@ export function buildTownArchitecture(ctx, RS, env) {
     for (let i = 0; i < 3; i++) { const a = M.a + Math.PI / 3 + i * 2 * Math.PI / 3, r = M.r * 0.62 - 1.1; b.group(M.x + Math.cos(a) * r, Y, M.z + Math.sin(a) * r, Math.atan2(-Math.cos(a), -Math.sin(a)), () => { b.box(1.8, 0.14, 0.55, 0, 0.42, 0, '#bdb8ae'); for (const s2 of [-1, 1]) b.box(0.18, 0.42, 0.5, s2 * 0.7, 0, 0, '#a19c93'); }); addFoot(M.x + Math.cos(a) * r - 1, M.z + Math.sin(a) * r - 1, M.x + Math.cos(a) * r + 1, M.z + Math.sin(a) * r + 1); }
   } });
 
-  // BẢNG THÔNG TIN ở quảng trường trước cổng: tỷ lệ vàng φ và số π (nội dung học)
-  if (RS.GATE) {
-    const gx = X3(RS.GATE[0]), gz = Z3(RS.GATE[1]), bx = SPAWN[0] - 1, bz = gz - 9.6;
-    const c = document.createElement('canvas'); c.width = 1024; c.height = 640; const k = c.getContext('2d');
-    k.fillStyle = '#fff6df'; k.fillRect(0, 0, 1024, 640); k.strokeStyle = '#7a5a2e'; k.lineWidth = 14; k.strokeRect(7, 7, 1010, 626);
-    k.fillStyle = '#7a1f2b'; k.font = 'bold 50px system-ui'; k.textAlign = 'center'; k.fillText('Thị trấn của chúng mình xây bằng Toán!', 512, 70);
-    k.textAlign = 'left'; const line = (t, x, y, f = '30px system-ui', col = '#3b2a1e') => { k.font = f; k.fillStyle = col; k.fillText(t, x, y, 470); };
-    line('φ  Tỷ lệ vàng ≈ 1,618', 30, 140, 'bold 40px system-ui', '#b5432f');
-    ['Dãy Fibonacci: 1, 1, 2, 3, 5, 8, 13, 21…', 'mỗi số = tổng 2 số liền trước.', 'Lấy số sau chia số trước → gần 1,618.', `Mỗi lô đất: ${LOT_W} m × ${LOT_L} m (21 : 13 ≈ φ)`, `Ngôi nhà: ${HOUSE_W.toFixed(0)} m × ${HOUSE_D.toFixed(0)} m (8 : 5 ≈ φ)`, `Sân trước nhà dài ${Math.round(LOT_L / 2 - HOUSE_V1)} m.`].forEach((t, i) => line(t, 30, 195 + i * 50));
-    line('π  Số Pi ≈ 3,14', 530, 140, 'bold 40px system-ui', '#2b63d9');
-    ['Chu vi hình tròn = π × đường kính.', `Đường vòng quanh trường: bán kính ${RING_ROAD_R} m`, `→ dài 2 × π × ${RING_ROAD_R} ≈ ${Math.round(2 * Math.PI * RING_ROAD_R)} m.`, `${ZONES_N} khu vui chơi cách đều 2π/${ZONES_N} = 45°.`, `${LOTS_N} lô đất cách đều 2π/${LOTS_N} = 22,5°.`, 'Thử đếm bước đi hết một vòng nhé!'].forEach((t, i) => line(t, 530, 195 + i * 50));
-    // hình minh hoạ: xoắn ốc vàng & hình tròn
-    k.strokeStyle = '#e9b949'; k.lineWidth = 5; k.beginPath(); for (let t = 0; t < 12.6; t += 0.05) { const r = 3 * Math.pow(PHI, t * 2 / Math.PI); const x = 300 + Math.cos(t) * r, y = 560 - Math.sin(t) * r * 0.9; t ? k.lineTo(x, y) : k.moveTo(x, y); if (r > 70) break; } k.stroke();
-    k.strokeStyle = '#2b63d9'; k.beginPath(); k.arc(770, 560, 55, 0, Math.PI * 2); k.stroke(); k.beginPath(); k.moveTo(715, 560); k.lineTo(825, 560); k.stroke(); k.fillStyle = '#2b63d9'; k.font = 'bold 26px system-ui'; k.fillText('d', 762, 552);
-    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-    const g = new THREE.Group(); g.position.set(bx, Y, bz); g.rotation.y = -0.35; scene.add(g);
-    const panel = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 3.0), new THREE.MeshToonMaterial({ map: tex, gradientMap })); panel.position.set(0, 2.3, 0.08); g.add(panel); extraMeshes.push(panel);
-    B.gate.group(bx, Y, bz, -0.35, () => { B.gate.box(5.2, 3.4, 0.14, 0, 0.6, 0, '#8a5a34'); for (const sd of [-1, 1]) B.gate.box(0.22, 4.2, 0.22, sd * 2.5, 0, 0, '#6b4a2b'); B.gate.prism(5.8, 0.6, 0.6, 0, 4.2, 0, '#9c3b2e'); });
-    ctx.colliders.push({ x: bx - 2.3, z: bz, r: 0.4 }, { x: bx + 2.3, z: bz, r: 0.4 });
-    addFoot(bx - 2.7, bz - 0.6, bx + 2.7, bz + 0.6);
-    const info = `<b>φ – Tỷ lệ vàng ≈ 1,618</b><br>Dãy Fibonacci 1, 1, 2, 3, 5, 8, 13, 21… (mỗi số bằng tổng 2 số liền trước). Chia số sau cho số trước: 21 : 13 ≈ 1,615 — càng về sau càng gần φ. Mỗi lô đất ở đây rộng ${LOT_W} m, sâu ${LOT_L} m; ngôi nhà ${HOUSE_W.toFixed(0)} × ${HOUSE_D.toFixed(0)} m.<br><br><b>π – Số Pi ≈ 3,14</b><br>Chu vi hình tròn = π × đường kính. Đường vòng quanh trường có bán kính ${RING_ROAD_R} m nên dài khoảng ${Math.round(2 * Math.PI * RING_ROAD_R)} m. ${ZONES_N} khu vui chơi xếp đều trên vòng tròn, mỗi khu cách nhau 2π/${ZONES_N} = 45°.`;
-    env.infoBoard = { x: bx, z: bz, html: info };
-  }
+  // BẢNG THÔNG TIN φ & π: dời vào quảng trường mẫu (sample/plaza.js)
 
   // Cây dừa dọc bờ biển quanh đảo
   for (let i = 0; i < (low ? 60 : 120); i++) { const a = rnd() * 6.28, r = ISLAND_R * (0.72 + rnd() * 0.33), x = Math.cos(a) * r, z = Math.sin(a) * r, h = hgt(x, z); if (h > 0.5 && h < 1.6 && !blocked(x, z, 2)) palmAt(x, z, h - 0.05); }
