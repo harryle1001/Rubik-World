@@ -47,3 +47,5 @@ audio/bgm-farm       "Summers" — symphony — https://opengameart.org/content/
 audio/bgm-temple     "Oriental" — shadowfire452 — https://opengameart.org/content/oriental
 
 Thời tiết (weather.js): tiếng mưa, gió, sấm tự tổng hợp bằng Web Audio (nhiễu lọc) — không dùng file âm thanh.
+
+Âm thanh môi trường của ambience.js (chuông chùa, trống trường, gà gáy, ve sầu, tiếng rao xe bánh mì/kem, cá quẫy nước, lội nước): tự tổng hợp bằng Web Audio trong code, không dùng file — không có bản quyền.

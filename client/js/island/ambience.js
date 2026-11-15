@@ -237,7 +237,7 @@ export function createAmbience(ctx) {
     L.night.value = lit * (q >= 3 ? 0.6 : 1);
     if (L.halo) { L.halo.visible = L.pool.visible = lit > 0.02; L.pool.visible = L.pool.visible && q < 3; }
     for (const m of GLOW_MATS) m.color.setScalar(0.7 + 1.1 * lit);
-    wU.uLight.value = 0.42 + 0.58 * Math.min(1, sky.hemi.intensity / 0.85);
+    wU.uLight.value = (0.3 + 0.7 * day) * (0.75 + 0.25 * Math.min(1, sky.hemi.intensity / 0.85));   // nước tối dần theo đêm
 
     // hạt
     const nM = MOTES[q]; motes.visible = nM > 0; mg.setDrawRange(0, nM);

@@ -37,8 +37,8 @@ export function createSky(scene) {
         // sao lấp lánh + dải Ngân Hà mờ
         vec3 cell = floor(d * 240.); float r = h(cell), up = smoothstep(0.05, 0.3, d.y);
         c += step(0.9975, r) * uNight * up * (0.55 + 0.45 * sin(uTime * (1.5 + r * 6.) + r * 50.));
-        float mw = exp(-pow(dot(d, normalize(vec3(0.35, 0.25, -0.9))) * 4.5, 2.)) * (0.6 + 0.4 * h(floor(d * 90.)));
-        c += vec3(0.16, 0.15, 0.24) * mw * uNight * up;
+        float mw = exp(-pow(dot(d, normalize(vec3(0.35, 0.25, -0.9))) * 5., 2.)) * (0.65 + 0.35 * sin(d.x * 23. + sin(d.z * 17.) * 2.) * sin(d.y * 19. - d.z * 11.));
+        c += vec3(0.07, 0.065, 0.11) * mw * uNight * up;
         // trăng có pha: chỗ sáng = phần được Mặt Trời chiếu (pha 0 trăng non · 0.5 trăng tròn)
         float m = dot(d, uMoon);
         if (m > 0.995) {
