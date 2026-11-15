@@ -7,6 +7,8 @@ import * as THREE from 'three';
 import { WIND } from './terrain.js';
 import { PHI, flatDist, lagoonDist, SPAWN } from './layout.js';
 import { CFG } from './config.js';
+import { LIGHTS } from './decor.js';
+import { gradientMap } from './style.js';
 
 const W0 = CFG.island.waterLevel, NB = 233, NF = 34, NI = 21;   // hạt (Fibonacci) · dấu chân · côn trùng
 const FACT = {
@@ -60,7 +62,7 @@ export function createLiving(ctx) {
           p.y -= e * 1.15; p.x += sin(e * 2.6 + ph) * .55; p.z += cos(e * 2.1 + ph) * .35; vR = e * 3.4 + ph; sz = .2;
           col = mix(vec3(.47, .72, .25), vec3(.93, .63, .2), fract(a1.y * 13.)); al = smoothstep(0., .1, e) * (1. - smoothstep(life - .6, life, e));
         } else if (k < 1.5) { // giọt nước: văng lên rồi rơi
-          p += a1.xyz * e; p.y -= 11. * e * e; sz = .085; col = vec3(.85, .95, 1.); al = .85 * (1. - smoothstep(life * .6, life, e));
+          p += a1.xyz * e; p.y -= 11. * e * e; sz = .13; col = vec3(.9, .97, 1.); al = .85 * (1. - smoothstep(life * .6, life, e));
         } else {             // bụi: phồng ra, bay lên chậm
           p += a1.xyz * e * .6; p.y += e * .4; sz = .35 + e * .6; col = vec3(.86, .78, .62); al = .35 * (1. - smoothstep(0., life, e));
         }
@@ -164,6 +166,39 @@ export function createLiving(ctx) {
     }, 2);
   }
 
+  // ---------- Dây cờ đuôi nheo giăng giữa các cột đèn quanh trường — đung đưa theo gió (shader, 2 draw call) ----------
+  const flagG = new THREE.BufferGeometry(); flagG.setAttribute('position', new THREE.Float32BufferAttribute([-0.16, 0, 0, 0.16, 0, 0, 0, -0.34, 0], 3)); flagG.computeVertexNormals();
+  const flagM = new THREE.MeshToonMaterial({ gradientMap, side: THREE.DoubleSide });
+  flagM.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, { uT: WIND.uTime, uG: WIND.uGust, uW: WIND.uWind });
+    sh.vertexShader = 'uniform float uT, uW; uniform vec4 uG;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      vec3 fp = instanceMatrix[3].xyz; float k = dot(vec3(uG.x, 0., uG.y), normalize(instanceMatrix[2].xyz));
+      float a = k * (0.35 + uW * 0.9 + uG.z * 0.8) + sin(uT * (4. + uW * 5.) + fp.x * 1.3 + fp.z) * (0.15 + uW * 0.3);
+      transformed.z += -position.y * sin(a); transformed.y += -position.y * (1. - cos(a));`);
+  };
+  flagM.customProgramCacheKey = () => 'bunting';
+  let bunt = null, buntT = 0;
+  function buildBunting() {
+    const near = LIGHTS.filter(l => Math.hypot(l.x - SPAWN[0], l.z - SPAWN[1]) < 55), pairs = [], used = new Set();
+    for (let i = 0; i < near.length && pairs.length < 13; i++) for (let j = i + 1; j < near.length; j++) {
+      const A = near[i], B = near[j], d = Math.hypot(A.x - B.x, A.z - B.z), g = terrain.heightAt(A.x, A.z);
+      if (d < 6 || d > 13 || Math.abs(A.y - B.y) > 0.3 || A.y - g < 2.2 || A.y - g > 5 || used.has(i) || used.has(j)) continue;
+      pairs.push([A, B]); used.add(i); used.add(j); break;
+    }
+    if (!pairs.length) return null;
+    const per = 13, im = new THREE.InstancedMesh(flagG, flagM, pairs.length * per), rope = [], COL = ['#e8473c', '#ffd23f', '#3fa7ff', '#52d273', '#ffffff'], c = new THREE.Color();
+    let n = 0;
+    for (const [A, B] of pairs) {
+      const ry = Math.atan2(-(B.z - A.z), B.x - A.x), sag = Math.hypot(A.x - B.x, A.z - B.z) / (PHI * 8);   // độ võng dây = nhịp/(8φ)
+      const P = k => new THREE.Vector3(A.x + (B.x - A.x) * k, A.y + 0.15 + (B.y - A.y) * k - sag * 4 * k * (1 - k), A.z + (B.z - A.z) * k);
+      for (let i = 0; i <= 12; i++) rope.push(P(i / 12), P((i + 1) / 12));
+      rope.length -= 2;
+      for (let i = 0; i < per; i++) { _o.position.copy(P((i + 0.5) / per)); _o.rotation.set(0, ry, 0); _o.scale.setScalar(1); _o.updateMatrix(); im.setMatrixAt(n, _o.matrix); im.setColorAt(n++, c.set(COL[n % COL.length])); }
+    }
+    im.frustumCulled = false; const line = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(rope), new THREE.LineBasicMaterial({ color: '#4a3a33' }));
+    line.frustumCulled = false; scene.add(im, line); return { im, line, n: pairs.length };
+  }
+
   // ---------- Mỗi khung hình ----------
   const prev = new THREE.Vector3().copy(pl.pos); let wasWet = false, splT = 0, scT = 0, vyPrev = 0;
   function update(dt) {
@@ -184,7 +219,7 @@ export function createLiving(ctx) {
     vyPrev = onGround ? 0 : vy;
 
     // nước: lội → giọt bắn theo bước, nhảy/ngã xuống → bắn tung toé
-    const wet = !fly && p.y < W0 + 0.55 && p.y > W0 - 1.6 && terrain.heightAt(p.x, p.z) < W0 + 0.1;
+    const wet = !fly && p.y < W0 + 0.65 && p.y > W0 - 1.6 && terrain.heightAt(p.x, p.z) < W0 + 0.1;
     if (wet && !wasWet && Math.abs(vy) > 3) { splash(p.x, p.z, 21, 1.4); fact('splash'); }
     else if (wet && sp > 1.2 && (splT -= dt) <= 0) { splT = 0.13 - Math.min(0.06, sp * 0.006); splash(p.x + dx / mv * 0.3, p.z + dz / mv * 0.3, q >= 2 ? 2 : 3, 0.6 + sp * 0.06); if (sp > 4) fact('splash'); }
     wasWet = wet;
@@ -204,7 +239,8 @@ export function createLiving(ctx) {
     if (W.c > 0.6 && W.r < 0.1 && day > 0.5) fact('dragon');
 
     litter();
+    if (!bunt && (buntT -= dt) <= 0) { buntT = 2; if (LIGHTS.length > 8) bunt = buildBunting(); }
     if (bHi >= bLo) { for (const A of [A0, A1]) { A.clearUpdateRanges(); A.addUpdateRange(bLo * 4, (bHi - bLo + 1) * 4); A.needsUpdate = true; } bLo = NB; bHi = -1; }
   }
-  return { update, emit, leaves, splash, dust, shakeTree, wind, burst, foot, bugs, get litter() { return picked; } };
+  return { update, emit, leaves, splash, dust, shakeTree, wind, burst, foot, bugs, get bunting() { return bunt; }, get litter() { return picked; } };
 }
