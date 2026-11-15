@@ -14,11 +14,11 @@ import { buildTownArchitecture } from './town-buildings.js';
 export { S, TOWN_Y };
 const Y_MIN = -600, Y_MAX = 1010;                    // phần đất liền của bản đồ 2D (đã cắt thành các khối trong layout.js)
 const P = (x, y, hx) => to3(x, y, hx);               // 2D → 3D theo bố cục mới
-const REGION_COL = {
-  yard: '#d8ccb0', road: '#9a948c', beach: '#ecd9a0', north: '#8cc46e', plaza: '#cfc3a6', rubik: '#efe2c4', chess: '#efe2c4', music: '#efe2c4', hall: '#e9d8b4', office: '#efe2c4', elec: '#efe2c4',
-  attend: '#e2d2a8', rubikyard: '#dcc99a', field: '#4fa64a', giantchess: '#ece6d6', rubikpark: '#9bd26e', pond: '#9bd26e', lake: '#8cc46e', lotus: '#8fc46a',
-  flowerfield: '#f0b3c8', bpad: '#b9d68a', skate: '#a5b0bf', patin: '#a5b0bf', basket: '#c98a5a', ski: '#f4f8fb', art: '#e6c79a', farm: '#b08850',
-  hills: '#6faa4f', garden: '#f5b6c8', picnic: '#9ad26e', forest: '#4f8f3c', dalat: '#c9a87c',
+const REGION_COL = {   // nền các khu: dịu, ấm (docs/art-style.md) — không xám chết
+  yard: '#e8d9bc', road: '#c2b6a4', beach: '#f3d6a8', north: '#8fcf6a', plaza: '#e3d3b4', rubik: '#f3e6cc', chess: '#f3e6cc', music: '#f3e6cc', hall: '#efdcbc', office: '#f3e6cc', elec: '#f3e6cc',
+  attend: '#ead8b0', rubikyard: '#e6d2a6', field: '#6fb85a', giantchess: '#f1ead9', rubikpark: '#9fd477', pond: '#9fd477', lake: '#8fcf6a', lotus: '#93cf72',
+  flowerfield: '#f6c7c0', bpad: '#bfdc94', skate: '#c7d3de', patin: '#c7d3de', basket: '#d9926a', ski: '#f4f8fb', art: '#ecd2a8', farm: '#b9905e',
+  hills: '#7dbf5c', garden: '#f6c7c0', picnic: '#a3d77a', forest: '#5fa04c', dalat: '#d3b58e',
 };
 
 export function createSchoolTown(ctx) {
