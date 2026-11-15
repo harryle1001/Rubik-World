@@ -3,9 +3,11 @@
 Dùng: `placeKit(scene, name, [[x,y,z,scale,rotY],…])` (instancing, `client/js/island/kit.js`). Kích thước là hộp bao gốc (X×Y×Z, đơn vị model ≈ m) trước khi scale; nhà Kenney rất nhỏ (≈1 đơn vị) → cần `scale` 5–8. Cột "Gợi ý" là scale tham khảo.
 Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp mesh/vật liệu, texture bảng màu ≤128 px (Kenney) / ≤512 px. Bảng mẫu: `docs/shots/assets/catalog.png` (tạo lại: mở `/tools/kit-preview.html`, `?filter=house_` để lọc).
 
-**Tổng: 238 model · 6.0 MB.** Ngân sách: công trình nhỏ < 1.500 tam giác, cây/đá < 300 (⚠ = vượt, chỉ dùng ít/xa).
+**Tổng: 361 model · 9.3 MB.** Ngân sách: công trình nhỏ < 1.500 tam giác, cây/đá < 300 (⚠ = vượt, chỉ dùng ít/xa).
 
-## Nhà & công trình (38)
+Ghi chú: `house_suburb_*_warm` = bản mái ngói cam (đổi màu bảng màu bằng `tools/kit/recolor.mjs`). `plant_qt_*`, `sport_goal` dùng lá/lưới cắt alpha — `placeKit` tự bật `alphaTest`. Model Kenney/KayKit giữ tỷ lệ gốc (nhỏ), model OGA/tự dựng đã chuẩn về mét.
+
+## Nhà & công trình (66)
 
 | Tên | Kích thước X×Y×Z | Tam giác | KB | Mô tả | Gợi ý |
 |---|---|---|---|---|---|
@@ -17,6 +19,14 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `building_f` | 0.84×1.69×1.03 | 1794 ⚠ | 33.1 | Cửa hàng F | scale ≈ 7.8 → rộng ~8 m |
 | `building_g` | 0.97×1.69×0.92 | 2006 ⚠ | 36.3 | Cửa hàng G | scale ≈ 8.2 → rộng ~8 m |
 | `building_h` | 0.88×1.29×1.01 | 1512 ⚠ | 30.2 | Cửa hàng H | scale ≈ 7.9 → rộng ~8 m |
+| `house_city_a` | 1.21×1.55×1.45 | 435 | 37.9 | Nhà phố KayKit A |  |
+| `house_city_b` | 1.61×1.55×1.3 | 586 | 40.5 | Nhà phố KayKit B |  |
+| `house_city_c` | 1.21×2.25×1.3 | 666 | 41.5 | Nhà phố KayKit C |  |
+| `house_city_d` | 1.61×2.25×1.3 | 848 | 44.7 | Nhà phố KayKit D |  |
+| `house_city_e` | 2.01×2.25×1.45 | 950 | 46.3 | Nhà phố KayKit E |  |
+| `house_city_f` | 2.01×2.25×1.3 | 1097 | 48.5 | Nhà phố KayKit F |  |
+| `house_city_g` | 2.01×2.25×1.45 | 1053 | 48 | Nhà phố KayKit G |  |
+| `house_city_h` | 2.01×2.95×1.3 | 1333 | 52.5 | Nhà phố KayKit H |  |
 | `house_shop_i` | 1.24×1.68×1.3 | 2544 ⚠ | 50.6 | Cửa hàng I | scale ≈ 6.2 → rộng ~8 m |
 | `house_shop_j` | 2.08×1.69×1.34 | 5246 ⚠ | 89.6 | Cửa hàng J | scale ≈ 3.8 → rộng ~8 m |
 | `house_shop_k` | 2.08×1.47×0.94 | 2960 ⚠ | 56.9 | Cửa hàng K | scale ≈ 3.8 → rộng ~8 m |
@@ -24,29 +34,49 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `house_shop_m` | 1.24×3.15×1.24 | 3740 ⚠ | 63.4 | Cửa hàng M | scale ≈ 6.5 → rộng ~8 m |
 | `house_shop_n` | 2.32×2.48×1.82 | 4350 ⚠ | 70.5 | Cửa hàng N | scale ≈ 3.4 → rộng ~8 m |
 | `house_suburb_a` | 1.3×0.83×1.03 | 1174 | 32.7 | Nhà phố/biệt thự ngoại ô A | scale ≈ 6.2 → rộng ~8 m |
+| `house_suburb_a_warm` | 1.3×0.83×1.03 | 1174 | 33.1 | Nhà ngoại ô A — mái ngói cam (biến thể đổi màu) | scale ≈ 6.2 → rộng ~8 m |
 | `house_suburb_b` | 1.83×1.14×1.14 | 1748 ⚠ | 40.9 | Nhà ngoại ô B | scale ≈ 4.4 → rộng ~8 m |
+| `house_suburb_b_warm` | 1.83×1.14×1.14 | 1748 ⚠ | 41.3 | Nhà ngoại ô B — mái ngói cam (biến thể đổi màu) | scale ≈ 4.4 → rộng ~8 m |
 | `house_suburb_c` | 1.29×1.03×1.03 | 1196 | 32.1 | Nhà ngoại ô C | scale ≈ 6.2 → rộng ~8 m |
+| `house_suburb_c_warm` | 1.29×1.03×1.03 | 1196 | 32.5 | Nhà ngoại ô C — mái ngói cam (biến thể đổi màu) | scale ≈ 6.2 → rộng ~8 m |
 | `house_suburb_d` | 1.76×1.24×1.03 | 1757 ⚠ | 41 | Nhà ngoại ô D | scale ≈ 4.5 → rộng ~8 m |
+| `house_suburb_d_warm` | 1.76×1.24×1.03 | 1757 ⚠ | 41.3 | Nhà ngoại ô D — mái ngói cam (biến thể đổi màu) | scale ≈ 4.5 → rộng ~8 m |
 | `house_suburb_e` | 1.3×1.14×1.03 | 1731 ⚠ | 40.2 | Nhà ngoại ô E | scale ≈ 6.2 → rộng ~8 m |
+| `house_suburb_e_warm` | 1.3×1.14×1.03 | 1731 ⚠ | 40.5 | Nhà ngoại ô E — mái ngói cam (biến thể đổi màu) | scale ≈ 6.2 → rộng ~8 m |
 | `house_suburb_f` | 1.43×1.14×1.41 | 1616 ⚠ | 40.1 | Nhà ngoại ô F | scale ≈ 5.6 → rộng ~8 m |
+| `house_suburb_f_warm` | 1.43×1.14×1.41 | 1616 ⚠ | 40.4 | Nhà ngoại ô F — mái ngói cam (biến thể đổi màu) | scale ≈ 5.6 → rộng ~8 m |
 | `house_suburb_g` | 1.45×0.77×1.18 | 1067 | 32.2 | Nhà ngoại ô G | scale ≈ 5.5 → rộng ~8 m |
+| `house_suburb_g_warm` | 1.45×0.77×1.18 | 1067 | 32.5 | Nhà ngoại ô G — mái ngói cam (biến thể đổi màu) | scale ≈ 5.5 → rộng ~8 m |
 | `house_suburb_h` | 1.3×0.74×0.92 | 770 | 26.5 | Nhà ngoại ô H | scale ≈ 6.2 → rộng ~8 m |
+| `house_suburb_h_warm` | 1.3×0.74×0.92 | 770 | 26.9 | Nhà ngoại ô H — mái ngói cam (biến thể đổi màu) | scale ≈ 6.2 → rộng ~8 m |
 | `house_suburb_i` | 1.29×0.74×1.03 | 800 | 27.2 | Nhà ngoại ô I | scale ≈ 6.2 → rộng ~8 m |
+| `house_suburb_i_warm` | 1.29×0.74×1.03 | 800 | 27.6 | Nhà ngoại ô I — mái ngói cam (biến thể đổi màu) | scale ≈ 6.2 → rộng ~8 m |
 | `house_suburb_j` | 1.37×1.04×0.92 | 1210 | 32.4 | Nhà ngoại ô J | scale ≈ 5.8 → rộng ~8 m |
+| `house_suburb_j_warm` | 1.37×1.04×0.92 | 1210 | 32.8 | Nhà ngoại ô J — mái ngói cam (biến thể đổi màu) | scale ≈ 5.8 → rộng ~8 m |
 | `house_suburb_k` | 0.92×1.15×1.02 | 1024 | 29.8 | Nhà ngoại ô K | scale ≈ 7.8 → rộng ~8 m |
+| `house_suburb_k_warm` | 0.92×1.15×1.02 | 1024 | 30.2 | Nhà ngoại ô K — mái ngói cam (biến thể đổi màu) | scale ≈ 7.8 → rộng ~8 m |
 | `house_suburb_l` | 1.03×1.05×1.02 | 1310 | 34.2 | Nhà ngoại ô L | scale ≈ 7.8 → rộng ~8 m |
+| `house_suburb_l_warm` | 1.03×1.05×1.02 | 1310 | 34.6 | Nhà ngoại ô L — mái ngói cam (biến thể đổi màu) | scale ≈ 7.8 → rộng ~8 m |
 | `house_suburb_m` | 1.43×0.74×1.43 | 1112 | 32.1 | Nhà ngoại ô M | scale ≈ 5.6 → rộng ~8 m |
+| `house_suburb_m_warm` | 1.43×0.74×1.43 | 1112 | 32.5 | Nhà ngoại ô M — mái ngói cam (biến thể đổi màu) | scale ≈ 5.6 → rộng ~8 m |
 | `house_suburb_n` | 1.78×1.14×1.38 | 1612 ⚠ | 39.1 | Nhà ngoại ô N | scale ≈ 4.5 → rộng ~8 m |
+| `house_suburb_n_warm` | 1.78×1.14×1.38 | 1612 ⚠ | 39.5 | Nhà ngoại ô N — mái ngói cam (biến thể đổi màu) | scale ≈ 4.5 → rộng ~8 m |
 | `house_suburb_o` | 1.27×1.14×1.03 | 1326 | 35.7 | Nhà ngoại ô O | scale ≈ 6.3 → rộng ~8 m |
+| `house_suburb_o_warm` | 1.27×1.14×1.03 | 1326 | 36 | Nhà ngoại ô O — mái ngói cam (biến thể đổi màu) | scale ≈ 6.3 → rộng ~8 m |
 | `house_suburb_p` | 1.24×0.92×0.99 | 1282 | 33.5 | Nhà ngoại ô P | scale ≈ 6.5 → rộng ~8 m |
 | `house_suburb_q` | 1.24×0.92×0.89 | 1140 | 31 | Nhà ngoại ô Q | scale ≈ 6.5 → rộng ~8 m |
 | `house_suburb_r` | 1.03×1.14×1.02 | 1030 | 30.9 | Nhà ngoại ô R | scale ≈ 7.8 → rộng ~8 m |
+| `house_suburb_r_warm` | 1.03×1.14×1.02 | 1030 | 31.2 | Nhà ngoại ô R — mái ngói cam (biến thể đổi màu) | scale ≈ 7.8 → rộng ~8 m |
 | `house_suburb_s` | 1.41×1.14×1.09 | 1212 | 33.3 | Nhà ngoại ô S | scale ≈ 5.7 → rộng ~8 m |
+| `house_suburb_s_warm` | 1.41×1.14×1.09 | 1212 | 33.7 | Nhà ngoại ô S — mái ngói cam (biến thể đổi màu) | scale ≈ 5.7 → rộng ~8 m |
 | `house_suburb_t` | 1.31×1.16×1.41 | 2062 ⚠ | 44.4 | Nhà ngoại ô T | scale ≈ 5.7 → rộng ~8 m |
+| `house_suburb_t_warm` | 1.31×1.16×1.41 | 2062 ⚠ | 44.8 | Nhà ngoại ô T — mái ngói cam (biến thể đổi màu) | scale ≈ 5.7 → rộng ~8 m |
 | `house_suburb_u` | 1.43×1.14×1.09 | 1332 | 36.7 | Nhà ngoại ô U | scale ≈ 5.6 → rộng ~8 m |
+| `house_suburb_u_warm` | 1.43×1.14×1.09 | 1332 | 37.1 | Nhà ngoại ô U — mái ngói cam (biến thể đổi màu) | scale ≈ 5.6 → rộng ~8 m |
 | `house_tower_a` | 1.36×2.88×1.36 | 1292 | 32.9 | Toà nhà cao A |  |
 | `house_tower_b` | 1.36×4.48×1.36 | 1592 ⚠ | 37 | Toà nhà cao B |  |
 | `house_watchtower` | 3.05×2.78×3.05 | 248 | 16.1 | Chòi canh/cứu hộ |  |
+| `house_watertower` | 0.5×0.67×0.5 | 146 | 32.9 | Tháp nước |  |
 
 ## Cầu tàu / cầu (9)
 
@@ -62,7 +92,7 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `dock_platform` | 2.5×1.31×2.51 | 324 | 18.7 | Cầu tàu gỗ (đoạn) |  |
 | `dock_small` | 1.9×1.31×2.51 | 312 | 18.4 | Cầu tàu nhỏ |  |
 
-## Thuyền & xe (25)
+## Thuyền & xe (28)
 
 | Tên | Kích thước X×Y×Z | Tam giác | KB | Mô tả | Gợi ý |
 |---|---|---|---|---|---|
@@ -86,25 +116,89 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `tractor` | 1.34×1.6×2.2 | 2044 ⚠ | 40.9 | Máy cày |  |
 | `van` | 1.5×1.35×2.75 | 1418 | 31.9 | Xe van |  |
 | `vehicle_ambulance` | 1.5×1.8×3.25 | 2804 ⚠ | 55.7 | Xe cứu thương |  |
+| `vehicle_bicycle` | 1.7×1.05×0.62 | 274 | 5.3 | Xe đạp |  |
 | `vehicle_firetruck` | 1.5×1.7×3.4 | 2767 ⚠ | 55.7 | Xe cứu hoả |  |
+| `vehicle_hatchback` | 0.42×0.37×0.81 | 1194 | 48.5 | Xe hatchback |  |
 | `vehicle_police` | 1.5×1.3×3.1 | 2304 ⚠ | 52.8 | Xe cảnh sát |  |
 | `vehicle_train_loco` | 0.67×0.43×0.27 | 740 | 26.2 | Đầu tàu hoả đồ chơi |  |
 | `vehicle_train_wagon` | 0.72×0.31×0.21 | 934 | 27.4 | Toa tàu |  |
 | `vehicle_truck` | 1.5×1.3×2.95 | 2082 ⚠ | 48.7 | Xe tải |  |
+| `vehicle_wagon` | 0.42×0.37×0.94 | 1234 | 49.4 | Xe wagon |  |
 
-## Thể thao & vui chơi (7)
+## Thể thao & sân chơi (20)
 
 | Tên | Kích thước X×Y×Z | Tam giác | KB | Mô tả | Gợi ý |
 |---|---|---|---|---|---|
+| `play_seesaw` | 2.98×0.96×0.45 | 84 | 5.5 | Bập bênh |  |
+| `play_slide` | 1.14×2.2×4.11 | 576 | 10.4 | Cầu trượt |  |
+| `play_swing` | 1.55×2.4×2.12 | 482 | 8.6 | Xích đu |  |
+| `play_swing_b` | 3.4×2.6×4.1 | 1376 | 17.3 | Xích đu khung |  |
+| `sport_ball_basket` | 0.24×0.24×0.24 | 891 | 15.4 | Bóng rổ |  |
+| `sport_ball_soccer` | 0.22×0.22×0.22 | 764 | 9.2 | Bóng đá |  |
+| `sport_ball_volley` | 0.21×0.21×0.21 | 696 | 10.1 | Bóng chuyền |  |
+| `sport_bench` | 4.44×1.3×0.78 | 1773 ⚠ | 26.1 | Băng ghế dự bị |  |
+| `sport_goal` | 5×1.3×1.77 | 145 | 19.1 | Khung thành bóng đá |  |
+| `sport_goal_mini` | 3.1×2.05×1 | 96 | 4.3 | Khung thành mini 3×2 m |  |
 | `sport_golf_flag` | 0.4×1.02×0.08 | 86 | 13.5 | Cờ lỗ golf |  |
 | `sport_golf_windmill` | 1.2×1.56×1 | 282 | 16.2 | Cối xay sân mini golf |  |
 | `sport_halfpipe` | 1×0.8×1 | 84 | 15.4 | Dốc trượt ván |  |
+| `sport_hoop` | 1.8×3.82×1.43 | 312 | 9.6 | Rổ bóng rổ cao 3.05 m |  |
+| `sport_net` | 6.1×2.41×0.1 | 80 | 4.7 | Lưới bóng chuyền/cầu lông 6 m |  |
+| `sport_pingpong` | 2.74×0.98×1.82 | 1042 | 17.1 | Bàn bóng bàn |  |
 | `sport_rail` | 0.11×0.25×1 | 150 | 17.7 | Thanh trượt |  |
 | `sport_ramp` | 1×0.31×1 | 104 | 16.7 | Dốc nhảy |  |
 | `sport_scooter` | 0.32×0.44×0.69 | 410 | 22.2 | Xe trượt scooter |  |
 | `sport_skateboard` | 0.32×0.18×0.69 | 432 | 21.7 | Ván trượt |  |
 
-## Đồ vật đường phố / chợ / trường (79)
+## Nội thất, lớp học, thư viện, cờ, nhạc cụ (43)
+
+| Tên | Kích thước X×Y×Z | Tam giác | KB | Mô tả | Gợi ý |
+|---|---|---|---|---|---|
+| `chess_bishop_black` | 0.25×0.74×0.25 | 953 | 11.2 | Quân cờ Bishop đen |  |
+| `chess_bishop_white` | 0.25×0.74×0.25 | 953 | 11.2 | Quân cờ Bishop trắng |  |
+| `chess_king_black` | 0.24×0.88×0.24 | 564 | 9.1 | Quân cờ King đen |  |
+| `chess_king_white` | 0.24×0.88×0.24 | 564 | 9.1 | Quân cờ King trắng |  |
+| `chess_knight_black` | 0.26×0.71×0.34 | 952 | 18 | Quân cờ Knight đen |  |
+| `chess_knight_white` | 0.26×0.71×0.34 | 952 | 18 | Quân cờ Knight trắng |  |
+| `chess_pawn_black` | 0.25×0.6×0.25 | 466 | 5.8 | Quân cờ Pawn đen |  |
+| `chess_pawn_white` | 0.25×0.6×0.25 | 466 | 5.8 | Quân cờ Pawn trắng |  |
+| `chess_queen_black` | 0.23×0.77×0.23 | 522 | 9.7 | Quân cờ Queen đen |  |
+| `chess_queen_white` | 0.23×0.77×0.23 | 522 | 9.7 | Quân cờ Queen trắng |  |
+| `chess_rook_black` | 0.25×0.7×0.25 | 610 | 11.5 | Quân cờ Rook đen |  |
+| `chess_rook_white` | 0.25×0.7×0.25 | 610 | 11.5 | Quân cờ Rook trắng |  |
+| `furn_armchair` | 1.8×1.22×1.6 | 528 | 29.6 | Ghế bành |  |
+| `furn_book_set` | 0.78×0.5×0.36 | 196 | 27.3 | Chồng sách |  |
+| `furn_bookshelf` | 2×0.4×0.5 | 212 | 26.9 | Kệ sách (trống) |  |
+| `furn_bookshelf_full` | 2×0.82×0.5 | 482 | 32.7 | Kệ sách đầy sách (thư viện) |  |
+| `furn_bookshelf_small` | 1×1.01×0.57 | 532 | 32 | Kệ sách nhỏ |  |
+| `furn_cabinet` | 2×1×1 | 428 | 31.4 | Tủ thấp |  |
+| `furn_cactus_pot` | 0.88×0.83×0.84 | 448 | 30.1 | Chậu xương rồng |  |
+| `furn_chair` | 0.75×1.26×0.85 | 308 | 29.2 | Ghế tựa |  |
+| `furn_chair_wood` | 0.75×1.26×0.85 | 308 | 29.2 | Ghế gỗ |  |
+| `furn_chair_wood_b` | 0.75×1.26×0.85 | 384 | 30.1 | Ghế gỗ B |  |
+| `furn_couch` | 3×1.22×1.6 | 636 | 31.1 | Sofa |  |
+| `furn_kitchen_table` | 2×1×2 | 236 | 36.3 | Bàn bếp |  |
+| `furn_lamp` | 1×2.52×1 | 320 | 27.3 | Đèn cây |  |
+| `furn_picture` | 1.01×1.2×0.2 | 60 | 24.2 | Tranh treo tường |  |
+| `furn_rug` | 3×0.1×2 | 68 | 23.8 | Thảm sọc |  |
+| `furn_shelf_big` | 2×0.4×0.5 | 212 | 26.8 | Kệ lớn |  |
+| `furn_stool` | 0.75×0.5×0.75 | 216 | 27.3 | Ghế đẩu |  |
+| `furn_table` | 2×1×2 | 168 | 26.3 | Bàn |  |
+| `furn_table_long` | 3×1×2 | 168 | 26.3 | Bàn dài (đọc sách) |  |
+| `furn_table_low` | 2.4×0.5×1.5 | 276 | 27.5 | Bàn trà |  |
+| `furn_table_round` | 3×1×3 | 312 | 36.9 | Bàn tròn quán |  |
+| `furn_table_round_set` | 3×1.86×3 | 4422 ⚠ | 93.9 | Bàn tròn có đồ ăn |  |
+| `furn_table_small` | 1×1×1 | 168 | 26.4 | Bàn nhỏ |  |
+| `music_drums` | 1.9×1.2×1.33 | 180 | 4.1 | Bộ trống (màu xám, tô màu bằng code) |  |
+| `music_guitar` | 1×0.37×0.08 | 72 | 2.6 | Guitar (màu xám, tô màu bằng code) |  |
+| `music_guitar_classic` | 0.11×1×0.41 | 1435 | 27.7 | Đàn guitar cổ điển |  |
+| `music_guitar_electric` | 1×0.34×0.04 | 44 | 2.6 | Guitar điện (màu xám, tô màu bằng code) |  |
+| `music_trumpet` | 0.19×0.22×0.5 | 728 | 11 | Kèn trumpet |  |
+| `school_chair` | 0.54×0.85×0.61 | 932 | 10.8 | Ghế học sinh |  |
+| `school_chalkboard` | 3×1.49×0.09 | 84 | 22.5 | Bảng đen |  |
+| `school_desk` | 1.56×0.75×0.52 | 846 | 9.3 | Bàn học sinh |  |
+
+## Đồ vật đường phố / chợ / trường (95)
 
 | Tên | Kích thước X×Y×Z | Tam giác | KB | Mô tả | Gợi ý |
 |---|---|---|---|---|---|
@@ -135,24 +229,34 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `prop_banner_arena` | 0.6×1.02×0.22 | 228 | 15.4 | Cờ sân đấu |  |
 | `prop_banner_green` | 0.05×0.84×0.5 | 102 | 17.3 | Cờ treo xanh |  |
 | `prop_banner_red` | 0.05×0.84×0.5 | 98 | 17.3 | Cờ treo đỏ |  |
+| `prop_beach_umbrella` | 2.8×2.42×2.8 | 64 | 5 | Dù bãi biển sọc đỏ trắng |  |
 | `prop_bench` | 1.12×0.73×0.63 | 160 | 17.8 | Ghế băng gỗ |  |
+| `prop_bench_park` | 0.4×0.1×0.15 | 44 | 31 | Ghế công viên |  |
+| `prop_bench_playground` | 2.09×0.55×0.72 | 100 | 4.4 | Ghế sân chơi |  |
 | `prop_bench_short` | 0.62×0.73×0.63 | 160 | 17.9 | Ghế băng ngắn |  |
 | `prop_box` | 0.25×0.25×0.5 | 124 | 13.8 | Hộp gỗ lớn |  |
+| `prop_box_city` | 0.2×0.18×0.2 | 32 | 30.8 | Thùng carton |  |
 | `prop_bucket` | 0.14×0.19×0.14 | 68 | 12.2 | Xô gỗ |  |
 | `prop_buoy` | 0.93×1.84×0.93 | 118 | 13.8 | Phao tiêu |  |
 | `prop_buoy_flag` | 0.93×2.72×1.29 | 218 | 15.8 | Phao cờ |  |
+| `prop_burger` | 0.95×0.86×0.95 | 1622 ⚠ | 55.8 | Bánh burger |  |
 | `prop_cannon` | 1.4×1.05×1.92 | 232 | 16.3 | Đại bác cổ |  |
 | `prop_cart` | 0.89×0.54×1.34 | 608 | 24.1 | Xe đẩy gỗ chợ |  |
 | `prop_cart_high` | 0.89×0.86×1.39 | 1028 | 31.2 | Xe đẩy thùng cao |  |
 | `prop_column_arena` | 0.6×1×0.6 | 168 | 14.8 | Cột đá |  |
 | `prop_container` | 1.38×1.1×2.76 | 160 | 14.8 | Container hàng |  |
 | `prop_crate_bottles` | 1.08×1.06×1.31 | 572 | 27 | Thùng chai |  |
+| `prop_crate_carrots` | 2×0.94×2 | 1752 ⚠ | 57.7 | Sọt cà rốt |  |
+| `prop_crate_tomatoes` | 2×0.92×2 | 2072 ⚠ | 64.2 | Sọt cà chua |  |
+| `prop_dumpster` | 0.57×0.32×0.35 | 126 | 33.1 | Thùng rác lớn |  |
 | `prop_fire_basket` | 0.42×0.17×0.42 | 196 | 17.5 | Giỏ lửa |  |
 | `prop_firewood` | 0.21×0.06×0.09 | 64 | 12.1 | Bó củi |  |
 | `prop_fish_large` | 0.31×0.16×0.1 | 233 | 18.6 | Cá lớn (đồ câu) |  |
 | `prop_flag` | 1.34×2.1×0.4 | 144 | 15 | Cờ cột |  |
 | `prop_fountain` | 2×0.48×2 | 1628 ⚠ | 41.3 | Đài phun nước tròn |  |
 | `prop_heart` | 0.12×0.38×0.41 | 50 | 2.6 | Trái tim (vật phẩm) |  |
+| `prop_hydrant` | 0.14×0.22×0.13 | 180 | 33 | Trụ cứu hoả |  |
+| `prop_inner_tube` | 1×0.19×0.47 | 344 | 6.4 | Phao săm |  |
 | `prop_jewel` | 0.33×0.37×0.29 | 12 | 2.2 | Ngọc (vật phẩm) |  |
 | `prop_key` | 0.07×0.22×0.41 | 332 | 7.1 | Chìa khoá (vật phẩm) |  |
 | `prop_ladder` | 0.08×1×0.38 | 104 | 2.8 | Thang |  |
@@ -178,8 +282,14 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `prop_statue` | 0.7×1.34×0.7 | 549 | 22 | Tượng |  |
 | `prop_statue_head` | 0.73×1×0.55 | 196 | 6.3 | Tượng đầu đá |  |
 | `prop_stool` | 0.26×0.23×0.26 | 180 | 17.9 | Ghế đẩu gỗ |  |
+| `prop_streetlight` | 0.27×0.96×0.07 | 176 | 33 | Đèn đường |  |
+| `prop_swim_ring` | 1.06×0.26×1.06 | 256 | 6.1 | Phao bơi |  |
 | `prop_traffic_cone` | 0.48×0.6×0.48 | 172 | 21.1 | Cọc giao thông |  |
+| `prop_trafficlight` | 0.17×0.73×0.15 | 508 | 40.8 | Đèn giao thông |  |
+| `prop_trashcan` | 0.13×0.05×0.13 | 18 | 30.5 | Thùng rác |  |
+| `prop_trashcan_b` | 0.07×0.04×0.07 | 18 | 30.5 | Thùng rác B |  |
 | `prop_trophy` | 0.57×0.48×0.45 | 244 | 16.3 | Cúp |  |
+| `prop_umbrella_cute` | 1.39×1×1.35 | 398 | 10.7 | Ô cầm tay |  |
 | `prop_urn` | 0.26×0.38×0.26 | 230 | 19.3 | Chum/lọ |  |
 | `prop_watermill_wheel` | 0.85×1.8×1.8 | 600 | 24.6 | Guồng nước (bánh xe nước) |  |
 | `prop_wheel` | 0.24×0.48×0.47 | 192 | 19.1 | Bánh xe gỗ |  |
@@ -206,7 +316,7 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `fence_wood_gate` | 0.07×0.38×1 | 560 | 22.3 | Cổng rào gỗ |  |
 | `path_stones` | 0.16×0.01×0.36 | 36 | 15.2 | Lối đá lát |  |
 
-## Cây cối & đá (55)
+## Cây cối & đá (75)
 
 | Tên | Kích thước X×Y×Z | Tam giác | KB | Mô tả | Gợi ý |
 |---|---|---|---|---|---|
@@ -215,11 +325,16 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `flower_red` | 0.16×0.29×0.18 | 76 | 4 | Hoa đỏ |  |
 | `mushroom_red` | 0.12×0.25×0.14 | 48 | 3.5 | Nấm đỏ |  |
 | `plant_beach_grass` | 1.11×0.52×1.24 | 144 | 15.7 | Cỏ bãi biển |  |
+| `plant_bush_city` | 0.19×0.38×0.2 | 72 | 31.4 | Bụi cây phố |  |
 | `plant_bush_detailed` | 0.6×0.36×0.6 | 104 | 3.9 | Bụi chi tiết |  |
+| `plant_bush_play_a` | 2.33×1.34×2.23 | 80 | 4.3 | Bụi A |  |
+| `plant_bush_play_b` | 1.46×1.05×1.51 | 80 | 4.3 | Bụi B |  |
 | `plant_bush_round` | 0.37×0.24×0.34 | 60 | 3.1 | Bụi tròn lớn |  |
 | `plant_bush_small` | 0.38×0.21×0.34 | 16 | 2.3 | Bụi nhỏ |  |
+| `plant_flower_blue` | 0.31×0.37×0.3 | 76 | 5.6 | Hoa xanh |  |
 | `plant_flower_purple` | 0.16×0.24×0.18 | 76 | 4 | Hoa tím |  |
 | `plant_flower_red2` | 0.16×0.29×0.18 | 76 | 4 | Hoa đỏ |  |
+| `plant_flower_white` | 0.31×0.37×0.3 | 76 | 5.6 | Hoa trắng |  |
 | `plant_flower_yellow` | 0.16×0.19×0.18 | 76 | 4 | Hoa vàng |  |
 | `plant_grass` | 0.41×0.25×0.41 | 224 | 5.8 | Bụi cỏ |  |
 | `plant_hedge` | 0.25×0.25×1 | 54 | 16.8 | Bờ giậu thấp |  |
@@ -235,12 +350,25 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `plant_palm_tall` | 1.03×1.36×1.03 | 190 | 6 | Dừa cao | scale ≈ 4.4 → cao ~6 m |
 | `plant_palm_tall_detailed` | 1.03×1.42×1.03 | 336 ⚠ | 8.9 | Dừa cao chi tiết | scale ≈ 4.2 → cao ~6 m |
 | `plant_pine_round` | 0.62×1.37×0.71 | 204 | 5.4 | Thông tròn |  |
+| `plant_qt_bush` | 1.91×1.58×1.97 | 900 ⚠ | 39.9 | Bụi lá đỏ (mùa thu) |  |
+| `plant_qt_bush_flowers` | 1.91×1.58×1.97 | 1243 ⚠ | 74.4 | Bụi có hoa |  |
+| `plant_qt_clover` | 0.8×1.14×0.76 | 379 ⚠ | 36.6 | Cỏ ba lá |  |
+| `plant_qt_fern` | 2.83×0.84×2.65 | 288 | 37 | Dương xỉ |  |
+| `plant_qt_flowers_a` | 1.49×2.05×1.59 | 755 ⚠ | 69.2 | Khóm hoa A |  |
+| `plant_qt_flowers_b` | 1.78×2.49×1.37 | 844 ⚠ | 71.8 | Khóm hoa B |  |
+| `plant_qt_grass` | 0.9×1.87×0.99 | 326 ⚠ | 12.2 | Cỏ cao |  |
+| `plant_qt_mushroom` | 0.56×0.46×0.78 | 352 ⚠ | 47 | Nấm |  |
+| `plant_qt_plant` | 1.81×2.35×1.95 | 360 ⚠ | 39.2 | Cây lá to |  |
 | `plant_sand_patch` | 7.74×0.56×6.04 | 636 ⚠ | 25.8 | Bãi cát có cỏ |  |
+| `plant_spruce_a` | 5.14×8.15×5.18 | 176 | 7.5 | Vân sam A |  |
 | `plant_stump_round` | 0.36×0.21×0.37 | 96 | 4.3 | Gốc cây |  |
 | `plant_tree_blocks` | 0.6×1.19×0.6 | 132 | 4.4 | Cây khối | scale ≈ 5.0 → cao ~6 m |
 | `plant_tree_cone` | 0.53×1.43×0.53 | 132 | 4.9 | Cây hình nón | scale ≈ 4.2 → cao ~6 m |
 | `plant_tree_crooked` | 1.02×2.41×1.02 | 178 | 20.1 | Cây thân cong | scale ≈ 2.5 → cao ~6 m |
 | `plant_tree_detailed` | 0.85×1.33×0.76 | 402 ⚠ | 10.7 | Cây chi tiết | scale ≈ 4.5 → cao ~6 m |
+| `plant_tree_play_a` | 3.37×6.93×3 | 284 | 9.5 | Cây tròn A | scale ≈ 0.9 → cao ~6 m |
+| `plant_tree_play_b` | 5.52×6.27×3.5 | 354 ⚠ | 11.6 | Cây tròn B | scale ≈ 1.0 → cao ~6 m |
+| `plant_tree_play_c` | 3.59×5.61×3.32 | 372 ⚠ | 12.6 | Cây C | scale ≈ 1.1 → cao ~6 m |
 | `plant_tree_suburb` | 0.21×0.77×0.24 | 42 | 15.3 | Cây sân vườn lớn | scale ≈ 7.8 → cao ~6 m |
 | `plant_tree_suburb_small` | 0.21×0.57×0.24 | 42 | 15.3 | Cây sân vườn nhỏ | scale ≈ 10.5 → cao ~6 m |
 | `plant_tree_tall_round` | 1.02×2.75×1.02 | 126 | 18.4 | Cây cao tán tròn | scale ≈ 2.2 → cao ~6 m |
@@ -251,6 +379,8 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 | `rock_large` | 0.78×0.26×1.02 | 80 | 4.2 | Đá lớn |  |
 | `rock_nature_large` | 0.78×0.26×1.02 | 80 | 4.2 | Đá lớn |  |
 | `rock_nature_tall` | 0.98×1×0.68 | 136 | 5.8 | Đá cao |  |
+| `rock_qt_a` | 3.23×2.26×2.99 | 342 ⚠ | 46.6 | Đá vừa A |  |
+| `rock_qt_b` | 3.05×1.9×2.48 | 244 | 45 | Đá vừa B |  |
 | `rock_shore_a` | 5.11×2.9×4.39 | 264 | 18.4 | Đá bờ biển A |  |
 | `rock_shore_b` | 4.44×3.65×4.7 | 300 | 19.2 | Đá bờ biển B |  |
 | `rock_shore_c` | 3.64×2.3×3.67 | 232 | 17.6 | Đá bờ biển C |  |

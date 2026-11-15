@@ -2,22 +2,30 @@
 import fs from 'fs'; import path from 'path';
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
-import { dedup, prune, flatten, join, weld, textureCompress, meshopt, unpartition, getBounds, palette } from '@gltf-transform/functions';
-import { MeshoptEncoder, MeshoptDecoder } from 'meshoptimizer';
+import { dedup, prune, flatten, join, weld, textureCompress, meshopt, unpartition, getBounds, simplify, transformMesh } from '@gltf-transform/functions';
+import { MeshoptEncoder, MeshoptDecoder, MeshoptSimplifier } from 'meshoptimizer';
 import sharp from 'sharp';
 
-await MeshoptEncoder.ready; await MeshoptDecoder.ready;
+await MeshoptEncoder.ready; await MeshoptDecoder.ready; await MeshoptSimplifier.ready;
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'meshopt.encoder': MeshoptEncoder, 'meshopt.decoder': MeshoptDecoder });
 const [, , listFile, outDir, maxTex = '512'] = process.argv;
 const rows = fs.readFileSync(listFile, 'utf8').split('\n').filter(l => l.trim() && !l.startsWith('#')).map(l => l.split('\t'));
 const meta = fs.existsSync(path.join(outDir, '_meta.json')) ? JSON.parse(fs.readFileSync(path.join(outDir, '_meta.json'))) : {};
-for (const [src, name, source, desc] of rows) {
+for (const [src, name, source, desc, simp, fit] of rows) {
   try {
     const doc = await io.read(src);
     const root = doc.getRoot();
     for (const a of root.listAnimations()) a.dispose();
     for (const s of root.listSkins()) s.dispose();
-    await doc.transform(dedup(), flatten(), join({ keepNamed: false }), weld(), prune(),
+    if (process.env.STRIP) for (const m of root.listMaterials()) { m.setNormalTexture(null); m.setMetallicRoughnessTexture(null); m.setOcclusionTexture(null); m.setEmissiveTexture(null); }
+    await doc.transform(dedup(), flatten(), join({ keepNamed: false }), weld(), prune());
+    if (simp && +simp < 1) await doc.transform(simplify({ simplifier: MeshoptSimplifier, ratio: +simp, error: 0.02, lockBorder: false }), prune());
+    if (fit) { // fit = "y1.2" → chiều Y = 1.2 m (scale đều), đặt đáy y=0, tâm XZ = 0
+      const sc0 = root.getDefaultScene() || root.listScenes()[0], b0 = getBounds(sc0), ax = 'xyz'.indexOf(fit[0]);
+      const k = +fit.slice(1) / (b0.max[ax] - b0.min[ax]), cx = (b0.max[0] + b0.min[0]) / 2, cz = (b0.max[2] + b0.min[2]) / 2;
+      for (const n of sc0.listChildren()) { const t = n.getTranslation(), s0 = n.getScale(); n.setTranslation([(t[0] - cx) * k, (t[1] - b0.min[1]) * k, (t[2] - cz) * k]); n.setScale(s0.map(v => v * k)); }
+    }
+    await doc.transform(
       textureCompress({ encoder: sharp, resize: [+maxTex, +maxTex], targetFormat: 'png' }),
       dedup(), prune(), meshopt({ encoder: MeshoptEncoder, level: 'medium' }), unpartition());
     root.listBuffers().slice(1).forEach(b => b.dispose());
