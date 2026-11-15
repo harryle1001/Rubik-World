@@ -17,16 +17,25 @@ export function loadModel(name) {
   return cache.get(name).then(m => m && m.clone());
 }
 
-// Rải nhiều bản sao 1 model bằng InstancedMesh (mỗi phần/vật liệu của model = 1 InstancedMesh)
-export async function scatterModel(scene, name, transforms) {
+// Rải nhiều bản sao 1 model bằng InstancedMesh (mỗi phần/vật liệu của model = 1 InstancedMesh).
+// cell > 0: chia theo ô cell×cell m (vd. 55, Fibonacci) → camera cắt bỏ ô ngoài khung hình, perf.js ẩn ô xa (chỉ số instance
+// khi đó tính trong từng ô — đừng dùng khi cần setColorAt/getMatrixAt theo chỉ số của cả danh sách).
+// userData.itemR = bán kính 1 vật lớn nhất trong mesh (perf.js dùng để ẩn vật nhỏ ở xa, tắt bóng vật < 1 m).
+export async function scatterModel(scene, name, transforms, cell = 0) {
   const src = await loadModel(name); if (!src || !transforms.length) return [];
   src.updateMatrixWorld(true);
+  const groups = new Map();
+  for (const t of transforms) { const k = cell ? Math.floor(t[0] / cell) + ',' + Math.floor(t[2] / cell) : 0; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(t); }
   const out = [], o = new THREE.Object3D();
   src.traverse(mesh => {
     if (!mesh.isMesh) return;
-    const im = new THREE.InstancedMesh(mesh.geometry, mesh.material, transforms.length);
-    transforms.forEach(([x, y, z, s, ry], i) => { o.position.set(x, y, z); o.rotation.set(0, ry, 0); o.scale.setScalar(s); o.updateMatrix(); im.setMatrixAt(i, o.matrix.clone().multiply(mesh.matrixWorld)); });
-    im.castShadow = im.receiveShadow = true; im.computeBoundingSphere(); scene.add(im); out.push(im);
+    if (!mesh.geometry.boundingSphere) mesh.geometry.computeBoundingSphere();
+    const r0 = mesh.geometry.boundingSphere.radius * mesh.matrixWorld.getMaxScaleOnAxis();
+    for (const list of groups.values()) {
+      const im = new THREE.InstancedMesh(mesh.geometry, mesh.material, list.length); let sMax = 0;
+      list.forEach(([x, y, z, s, ry], i) => { o.position.set(x, y, z); o.rotation.set(0, ry, 0); o.scale.setScalar(s); o.updateMatrix(); im.setMatrixAt(i, o.matrix.clone().multiply(mesh.matrixWorld)); sMax = Math.max(sMax, s); });
+      im.castShadow = im.receiveShadow = true; im.userData.itemR = r0 * sMax; im.computeBoundingSphere(); scene.add(im); out.push(im);
+    }
   });
   return out;
 }
