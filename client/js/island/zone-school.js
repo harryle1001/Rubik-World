@@ -8,11 +8,12 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { toon } from './style.js';
-import { BLOCKS } from './layout.js';
+import { BLOCKS, PHI } from './layout.js';
 import { Batch } from './decor.js';
 import { placeKit } from './kit.js';
 import { buildGate } from './sample/gate.js';
 import { buildPlaza } from './sample/plaza.js';
+import { FC, cbox, wallBody, archWindow, blindArch, roundPier, vine, arcadeBays, arcadeFront, column, pediment, oculus, fanlight, rubikRelief, gableRoof, hipRoofPlus, bellTower } from './sample/facade.js';
 
 // bảng màu (docs/art-style.md)
 const C = {
@@ -20,7 +21,6 @@ const C = {
   shutter: '#4f9a7a', glass: '#86b9d2', floor: '#eadfc8', door: '#8a5a34', step: '#d8cfbf', stone: '#d8cfbf', stone2: '#a9a297',
   walk: '#e4ddcc', curb: '#b3ab9c', cement: '#d6d0c3', paint: '#fbf6ea', iron: '#3b3346', gold: '#e9b949', lantern: '#ffe08a',
 };
-const RUBIK_COL = ['#e8453c', '#4caf50', '#3d7be0', '#f5c518', '#ff8a1f', '#ffffff'];
 const ROOM = {
   rubik:     { wall: '#f7e3a1', acc: '#d9542b', sign: ['LỚP RUBIK', '#c4452f'] },
   chess:     { wall: '#d3e3f2', acc: '#3b4a6b', sign: ['KHU CỜ VUA', '#2f3b59'] },
@@ -45,30 +45,6 @@ function fakeAO(b, y0) {
     for (let i = 0; i < p.count; i++) { const k = 0.8 + 0.2 * Math.min(1, Math.max(0, (p.getY(i) - y0) / 2.4)); c.setXYZ(i, c.getX(i) * k, c.getY(i) * k, c.getZ(i) * k); }
   }
 }
-// mái 4 mái (mái ngói): chia mỗi mái thành các dải 2 màu xen kẽ → hàng ngói; diềm mái + bờ nóc
-function hipRoof(b, x0, z0, x1, z1, y, h) {
-  const w = x1 - x0, d = z1 - z0, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, alongX = w >= d, r = Math.abs(w - d) / 2;
-  const R0 = alongX ? [cx - r, y + h, cz] : [cx, y + h, cz - r], R1 = alongX ? [cx + r, y + h, cz] : [cx, y + h, cz + r];
-  const top = p => (alongX ? (p[0] < cx ? R0 : R1) : (p[2] < cz ? R0 : R1));
-  const c = [[x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1]], N = 5, L = (P, Q, t) => [P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * Math.pow(t, 1.6), P[2] + (Q[2] - P[2]) * t];   // mái cong kiểu ngói ta
-  for (let e = 0; e < 4; e++) {
-    const A = c[e], B = c[(e + 1) % 4], TA = top(A), TB = top(B);
-    for (let i = 0; i < N; i++) {
-      const a0 = L(A, TA, i / N), b0 = L(B, TB, i / N), b1 = L(B, TB, (i + 1) / N), a1 = L(A, TA, (i + 1) / N);
-      let p = [...a0, ...b0, ...b1, ...a0, ...b1, ...a1];
-      _v.set(b0[0] - a0[0], b0[1] - a0[1], b0[2] - a0[2]).cross(new THREE.Vector3(a1[0] - a0[0], a1[1] - a0[1], a1[2] - a0[2]));
-      if (_v.y < 0) p = [...a0, ...b1, ...b0, ...a0, ...a1, ...b1];
-      if (TA === TB && i === N - 1) p = p.slice(0, 9);   // đỉnh tam giác của mái hồi
-      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3));
-      b.push(g, i % 2 ? C.roof2 : C.roof);
-    }
-  }
-  b.box(w + 0.1, 0.24, 0.14, cx, y - 0.24, z0, C.fascia); b.box(w + 0.1, 0.24, 0.14, cx, y - 0.24, z1, C.fascia);
-  b.box(0.14, 0.24, d + 0.1, x0, y - 0.24, cz, C.fascia); b.box(0.14, 0.24, d + 0.1, x1, y - 0.24, cz, C.fascia);
-  if (r > 0.1) b.box(alongX ? 2 * r + 0.3 : 0.32, 0.18, alongX ? 0.32 : 2 * r + 0.3, cx, y + h - 0.1, cz, C.ridge);
-  b.ball(0.22, R0[0], y + h + 0.05, R0[2], C.ridge); b.ball(0.22, R1[0], y + h + 0.05, R1[2], C.ridge);
-}
-
 // KHỐI RUBIK GIỐNG THẬT (dùng chung mọi khu): 26 khối con vát góc (44 tam giác/khối) thân đen + 54 miếng dán nhỏ hơn mặt (lõm trong viền vát)
 // ≈ 1.250 tam giác (lite: 1 lõi + miếng dán ≈ 120). Gốc (x, y, z) = tâm khối; s = cạnh; tilt = đứng trên 1 góc. Có thể gọi cho Batch hoặc DetailGrid.
 let cubieGeo = null;
@@ -110,26 +86,24 @@ export function buildSchoolZone(a) {
   const stoneBench = (b, x, z, ry) => b.group(x, Y, z, ry, () => { b.box(1.9, 0.12, 0.6, 0, 0.4, 0, C.stone); b.box(1.96, 0.04, 0.66, 0, 0.36, 0, C.stone2); for (const s of [-1, 1]) b.box(0.22, 0.38, 0.5, s * 0.68, 0, 0, C.stone2); });
 
   // ================= LỚP HỌC =================
-  // đoạn tường (đúng khối va chạm) + chân tường, gờ trên, cửa sổ chớp xanh phía ngoài
+  // TỶ LỆ VÀNG: mặt tiền cao HV = tường + diềm trán; mái cao HV/φ; vòm hành lang cao/rộng = φ, vòm cửa chính rộng = φ·nhịp thường;
+  // cửa sổ: thân cao φ·rộng + vòm bán nguyệt, khoảng cách φ² (tường dài φ³)
+  const HV = H + 0.6, ARCH_R = (HV - 0.3) / (2 * PHI), ARCH_YS = HV - 0.3 - ARCH_R, BAY = 2 * ARCH_R + 0.44, DOORBAY = BAY * PHI;
+  const WIN_W = 0.95, WIN_H = WIN_W * PHI + WIN_W / 2;
+  // đoạn tường (đúng khối va chạm): chân đá, gờ ngang, diềm trán + phào; mặt ngoài: cửa sổ vòm cuốn (lớp) hoặc vòm mù + dây leo (sân chơi)
   function wallSeg(b, st, ax, az, bx, bz, ry, opts = {}) {
     const len = Math.hypot(bx - ax, bz - az); if (len < 0.2) return;
     b.group((ax + bx) / 2, Y, (az + bz) / 2, ry, () => {
-      b.box(len, H, T, 0, 0, 0, st.wall);
-      b.box(len + 0.04, 0.55, T + 0.12, 0, 0, 0, C.plinth);
-      b.box(len + 0.1, 0.22, T + 0.22, 0, H - 0.22, 0, C.trim);
-      if (opts.band) opts.band(len);
-      if (opts.noWin) return;
-      const sp = len > 20 ? 4.8 : 3.0, n = Math.floor((len - 1.4) / sp); if (n < 1) return;
-      for (let i = 0; i < n; i++) {
-        const u = -len / 2 + (len - (n - 1) * sp) / 2 + i * sp, z = T / 2;
-        b.plane(1.32, 1.56, u, 1.78, z + 0.02, C.trim); b.plane(1.04, 1.28, u, 1.78, z + 0.03, C.glass);
-        for (const s of [-1, 1]) b.plane(0.5, 1.36, u + s * 0.95, 1.78, z + 0.025, C.shutter);
-        b.plane(1.5, 0.24, u, 1.0, z + 0.1, C.trim, 0, -1.1);
-        const d = DG.follow(b), cc = ['#f6d6a8', '#fff3c4', '#cfe6f7'][(i + Math.round(len)) % 3];
-        d.plane(0.3, 1.0, u - 0.34, 1.88, z + 0.035, cc); d.plane(0.3, 1.0, u + 0.34, 1.88, z + 0.035, cc);
-        d.box(0.05, 1.28, 0.03, u, 1.14, z + 0.05, C.trim); d.box(1.04, 0.05, 0.03, u, 1.84, z + 0.05, C.trim);
-        if (i % 2 === 0) { d.box(1.2, 0.24, 0.3, u, 0.7, z + 0.2, '#b9824f'); for (let k = -1; k <= 1; k++) d.ball(0.15, u + k * 0.36, 1.0, z + 0.2, ['#e85d8a', '#f5c518', '#e8453c'][(i + k + 3) % 3]); }
+      wallBody(b, len, H, HV, T);
+      const z = T / 2, d = DG.follow(b), k0 = Math.round(len * 7); GR.pre = b.pre;
+      if (opts.yard) {
+        const sp = PHI * PHI, n = Math.floor((len - 1.0) / sp);
+        for (let i = 0; i < n; i++) { const u = -len / 2 + (len - (n - 1) * sp) / 2 + i * sp; blindArch(b, GR, u, z, 1.2, 1.2 * PHI + 0.6, 0.85); if ((i + k0) % 3 === 0) vine(d, u + sp / 2, z + 0.06, HV - 0.6, i + k0); }
+      } else {
+        const sp = len > 20 ? PHI ** 3 : PHI * PHI, n = Math.floor((len - 1.4) / sp);
+        for (let i = 0; i < n; i++) { const u = -len / 2 + (len - (n - 1) * sp) / 2 + i * sp; archWindow(b, GR, d, u, 1.0, z, WIN_W, WIN_H, (i + k0) % 2 ? 0 : 1 + ((i + k0) % 5)); }
       }
+      GR.pre = null;
     });
   }
   function musicNote(b, x, y, z, s, c) {
@@ -143,15 +117,15 @@ export function buildSchoolZone(a) {
     const sides = { t: [ax, az, bx, az], b: [ax, bz, bx, bz], l: [ax, az, ax, bz], r: [bx, az, bx, bz] };
     for (const s of ['t', 'b', 'l', 'r']) {
       const [px, pz, qx, qz] = sides[s], horiz = s === 't' || s === 'b', ry = FACE[s];
-      const band = id === 'chess' && s === side ? len => { b.box(len, 0.36, T + 0.06, 0, 2.62, 0, '#ffffff'); for (let u = -len / 2 + 0.18; u < len / 2 - 0.18; u += 0.72) b.box(0.36, 0.36, T + 0.08, u, 2.62, 0, '#2b2633'); }
-        : id === 'music' && s === side ? len => { b.box(len, 0.42, T + 0.06, 0, 2.6, 0, '#ffffff'); for (let u = -len / 2 + 0.3; u < len / 2 - 0.2; u += 0.42) if ((Math.round(u / 0.42) % 7 + 7) % 7 % 3 !== 2) b.box(0.18, 0.26, T + 0.1, u, 2.76, 0, '#2b2633'); }
-        : id === 'rubikyard' ? len => { for (let u = -len / 2 + 0.5, k = 0; u < len / 2 - 0.3; u += 1.15, k++) b.box(0.62, 0.62, 0.62, u, H, 0, RUBIK_COL[(k + s.charCodeAt(0)) % 6]); } : null;
-      const opts = { band, noWin: st.yard };
+      const opts = { yard: st.yard };
       if (s !== side) wallSeg(b, st, px, pz, qx, qz, ry, opts);
       else if (horiz) { wallSeg(b, st, px, pz, dx - gap, qz, ry, opts); wallSeg(b, st, dx + gap, pz, qx, qz, ry, opts); }
       else { wallSeg(b, st, px, pz, qx, dz - gap, ry, opts); wallSeg(b, st, px, dz + gap, qx, qz, ry, opts); }
     }
-    for (const [x, z] of [[ax, az], [bx, az], [ax, bz], [bx, bz]]) b.box(0.56, H + 0.12, 0.56, x, Y, z, C.trim);   // trụ góc
+    [[ax, az], [bx, az], [ax, bz], [bx, bz]].forEach(([x, z], k) => {   // trụ góc bo tròn + dây leo 2 góc
+      b.group(x, Y, z, 0, () => roundPier(b, 0, 0, HV));
+      if ((k + id.length) % 2) { const nx = x < cx ? -1 : 1, nz = z < cz ? -1 : 1; DG.follow(null); DG.pre = null; vine(DG, x + nx * 0.42, z + nz * 0.42, HV - 0.4, k, 0, nz, Y); }
+    });
     // sàn trong lớp (gạch men) — thấy khi mái mờ đi
     GR.box(bx - ax - 0.2, 0.04, bz - az - 0.2, cx, Y, cz, st.yard ? C.cement : C.floor);
 
@@ -159,38 +133,50 @@ export function buildSchoolZone(a) {
     addFoot(ax - 1.5 - (side === 'l' ? VD + 1 : 0), az - 1.5 - (side === 't' ? VD + 1 : 0), bx + 1.5 + (side === 'r' ? VD + 1 : 0), bz + 1.5 + (side === 'b' ? VD + 1 : 0));
     const ox = side === 'l' ? ax : side === 'r' ? bx : dx, oz = side === 't' ? az : side === 'b' ? bz : dz;
     const faceL = side === 't' || side === 'b' ? bx - ax : bz - az, du = side === 't' ? -(dx - cx) : side === 'b' ? dx - cx : side === 'l' ? dz - cz : -(dz - cz);
-    // hành lang cột dọc mặt tiền (gốc cục bộ = giữa mặt tiền, +z ra ngoài)
+    // HÀNH LANG VÒM CUỐN dọc mặt tiền (gốc cục bộ = giữa mặt tiền, +z ra ngoài): nhịp đều ~BAY, vòm cửa chính rộng φ·BAY
     const mx = side === 'l' ? ax : side === 'r' ? bx : cx, mz = side === 't' ? az : side === 'b' ? bz : cz;
     if (!st.yard) b.group(mx, Y, mz, FACE[side], () => {
-      GR.pre = b.pre; GR.box(faceL + 1.0, 0.08, VD + 0.3, 0, 0, VD / 2 + 0.15, C.step); GR.box(faceL + 1.1, 0.06, 0.2, 0, 0.12, VD + 0.3, C.curb); GR.pre = null;
-      const n = Math.max(2, Math.round(faceL / 3.2));
-      for (let i = 0; i <= n; i++) {
-        const u = -faceL / 2 + i * faceL / n; if (Math.abs(u - du) < gap + 0.7) continue;
-        b.cyl(0.3, 0.34, 0.3, u, 0, VD, C.plinth, 6); b.cyl(0.17, 0.2, H - 0.3, u, 0.3, VD, C.trim, 6); b.cyl(0.28, 0.2, 0.18, u, H - 0.38, VD, st.acc, 6);
-        const un = u + faceL / n; if (i < n && !big && Math.abs(un - du) >= gap + 0.7) b.push(new THREE.TorusGeometry(faceL / n / 2 - 0.15, 0.1, 3, 6, Math.PI), C.trim, (u + un) / 2, H - 0.95 - (faceL / n / 2 - 0.15) * 0.45, VD, 0, 0, 0, 1, 0.45, 1);
-        _v.set(u, 0, VD).applyMatrix4(b.pre); col(_v.x, _v.z, 0.22);
-      }
-      if (!big) { b.box(faceL + 0.2, 0.5, 0.06, 0, H - 0.72, VD + 0.18, st.acc); }   // diềm hành lang màu riêng của lớp
+      GR.pre = b.pre; GR.box(faceL + 1.0, 0.08, VD + 0.3, 0, 0, VD / 2 + 0.15, C.step); GR.box(faceL + 1.1, 0.06, 0.2, 0, 0.12, VD + 0.3, C.curb);
+      const xs = arcadeBays(faceL, du, BAY, DOORBAY, big ? 1 : 0), d = DG.follow(b);
+      arcadeFront(b, GR, xs, ARCH_YS, HV - 0.24, ARCH_R, 0.22, 0.32, VD);
+      const span = xs[xs.length - 1] - xs[0] + 0.44;
+      cbox(b, span + 0.16, 0.1, 0.5, (xs[0] + xs[xs.length - 1]) / 2, HV - 0.24, VD, FC.trim, 0.03); cbox(b, span + 0.36, 0.14, 0.62, (xs[0] + xs[xs.length - 1]) / 2, HV - 0.14, VD, FC.trim, 0.04);
+      xs.forEach((u, i) => {
+        column(b, u, VD, ARCH_YS); _v.set(u, 0, VD).applyMatrix4(b.pre); col(_v.x, _v.z, 0.22);
+        if ((i + id.length) % 3 === 0 && Math.abs(u - du) > DOORBAY / 2 + 0.1) vine(d, u, VD + 0.24, ARCH_YS - 0.2, i);
+      });
+      for (const e of [-1, 1]) b.group(xs[e < 0 ? 0 : xs.length - 1], 0, VD / 2, Math.PI / 2, () => { GR.pre = b.pre; arcadeFront(b, GR, [-VD / 2 + 0.2, VD / 2], ARCH_YS, HV - 0.24, ARCH_R, 0.22, 0.3, 0); });   // vòm đầu hồi hành lang
+      GR.pre = null;
     });
-    // cửa + bảng tên + trán cửa + biểu tượng của lớp
-    const pw = big ? 9 : 2 * gap + 1.6, pd = VD + 0.4;
+    // CỬA CHÍNH (khung đá, ô kính quạt) + TRÁN TƯỜNG (bảng tên trên attic, biểu tượng lớp ở tam giác)
     b.group(ox, Y, oz, FACE[side], () => {
-      b.box(2 * gap, H - 2.75, T + 0.04, 0, 2.75, 0, C.trim);
-      if (!st.yard) for (const s of [-1, 1]) b.box(0.08, 2.6, 1.3, s * (gap - 0.12), 0.05, -0.8, C.door);   // khu sân chơi: lối vào mở, không cánh cổng sắt
+      const d = DG.follow(b); GR.pre = b.pre;
       b.box(2 * gap + 0.6, 0.12, 1.0, 0, 0, st.yard ? 0.5 : VD + 0.7, C.stone);
-      if (st.yard) { for (const s of [-1, 1]) { b.box(0.7, H + 0.9, 0.7, s * (gap + 0.35), 0, 0, C.trim); b.box(0.9, 0.2, 0.9, s * (gap + 0.35), H + 0.9, 0, st.acc); } b.box(2 * gap + 1.4, 0.5, 0.4, 0, H + 0.4, 0, st.acc); signAt(b, atlas.sign(st.sign[0], st.sign[1]), 3.4, 0.42, 0, H + 0.65, 0.22); rubikCube(b, 0, H + 2.1, 0, 1.2, 0.5, true, true); return; }
-      const gh = big ? 2.3 : 1.5, gy = H + 0.02;
-      b.prism(pd + 0.5, gh, pw + 0.4, 0, gy, pd / 2 - 0.1, C.roof, Math.PI / 2);
-      b.prism(pd + 0.1, gh * 0.75, pw - 0.6, 0, gy + 0.02, pd / 2 - 0.05, st.wall, Math.PI / 2);
-      b.box(pw + 0.5, 0.2, 0.2, 0, gy - 0.2, pd - 0.08, C.fascia);
-      signAt(b, atlas.sign(st.sign[0], st.sign[1]), big ? 5.0 : 3.3, big ? 0.62 : 0.42, 0, H - 0.47, VD + 0.23);
-      const topY = gy + gh, tz = pd / 2 - 0.1;
-      if (id === 'rubik') rubikCube(b, 0, topY + 0.9, tz, 1.4, 0.5, true, true);
-      else if (id === 'chess') { chessPiece(b, 'k', -0.7, tz, 0.95, 'w', topY - 0.25); chessPiece(b, 'n', 0.8, tz, 0.8, 'b', topY - 0.35); }
-      else if (id === 'music') musicNote(b, 0, topY + 0.15, tz, 0.85, '#2b2633');
-      else if (id === 'hall') { b.cyl(0.75, 0.75, 0.14, 0, gy + 0.85, pd - 0.2, C.trim, 12, 0, Math.PI / 2); b.cyl(0.6, 0.6, 0.16, 0, gy + 0.85, pd - 0.17, '#2b2633', 12, 0, Math.PI / 2); b.box(0.06, 0.45, 0.04, 0, gy + 0.85, pd - 0.07, C.trim); b.box(0.32, 0.06, 0.04, 0.12, gy + 1.05, pd - 0.07, C.trim); b.ball(0.2, 0, topY + 0.15, tz, C.gold); }
-      else if (id === 'elec') { const by = topY + 0.05; b.box(0.35, 1.0, 0.18, 0.1, by + 0.55, tz, '#f5c518', 0, 0, -0.45); b.box(0.35, 1.0, 0.18, -0.1, by - 0.15, tz, '#f5c518', 0, 0, -0.45); b.box(0.7, 0.18, 0.2, 0, by + 0.42, tz, '#f5c518'); }
-      const d = DG.follow(b); for (const s of [-1, 1]) { const u = s * (gap + 1.2); d.cyl(0.32, 0.24, 0.5, u, 0, VD + 0.9, '#c9744a', 8); d.ball(0.4, u, 0.78, VD + 0.9, '#5aa04a'); d.ball(0.13, u + 0.15, 1.05, VD + 1.0, '#e85d8a'); d.ball(0.13, u - 0.15, 1.0, VD + 0.8, '#f5c518'); }
+      if (st.yard) {   // cổng vòm khu sân chơi: 2 trụ bo tròn + vòm + bảng tên (không cánh cổng sắt)
+        const px = gap + 0.42;
+        for (const s of [-1, 1]) { b.group(s * px, 0, 0, 0, () => roundPier(b, 0, 0, HV + 0.9, 0.42)); cbox(b, 0.7, 0.3, 0.7, s * px, HV + 0.9, 0, FC.stone, 0.06); b.ball(0.3, s * px, HV + 1.45, 0, FC.stone); }
+        arcadeFront(b, GR, [-px, px], H - 0.2, HV + 0.9, 1.05, 0.42, 0.5, 0);
+        cbox(b, 2 * px + 0.9, 0.16, 0.66, 0, HV + 0.9, 0, FC.trim, 0.04);
+        signAt(b, atlas.sign(st.sign[0], st.sign[1]), 3.2, 0.4, 0, HV + 0.6, 0.29);
+        for (const s of [-1, 1]) vine(d, s * (px + 0.5), 0.3, HV + 0.3, s + 3, 0, 1);
+        GR.pre = null; return;
+      }
+      for (const s of [-1, 1]) { cbox(b, 0.32, 2.8, T + 0.26, s * (gap + 0.02), 0, 0, FC.trim, 0.04); b.box(0.08, 2.6, 1.3, s * (gap - 0.12), 0.05, -0.8, FC.door); }
+      cbox(b, 2 * gap + 0.74, 0.16, T + 0.3, 0, 2.75, 0, FC.trim, 0.04);
+      b.box(2 * gap, HV - 2.91, T, 0, 2.91, 0, FC.wall);
+      fanlight(b, GR, d, 2.91, T / 2, gap - 0.3, 0.62);
+      const PW = big ? DOORBAY + 2 * BAY + 0.6 : DOORBAY + 0.5, attic = big ? 1.0 : 0.62;
+      const pd = pediment(b, PW, HV, VD, big ? 6.5 : 4.2, attic, id !== 'chess');
+      signAt(b, atlas.sign(st.sign[0], st.sign[1]), big ? 5.0 : 3.3, big ? 0.62 : 0.42, 0, HV + attic / 2 + 0.03, pd.zf + 0.04);
+      const ty = pd.y1 + pd.hp * 0.4, tz = pd.zf;
+      if (id === 'rubik') oculus(b, GR, 0, ty, tz, Math.min(0.36, pd.hp * 0.3));
+      else if (id === 'chess') chessPiece(b, 'k', 0, VD - 0.2, 0.55, 'w', pd.y1 + pd.hp + 0.05);
+      else if (id === 'music') musicNote(b, -0.15, ty - 0.25, tz + 0.02, 0.36, '#2b2633');
+      else if (id === 'hall') rubikRelief(b, 0, ty, tz + 0.01, Math.min(1.1, pd.hp * 0.55));   // phù điêu Rubik duy nhất: trán toà chính
+      else if (id === 'elec') { const by = ty - 0.3; b.box(0.18, 0.5, 0.08, 0.05, by + 0.28, tz, '#f5c518', 0, 0, -0.45); b.box(0.18, 0.5, 0.08, -0.05, by - 0.08, tz, '#f5c518', 0, 0, -0.45); b.box(0.36, 0.09, 0.09, 0, by + 0.21, tz, '#f5c518'); }
+      else oculus(b, GR, 0, ty, tz, Math.min(0.36, pd.hp * 0.3));
+      for (const s of [-1, 1]) { const u = s * (DOORBAY / 2 + 0.75); d.cyl(0.32, 0.24, 0.5, u, 0, VD + 0.9, '#c9744a', 8); d.ball(0.4, u, 0.78, VD + 0.9, '#5aa04a'); d.ball(0.13, u + 0.15, 1.05, VD + 1.0, '#e85d8a'); d.ball(0.13, u - 0.15, 1.0, VD + 0.8, '#f5c518'); }
+      GR.pre = null;
     });
     // đồ bên trong
     if (!st.yard && id !== 'office') {
@@ -203,13 +189,18 @@ export function buildSchoolZone(a) {
     if (id === 'hall') { b.box(5, 0.6, (bz - az) * 0.6, bx - 2.8, Y, cz, '#b9824f'); for (let i = 0; i < 4; i++) b.box(r.w * S * 0.45, 0.45, 0.5, cx - 1.5, Y, Z3(r.y + 300 + i * 68), '#a0522d'); }
     // MÁI: mesh riêng mỗi lớp, mờ dần khi người chơi vào trong
     if (st.yard) return;
-    const fx0 = ax - (side === 'l' ? VD + 0.5 : 0.6), fx1 = bx + (side === 'r' ? VD + 0.5 : 0.6), fz0 = az - (side === 't' ? VD + 0.5 : 0.6), fz1 = bz + (side === 'b' ? VD + 0.5 : 0.6);
+    const OV = 0.9, fx0 = ax - (side === 'l' ? VD + 0.6 : OV), fx1 = bx + (side === 'r' ? VD + 0.6 : OV), fz0 = az - (side === 't' ? VD + 0.6 : OV), fz1 = bz + (side === 'b' ? VD + 0.6 : OV);
     const rb = new Batch('roof-' + id), t0 = rb.tris;
     if (st.flat) {
-      rb.box(fx1 - fx0, 0.3, fz1 - fz0, (fx0 + fx1) / 2, Y + H - 0.05, (fz0 + fz1) / 2, '#cfc6b4');
-      for (const [w, d, x, z] of [[fx1 - fx0, 0.25, (fx0 + fx1) / 2, fz0], [fx1 - fx0, 0.25, (fx0 + fx1) / 2, fz1], [0.25, fz1 - fz0, fx0, (fz0 + fz1) / 2], [0.25, fz1 - fz0, fx1, (fz0 + fz1) / 2]]) rb.box(w, 0.6, d, x, Y + H + 0.25, z, C.trim);
-      rb.box(1.6, 0.9, 1.2, (fx0 + fx1) / 2 + 3, Y + H + 0.25, (fz0 + fz1) / 2, '#a9b4c2'); rb.cyl(0.04, 0.05, 2.4, (fx0 + fx1) / 2 - 3, Y + H + 0.25, (fz0 + fz1) / 2, '#d9d9d9', 6);
-    } else hipRoof(rb, fx0, fz0, fx1, fz1, Y + H + 0.02, Math.min(4.2, Math.max(2.2, Math.min(fx1 - fx0, fz1 - fz0) * 0.28)));
+      const gx0 = fx0 + 0.6, gx1 = fx1 - 0.6, gz0 = fz0 + 0.6, gz1 = fz1 - 0.6, gcx = (gx0 + gx1) / 2, gcz = (gz0 + gz1) / 2;   // sân thượng: tường chắn mái có phào, chậu cây
+      rb.box(gx1 - gx0, 0.3, gz1 - gz0, gcx, Y + HV - 0.2, gcz, '#d9cfbb');
+      for (const [w, d, x, z] of [[gx1 - gx0, 0.3, gcx, gz0], [gx1 - gx0, 0.3, gcx, gz1], [0.3, gz1 - gz0, gx0, gcz], [0.3, gz1 - gz0, gx1, gcz]]) { rb.box(w, 0.5, d, x, Y + HV, z, FC.wall); cbox(rb, w + 0.2, 0.12, d + 0.2, x, Y + HV + 0.5, z, FC.trim, 0.03); }
+      for (const [x, z] of [[gx0 + 1, gz0 + 1], [gx1 - 1, gz0 + 1], [gx0 + 1, gz1 - 1], [gx1 - 1, gz1 - 1]]) { rb.cyl(0.4, 0.3, 0.5, x, Y + HV + 0.1, z, '#c9744a', 8); rb.ball(0.5, x, Y + HV + 0.85, z, '#5aa04a'); }
+    } else if (big) {   // toà chính: mái 4 mái + tháp chuông trên trục cổng trường
+      const rr = hipRoofPlus(rb, fx0, fz0, fx1, fz1, Y + HV + 0.02, HV);
+      const alongZ = fz1 - fz0 > fx1 - fx0, tx = alongZ ? rr.cx : (side === 't' || side === 'b' ? dx : rr.cx), tz = alongZ ? (side === 'l' || side === 'r' ? dz : rr.cz) : rr.cz;
+      bellTower(rb, tx, Y + HV + 0.02 + HV, tz, 1.9, FACE[side]);
+    } else gableRoof(rb, fx0, fz0, fx1, fz1, Y + HV + 0.02, HV / PHI, OV - T / 2 - 0.02, side === 't' || side === 'b');
     budget['roof-' + id] = Math.round(rb.tris - t0);
     roofs.push({ b: rb, x0: fx0 - 0.3, x1: fx1 + 0.3, z0: fz0 - 0.3, z1: fz1 + 0.3 });
   }
