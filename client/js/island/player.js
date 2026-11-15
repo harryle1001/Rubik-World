@@ -80,7 +80,7 @@ export function createPlayer(ctx) {
   let hero = null; const animState = {};
   loadHero(ctx.heroKind || 'student-male-a').then(r => { if (!r) return; hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
   self.emote = name => { if (hero) emote(hero, animState, name); };
-  let stepT = 0, stepPh = 1;
+  let stepT = 0, stepPh = 1, jumpBuf = 0, coyote = 0;
   // trạng thái chuyển động mượt (tạo 1 lần, không cấp phát mỗi khung hình)
   const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3(), pivot = new THREE.Vector3(), pivV = new THREE.Vector3(), ZERO = new THREE.Vector3();
   const visOff = new THREE.Vector3(), visV = new THREE.Vector3(), extPos = new THREE.Vector3(), extQ = new THREE.Quaternion(), orbQ = new THREE.Quaternion(), lastCam = new THREE.Vector3();
@@ -149,8 +149,9 @@ export function createPlayer(ctx) {
     let g = sup(pos.x, pos.z, pos.y);
     if (!fly) for (const b of near(pos.x, pos.z).boxes) if (b.top <= pos.y + BSTEP && b.top > g && pos.x > b.x0 - 0.15 && pos.x < b.x1 + 0.15 && pos.z > b.z0 - 0.15 && pos.z < b.z1 + 0.15) g = b.top;
     if (!fly && ctx.physics) for (const b of ctx.physics.solid) { const t = b.pos.y + b.K.r - 0.02; if (t > g && pos.y >= t - 0.3 && Math.abs(pos.x - b.pos.x) < 0.5 && Math.abs(pos.z - b.pos.z) < 0.5) g = t; }
-    if (input.jump && grounded && !self.frozen && !V) { vy = P.jump; grounded = false; ctx.sfx && ctx.sfx('jump'); }
-    input.jump = false;
+    // nhảy dễ trúng: bấm sớm ≤ 1/φ⁴ s trước khi chạm đất vẫn nhận; vừa bước khỏi mép ≤ 0,1 s vẫn nhảy được
+    if (input.jump) jumpBuf = 1 / PHI ** 4; input.jump = false; jumpBuf -= dt; coyote = grounded ? 0.1 : coyote - dt;
+    if (jumpBuf > 0 && coyote > 0 && vy <= 0.01 && !self.frozen && !V) { vy = P.jump; grounded = false; coyote = jumpBuf = 0; ctx.sfx && ctx.sfx('jump'); }
     if (V && V.water) { pos.y = V.waterY(pos.x, pos.z); vy = 0; grounded = true; }
     else if (V && V.fly) { // khinh khí cầu: bay lơ lửng, V.lift = tốc độ lên/xuống mong muốn
       vy += (V.lift - vy) * Math.min(1, dt * 1.5); pos.y = Math.min(V.maxAlt, pos.y + vy * dt);
