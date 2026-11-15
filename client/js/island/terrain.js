@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { CFG } from './config.js';
 import { gradientMap, toon } from './style.js';
-import { LAND, WORLD, FLAT, rectDist, SPAWN } from './layout.js';
+import { LAND, WORLD, FLAT, rectDist, SPAWN, ISLAND_R, TEMPLE_C, blocked, flatDist, lagoonDist, roadDist, houseAt, ROAD_W } from './layout.js';
 
 // ---------- noise ----------
 const hash = (x, y) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -13,17 +13,16 @@ const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a
 let seed = CFG.seed; export const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
 
 // Uniform dùng chung cho gió và cỏ rẽ
-export const WIND = { uTime: { value: 0 }, uPlayer: { value: new THREE.Vector3(0, -99, 0) } };
+export const WIND = { uTime: { value: 0 }, uPlayer: { value: new THREE.Vector3(0, -99, 0) }, uWind: { value: 0 } }; // uWind 0..1: gió mạnh (weather.js)
 
-const R = CFG.island.radius;
-// Độ cao: đảo tròn hơi méo, đồi thoải ở giữa, ra rìa chìm xuống biển
+const R = ISLAND_R;   // bán kính đảo theo bố cục hình tròn (layout.js)
+// Độ cao: đảo tròn hơi méo, đồi thoải giữa các khu, ra rìa chìm xuống biển
 export function rawHeight(x, z) {
   const ang = Math.atan2(z, x), r = Math.hypot(x, z);
   const edge = R * (0.85 + 0.25 * fbm(Math.cos(ang) * 2 + 5, Math.sin(ang) * 2 + 5));
   const land = 1 - smooth(edge * 0.75, edge, r);
-  const hills = 2.2 + fbm(x * 0.025, z * 0.025) * 9 + Math.max(0, fbm(x * 0.012 + 9, z * 0.012) - 0.55) * 30;
-  const plaza = 1 - smooth(10, 22, Math.hypot(x, z - 10)); // khoảng đất phẳng cho người chơi xuất phát
-  const h = hills * (1 - plaza * 0.85) + plaza * 0.85 * 2.5;
+  const hills = 2.2 + fbm(x * 0.02, z * 0.02) * 9 + Math.max(0, fbm(x * 0.01 + 9, z * 0.01) - 0.55) * 30;
+  const h = hills;
   let out = h * land - 6 * (1 - land);
   // các khu quanh đảo (layout.js): đất bằng trong khu, đồi thấp + bãi cát ở viền, nối liền nhau thành 1 vùng đất
   { const ds = Math.hypot(x - SPAWN[0], z - SPAWN[1]); if (ds < 32) out = Math.min(out, FLAT + (out - FLAT) * smooth(12, 32, ds)); }   // không để đồi che cổng trường lúc vào game
@@ -34,6 +33,12 @@ export function rawHeight(x, z) {
     out = Math.max(out, zh);
     const w = 1 - smooth(0, 5, d); out = out + (FLAT - out) * w;
   }
+  // đĩa thị trấn quanh trường (đường vòng, lô đất) và các đường hướng tâm: đất bằng
+  { const f = flatDist(x, z); if (f < 14) out = out + (FLAT - out) * (1 - smooth(0, 14, f)); }
+  // sân Đền Tri Thức (khu I): bãi phẳng trên đồi rừng
+  { const dt = Math.hypot(x - TEMPLE_C[0], z - TEMPLE_C[1]); if (dt < 30) out = out + (3 - out) * (1 - smooth(14, 30, dt)); }
+  // hồ bán nguyệt phía nam trường
+  { const ld = lagoonDist(x, z); if (ld < 6) { const t = smooth(-1, 8, -ld); out = Math.min(out, FLAT * (1 - t) - 2.6 * t); } }
   return out;
 }
 
@@ -59,7 +64,7 @@ export function createTerrain(scene) {
     const x = pos.getX(i), z = pos.getZ(i), h = H[Math.round((z - WORLD.z0) / step) * (NX + 1) + Math.round((x - WORLD.x0) / step)];
     pos.setY(i, h);
     c.copy(cG1).lerp(cG2, fbm(x * 0.06, z * 0.06));
-    c.lerp(cSand, 1 - smooth(W + 0.6, W + 1.6, h));
+    if (!(flatDist(x, z) < 3 && lagoonDist(x, z) > 4)) c.lerp(cSand, 1 - smooth(W + 0.6, W + 1.6, h));   // thị trấn & đường: cỏ, không phải cát
     if (h < W - 0.5) c.copy(cDeep);
     c.lerp(cRock, smooth(0.9, 1.5, slopeAt(x, z)) * 0.9);
     col.set([c.r, c.g, c.b], i * 3);
@@ -73,14 +78,14 @@ export function createTerrain(scene) {
   for (let j = 0; j < TS; j++) for (let i = 0; i < TS; i++) hd[j * TS + i] = Math.max(0, Math.min(255, Math.round((heightAt(WORLD.x0 + (i + 0.5) / TS * SX, WORLD.z0 + (j + 0.5) / TS * SZ) + 8) * 12)));
   const hTex = new THREE.DataTexture(hd, TS, TS, THREE.RedFormat); hTex.magFilter = hTex.minFilter = THREE.LinearFilter; hTex.needsUpdate = true;
   const waterMat = new THREE.ShaderMaterial({
-    transparent: true, fog: true,
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 } }]),
+    transparent: true, fog: true, depthWrite: false,   // không ghi độ sâu: cá dưới nước (ambience.js) vẫn vẽ lên được
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 }, uSunW: { value: new THREE.Vector3(0, 1, 0) }, uSunC: { value: new THREE.Color('#fff') }, uSkyH: { value: new THREE.Color('#bfe6f6') }, uPlayer: { value: null } }]), // uSun*/uSkyH: ambience.js nối với bầu trời
     vertexShader: `varying vec3 vW;
 #include <fog_pars_vertex>
       void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; vec4 mvPosition = viewMatrix*w; gl_Position = projectionMatrix*mvPosition;
 #include <fog_vertex>
       }`,
-    fragmentShader: `uniform sampler2D uH; uniform vec2 uMin, uSize; uniform vec3 uShallow, uDeep; uniform float uLight; uniform float uTime; varying vec3 vW;
+    fragmentShader: `uniform sampler2D uH; uniform vec2 uMin, uSize; uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uPlayer; uniform float uLight; uniform float uTime; varying vec3 vW;
 #include <fog_pars_fragment>
       void main(){
         vec2 uv = (vW.xz - uMin) / uSize;
@@ -91,22 +96,33 @@ export function createTerrain(scene) {
         float wave = sin(depth*5. - uTime*1.6 + sin(vW.x*0.3+uTime)*0.6);
         float foam = step(depth, 0.35) + step(0.75, wave) * (1. - smoothstep(0.4, 1.4, depth));
         float sparkle = step(0.985, sin(vW.x*1.7 + uTime*1.3)*sin(vW.z*1.9 - uTime*1.1));
+        // sóng vỗ bờ: từng đợt sóng dâng lên rồi rút, để lại viền bọt trắng
+        float surge = 0.5 + 0.5 * sin(uTime * 0.9 + vW.x * 0.045 + vW.z * 0.035);
+        foam += smoothstep(0.14, 0., abs(depth - 0.25 - surge * 0.9)) * (1. - smoothstep(1.1, 1.5, depth)) * (0.4 + 0.6 * step(0.5, fract(vW.x * 0.7 + vW.z * 0.5 + uTime * 0.2)));
+        // gợn tròn quanh chân khi lội nước
+        float pd = length(vW.xz - uPlayer.xz), wade = step(uPlayer.y, 0.55) * step(-1.6, uPlayer.y);
+        foam += smoothstep(0.7, 1., sin(pd * 5.5 - uTime * 4.5)) * (1. - smoothstep(0.4, 2.6, pd)) * wade * 0.8;
+        // phản chiếu: chân trời phản lên mặt nước khi nhìn xiên + lấp lánh nắng
+        vec3 V = normalize(cameraPosition - vW), N = normalize(vec3(sin(vW.x * 0.9 + uTime * 1.3) * 0.06 + sin(vW.z * 1.7 - uTime) * 0.04, 1., sin(vW.z * 0.8 - uTime * 1.1) * 0.06));
+        float fres = pow(1. - max(V.y, 0.), 4.);
+        c = mix(c, uSkyH, fres * 0.45);
+        c += uSunC * pow(max(dot(reflect(-uSunW, N), V), 0.), 90.) * 0.9 * step(0.02, uSunW.y);
         c = mix(c, vec3(1.), clamp(foam, 0., 1.)*0.85) + sparkle*0.25;
-        gl_FragColor = vec4(c * uLight, mix(0.75, 0.95, smoothstep(0., 3., depth)));
+        gl_FragColor = vec4(c * uLight, mix(0.68, 0.95, smoothstep(0., 3., depth)));
 #include <fog_fragment>
       }`,
   });
-  waterMat.uniforms.uH.value = hTex; waterMat.uniforms.uTime = WIND.uTime;
+  waterMat.uniforms.uH.value = hTex; waterMat.uniforms.uTime = WIND.uTime; waterMat.uniforms.uPlayer = WIND.uPlayer;
   const water = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600).rotateX(-Math.PI / 2), waterMat); water.position.y = W; scene.add(water);
 
   // ---------- Vật liệu lay theo gió (cây, cỏ) ----------
   function windy(mat, amp, push = 0) {
     mat.onBeforeCompile = sh => {
       Object.assign(sh.uniforms, WIND);
-      sh.vertexShader = 'uniform float uTime; uniform vec3 uPlayer;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      sh.vertexShader = 'uniform float uTime; uniform vec3 uPlayer; uniform float uWind;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
         vec3 ip = (modelMatrix * instanceMatrix * vec4(0.,0.,0.,1.)).xyz;
         float hh = max(position.y, 0.);
-        float sw = sin(uTime*1.8 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.4 + ip.x)*0.3;
+        float sw = (sin(uTime*1.8 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.4 + ip.x)*0.3) * (1. + uWind*1.6) + uWind*(1.2 + 0.6*sin(uTime*0.9 + ip.x*0.06));
         transformed.x += sw * ${amp.toFixed(3)} * hh; transformed.z += sw * ${(amp * 0.6).toFixed(3)} * hh;
         ${push ? `vec2 d = ip.xz - uPlayer.xz; float L = length(d); float k = (1. - smoothstep(0.2, 1.4, L)) * step(abs(ip.y - uPlayer.y), 1.5);
         vec2 dl = normalize(vec2(dot(d, instanceMatrix[0].xz), dot(d, instanceMatrix[2].xz)) + 1e-4); // hướng rẽ trong hệ của ngọn cỏ
@@ -117,9 +133,11 @@ export function createTerrain(scene) {
   }
 
   // chỗ đặt cây/đá: trên cạn, không quá dốc, tránh bãi xuất phát
-  const clear = (x, z) => CFG.clearings.every(([cx, cz, r]) => Math.hypot(x - cx, z - cz) > r) && LAND.every(r => rectDist(r, x, z) > 4);
-  // 55% trên đảo cũ, 45% trên đồi viền giữa các khu
-  const spot = (minH = W + 1.4) => { for (let k = 0; k < 40; k++) { const isl = rand() < 0.55, a = rand() * 6.283, r = Math.sqrt(rand()) * R * 1.05, x = isl ? Math.cos(a) * r : WORLD.x0 + rand() * SX, z = isl ? Math.sin(a) * r : WORLD.z0 + rand() * SZ, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z)) return [x, h, z]; } return null; };
+  // không bao giờ mọc trong khu, lô đất, đường, hồ, sân đền (layout.js: blocked) — lề 4 m
+  const clear = (x, z, m = 4) => !blocked(x, z, m);
+  // 40% dồn vào rừng quanh đền (khu I), còn lại rải khắp đảo
+  const spot = (minH = W + 1.4, m = 4) => { for (let k = 0; k < 40; k++) { const forest = rand() < 0.4, a = rand() * 6.283, r = forest ? 18 + Math.sqrt(rand()) * 62 : Math.sqrt(rand()) * R * 1.02, x = (forest ? TEMPLE_C[0] : 0) + Math.cos(a) * r, z = (forest ? TEMPLE_C[1] : 0) + Math.sin(a) * r, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z, m)) return [x, h, z]; } return null; };
+  const plants = [];   // [x, z, bán kính, loại] — để kiểm tra không mọc trùng kiến trúc
   const colliders = [];
   const o = new THREE.Object3D(), tint = new THREE.Color();
   // LOD: mỗi loại có 2 bộ InstancedMesh — gần (đủ chi tiết, đổ bóng) và xa (hình đơn giản, không đổ bóng).
@@ -141,13 +159,13 @@ export function createTerrain(scene) {
   const crown = (() => { const parts = [[0, 2.9, 0, 1.3], [0.7, 2.5, 0.3, 0.9], [-0.6, 2.6, -0.2, 0.95]].map(([x, y, z, r]) => new THREE.IcosahedronGeometry(r, 1).translate(x, y, z)); return mergeGeos(parts); })();
   const pine = mergeGeos([new THREE.ConeGeometry(1.4, 2.4, 7).translate(0, 2.2, 0), new THREE.ConeGeometry(1.05, 2, 7).translate(0, 3.4, 0), new THREE.ConeGeometry(0.7, 1.6, 7).translate(0, 4.5, 0)]);
   const trunkMat = toon('#7a5236'), leafMat = windy(new THREE.MeshToonMaterial({ color: '#4fae47', gradientMap }), 0.018), pineMat = windy(new THREE.MeshToonMaterial({ color: '#2f7d4a', gradientMap }), 0.014);
-  const place = (sMin, sMax, colR) => () => { const p = spot(); if (!p) return null; const s = sMin + rand() * (sMax - sMin); colliders.push({ x: p[0], z: p[2], r: colR * s }); return [p[0], p[1] - 0.1, p[2], s]; };
+  const place = (sMin, sMax, colR, kind) => () => { const p = spot(); if (!p) return null; const s = sMin + rand() * (sMax - sMin); colliders.push({ x: p[0], z: p[2], r: colR * s }); plants.push([p[0], p[2], 1.4 * s, kind]); return [p[0], p[1] - 0.1, p[2], s]; };
   const trunkFar = new THREE.CylinderGeometry(0.18, 0.28, 2.2, 4).translate(0, 1.1, 0);
   const crownFar = new THREE.IcosahedronGeometry(1.6, 0).translate(0.05, 2.8, 0), pineFar = new THREE.ConeGeometry(1.4, 4.4, 5).translate(0, 3.0, 0);
-  instanced([[trunk, trunkMat], [crown, leafMat]], CFG.counts.trees, place(0.8, 1.4, 0.4), [[trunkFar, trunkMat], [crownFar, toon('#4fae47')]]);
-  instanced([[trunk, trunkMat], [pine, pineMat]], CFG.counts.pines, place(0.9, 1.5, 0.4), [[trunkFar, trunkMat], [pineFar, toon('#2f7d4a')]]);
+  instanced([[trunk, trunkMat], [crown, leafMat]], CFG.counts.trees, place(0.8, 1.4, 0.4, 'tree'), [[trunkFar, trunkMat], [crownFar, toon('#4fae47')]]);
+  instanced([[trunk, trunkMat], [pine, pineMat]], CFG.counts.pines, place(0.9, 1.5, 0.4, 'pine'), [[trunkFar, trunkMat], [pineFar, toon('#2f7d4a')]]);
   const rockGeo = new THREE.DodecahedronGeometry(1, 0);
-  instanced([[rockGeo, toon('#a7a29a')]], CFG.counts.rocks, () => { const p = spot(W - 0.3); if (!p) return null; const s = 0.3 + rand() * 1.1; if (s > 0.8) colliders.push({ x: p[0], z: p[2], r: s * 0.9 }); return [p[0], p[1] + s * 0.1, p[2], s]; });
+  instanced([[rockGeo, toon('#a7a29a')]], CFG.counts.rocks, () => { const p = spot(W - 0.3, 2); if (!p) return null; const s = 0.3 + rand() * 1.1; plants.push([p[0], p[2], s, 'rock']); if (s > 0.8) colliders.push({ x: p[0], z: p[2], r: s * 0.9 }); return [p[0], p[1] + s * 0.1, p[2], s]; });
 
   // ---------- Cỏ: chia ô, ô xa thì ẩn (LOD) ----------
   const blade = (() => { const geos = []; for (let i = 0; i < 3; i++) { const b = new THREE.BufferGeometry(); b.setAttribute('position', new THREE.Float32BufferAttribute([-0.07, 0, 0, 0.07, 0, 0, 0, 0.55, 0], 3)); b.setAttribute('color', new THREE.Float32BufferAttribute([0.25, 0.5, 0.2, 0.25, 0.5, 0.2, 0.75, 0.95, 0.45], 3)); b.rotateY(i * 1.05); b.translate((i - 1) * 0.06, 0, 0); geos.push(b); } const m = mergeGeos(geos); m.computeVertexNormals(); return m; })();
@@ -155,7 +173,7 @@ export function createTerrain(scene) {
   const chunks = new Map(), CH = 24;
   for (let i = 0; i < CFG.counts.grass; i++) {
     const a = rand() * 6.283, r = Math.sqrt(rand()) * R, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z);
-    if (h < W + 1.0 || slopeAt(x, z) > 0.8 || Math.hypot(x, z + 6) < 9 || LAND.some(r => rectDist(r, x, z) < 2)) continue;
+    if (h < W + 1.0 || slopeAt(x, z) > 0.8 || LAND.some(r => rectDist(r, x, z) < 2) || roadDist(x, z) < ROAD_W / 2 + 0.6 || houseAt(x, z, 0.6) || lagoonDist(x, z) < 1 || Math.hypot(x - TEMPLE_C[0], z - TEMPLE_C[1]) < 9) continue;
     const k = Math.floor(x / CH) + ',' + Math.floor(z / CH); if (!chunks.has(k)) chunks.set(k, []); chunks.get(k).push([x, h, z]);
   }
   const grass = [];
@@ -175,7 +193,7 @@ export function createTerrain(scene) {
     }
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
-  return { heightAt, slopeAt, update, colliders, ground, waterMat, state };
+  return { heightAt, slopeAt, update, colliders, ground, waterMat, state, plants };
 }
 
 // Gộp nhiều geometry (cùng thuộc tính) thành 1
