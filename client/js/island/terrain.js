@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { CFG } from './config.js';
 import { gradientMap, toon } from './style.js';
-import { LAND, WORLD, FLAT, rectDist, SPAWN } from './layout.js';
+import { LAND, WORLD, FLAT, rectDist, SPAWN, ISLAND_R, TEMPLE_C, blocked, flatDist, lagoonDist, roadDist, houseAt, ROAD_W } from './layout.js';
 
 // ---------- noise ----------
 const hash = (x, y) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -15,15 +15,14 @@ let seed = CFG.seed; export const rand = () => { seed = (seed * 16807) % 2147483
 // Uniform dùng chung cho gió và cỏ rẽ
 export const WIND = { uTime: { value: 0 }, uPlayer: { value: new THREE.Vector3(0, -99, 0) } };
 
-const R = CFG.island.radius;
-// Độ cao: đảo tròn hơi méo, đồi thoải ở giữa, ra rìa chìm xuống biển
+const R = ISLAND_R;   // bán kính đảo theo bố cục hình tròn (layout.js)
+// Độ cao: đảo tròn hơi méo, đồi thoải giữa các khu, ra rìa chìm xuống biển
 export function rawHeight(x, z) {
   const ang = Math.atan2(z, x), r = Math.hypot(x, z);
   const edge = R * (0.85 + 0.25 * fbm(Math.cos(ang) * 2 + 5, Math.sin(ang) * 2 + 5));
   const land = 1 - smooth(edge * 0.75, edge, r);
-  const hills = 2.2 + fbm(x * 0.025, z * 0.025) * 9 + Math.max(0, fbm(x * 0.012 + 9, z * 0.012) - 0.55) * 30;
-  const plaza = 1 - smooth(10, 22, Math.hypot(x, z - 10)); // khoảng đất phẳng cho người chơi xuất phát
-  const h = hills * (1 - plaza * 0.85) + plaza * 0.85 * 2.5;
+  const hills = 2.2 + fbm(x * 0.02, z * 0.02) * 9 + Math.max(0, fbm(x * 0.01 + 9, z * 0.01) - 0.55) * 30;
+  const h = hills;
   let out = h * land - 6 * (1 - land);
   // các khu quanh đảo (layout.js): đất bằng trong khu, đồi thấp + bãi cát ở viền, nối liền nhau thành 1 vùng đất
   { const ds = Math.hypot(x - SPAWN[0], z - SPAWN[1]); if (ds < 32) out = Math.min(out, FLAT + (out - FLAT) * smooth(12, 32, ds)); }   // không để đồi che cổng trường lúc vào game
@@ -34,6 +33,12 @@ export function rawHeight(x, z) {
     out = Math.max(out, zh);
     const w = 1 - smooth(0, 5, d); out = out + (FLAT - out) * w;
   }
+  // đĩa thị trấn quanh trường (đường vòng, lô đất) và các đường hướng tâm: đất bằng
+  { const f = flatDist(x, z); if (f < 14) out = out + (FLAT - out) * (1 - smooth(0, 14, f)); }
+  // sân Đền Tri Thức (khu I): bãi phẳng trên đồi rừng
+  { const dt = Math.hypot(x - TEMPLE_C[0], z - TEMPLE_C[1]); if (dt < 30) out = out + (3 - out) * (1 - smooth(14, 30, dt)); }
+  // hồ bán nguyệt phía nam trường
+  { const ld = lagoonDist(x, z); if (ld < 6) { const t = smooth(-1, 8, -ld); out = Math.min(out, FLAT * (1 - t) - 2.6 * t); } }
   return out;
 }
 
@@ -59,7 +64,7 @@ export function createTerrain(scene) {
     const x = pos.getX(i), z = pos.getZ(i), h = H[Math.round((z - WORLD.z0) / step) * (NX + 1) + Math.round((x - WORLD.x0) / step)];
     pos.setY(i, h);
     c.copy(cG1).lerp(cG2, fbm(x * 0.06, z * 0.06));
-    c.lerp(cSand, 1 - smooth(W + 0.6, W + 1.6, h));
+    if (!(flatDist(x, z) < 3 && lagoonDist(x, z) > 4)) c.lerp(cSand, 1 - smooth(W + 0.6, W + 1.6, h));   // thị trấn & đường: cỏ, không phải cát
     if (h < W - 0.5) c.copy(cDeep);
     c.lerp(cRock, smooth(0.9, 1.5, slopeAt(x, z)) * 0.9);
     col.set([c.r, c.g, c.b], i * 3);
@@ -117,9 +122,11 @@ export function createTerrain(scene) {
   }
 
   // chỗ đặt cây/đá: trên cạn, không quá dốc, tránh bãi xuất phát
-  const clear = (x, z) => CFG.clearings.every(([cx, cz, r]) => Math.hypot(x - cx, z - cz) > r) && LAND.every(r => rectDist(r, x, z) > 4);
-  // 55% trên đảo cũ, 45% trên đồi viền giữa các khu
-  const spot = (minH = W + 1.4) => { for (let k = 0; k < 40; k++) { const isl = rand() < 0.55, a = rand() * 6.283, r = Math.sqrt(rand()) * R * 1.05, x = isl ? Math.cos(a) * r : WORLD.x0 + rand() * SX, z = isl ? Math.sin(a) * r : WORLD.z0 + rand() * SZ, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z)) return [x, h, z]; } return null; };
+  // không bao giờ mọc trong khu, lô đất, đường, hồ, sân đền (layout.js: blocked) — lề 4 m
+  const clear = (x, z, m = 4) => !blocked(x, z, m);
+  // 40% dồn vào rừng quanh đền (khu I), còn lại rải khắp đảo
+  const spot = (minH = W + 1.4, m = 4) => { for (let k = 0; k < 40; k++) { const forest = rand() < 0.4, a = rand() * 6.283, r = forest ? 18 + Math.sqrt(rand()) * 62 : Math.sqrt(rand()) * R * 1.02, x = (forest ? TEMPLE_C[0] : 0) + Math.cos(a) * r, z = (forest ? TEMPLE_C[1] : 0) + Math.sin(a) * r, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z, m)) return [x, h, z]; } return null; };
+  const plants = [];   // [x, z, bán kính, loại] — để kiểm tra không mọc trùng kiến trúc
   const colliders = [];
   const o = new THREE.Object3D(), tint = new THREE.Color();
   // LOD: mỗi loại có 2 bộ InstancedMesh — gần (đủ chi tiết, đổ bóng) và xa (hình đơn giản, không đổ bóng).
@@ -141,13 +148,13 @@ export function createTerrain(scene) {
   const crown = (() => { const parts = [[0, 2.9, 0, 1.3], [0.7, 2.5, 0.3, 0.9], [-0.6, 2.6, -0.2, 0.95]].map(([x, y, z, r]) => new THREE.IcosahedronGeometry(r, 1).translate(x, y, z)); return mergeGeos(parts); })();
   const pine = mergeGeos([new THREE.ConeGeometry(1.4, 2.4, 7).translate(0, 2.2, 0), new THREE.ConeGeometry(1.05, 2, 7).translate(0, 3.4, 0), new THREE.ConeGeometry(0.7, 1.6, 7).translate(0, 4.5, 0)]);
   const trunkMat = toon('#7a5236'), leafMat = windy(new THREE.MeshToonMaterial({ color: '#4fae47', gradientMap }), 0.018), pineMat = windy(new THREE.MeshToonMaterial({ color: '#2f7d4a', gradientMap }), 0.014);
-  const place = (sMin, sMax, colR) => () => { const p = spot(); if (!p) return null; const s = sMin + rand() * (sMax - sMin); colliders.push({ x: p[0], z: p[2], r: colR * s }); return [p[0], p[1] - 0.1, p[2], s]; };
+  const place = (sMin, sMax, colR, kind) => () => { const p = spot(); if (!p) return null; const s = sMin + rand() * (sMax - sMin); colliders.push({ x: p[0], z: p[2], r: colR * s }); plants.push([p[0], p[2], 1.4 * s, kind]); return [p[0], p[1] - 0.1, p[2], s]; };
   const trunkFar = new THREE.CylinderGeometry(0.18, 0.28, 2.2, 4).translate(0, 1.1, 0);
   const crownFar = new THREE.IcosahedronGeometry(1.6, 0).translate(0.05, 2.8, 0), pineFar = new THREE.ConeGeometry(1.4, 4.4, 5).translate(0, 3.0, 0);
-  instanced([[trunk, trunkMat], [crown, leafMat]], CFG.counts.trees, place(0.8, 1.4, 0.4), [[trunkFar, trunkMat], [crownFar, toon('#4fae47')]]);
-  instanced([[trunk, trunkMat], [pine, pineMat]], CFG.counts.pines, place(0.9, 1.5, 0.4), [[trunkFar, trunkMat], [pineFar, toon('#2f7d4a')]]);
+  instanced([[trunk, trunkMat], [crown, leafMat]], CFG.counts.trees, place(0.8, 1.4, 0.4, 'tree'), [[trunkFar, trunkMat], [crownFar, toon('#4fae47')]]);
+  instanced([[trunk, trunkMat], [pine, pineMat]], CFG.counts.pines, place(0.9, 1.5, 0.4, 'pine'), [[trunkFar, trunkMat], [pineFar, toon('#2f7d4a')]]);
   const rockGeo = new THREE.DodecahedronGeometry(1, 0);
-  instanced([[rockGeo, toon('#a7a29a')]], CFG.counts.rocks, () => { const p = spot(W - 0.3); if (!p) return null; const s = 0.3 + rand() * 1.1; if (s > 0.8) colliders.push({ x: p[0], z: p[2], r: s * 0.9 }); return [p[0], p[1] + s * 0.1, p[2], s]; });
+  instanced([[rockGeo, toon('#a7a29a')]], CFG.counts.rocks, () => { const p = spot(W - 0.3, 2); if (!p) return null; const s = 0.3 + rand() * 1.1; plants.push([p[0], p[2], s, 'rock']); if (s > 0.8) colliders.push({ x: p[0], z: p[2], r: s * 0.9 }); return [p[0], p[1] + s * 0.1, p[2], s]; });
 
   // ---------- Cỏ: chia ô, ô xa thì ẩn (LOD) ----------
   const blade = (() => { const geos = []; for (let i = 0; i < 3; i++) { const b = new THREE.BufferGeometry(); b.setAttribute('position', new THREE.Float32BufferAttribute([-0.07, 0, 0, 0.07, 0, 0, 0, 0.55, 0], 3)); b.setAttribute('color', new THREE.Float32BufferAttribute([0.25, 0.5, 0.2, 0.25, 0.5, 0.2, 0.75, 0.95, 0.45], 3)); b.rotateY(i * 1.05); b.translate((i - 1) * 0.06, 0, 0); geos.push(b); } const m = mergeGeos(geos); m.computeVertexNormals(); return m; })();
@@ -155,7 +162,7 @@ export function createTerrain(scene) {
   const chunks = new Map(), CH = 24;
   for (let i = 0; i < CFG.counts.grass; i++) {
     const a = rand() * 6.283, r = Math.sqrt(rand()) * R, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z);
-    if (h < W + 1.0 || slopeAt(x, z) > 0.8 || Math.hypot(x, z + 6) < 9 || LAND.some(r => rectDist(r, x, z) < 2)) continue;
+    if (h < W + 1.0 || slopeAt(x, z) > 0.8 || LAND.some(r => rectDist(r, x, z) < 2) || roadDist(x, z) < ROAD_W / 2 + 0.6 || houseAt(x, z, 0.6) || lagoonDist(x, z) < 1 || Math.hypot(x - TEMPLE_C[0], z - TEMPLE_C[1]) < 9) continue;
     const k = Math.floor(x / CH) + ',' + Math.floor(z / CH); if (!chunks.has(k)) chunks.set(k, []); chunks.get(k).push([x, h, z]);
   }
   const grass = [];
@@ -175,7 +182,7 @@ export function createTerrain(scene) {
     }
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
-  return { heightAt, slopeAt, update, colliders, ground, waterMat, state };
+  return { heightAt, slopeAt, update, colliders, ground, waterMat, state, plants };
 }
 
 // Gộp nhiều geometry (cùng thuộc tính) thành 1

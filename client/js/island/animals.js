@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { loadAnimated, animator } from './models.js';
 import { addOutline, outlineMat } from './style.js';
 import { createFauna } from './fauna.js';
+import { TEMPLE_C, ISLAND_R, blocked } from './layout.js';
 
 const clean = n => n.split('|').pop(); // 'AnimalArmature|...|Walk' → 'Walk'
 const SPECIES = [
@@ -18,7 +19,7 @@ const SPECIES = [
 
 export function createAnimals(ctx) {
   const { scene, terrain } = ctx; const list = []; const v = new THREE.Vector3();
-  const land = beach => { for (let k = 0; k < 60; k++) { const a = Math.random() * 6.283, r = beach ? 45 + Math.random() * 30 : 12 + Math.random() * 50, x = Math.cos(a) * r, z = Math.sin(a) * r, h = terrain.heightAt(x, z); if (beach ? h > 0.2 && h < 1.4 : h > 1.6 && terrain.slopeAt(x, z) < 0.7) return [x, z]; } return [0, 12]; };
+  const land = beach => { for (let k = 0; k < 60; k++) { const a = Math.random() * 6.283, r = beach ? ISLAND_R * (0.7 + Math.random() * 0.35) : 18 + Math.random() * 55, x = (beach ? 0 : TEMPLE_C[0]) + Math.cos(a) * r, z = (beach ? 0 : TEMPLE_C[1]) + Math.sin(a) * r, h = terrain.heightAt(x, z); if (!blocked(x, z, 1) && (beach ? h > 0.2 && h < 1.4 : h > 1.6 && terrain.slopeAt(x, z) < 0.7)) return [x, z]; } return [TEMPLE_C[0] + 20, TEMPLE_C[1] + 20]; };   // thú rừng quanh đền (khu I), cua/ếch ven biển
   const ok = (a, x, z) => { const h = terrain.heightAt(x, z); return a.beach ? h > 0.15 && h < 2.2 : h > 1.2 && terrain.slopeAt(x, z) < 0.9; };
 
   for (const S of SPECIES) loadAnimated(S.id).then(g0 => {

@@ -9,7 +9,7 @@
 import * as THREE from 'three';
 import { toon, gradientMap } from './style.js';
 import { createTownPeople } from './town-people.js';
-import { S, TOWN_Y, BLOCKS, LAND, to3, to2, GATE3, SPAWN, rectDist } from './layout.js';
+import { S, TOWN_Y, BLOCKS, LAND, to3, to2, GATE3, SPAWN, rectDist, setHouses, onFlat, roadDist, ROAD_W, HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1 } from './layout.js';
 import { buildTownArchitecture } from './town-buildings.js';
 export { S, TOWN_Y };
 export const Y_MIN = -600, Y_MAX = 1010;                    // phần đất liền của bản đồ 2D (đã cắt thành các khối trong layout.js)
@@ -38,6 +38,7 @@ export function createSchoolTown(ctx) {
   ctx.groundExtra = (x, z, y) => {
     let h = prevExtra ? prevExtra(x, z, y) : -99;
     for (const r of LAND) if (x >= r[0] && x <= r[2] && z >= r[1] && z <= r[3]) { h = Math.max(h, TOWN_Y); break; }
+    if (h < TOWN_Y && onFlat(x, z)) h = TOWN_Y;   // đường vòng, đường hướng tâm (cả cầu qua hồ), lô đất
     for (const d of ctx.decks) if (x >= d.x0 && x <= d.x1 && z >= d.z0 && z <= d.z1) h = Math.max(h, d.y);
     return h;
   };
@@ -51,6 +52,7 @@ export function createSchoolTown(ctx) {
   };
   function build() {
     const RS = town.RS, R = RS.R;
+    setHouses(RS.HOUSES);   // nhà ở 2D → lô đất có sân vườn trên vòng quanh trường (layout.js)
     // nền có màu theo vùng, mỗi khối 1 tấm
     const c = new THREE.Color(), gmat = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap });
     for (const b of BLOCKS) {
@@ -83,10 +85,12 @@ export function createSchoolTown(ctx) {
       else if (r.name && r.w * S > 6 && r.w * S < 140) label(r.name, (ax + bx) / 2, TOWN_Y + 3, (az + bz) / 2, 0.8);
     }
     // va chạm nhà ở
-    for (const h of RS.HOUSES || []) { const [ax, az] = P(h.x, h.y), w = h.w * S, d = h.h * S, hh = Math.max(2.4, Math.min(5, d * 0.6)); ctx.boxes.push({ x0: ax, x1: ax + w, z0: az, z1: az + d, top: TOWN_Y + hh }); }
+    // (nhà xoay theo vòng tròn → dùng 2 vòng tròn va chạm phủ nền nhà HOUSE_W × HOUSE_D)
+    for (const L of HOUSE_LOTS) if (L.house) for (const u of [-HOUSE_W / 4, HOUSE_W / 4]) { const [x, z] = lotToWorld(L, u, HOUSE_V1 - HOUSE_D / 2); ctx.colliders.push({ x, z, r: HOUSE_W / 4 + 0.2 }); }
     town.gate = GATE3;
     // kiến trúc (lớp học, cổng, nhà, khu mở, 4 khu mới quanh đảo)
-    town.arch = buildTownArchitecture(ctx, RS, { P, S, Y: TOWN_Y, H, T, gap, Y_MIN, Y_MAX, win: town.win });
+    const env = { P, S, Y: TOWN_Y, H, T, gap, Y_MIN, Y_MAX, win: town.win };
+    town.arch = buildTownArchitecture(ctx, RS, env); town.info = env.infoBoard;
 
     // cửa vào: vòng sáng nhỏ (InstancedMesh)
     town.doors = RS.doors().filter(d => d.y > Y_MIN && d.y < Y_MAX && d.x >= -200 && d.x <= 10400).map(d => { const [x, z] = P(d.x, d.y); return { d, x, z }; });
@@ -118,7 +122,7 @@ export function createSchoolTown(ctx) {
       for (const d of ctx.decks) if (x >= d.x0 && x <= d.x1 && z >= d.z0 && z <= d.z1 && (y == null || y > d.y - 0.3)) return 'wood';
       const q = to2(x, z); if (q && (y == null || y > TOWN_Y - 0.3)) { let r = 'yard'; try { r = q[0] < 0 ? 'yard' : RS.regionAt(q[0], q[1]); } catch (e) {} return SURF[r] || 'grass'; }
       if (LAND.some(r => rectDist(r, x, z) === 0) && (y == null || y > TOWN_Y - 0.3)) return 'stone';
-      if (Math.hypot(x, z + 6) < 6.5) return 'stone'; // nền đền
+      if (roadDist(x, z) < ROAD_W / 2 && (y == null || y > TOWN_Y - 0.3)) return 'stone';
       return prevSurf(x, z, y);
     };
     town.ready = true; ctx.toast && ctx.toast('🏫 Chào mừng đến Trường Rubik! Các khu vui chơi nằm quanh đảo — đi bộ khám phá nhé');
@@ -135,6 +139,14 @@ export function createSchoolTown(ctx) {
   // (trang phục theo vai trò, pool, hoạt ảnh, tên trên đầu → town-people.js)
   const people = createTownPeople(ctx, { P, Y_MIN, Y_MAX, TOWN_Y, POOL: ctx.lowEnd ? 14 : 24 });
   function updatePeople(dt) { if (town.RS) people(dt, town.RS); }
+
+  // ---------- Bảng thông tin tỷ lệ vàng & số π (quảng trường trước cổng) ----------
+  let infoEl = null;
+  function showInfo() {
+    if (!infoEl) { infoEl = document.createElement('div'); infoEl.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:31;max-width:min(92vw,560px);background:#fff6df;color:#3b2a1e;border:4px solid #7a5a2e;border-radius:18px;padding:18px 20px 14px;font:16px/1.5 system-ui;box-shadow:0 8px 30px #0008'; document.body.appendChild(infoEl); }
+    infoEl.innerHTML = town.info.html + '<div style="text-align:center;margin-top:12px"><button style="font:800 15px system-ui;padding:8px 22px;border-radius:20px;border:2px solid #7a5a2e;background:#ffd36e">Hiểu rồi!</button></div>';
+    infoEl.hidden = false; ctx.player.frozen = true; infoEl.querySelector('button').onclick = () => { infoEl.hidden = true; ctx.player.frozen = false; };
+  }
 
   // ---------- Mỗi khung hình ----------
   const hudSchool = document.getElementById('school');
@@ -155,6 +167,7 @@ export function createSchoolTown(ctx) {
     const p = ctx.player.pos; let best = null, bd = 2.2;
     for (const q of town.doors) { const d = Math.abs(q.x - p.x) + Math.abs(q.z - p.z); if (d < bd) { bd = d; best = q; } }
     if (best) ctx.offer('🚪 ' + best.d.n.split('·')[0].trim(), () => town.enter(best), 2);
+    if (town.info && Math.abs(town.info.x - p.x) + Math.abs(town.info.z - p.z) < 5) ctx.offer('📜 Đọc bảng φ & π', showInfo, 1);
     if (best !== nearDoor) { nearDoor = best; if (nameTag) { scene.remove(nameTag); town.labels.splice(town.labels.indexOf(nameTag), 1); nameTag = null; } if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8); }
     updatePeople(dt);
   }

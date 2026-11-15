@@ -5,10 +5,10 @@
 // Kéo để di chuyển, lăn chuột / chụm 2 ngón / nút +− để phóng to. Bấm vào biểu tượng để xem tên (con vật: điều thú vị).
 import { TEMPLES } from './temple.js';
 import { REGION_COL, Y_MIN, Y_MAX } from './school-town.js';
-import { WORLD, BLOCKS, EXTRA, to2, to3 } from './layout.js';
+import { WORLD, BLOCKS, EXTRA, to2, to3, LOTS, LOT_W, LOT_L, RING_ROAD_R, ROAD_W, RADIALS, HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1 } from './layout.js';
 
 const B = WORLD; // khung thế giới (m), theo bố cục layout.js
-const EXTRA_COL = { F: '#c9c27a', G: '#e9cfa0', H: '#f1dca2' };
+const EXTRA_COL = { F: '#c9c27a', G: '#e9cfa0', H: '#f1dca2', K: '#cfc8b8' };
 const PPM = 2, NEAR = 60;                       // ảnh nền: 2 điểm ảnh / mét; "Gần tôi": 60 m
 const ANIMAL_ICON = { gull: '🕊️', sparrow: '🐦', butterfly: '🦋', fish: '🐟', 'animal-deer': '🦌', 'animal-fox': '🦊', 'animal-shiba': '🐕', 'animal-cat': '🐈', 'animal-frog': '🐸', 'animal-crab': '🦀' };
 const NPC_ICON = { swim: '🏊', surf: '🏄', sun: '😎', bike: '🚲', camp: '⛺', picnic: '🧺', fishing: '🎣', walk: '🚶', kite: '🪁' };
@@ -55,7 +55,7 @@ body.rs-modal #bMap{display:none}`;
     const lerp = (a, c, t) => a.map((v, i) => v + (c[i] - v) * t);
     for (let py = 0; py < H; py++) for (let px = 0; px < W; px++) {
       const x = B.x0 + px / PPM, z = B.z0 + py / PPM, i = py * W + px; let c;
-      const p2 = RS && to2(x, z), ex = !p2 && EXTRA.find(e => !e.sea && x >= e.r[0] && x <= e.r[2] && z >= e.r[1] && z <= e.r[3]);
+      const p2 = RS && to2(x, z), ex = !p2 && EXTRA.find(e => !e.sea && !e.wild && x >= e.r[0] && x <= e.r[2] && z >= e.r[1] && z <= e.r[3]);
       if (p2) { let reg = 'north'; try { reg = RS.regionAt(p2[0], p2[1]); } catch (e) {} c = hex(REGION_COL[reg] || '#d8cdb5'); land[i] = 1; }
       else if (ex) { c = hex(EXTRA_COL[ex.id] || '#e6d6a8'); land[i] = 1; }
       else {
@@ -80,6 +80,14 @@ body.rs-modal #bMap{display:none}`;
       if (land[i] || land[Math.min(W * H - 1, i + 14)]) continue;
       b.beginPath(); b.moveTo(px, py); b.quadraticCurveTo(px + 4, py - 4, px + 8, py); b.quadraticCurveTo(px + 12, py + 4, px + 16, py); b.stroke();
     }
+    // đường vòng quanh trường + 8 đường hướng tâm, lô đất có sân vườn
+    b.strokeStyle = '#cbb48a'; b.lineWidth = ROAD_W * PPM; b.lineCap = 'round';
+    b.beginPath(); b.arc(-B.x0 * PPM, -B.z0 * PPM, RING_ROAD_R * PPM, 0, Math.PI * 2); b.stroke();
+    for (const R of RADIALS) { b.beginPath(); b.moveTo((R.c * R.r0 - B.x0) * PPM, (R.s * R.r0 - B.z0) * PPM); b.lineTo((R.c * R.r1 - B.x0) * PPM, (R.s * R.r1 - B.z0) * PPM); b.stroke(); }
+    const quad = (L, u0, v0, u1, v1) => { b.beginPath(); for (const [u, v] of [[u0, v0], [u1, v0], [u1, v1], [u0, v1]]) { const [x, z] = lotToWorld(L, u, v); b.lineTo((x - B.x0) * PPM, (z - B.z0) * PPM); } b.closePath(); };
+    b.lineWidth = 1.5; b.strokeStyle = '#3f7a32';
+    for (const L of LOTS) { b.fillStyle = '#9bd67a'; quad(L, -LOT_W / 2, -LOT_L / 2, LOT_W / 2, LOT_L / 2); b.fill(); b.stroke(); }
+    b.fillStyle = 'rgba(122,86,52,.85)'; for (const L of HOUSE_LOTS) { quad(L, -HOUSE_W / 2, HOUSE_V1 - HOUSE_D, HOUSE_W / 2, HOUSE_V1); b.fill(); }
     // nhà, tường của thị trấn
     b.fillStyle = 'rgba(122,86,52,.75)';
     for (const r of ctx.boxes || []) b.fillRect((r.x0 - B.x0) * PPM, (r.z0 - B.z0) * PPM, Math.max(1.5, (r.x1 - r.x0) * PPM), Math.max(1.5, (r.z1 - r.z0) * PPM));
