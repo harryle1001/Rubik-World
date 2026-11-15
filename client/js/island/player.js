@@ -8,8 +8,9 @@ import { PHI } from './layout.js';
 import { T, damp, dampAngle, dampV3, ease, wrapAngle } from './motion.js';
 
 const P = CFG.player, C = CFG.camera;
-// Camera thứ 3 theo φ: cách 21 m (Fibonacci), góc ngẩng atan(1/φ) ≈ 31,7°, nhìn vào điểm cao φ m trên chân; zoom 8…34 m (Fibonacci)
-const CAM = { dist: 21, pitch: Math.atan(1 / PHI), height: PHI, min: 8, max: 34, lead: 1 / PHI ** 3 };
+// Camera thứ 3 theo φ (khu mẫu cổng trường): cách 13 m (Fibonacci), góc ngẩng atan(1/φ³) ≈ 13,3°, nhìn vào điểm cao φ² m trên chân
+// → nhân vật nằm gần đường 1/3 dưới, cổng/mặt tiền chiếm dải 1/3 trên; FOV dọc 50° (ít méo hình hơn 55°); zoom 8…34 m (Fibonacci)
+const CAM = { dist: 13, pitch: Math.atan(1 / PHI ** 3), height: PHI ** 2, min: 8, max: 34, lead: 1 / PHI ** 3, fov: 50 };
 const ACC = PHI ** 4, DEC = PHI ** 5, AIR = PHI ** 2, TURN_MAX = 2 * Math.PI * PHI; // tăng tốc ≈6,9/s · hãm ≈11/s · xoay tối đa ≈10 rad/s
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
@@ -33,6 +34,9 @@ export function makeHero(hue = 128) {
 
 export function createPlayer(ctx) {
   const { scene, camera, terrain, renderer } = ctx;
+  // FOV dọc 50° cho màn ngang; màn dọc (điện thoại) mở rộng theo (1/tỷ lệ)^(1/φ), tối đa 72° (= 2 × 36°, góc ngũ giác vàng) → cổng không bị cắt hai bên
+  const fitFov = () => { const a = innerWidth / innerHeight; camera.fov = a >= 1 ? CAM.fov : Math.min(72, 2 * THREE.MathUtils.radToDeg(Math.atan(Math.tan(THREE.MathUtils.degToRad(CAM.fov / 2)) / a ** (1 / PHI)))); camera.updateProjectionMatrix(); };
+  camera.far = CFG.view.far; fitFov(); addEventListener('resize', fitFov);   // cắt xa = nơi sương đặc hẳn
   const h = makeHero(ctx.hue); scene.add(h.root);
   const pos = new THREE.Vector3(0, 0, 10); pos.y = terrain.heightAt(pos.x, pos.z);
   const vel = new THREE.Vector3(); let vy = 0, grounded = true, rot = Math.PI, phase = 0;

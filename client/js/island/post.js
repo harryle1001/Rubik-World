@@ -1,4 +1,4 @@
-// post.js — Hậu kỳ: tone mapping ACES + MSAA (máy tính 4x, điện thoại 2x) + bloom nhẹ + làm nét thích ứng + tia nắng + chỉnh màu theo giờ + vignette (không dùng SSAO cho nhẹ máy). Tắt bloom được khi máy yếu.
+// post.js — Hậu kỳ: tone mapping ACES + MSAA 4x (máy yếu tự giảm 2x → tắt) + lọc dị hướng texture + bloom nhẹ + làm nét thích ứng + tia nắng + chỉnh màu theo giờ + vignette (không dùng SSAO cho nhẹ máy). Tắt bloom được khi máy yếu.
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -9,6 +9,9 @@ import { CFG } from './config.js';
 
 export function createPost(renderer, scene, camera) {
   const Q = CFG.quality;
+  // lọc dị hướng: texture tạo SAU dòng này (model, biển chữ canvas) tự nhận; texture có sẵn được quét bù ở render()
+  const ANISO = Math.min(Q.anisotropy, renderer.capabilities.getMaxAnisotropy()); THREE.Texture.DEFAULT_ANISOTROPY = ANISO;
+  const basePR = renderer.getPixelRatio();
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = Q.exposure;   // OutputPass áp dụng
   // khử răng cưa MSAA ngay trong render target của hậu kỳ (sắc nét, không nhoè như FXAA)
   const pr = renderer.getPixelRatio(), rt = new THREE.WebGLRenderTarget(innerWidth * pr, innerHeight * pr, { type: THREE.HalfFloatType, samples: Q.msaa });
@@ -51,12 +54,18 @@ export function createPost(renderer, scene, camera) {
   bloom.enabled = Q.bloom;
   vignette.uniforms.uTexel.value.set(1 / (innerWidth * pr), 1 / (innerHeight * pr));
   composer.setSize(innerWidth, innerHeight);   // đúng kích thước theo pixelRatio khi tự tạo render target
+  let frame = 0; const seen = new WeakSet();
+  function sweepAniso() {
+    scene.traverse(o => { if (!o.material) return; for (const m of [].concat(o.material)) { if (seen.has(m)) continue; seen.add(m);
+      for (const k of ['map', 'emissiveMap', 'alphaMap']) { const t = m[k]; if (t && t.anisotropy < ANISO && t.minFilter !== THREE.NearestFilter) { t.anisotropy = ANISO; t.needsUpdate = true; } } } });
+  }
   return {
     composer, bloom, grade: vignette.uniforms,   // grade: ambience.js chỉnh theo giờ/thời tiết
     // composer giữ pixelRatio riêng (lấy lúc tạo) → phải đồng bộ, nếu không hạ chất lượng không giảm độ phân giải thật
     setSize(w, h) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h); bloom.resolution.set(w / 2, h / 2); const pr = renderer.getPixelRatio(); vignette.uniforms.uTexel.value.set(1 / (w * pr), 1 / (h * pr)); },
     // đổi số mẫu MSAA (0 = tắt) khi máy yếu: cấp phát lại 2 render target ở lần vẽ sau
-    setMSAA(n) { for (const t of [composer.renderTarget1, composer.renderTarget2]) if (t.samples !== n) { t.samples = n; t.dispose(); } },
-    render() { composer.render(); },
+    // (độ phân giải đã hạ vì máy chậm → MSAA giảm còn 2x trước khi tắt hẳn)
+    setMSAA(n) { if (n && renderer.getPixelRatio() < basePR) n = Math.min(n, 2); for (const t of [composer.renderTarget1, composer.renderTarget2]) if (t.samples !== n) { t.samples = n; t.dispose(); } },
+    render() { if (frame++ % 144 === 0 && frame < 144 * 21) sweepAniso(); composer.render(); },   // quét texture mới nạp trong ~1 phút đầu (Fibonacci 144 khung × 21)
   };
 }

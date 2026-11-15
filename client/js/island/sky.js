@@ -4,20 +4,24 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { CFG } from './config.js';
 import { toon } from './style.js';
 
-// [giờ, đỉnh trời, chân trời, màu nắng, cường độ nắng, cường độ trời (hemi)]
-const KEYS = [
-  [0, '#14204a', '#34467a', '#a9bcff', 0.3, 0.6],
-  [5.5, '#2a3a74', '#e49a7a', '#ffb07a', 0.45, 0.5],
-  [6.4, '#5b80c8', '#ffc59a', '#ffc690', 1.0, 0.66],     // bình minh: chân trời hồng cam
-  [8, '#4f9be6', '#ffe6c8', '#ffe2b4', 1.35, 0.8],     // sáng sớm ấm
-  [10, '#3e8fe3', '#cfeefa', '#fff0d2', 1.7, 0.85],
-  [14, '#3a8ae0', '#c8eaf9', '#ffedc8', 1.75, 0.85],   // trưa: nắng vàng ấm, không trắng gắt
-  [16.5, '#4f8ad6', '#ffe0b0', '#ffd394', 1.6, 0.8],
-  [17.6, '#5574bf', '#ffb57a', '#ffb066', 1.25, 0.72],  // giờ vàng
+const PHI = (1 + Math.sqrt(5)) / 2, CLOUD_R = 200;
 
-  [18.4, '#3b4a8c', '#ff9466', '#ff8a52', 0.9, 0.6],
-  [19.6, '#1b2656', '#5e4a80', '#b49cff', 0.35, 0.55],
-  [24, '#14204a', '#34467a', '#a9bcff', 0.3, 0.6],
+// [giờ, đỉnh trời, chân trời, màu nắng, cường độ nắng, cường độ trời (hemi)]
+// Bảng 4 thời điểm mẫu (docs/style-guide.md): 8h30 trong trẻo · 13h không cháy · 17h40 vàng đào (không cam gắt) · 22h lam dịu + trăng.
+// Nắng ấm ↔ trời (hemi) mát: bóng đổ mang sắc lam nhạt như tranh màu nước. Cường độ nắng trưa ≤ φ, trời ≈ 1/φ² … 1/φ.
+const KEYS = [
+  [0, '#0f1a3d', '#26365f', '#9fb4ff', 0.25, 0.28],
+  [5.5, '#25356b', '#d39a8c', '#ffbe9c', 0.4, 0.36],
+  [6.4, '#5677c0', '#f4cdb0', '#ffd2a6', 0.95, 0.44],   // bình minh: hồng đào nhạt
+  [8, '#4a95e2', '#d6ebf7', '#fff1dc', 1.35, 0.52],     // sáng sớm trong trẻo: chân trời lam sữa, nắng trắng ấm
+  [10, '#3f8ee0', '#cde8f6', '#fff4e2', 1.5, 0.56],
+  [14, '#3b89dd', '#c9e5f5', '#fff2de', 1.5, 0.56],     // trưa: nắng ≈ φ − 1/φ³, không trắng cháy
+  [16.5, '#4b88d4', '#efe0c6', '#ffe6c0', 1.42, 0.54],
+  [17.6, '#6687c6', '#f2d8bc', '#ffe0bc', 1.2, 0.52],    // giờ vàng: vàng đào, giữ trời lam ở đỉnh
+
+  [18.4, '#46559a', '#ecab90', '#ffb894', 0.75, 0.44],
+  [19.6, '#1d2a5c', '#4f5486', '#aab8ff', 0.3, 0.32],
+  [24, '#0f1a3d', '#26365f', '#9fb4ff', 0.25, 0.28],
 ].map(k => [k[0], new THREE.Color(k[1]), new THREE.Color(k[2]), new THREE.Color(k[3]), k[4], k[5]]);
 
 export function createSky(scene) {
@@ -58,16 +62,18 @@ export function createSky(scene) {
         }
         gl_FragColor = vec4(c, 1.); }`,
   }));
+  dome.scale.setScalar(1 / PHI);   // bán kính 400/φ ≈ 247 m < mặt cắt xa (CFG.view.far)
   dome.renderOrder = -1; dome.frustumCulled = false; scene.add(dome);
 
-  const hemi = new THREE.HemisphereLight('#d6ecff', '#c2ad7e', 0.8);   // đất hắt ánh ấm (cát/cỏ) thay vì xanh rêu tối scene.add(hemi);
+  const hemi = new THREE.HemisphereLight('#d6ecff', '#c2ad7e', 0.56);   // ánh trời (lam) + đất hắt ấm (cát/cỏ): làm mềm bóng đổ
+  scene.add(hemi);
   const sun = new THREE.DirectionalLight('#fff0d2', 1.7); sun.castShadow = true;
   const r = CFG.quality.shadowRange; Object.assign(sun.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: 1, far: 200 });
   sun.shadow.mapSize.set(CFG.quality.shadowSize, CFG.quality.shadowSize); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05;
   scene.add(sun, sun.target);
-  scene.fog = new THREE.Fog('#cfeefa', 150, 400);
+  scene.fog = new THREE.Fog('#cfeefa', CFG.view.fogNear, CFG.view.far);
 
-  const GROUND_DAY = new THREE.Color('#c2ad7e'), GROUND_NIGHT = new THREE.Color('#2a2f4a');
+  const GROUND_DAY = new THREE.Color('#c2ad7e'), GROUND_NIGHT = new THREE.Color('#2a2f4a'), WHITE = new THREE.Color('#fff'), NIGHT_FILL = new THREE.Color('#5a6eae');
   // Mây: cụm phồng đáy phẳng, mặt dưới hơi xanh tím (màu theo đỉnh), trôi chậm
   const clouds = new THREE.Group(); scene.add(clouds);
   const cm = toon('#ffffff', { fog: false, emissive: '#ffffff', emissiveIntensity: 0.25, vertexColors: true });
@@ -99,14 +105,15 @@ export function createSky(scene) {
     const A = KEYS[i], B = KEYS[i + 1], t = (h - A[0]) / (B[0] - A[0]);
     U.uTop.value.copy(A[1]).lerp(B[1], t); U.uHor.value.copy(A[2]).lerp(B[2], t);
     sun.color.copy(A[3]).lerp(B[3], t); sun.intensity = A[4] + (B[4] - A[4]) * t; hemi.intensity = A[5] + (B[5] - A[5]) * t;
-    hemi.color.copy(U.uHor.value).lerp(U.uTop.value, 0.35);
-    scene.fog.color.copy(U.uHor.value).lerp(U.uTop.value, 0.15);   // sương mù = màu trời nhạt
+    scene.fog.color.copy(U.uHor.value);   // sương = đúng màu chân trời của vòm → vật ở xa tan liền vào trời, không có vệt nối
     hemi.groundColor.copy(GROUND_DAY).lerp(GROUND_NIGHT, Math.min(1, Math.max(0, (0.1 - Math.sin(((h - 6) / 12) * Math.PI)) / 0.25)));
     const a = ((h - 6) / 12) * Math.PI, el = Math.sin(a);
     U.uSun.value.set(Math.cos(a) * 0.8, el, 0.45).normalize();
     state.sunDir.copy(el > 0 ? U.uSun.value : U.uSun.value.clone().negate()); state.sunDir.y = Math.max(state.sunDir.y, 0.15); state.sunDir.normalize();
     U.uSunCol.value.copy(sun.color);
     state.night = Math.min(1, Math.max(0, (0.1 - el) / 0.25)); U.uNight.value = state.night;
+    // ánh trời = trung bình vòm trời pha trắng (lam mát cả lúc hoàng hôn → nắng ấm/bóng mát); đêm: lam ánh trăng dịu
+    hemi.color.copy(U.uTop.value).lerp(U.uHor.value, 0.5).lerp(WHITE, 0.38).lerp(NIGHT_FILL, state.night);
     // trăng: lệch khỏi mặt trời một góc = pha × 2π (trăng tròn đối diện mặt trời), mỗi ngày đổi 1/8 vòng
     state.moonPhase = realMoonPhase(); const am = a - state.moonPhase * Math.PI * 2;
     U.uMoon.value.set(Math.cos(am) * 0.8, Math.sin(am), 0.45).normalize(); U.uPhase.value = state.moonPhase;
@@ -132,7 +139,13 @@ export function createSky(scene) {
     if (state.hour < prevH - 12) state.day++; prevH = state.hour; U.uTime.value += dt; apply();   // qua nửa đêm (kể cả khi trường đặt giờ) → sang ngày mới
     dome.position.copy(cam.position);
     sun.target.position.copy(target); sun.position.copy(target).addScaledVector(state.sunDir, 80);
-    for (const c of clouds.children) { c.position.x += c.userData.v * dt; if (c.position.x > 220) c.position.x = -220; }
+    // mây trôi theo gió, quấn quanh người chơi trong ô ±200 m → luôn nằm trong tầm nhìn (≤ CFG.view.far), không bị cắt
+    for (const c of clouds.children) {
+      c.position.x += c.userData.v * dt;
+      const dx = c.position.x - cam.position.x, dz = c.position.z - cam.position.z;
+      if (dx > CLOUD_R) c.position.x -= 2 * CLOUD_R; else if (dx < -CLOUD_R) c.position.x += 2 * CLOUD_R;
+      if (dz > CLOUD_R) c.position.z -= 2 * CLOUD_R; else if (dz < -CLOUD_R) c.position.z += 2 * CLOUD_R;
+    }
   }
   return { update, state, sun, hemi, U, clouds, cloudMat: cm }; // U/clouds/cloudMat: weather.js chỉnh theo thời tiết
 }

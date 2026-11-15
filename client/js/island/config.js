@@ -5,13 +5,14 @@ export const CFG = {
   isMobile,
   seed: 7,
   quality: {
-    maxPixelRatio: isMobile ? 1.5 : 2,  // giới hạn pixelRatio (máy tính 2: sắc nét)
+    maxPixelRatio: 2,                   // pixelRatio theo màn hình, tối đa 2 (máy yếu: tự hạ ở ocean.js applyQuality)
     shadowSize: isMobile ? 1024 : 2048,
     shadowRange: 40,
-    msaa: isMobile ? 2 : 4,             // khử răng cưa MSAA trong hậu kỳ (GPU điện thoại dạng tile: 2x rẻ)
-    bloom: !isMobile, bloomStrength: 0.22, bloomRadius: 0.45, bloomThreshold: 0.9,   // điện thoại: tắt bloom cho mượt
-    vignette: 0.2,
+    msaa: 4,                            // khử răng cưa MSAA 4x trong render target hậu kỳ (máy yếu: tự giảm 2 → 0)
+    bloom: !isMobile, bloomStrength: 0.18, bloomRadius: 0.382, bloomThreshold: 0.92,  // bloom tinh tế: chỉ đèn/mặt trời toả, bán kính 1/φ² (điện thoại tắt cho mượt)
+    vignette: 0.146,                    // 1/φ⁴: viền tối rất nhẹ, không làm mờ
     exposure: 0.92, saturation: 1.04, contrast: 1.06, warmth: 0.015,   // chỉnh màu hậu kỳ (ấm, tươi nhẹ)
+    anisotropy: isMobile ? 8 : 16,      // lọc dị hướng cho texture (chữ biển, nền) nét khi nhìn xiên
     lowFps: 40, highFps: 57,            // tự giảm / tăng chất lượng theo FPS
   },
   time: { dayLengthSec: 480, startHour: 10.5 },
@@ -19,7 +20,9 @@ export const CFG = {
   counts: { trees: isMobile ? 140 : 220, pines: isMobile ? 70 : 110, rocks: 90, grass: isMobile ? 7000 : 14000 },
   clearings: [[0, 10, 16], [0, -6, 13]], // [x, z, bán kính]: chỗ không mọc cây/cỏ (bãi xuất phát, đền)
   player: { walk: 5.5, run: 9.5, jump: 7.5, gravity: 22 },
+  // tầm nhìn: sương bắt đầu 144 m (Fibonacci), đặc hẳn ở 144·φ^1,5 ≈ 296 m = mặt cắt xa của camera (vật khuất hẳn trong sương thì không vẽ)
+  view: { fogNear: 144, far: 296 },
   camera: { distance: 15, height: 2.6, pitch: 0.62, follow: 7 },   // camera xa + cao: nhân vật nhỏ, thấy toàn cảnh
   toon: { steps: [0.42, 0.62, 0.82, 1.0] },   // 4 bậc sáng mềm của MeshToonMaterial (bóng không quá tối)
-  outline: { thickness: 0.022, color: '#3d2b3f' },   // viền mảnh, nâu tím đậm (không đen thuần)
+  outline: { thickness: 0.022, ref: 13, color: '#3d2b3f' },   // viền mảnh nâu tím; dày theo khoảng cách (chuẩn ở 13 m) → đều nét trên màn hình
 };
