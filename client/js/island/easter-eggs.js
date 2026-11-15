@@ -48,7 +48,7 @@ const CUBES = [
   [...lotToWorld(GARDEN_LOTS[0], -6, -9), TOWN_Y + 0.9, 'vườn cộng đồng phía Bắc trường'],
   [-20, 70, TOWN_Y + 0.9, 'bờ hồ bán nguyệt sau trường'],
   [AIRK[0] + 70, AIRK[1] + 5, TOWN_Y + 17.4, 'nóc tháp điều khiển sân bay (cần 🎈!)'],
-  [285.7, 285.7, 2.0, 'bến nổi của Làng nổi ngoài khơi (đi ⛵)'],
+  [281, 299.5, 2.0, 'cầu gỗ Làng nổi ngoài khơi (đi ⛵)'],
   [-302, 0, null, 'bãi biển xa nhất phía Tây'],
 ];
 const HILL = [-96, 200], SCOPE = [-92.5, 201.5], TURTLE = [-99, -238], BANYAN = [-150, -126], STELE = [-101, 110];
