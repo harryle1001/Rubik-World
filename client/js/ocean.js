@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { CFG } from './island/config.js';
 import { createSky } from './island/sky.js';
 import { createPost } from './island/post.js';
+import { createBrightness } from './island/brightness.js';
 import { createTerrain } from './island/terrain.js';
 import { createPlayer } from './island/player.js';
 import { scatterModel } from './island/models.js';
@@ -22,6 +23,11 @@ import { createWeather } from './island/weather.js';
 import { createEasterEggs } from './island/easter-eggs.js';
 import { createDt } from './island/motion.js';
 import { createAmbience } from './island/ambience.js';
+import { createDive } from './island/dive.js';
+import { createMiniGameHost } from './island/mg/host.js';
+// mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
+import { register as regBoard } from './island/mg/board/index.js';
+import { register as registerArts } from './island/mg/arts/index.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -68,13 +74,18 @@ const net = ctx.net = createNet(ctx);
 const animals = ctx.animals = createAnimals(ctx);
 ctx.sky = sky;
 const school = createSchoolTown(ctx);
+const mg = ctx.mg = createMiniGameHost(ctx); // khung mini game 3D (mg/host.js); mỗi nhóm đăng ký game của mình:
+regBoard(ctx);
 const worldMap = ctx.worldMap = createWorldMap(ctx); // bản đồ: phím M / nút 🗺️
 const vehicles = createVehicles(ctx);
 const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 13 bí mật: khối Rubik vàng, pháo hoa π, cá voi… (📖 Sổ bí mật)
+const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
+const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
+registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
@@ -113,11 +124,25 @@ renderer.setAnimationLoop(() => {
   weather.update(dt, clock.elapsedTime);
   eggs.update(dt, clock.elapsedTime);
   ambience.update(dt);
+  dive.update(dt); // sau ambience: ghi đè sương/màu khi dưới nước
+  mg.update(dt, clock.elapsedTime);
   ctx.flushOffer();
+  brightness.update();
+  unfreezeGuard(dt);
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
   quality(dt);
 });
+
+// ---------- Lưới an toàn: nhân vật bị khoá (player.frozen) mà không còn bảng nào mở → mở khoá ----------
+// Cờ frozen dùng chung (bảng trường, bản đồ, câu đố đền, sổ bí mật, bảng φ & π); bên này đóng/mở chồng lên bên kia
+// (vd. mở bản đồ khi bảng trường đang mở → đóng bản đồ khôi phục frozen = true) làm nhân vật đứng yên mãi.
+let frzT = 0;
+function unfreezeGuard(dt) {
+  if (!player.frozen) { frzT = 0; return; }
+  if ((frzT += dt) < 1) return; frzT = 0;
+  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden])')) player.frozen = false;
+}
 
 // ---------- Tự giảm/tăng chất lượng theo FPS ----------
 // mức 0: đầy đủ · 1: tắt bloom, giảm độ phân giải · 2: cỏ/cây chi tiết gần hơn, bóng nhỏ · 3: tắt bóng đổ
@@ -126,7 +151,7 @@ const base = { pr, grass: terrain.state.grassDist, tree: terrain.state.treeDist 
 function applyQuality() {
   const L = qLevel;
   pr = [base.pr, Math.min(base.pr, 1.15), 1.0, 0.85][L]; renderer.setPixelRatio(pr); post.setSize(innerWidth, innerHeight);
-  post.bloom.enabled = CFG.quality.bloom && L === 0;
+  post.bloom.enabled = CFG.quality.bloom && L === 0; post.setMSAA(L >= 2 ? 0 : CFG.quality.msaa);
   terrain.state.grassDist = base.grass * (L >= 2 ? 0.6 : 1); terrain.state.treeDist = base.tree * (L >= 2 ? 0.7 : 1); terrain.state.relayoutAll(player.pos);
   const ss = L >= 2 ? 512 : CFG.quality.shadowSize; if (sky.sun.shadow.mapSize.x !== ss) { sky.sun.shadow.mapSize.set(ss, ss); sky.sun.shadow.map?.dispose(); sky.sun.shadow.map = null; }
   if (renderer.shadowMap.enabled !== (L < 3)) { renderer.shadowMap.enabled = L < 3; scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => m.needsUpdate = true); }); }
@@ -136,7 +161,8 @@ function quality(dt) {
   qFrames++; const el = (performance.now() - qT) / 1000; if (el < 3) return;
   const fps = qFrames / el; qFrames = 0; qT = performance.now(); ctx.fps = Math.round(fps);
   if (fps < CFG.quality.lowFps && qLevel < 3) { qLevel++; qGood = 0; applyQuality(); }
-  else if (fps > CFG.quality.highFps && qLevel > 0 && ++qGood >= 3) { qLevel--; qGood = 0; applyQuality(); }
+  // không quay lại từ mức 3: bật/tắt bóng đổ phải biên dịch lại mọi shader (khựng vài giây) → nếu dao động 2↔3 sẽ giật liên tục
+  else if (fps > CFG.quality.highFps && qLevel > 0 && qLevel < 3 && ++qGood >= 3) { qLevel--; qGood = 0; applyQuality(); }
 }
 if (new URLSearchParams(location.search).has('low')) { qLevel = 2; applyQuality(); } // ?low: bắt đầu ở chất lượng thấp
 

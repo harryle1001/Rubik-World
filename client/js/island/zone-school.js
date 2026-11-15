@@ -174,7 +174,7 @@ export function buildSchoolZone(a) {
     const pw = big ? 9 : 2 * gap + 1.6, pd = VD + 0.4;
     b.group(ox, Y, oz, FACE[side], () => {
       b.box(2 * gap, H - 2.75, T + 0.04, 0, 2.75, 0, C.trim);
-      for (const s of [-1, 1]) b.box(0.08, 2.6, 1.3, s * (gap - 0.12), 0.05, -0.8, st.yard ? C.iron : C.door);
+      if (!st.yard) for (const s of [-1, 1]) b.box(0.08, 2.6, 1.3, s * (gap - 0.12), 0.05, -0.8, C.door);   // khu sân chơi: lối vào mở, không cánh cổng sắt
       b.box(2 * gap + 0.6, 0.12, 1.0, 0, 0, st.yard ? 0.5 : VD + 0.7, C.stone);
       if (st.yard) { for (const s of [-1, 1]) { b.box(0.7, H + 0.9, 0.7, s * (gap + 0.35), 0, 0, C.trim); b.box(0.9, 0.2, 0.9, s * (gap + 0.35), H + 0.9, 0, st.acc); } b.box(2 * gap + 1.4, 0.5, 0.4, 0, H + 0.4, 0, st.acc); signAt(b, atlas.sign(st.sign[0], st.sign[1]), 3.4, 0.42, 0, H + 0.65, 0.22); rubikCube(b, 0, H + 2.1, 0, 1.2, 0.5, true, true); return; }
       const gh = big ? 2.3 : 1.5, gy = H + 0.02;

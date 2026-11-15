@@ -143,6 +143,7 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
     U.uUnder.value = under ? 1 : 0; mat.side = under ? THREE.BackSide : THREE.FrontSide;
   };
   scene.add(mesh);
+  addEventListener('island:underwater', e => { mesh.visible = !e.detail; });   // lặn: dive.js vẽ mặt nước nhìn từ dưới (cửa sổ Snell) — không vẽ chồng 2 lớp
 
   // ---------- Độ cao sóng tại (x, z) — cùng công thức shader (bỏ phần tắt dần theo khoảng cách camera) ----------
   function disp(x, z, t, att, out) {

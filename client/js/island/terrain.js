@@ -106,8 +106,22 @@ export function createTerrain(scene) {
       }`);
   };
   groundMat.customProgramCacheKey = () => 'seabed';
-  const ground = new THREE.Mesh(g, groundMat); ground.receiveShadow = true; ground.name = 'ground';
-  scene.add(ground);
+  // chia thành ô 44×44 mắt lưới (dùng chung thuộc tính đỉnh, chỉ khác chỉ mục) → camera loại bỏ (frustum culling) phần ngoài khung hình;
+  // trước đây 1 mesh ~190k tam giác luôn được vẽ toàn bộ
+  const ground = new THREE.Group(); ground.name = 'ground'; scene.add(ground);
+  { const gm = groundMat, TS = 44, n = NX + 1, bb = new THREE.Box3(), v = new THREE.Vector3();
+    for (let tz = 0; tz < NZ; tz += TS) for (let tx = 0; tx < NX; tx += TS) {
+      const ex = Math.min(NX, tx + TS), ez = Math.min(NZ, tz + TS), idx = []; bb.makeEmpty();
+      for (let iz = tz; iz < ez; iz++) for (let ix = tx; ix < ex; ix++) { const a = iz * n + ix, b = a + n, c = b + 1, d = a + 1; idx.push(a, b, d, b, c, d); }
+      for (let iz = tz; iz <= ez; iz++) for (let ix = tx; ix <= ex; ix++) bb.expandByPoint(v.fromBufferAttribute(pos, iz * n + ix));
+      const tg = new THREE.BufferGeometry(); for (const k of ['position', 'normal', 'color']) tg.setAttribute(k, g.attributes[k]);
+      tg.setIndex(idx); tg.boundingBox = bb.clone(); tg.boundingSphere = bb.getBoundingSphere(new THREE.Sphere());
+      const m = new THREE.Mesh(tg, gm); m.receiveShadow = true; m.name = 'ground'; ground.add(m);
+    } }
+
+  // đáy biển nối dài ra khơi ngoài lưới địa hình (lặn xa bờ không thấy khoảng trống) — 1 mặt phẳng, thấp hơn đáy sâu nhất 0,3 m
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(1597, 1597).rotateX(-Math.PI / 2), new THREE.MeshToonMaterial({ color: new THREE.Color('#e6cc9a').lerp(cAbyss, 0.7), gradientMap }));
+  floor.position.set(CX, -6.3, CZ); floor.receiveShadow = true; floor.name = 'seafloor'; scene.add(floor);
 
   // ---------- Nước: bản đồ độ cao (độ sâu) cho shader nước + cá + hạt ----------
   const TS = 256, hd = new Uint8Array(TS * TS);

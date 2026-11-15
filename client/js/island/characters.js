@@ -25,12 +25,13 @@ const NAMES = {
 };
 
 // Trang phục cuối cùng = đặc điểm người (BASE theo kind) + vai trò (look)
-//   look: { role:'student'|'teacher'|'adult', shirt, pants, bag, acc, accColor|bowColor, aodai, skirt, cap, brim, hat, hatStyle, glasses, sun, tie, prop, propColor }
+//   look: { role:'student'|'teacher'|'adult', shirt, pants, tee, stripe, shorts, dress, old, bag, acc, accColor|bowColor, aodai, skirt, cap, brim, hat, hatStyle, glasses, sun, tie, prop, propColor }
 function personLook(kind, look) {
   const b = BASE[kind] || BASE['student-male-a'], L = look || {}, f = b.gender === 'f';
   if (!L.role || L.role === 'student') return { ...b, scarf: '#d8232a', shirt: L.shirt || '#f7f7f2', pants: L.pants || '#1f2a5a', skirt: f, belt: f ? null : '#2a1f1a', bag: L.bag || b.bag, acc: L.acc !== undefined ? L.acc : b.acc, accColor: L.bowColor || L.accColor || b.accColor, glasses: L.glasses || (L.acc === 'glasses') || (L.acc === undefined && b.glasses) };
   const teacher = L.role === 'teacher';
-  return { gender: b.gender, adult: true, skin: b.skin, hair: b.hair, hairStyle: L.aodai ? 'long' : f ? (L.skirt || teacher ? 'bun' : 'bob') : (teacher ? 'side' : 'short'),
+  return { gender: b.gender, adult: true, skin: b.skin, hair: L.old ? '#d6d1c8' : b.hair, hairStyle: L.aodai ? 'long' : f ? (L.skirt || teacher || L.old ? 'bun' : L.dress ? 'long' : 'bob') : (teacher ? 'side' : L.old ? 'buzz' : 'short'),
+    tee: !!L.tee, stripe: L.stripe || null, shorts: !!L.shorts, dress: !!L.dress && f,
     shirt: L.shirt || '#9fc3e8', pants: L.pants || '#3a3a44', aodai: !!L.aodai, skirt: !!L.skirt && !L.aodai, longSleeve: teacher && !L.aodai, belt: !f && !L.aodai ? '#2a1f1a' : null, tie: L.tie || null,
     cap: L.cap || null, brim: L.brim || null, hat: L.hat || null, hatStyle: L.hatStyle || null, glasses: !!L.glasses, sun: !!L.sun, prop: L.prop || null, propColor: L.propColor || null, shoes: L.aodai ? '#c8a882' : '#2a2226', sole: '#4a3a30' };
 }
@@ -47,12 +48,23 @@ export async function loadHero(kind, height = 1.65, look = null) {
   const key = JSON.stringify(L);
   if (!geoCache.has(key)) geoCache.set(key, buildPerson(jointCache.get(bk), L));
   const G = geoCache.get(key);
-  skinTo(model, G); model.scale.setScalar(height / G.top);
+  const parts = skinTo(model, G); model.scale.setScalar(height / G.top);
   addOutline(model);
   const outlines = []; model.traverse(o => { if (o.userData.outline && o.material === outlineMat) outlines.push(o); });
   const anim = animator(model, rigClips(g.animations, B, model));
   const N = NAMES.person; for (const [k, v] of Object.entries({ ...N, drive: N.sit })) if (!anim.actions[k] && anim.actions[v]) anim.actions[k] = anim.actions[v]; // tên cũ (vehicles: 'drive', 'sit', 'idle')
-  return { model, anim, set: N, height, outlines, head: model.getObjectByName('head'), outlineOn: true, tris: G.tris };
+  const hero = { model, anim, set: N, height, outlines, head: model.getObjectByName('head'), outlineOn: true, tris: G.tris, detail: parts.detail, happyUntil: 0 };
+  // Biểu cảm: chớp mắt ngẫu nhiên (2–5 s/lần, ~0,13 s); mắt cười híp "^^" khi reo/chào (happyUntil)
+  if (parts.detail) {
+    const upd = anim.update; let next = 1 + Math.random() * 3, t = 0;
+    anim.update = dt => {
+      upd(dt); t += dt; let o = 1;
+      if (performance.now() < hero.happyUntil) o = 0.12;
+      else if (t > next) { const k = (t - next) / 0.13; if (k >= 1) { t = 0; next = 2 + Math.random() * 3; } else o = Math.abs(k * 2 - 1) * 0.9 + 0.1; }
+      parts.detail.material.userData.blink.value = o;
+    };
+  }
+  return hero;
 }
 // Bộ KayKit gốc (hiệp sĩ, phù thuỷ…): ẩn vũ khí
 const KAYKIT = { 'hero-knight': 'Knight', 'hero-rogue': 'Rogue', 'hero-mage': 'Mage', 'hero-barbarian': 'Barbarian' };
@@ -67,7 +79,8 @@ async function loadKayKit(kind, height) {
 }
 
 // Bật/tắt viền (chỉ người gần mới cần viền: đỡ 1 lần vẽ mỗi người ở xa)
-export function setOutline(hero, on) { if (hero.outlineOn === on) return; hero.outlineOn = on; for (const o of hero.outlines) o.visible = on; }
+// Ở xa: tắt viền và chi tiết nhỏ (mắt, miệng, khuy…) — bớt 2 lần vẽ mỗi người
+export function setOutline(hero, on) { if (hero.outlineOn === on) return; hero.outlineOn = on; for (const o of hero.outlines) o.visible = on; if (hero.detail) hero.detail.visible = on; }
 
 // Quay đầu nhìn mục tiêu (gọi SAU anim.update, mỗi khung hình): quay quanh trục đứng, tối đa ±65°, mượt theo w (0..1)
 const _q = new THREE.Quaternion(), _qp = new THREE.Quaternion(), _qi = new THREE.Quaternion(), _up = new THREE.Vector3(0, 1, 0), _v = new THREE.Vector3();
@@ -115,7 +128,7 @@ export function drivePlayer(hero, st, { speed, grounded, vy = 0, impact = 0, dt 
   st.airT = grounded ? 0 : (st.airT || 0) + dt;
   if (impact > 7) st.landT = 0.3;
   if (oneShot && oneShot.until > performance.now()) return;
-  if (!grounded) {
+  if (!grounded && (st.airT > 0.12 || vy > 0.5)) { // bước hụt xuống lề thấp (< 0,12 s trên không) không đổi sang dáng nhảy
     if (vy > 0.5 && st.airT < 0.45 && a.has('Jump_Start')) a.play('Jump_Start', 0.08, true); else a.play(N.jump, 0.22);
     return;
   }
@@ -138,4 +151,5 @@ export function driveHero(hero, { speed, grounded, walk = 5.5, oneShot, sitting 
 export function emote(hero, state, name) {
   const N = hero.set || NAMES.person, act = hero.anim.play(N[name] || name, 0.15, true); if (!act) return;
   state.oneShot = { until: performance.now() + act.getClip().duration * 1000 / (act.timeScale || 1) - 120 };
+  if (name === 'cheer' && 'happyUntil' in hero) hero.happyUntil = state.oneShot.until - 200; // reo/chào: mắt cười
 }

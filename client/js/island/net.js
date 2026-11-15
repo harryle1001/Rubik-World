@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { makeHero } from './player.js';
 import { loadHero, driveHero, KINDS } from './characters.js';
+import { T, dampV3, dampAngle } from './motion.js';
 
 function nameTag(text) {
   const c = document.createElement('canvas'); c.width = 256; c.height = 64; const g = c.getContext('2d');
@@ -20,7 +21,7 @@ export function createNet(ctx) {
   function add(p) {
     if (others.has(p.id)) return;
     const h = makeHero(p.hue); h.root.add(nameTag(p.name)); ctx.scene.add(h.root);
-    const o = { h, name: p.name, from: new THREE.Vector3(p.x, p.y, p.z), to: new THREE.Vector3(p.x, p.y, p.z), r: p.r, s: 0, t: 1, phase: 0 };
+    const o = { h, name: p.name, from: new THREE.Vector3(p.x, p.y, p.z), to: new THREE.Vector3(p.x, p.y, p.z), r: p.r, s: 0, t: 1, phase: 0, vel: new THREE.Vector3(), pv: new THREE.Vector3(), pred: new THREE.Vector3(), kr: { v: 0 }, age: 0, recv: 0 };
     h.root.position.copy(o.to); others.set(p.id, o); setStatus();
     // bộ đồ KayKit theo màu áo người đó chọn (hiệp sĩ / đạo tặc / pháp sư / chiến binh)
     loadHero(KINDS[Math.floor((p.hue || 0) / 30) % KINDS.length]).then(r => { if (!r || !others.has(p.id)) return; o.hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
@@ -38,7 +39,10 @@ export function createNet(ctx) {
     sock.on('players', list => list.forEach(add));
     sock.on('joined', add);
     sock.on('left', remove);
-    sock.on('m', ([id, x, y, z, r, sp]) => { const o = others.get(id); if (!o) return; o.from.copy(o.h.root.position); o.to.set(x, y, z); o.r = r; o.s = sp; o.t = 0; });
+    sock.on('m', ([id, x, y, z, r, sp]) => { // ước lượng vận tốc từ 2 gói liên tiếp để dự đoán giữa các gói (gói trễ không làm khựng)
+      const o = others.get(id); if (!o) return; const now = performance.now() / 1000, gap = Math.min(0.5, Math.max(0.05, now - o.recv));
+      o.from.copy(o.to); const vx = (x - o.to.x) / gap, vz = (z - o.to.z) / gap; if (vx * vx + vz * vz > 400) o.vel.set(0, 0, 0); else { o.vel.x += (vx - o.vel.x) * 0.382; o.vel.z += (vz - o.vel.z) * 0.382; } // lọc nhiễu (1/φ²)
+      o.to.set(x, y, z); o.r = r; o.s = sp; o.t = 0; o.age = 0; o.recv = now; });
   };
   s.onerror = setStatus; document.head.appendChild(s); setStatus();
 
@@ -50,9 +54,11 @@ export function createNet(ctx) {
       if (lastSent.distanceToSquared(p.pos) > 0.0004 || p.speed > 0.05) { sock.emit('m', { x: p.pos.x, y: p.pos.y, z: p.pos.z, r: p.rot, s: p.speed }); lastSent.copy(p.pos); }
     }
     for (const o of others.values()) {
-      o.t = Math.min(1, o.t + dt / 0.1); const root = o.h.root;
-      root.position.lerpVectors(o.from, o.to, o.t);
-      let d = o.r - root.rotation.y; d = Math.atan2(Math.sin(d), Math.cos(d)); root.rotation.y += d * Math.min(1, dt * 10);
+      o.t = Math.min(1, o.t + dt / 0.1); o.age += dt; const root = o.h.root;
+      // vị trí dự đoán = gói mới nhất + vận tốc × thời gian từ gói (tối đa 1/φ³ s), hiển thị bám theo bằng lò xo; lệch > 8 m thì đặt lại
+      o.pred.copy(o.vel).multiplyScalar(Math.min(o.age, 1 / 1.618 ** 3)).add(o.to);
+      if (root.position.distanceToSquared(o.pred) > 64) { root.position.copy(o.pred); o.pv.set(0, 0, 0); } else dampV3(root.position, o.pred, o.pv, T.soft, dt);
+      root.rotation.y = dampAngle(root.rotation.y, o.r, o.kr, T.quick, dt, 12);
       if (o.hero) { driveHero(o.hero, { speed: o.s, grounded: Math.abs(o.to.y - o.from.y) < 0.6 }); if (root.position.distanceToSquared(ctx.player.pos) < 3600) o.hero.anim.update(dt); continue; }
       o.phase += dt * o.s * 2.1; const a = Math.min(1, o.s / 5.5) * 0.8;
       o.h.legL.rotation.x = Math.sin(o.phase) * a; o.h.legR.rotation.x = -Math.sin(o.phase) * a; o.h.armL.rotation.x = -Math.sin(o.phase) * a; o.h.armR.rotation.x = Math.sin(o.phase) * a;

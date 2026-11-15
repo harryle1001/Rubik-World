@@ -12,13 +12,19 @@ const V = 'abcdef', SEAT_Y = 0.56; // mặt ghế đá (town-buildings.js: chân
 const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', sun: 'Khách du lịch', bike: 'Người đạp xe', camp: 'Bạn cắm trại', picnic: 'Gia đình dã ngoại', fishing: 'Bác câu cá', walk: 'Người đi dạo', kite: 'Bạn thả diều' };
 const hash = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
 
+// Trang phục người dân đa dạng theo việc đang làm (cố định theo idx): áo thun sọc, quần đùi, váy liền, người già tóc bạc
+const STRIPE = ['#ffffff', '#ffd23f', '#2b6cb0', '#e0564a', null];
+function npcStyle(a, female) {
+  const i = a.idx || 0, beach = /swim|surf|sun/.test(a.kind);
+  return { tee: beach || a.kind === 'bike' || a.kind === 'kite' || i % 3 === 0, stripe: STRIPE[i % 5], shorts: beach || a.kind === 'kite' || (a.kind === 'camp' && i % 2), dress: female && (a.kind === 'picnic' || a.kind === 'walk') && i % 2 === 0, old: (a.kind === 'fishing' || a.kind === 'walk') && i % 5 === 2 };
+}
 // Phân loại 1 người → model + trang phục (key: người có cùng key dùng lại được model của nhau)
 function lookOf(a) {
   const female = !!(a.long || a.skirt || a.aodai);
   const kind = `student-${female ? 'female' : 'male'}-${V[(a.kind ? a.idx : hash(a.id || a.name)) % 6]}`;
   let look;
   if (a.kind) { // NPC: người dân / khách
-    look = { role: 'adult', shirt: a.shirt, pants: a.pants, prop: a.kind === 'fishing' ? 'rod' : null, hat: a.kind === 'sun' || a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 2) ? '#e8c873' : null, hatStyle: a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 4 === 1) ? 'nonla' : null, sun: a.kind === 'sun' };
+    look = { role: 'adult', shirt: a.shirt, pants: a.pants, prop: a.kind === 'fishing' ? 'rod' : null, hat: a.kind === 'sun' || a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 2) ? '#e8c873' : null, hatStyle: a.kind === 'fishing' || (a.kind === 'walk' && a.idx % 4 === 1) ? 'nonla' : null, sun: a.kind === 'sun', ...npcStyle(a, female) };
   } else if (a.student !== false) {
     const hs = hash(a.id || a.name), girl = !!a.long, r = hs % 10; // phụ kiện cố định theo từng bạn
     look = { role: 'student', bag: a.bag, acc: girl ? (r < 5 ? 'bow' : r < 7 ? 'clip' : r < 8 ? 'glasses' : null) : (r < 2 ? 'glasses' : null), bowColor: ['#ff5a8a', '#ffd23f', '#7fd1ff', '#ff8a2b', '#b06bff'][hs % 5] };
@@ -107,7 +113,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       else if (e.partner && e.partner.a) face = Math.atan2(e.partner.px - x, e.partner.pz - z); // nói chuyện: quay vào nhau
       else if (dist < 4 && !sit) face = Math.atan2(p.x - x, p.z - z); // đứng gần → quay về phía người chơi
       if (face !== null) e.yaw = dampAngle(e.yaw, face, e.ky, T.soft, dt, 2 * Math.PI); else e.ky.v = 0; // rẽ mềm, quay tối đa 1 vòng/s
-      e.px = x; e.pz = z; const m = e.hero.model, gy = groundY(gx, gz); m.position.set(gx, gy + (e.seat ? SEAT_Y : 0), gz); m.rotation.y = e.yaw;
+      e.px = x; e.pz = z; const m = e.hero.model, gy = groundY(gx, gz); m.position.set(gx, gy + (e.seat ? SEAT_Y : 0), gz); m.rotation.y = e.yaw; m.visible = !(ctx.mgHide && ctx.mgHide(gx, gz));   // khu mini game: ẩn người đi ngang
       // đứng nói chuyện: 2 người đứng yên cách nhau < 1.8 m (kiểm tra thưa, 0.6 s/lần)
       if (doTalk) {
         e.partner = null;
