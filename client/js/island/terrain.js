@@ -79,10 +79,10 @@ export function createTerrain(scene) {
     col.set([c.r, c.g, c.b], i * 3);
   }
   g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
-  // chia thành ô 44×44 mắt lưới (dùng chung thuộc tính đỉnh, chỉ khác chỉ mục) → camera loại bỏ (frustum culling) phần ngoài khung hình;
+  // chia thành ô 89×89 mắt lưới (Fibonacci, ~196 m; ô to hơn → ít draw call hơn, vẫn cắt được phần ngoài khung hình) (dùng chung thuộc tính đỉnh, chỉ khác chỉ mục) → camera loại bỏ (frustum culling) phần ngoài khung hình;
   // trước đây 1 mesh ~190k tam giác luôn được vẽ toàn bộ
   const ground = new THREE.Group(); ground.name = 'ground'; scene.add(ground);
-  { const gm = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap }), TS = 44, n = NX + 1, bb = new THREE.Box3(), v = new THREE.Vector3();
+  { const gm = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap }), TS = 89, n = NX + 1, bb = new THREE.Box3(), v = new THREE.Vector3();
     for (let tz = 0; tz < NZ; tz += TS) for (let tx = 0; tx < NX; tx += TS) {
       const ex = Math.min(NX, tx + TS), ez = Math.min(NZ, tz + TS), idx = []; bb.makeEmpty();
       for (let iz = tz; iz < ez; iz++) for (let ix = tx; ix < ex; ix++) { const a = iz * n + ix, b = a + n, c = b + 1, d = a + 1; idx.push(a, b, d, b, c, d); }
@@ -176,11 +176,12 @@ export function createTerrain(scene) {
       for (const m of [set.near, set.far]) if (m) { scene.remove(m); m.dispose(); }
       set.cap = Math.ceil(items.length * 1.1); set.near = mk(set.geo, !!def.shadow); set.far = def.far ? mk(set.geo, false) : null; set.relayout(set.last);
     };
-    const fill = (m, idx) => { idx.forEach((k, j) => { m.setMatrixAt(j, items[k].m); m.setColorAt(j, items[k].c); }); m.count = idx.length; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
+    const fill = (m, idx) => { idx.forEach((k, j) => { m.setMatrixAt(j, items[k].m); m.setColorAt(j, items[k].c); }); m.count = idx.length; m.visible = idx.length > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
     set.relayout = p => {
       set.last.copy(p); if (!set.near) return;
       const dNear = def.dist === 'tree' ? state.treeDist : def.dist === 'grass' ? state.grassDist : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = [], b = [];
-      items.forEach((q, k) => { const d = Math.hypot(q.m.elements[12] - p.x, q.m.elements[14] - p.z); if (d < dNear) a.push(k); else if (set.far && d < dFar) b.push(k); });
+      // tắt bóng đổ (chất lượng 3) → gần/xa như nhau: gộp hết vào 1 mesh, đỡ 1 draw call mỗi loại
+      const one = !state.shadows; items.forEach((q, k) => { const d = Math.hypot(q.m.elements[12] - p.x, q.m.elements[14] - p.z); if (d < dNear) a.push(k); else if (set.far && d < dFar) (one ? a : b).push(k); });
       fill(set.near, a); if (set.far) fill(set.far, b);
     };
     kitGeo(kind).then(g => { set.geo = g; set.build(); });
@@ -220,7 +221,7 @@ export function createTerrain(scene) {
     m.computeBoundingSphere(); m.receiveShadow = true; scene.add(m); grass.push({ m, x: cx / list.length, z: cz / list.length });
   }
 
-  let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55 };
+  let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55, shadows: true };
   function update(dt, t, player) {
     WIND.uTime.value = t;
     if (player) WIND.uPlayer.value.copy(player);

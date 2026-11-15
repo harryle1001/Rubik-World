@@ -81,10 +81,11 @@ export function createFauna(ctx) {
   const v = new THREE.Vector3();
   function update(dt, time) {
     const p = ctx.player.pos, dirty = new Set();
+    for (const k in kinds) kinds[k].live = 0;
     for (const g of groups) {
       const far = Math.hypot(g.cx - p.x, g.cz - p.z) > ACTIVE + (g.type === 'gull' ? 40 : 0);
       if (far) { if (!g.hidden) { g.members.forEach(m => hide(g.K, m.i)); g.hidden = true; dirty.add(g.K); } continue; }
-      g.hidden = false; dirty.add(g.K);
+      g.hidden = false; dirty.add(g.K); g.K.live++;
       if (g.type === 'gull') {
         g.drift += dt * 0.05; g.cx += Math.cos(g.drift) * dt * 1.2; g.cz += Math.sin(g.drift) * dt * 1.2;
         for (const m of g.members) {
@@ -156,6 +157,7 @@ export function createFauna(ctx) {
       }
     }
     for (const K of dirty) K.meshes.forEach(m => m.instanceMatrix.needsUpdate = true);
+    for (const k in kinds) { const K = kinds[k], on = K.live > 0; if (K.meshes[0].visible !== on) K.meshes.forEach(m => m.visible = on); }   // loài không có đàn nào gần → không tốn draw call
   }
   // cho bản đồ: vị trí đại diện của mỗi đàn
   const markers = groups.map(g => ({ S: FAUNA_INFO[g.type], g, root: { position: v.clone() } }));
