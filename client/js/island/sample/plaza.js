@@ -109,6 +109,53 @@ export function buildPlaza({ ctx, env, addFoot = () => {} }) {
     }
   }
 
+  // ================= TƯỢNG RUBIK: bệ đá + khối 3×3 =================
+  const s = PHI * PHI, q = s / 3;                         // cạnh khối φ² ≈ 2,62 m
+  const pedH = 1.02, cubeY = yP + pedH + s / 2 + 0.03;
+  S.push(lathe([[R3 - 0.07, yP - 0.08], [R3 - 0.07, yP + 0.2], [R3 - 0.12, yP + 0.24], [2.6, yP + 0.24]], 64), C.stone2, cx, 0, cz);   // bậc đế (bán kính R/φ³)
+  S.push(lathe([[2.6, yP + 0.23], [2.56, yP + 0.32], [2.3, yP + 0.38], [2.0, yP + 0.46], [2.0, yP + 0.82], [2.1, yP + 0.88], [2.2, yP + 0.96], [2.2, yP + 1.02], [0, yP + 1.02]], 48), C.stone, cx, 0, cz);
+  S.push(new THREE.TorusGeometry(2.02, 0.04, 4, 48).rotateX(PI / 2), C.gold, cx, yP + 0.74, cz);
+  L.push(new THREE.TorusGeometry(R3 - 0.1, 0.035, 3, 64).rotateX(PI / 2), C.lantern, cx, yP + 0.25, cz);      // vòng sáng chân bệ (đêm)
+  { const a = PI, [px, pz] = at(2.04, a); S.box(1.5, 0.24, 0.1, px, yP + 0.5, pz, C.bronze, -a - PI / 2 + PI); }   // bảng đồng (chữ ở atlas)
+  ctx.colliders.push({ x: cx, z: cz, r: R3 });
+
+  // khối con bo góc (InstancedMesh, 1 draw call) + miếng dán lõm nhẹ (1 draw call, màu theo instance)
+  const cubeGroup = new THREE.Object3D(); cubeGroup.position.set(cx, cubeY, cz); cubeGroup.rotation.y = PI / 4; cubeGroup.updateMatrix();
+  const cubieGeo = new RoundedBoxGeometry(q * 0.97, q * 0.97, q * 0.97, 3, q * 0.12);
+  const body = new THREE.InstancedMesh(cubieGeo, new THREE.MeshPhongMaterial({ color: '#141218', specular: '#4a4a55', shininess: 70 }), 27);
+  // miếng dán: vuông bo góc, tâm lõm vào trong (pháp tuyến nghiêng về tâm để bóng đổ nhẹ trong lòng)
+  const stickerGeo = (() => { const sz = q * 0.82, rc = sz * 0.2, N = 8, ring = [];
+    for (let c = 0; c < 4; c++) { const ox = (c === 0 || c === 3 ? 1 : -1) * (sz / 2 - rc), oy = (c < 2 ? 1 : -1) * (sz / 2 - rc); for (let i = 0; i <= N; i++) { const t = (c * PI / 2) + i / N * PI / 2; ring.push([ox + Math.cos(t) * rc, oy + Math.sin(t) * rc]); } }
+    const pos = [], nor = [], dep = 0.006, tilt = 0.32, pushV = (x, y, k) => { const d = Math.hypot(x, y) || 1; pos.push(x, y, -dep * (1 - k)); nor.push(-x / d * tilt * k, -y / d * tilt * k, 1); };
+    for (let i = 0; i < ring.length; i++) { const [ax, ay] = ring[i], [bx, by] = ring[(i + 1) % ring.length];
+      pushV(0, 0, 0); pushV(ax * 0.62, ay * 0.62, 0.62); pushV(bx * 0.62, by * 0.62, 0.62);
+      pushV(ax * 0.62, ay * 0.62, 0.62); pushV(ax, ay, 1); pushV(bx, by, 1); pushV(ax * 0.62, ay * 0.62, 0.62); pushV(bx, by, 1); pushV(bx * 0.62, by * 0.62, 0.62); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); g.normalizeNormals(); return g; })();
+  const FACES = [['px', [1, 0, 0], [0, PI / 2, 0]], ['nx', [-1, 0, 0], [0, -PI / 2, 0]], ['py', [0, 1, 0], [-PI / 2, 0, 0]], ['ny', [0, -1, 0], [PI / 2, 0, 0]], ['pz', [0, 0, 1], [0, 0, 0]], ['nz', [0, 0, -1], [0, PI, 0]]];
+  const cubies = [], stickers = [];
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (let k = -1; k <= 1; k++) {
+    cubies.push({ p: new THREE.Vector3(i * q, j * q, k * q), top: j === 1 });
+    for (const [key, n, rot] of FACES) if ((n[0] && n[0] === i) || (n[1] && n[1] === j) || (n[2] && n[2] === k)) stickers.push({ key, top: j === 1, p: new THREE.Vector3(i * q + n[0] * (q * 0.485 + 0.012), j * q + n[1] * (q * 0.485 + 0.012), k * q + n[2] * (q * 0.485 + 0.012)), e: new THREE.Euler(...rot) });
+  }
+  const stick = new THREE.InstancedMesh(stickerGeo, new THREE.MeshToonMaterial({ color: '#ffffff', gradientMap }), stickers.length);
+  stick.material.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n totalEmissiveRadiance += diffuseColor.rgb * 0.24;'); };   // nhựa dán luôn tươi màu (kể cả lúc chiều tối)
+  const _c = new THREE.Color(); stickers.forEach((st, i) => stick.setColorAt(i, _c.set(RUBIK[st.key])));
+  const _o = new THREE.Object3D(), _q = new THREE.Quaternion(), _m = new THREE.Matrix4(), UP = new THREE.Vector3(0, 1, 0);
+  function pose(th) {   // th: góc xoay tầng trên
+    _q.setFromAxisAngle(UP, th);
+    cubies.forEach((c, i) => { _o.position.copy(c.p); _o.quaternion.identity(); _o.scale.setScalar(1); if (c.top) { _o.position.applyQuaternion(_q); _o.quaternion.copy(_q); } _o.updateMatrix(); body.setMatrixAt(i, _m.multiplyMatrices(cubeGroup.matrix, _o.matrix)); });
+    stickers.forEach((st, i) => { _o.position.copy(st.p); _o.quaternion.setFromEuler(st.e); _o.scale.setScalar(1); if (st.top) { _o.position.applyQuaternion(_q); _o.quaternion.premultiply(_q); } _o.updateMatrix(); stick.setMatrixAt(i, _m.multiplyMatrices(cubeGroup.matrix, _o.matrix)); });
+    body.instanceMatrix.needsUpdate = stick.instanceMatrix.needsUpdate = true;
+  }
+  pose(0);
+  for (const m of [body, stick]) { m.computeBoundingSphere(); m.receiveShadow = true; scene.add(m); }
+  body.castShadow = true; stick.castShadow = false; body.name = 'plaza-rubik'; stick.name = 'plaza-rubik-stickers';
+  // xoay ¼ vòng trong φ giây, nghỉ φ² giây → chu kỳ φ³ ≈ 4,24 s (chỉ tính khi tượng đang được vẽ)
+  let lastT = -1, lastTh = 0;
+  body.onBeforeRender = () => { const t = performance.now() / 1000; if (t === lastT) return; lastT = t;
+    const T = PHI ** 3, n = Math.floor(t / T), u = Math.min(1, (t - n * T) / PHI), e = u * u * (3 - 2 * u), th = (n + e) * PI / 2;
+    if (Math.abs(th - lastTh) > 1e-4) { lastTh = th; pose(th); } };
+
   // ================= 8 ĐÈN CỔ ĐIỂN (cách đều 2π/8, cao φ³) =================
   const lampAt = (x, z) => {
     S.push(lathe([[0.3, 0], [0.3, 0.16], [0.22, 0.24], [0.17, 0.46], [0.11, 0.62], [0.09, 0.72], [0, 0.72]], 8), C.iron, x, Y, z);
@@ -148,7 +195,7 @@ export function buildPlaza({ ctx, env, addFoot = () => {} }) {
 
   // ================= GỘP THÀNH MESH =================
   const mat = toon('#ffffff', { vertexColors: true }), glow = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }); GLOW_MATS.push(glow);
-  const meshes = [];
+  const meshes = [body, stick];
   const add = (b, m, shadow) => { const me = b.mesh(m, shadow); if (!me) return null; me.name = b.name; scene.add(me); meshes.push(me); return me; };
   add(G, mat, false); const st = add(S, mat, true); add(F, mat, false); add(L, glow, false);
   if (st && !low) { const ol = new THREE.MeshBasicMaterial({ color: '#4a3548', side: THREE.BackSide }); ol.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n transformed += normalize(normal) * 0.022;'); }; const e = new THREE.Mesh(st.geometry, ol); e.raycast = () => {}; e.castShadow = false; e.name = 'plaza-outline'; st.add(e); meshes.push(e); }
