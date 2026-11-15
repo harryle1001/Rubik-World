@@ -462,8 +462,7 @@ export function buildTownArchitecture(ctx, RS, env) {
     const b = B.E = new Batch('E'), [x0, z0, x1, z1] = ZR.E, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, y = 1.1;
     let sz = 30; while (sz < z0 && hgt(cx, sz) > 0.2) sz += 1;             // bờ nam của đảo
     measure(b, 'village', () => {
-      deck(b, cx - 1.6, sz - 3, cx + 1.6, cz - 8, y);                         // cầu tàu chính
-      for (let z = sz + 4; z < cz - 9; z += 10) { lamp(b, cx + 1.7, z, y); }
+      // (đã bỏ cầu tàu nối đảo với làng nổi — đến làng bằng thuyền)
       deck(b, cx - 8, cz - 8, cx + 8, cz + 8, y, true, '#c08a52'); dome(b, cx, cz, y, 6.2, '#e8f1f4');      // nhà vòm trung tâm
       signAt(b, atlas.sign('LÀNG NỔI TRÊN BIỂN', '#1d5c7a', '#fff', '#ffd36e'), 4.4, 0.55, cx, y + 3.2, cz + 6.3);
       const pods = [[-22, -6], [22, -6], [-26, 16], [26, 16], [-10, 26], [10, 26]];
