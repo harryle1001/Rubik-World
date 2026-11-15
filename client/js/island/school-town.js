@@ -11,6 +11,7 @@ import { toon, gradientMap } from './style.js';
 import { createTownPeople } from './town-people.js';
 import { S, TOWN_Y, BLOCKS, LAND, to3, to2, GATE3, SPAWN, rectDist, setHouses, onFlat, roadDist, ROAD_W, HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1 } from './layout.js';
 import { buildTownArchitecture } from './town-buildings.js';
+import { doorKey } from './mg/host.js';
 export { S, TOWN_Y };
 export const Y_MIN = -600, Y_MAX = 1010;                    // phần đất liền của bản đồ 2D (đã cắt thành các khối trong layout.js)
 const P = (x, y, hx) => to3(x, y, hx);               // 2D → 3D theo bố cục mới
@@ -131,7 +132,7 @@ export function createSchoolTown(ctx) {
   // ---------- Mở cửa → bảng mini game của trường (iframe nhận chạm) ----------
   let modalOpen = false, nearDoor = null, nameTag = null, checkT = 0;
   const isModal = () => { try { const doc = fr.contentDocument; return !!doc.querySelector('.modal:not([hidden]), #v32Map:not([hidden]), #v40Quiz:not([hidden]), #v40Rep:not([hidden]), #v43J:not([hidden]), #lvlUp:not([hidden])') || !!(doc.querySelector('#v40Coach') && doc.querySelector('#v40Coach').offsetParent); } catch (e) { return false; } };
-  town.enter = q => { if (!town.RS) return; ctx.sfx && ctx.sfx('ok'); town.RS.enterDoor(q.d); checkT = 0; };
+  town.enter = q => { if (!town.RS) return; ctx.sfx && ctx.sfx('ok'); const k = doorKey(ctx, q.d); if (k && ctx.mg && ctx.miniGames[k] && ctx.mg.start(k, q)) return; town.RS.enterDoor(q.d); checkT = 0; };   // có bản 3D (mg/host.js) → mở 3D, không thì bảng 2D
   town.menu = () => { if (!town.RS) { ctx.toast('Trường Rubik đang tải…'); return; } town.RS.btn2D('hMenu'); checkT = 0; };
   town.goSchool = () => { ctx.player.teleport(SPAWN[0], SPAWN[1]); ctx.player.pos.y = TOWN_Y; ctx.toast('🏫 Chào mừng đến Trường Rubik!'); };
 

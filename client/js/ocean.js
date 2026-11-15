@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { CFG } from './island/config.js';
 import { createSky } from './island/sky.js';
 import { createPost } from './island/post.js';
+import { createBrightness } from './island/brightness.js';
 import { createTerrain } from './island/terrain.js';
 import { createPlayer } from './island/player.js';
 import { scatterModel } from './island/models.js';
@@ -24,6 +25,11 @@ import { createDt } from './island/motion.js';
 import { createAmbience } from './island/ambience.js';
 import { createLiving } from './island/living.js';
 import { createSkyshow } from './island/skyshow.js';
+import { createDive } from './island/dive.js';
+import { createMiniGameHost } from './island/mg/host.js';
+// mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
+import { register as regBoard } from './island/mg/board/index.js';
+import { register as registerArts } from './island/mg/arts/index.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -70,15 +76,20 @@ const net = ctx.net = createNet(ctx);
 const animals = ctx.animals = createAnimals(ctx);
 ctx.sky = sky;
 const school = createSchoolTown(ctx);
+const mg = ctx.mg = createMiniGameHost(ctx); // khung mini game 3D (mg/host.js); mỗi nhóm đăng ký game của mình:
+regBoard(ctx);
 const worldMap = ctx.worldMap = createWorldMap(ctx); // bản đồ: phím M / nút 🗺️
 const vehicles = createVehicles(ctx);
 const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 13 bí mật: khối Rubik vàng, pháo hoa π, cá voi… (📖 Sổ bí mật)
+const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
+const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao băng, mây ti, chế độ ngắm trời ⭐ (skyshow.js)
 const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
+registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
@@ -119,7 +130,10 @@ renderer.setAnimationLoop(() => {
   ambience.update(dt);
   living.update(dt);
   skyshow.update(dt); // sau player/sky: chế độ ngắm trời đặt lại camera
+  dive.update(dt); // sau ambience: ghi đè sương/màu khi dưới nước
+  mg.update(dt, clock.elapsedTime);
   ctx.flushOffer();
+  brightness.update();
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
   quality(dt);

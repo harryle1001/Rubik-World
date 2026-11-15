@@ -209,7 +209,8 @@ export function createPhysics(ctx) {
       if (b.kind !== 'crate' && d2 < nd * nd) { nd = Math.sqrt(d2); near = b; }
     }
     solid.length = 0; for (const b of act) if (b.kind === 'crate') solid.push(b);
-    const sub = L === 0 ? 2 : 1, h = dt / sub;
+    let vmax = 0; for (const b of act) vmax = Math.max(vmax, b.vel.lengthSq());
+    const sub = Math.min(4, Math.max(L === 0 ? 2 : 1, Math.ceil(Math.sqrt(vmax) * dt / 0.18))), h = dt / sub; // vật bay nhanh: chia nhỏ bước để không xuyên tường mỏng
     for (let s = 0; s < sub; s++) {
       for (const b of act) step(b, h);
       for (let i = 0; i < act.length; i++) for (let j = i + 1; j < act.length; j++) pair(act[i], act[j]);

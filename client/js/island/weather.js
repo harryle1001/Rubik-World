@@ -92,7 +92,7 @@ export function createWeather(ctx) {
             float n = sin(vWP.x*0.47 + sin(vWP.z*0.31)*2.1) * sin(vWP.z*0.43 + sin(vWP.x*0.29)*2.3);
             float pud = smoothstep(0.9 - uWet*0.2, 0.93 - uWet*0.2, n*0.5+0.5);
             vec2 q = fract(vWP.xz * 0.6) - 0.5; float rip = sin(length(q) * 38. - uWT * 9. + floor(vWP.x*0.6)*3.7 + floor(vWP.z*0.6)*5.1) * uRainNow;
-            diffuseColor.rgb *= 1. - 0.3 * uWet;
+            diffuseColor.rgb *= 1. - 0.18 * uWet;
             diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.3, 0.37, 0.46) + rip * 0.035, pud * 0.85 * smoothstep(0.85, 0.97, vUp));
           }`);
       };
@@ -142,7 +142,7 @@ export function createWeather(ctx) {
     const L = ctx.qualityLevel || 0, S = sky, day = 1 - S.state.night;
 
     // ánh sáng & màu trời (sky.js vừa đặt theo giờ, ở đây chỉ phủ thêm thời tiết)
-    S.sun.intensity *= 1 - 0.78 * cur.c; S.hemi.intensity *= 1 - 0.3 * cur.c;
+    S.sun.intensity *= 1 - 0.6 * cur.c; S.hemi.intensity *= 1 + 0.15 * cur.c * day; // trời âm u: nắng yếu nhưng ánh sáng tán xạ từ mây bù lại (không quá tối cho trẻ)
     S.U.uTop.value.lerp(grey, cur.c * 0.6 * day); S.U.uHor.value.lerp(grey, cur.c * 0.45 * day); S.U.uSunCol.value.multiplyScalar(1 - cur.c * 0.9);
     S.cloudMat.color.copy(S.state.cloudTint).multiplyScalar(1 - cur.c * 0.45); S.cloudMat.emissiveIntensity *= 1 - cur.c * 0.6;
     const nVis = Math.round(5 + cur.c * 9); S.clouds.children.forEach((c, i) => { c.visible = i < nVis; c.position.x += cur.w * 5 * dt; });
