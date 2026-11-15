@@ -68,18 +68,19 @@ function hipRoof(b, x0, z0, x1, z1, y, h) {
 }
 
 // KHỐI RUBIK GIỐNG THẬT (dùng chung mọi khu): 26 khối con vát góc (44 tam giác/khối) thân đen + 54 miếng dán nhỏ hơn mặt (lõm trong viền vát)
-// ≈ 1.250 tam giác. Gốc (x, y, z) = tâm khối; s = cạnh; tilt = đứng trên 1 góc. Có thể gọi cho Batch hoặc DetailGrid.
+// ≈ 1.250 tam giác (lite: 1 lõi + miếng dán ≈ 120). Gốc (x, y, z) = tâm khối; s = cạnh; tilt = đứng trên 1 góc. Có thể gọi cho Batch hoặc DetailGrid.
 let cubieGeo = null;
 export function rubikCube(b, x, y, z, s, ry = 0, tilt = false, lite = false) {   // lite: khối con hộp thường (≈ 420 tam giác) cho biểu tượng nhỏ
   if (!cubieGeo) { const h = 0.5, a = 0.41, pts = []; for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) pts.push(new THREE.Vector3(sx * h, sy * a, sz * a), new THREE.Vector3(sx * a, sy * h, sz * a), new THREE.Vector3(sx * a, sy * a, sz * h)); cubieGeo = new ConvexGeometry(pts); }
   const pre = b.pre; _o.position.set(x, y, z); _o.rotation.set(tilt ? 0.615 : 0, ry, tilt ? Math.PI / 4 : 0, 'YXZ'); _o.scale.set(1, 1, 1); _o.updateMatrix();
   b.pre = pre ? pre.clone().multiply(_o.matrix) : _o.matrix.clone();
   const q = s / 3, f = q * 0.5 + 0.004;
+  if (lite) b.box(s * 0.99, s * 0.99, s * 0.99, 0, -s * 0.495, 0, '#17151d');
   // màu mặt: +z đỏ, -z cam, +x xanh dương, -x xanh lá, +y trắng, -y vàng (tráo vài ô cho trông như đang xoay dở)
   const FC = { pz: '#e8392f', nz: '#ff8a1f', px: '#2b63d9', nx: '#2f9e44', py: '#ffffff', ny: '#f5c518' }, ALT = Object.values(FC);
   for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (let k = -1; k <= 1; k++) {
     if (!i && !j && !k) continue;
-    const cx = i * q, cy = j * q, cz = k * q; b.push(lite ? new THREE.BoxGeometry(1, 1, 1) : cubieGeo.clone(), '#17151d', cx, cy, cz, 0, 0, 0, q * 0.98, q * 0.98, q * 0.98);
+    const cx = i * q, cy = j * q, cz = k * q; if (!lite) b.push(cubieGeo.clone(), '#17151d', cx, cy, cz, 0, 0, 0, q * 0.98, q * 0.98, q * 0.98);
     const mix = (i * 7 + j * 3 + k * 5 + 21) % 5 === 0;
     const st = (key, px, py, pz, ryy, rxx) => b.plane(q * 0.8, q * 0.8, cx + px, cy + py, cz + pz, mix ? ALT[(i + j + k + 9) % 6] : FC[key], ryy, rxx);
     if (k === 1) st('pz', 0, 0, f, 0, 0); if (k === -1) st('nz', 0, 0, -f, Math.PI, 0);
@@ -116,12 +117,12 @@ export function buildSchoolZone(a) {
       b.box(len + 0.1, 0.22, T + 0.22, 0, H - 0.22, 0, C.trim);
       if (opts.band) opts.band(len);
       if (opts.noWin) return;
-      const sp = len > 20 ? 4.2 : 2.9, n = Math.floor((len - 1.4) / sp); if (n < 1) return;
+      const sp = len > 20 ? 4.8 : 3.0, n = Math.floor((len - 1.4) / sp); if (n < 1) return;
       for (let i = 0; i < n; i++) {
         const u = -len / 2 + (len - (n - 1) * sp) / 2 + i * sp, z = T / 2;
         b.plane(1.32, 1.56, u, 1.78, z + 0.02, C.trim); b.plane(1.04, 1.28, u, 1.78, z + 0.03, C.glass);
         for (const s of [-1, 1]) b.plane(0.5, 1.36, u + s * 0.95, 1.78, z + 0.025, C.shutter);
-        b.box(1.5, 0.1, 0.22, u, 0.94, z + 0.06, C.trim);
+        b.plane(1.5, 0.24, u, 1.0, z + 0.1, C.trim, 0, -1.1);
         const d = DG.follow(b), cc = ['#f6d6a8', '#fff3c4', '#cfe6f7'][(i + Math.round(len)) % 3];
         d.plane(0.3, 1.0, u - 0.34, 1.88, z + 0.035, cc); d.plane(0.3, 1.0, u + 0.34, 1.88, z + 0.035, cc);
         d.box(0.05, 1.28, 0.03, u, 1.14, z + 0.05, C.trim); d.box(1.04, 0.05, 0.03, u, 1.84, z + 0.05, C.trim);
@@ -163,8 +164,8 @@ export function buildSchoolZone(a) {
       const n = Math.max(2, Math.round(faceL / 3.2));
       for (let i = 0; i <= n; i++) {
         const u = -faceL / 2 + i * faceL / n; if (Math.abs(u - du) < gap + 0.7) continue;
-        b.cyl(0.3, 0.34, 0.3, u, 0, VD, C.plinth, 8); b.cyl(0.17, 0.2, H - 0.3, u, 0.3, VD, C.trim, 8); b.cyl(0.28, 0.2, 0.18, u, H - 0.38, VD, st.acc, 8);
-        const un = u + faceL / n; if (i < n && !big && Math.abs(un - du) >= gap + 0.7) b.push(new THREE.TorusGeometry(faceL / n / 2 - 0.15, 0.1, 3, 8, Math.PI), C.trim, (u + un) / 2, H - 0.95 - (faceL / n / 2 - 0.15) * 0.45, VD, 0, 0, 0, 1, 0.45, 1);
+        b.cyl(0.3, 0.34, 0.3, u, 0, VD, C.plinth, 6); b.cyl(0.17, 0.2, H - 0.3, u, 0.3, VD, C.trim, 6); b.cyl(0.28, 0.2, 0.18, u, H - 0.38, VD, st.acc, 6);
+        const un = u + faceL / n; if (i < n && !big && Math.abs(un - du) >= gap + 0.7) b.push(new THREE.TorusGeometry(faceL / n / 2 - 0.15, 0.1, 3, 6, Math.PI), C.trim, (u + un) / 2, H - 0.95 - (faceL / n / 2 - 0.15) * 0.45, VD, 0, 0, 0, 1, 0.45, 1);
         _v.set(u, 0, VD).applyMatrix4(b.pre); col(_v.x, _v.z, 0.22);
       }
       if (!big) { b.box(faceL + 0.2, 0.5, 0.06, 0, H - 0.72, VD + 0.18, st.acc); }   // diềm hành lang màu riêng của lớp
@@ -231,7 +232,7 @@ export function buildSchoolZone(a) {
       b.box(0.5, 0.7, 0.5, 0, 6.55, 0.86, stone2);                                                          // đá khoá vòm
       b.box(8.8, 1.05, 2.0, 0, 6.2, 0, stone); b.box(9.3, 0.22, 2.25, 0, 7.25, 0, stone2);
       b.prism(2.2, 1.6, 8.6, 0, 7.47, 0, roof, 0); b.prism(1.9, 1.3, 7.2, 0, 7.5, 0.18, stone, 0);
-      rubikCube(b, 0, 9.55, 0.3, 0.8, 0.6, true);
+      rubikCube(b, 0, 9.55, 0.3, 0.8, 0.6, true, true);
       signAt(b, atlas.sign('TRƯỜNG RUBIK', '#7a1f2b', '#ffe08a', C.gold), 6.2, 0.8, 0, 6.75, 1.02);
       signAt(b, atlas.sign('Học – Chơi – Khám phá', '#1f3b63', '#fff', C.gold), 3.4, 0.4, 0, 5.15, 1.0);
       for (const s of [-1, 1]) {   // không rào, không cổng sắt: trụ đèn đứng riêng, bình hoa đá, bồn hoa
