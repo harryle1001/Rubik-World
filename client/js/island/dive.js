@@ -108,7 +108,7 @@ export function createDive(ctx) {
     fragmentShader: `uniform sampler2D uTex; uniform float uTime, uA, uFar; varying vec3 vW; varying float vD;
       void main(){ vec2 p = vW.xz;
         float a = texture2D(uTex, p * 0.21 + vec2(uTime * 0.03, uTime * 0.019)).r, b = texture2D(uTex, p * 0.16 - vec2(uTime * 0.024, -uTime * 0.027)).r;
-        float k = min(a, b) * 0.9 + a * b * 0.35;
+        float k = min(a, b) * 0.6 + a * b * 0.25;
         float fade = smoothstep(0.25, 1.2, vD) * (1. - smoothstep(4., 24., vD)) * (1. - smoothstep(uFar * 0.35, uFar * 0.9, length(vW - cameraPosition)));
         gl_FragColor = vec4(vec3(0.75, 1., 0.95) * k * fade * uA, 1.); }`,
   }));
@@ -250,7 +250,7 @@ export function createDive(ctx) {
     const sky = ctx.sky, nt = sky ? sky.state.night : 0, day = 1 - nt;
     const d = Math.max(0, cs - camera.position.y), k = clamp(d / FOG_DEEP, 0, 1);
     fogC.copy(shallow).lerp(deep, Math.pow(k, 0.7)).lerp(night, nt * 0.85);
-    const F = scene.fog; F.color.copy(fogC); F.near = 0.5; F.far = lerp(40, 25, k) * (1 - nt * 0.3);
+    const F = scene.fog; F.color.copy(fogC); F.near = 0; F.far = lerp(34, 21, k) * (1 - nt * 0.3);   // nhìn xa 34 → 21 m (Fibonacci)
     if (sky) { sky.U.uTop.value.copy(fogC); sky.U.uHor.value.copy(fogC); sky.U.uSunCol.value.setRGB(0, 0, 0); sky.U.uNight.value = 0; }
     UU.uFog.value.copy(fogC); UU.uFar.value = F.far;
     const far = Math.ceil(F.far + 8); if (camera.far !== far) { camera.far = far; camera.updateProjectionMatrix(); }   // cắt xa theo sương → bớt draw call
@@ -264,8 +264,8 @@ export function createDive(ctx) {
     // chỉnh màu hậu kỳ (dùng pass màu sẵn có): ngả lam-ngọc, giảm bão hoà, vignette đậm hơn khi sâu
     const G = ctx.post && ctx.post.grade;
     if (G) {
-      G.uGain.value.set(0.82, 0.98, 1.02).multiplyScalar(lerp(1.05, 0.8, k)); G.uLift.value.set(0.0, 0.012, 0.025).multiplyScalar(1 - k);
-      G.uSat.value = lerp(0.95, 0.78, k); G.uCon.value = 1.0; G.uAmt.value = lerp(0.3, 0.5, k); G.uRays.value = 0.5 * day * (1 - k);
+      G.uGain.value.set(0.66, 0.93, 1.02).multiplyScalar(lerp(1.08, 0.78, k));   // nước hút đỏ trước G.uLift.value.set(0.0, 0.012, 0.025).multiplyScalar(1 - k);
+      G.uSat.value = lerp(0.92, 0.75, k); G.uCon.value = 1.0; G.uAmt.value = lerp(0.3, 0.5, k); G.uRays.value = 0.5 * day * (1 - k);
     }
   };
   return S;
