@@ -116,7 +116,7 @@ export function createTreasure(ctx) {
   const hud = document.createElement('button'); hud.id = 'bSea'; hud.title = 'Sổ biển: rương kho báu & Bách khoa biển';
   (document.querySelector('.topbtns') || document.body).appendChild(hud);
   const busy = () => !quiz.hidden || !book.hidden;
-  const freeze = on => { ctx.player.frozen = on; if (ctx.dive) ctx.dive.paused = on; };
+  let o2Hold = null; const freeze = on => { ctx.player.frozen = on; o2Hold = on && ctx.dive ? ctx.dive.oxygen : null; };   // đang đọc câu đố/sổ: giữ nguyên dưỡng khí
 
   function ask(c) {
     const q = pickQuestions(['bien'], 1)[0]; freeze(true); quiz.hidden = false; ctx.sfx && ctx.sfx('ui');
@@ -189,7 +189,7 @@ export function createTreasure(ctx) {
     if (burstT > 0) { burstT -= dt; for (let k = 0; k < NB; k++) { bV[k].y -= dt * 2.4; bV[k].multiplyScalar(1 - dt * 0.6); bPos[k * 3] += bV[k].x * dt; bPos[k * 3 + 1] += bV[k].y * dt; bPos[k * 3 + 2] += bV[k].z * dt; } bg.attributes.position.needsUpdate = true; if (burstT <= 0) burst.visible = false; }
     if (ctx.dive && ctx.dive.maxOxygen && o2Applied !== o2Level()) applyO2();
     if ((lT -= dt) <= 0) { lT = 0.5; label(); }
-    if (busy()) return;
+    if (busy()) { if (o2Hold != null && ctx.dive) ctx.dive.oxygen = Math.max(ctx.dive.oxygen, o2Hold); return; }
     // nút E: rương gần nhất (≤ 3 m, tính cả độ sâu) · mảnh bản đồ
     let tc = null, td = 9; for (const c of C) if (!S.open[c.i]) { const d = c.pos.distanceToSquared(p); if (d < td) { td = d; tc = c; } }
     if (tc) ctx.offer('🧰 Mở rương kho báu', () => ask(tc), 2);
