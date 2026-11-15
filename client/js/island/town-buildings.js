@@ -13,6 +13,7 @@ import { buildSchoolZone, rubikCube as rubikCubeReal } from './zone-school.js';
 import { buildZoneEast } from './zone-east.js';
 import { buildExtraZones, buildBoats, placePalms } from './zone-extra.js';
 import { buildNorth, house } from './zone-north.js';
+import { buildZen } from './zone-zen.js';
 
 const _o = new THREE.Object3D(), _c = new THREE.Color();
 const shade = (hex, l) => '#' + new THREE.Color(hex).offsetHSL(0, 0, l).getHexString();
@@ -226,6 +227,7 @@ export function buildTownArchitecture(ctx, RS, env) {
   const life = createLife(scene, { butterflies: flies, gulls, flag: flagAt && Object.assign({ tex: flagTex }, flagAt) });
 
   const east = buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, nearDoor, rubikCube });   // khối C & D (zone-east.js)
+  const zen = buildZen({ ctx, low });   // rừng thiền quanh Đền Tri Thức (zone-zen.js)
   // ================= XUẤT RA SCENE =================
   const mat = toon('#ffffff', { vertexColors: true }), out = [...extraMeshes];
   for (const k of Object.keys(B)) { const m = B[k].mesh(mat, k !== 'ground'); if (!m) continue; if (k !== 'ground') addOutline(m); scene.add(m); out.push(m); }
@@ -277,7 +279,7 @@ export function buildTownArchitecture(ctx, RS, env) {
   function update(p, t, dt = 0.016) {
     life.update(t, p); north.update(p, t);
     SZ.update(p, dt);
-    boats.update(t);
+    boats.update(t); zen.update(p, t, dt);
     if ((upT -= dt) > 0) return; upT = 0.3; DG.update(p, 60);
     const fogFar = (scene.fog && scene.fog.far) || 300;
     for (const q of far) if (!q.m.isInstancedMesh) q.m.visible = q.c.distanceTo(p) - q.r < fogFar + 10;
