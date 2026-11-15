@@ -80,13 +80,13 @@ export function createPlayer(ctx) {
   let hero = null; const animState = {};
   loadHero(ctx.heroKind || 'student-male-a').then(r => { if (!r) return; hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
   self.emote = name => { if (hero) emote(hero, animState, name); };
-  let stepT = 0;
+  let stepT = 0, stepPh = 1;
   // trạng thái chuyển động mượt (tạo 1 lần, không cấp phát mỗi khung hình)
   const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3(), pivot = new THREE.Vector3(), pivV = new THREE.Vector3(), ZERO = new THREE.Vector3();
   const visOff = new THREE.Vector3(), visV = new THREE.Vector3(), extPos = new THREE.Vector3(), extQ = new THREE.Quaternion(), orbQ = new THREE.Quaternion(), lastCam = new THREE.Vector3();
-  const rotSt = { v: 0 }, distSt = { v: 0 }, colSt = { v: 0 }, liftSt = { v: 0 }, leanSt = { v: 0 }, tiltSt = { v: 0 }, extSt = { v: 0 }, pyS = { v: 0 }, yawFSt = { v: 0 };
+  const rotSt = { v: 0 }, distSt = { v: 0 }, colSt = { v: 0 }, liftSt = { v: 0 }, leanSt = { v: 0 }, tiltSt = { v: 0 }, extSt = { v: 0 }, pyS = { v: 0 }, yawFSt = { v: 0 }, stepSt = { v: 0 };
   let yawF = 0;
-  let camDist = CAM.dist, colDist = CAM.dist, camLift = 0, lean = 0, tilt = 0, dip = 0, dipV = 0, ext = 0, snapCam = true, idleT = 0, lookT = 0, prevSpeed = 0, prevY = pos.y, wasGrounded = true;
+  let camDist = CAM.dist, colDist = CAM.dist, camLift = 0, lean = 0, tilt = 0, dip = 0, dipV = 0, ext = 0, snapCam = true, idleT = 0, lookT = 0, prevSpeed = 0, prevY = pos.y, prevDy = 0, stepY = 0, wasGrounded = true;
   const hs = {}, lookSt = {}, lookPt = { x: 0, z: 0, on: false };
   // Phương tiện (vehicles.js gán): self.vehicle = { speed, turn, accel, water, fly, lift, anim, seat, camAdd, maxAlt } hoặc null
   self.vehicle = null; self.vel = vel; self.setRot = r => { rot = r; rotSt.v = 0; };
@@ -114,7 +114,7 @@ export function createPlayer(ctx) {
     const fly = V && V.fly, STEP = 1.1, BSTEP = 0.6, R0 = 0.35;
     const sup = (x, z, y) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, y) : -99);
     const near = (x, z) => ctx.grid ? ctx.grid.near(x, z) : { cols: ctx.colliders, boxes: ctx.boxes || [] };
-    const ddx = vel.x * dt, ddz = vel.z * dt, ns = Math.max(1, Math.ceil(Math.hypot(ddx, ddz) / 0.25));
+    const sx0 = pos.x, sz0 = pos.z, ddx = vel.x * dt, ddz = vel.z * dt, ns = Math.max(1, Math.ceil(Math.hypot(ddx, ddz) / 0.25));
     for (let s = 0; s < ns; s++) {
       const ox = pos.x, oz = pos.z; let nx = ox + ddx / ns, nz = oz + ddz / ns;
       if (!fly) {
@@ -143,6 +143,8 @@ export function createPlayer(ctx) {
       else if (!fly && sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = ox; nz = oz; vel.set(0, 0, 0); }
       pos.x = nx; pos.z = nz;
     }
+    // vướng tường/vật cản: vận tốc = phần thật sự đi được (trượt dọc tường) → không "chạy tại chỗ", camera không nhìn xuyên tường
+    if (!fly && dt > 0) { const ax = (pos.x - sx0) / dt, az = (pos.z - sz0) / dt; if (ax * ax + az * az < (vel.x * vel.x + vel.z * vel.z) * 0.9) { vel.x = ax; vel.z = az; self.speed = Math.hypot(ax, az); } }
     // mặt đỡ: địa hình, sàn thị trấn, nóc hộp thấp đang đứng trên
     let g = sup(pos.x, pos.z, pos.y);
     if (!fly) for (const b of near(pos.x, pos.z).boxes) if (b.top <= pos.y + BSTEP && b.top > g && pos.x > b.x0 - 0.15 && pos.x < b.x1 + 0.15 && pos.z > b.z0 - 0.15 && pos.z < b.z1 + 0.15) g = b.top;
@@ -165,9 +167,10 @@ export function createPlayer(ctx) {
     }
     // animation KayKit + tiếng bước chân
     // bậc thang/lề đường: độ cao hiển thị trượt dần thay vì nhảy cóc (dốc thường không bị ảnh hưởng)
-    const dyS = pos.y - prevY; if (!V && grounded && wasGrounded && Math.abs(dyS) > 0.1 + self.speed * dt * 0.7 && Math.abs(dyS) < 0.8) visOff.y = clamp(visOff.y - dyS, -0.6, 0.6);
+    // bậc = độ cao đổi đột ngột so với khung trước (dốc đổi đều nên không bị ảnh hưởng); xe đạp cũng được làm mượt
+    const dyS = pos.y - prevY; if ((!V || !(V.fly || V.water)) && grounded && wasGrounded && Math.abs(dyS - prevDy) > 0.07 && Math.abs(dyS) < 0.8) { stepY = clamp(stepY - dyS + prevDy, -0.6, 0.6); prevDy = 0; } else prevDy = grounded ? dyS : 0;
     prevY = pos.y; wasGrounded = grounded;
-    dampV3(visOff, ZERO, visV, T.soft, dt);
+    dampV3(visOff, ZERO, visV, T.soft, dt); stepY = damp(stepY, 0, stepSt, T.soft, dt);
     // nghiêng người vào khúc cua (theo lực hướng tâm v·ω/g), chúi nhẹ khi tăng tốc, nhún gối khi tiếp đất
     if (!V) {
       lean = damp(lean, clamp(-Math.atan(self.speed * rotSt.v / P.gravity) * 0.4, -0.2, 0.2), leanSt, T.quick, dt);
@@ -189,16 +192,20 @@ export function createPlayer(ctx) {
       if (idleT > 5 && (lookT -= dt) <= 0) { lookT = 2 + Math.random() * 3; const a = rot + (Math.random() - 0.5) * 2.4; lookPt.x = pos.x + Math.sin(a) * 5; lookPt.z = pos.z + Math.cos(a) * 5; lookPt.on = Math.random() < 0.75; }
       lookSt.facing = rot; lookAtTarget(hero, idleT > 5 && lookPt.on ? lookPt : null, lookSt, dt);
     }
-    if (!V && grounded && self.speed > 0.8 && (stepT -= dt) <= 0) { stepT = self.speed > P.walk * 1.1 ? 0.3 : 0.42; ctx.sfx && ctx.sfx('step'); }
+    // bước chân: tiếng + bụi đúng lúc bàn chân chạm đất (theo pha animation đi/chạy: chân trước ở 0,875 / 0, mỗi nửa chu kỳ 1 bước)
+    const A = hero && hero.anim.current, NS = hero && hero.set, isW = A && A === hero.anim.actions[NS.walk], isR = A && A === hero.anim.actions[NS.run];
+    if (!V && grounded && self.speed > 0.8 && (isW || isR)) { const ph = ((A.time / A.getClip().duration - (isW ? 0.875 : 0) + 1) * 2) % 1; if (ph < stepPh) { ctx.sfx && ctx.sfx('step'); if (isR) puff(3, 1.1); } stepPh = ph; }
+    else if (!V && grounded && self.speed > 0.8 && !hero && (stepT -= dt) <= 0) { stepT = self.speed > P.walk * 1.1 ? 0.3 : 0.42; ctx.sfx && ctx.sfx('step'); }
+    else stepPh = 1;
     // dáng chạy (nhân vật dựng bằng khối, dùng khi chưa nạp xong model)
     phase += dt * self.speed * 2.1;
     const a = Math.min(1, self.speed / P.walk) * (running ? 1.0 : 0.7);
-    h.root.position.copy(pos); h.root.rotation.y = rot;
+    h.root.position.copy(pos); h.root.position.y += stepY; h.root.rotation.y = rot; // lệch độ cao hiển thị (bậc) áp cho cả người lẫn xe
     h.legL.rotation.x = Math.sin(phase) * a; h.legR.rotation.x = -Math.sin(phase) * a;
     h.armL.rotation.x = -Math.sin(phase) * a; h.armR.rotation.x = Math.sin(phase) * a;
     h.body.position.y = Math.abs(Math.cos(phase)) * 0.08 * a; h.body.rotation.x = running ? 0.15 * a : 0;
     if (!grounded) { h.legL.rotation.x = -0.7; h.legR.rotation.x = 0.4; h.armL.rotation.z = -0.8; h.armR.rotation.z = 0.8; } else { h.armL.rotation.z = h.armR.rotation.z = 0; }
-    if (!V && grounded && self.speed > P.walk * 1.1 && (dustT += dt) > 0.06) { dustT = 0; puff(1, 0.6); }
+    if (!hero && !V && grounded && self.speed > P.walk * 1.1 && (dustT += dt) > 0.06) { dustT = 0; puff(1, 0.6); }
     for (let i = 0; i < NDust; i++) if (dl[i] > 0) { dl[i] = Math.max(0, dl[i] - dt * 1.4); dp[i * 3] += dv[i].x * dt; dp[i * 3 + 1] += dv[i].y * dt; dp[i * 3 + 2] += dv[i].z * dt; }
     dg.attributes.position.needsUpdate = dg.attributes.life.needsUpdate = true;
 
@@ -239,7 +246,7 @@ export function createPlayer(ctx) {
   self.teleport = (x, z, y) => {
     const ny = y ?? terrain.heightAt(x, z); tmp2.set(x - pos.x, ny - pos.y, z - pos.z);
     if (tmp2.lengthSq() < 36) visOff.sub(tmp2); else { visOff.set(0, 0, 0); visV.set(0, 0, 0); snapCam = true; }
-    pos.set(x, ny, z); vel.set(0, 0, 0); vy = 0; prevY = ny;
+    pos.set(x, ny, z); vel.set(0, 0, 0); vy = 0; prevY = ny; prevDy = 0;
   };
   self.snapCamera = () => { snapCam = true; };
   return self;
