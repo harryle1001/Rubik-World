@@ -1,15 +1,17 @@
-# Lộ trình cho AI agent nâng cấp game (chạy mỗi đêm)
+# Lộ trình cho AI agent nâng cấp game (chạy liên tục)
 
-Agent đọc file này mỗi lần chạy, làm **1 việc** ở đầu mục "Việc tiếp theo", rồi chuyển việc đó xuống "Nhật ký" (ghi ngày, kết quả, số đo). Chủ dự án có thể thêm, xoá hoặc sắp xếp lại việc ở đây bất cứ lúc nào: agent luôn làm theo thứ tự trong file.
+Agent đọc file này mỗi lần chạy, làm lần lượt các việc từ đầu mục "Việc tiếp theo", rồi chuyển việc đó xuống "Nhật ký" (ghi ngày, kết quả, số đo). Chủ dự án có thể thêm, xoá hoặc sắp xếp lại việc ở đây bất cứ lúc nào: agent luôn làm theo thứ tự trong file.
 
 ## Quy tắc
-- Đọc CLAUDE.md trước. Mỗi lần chỉ làm 1 việc nhỏ, xong trọn vẹn, có ảnh chụp kiểm tra.
+- Đọc CLAUDE.md trước. Mỗi việc xong trọn vẹn, có ảnh chụp kiểm tra.
+- **TỶ LỆ VÀNG φ ≈ 1,618 cho MỌI THỨ** (yêu cầu của chủ dự án): kích thước nhà, lô đất, cửa, cửa sổ, cây, khoảng cách, tỷ lệ cơ thể nhân vật (chiều cao/rốn, đầu/thân), camera (khoảng cách/độ cao), bố cục HUD và nút bấm, cỡ chữ (thang chữ nhân φ), thời lượng hiệu ứng, âm lượng/nhịp nhạc khi hợp lý. Dùng hằng số PHI trong client/js/island/layout.js, dãy Fibonacci (1,2,3,5,8,13,21,34…) cho số lượng/khoảng cách, π cho bố cục tròn. Ghi chú trong commit đã áp φ ở đâu.
 - Không làm hỏng thứ đang chạy tốt: chạy thử trước khi ghép (vào game trước cổng trường, máy bay cất cánh, bản đồ M, cửa vào mini game, không lỗi console).
 - Điện thoại phải mượt: không để draw call trước cổng trường tăng; mục tiêu < 150.
 - Chỉ tài nguyên CC0, ghi client/assets/CREDITS.txt. Không nhạc/nhân vật có bản quyền. An toàn cho trẻ em (không chat tự do).
 - Nội dung học lồng vào lối chơi, hợp lứa tuổi học sinh.
 
 ## Việc tiếp theo
+0. Rà soát toàn bộ game và áp tỷ lệ vàng φ vào những chỗ chưa có: HUD/nút/cỡ chữ, camera, tỷ lệ cơ thể nhân vật (people-model.js), kích thước kiến trúc trường và các khu, máy bay/sân bay, đồ vật vật lý. Chia nhỏ nếu nhiều.
 1. Camera thứ 3 cao hơn, nhìn xa hơn, mượt hơn (kéo xoay, tự né tường); giữ ổn định khi chạy trên điện thoại.
 2. Hiệu năng điện thoại: giảm draw call trước cổng trường xuống < 150 (gộp mesh, tắt bóng vật nhỏ, LOD người ở xa).
 3. Cập nhật Xưởng Nhân Vật (https://claude.ai/artifact/Gkr6gn9gZRPL6dtLym67Fr) sang nhân vật dáng Zelda mới (people-model.js).
