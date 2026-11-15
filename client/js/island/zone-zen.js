@@ -182,6 +182,7 @@ export function buildZen({ ctx, low = false }) {
       for (let i = 0; i < 6; i++) { const a0 = i * Math.PI / 3 + Math.PI / 6, a1 = a0 + Math.PI / 3, ru = r - 0.4; const mu = u + (Math.cos(a0) + Math.cos(a1)) / 2 * ru, mv = v + (Math.sin(a0) + Math.sin(a1)) / 2 * ru; B.box(0.16, 0.22, ru, mu, y + post - 0.25, mv, '#8a3a26', -(a0 + a1) / 2); }
       B.push(roofGeo(r + 1.1, roofH, 0.42), '#9c4a33', u, y + post + roofH / 2 - 0.05, v, Math.PI / 6);
       B.push(roofGeo(1.0, 0.7, 0.18), '#9c4a33', u, y + post + roofH + 0.18, v, Math.PI / 6);
+      B.cyl(r + 1.0, r + 1.0, 0.1, u, y + post - 0.06, v, '#8a3a26', 6, Math.PI / 6); B.cyl(0.95, 0.95, 0.08, u, y + post + roofH + 0.02, v, '#8a3a26', 6, Math.PI / 6);   // trần che mặt dưới mái
       B.cyl(0.55, 0.55, 0.3, u, y + post + roofH - 0.25, v, '#8a3a26', 6);
       B.ball(0.16, u, y + post + roofH + 0.62, v, '#f2c14e');
       B.cyl(0.42, 0.48, 0.38, u + 1.4, y, v + 1.2, '#8f8676', 7); B.cyl(0.42, 0.48, 0.38, u - 1.2, y, v - 1.4, '#8f8676', 7);   // đôn đá ngồi
@@ -354,12 +355,12 @@ export function buildZen({ ctx, low = false }) {
       }
       mine({ x, z, r: 0.75 });
     }
-    const cells = new Map(), C = 34;
+    const cells = new Map(), C = 55;   // ô 55 m (Fibonacci) → ít mesh hơn
     for (const q of bamboo) { const k = Math.floor(q.x / C) + ',' + Math.floor(q.z / C); if (!cells.has(k)) cells.set(k, []); cells.get(k).push(q); }
     for (const list of cells.values()) {
       const im = new THREE.InstancedMesh(bambooGeo, bambooMat, list.length); let cx = 0, cz = 0;
       list.forEach((q, i) => { im.setMatrixAt(i, q.m); im.setColorAt(i, q.c); cx += q.x; cz += q.z; });
-      im.castShadow = !low; im.receiveShadow = true; im.computeBoundingSphere(); im.name = 'zen-bamboo'; im.visible = false; root.add(im);
+      im.castShadow = false; im.receiveShadow = true; im.computeBoundingSphere(); im.name = 'zen-bamboo';   // không đổ bóng: bớt 1 draw call/ô im.visible = false; root.add(im);
       bambooCells.push({ im, x: cx / list.length, z: cz / list.length });
     }
     void Wl;
@@ -411,7 +412,7 @@ export function buildZen({ ctx, low = false }) {
   const ffMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime: { value: 0 }, uNight: { value: 0 } },
     vertexShader: `uniform float uTime, uNight; attribute float aPh; varying float vA;
       void main(){ vec3 p = position; p.x += sin(uTime * 0.5 + aPh) * 1.4; p.z += cos(uTime * 0.37 + aPh * 1.7) * 1.4; p.y += sin(uTime * 0.8 + aPh * 2.3) * 0.5;
-        vec4 mv = modelViewMatrix * vec4(p, 1.); gl_Position = projectionMatrix * mv; vA = uNight * (0.35 + 0.65 * max(0., sin(uTime * 2.1 + aPh * 3.))); gl_PointSize = 90. / -mv.z; }`,
+        vec4 mv = modelViewMatrix * vec4(p, 1.); gl_Position = projectionMatrix * mv; vA = uNight * (0.35 + 0.65 * max(0., sin(uTime * 2.1 + aPh * 3.))); gl_PointSize = 170. / -mv.z; }`,
     fragmentShader: `varying float vA; void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0., d) * vA; gl_FragColor = vec4(vec3(1., 0.95, 0.5) * a, a); }` });
   const fireflies = new THREE.Points(ffGeo, ffMat); fireflies.frustumCulled = false; fireflies.name = 'zen-fireflies'; root.add(fireflies);
 
@@ -469,13 +470,14 @@ export function buildZen({ ctx, low = false }) {
     if (first) { first = false; cleanup(); }
     if ((upT -= dt) <= 0) {
       upT = 0.3; const d = Math.hypot(p.x - TX, p.z - TZ); near = d < 150; root.visible = near;
-      if (near) { DG.update(p, 60); for (const q of bambooCells) q.im.visible = Math.hypot(q.x - p.x, q.z - p.z) < 60 + 24; }
+      if (near) { DG.update(p, 60); for (const q of bambooCells) q.im.visible = Math.hypot(q.x - p.x, q.z - p.z) < 60 + 38; }
     }
     if (!near) return;
     const night = (ctx.sky && ctx.sky.state.night) || 0, hour = ctx.sky ? ctx.sky.state.hour : 12;
     windU.value = t; waterMat.uniforms.uTime.value = t; mistMat.uniforms.uTime.value = t;
     mistMat.uniforms.uOpacity.value = 0.22 + 0.25 * Math.max(0, 1 - Math.abs(hour - 6.5) / 2.5) + 0.12 * night;   // sương dày lúc sáng sớm
-    ffMat.uniforms.uTime.value = t; ffMat.uniforms.uNight.value = night; fireflies.visible = night > 0.05;
+    ffMat.uniforms.uTime.value = t; ffMat.uniforms.uNight.value = Math.min(1, night * 1.6); fireflies.visible = night > 0.05;
+    mistMat.uniforms.uColor.value.setRGB(0.93, 0.95, 0.94).multiplyScalar(1 - night * 0.78);   // sương tối dần theo đêm
     // chuông đồng: con lắc tắt dần; chuông gió lay theo gió
     swingV += (-swing * 9 - swingV * 0.9) * dt; swing += swingV * dt; bellPivot.rotation.x = swing * 0.35;
     chimes.rotation.z = Math.sin(t * 1.7) * 0.06 + swing * 0.1; chimes.rotation.x = Math.cos(t * 1.3) * 0.05;
