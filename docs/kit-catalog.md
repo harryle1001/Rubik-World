@@ -5,6 +5,8 @@ Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp 
 
 **Tổng: 361 model · 9.3 MB.** Ngân sách: công trình nhỏ < 1.500 tam giác, cây/đá < 300 (⚠ = vượt, chỉ dùng ít/xa).
 
+Lưu ý (yêu cầu mới của chủ dự án): thế giới mở, KHÔNG dùng hàng rào/cổng (`fence_*`, `*_gate`) — giữ trong kho chỉ để tham khảo; ưu tiên model mềm, bo cạnh, mái cong.
+
 Ghi chú: `house_suburb_*_warm` = bản mái ngói cam (đổi màu bảng màu bằng `tools/kit/recolor.mjs`). `plant_qt_*`, `sport_goal` dùng lá/lưới cắt alpha — `placeKit` tự bật `alphaTest`. Model Kenney/KayKit giữ tỷ lệ gốc (nhỏ), model OGA/tự dựng đã chuẩn về mét.
 
 ## Nhà & công trình (66)

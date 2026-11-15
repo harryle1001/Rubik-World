@@ -5,6 +5,9 @@
 2. **Greybox trước, làm đẹp sau:** dựng thử bằng khối cơ bản (hộp, cầu, trụ) để kiểm tra vật lý, tỷ lệ bản đồ và lối chơi; chỉ nạp model 3D và hiệu ứng khi khung đã chạy đúng.
 3. **Mỗi tính năng một commit:** chạy thử (có ảnh chụp màn hình) rồi commit riêng. Không sửa lan sang file đang chạy ổn định nếu không cần. Sau mỗi tính năng lớn, chủ dự án có thể gõ `/clear` để làm mới ngữ cảnh: đọc lại file này và lịch sử git để nắm tiến độ.
 
+## Tỷ lệ vàng (bắt buộc)
+- Áp φ ≈ 1,618 (hằng PHI trong client/js/island/layout.js), dãy Fibonacci và π vào mọi thiết kế: kiến trúc, lô đất, khoảng cách, nhân vật, camera, HUD, cỡ chữ, hiệu ứng.
+
 ## Phong cách trả lời
 - Tiếng Việt, ngắn gọn, đi thẳng vào việc; chỉ sửa đúng phần cần sửa.
 - Game cho học sinh: ưu tiên chạy mượt trên điện thoại, nội dung học lồng vào lối chơi, phù hợp lứa tuổi.

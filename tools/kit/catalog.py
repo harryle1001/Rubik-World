@@ -23,7 +23,7 @@ def hint(n,v):
 L=['# Kho model CC0 — `client/assets/models/kit/`','',
 'Dùng: `placeKit(scene, name, [[x,y,z,scale,rotY],…])` (instancing, `client/js/island/kit.js`). Kích thước là hộp bao gốc (X×Y×Z, đơn vị model ≈ m) trước khi scale; nhà Kenney rất nhỏ (≈1 đơn vị) → cần `scale` 5–8. Cột "Gợi ý" là scale tham khảo.',
 'Tất cả CC0 (nguồn: `client/assets/CREDITS.txt`). Đã nén meshopt, gộp mesh/vật liệu, texture bảng màu ≤128 px (Kenney) / ≤512 px. Bảng mẫu: `docs/shots/assets/catalog.png` (tạo lại: mở `/tools/kit-preview.html`, `?filter=house_` để lọc).','',
-f'**Tổng: {len(m)} model · {sum(v["kb"] for v in m.values())/1024:.1f} MB.** Ngân sách: công trình nhỏ < 1.500 tam giác, cây/đá < 300 (⚠ = vượt, chỉ dùng ít/xa).','','Ghi chú: `house_suburb_*_warm` = bản mái ngói cam (đổi màu bảng màu bằng `tools/kit/recolor.mjs`). `plant_qt_*`, `sport_goal` dùng lá/lưới cắt alpha — `placeKit` tự bật `alphaTest`. Model Kenney/KayKit giữ tỷ lệ gốc (nhỏ), model OGA/tự dựng đã chuẩn về mét.','']
+f'**Tổng: {len(m)} model · {sum(v["kb"] for v in m.values())/1024:.1f} MB.** Ngân sách: công trình nhỏ < 1.500 tam giác, cây/đá < 300 (⚠ = vượt, chỉ dùng ít/xa).','','Lưu ý (yêu cầu mới của chủ dự án): thế giới mở, KHÔNG dùng hàng rào/cổng (`fence_*`, `*_gate`) — giữ trong kho chỉ để tham khảo; ưu tiên model mềm, bo cạnh, mái cong.','','Ghi chú: `house_suburb_*_warm` = bản mái ngói cam (đổi màu bảng màu bằng `tools/kit/recolor.mjs`). `plant_qt_*`, `sport_goal` dùng lá/lưới cắt alpha — `placeKit` tự bật `alphaTest`. Model Kenney/KayKit giữ tỷ lệ gốc (nhỏ), model OGA/tự dựng đã chuẩn về mét.','']
 order=[]
 for k,title,pre in G:
   ns=sorted(n for n in m if grp(n)==k)
