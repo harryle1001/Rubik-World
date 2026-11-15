@@ -47,3 +47,4 @@ audio/bgm-temple     "Oriental" — shadowfire452 — https://opengameart.org/co
 models/kit/*.glb (cây, bụi, đá, hoa, hàng rào, thùng, nhà building_a–h, xe, thú nhỏ…)
   Quaternius (https://quaternius.com) và Kenney (https://kenney.nl), CC0 1.0
   Lấy từ gói npm "@netforge/asset-library-files" 0.2.0, thư mục library/lowpoly (NOTICE trong gói ghi rõ giấy phép CC0).
+models/kit/kart_a–e.glb (xe kart, khu Rubik Kart): Kenney Car Kit — https://kenney.nl/assets/car-kit, CC0 1.0 (cùng gói npm trên, library/lowpoly).
