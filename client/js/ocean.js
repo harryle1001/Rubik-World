@@ -23,6 +23,7 @@ import { createEasterEggs } from './island/easter-eggs.js';
 import { createDt } from './island/motion.js';
 import { createAmbience } from './island/ambience.js';
 import { createLiving } from './island/living.js';
+import { createSkyshow } from './island/skyshow.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -75,8 +76,9 @@ const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ 
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 13 bí mật: khối Rubik vàng, pháo hoa π, cá voi… (📖 Sổ bí mật)
-const ambience = ctx.ambience = createAmbience(ctx);
-const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js) // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
+const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
+const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao băng, mây ti, chế độ ngắm trời ⭐ (skyshow.js)
+const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
@@ -116,6 +118,7 @@ renderer.setAnimationLoop(() => {
   eggs.update(dt, clock.elapsedTime);
   ambience.update(dt);
   living.update(dt);
+  skyshow.update(dt); // sau player/sky: chế độ ngắm trời đặt lại camera
   ctx.flushOffer();
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
