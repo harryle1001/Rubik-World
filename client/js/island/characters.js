@@ -71,21 +71,56 @@ export function setOutline(hero, on) { if (hero.outlineOn === on) return; hero.o
 
 // Quay đầu nhìn mục tiêu (gọi SAU anim.update, mỗi khung hình): quay quanh trục đứng, tối đa ±65°, mượt theo w (0..1)
 const _q = new THREE.Quaternion(), _qp = new THREE.Quaternion(), _qi = new THREE.Quaternion(), _up = new THREE.Vector3(0, 1, 0), _v = new THREE.Vector3();
-export function lookAtTarget(hero, target, state) {
+// state.facing: hướng thân (nếu model nằm trong nhóm đã xoay, vd người chơi) · dt: làm mượt không phụ thuộc FPS
+export function lookAtTarget(hero, target, state, dt = 1 / 60) {
   const head = hero.head; if (!head || !head.parent) return;
   if (state.after && head.quaternion.equals(state.after)) head.quaternion.copy(state.base); // animation không ghi đè xương đầu → bỏ phần xoay cũ (không cộng dồn)
   let want = 0;
   if (target) {
     head.getWorldPosition(_v); const yawTo = Math.atan2(target.x - _v.x, target.z - _v.z);
-    let d = yawTo - hero.model.rotation.y; d = Math.atan2(Math.sin(d), Math.cos(d));
+    let d = yawTo - (state.facing ?? hero.model.rotation.y); d = Math.atan2(Math.sin(d), Math.cos(d));
     if (Math.abs(d) < 2.2) want = Math.max(-1.13, Math.min(1.13, d));
   }
-  state.look = (state.look || 0) + (want - (state.look || 0)) * 0.12;
+  state.look = (state.look || 0) + (want - (state.look || 0)) * (1 - Math.exp(-dt * 7.5));
   if (Math.abs(state.look) < 0.002) { state.after = null; return; }
   (state.base || (state.base = new THREE.Quaternion())).copy(head.quaternion);
   head.parent.getWorldQuaternion(_qp); _q.setFromAxisAngle(_up, state.look); _qi.copy(_qp).invert();
   head.quaternion.premultiply(_qi.multiply(_q).multiply(_qp)); // xoay theo trục đứng của thế giới
   (state.after || (state.after = new THREE.Quaternion())).copy(head.quaternion);
+}
+
+// Bước chân khớp tốc độ: tốc độ tự nhiên (m/s) của clip ở timeScale 1, cho mỗi 1 m chiều cao (đo chân tiếp đất trong Walking_A / Running_A).
+// Pha: chân trái bước lên trước ở 0,875 (đi) và 0 (chạy) → lệch 0,125 chu kỳ; chuyển đi ↔ chạy giữ đúng pha (không đổi chân giữa chừng).
+export const STRIDE = { walk: 0.92 / 1.65, run: 1.65 / 1.65, phase: 0.125 };
+const clampN = (v, a, b) => Math.max(a, Math.min(b, v));
+function playLoco(hero, name, fade, ts) {
+  const a = hero.anim, N = hero.set || NAMES.person, prev = a.current, act = a.play(name, fade); if (!act) return act;
+  if (prev && act !== prev) {
+    const W = a.actions[N.walk], R = a.actions[N.run];
+    if ((prev === W && act === R) || (prev === R && act === W)) { const off = act === R ? STRIDE.phase : -STRIDE.phase; act.time = (((prev.time / prev.getClip().duration + off) % 1) + 1) % 1 * act.getClip().duration; }
+  }
+  act.timeScale = ts; return act;
+}
+// Đứng → đi → chạy (có trễ để không nhấp nháy giữa 2 dáng), timeScale = tốc độ thật / tốc độ tự nhiên của bước (giới hạn cho đỡ "líu chân")
+function loco(hero, st, speed, runAt, fadeIdle = 0.3) {
+  const N = hero.set || NAMES.person, hh = hero.height || 1.65;
+  st.run = st.run ? speed > runAt * 0.9 : speed > runAt;
+  if (st.run) playLoco(hero, N.run, 0.25, clampN(speed / (STRIDE.run * hh), 0.8, 3.3));
+  else if (speed > (st.walk ? 0.12 : 0.25)) { st.walk = true; playLoco(hero, N.walk, 0.25, clampN(speed / (STRIDE.walk * hh), 0.45, 2.9)); }
+  else { st.walk = false; hero.anim.play(N.idle, fadeIdle); }
+}
+// Người chơi: bật nhảy (Jump_Start) → lơ lửng (Jump_Idle) → tiếp đất (Jump_Land, khi rơi mạnh mà đứng yên) → đi/chạy theo pha.
+export function drivePlayer(hero, st, { speed, grounded, vy = 0, impact = 0, dt = 1 / 60, walk = 5.5, oneShot }) {
+  const a = hero.anim, N = hero.set || NAMES.person;
+  st.airT = grounded ? 0 : (st.airT || 0) + dt;
+  if (impact > 7) st.landT = 0.3;
+  if (oneShot && oneShot.until > performance.now()) return;
+  if (!grounded) {
+    if (vy > 0.5 && st.airT < 0.45 && a.has('Jump_Start')) a.play('Jump_Start', 0.08, true); else a.play(N.jump, 0.22);
+    return;
+  }
+  if (st.landT > 0) { st.landT -= dt; if (speed < walk * 0.5 && a.has('Jump_Land')) { a.play('Jump_Land', 0.06, true); return; } st.landT = 0; }
+  loco(hero, st, speed, walk * 1.15);
 }
 
 // Chọn animation theo trạng thái di chuyển
@@ -94,16 +129,9 @@ export function driveHero(hero, { speed, grounded, walk = 5.5, oneShot, sitting 
   if (oneShot && oneShot.until > performance.now()) return;
   if (sitting) { a.play(sitting === 'drive' && a.has('drive') ? 'drive' : sitting === 'floor' && N.floor ? N.floor : N.sit, 0.3); return; }
   if (!grounded) { a.play(N.jump, 0.15); return; }
-  if (hero.npc) { // người trong thị trấn: tốc độ chân khớp tốc độ đi thật (không trượt chân), chuyển mượt theo tốc độ
-    const hh = hero.height || 1.25, wRef = 1.5 * hh, rRef = 3.3 * hh;
-    if (speed > wRef * 1.6) { const r = a.play(N.run, 0.25); if (r) r.timeScale = Math.max(0.7, Math.min(1.6, speed / rRef)); }
-    else if (speed > 0.15) { const w = a.play(N.walk, 0.25); if (w) w.timeScale = Math.max(0.45, Math.min(1.9, speed / wRef)); }
-    else a.play(N.idle, 0.35);
-    return;
-  }
-  if (speed > walk * 1.15) { const r = a.play(N.run, 0.2); if (r) r.timeScale = Math.min(1.5, speed / 7); }
-  else if (speed > 0.3) { const w = a.play(N.walk, 0.2); if (w) w.timeScale = Math.max(0.6, speed / 2.6); }
-  else a.play(N.idle, 0.3);
+  const st = hero._loco || (hero._loco = {});
+  if (hero.npc) { loco(hero, st, speed, 2.4 * (hero.height || 1.25), 0.35); return; } // người trong thị trấn: tốc độ chân khớp tốc độ đi thật
+  loco(hero, st, speed, walk * 1.15);
 }
 
 // Hành động một lần (cheer, interact, pickup…) rồi quay lại di chuyển
