@@ -1,8 +1,8 @@
-// style.js — Phong cách vẽ kiểu Zelda: MeshToonMaterial 3 bậc sáng + viền mỏng (inverted hull).
+// style.js — Phong cách vẽ kiểu Zelda: MeshToonMaterial 4 bậc sáng mềm + viền mảnh nâu tím (inverted hull).
 import * as THREE from 'three';
 import { CFG } from './config.js';
 
-// Dải sáng 3 bậc (tối – vừa – sáng), lọc Nearest để ra các mảng màu rõ ràng
+// Dải sáng nhiều bậc (CFG.toon.steps), lọc Nearest để ra các mảng màu rõ ràng
 const steps = CFG.toon.steps.map(v => Math.round(v * 255));
 export const gradientMap = new THREE.DataTexture(new Uint8Array(steps), steps.length, 1, THREE.RedFormat);
 gradientMap.minFilter = gradientMap.magFilter = THREE.NearestFilter; gradientMap.needsUpdate = true;
