@@ -25,13 +25,13 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
     uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 },
     uSunW: { value: new THREE.Vector3(0, 1, 0) }, uSunC: { value: new THREE.Color('#fff') }, uSkyH: { value: new THREE.Color('#bfe6f6') },   // ambience.js nối với bầu trời
     uSkyT: { value: new THREE.Color('#5a9fe6') }, uMoon: { value: new THREE.Vector3(0, -1, 0) }, uNight: { value: 0 },
-    uPlayer: { value: null }, uWaveN: { value: state.waveN }, uAmp: { value: 1 }, uUnder: { value: 0 },
+    uPlayer: { value: null }, uWaveN: { value: state.waveN }, uAmp: { value: 1 },
     uWA: { value: wa }, uWB: { value: wb },
   }]);
   const DEPTH = `uniform sampler2D uH; uniform vec2 uMin, uSize;
     float depthAt(vec2 p){ vec2 uv = (p - uMin) / uSize; if (uv.x < 0. || uv.x > 1. || uv.y < 0. || uv.y > 1.) return 8.; return max(0., 8. - texture2D(uH, uv).r * 255. / 12.); }`;
   const mat = new THREE.ShaderMaterial({
-    transparent: true, fog: true, depthWrite: false,   // không ghi độ sâu: cá dưới nước (ambience.js) vẫn vẽ lên được
+    defines: {}, transparent: true, fog: true, depthWrite: false,   // không ghi độ sâu: cá dưới nước (ambience.js) vẫn vẽ lên được
     uniforms: U,
     vertexShader: `${DEPTH}
       uniform float uTime, uWaveN, uAmp; uniform vec4 uWA[${N_MAX}], uWB[${N_MAX}];
@@ -55,7 +55,7 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
 #include <fog_vertex>
       }`,
     fragmentShader: `${DEPTH}
-      uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uSkyT, uPlayer, uMoon; uniform float uLight, uTime, uNight, uUnder;
+      uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uSkyT, uPlayer, uMoon; uniform float uLight, uTime, uNight;
       varying vec3 vW, vN; varying float vCrest;
 #include <fog_pars_fragment>
       void main(){
@@ -64,11 +64,16 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
         float det = 1. - smoothstep(21., 89., dist);                       // gợn nhỏ chỉ vẽ ở gần (21–89 m, Fibonacci)
         // gợn nhỏ: 3 sóng lăn tăn theo các hướng lệch góc vàng (không trùng trục x/z)
         vec2 g1 = vec2(0.81, 0.59), g2 = vec2(-0.43, 0.9), g3 = vec2(0.99, -0.13);
+#ifdef LOW
+        vec3 N = normalize(vN + det * vec3(g1.x, 0., g1.y) * cos(dot(q, g1) * 1.9 - t * 2.3) * 0.07);
+#else
         vec3 N = normalize(vN + det * vec3(g1.x, 0., g1.y) * cos(dot(q, g1) * 1.9 - t * 2.3) * 0.06
                               + det * vec3(g2.x, 0., g2.y) * cos(dot(q, g2) * 2.9 - t * 2.9) * 0.045
                               + det * vec3(g3.x, 0., g3.y) * cos(dot(q, g3) * 4.7 - t * 3.6) * 0.03);
+#endif
         float sunUp = smoothstep(-0.02, 0.08, uSunW.y);
-        if (uUnder > 0.5) {
+#ifdef UNDER
+        {
           // nhìn từ dưới lên: trong "cửa sổ Snell" (góc < 48,6°) thấy trời sáng; ngoài cửa sổ: phản xạ toàn phần màu nước sâu
           float cs = abs(dot(N, V)), win = smoothstep(0.6, 0.72, cs);
           vec3 sky = mix(uSkyH, uSkyT, 0.45) * 1.15 + uSunC * pow(max(dot(-V, uSunW), 0.), 24.) * 1.4 * sunUp;
@@ -76,13 +81,12 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
           float sh = (1. - smoothstep(0., 0.07, abs(sin(dot(q, vec2(0.81, 0.59)) * 1.3 + sin(dot(q, vec2(-0.43, 0.9)) * 0.9 + t) * 1.6 + t * 0.7)))) * det * 0.35;   // vân sáng lung linh dạng sợi
           vec3 c = mix(tir, sky, win) + vec3(0.25, 0.35, 0.35) * sh * (0.4 + 0.6 * win);
           gl_FragColor = vec4(c * uLight, 0.92);
-#include <fog_fragment>
-          return;
         }
+#else
         float NdV = max(dot(N, V), 0.);
         vec3 c = mix(uShallow, uDeep, smoothstep(0.3, 5., depth));
         c = mix(c, uDeep * 0.72, smoothstep(5., 8., depth) * 0.55);         // biển khơi sẫm dần
-        float ca = sin(q.x * 0.9 + t * 0.8) * sin(q.y * 0.8 - t * 0.6) + sin((q.x + q.y) * 0.45 + t * 0.5);
+        float ca = depth > 3. ? 0. : sin(q.x * 0.9 + t * 0.8) * sin(q.y * 0.8 - t * 0.6) + sin((q.x + q.y) * 0.45 + t * 0.5);
         c += vec3(0.1, 0.16, 0.12) * smoothstep(1.0, 1.7, ca) * (1. - smoothstep(0.4, 3., depth));   // vân sáng đáy nước nông
         c += vec3(0.04, 0.16, 0.13) * max(vCrest, 0.) * smoothstep(1., 5., depth);   // ánh xanh ngọc xuyên qua đỉnh sóng
         // phản chiếu bầu trời (Fresnel Schlick): nhìn xiên thấy trời, nhìn thẳng xuống thấy nước
@@ -90,39 +94,54 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
         vec3 sky = mix(uSkyH, uSkyT, smoothstep(0.02, 0.6, R.y));
         float fres = 0.04 + 0.96 * pow(1. - NdV, 5.);
         c = mix(c, sky, min(fres * 0.9, 0.85));
-        // bọt: viền sát bờ, các dải sóng vỗ chạy dần vào bờ, gợn quanh chân, bọt trắng đỉnh sóng ngoài khơi
-        float br = sin(q.x * 0.37 + sin(q.y * 0.29) * 2.) * sin(q.y * 0.41 - q.x * 0.13);   // làm đứt quãng dải bọt
-        float foam = step(depth, 0.3) * (0.75 + 0.25 * br);
-        float run = fract(depth * 0.618 + t * 0.21 + br * 0.08);             // pha giảm dần theo độ sâu → dải bọt chạy vào bờ
-        foam += smoothstep(0.8, 0.95, run) * (1. - smoothstep(0.95, 1., run)) * (1. - smoothstep(0.6, 2.6, depth)) * smoothstep(-0.4, 0.4, br + 0.2);
-        float surge = 0.5 + 0.5 * sin(t * 0.9 + q.x * 0.045 + q.y * 0.035);   // đợt sóng dâng rồi rút, để lại viền bọt
-        foam += smoothstep(0.14, 0., abs(depth - 0.25 - surge * 0.9)) * (1. - smoothstep(1.1, 1.5, depth)) * (0.4 + 0.6 * step(0.5, fract(q.x * 0.7 + q.y * 0.5 + t * 0.2)));
-        float pd = length(q - uPlayer.xz), wade = step(uPlayer.y, 0.55) * step(-1.6, uPlayer.y);
-        foam += smoothstep(0.7, 1., sin(pd * 5.5 - t * 4.5)) * (1. - smoothstep(0.4, 2.6, pd)) * wade * 0.8;
-        float cap = sin(dot(q, g1) * 0.9 + sin(dot(q, g2) * 0.37) * 2. + t * 0.6) * sin(dot(q, g3) * 0.53 - t * 0.4);
-        foam += smoothstep(0.6, 0.9, vCrest + cap * 0.2) * smoothstep(0.6, 1., cap) * smoothstep(3., 8., depth) * 0.8 * (1. - smoothstep(55., 144., dist));
+        // bọt: viền sát bờ, dải sóng vỗ chạy dần vào bờ, gợn quanh chân (chỉ tính ở nước nông) · bọt đỉnh sóng (chỉ ở khơi, gần camera)
+        float foam = 0.;
+        if (depth < 2.6) {
+          float br = sin(q.x * 0.37 + sin(q.y * 0.29) * 2.) * sin(q.y * 0.41 - q.x * 0.13);   // làm đứt quãng dải bọt
+          foam = step(depth, 0.3) * (0.75 + 0.25 * br);
+          float run = fract(depth * 0.618 + t * 0.21 + br * 0.08);           // pha giảm dần theo độ sâu → dải bọt chạy vào bờ
+          foam += smoothstep(0.8, 0.95, run) * (1. - smoothstep(0.95, 1., run)) * (1. - smoothstep(0.6, 2.6, depth)) * smoothstep(-0.4, 0.4, br + 0.2);
+          float surge = 0.5 + 0.5 * sin(t * 0.9 + q.x * 0.045 + q.y * 0.035);   // đợt sóng dâng rồi rút, để lại viền bọt
+          foam += smoothstep(0.14, 0., abs(depth - 0.25 - surge * 0.9)) * (1. - smoothstep(1.1, 1.5, depth)) * (0.4 + 0.6 * step(0.5, fract(q.x * 0.7 + q.y * 0.5 + t * 0.2)));
+          float pd = length(q - uPlayer.xz);
+          if (pd < 2.6 && uPlayer.y < 0.55 && uPlayer.y > -1.6) foam += smoothstep(0.7, 1., sin(pd * 5.5 - t * 4.5)) * (1. - smoothstep(0.4, 2.6, pd)) * 0.8;
+        }
+#ifndef LOW
+        else if (depth > 3. && dist < 144. && vCrest > 0.35) {
+          float cap = sin(dot(q, g1) * 0.9 + sin(dot(q, g2) * 0.37) * 2. + t * 0.6) * sin(dot(q, g3) * 0.53 - t * 0.4);
+          foam = smoothstep(0.6, 0.9, vCrest + cap * 0.2) * smoothstep(0.6, 1., cap) * smoothstep(3., 8., depth) * 0.8 * (1. - smoothstep(55., 144., dist));
+        }
+#endif
         foam = clamp(foam, 0., 1.);
         c = mix(c, vec3(1.), foam * 0.88);
-        // nắng: điểm chói + vệt sáng dài trên mặt biển (rõ lúc hoàng hôn) + lấp lánh
-        float sd = max(dot(R, uSunW), 0.);
-        vec3 spec = uSunC * (pow(sd, 420.) * 2.4 + pow(sd, 36.) * 0.2) * sunUp;
-        float gl = step(0.986, sin(q.x * 2.7 + t * 2.1) * sin(q.y * 3.1 - t * 1.7));
-        spec += uSunC * gl * pow(sd, 5.) * 1.3 * sunUp * (1. - smoothstep(34., 144., dist)) * (1. - foam);
-        // trăng: vệt sáng bạc ban đêm
-        float md = max(dot(R, uMoon), 0.) * smoothstep(-0.05, 0.1, uMoon.y);
-        vec3 moon = vec3(0.75, 0.82, 1.) * (pow(md, 300.) * 1.6 + pow(md, 28.) * 0.14 + gl * pow(md, 6.) * 0.5) * uNight;
-        float sparkle = step(0.993, sin(q.x * 1.7 + t * 1.3) * sin(q.y * 1.9 - t * 1.1)) * 0.25 * det;
-        c = c * uLight + spec + moon + sparkle * uLight;
+        c *= uLight;
+        // nắng: điểm chói + vệt sáng dài trên mặt biển (rõ lúc hoàng hôn) + lấp lánh gần
+        float gl = 0.;
+#ifndef LOW
+        if (dist < 144.) gl = step(0.986, sin(q.x * 2.7 + t * 2.1) * sin(q.y * 3.1 - t * 1.7)) * (1. - smoothstep(34., 144., dist)) * (1. - foam);
+#endif
+        if (sunUp > 0.) {
+          float sd = max(dot(R, uSunW), 0.);
+          c += uSunC * (pow(sd, 420.) * 2.4 + pow(sd, 36.) * 0.2 + gl * pow(sd, 5.) * 1.3) * sunUp;
+        }
+        if (uNight > 0.01) {   // trăng: vệt sáng bạc ban đêm
+          float md = max(dot(R, uMoon), 0.) * smoothstep(-0.05, 0.1, uMoon.y);
+          c += vec3(0.75, 0.82, 1.) * (pow(md, 300.) * 1.6 + pow(md, 28.) * 0.14 + gl * pow(md, 6.) * 0.5) * uNight;
+        }
+#ifndef LOW
+        if (det > 0.) c += step(0.993, sin(q.x * 1.7 + t * 1.3) * sin(q.y * 1.9 - t * 1.1)) * 0.25 * det * uLight;
+#endif
         float alpha = mix(0.4, 0.96, smoothstep(0., 3.4, depth));            // nước nông trong: thấy cát đáy
         alpha = max(mix(alpha, 1., fres * 0.6), foam * 0.92);
         gl_FragColor = vec4(c, alpha);
+#endif
 #include <fog_fragment>
       }`,
   });
   U.uH.value = hTex; U.uTime = WIND.uTime; U.uPlayer = WIND.uPlayer;
 
   // ---------- Lưới vòng đồng tâm: bán kính tăng theo cấp số φ (khoảng cách vòng ∝ bán kính ∝ khoảng cách đỉnh theo góc) ----------
-  const AS = CFG.isMobile ? 64 : 96, RMAX = 610, C0 = 1.2;                 // 610 m (Fibonacci) > tầm sương mù
+  const AS = CFG.isMobile ? 55 : 89, RMAX = 610, C0 = 1.2;                 // 610 m (Fibonacci) > tầm sương mù
   const m = AS * Math.log(PHI) / (2 * Math.PI), NR = Math.ceil(m * Math.log(1 + RMAX / C0) / Math.log(PHI));
   const pos = [0, 0, 0], idx = [];
   for (let j = 1; j <= NR; j++) {
@@ -140,7 +159,8 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
   mesh.onBeforeRender = (r, s, cam) => {
     mesh.position.x = cam.position.x; mesh.position.z = cam.position.z; mesh.updateMatrixWorld();
     const under = cam.position.y < waveHeight(cam.position.x, cam.position.z);
-    U.uUnder.value = under ? 1 : 0; mat.side = under ? THREE.BackSide : THREE.FrontSide;
+    mat.side = under ? THREE.BackSide : THREE.FrontSide;
+    if (!!mat.defines.UNDER !== under) { if (under) mat.defines.UNDER = 1; else delete mat.defines.UNDER; mat.needsUpdate = true; }   // 2 chương trình riêng: shader trên mặt nước không phải gánh nhánh dưới nước
   };
   scene.add(mesh);
   addEventListener('island:underwater', e => { mesh.visible = !e.detail; });   // lặn: dive.js vẽ mặt nước nhìn từ dưới (cửa sổ Snell) — không vẽ chồng 2 lớp
@@ -168,7 +188,12 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
     return out.set(-hx, 2 * e, -hz).normalize();
   }
   // mức chất lượng 0..3 (ocean.js): máy yếu dùng 3 sóng; gió mạnh (weather.js → WIND.uWind) sóng cao thêm tới φ lần
-  function setQuality(L) { state.waveN = L >= 2 || CFG.isMobile ? 3 : 5; U.uWaveN.value = state.waveN; }
+  // máy yếu (điện thoại / mức ≥ 2): 3 sóng, bỏ bọt đỉnh sóng, lấp lánh và 2 lớp gợn nhỏ (shader LOW)
+  function setQuality(L) {
+    const low = L >= 2 || CFG.isMobile; state.waveN = low ? 3 : 5; U.uWaveN.value = state.waveN;
+    if (!!mat.defines.LOW !== low) { if (low) mat.defines.LOW = 1; else delete mat.defines.LOW; mat.needsUpdate = true; }
+  }
+  setQuality(0);
   function update() { U.uAmp.value = state.amp * (1 + (PHI - 1) * WIND.uWind.value); }
   return { mat, mesh, waveHeight, waveNormal, setQuality, update, state };
 }
