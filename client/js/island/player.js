@@ -88,20 +88,44 @@ export function createPlayer(ctx) {
     vel.x += (mx * sp - vel.x) * k; vel.z += (mz * sp - vel.z) * k; self.speed = Math.hypot(vel.x, vel.z);
     if (mag > 0.05) { let d = Math.atan2(mx, mz) - rot; d = Math.atan2(Math.sin(d), Math.cos(d)); rot += d * Math.min(1, dt * (V ? V.turn : 12)); }
 
-    // di chuyển + va chạm cây/đá + không ra nước sâu
-    let nx = pos.x + vel.x * dt, nz = pos.z + vel.z * dt;
-    if (!V || !V.fly) for (const c of ctx.colliders) { const dx = nx - c.x, dz = nz - c.z, rr = c.r + 0.35, d2 = dx * dx + dz * dz; if (d2 < rr * rr && d2 < 100) { const d = Math.sqrt(d2) || 1e-3; nx = c.x + dx / d * rr; nz = c.z + dz / d * rr; } }
-    // tường/nhà hình hộp (ctx.boxes: {x0,z0,x1,z1,top}) — đẩy ra theo cạnh gần nhất
-    for (const b of (V && V.fly) ? [] : ctx.boxes || []) {
-      const r = 0.35; if (nx < b.x0 - r || nx > b.x1 + r || nz < b.z0 - r || nz > b.z1 + r || pos.y > b.top) continue;
-      const pl = nx - (b.x0 - r), pr = (b.x1 + r) - nx, pt = nz - (b.z0 - r), pb = (b.z1 + r) - nz, m = Math.min(pl, pr, pt, pb);
-      if (m === pl) nx = b.x0 - r; else if (m === pr) nx = b.x1 + r; else if (m === pt) nz = b.z0 - r; else nz = b.z1 + r;
+    // di chuyển + va chạm (phần vật lý — physics.js dựng lưới ctx.grid để tra nhanh vật cản gần)
+    // chia nhỏ bước (≤ 0.25 m) để chạy nhanh/đi xe không xuyên tường mỏng; leo bậc ≤ STEP, vách cao hơn thì chặn
+    const fly = V && V.fly, STEP = 1.1, BSTEP = 0.6, R0 = 0.35;
+    const sup = (x, z, y) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, y) : -99);
+    const near = (x, z) => ctx.grid ? ctx.grid.near(x, z) : { cols: ctx.colliders, boxes: ctx.boxes || [] };
+    const ddx = vel.x * dt, ddz = vel.z * dt, ns = Math.max(1, Math.ceil(Math.hypot(ddx, ddz) / 0.25));
+    for (let s = 0; s < ns; s++) {
+      const ox = pos.x, oz = pos.z; let nx = ox + ddx / ns, nz = oz + ddz / ns;
+      if (!fly) {
+        const N = near(nx, nz);
+        for (const c of N.cols) { const dx = nx - c.x, dz = nz - c.z, rr = c.r + R0, d2 = dx * dx + dz * dz; if (d2 < rr * rr) { const d = Math.sqrt(d2) || 1e-3; nx = c.x + dx / d * rr; nz = c.z + dz / d * rr; } }
+        // tường/nhà hình hộp (ctx.boxes: {x0,z0,x1,z1,top}) — đẩy ra về phía vừa đi tới; hộp thấp (≤ BSTEP) thì bước lên được
+        for (const b of N.boxes) {
+          if (nx < b.x0 - R0 || nx > b.x1 + R0 || nz < b.z0 - R0 || nz > b.z1 + R0 || b.top <= pos.y + BSTEP) continue;
+          const inX = ox > b.x0 - R0 && ox < b.x1 + R0, inZ = oz > b.z0 - R0 && oz < b.z1 + R0;
+          let side; if (!inX) side = ox < b.x0 ? 0 : 1; else if (!inZ) side = oz < b.z0 ? 2 : 3;
+          else { const a = [nx - (b.x0 - R0), (b.x1 + R0) - nx, nz - (b.z0 - R0), (b.z1 + R0) - nz]; side = a.indexOf(Math.min(...a)); }
+          if (side === 0) nx = b.x0 - R0; else if (side === 1) nx = b.x1 + R0; else if (side === 2) nz = b.z0 - R0; else nz = b.z1 + R0;
+        }
+        // thùng gỗ (physics.js): chặn người chơi, bị đẩy đi theo khối lượng; đứng trên nóc thùng được
+        if (ctx.physics) for (const b of ctx.physics.solid) { // hộp vuông (không xoay) – điểm gần nhất trên hộp
+          const H = b.K.half, qx = Math.max(b.pos.x - H, Math.min(b.pos.x + H, nx)), qz = Math.max(b.pos.z - H, Math.min(b.pos.z + H, nz));
+          const dx = nx - qx, dz = nz - qz, d = Math.hypot(dx, dz); if (d >= R0 || pos.y >= b.pos.y + b.K.r - 0.25 || pos.y + 1.6 < b.pos.y - b.K.r) continue;
+          let ux, uz, pen; const ex = nx - b.pos.x, ez = nz - b.pos.z;
+          if (d > 1e-4) { ux = dx / d; uz = dz / d; pen = R0 - d; } else if (Math.abs(ex) > Math.abs(ez)) { ux = Math.sign(ex) || 1; uz = 0; pen = R0 + H - Math.abs(ex); } else { ux = 0; uz = Math.sign(ez) || 1; pen = R0 + H - Math.abs(ez); }
+          const w = ctx.physics.push(b, -ux, -uz, pen, vel); nx += ux * pen * (1 - w); nz += uz * pen * (1 - w);
+        }
+        // vách đất quá cao so với chân → trượt dọc theo vách thay vì leo thẳng lên
+        if (!(V && V.water)) { const lim = pos.y + STEP; if (sup(nx, nz, lim) > lim) { if (sup(nx, oz, lim) <= lim) nz = oz; else if (sup(ox, nz, lim) <= lim) nx = ox; else { nx = ox; nz = oz; } } }
+      }
+      if (V && V.water) { if (sup(nx, nz) > CFG.island.waterLevel - 0.3) { nx = ox; nz = oz; vel.multiplyScalar(0.3); } } // thuyền: chỉ đi trên nước
+      else if (!fly && sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = ox; nz = oz; vel.set(0, 0, 0); }
+      pos.x = nx; pos.z = nz;
     }
-    const sup = (x, z) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, pos.y) : -99);
-    if (V && V.water) { if (sup(nx, nz) > CFG.island.waterLevel - 0.3) { nx = pos.x; nz = pos.z; vel.multiplyScalar(0.3); } } // thuyền: chỉ đi trên nước
-    else if (!(V && V.fly) && sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = pos.x; nz = pos.z; vel.set(0, 0, 0); }
-    pos.x = nx; pos.z = nz;
-    const g = Math.max(terrain.heightAt(pos.x, pos.z), ctx.groundExtra ? ctx.groundExtra(pos.x, pos.z, pos.y) : -99);
+    // mặt đỡ: địa hình, sàn thị trấn, nóc hộp thấp đang đứng trên
+    let g = sup(pos.x, pos.z, pos.y);
+    if (!fly) for (const b of near(pos.x, pos.z).boxes) if (b.top <= pos.y + BSTEP && b.top > g && pos.x > b.x0 - 0.15 && pos.x < b.x1 + 0.15 && pos.z > b.z0 - 0.15 && pos.z < b.z1 + 0.15) g = b.top;
+    if (!fly && ctx.physics) for (const b of ctx.physics.solid) { const t = b.pos.y + b.K.r - 0.02; if (t > g && pos.y >= t - 0.3 && Math.abs(pos.x - b.pos.x) < 0.5 && Math.abs(pos.z - b.pos.z) < 0.5) g = t; }
     if (input.jump && grounded && !self.frozen && !V) { vy = P.jump; grounded = false; ctx.sfx && ctx.sfx('jump'); }
     input.jump = false;
     if (V && V.water) { pos.y = V.waterY(pos.x, pos.z); vy = 0; grounded = true; }
@@ -110,9 +134,13 @@ export function createPlayer(ctx) {
       const floor = Math.max(g, CFG.island.waterLevel + 0.6); if (pos.y <= floor) { pos.y = floor; vy = Math.max(0, vy); grounded = g >= floor - 0.01; } else grounded = false;
     } else {
     vy -= P.gravity * dt; pos.y += vy * dt;
-    if (pos.y <= g) { if (!grounded && vy < -6) { puff(8, 2.5); ctx.sfx && ctx.sfx('land'); } pos.y = g; vy = 0; grounded = true; } else if (pos.y > g + 0.3) grounded = false;
+    if (pos.y <= g) {
+      if (!grounded && vy < -6) { puff(8, 2.5); ctx.sfx && ctx.sfx('land'); }
+      // bước lên bậc/dốc: nâng chân mượt thay vì giật (chỉ khi đang đứng đất và bậc thấp)
+      const up = g - pos.y; pos.y = grounded && up > 0.12 && up < BSTEP ? pos.y + up * Math.min(1, dt * 22) : g; vy = 0; grounded = true;
+    } else if (pos.y > g + (grounded && vy <= 0 ? 0.45 : 0.3)) grounded = false;
+    else if (grounded && vy <= 0) { pos.y = g; vy = 0; } // xuống dốc/bậc: bám mặt đất, không "bay" lơ lửng
     }
-
     // animation KayKit + tiếng bước chân
     if (hero) { if (V) { if (!animState.oneShot || animState.oneShot.until < performance.now()) hero.anim.play(V.anim, 0.25); hero.model.position.set(0, V.seat || 0, V.seatZ || 0); } else { hero.model.position.set(0, 0, 0); driveHero(hero, { speed: self.speed, grounded, walk: P.walk, oneShot: animState.oneShot }); } hero.anim.update(dt); }
     if (!V && grounded && self.speed > 0.8 && (stepT -= dt) <= 0) { stepT = self.speed > P.walk * 1.1 ? 0.3 : 0.42; ctx.sfx && ctx.sfx('step'); }

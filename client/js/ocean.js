@@ -17,6 +17,7 @@ import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
+import { createPhysics } from './island/physics.js';
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
@@ -66,6 +67,7 @@ const school = createSchoolTown(ctx);
 const worldMap = ctx.worldMap = createWorldMap(ctx); // bản đồ: phím M / nút 🗺️
 const vehicles = createVehicles(ctx);
 const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
+const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
@@ -90,6 +92,7 @@ window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
   const dt = Math.min(clock.getDelta(), 0.05);
   if (!ctx.freeCam) player.update(dt); // freeCam: camera tự do để gỡ lỗi
+  physics.update(dt);
   terrain.update(dt, clock.elapsedTime, player.pos);
   temples.update(dt, clock.elapsedTime);
   audio.update(dt, { night: sky.state.night, school: !!ctx.schoolHours });
