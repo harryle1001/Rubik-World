@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { CFG } from './island/config.js';
 import { createSky } from './island/sky.js';
 import { createPost } from './island/post.js';
+import { createBrightness } from './island/brightness.js';
 import { createTerrain } from './island/terrain.js';
 import { createPlayer } from './island/player.js';
 import { scatterModel } from './island/models.js';
@@ -74,6 +75,7 @@ const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ 
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 13 bí mật: khối Rubik vàng, pháo hoa π, cá voi… (📖 Sổ bí mật)
+const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
@@ -114,6 +116,7 @@ renderer.setAnimationLoop(() => {
   eggs.update(dt, clock.elapsedTime);
   ambience.update(dt);
   ctx.flushOffer();
+  brightness.update();
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
   quality(dt);
