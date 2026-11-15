@@ -5,7 +5,9 @@ models/hero-*.glb (Knight, Rogue, Mage, Barbarian + 14 animation)
   Nguồn tải: https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0 (LICENSE: CC0 1.0)
   Đã lược bớt animation và nén Meshopt bằng gltf-transform.
 
-models/student-*.glb (12 học sinh chibi; code tô lại áo trắng, quần xanh, thêm khăn quàng đỏ, cặp sách): Kenney Mini Characters 1.0, CC0 — https://kenney.nl/assets/mini-characters (qua "@netforge/asset-library-files")
+Nhân vật học sinh/thầy cô/người dân hiện tại (client/js/island/people-model.js): khối low-poly tự dựng bằng code, gắn lên bộ xương + animation của models/hero-rogue.glb (KayKit Adventurers, CC0) ở trên.
+
+models/student-*.glb (KHÔNG còn dùng trong game — bản cũ: 12 học sinh chibi; code tô lại áo trắng, quần xanh, thêm khăn quàng đỏ, cặp sách): Kenney Mini Characters 1.0, CC0 — https://kenney.nl/assets/mini-characters (qua "@netforge/asset-library-files")
 
 models/animal-*.glb (hươu, cáo, ếch, mèo, cua, chó shiba – có animation), models/prop-*.glb (lửa trại, hoa, nấm, khúc gỗ, gốc cây, lều, pha lê, ngọc)
   Quaternius (https://quaternius.com) và Kenney (https://kenney.nl), CC0 1.0

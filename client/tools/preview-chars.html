@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Xem nhân vật</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>html,body{margin:0;height:100%;background:#9fd4f0;overflow:hidden;font:14px system-ui}#info{position:fixed;left:8px;top:6px;color:#123;background:#fff9;padding:4px 8px;border-radius:8px}</style>
+<script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script></head><body>
+<div id="info">Đang nạp…</div>
+<script type="module">
+// Trang xem trước nhân vật: /tools/preview-chars.html?set=students|adults|all&anim=Idle&t=0.4&zoom=1
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { loadHero, STUDENTS } from '../js/island/characters.js';
+const Q = new URLSearchParams(location.search), set = Q.get('set') || 'all', anim = Q.get('anim') || 'Idle', T = parseFloat(Q.get('t') || '0.3');
+const r = new THREE.WebGLRenderer({ antialias: true }); r.setPixelRatio(devicePixelRatio); r.setSize(innerWidth, innerHeight); r.shadowMap.enabled = true; document.body.appendChild(r.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#9fd4f0');
+scene.add(new THREE.HemisphereLight('#ffffff', '#6a8a5a', 1.4));
+const sun = new THREE.DirectionalLight('#fff4e0', 2.2); sun.position.set(4, 8, 6); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -12, right: 12, top: 6, bottom: -2 }); scene.add(sun);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 30), new THREE.MeshToonMaterial({ color: '#8fcf6a' })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+const LIST = [];
+if (set !== 'adults') STUDENTS.forEach(k => LIST.push({ kind: k, h: 1.6 }));
+if (set !== 'students') LIST.push(
+  { kind: 'student-female-c', h: 1.78, look: { role: 'teacher', shirt: '#e8a0b8', aodai: true, prop: 'book', propColor: '#c0392b' } },
+  { kind: 'student-male-d', h: 1.82, look: { role: 'teacher', shirt: '#9fc3e8', pants: '#3a3a44', glasses: true, prop: 'clip', tie: '#b03a3a' } },
+  { kind: 'student-female-a', h: 1.76, look: { role: 'teacher', shirt: '#f3e3a0', pants: '#4a5a8a', skirt: true, prop: 'book', propColor: '#2b6cb0' } },
+  { kind: 'student-male-b', h: 1.82, look: { role: 'adult', shirt: '#5a7a4a', pants: '#3a4a2a', cap: '#3a4a2a', brim: '#2a3a1a' } },
+  { kind: 'student-male-e', h: 1.8, look: { role: 'adult', shirt: '#e07a3a', pants: '#5a4a3a', prop: 'rod', hat: '#e8c873', hatStyle: 'nonla' } },
+  { kind: 'student-female-d', h: 1.75, look: { role: 'adult', shirt: '#7fd1c0', pants: '#f0e0c0', hat: '#e8c873', sun: true } },
+);
+if (Q.get('kay')) LIST.unshift({ kind: 'hero-rogue', h: 1.7 }, { kind: 'hero-knight', h: 1.7 });
+const heroes = [], gap = 1.15; let tris = [];
+for (let i = 0; i < LIST.length; i++) {
+  const L = LIST[i], h = await loadHero(L.kind, L.h, L.look); if (!h) continue;
+  h.model.position.set((i - (LIST.length - 1) / 2) * gap, 0, 0); scene.add(h.model);
+  const a = h.anim.play(anim, 0) || h.anim.play('Idle', 0); h.anim.update(T + i * 0.13 * (Q.get('stagger') === '0' ? 0 : 1)); heroes.push(h); tris.push(h.tris);
+}
+const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.1, 100), zoom = parseFloat(Q.get('zoom') || '1'), W = LIST.length * gap;
+cam.position.set(0, 1.4, (W * 0.95 + 2) / zoom); const ctl = new OrbitControls(cam, r.domElement); ctl.target.set(0, 0.9, 0);
+if (Q.get('cx')) { cam.position.set(+Q.get('cx'), +(Q.get('cy') || 1.2), +(Q.get('cz') || 3)); ctl.target.set(+Q.get('cx'), +(Q.get('ty') || 1), 0); }
+if (Q.get('yaw')) heroes.forEach(h => h.model.rotation.y = +Q.get('yaw'));
+if (Q.get('lift')) heroes.forEach(h => h.model.position.y = +Q.get('lift'));
+ctl.update();
+document.getElementById('info').textContent = `${heroes.length} nhân vật · tam giác: ${Math.min(...tris)}–${Math.max(...tris)} · anim ${anim}`;
+window.info = { tris, n: heroes.length };
+const clock = new THREE.Clock(), play = Q.get('play') === '1';
+r.setAnimationLoop(() => { const dt = clock.getDelta(); if (play) heroes.forEach(h => h.anim.update(dt)); ctl.update(); r.render(scene, cam); });
+window.ready = true;
+</script></body></html>
