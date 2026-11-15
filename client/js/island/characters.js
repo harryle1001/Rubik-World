@@ -4,7 +4,7 @@
 // Animation theo trạng thái: driveHero(). Hành động một lần (vẫy tay, nhặt đồ…): emote().
 import * as THREE from 'three';
 import { loadAnimated, animator } from './models.js';
-import { addOutline, toon, gradientMap } from './style.js';
+import { addOutline, outlineMat, toon, gradientMap } from './style.js';
 
 // Học sinh Việt Nam dáng chibi low-poly dễ thương (Kenney Mini Characters, CC0, ~700 tam giác):
 // tô lại thành áo sơ mi trắng, quần/váy xanh đậm; thêm khăn quàng đỏ và cặp sách gắn vào xương ngực.
@@ -19,7 +19,7 @@ const UNIFORM = { shirt: new THREE.Color('#f8f8f4'), pants: new THREE.Color('#20
 
 // Nạp nhân vật, chỉnh cỡ (height m), thêm viền. Trả về { model, anim, set } hoặc null.
 // look (tuỳ chọn, chỉ cho bộ student-*): trang phục theo vai trò, xem dressLook(). Không có look → đồng phục học sinh.
-//   { role:'student'|'teacher'|'adult', shirt, pants, bag, aodai, skirt, cap, brim, glasses, prop:'book'|'clip'|'cam'|'rod'|'hat' }
+//   { role:'student'|'teacher'|'adult', shirt, pants, bag, acc:'bow'|'glasses'|'clip', bowColor, aodai, skirt, cap, brim, glasses, prop:'book'|'clip'|'cam'|'rod'|'bag'|'phone' }
 export async function loadHero(kind, height = 1.25, look = null) {
   const g = await loadAnimated(kind); if (!g) return null;
   const model = g.scene, kay = KAYKIT[kind], student = kind.startsWith('student-');
@@ -29,9 +29,32 @@ export async function loadHero(kind, height = 1.25, look = null) {
   model.updateMatrixWorld(true);
   const box = new THREE.Box3(); model.traverse(o => { if (o.isMesh && o.visible) box.expandByObject(o); });
   const h = box.max.y - box.min.y || 1; model.scale.multiplyScalar(height / h);
-  if (dress) dressLook(model, look); else if (student) dressStudent(model, look && look.bag);
+  if (dress) dressLook(model, look); else if (student) { dressStudent(model, look && look.bag); if (look && look.acc) dressAcc(model, look); }
   addOutline(model);
-  return { model, anim: animator(model, g.animations, n => n.split('|').pop()), set: student ? NAMES.student : NAMES.kaykit };
+  const outlines = []; model.traverse(o => { if (o.userData.outline && o.material === outlineMat) outlines.push(o); });
+  return { model, anim: animator(model, g.animations, n => n.split('|').pop()), set: student ? NAMES.student : NAMES.kaykit, height, outlines, head: model.getObjectByName('head'), outlineOn: true };
+}
+
+// Bật/tắt viền (chỉ người gần mới cần viền: đỡ 1 lần vẽ mỗi người ở xa)
+export function setOutline(hero, on) { if (hero.outlineOn === on) return; hero.outlineOn = on; for (const o of hero.outlines) o.visible = on; }
+
+// Quay đầu nhìn mục tiêu (gọi SAU anim.update, mỗi khung hình): quay quanh trục đứng, tối đa ±65°, mượt theo w (0..1)
+const _q = new THREE.Quaternion(), _qp = new THREE.Quaternion(), _qi = new THREE.Quaternion(), _up = new THREE.Vector3(0, 1, 0), _v = new THREE.Vector3();
+export function lookAtTarget(hero, target, state) {
+  const head = hero.head; if (!head || !head.parent) return;
+  if (state.after && head.quaternion.equals(state.after)) head.quaternion.copy(state.base); // animation không ghi đè xương đầu → bỏ phần xoay cũ (không cộng dồn)
+  let want = 0;
+  if (target) {
+    head.getWorldPosition(_v); const yawTo = Math.atan2(target.x - _v.x, target.z - _v.z);
+    let d = yawTo - hero.model.rotation.y; d = Math.atan2(Math.sin(d), Math.cos(d));
+    if (Math.abs(d) < 2.2) want = Math.max(-1.13, Math.min(1.13, d));
+  }
+  state.look = (state.look || 0) + (want - (state.look || 0)) * 0.12;
+  if (Math.abs(state.look) < 0.002) { state.after = null; return; }
+  (state.base || (state.base = new THREE.Quaternion())).copy(head.quaternion);
+  head.parent.getWorldQuaternion(_qp); _q.setFromAxisAngle(_up, state.look); _qi.copy(_qp).invert();
+  head.quaternion.premultiply(_qi.multiply(_q).multiply(_qp)); // xoay theo trục đứng của thế giới
+  (state.after || (state.after = new THREE.Quaternion())).copy(head.quaternion);
 }
 
 // Đổi màu thân theo xương: thân & tay → áo trắng, chân → quần xanh (giữ màu da ở cổ/tay và màu giày)
@@ -100,11 +123,29 @@ function bodyBox(model) {
 function dressStudent(model, bagColor) {
   const B = bodyBox(model); if (!B) return;
   const { wb, H, W, D, cx, s } = B, at = boneAttach(model, 'torso'), red = toon('#d8232a');
-  const scarf = new THREE.Mesh(new THREE.ConeGeometry(W * 0.13 * s, H * 0.22 * s, 3), red); scarf.geometry.rotateX(Math.PI); scarf.geometry.scale(1, 1, 0.4);
-  at(scarf, cx, wb.min.y + H * 0.7, wb.max.z + 0.002);
-  const knot = new THREE.Mesh(new THREE.BoxGeometry(W * 0.42 * s, H * 0.07 * s, D * 0.2 * s), red); at(knot, cx, wb.min.y + H * 0.86, wb.max.z - D * 0.08);
-  const bag = new THREE.Mesh(new THREE.BoxGeometry(W * 0.42 * s, H * 0.3 * s, D * 0.3 * s), toon(bagColor || '#3d7bd9')); at(bag, cx, wb.min.y + H * 0.58, wb.min.z - D * 0.1);
-  const flap = new THREE.Mesh(new THREE.BoxGeometry(W * 0.44 * s, H * 0.09 * s, D * 0.32 * s), toon('#f2b134')); at(flap, cx, wb.min.y + H * 0.71, wb.min.z - D * 0.1);
+  const thin = m => (m.userData.outline = true, m); // chi tiết mỏng: không viền (đỡ răng cưa, đỡ vẽ)
+  // khăn quàng: vòng cổ + nút thắt + 2 vạt tam giác so le
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(W * 0.27 * s, H * 0.035 * s, 4, 10), red); collar.geometry.rotateX(Math.PI / 2); collar.geometry.scale(1, 1, D / W);
+  at(collar, cx, wb.min.y + H * 0.9, (wb.min.z + wb.max.z) / 2);
+  const knot = new THREE.Mesh(new THREE.BoxGeometry(W * 0.13 * s, H * 0.07 * s, D * 0.1 * s), toon('#b81c22')); at(knot, cx, wb.min.y + H * 0.84, wb.max.z + D * 0.01);
+  const tail = (dx, len, rz) => { const t = thin(new THREE.Mesh(new THREE.ConeGeometry(W * 0.09 * s, H * len * s, 3), red)); t.geometry.rotateX(Math.PI); t.geometry.scale(1, 1, 0.35); t.geometry.rotateZ(rz); at(t, cx + dx, wb.min.y + H * (0.84 - len / 2), wb.max.z + D * 0.02); };
+  tail(-W * 0.05, 0.2, -0.18); tail(W * 0.06, 0.16, 0.22);
+  // cặp: thân bo góc + nắp + khoá + 2 quai qua vai
+  const bc = bagColor || '#3d7bd9', bz = wb.min.z - D * 0.13;
+  const bag = new THREE.Mesh(new THREE.BoxGeometry(W * 0.4 * s, H * 0.3 * s, D * 0.22 * s), toon(bc)); at(bag, cx, wb.min.y + H * 0.58, bz);
+  at(new THREE.Mesh(new THREE.BoxGeometry(W * 0.28 * s, H * 0.13 * s, D * 0.08 * s), toon(new THREE.Color(bc).offsetHSL(0, 0, 0.1).getStyle())), cx, wb.min.y + H * 0.5, bz - D * 0.13); // túi trước
+  const flap = new THREE.Mesh(new THREE.BoxGeometry(W * 0.42 * s, H * 0.11 * s, D * 0.25 * s), toon(new THREE.Color(bc).offsetHSL(0, 0, -0.12).getStyle())); at(flap, cx, wb.min.y + H * 0.71, bz);
+  at(thin(new THREE.Mesh(new THREE.BoxGeometry(W * 0.1 * s, H * 0.05 * s, D * 0.03 * s), toon('#ffd23f'))), cx, wb.min.y + H * 0.63, bz - D * 0.13); // khoá
+  for (const k of [-1, 1]) { const st = thin(new THREE.Mesh(new THREE.BoxGeometry(W * 0.06 * s, H * 0.42 * s, D * 0.04 * s), toon('#2b2b38'))); at(st, cx + k * W * 0.2, wb.min.y + H * 0.66, wb.max.z - D * 0.02); }
+}
+
+// Phụ kiện học sinh: nơ tóc, kính, kẹp tóc (đa dạng mà không cần model mới)
+function dressAcc(model, L) {
+  const B = bodyBox(model); if (!B) return;
+  const { hb, s } = B, head = boneAttach(model, 'head'), hw = hb.max.x - hb.min.x, hh = hb.max.y - hb.min.y, hd = hb.max.z - hb.min.z, hcx = (hb.min.x + hb.max.x) / 2;
+  if (L.acc === 'bow') { const c = toon(L.bowColor || '#ff5a8a'); for (const k of [-1, 1]) { const w = new THREE.Mesh(new THREE.ConeGeometry(hh * 0.11 * s, hh * 0.2 * s, 4), c); w.geometry.rotateZ(k * Math.PI / 2); head(w, hcx + hw * 0.22 + k * hh * 0.1, hb.max.y - hh * 0.06, hb.min.z + hd * 0.55); } head(new THREE.Mesh(new THREE.SphereGeometry(hh * 0.05 * s, 6, 4), c), hcx + hw * 0.22, hb.max.y - hh * 0.06, hb.min.z + hd * 0.55); }
+  else if (L.acc === 'clip') head(new THREE.Mesh(new THREE.BoxGeometry(hw * 0.2 * s, hh * 0.05 * s, hd * 0.08 * s), toon(L.bowColor || '#ffd23f')), hcx - hw * 0.25, hb.max.y - hh * 0.12, hb.max.z - hd * 0.12);
+  else if (L.acc === 'glasses') { const gy = hb.min.y + hh * 0.47; for (const k of [-1, 1]) { const m = new THREE.Mesh(new THREE.TorusGeometry(hw * 0.085 * s, hw * 0.015 * s, 3, 8), toon('#2a2a38')); m.userData.outline = true; head(m, hcx + k * hw * 0.17, gy, hb.max.z + 0.004); } }
 }
 
 // Trang phục người lớn: thầy cô (áo dài / váy / sơ mi + sách), bảo vệ (mũ), người dân (đồ thường + vật dụng)
@@ -137,6 +178,13 @@ export function driveHero(hero, { speed, grounded, walk = 5.5, oneShot, sitting 
   if (oneShot && oneShot.until > performance.now()) return;
   if (sitting) { a.play(sitting === 'drive' && a.has('drive') ? 'drive' : N.sit, 0.3); return; }
   if (!grounded) { a.play(N.jump, 0.15); return; }
+  if (hero.npc) { // người trong thị trấn: tốc độ chân khớp tốc độ đi thật (không trượt chân), chuyển mượt theo tốc độ
+    const hh = hero.height || 1.25, wRef = 1.5 * hh, rRef = 3.3 * hh;
+    if (speed > wRef * 1.6) { const r = a.play(N.run, 0.25); if (r) r.timeScale = Math.max(0.7, Math.min(1.6, speed / rRef)); }
+    else if (speed > 0.15) { const w = a.play(N.walk, 0.25); if (w) w.timeScale = Math.max(0.45, Math.min(1.9, speed / wRef)); }
+    else a.play(N.idle, 0.35);
+    return;
+  }
   if (speed > walk * 1.15) { const r = a.play(N.run, 0.2); if (r) r.timeScale = Math.min(1.5, speed / 7); }
   else if (speed > 0.3) { const w = a.play(N.walk, 0.2); if (w) w.timeScale = Math.max(0.6, speed / 2.6); }
   else a.play(N.idle, 0.3);

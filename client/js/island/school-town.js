@@ -12,9 +12,9 @@ import { createTownPeople } from './town-people.js';
 import { S, TOWN_Y, BLOCKS, LAND, to3, to2, GATE3, SPAWN, rectDist } from './layout.js';
 import { buildTownArchitecture } from './town-buildings.js';
 export { S, TOWN_Y };
-const Y_MIN = -600, Y_MAX = 1010;                    // phần đất liền của bản đồ 2D (đã cắt thành các khối trong layout.js)
+export const Y_MIN = -600, Y_MAX = 1010;                    // phần đất liền của bản đồ 2D (đã cắt thành các khối trong layout.js)
 const P = (x, y, hx) => to3(x, y, hx);               // 2D → 3D theo bố cục mới
-const REGION_COL = {
+export const REGION_COL = {
   yard: '#d8ccb0', road: '#9a948c', beach: '#ecd9a0', north: '#8cc46e', plaza: '#cfc3a6', rubik: '#efe2c4', chess: '#efe2c4', music: '#efe2c4', hall: '#e9d8b4', office: '#efe2c4', elec: '#efe2c4',
   attend: '#e2d2a8', rubikyard: '#dcc99a', field: '#4fa64a', giantchess: '#ece6d6', rubikpark: '#9bd26e', pond: '#9bd26e', lake: '#8cc46e', lotus: '#8fc46a',
   flowerfield: '#f0b3c8', bpad: '#b9d68a', skate: '#a5b0bf', patin: '#a5b0bf', basket: '#c98a5a', ski: '#f4f8fb', art: '#e6c79a', farm: '#b08850',

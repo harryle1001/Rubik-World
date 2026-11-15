@@ -11,6 +11,7 @@ import { createAudio } from './island/audio.js';
 import { createNet } from './island/net.js';
 import { createAnimals } from './island/animals.js';
 import { createSchoolTown } from './island/school-town.js';
+import { createWorldMap } from './island/world-map.js';
 import { SPAWN, landDist } from './island/layout.js';
 import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
@@ -62,6 +63,7 @@ const net = ctx.net = createNet(ctx);
 const animals = ctx.animals = createAnimals(ctx);
 ctx.sky = sky;
 const school = createSchoolTown(ctx);
+const worldMap = ctx.worldMap = createWorldMap(ctx); // bản đồ: phím M / nút 🗺️
 const vehicles = createVehicles(ctx);
 const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
 document.getElementById('bSchool').onclick = () => school.goSchool();
@@ -98,7 +100,8 @@ renderer.setAnimationLoop(() => {
   aircraft.update(dt, clock.elapsedTime);
   sky.update(dt, camera, player.pos);
   ctx.flushOffer();
-  post.render();
+  if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
+  worldMap.update();
   quality(dt);
 });
 
