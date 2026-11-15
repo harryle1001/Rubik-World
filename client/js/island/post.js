@@ -1,4 +1,4 @@
-// post.js — Hậu kỳ: tone mapping ACES + MSAA (máy tính 4x, điện thoại 2x) + bloom nhẹ + tia nắng + chỉnh màu theo giờ + vignette (không dùng SSAO cho nhẹ máy). Tắt bloom được khi máy yếu.
+// post.js — Hậu kỳ: tone mapping ACES + MSAA (máy tính 4x, điện thoại 2x) + bloom nhẹ + làm nét thích ứng + tia nắng + chỉnh màu theo giờ + vignette (không dùng SSAO cho nhẹ máy). Tắt bloom được khi máy yếu.
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -21,13 +21,18 @@ export function createPost(renderer, scene, camera) {
   const grade = {
     tDiffuse: { value: null }, uAmt: { value: Q.vignette },
     uLift: { value: new THREE.Vector3() }, uGain: { value: new THREE.Vector3(1, 1, 1) }, uSat: { value: 1 }, uCon: { value: 1 }, uWarm: { value: Q.warmth }, uSat0: { value: Q.saturation },
-    uSunUV: { value: new THREE.Vector2(0.5, 0.5) }, uRays: { value: 0 }, uRayCol: { value: new THREE.Color('#ffe2a8') }, uAsp: { value: 1 },
+    uSunUV: { value: new THREE.Vector2(0.5, 0.5) }, uRays: { value: 0 }, uSharp: { value: 0.18 }, uTexel: { value: new THREE.Vector2(1 / 1280, 1 / 720) }, uRayCol: { value: new THREE.Color('#ffe2a8') }, uAsp: { value: 1 },
   };
   const vignette = new ShaderPass({
     uniforms: grade,
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-    fragmentShader: `uniform sampler2D tDiffuse; uniform float uAmt, uSat, uCon, uRays, uAsp, uWarm, uSat0; uniform vec3 uLift, uGain, uRayCol; uniform vec2 uSunUV; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float uAmt, uSat, uCon, uRays, uAsp, uWarm, uSat0, uSharp; uniform vec3 uLift, uGain, uRayCol; uniform vec2 uSunUV, uTexel; varying vec2 vUv;
       void main(){ vec4 c = texture2D(tDiffuse, vUv);
+        if (uSharp > 0.01) {   // làm nét nhẹ (4 mẫu chữ thập, giới hạn biên độ để không viền sáng): ảnh hết nhoè khi máy hạ độ phân giải
+          vec3 n = texture2D(tDiffuse, vUv + vec2(0., uTexel.y)).rgb, s = texture2D(tDiffuse, vUv - vec2(0., uTexel.y)).rgb, e = texture2D(tDiffuse, vUv + vec2(uTexel.x, 0.)).rgb, w = texture2D(tDiffuse, vUv - vec2(uTexel.x, 0.)).rgb;
+          vec3 mn = min(c.rgb, min(min(n, s), min(e, w))), mx = max(c.rgb, max(max(n, s), max(e, w)));
+          c.rgb = clamp(c.rgb + (4. * c.rgb - n - s - e - w) * uSharp * 0.25, mn, mx);
+        }
         if (uRays > 0.003) {   // tia nắng: cộng dồn chỗ sáng (trời) dọc đường về phía mặt trời → vệt sáng lọt qua cây, mái nhà
           vec2 dv = (uSunUV - vUv) / 12.; vec2 q = vUv; float acc = 0., w = 1.;
           for (int i = 0; i < 12; i++) { q += dv; vec3 s = texture2D(tDiffuse, clamp(q, 0., 1.)).rgb; acc += smoothstep(0.78, 1.0, max(s.r, max(s.g, s.b))) * w; w *= 0.9; }
@@ -44,10 +49,11 @@ export function createPost(renderer, scene, camera) {
   composer.addPass(vignette);
   composer.addPass(new OutputPass());
   bloom.enabled = Q.bloom;
+  vignette.uniforms.uTexel.value.set(1 / (innerWidth * pr), 1 / (innerHeight * pr));
   composer.setSize(innerWidth, innerHeight);   // đúng kích thước theo pixelRatio khi tự tạo render target
   return {
     composer, bloom, grade: vignette.uniforms,   // grade: ambience.js chỉnh theo giờ/thời tiết
-    setSize(w, h) { composer.setSize(w, h); bloom.resolution.set(w / 2, h / 2); },
+    setSize(w, h) { composer.setSize(w, h); bloom.resolution.set(w / 2, h / 2); const pr = renderer.getPixelRatio(); vignette.uniforms.uTexel.value.set(1 / (w * pr), 1 / (h * pr)); },
     render() { composer.render(); },
   };
 }
