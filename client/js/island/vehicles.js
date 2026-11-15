@@ -240,7 +240,7 @@ export function createVehicles(ctx) {
       const turn = (pl.rot - (update.lastRot ?? pl.rot)); update.lastRot = pl.rot;
       const want = THREE.MathUtils.clamp(-Math.atan2(Math.sin(turn), Math.cos(turn)) / Math.max(dt, 1e-3) * sp * 0.035, -0.4, 0.4);
       lean += (want - lean) * Math.min(1, dt * 6); pl.root.rotation.z = lean;
-      const hero = pl.hero; if (hero) { const L = hero.model.getObjectByName('leg-left'), R = hero.model.getObjectByName('leg-right'), a = spin * 0.55; if (L && R) { L.rotateX(Math.sin(a) * 0.55 - 0.25); R.rotateX(-Math.sin(a) * 0.55 - 0.25); } }
+      const hero = pl.hero; if (hero) { const L = (hero.model.getObjectByName('leg-left') || hero.model.getObjectByName('upperlegl')), R = (hero.model.getObjectByName('leg-right') || hero.model.getObjectByName('upperlegr')), a = spin * 0.55; if (L && R) { L.rotateX(Math.sin(a) * 0.55 - 0.25); R.rotateX(-Math.sin(a) * 0.55 - 0.25); } }
       ctx.offer('🚶 Xuống xe', dismount, 0.5);
       if (!onLand()) { /* xe không xuống nước: player.js đã chặn */ }
     } else if (cur.type === 'boat') {
