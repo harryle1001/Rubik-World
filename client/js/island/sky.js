@@ -73,5 +73,5 @@ export function createSky(scene) {
     sun.target.position.copy(target); sun.position.copy(target).addScaledVector(state.sunDir, 80);
     for (const c of clouds.children) { c.position.x += c.userData.v * dt; if (c.position.x > 220) c.position.x = -220; }
   }
-  return { update, state, sun, hemi };
+  return { update, state, sun, hemi, U, clouds, cloudMat: cm }; // U/clouds/cloudMat: weather.js chỉnh theo thời tiết
 }

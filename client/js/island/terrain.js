@@ -13,7 +13,7 @@ const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a
 let seed = CFG.seed; export const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
 
 // Uniform dùng chung cho gió và cỏ rẽ
-export const WIND = { uTime: { value: 0 }, uPlayer: { value: new THREE.Vector3(0, -99, 0) } };
+export const WIND = { uTime: { value: 0 }, uPlayer: { value: new THREE.Vector3(0, -99, 0) }, uWind: { value: 0 } }; // uWind 0..1: gió mạnh (weather.js)
 
 const R = CFG.island.radius;
 // Độ cao: đảo tròn hơi méo, đồi thoải ở giữa, ra rìa chìm xuống biển
@@ -103,10 +103,10 @@ export function createTerrain(scene) {
   function windy(mat, amp, push = 0) {
     mat.onBeforeCompile = sh => {
       Object.assign(sh.uniforms, WIND);
-      sh.vertexShader = 'uniform float uTime; uniform vec3 uPlayer;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      sh.vertexShader = 'uniform float uTime; uniform vec3 uPlayer; uniform float uWind;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
         vec3 ip = (modelMatrix * instanceMatrix * vec4(0.,0.,0.,1.)).xyz;
         float hh = max(position.y, 0.);
-        float sw = sin(uTime*1.8 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.4 + ip.x)*0.3;
+        float sw = (sin(uTime*1.8 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.4 + ip.x)*0.3) * (1. + uWind*1.6) + uWind*(1.2 + 0.6*sin(uTime*0.9 + ip.x*0.06));
         transformed.x += sw * ${amp.toFixed(3)} * hh; transformed.z += sw * ${(amp * 0.6).toFixed(3)} * hh;
         ${push ? `vec2 d = ip.xz - uPlayer.xz; float L = length(d); float k = (1. - smoothstep(0.2, 1.4, L)) * step(abs(ip.y - uPlayer.y), 1.5);
         vec2 dl = normalize(vec2(dot(d, instanceMatrix[0].xz), dot(d, instanceMatrix[2].xz)) + 1e-4); // hướng rẽ trong hệ của ngọn cỏ

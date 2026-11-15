@@ -43,3 +43,5 @@ audio/bgm-market     "Medieval: Market Day" — RandomMind — https://opengamea
 audio/bgm-explore    "Medieval: Exploration" — RandomMind — https://opengameart.org/content/medieval-exploration
 audio/bgm-farm       "Summers" — symphony — https://opengameart.org/content/summers
 audio/bgm-temple     "Oriental" — shadowfire452 — https://opengameart.org/content/oriental
+
+Thời tiết (weather.js): tiếng mưa, gió, sấm tự tổng hợp bằng Web Audio (nhiễu lọc) — không dùng file âm thanh.
