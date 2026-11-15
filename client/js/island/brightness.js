@@ -33,10 +33,10 @@ body.rs-modal #brightBox{display:none}`;
     else if (e.code === 'BracketRight') { set(v + 0.05); box.hidden = false; }
   });
 
-  // mỗi khung: phơi sáng = gốc × mức người chơi chọn × bù đêm (đêm sáng thêm tối đa 1/φ ≈ 0,38)
+  // mỗi khung: phơi sáng = gốc × mức người chơi chọn × bù đêm (đêm sáng thêm tối đa 1/φ³ ≈ 0,24: đã có ánh trời lam, giữ đêm dịu)
   function update() {
     const night = ctx.sky ? ctx.sky.state.night : 0;
-    renderer.toneMappingExposure = base * v * (1 + night * (PHI - 1) * 0.618);
+    renderer.toneMappingExposure = base * v * (1 + night / PHI ** 3);
   }
   return { update, get value() { return v; }, set };
 }
