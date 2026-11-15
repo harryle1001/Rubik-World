@@ -61,13 +61,13 @@ function ringGeo(w, h, rise, t) {   // khung vòm (viền dày t quanh cửa vò
 // gốc: u (ngang tường), y0 (bậu), z (mặt ngoài tường)
 export function archWindow(b, g, d, u, y0, z, w, h, flowers = 0) {
   const r = w / 2;
-  b.push(ringGeo(w, h, r, 0.11), FC.trim, u, y0, z + 0.025);                         // khung vòm
+  g.push(ringGeo(w, h, r, 0.11), FC.trim, u, y0, z + 0.025);                         // khung vòm (chi tiết phẳng: không bóng, không viền)
   g.push(archGeo(w, h, r), FC.glass, u, y0, z + 0.02);                               // kính
   g.push(archGeo(w * 0.62, (h - r) * 0.9 + r * 0.62, r * 0.62), FC.glassDk, u, y0 + 0.06, z + 0.022);   // bóng tối trong phòng
   d.box(0.05, h - 0.04, 0.03, u, y0, z + 0.03, FC.trim); d.box(w, 0.05, 0.03, u, y0 + h - r, z + 0.03, FC.trim);   // song chia ô
-  cbox(b, 0.2, 0.3, 0.1, u, y0 + h - 0.16, z + 0.04, FC.trim, 0.03);                 // đá khoá
-  cbox(b, w + 0.4, 0.1, 0.22, u, y0 - 0.1, z + 0.08, FC.trim, 0.03);                 // bậu
-  b.box(w + 0.2, 0.06, 0.12, u, y0 - 0.16, z + 0.05, FC.stone);
+  g.box(0.2, 0.3, 0.1, u, y0 + h - 0.16, z + 0.04, FC.trim);                         // đá khoá
+  cbox(b, w + 0.4, 0.1, 0.22, u, y0 - 0.1, z + 0.08, FC.trim, 0.03);                 // bậu (đổ bóng nhỏ xuống tường)
+  g.box(w + 0.2, 0.06, 0.12, u, y0 - 0.16, z + 0.05, FC.stone);
   const sh = h - r * 0.72, sw = r * 0.96;
   for (const s of [-1, 1]) {                                                          // cửa chớp mở 2 bên
     const x = u + s * (r + 0.11 + sw / 2);
@@ -96,7 +96,7 @@ export function wallBody(b, len, H, HV, T, wall = FC.wall) {
 // cửa vòm mù (tường rào sân chơi): ô lõm vòm + gờ
 export function blindArch(b, g, u, z, w, h, y0 = 0.7) {
   g.push(archGeo(w, h, w / 2), '#e9cd92', u, y0, z + 0.015);
-  b.push(ringGeo(w, h, w / 2, 0.09), FC.trim, u, y0, z + 0.02);
+  g.push(ringGeo(w, h, w / 2, 0.09), FC.trim, u, y0, z + 0.02);
 }
 
 // trụ góc bo tròn (thay hộp vuông)
@@ -127,7 +127,7 @@ export function arcadeBays(L, du, B, Wd, extra = 0) {
   return [...new Set(xs.map(v => +v.toFixed(3)))].sort((p, q) => p - q);
 }
 // mặt vòm liền 1 khối (đùn có vát mép) từ xs: chân vòm ys, đỉnh khối top, độ vồng rise, nửa bề rộng mũ cột cw
-export function arcadeFront(b, xs, ys, top, rise, cw, depth, z, col = FC.wall, ring = FC.trim) {
+export function arcadeFront(b, g, xs, ys, top, rise, cw, depth, z, col = FC.wall, ring = FC.trim) {
   const s = new THREE.Shape(), n = xs.length - 1;
   s.moveTo(xs[0] - cw, ys); s.lineTo(xs[0] - cw, top); s.lineTo(xs[n] + cw, top); s.lineTo(xs[n] + cw, ys);
   for (let i = n; i > 0; i--) {
@@ -141,15 +141,15 @@ export function arcadeFront(b, xs, ys, top, rise, cw, depth, z, col = FC.wall, r
   for (let i = 1; i <= n; i++) {                                                      // vành vòm trắng (archivolt)
     const c = (xs[i - 1] + xs[i]) / 2, rx = (xs[i] - xs[i - 1]) / 2 - cw, ry = Math.min(rise, top - ys - 0.18), t = 0.12, a = new THREE.Shape();
     a.moveTo(rx + t, 0); a.absellipse(0, 0, rx + t, ry + t, 0, Math.PI, false); a.lineTo(-rx, 0); a.absellipse(0, 0, rx, ry, Math.PI, 0, true); a.lineTo(rx + t, 0);
-    b.push(new THREE.ShapeGeometry(a, 9), ring, c, ys, z + depth / 2 + 0.035);
+    g.push(new THREE.ShapeGeometry(a, 9), ring, c, ys, z + depth / 2 + 0.035);
   }
 }
 // cột tròn: đế vát, thân thon (pháp tuyến mượt), mũ cột loe + tấm đỉnh
 export function column(b, x, z, ys) {
   cbox(b, 0.56, 0.3, 0.56, x, 0, z, FC.stone, 0.05);
-  scyl(b, 0.17, 0.205, ys - 0.5, x, 0.3, z, FC.trim, 10);
-  scyl(b, 0.27, 0.18, 0.12, x, ys - 0.32, z, FC.trim, 10);
-  cbox(b, 0.5, 0.14, 0.5, x, ys - 0.2, z, FC.trim, 0.03);
+  scyl(b, 0.17, 0.205, ys - 0.5, x, 0.3, z, FC.trim, 8);
+  scyl(b, 0.27, 0.18, 0.12, x, ys - 0.32, z, FC.trim, 8);
+  b.box(0.5, 0.14, 0.5, x, ys - 0.2, z, FC.trim);
 }
 
 // TRÁN TƯỜNG (pediment) trên vòm cửa: bệ attic + tam giác + diềm dốc, lùi vào mái depth m. Trả về {base, apex, zf} để gắn biển/biểu tượng.
@@ -168,7 +168,7 @@ export function pediment(b, W, y, z, depth, attic, finial = true, wall = FC.wall
 // cửa sổ tròn (ô thoáng) — đầu hồi / trán tường
 export function oculus(b, g, x, y, z, r, ry = 0) {
   g.push(new THREE.CircleGeometry(r, 12), FC.glass, x, y, z, ry);
-  b.push(new THREE.RingGeometry(r, r + 0.1, 12), FC.trim, x + Math.sin(ry) * 0.012, y, z + Math.cos(ry) * 0.012, ry);
+  g.push(new THREE.RingGeometry(r, r + 0.1, 12), FC.trim, x + Math.sin(ry) * 0.012, y, z + Math.cos(ry) * 0.012, ry);
   if (!ry) { g.box(r * 2, 0.04, 0.02, x, y - 0.02, z + 0.01, FC.trim); g.box(0.04, r * 2, 0.02, x, y - r, z + 0.01, FC.trim); }
 }
 // ô kính quạt bán nguyệt trên cửa chính (gốc: giữa chân quạt)
@@ -176,7 +176,7 @@ export function fanlight(b, g, d, y, z, rx, rise) {
   const s = new THREE.Shape(); s.moveTo(rx, 0); s.absellipse(0, 0, rx, rise, 0, Math.PI, false); s.lineTo(rx, 0);
   g.push(new THREE.ShapeGeometry(s, 9), FC.glass, 0, y, z + 0.01);
   const t = 0.11, a = new THREE.Shape(); a.moveTo(rx + t, 0); a.absellipse(0, 0, rx + t, rise + t, 0, Math.PI, false); a.lineTo(-rx, 0); a.absellipse(0, 0, rx, rise, Math.PI, 0, true); a.lineTo(rx + t, 0);
-  b.push(new THREE.ShapeGeometry(a, 9), FC.trim, 0, y, z + 0.02);
+  g.push(new THREE.ShapeGeometry(a, 9), FC.trim, 0, y, z + 0.02);
   for (let k = 1; k < 4; k++) { const an = k * Math.PI / 4; d.push(new THREE.PlaneGeometry(0.04, 1), FC.trim, Math.cos(an) * rx / 2, y + Math.sin(an) * rise / 2, z + 0.025, 0, 0, an - Math.PI / 2, 1, Math.hypot(Math.cos(an) * rx, Math.sin(an) * rise), 1); }
   cbox(b, 0.22, 0.34, 0.12, 0, y + rise - 0.06, z + 0.06, FC.trim, 0.03);
 }

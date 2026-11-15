@@ -134,16 +134,17 @@ export function buildSchoolZone(a) {
     // HÀNH LANG VÒM CUỐN dọc mặt tiền (gốc cục bộ = giữa mặt tiền, +z ra ngoài): nhịp đều ~BAY, vòm cửa chính rộng φ·BAY
     const mx = side === 'l' ? ax : side === 'r' ? bx : cx, mz = side === 't' ? az : side === 'b' ? bz : cz;
     if (!st.yard) b.group(mx, Y, mz, FACE[side], () => {
-      GR.pre = b.pre; GR.box(faceL + 1.0, 0.08, VD + 0.3, 0, 0, VD / 2 + 0.15, C.step); GR.box(faceL + 1.1, 0.06, 0.2, 0, 0.12, VD + 0.3, C.curb); GR.pre = null;
+      GR.pre = b.pre; GR.box(faceL + 1.0, 0.08, VD + 0.3, 0, 0, VD / 2 + 0.15, C.step); GR.box(faceL + 1.1, 0.06, 0.2, 0, 0.12, VD + 0.3, C.curb);
       const xs = arcadeBays(faceL, du, BAY, DOORBAY, big ? 1 : 0), d = DG.follow(b);
-      arcadeFront(b, xs, ARCH_YS, HV - 0.24, ARCH_R, 0.22, 0.32, VD);
+      arcadeFront(b, GR, xs, ARCH_YS, HV - 0.24, ARCH_R, 0.22, 0.32, VD);
       const span = xs[xs.length - 1] - xs[0] + 0.44;
       cbox(b, span + 0.16, 0.1, 0.5, (xs[0] + xs[xs.length - 1]) / 2, HV - 0.24, VD, FC.trim, 0.03); cbox(b, span + 0.36, 0.14, 0.62, (xs[0] + xs[xs.length - 1]) / 2, HV - 0.14, VD, FC.trim, 0.04);
       xs.forEach((u, i) => {
         column(b, u, VD, ARCH_YS); _v.set(u, 0, VD).applyMatrix4(b.pre); col(_v.x, _v.z, 0.22);
         if ((i + id.length) % 3 === 0 && Math.abs(u - du) > DOORBAY / 2 + 0.1) vine(d, u, VD + 0.24, ARCH_YS - 0.2, i);
       });
-      for (const e of [-1, 1]) b.group(xs[e < 0 ? 0 : xs.length - 1], 0, VD / 2, Math.PI / 2, () => arcadeFront(b, [-VD / 2 + 0.2, VD / 2], ARCH_YS, HV - 0.24, ARCH_R, 0.22, 0.3, 0));   // vòm đầu hồi hành lang
+      for (const e of [-1, 1]) b.group(xs[e < 0 ? 0 : xs.length - 1], 0, VD / 2, Math.PI / 2, () => { GR.pre = b.pre; arcadeFront(b, GR, [-VD / 2 + 0.2, VD / 2], ARCH_YS, HV - 0.24, ARCH_R, 0.22, 0.3, 0); });   // vòm đầu hồi hành lang
+      GR.pre = null;
     });
     // CỬA CHÍNH (khung đá, ô kính quạt) + TRÁN TƯỜNG (bảng tên trên attic, biểu tượng lớp ở tam giác)
     b.group(ox, Y, oz, FACE[side], () => {
@@ -152,7 +153,7 @@ export function buildSchoolZone(a) {
       if (st.yard) {   // cổng vòm khu sân chơi: 2 trụ bo tròn + vòm + bảng tên (không cánh cổng sắt)
         const px = gap + 0.42;
         for (const s of [-1, 1]) { b.group(s * px, 0, 0, 0, () => roundPier(b, 0, 0, HV + 0.9, 0.42)); cbox(b, 0.7, 0.3, 0.7, s * px, HV + 0.9, 0, FC.stone, 0.06); b.ball(0.3, s * px, HV + 1.45, 0, FC.stone); }
-        arcadeFront(b, [-px, px], H - 0.2, HV + 0.9, 1.05, 0.42, 0.5, 0);
+        arcadeFront(b, GR, [-px, px], H - 0.2, HV + 0.9, 1.05, 0.42, 0.5, 0);
         cbox(b, 2 * px + 0.9, 0.16, 0.66, 0, HV + 0.9, 0, FC.trim, 0.04);
         signAt(b, atlas.sign(st.sign[0], st.sign[1]), 3.2, 0.4, 0, HV + 0.6, 0.29);
         for (const s of [-1, 1]) vine(d, s * (px + 0.5), 0.3, HV + 0.3, s + 3, 0, 1);
