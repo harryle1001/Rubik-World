@@ -126,7 +126,7 @@ const base = { pr, grass: terrain.state.grassDist, tree: terrain.state.treeDist 
 function applyQuality() {
   const L = qLevel;
   pr = [base.pr, Math.min(base.pr, 1.15), 1.0, 0.85][L]; renderer.setPixelRatio(pr); post.setSize(innerWidth, innerHeight);
-  post.bloom.enabled = CFG.quality.bloom && L === 0;
+  post.bloom.enabled = CFG.quality.bloom && L === 0; post.setMSAA(L >= 2 ? 0 : CFG.quality.msaa);
   terrain.state.grassDist = base.grass * (L >= 2 ? 0.6 : 1); terrain.state.treeDist = base.tree * (L >= 2 ? 0.7 : 1); terrain.state.relayoutAll(player.pos);
   const ss = L >= 2 ? 512 : CFG.quality.shadowSize; if (sky.sun.shadow.mapSize.x !== ss) { sky.sun.shadow.mapSize.set(ss, ss); sky.sun.shadow.map?.dispose(); sky.sun.shadow.map = null; }
   if (renderer.shadowMap.enabled !== (L < 3)) { renderer.shadowMap.enabled = L < 3; scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => m.needsUpdate = true); }); }
@@ -136,7 +136,8 @@ function quality(dt) {
   qFrames++; const el = (performance.now() - qT) / 1000; if (el < 3) return;
   const fps = qFrames / el; qFrames = 0; qT = performance.now(); ctx.fps = Math.round(fps);
   if (fps < CFG.quality.lowFps && qLevel < 3) { qLevel++; qGood = 0; applyQuality(); }
-  else if (fps > CFG.quality.highFps && qLevel > 0 && ++qGood >= 3) { qLevel--; qGood = 0; applyQuality(); }
+  // không quay lại từ mức 3: bật/tắt bóng đổ phải biên dịch lại mọi shader (khựng vài giây) → nếu dao động 2↔3 sẽ giật liên tục
+  else if (fps > CFG.quality.highFps && qLevel > 0 && qLevel < 3 && ++qGood >= 3) { qLevel--; qGood = 0; applyQuality(); }
 }
 if (new URLSearchParams(location.search).has('low')) { qLevel = 2; applyQuality(); } // ?low: bắt đầu ở chất lượng thấp
 
