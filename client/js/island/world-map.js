@@ -5,7 +5,7 @@
 // Kéo để di chuyển, lăn chuột / chụm 2 ngón / nút +− để phóng to. Bấm vào biểu tượng để xem tên (con vật: điều thú vị).
 import { TEMPLES } from './temple.js';
 import { REGION_COL, Y_MIN, Y_MAX } from './school-town.js';
-import { WORLD, BLOCKS, EXTRA, to2, to3, LOTS, LOT_W, LOT_L, RING_ROAD_R, ROAD_W, RADIALS, HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1 } from './layout.js';
+import { WORLD, BLOCKS, EXTRA, to2, to3, LOTS, LOT_W, LOT_L, RING_ROAD_R, ROAD_W, RADIALS, HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1, flatDist, lagoonDist } from './layout.js';
 
 const B = WORLD; // khung thế giới (m), theo bố cục layout.js
 const EXTRA_COL = { F: '#c9c27a', G: '#e9cfa0', H: '#f1dca2', K: '#cfc8b8' };
@@ -61,7 +61,7 @@ body.rs-modal #bMap{display:none}`;
       else {
         const h = ctx.terrain.heightAt(x, z);
         if (h < 0.15) { const t = Math.min(1, Math.max(0, -h / 6)); c = lerp([116, 214, 205], [52, 160, 168], t); }
-        else if (h < 1.1) { c = [244, 221, 156]; land[i] = 1; }
+        else if (h < 1.1 && !(flatDist(x, z) < 3 && lagoonDist(x, z) > 4)) { c = [244, 221, 156]; land[i] = 1; }
         else { const t = Math.min(1, (h - 1.1) / 12); c = h > 13 ? [205, 186, 140] : lerp([166, 216, 115], [96, 158, 72], t); land[i] = 1; }
       }
       const n = ((px * 7 + py * 13) % 11) / 11 * 6 - 3; // hạt giấy nhẹ
