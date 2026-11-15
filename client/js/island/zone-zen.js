@@ -19,19 +19,20 @@ const L = (x, z) => { const dx = x - TX, dz = z - TZ; return [dx * CR - dz * SR,
 const FRAME = new THREE.Matrix4().makeRotationY(ROT).setPosition(TX, 0, TZ);
 
 // ---------- Bố cục (u, v) ----------
-const PATH = [[-5, 12], [-11, 16], [-19, 19], [-28, 15], [-33, 6], [-32, -3], [-28, -11], [-20, -17], [-10, -21], [0, -24], [10, -22], [18, -26], [26, -25],
-  [32, -17], [33, -7], [31, 1], [30, 5]];                                     // lối đá vòng quanh đền (tây → sau → đông), tới đầu cầu
-const PATH2 = [[12, 5], [10, 10], [5, 12]];                                   // cuối cầu → sân trước đền
-const POND = { u: 21, v: 5, ru: 8.5, rv: 6 };                                 // hồ sen (elip, 8,5/6 ≈ √2 — mềm mại)
-const BRIDGE = [[12, 5], [30, 5]];
-const STREAM = [[29, -29], [27, -21], [25, -13], [23, -6], [22, 0]];          // suối từ chân thác chảy vào hồ
-const FALL = { u: 29.5, v: -30.5, h: 2.6 };                                   // thác thấp (cao 2,6 m)
-const GARDEN = { u: -21, v: 6, r: 6.5 };                                      // vườn đá cát cào
-const PAV = { u: -25, v: -4, r: 3.2 };                                        // đình nghỉ lục giác
-const BELL = { u: -15, v: -24 };                                              // chuông đồng
+// Địa hình: sân đền phẳng (cao 3 m) trong bán kính 14 m, đồi tây (~10 m), đồi đông (~7 m), phía sau đền dốc xuống biển.
+const PATH = [[-5, 13], [-10, 13.5], [-15, 13], [-20, 16], [-26, 20], [-33, 19], [-36, 12], [-33, 4], [-30, -1], [-25, -8], [-19, -13], [-12, -18], [-5, -19],
+  [0, -17.5], [6, -18], [13, -17], [19, -13], [22, -7], [21, -2], [20, 3], [16, 8], [10, 12], [5, 13]];   // lối đá vòng quanh đền: đồi tây → sau đền → đồi đông
+const SPURS = [[[13, 2.5], [14, 5], [16, 8]], [[13, -14.5], [13, -16.8]]];   // 2 nhánh nối 2 đầu cầu với lối chính
+const POND = { u: 13, v: -6, ru: 4.6, rv: 7 };                                // hồ sen trên bãi phẳng phía đông đền (7/4,6 ≈ φ − 0,1)
+const BRIDGE = [[13, -14], [13, 2]];                                          // cầu cong bắc qua hồ theo chiều dài
+const STREAM = [[25.5, -2], [22.5, -3], [19.5, -3.5], [17, -4]];              // suối từ chân thác trên đồi đông chảy xuống hồ
+const FALL = { u: 27, v: -1.6, h: 2 };                                        // thác thấp (cao 2 m — Fibonacci)
+const GARDEN = { u: -12.5, v: 4, r: 5 };                                      // vườn đá cát cào (bán kính 5 — Fibonacci), phủ theo mặt đất
+const PAV = { u: -30, v: 15, r: 3.2 };                                        // đình nghỉ lục giác trên đỉnh đồi tây (ngắm biển)
+const BELL = { u: -11, v: -13 };                                              // chuông đồng sau đền
 const BANYAN = L(-150, -126);                                                 // cây đa (easter-eggs.js) — chừa chỗ
 const SEATS = [   // 5 chỗ ngồi thiền: [u, v, hướng nhìn tới (u, v)]
-  [-21, 15.5, -21, 6], [-25, -4, -21, 6], [0, -28, 0, -40], [24, -28.5, 29.5, -31], [21, 13.5, 21, 5]];
+  [-12.5, 10.5, -12.5, 4], [-30, 15, -40, 20], [0, -21, 0, -40], [24, -6.5, 25.5, -2], [9, -14, 13, -6]];
 const QUOTES = [
   'Có công mài sắt, có ngày nên kim.',
   'Nước chảy đá mòn — kiên nhẫn từng chút sẽ làm nên điều lớn.',
@@ -67,7 +68,7 @@ export function buildZen({ ctx, low = false }) {
   const inFrame = fn => { B.group(TX, 0, TZ, ROT, fn); };
   const inFrameDG = fn => DG.group(TX, 0, TZ, ROT, fn);
   const inFrameG = fn => G.group(TX, 0, TZ, ROT, fn);
-  const path = curve([...PATH], 0.5), path2 = curve(PATH2, 0.5), stream = curve(STREAM, 0.5);
+  const path = curve([...PATH], 0.5), spurs = SPURS.map(p => curve(p, 0.5)), stream = curve(STREAM, 0.5);
 
   // vùng chừa trống (không trồng tre/cây, dọn cây tự nhiên trùng lối đi)
   function zenBlocked(u, v, m = 0) {
@@ -77,7 +78,7 @@ export function buildZen({ ctx, low = false }) {
     if (Math.hypot(u - BELL.u, v - BELL.v) < 2.2 + m) return true;
     if (Math.hypot(u - FALL.u, v - FALL.v) < 3.2 + m) return true;
     for (const s of SEATS) if (Math.hypot(u - s[0], v - s[1]) < 1.6 + m) return true;
-    return segDist(path, u, v) < 1.3 + m || segDist(path2, u, v) < 1.3 + m || segDist(stream, u, v) < 1.2 + m;
+    return segDist(path, u, v) < 1.3 + m || spurs.some(p => segDist(p, u, v) < 1.3 + m) || segDist(BRIDGE, u, v) < 1.2 + m || segDist(stream, u, v) < 1.2 + m;
   }
 
   // ================= LỐI ĐÁ RÊU (bậc theo Fibonacci) =================
@@ -97,7 +98,7 @@ export function buildZen({ ctx, low = false }) {
         prevY = y;
       }
     };
-    walk(path, 0); walk(path2, 5);
+    walk(path, 0); spurs.forEach((p, i) => walk(p, 5 + i));
     // đá cuội băng qua suối (bước đá)
     for (const s of stones) if (segDist(stream, s[0], s[2]) < 0.9) { s[4] += 0.12; s[6] = '#9aa58a'; }
     budget._stones = stones.length;
@@ -109,11 +110,11 @@ export function buildZen({ ctx, low = false }) {
 
   // ================= ĐÈN ĐÁ TŌRŌ (cách nhau 13 m — Fibonacci) =================
   const lanterns = [];
-  { let acc = 0, k = 0; const all = [...path, ...path2];
+  { let acc = 0, k = 0; const all = path;
     for (let i = 1; i < all.length; i++) { acc += Math.hypot(all[i][0] - all[i - 1][0], all[i][1] - all[i - 1][1]); if (acc < 13 || i > all.length - 4) continue; acc = 0; k++;
       const [u, v] = all[i], tu = all[i + 1][0] - all[i - 1][0], tv = all[i + 1][1] - all[i - 1][1], tl = Math.hypot(tu, tv) || 1, s = (k % 2 ? 1.5 : -1.5);
       const lu = u - tv / tl * s, lv = v + tu / tl * s; if (((lu - POND.u) / POND.ru) ** 2 + ((lv - POND.v) / POND.rv) ** 2 < 1.2) continue; lanterns.push([lu, lv]); }
-    lanterns.push([BRIDGE[0][0] - 1, BRIDGE[0][1] + 1.6], [BRIDGE[1][0] + 1, BRIDGE[1][1] - 1.6]); }
+    lanterns.push([BRIDGE[0][0] - 1.6, BRIDGE[0][1] - 1], [BRIDGE[1][0] - 1.6, BRIDGE[1][1] + 1]); }
   measure('đèn tōrō', () => inFrameDG(() => {
     const st = '#c9c2b2', st2 = '#b3ab9b';
     for (const [u, v] of lanterns) {
@@ -128,7 +129,7 @@ export function buildZen({ ctx, low = false }) {
 
   // ================= CỔNG GỖ ĐƠN GIẢN (không rào) =================
   measure('cổng gỗ', () => {
-    for (const [pts, i] of [[path, 8], [path2, path2.length - 5]]) {
+    for (const [pts, i] of [[path, 9], [path, path.length - 10]]) {
       const [u, v] = pts[i], [au, av] = pts[i - 2], [bu, bv] = pts[i + 2], ry = Math.atan2(bu - au, bv - av) + Math.PI / 2, y = H(u, v) - 0.1, wood = '#8a5a34', dark = '#6e4428';
       inFrame(() => B.group(u, 0, v, ry, () => {
         for (const s of [-1, 1]) { B.cyl(0.15, 0.18, 3.4, 0, y, s * 1.6, wood, 7); B.cyl(0.24, 0.24, 0.3, 0, y, s * 1.6, '#b3ab9b', 7); }
@@ -140,27 +141,23 @@ export function buildZen({ ctx, low = false }) {
     }
   });
 
-  // ================= VƯỜN ĐÁ CÁT CÀO (vòng đồng tâm quanh tảng đá) =================
-  const gardenY = (() => { let m = -1e9, n = 1e9; for (let a = 0; a < 6.28; a += 0.5) for (const r of [0, 3, 6.5]) { const h = H(GARDEN.u + Math.cos(a) * r, GARDEN.v + Math.sin(a) * r); m = Math.max(m, h); n = Math.min(n, h); } return { top: m + 0.08, low: n }; })();
+  // ================= VƯỜN ĐÁ CÁT CÀO (vòng đồng tâm quanh tảng đá) — cát phủ theo mặt đất, không xây bệ =================
+  const drape = (g, off) => { g = g.toNonIndexed(); const p = g.attributes.position; for (let i = 0; i < p.count; i++) p.setY(i, H(p.getX(i), p.getZ(i)) + off); return g; };
   measure('vườn đá cát', () => {
-    const { u, v, r } = GARDEN, y = gardenY.top;
+    const { u, v, r } = GARDEN, hy = (du, dv) => H(u + du, v + dv);
     inFrameG(() => {
-      G.push(new THREE.CircleGeometry(r, 34).rotateX(-Math.PI / 2), '#efe4cc', u, y, v);
-      G.push(new THREE.CylinderGeometry(r + 0.05, r + 0.05, y - gardenY.low + 0.4, 34, 1, true), '#a9a297', u, (y + gardenY.low - 0.4) / 2, v);
-      const rocks = [[0, 0, 1.0], [-r * 0.5, r * 0.32, 0.62], [r * 0.38, -r * 0.45, 0.38]];   // 3 tảng: cỡ giảm theo φ
-      const ring = (cu, cv, rr) => G.push(new THREE.RingGeometry(rr - 0.045, rr + 0.045, Math.max(14, Math.round(rr * 9))).rotateX(-Math.PI / 2), '#d6c6a4', cu, y + 0.012, cv);
-      for (let k = 1; k <= 8; k++) { const rr = 1.4 + k * 0.55; if (rr < r - 0.25) ring(u, v, rr); }
-      for (const [du, dv, s] of rocks.slice(1)) for (let k = 1; k <= 3; k++) ring(u + du, v + dv, s * 1.2 + k * 0.32);
+      G.push(drape(new THREE.RingGeometry(0.01, r, 28, 5).rotateX(-Math.PI / 2).translate(u, 0, v), 0.07), '#efe4cc');
+      const ring = (cu, cv, rr) => G.push(drape(new THREE.RingGeometry(rr - 0.045, rr + 0.045, Math.max(12, Math.round(rr * 6))).rotateX(-Math.PI / 2).translate(cu, 0, cv), 0.085), '#d6c6a4');
+      for (let k = 1; k <= 8; k++) { const rr = 1.3 + k * 0.42; if (rr < r - 0.25) ring(u, v, rr); }
+      for (const [du, dv, sc] of [[-r * 0.5, r * 0.32, 0.62], [r * 0.38, -r * 0.45, 0.38]]) for (let k = 1; k <= 3; k++) ring(u + du, v + dv, sc * 1.2 + k * 0.3);
     });
-    inFrame(() => {
-      const [du, dv] = [0, 0]; B.push(new THREE.DodecahedronGeometry(1, 0), '#9e978a', u + du, y + 0.35, v + dv, 0.4, 0.2, 0, 1.1, 0.75, 0.9);
-      B.push(new THREE.DodecahedronGeometry(0.62, 0), '#8f8a7e', u - r * 0.5, y + 0.22, v + r * 0.32, 1.2, 0.1, 0, 1, 0.8, 1.1);
-      B.push(new THREE.DodecahedronGeometry(0.38, 0), '#a9a297', u + r * 0.38, y + 0.14, v - r * 0.45, 2.1, 0, 0.2, 1, 0.75, 1);
-      for (let a = 0; a < Math.PI * 2; a += 0.42) B.ball(0.26, u + Math.cos(a) * (r + 0.15), y + 0.02, v + Math.sin(a) * (r + 0.15), a % 0.84 < 0.42 ? '#a9a297' : '#8fae6a', 1.3, 0.55, 1);
+    inFrame(() => {   // 3 tảng đá: cỡ giảm theo φ
+      B.push(new THREE.DodecahedronGeometry(1, 0), '#9e978a', u, hy(0, 0) + 0.35, v, 0.4, 0.2, 0, 1.1, 0.75, 0.9);
+      B.push(new THREE.DodecahedronGeometry(1 / PHI, 0), '#8f8a7e', u - r * 0.5, hy(-r * 0.5, r * 0.32) + 0.22, v + r * 0.32, 1.2, 0.1, 0, 1, 0.8, 1.1);
+      B.push(new THREE.DodecahedronGeometry(1 / PHI / PHI, 0), '#a9a297', u + r * 0.38, hy(r * 0.38, -r * 0.45) + 0.14, v - r * 0.45, 2.1, 0, 0.2, 1, 0.75, 1);
+      for (let a = 0; a < Math.PI * 2; a += 0.42) { const du = Math.cos(a) * (r + 0.15), dv = Math.sin(a) * (r + 0.15); B.ball(0.26, u + du, hy(du, dv) + 0.06, v + dv, a % 0.84 < 0.42 ? '#a9a297' : '#8fae6a', 1.3, 0.55, 1); }
     });
-    for (const [du, dv, s] of [[0, 0, 1.1], [-r * 0.5, r * 0.32, 0.7]]) colAt(u + du, v + dv, s);
-    // sàn đi được trên cát (3 hình chữ nhật xấp xỉ hình tròn)
-    const [x, z] = W(u, v); for (const [hx, hz] of [[0.92, 0.38], [0.38, 0.92], [0.7, 0.7]]) ctx.decks.push({ x0: x - r * hx, x1: x + r * hx, z0: z - r * hz, z1: z + r * hz, y });
+    for (const [du, dv, sc] of [[0, 0, 1.1], [-r * 0.5, r * 0.32, 0.7]]) colAt(u + du, v + dv, sc);
   });
 
   // ================= ĐÌNH NGHỈ LỤC GIÁC MÁI CONG + CHUÔNG GIÓ =================
@@ -168,7 +165,7 @@ export function buildZen({ ctx, low = false }) {
   const roofGeo = (R, h, up) => {   // mái lục giác cong: mặt lõm (y = h·s^1,6), góc mái vểnh lên
     const g = new THREE.ConeGeometry(R, h, 12, 4, true).toNonIndexed(), p = g.attributes.position;
     for (let i = 0; i < p.count; i++) {
-      const x = p.getX(i), z = p.getZ(i), y = p.getY(i), s = (y + h / 2) / h, a = Math.atan2(z, x), rr = Math.hypot(x, z);
+      const x = p.getX(i), z = p.getZ(i), y = p.getY(i), s = Math.min(1, Math.max(0, (y + h / 2) / h)), a = Math.atan2(z, x), rr = Math.hypot(x, z);
       const seg = ((a % (Math.PI / 3)) + Math.PI / 3) % (Math.PI / 3), hex = Math.cos(Math.PI / 6) / Math.cos(seg - Math.PI / 6);   // ép về hình lục giác
       const corner = Math.pow(Math.abs(Math.cos(3 * a)), 6) * (1 - s);   // gần góc → vểnh
       p.setXYZ(i, x * hex * (1 + corner * 0.12), h * Math.pow(s, 1.6) - h / 2 + corner * up, z * hex * (1 + corner * 0.12)); void rr;
@@ -216,7 +213,7 @@ export function buildZen({ ctx, low = false }) {
   for (const s of [-1, 1]) colAt(BELL.u + s * 1.1, BELL.v, 0.3);
 
   // ================= SUỐI + THÁC + HỒ SEN + CẦU CONG ĐỎ =================
-  const pondY = (() => { let m = -1e9; for (let a = 0; a < 6.28; a += 0.4) for (const k of [0, 0.5, 1]) m = Math.max(m, H(POND.u + Math.cos(a) * POND.ru * k, POND.v + Math.sin(a) * POND.rv * k)); return m + 0.12; })();
+  const pondY = (() => { let m = 1e9; for (let a = 0; a < 6.28; a += 0.3) m = Math.min(m, H(POND.u + Math.cos(a) * POND.ru, POND.v + Math.sin(a) * POND.rv)); return Math.max(m, H(POND.u, POND.v)) + 0.22; })();   // mép đất cao hơn tự thành bờ
   const pondLow = (() => { let n = 1e9; for (let a = 0; a < 6.28; a += 0.3) n = Math.min(n, H(POND.u + Math.cos(a) * POND.ru, POND.v + Math.sin(a) * POND.rv)); return n; })();
   // mực nước suối: không thấp hơn đất, luôn chảy xuống phía hồ
   const sY = new Array(stream.length); for (let i = stream.length - 1; i >= 0; i--) sY[i] = Math.max(H(...stream[i]) + 0.1, i === stream.length - 1 ? pondY : sY[i + 1]);
@@ -282,7 +279,7 @@ export function buildZen({ ctx, low = false }) {
       for (let a = 0; a < 6.28; a += 0.55) { const ru = POND.ru + 0.25, rv = POND.rv + 0.25; DG.ball(0.24 + rnd() * 0.14, POND.u + Math.cos(a) * ru, pondY + 0.06, POND.v + Math.sin(a) * rv, rnd() < 0.4 ? '#7fa65a' : '#a9a297', 1.3, 0.55, 1); }
       for (let k = 0; k < 21; k++) {   // lá sen theo xoắn ốc vàng trong hồ
         const r = Math.sqrt((k + 0.5) / 21), a = k * GOLD, u = POND.u + Math.cos(a) * r * (POND.ru - 1), v = POND.v + Math.sin(a) * r * (POND.rv - 1);
-        if (Math.abs(v - BRIDGE[0][1]) < 1.3) continue;
+        if (segDist(BRIDGE, u, v) < 1.3) continue;
         const s = 0.35 + rnd() * 0.3; DG.cyl(s, s, 0.03, u, pondY + 0.02, v, k % 3 ? '#4f9a3a' : '#5faa4e', 8);
         if (k % 3 === 0) { DG.cone(0.16, 0.3, u, pondY + 0.05, v, '#f6a6c0', 5); DG.cone(0.1, 0.34, u, pondY + 0.08, v, '#ffd1e0', 5, 0.6); DG.ball(0.05, u, pondY + 0.3, v, '#f5c518'); }
       }
@@ -292,20 +289,21 @@ export function buildZen({ ctx, low = false }) {
   });
   // cầu cong đỏ (vòm) — đi được nhờ ctx.decks
   measure('cầu cong đỏ', () => {
-    const [[ua, va], [ub, vb]] = BRIDGE, span = ub - ua, ya = H(ua, va) + 0.12, yb = H(ub, vb) + 0.12, N = 13, wHalf = 0.8;
-    const rise = Math.max(span / Math.pow(PHI, 5), pondY + 0.6 - (ya + yb) / 2);   // vòm cao = nhịp/φ⁵ ≈ 1,6 m
-    const Y = t => ya + (yb - ya) * t + rise * Math.sin(Math.PI * t);
+    const [[ua, va], [ub, vb]] = BRIDGE, span = Math.hypot(ub - ua, vb - va), du = (ub - ua) / span, dv = (vb - va) / span, nu = -dv, nv = du, ry = Math.atan2(-dv, du);
+    const ya = H(ua, va) + 0.12, yb = H(ub, vb) + 0.12, N = 13, wHalf = 0.8;
+    const rise = Math.max(span / Math.pow(PHI, 5), pondY + 0.6 - (ya + yb) / 2);   // vòm cao = nhịp/φ⁵ ≈ 1,4 m
+    const Y = t => ya + (yb - ya) * t + rise * Math.sin(Math.PI * t), P = t => [ua + du * span * t, va + dv * span * t];
     inFrame(() => {
       for (let i = 0; i < N; i++) {
-        const t0 = i / N, t1 = (i + 1) / N, u0 = ua + span * t0, u1 = ua + span * t1, y0 = Y(t0), y1 = Y(t1), len = Math.hypot(u1 - u0, y1 - y0);
-        B.box(len + 0.04, 0.12, wHalf * 2, (u0 + u1) / 2, (y0 + y1) / 2 - 0.12, va, '#b9824f', 0, 0, Math.atan2(y1 - y0, u1 - u0));
-        for (const s of [-1, 1]) B.box(len + 0.02, 0.08, 0.1, (u0 + u1) / 2, (y0 + y1) / 2 + 0.78, va + s * wHalf, '#d9553a', 0, 0, Math.atan2(y1 - y0, u1 - u0));
-        if (i % 2 === 0 || i === N - 1) for (const s of [-1, 1]) B.box(0.12, 0.9, 0.12, i === N - 1 ? u1 : u0, (i === N - 1 ? y1 : y0) - 0.1, va + s * wHalf, '#d9553a');
-        const [x, z] = W((u0 + u1) / 2, va); ctx.decks.push({ x0: x - 0.62, x1: x + 0.62, z0: z - 0.62, z1: z + 0.62, y: (y0 + y1) / 2 - 0.02 });
+        const t0 = i / N, t1 = (i + 1) / N, y0 = Y(t0), y1 = Y(t1), [mu, mv] = P((t0 + t1) / 2), seg = span / N, len = Math.hypot(seg, y1 - y0), pitch = Math.atan2(y1 - y0, seg);
+        B.box(len + 0.04, 0.12, wHalf * 2, mu, (y0 + y1) / 2 - 0.12, mv, '#b9824f', ry, 0, pitch);
+        for (const s of [-1, 1]) B.box(len + 0.02, 0.08, 0.1, mu + nu * s * wHalf, (y0 + y1) / 2 + 0.78, mv + nv * s * wHalf, '#d9553a', ry, 0, pitch);
+        if (i % 2 === 0 || i === N - 1) { const tt = i === N - 1 ? t1 : t0, [pu, pv] = P(tt); for (const s of [-1, 1]) B.box(0.12, 0.9, 0.12, pu + nu * s * wHalf, Y(tt) - 0.1, pv + nv * s * wHalf, '#d9553a', ry); }
+        const [x, z] = W(mu, mv); ctx.decks.push({ x0: x - 0.62, x1: x + 0.62, z0: z - 0.62, z1: z + 0.62, y: (y0 + y1) / 2 - 0.02 });
       }
-      for (const t of [0.25, 0.5, 0.75]) B.cyl(0.12, 0.14, Y(t) - pondY + 0.6, ua + span * t, pondY - 0.6, va, '#a9442f', 6);   // trụ đỡ
+      for (const t of [0.25, 0.5, 0.75]) { const [pu, pv] = P(t); B.cyl(0.12, 0.14, Y(t) - pondY + 0.6, pu, pondY - 0.6, pv, '#a9442f', 6); }   // trụ đỡ
     });
-    for (let i = 0; i <= N; i += 2) for (const s of [-1, 1]) colAt(ua + span * i / N, va + s * (wHalf + 0.15), 0.18);
+    for (let i = 0; i <= N; i += 2) for (const s of [-1, 1]) { const [pu, pv] = P(i / N); colAt(pu + nu * s * (wHalf + 0.15), pv + nv * s * (wHalf + 0.15), 0.18); }
   });
 
   // ================= CHỖ NGỒI THIỀN (đá phẳng + bồ đoàn) =================
@@ -369,7 +367,7 @@ export function buildZen({ ctx, low = false }) {
   budget._bamboo = bamboo.length;
   // phong lá đỏ + thông: thêm vào InstancedMesh cây của terrain (không tốn draw call)
   const treeItems = { round: [], fat: [], pine: [], pineTall: [] };
-  { const MAPLE = ['#d9452f', '#e8663a', '#c8402e', '#f08a3c', '#e2553a'], nM = low ? 13 : 21, nP = low ? 13 : 21;
+  { const MAPLE = ['#d9583a', '#e8763f', '#c95a3a', '#f09a4a', '#e26a44'], nM = low ? 13 : 21, nP = low ? 13 : 21;
     let placed = 0;
     for (let i = 0; i < 400 && placed < nM + nP; i++) {
       const maple = placed < nM, r = maple ? 12 + 26 * Math.sqrt(rnd()) : 30 + 28 * Math.sqrt(rnd()), a = rnd() * 6.283, u = Math.cos(a) * r, v = Math.sin(a) * r, [x, z] = W(u, v), h = Hw(x, z);
