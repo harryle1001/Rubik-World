@@ -16,6 +16,11 @@ canvas{touch-action:none}
 #bSound{position:fixed;right:12px;top:10px;width:42px;height:42px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:20px}
 #inv{position:fixed;right:64px;top:20px;color:#fff;font:700 16px system-ui;text-shadow:0 1px 3px #000}
 #bAct{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);padding:14px 22px;border-radius:30px;border:2px solid #fff;background:#f0a23a;color:#2a1a0a;font:800 17px system-ui;box-shadow:0 6px 20px #0005}
+#o2{position:fixed;left:50%;top:max(55px,calc(env(safe-area-inset-top) + 55px));transform:translate(-50%,-8px);width:min(233px,62vw);height:21px;padding:0 13px 0 34px;border-radius:13px;background:#0b2a40b3;border:2px solid #bff4ff88;box-shadow:0 5px 13px #0004;opacity:0;transition:opacity .4s,transform .4s;pointer-events:none;z-index:26;box-sizing:border-box;display:flex;align-items:center}
+#o2.on{opacity:1;transform:translate(-50%,0)}#o2::before{content:'🫧';position:absolute;left:8px;top:0;font-size:15px;line-height:21px}
+#o2 i{display:block;width:100%;height:8px;border-radius:5px;background:#ffffff26;overflow:hidden}#o2f{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#46e3c6,#7fd0ff);transform-origin:left;transition:transform .2s linear}
+#o2.low{border-color:#ffb3a1;animation:o2b .62s ease-in-out infinite alternate}#o2.low #o2f{background:linear-gradient(90deg,#ff8a6b,#ffc36b)}@keyframes o2b{to{box-shadow:0 0 21px #ff8a6bcc;border-color:#fff}}
+#bDive{background:#2a7fb8cc}#bSurf{background:#3fb39acc}body.rs-modal #o2{display:none}
 [hidden]{display:none!important}
 .vbtns{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 96px);display:flex;gap:10px;z-index:26}
 .vbtns button{width:52px;height:52px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:24px;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer}
@@ -32,8 +37,9 @@ canvas{touch-action:none}
 </head><body>
 <div class="topbtns"><button id="bSchool">🏫 Đến trường</button><button id="bMenu">📚 Menu trường</button></div><div id="info"></div>
 <button id="bAct" hidden></button>
+<div id="o2"><i><b id="o2f"></b></i></div>
 <div id="joy"><div id="knob"></div></div>
 <div class="vbtns"><button id="bBike" title="Xe đạp (B)">🚲</button><button id="bBalloon" title="Khinh khí cầu (F)">🎈</button><button id="bBell" title="Chuông (R)" hidden>🔔</button></div>
-<div class="btns"><button id="bRun">Chạy</button><button id="bJump">Nhảy</button><button id="bDown" hidden>⬇ Xuống</button><button id="bUp" hidden>⬆ Lên</button></div>
+<div class="btns"><button id="bRun">Chạy</button><button id="bJump">Nhảy</button><button id="bDive" hidden>🤿 Lặn</button><button id="bSurf" hidden>⬆ Nổi</button><button id="bDown" hidden>⬇ Xuống</button><button id="bUp" hidden>⬆ Lên</button></div>
 <script type="module" src="/js/ocean.js"></script>
 </body></html>

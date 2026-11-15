@@ -1,4 +1,4 @@
-// sky.js — Trời gradient, quầng bình minh/hoàng hôn, mặt trời, trăng có pha (8 pha/8 ngày), sao lấp lánh, Ngân Hà, sương mù xa, ánh sáng theo giờ (ngày đêm), mây trôi.
+// sky.js — Trời gradient, quầng bình minh/hoàng hôn, mặt trời, trăng có pha theo lịch thật, sao lấp lánh, Ngân Hà, sương mù xa, ánh sáng theo giờ (ngày đêm), mây trôi.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { CFG } from './config.js';
@@ -6,7 +6,7 @@ import { toon } from './style.js';
 
 // [giờ, đỉnh trời, chân trời, màu nắng, cường độ nắng, cường độ trời (hemi)]
 const KEYS = [
-  [0, '#0c1433', '#26335f', '#8fa6ff', 0.25, 0.35],
+  [0, '#14204a', '#34467a', '#a9bcff', 0.3, 0.6],
   [5.5, '#2a3a74', '#e49a7a', '#ffb07a', 0.45, 0.5],
   [6.4, '#5b80c8', '#ffc59a', '#ffc690', 1.0, 0.66],     // bình minh: chân trời hồng cam
   [8, '#4f9be6', '#ffe6c8', '#ffe2b4', 1.35, 0.8],     // sáng sớm ấm
@@ -16,8 +16,8 @@ const KEYS = [
   [17.6, '#5574bf', '#ffb57a', '#ffb066', 1.25, 0.72],  // giờ vàng
 
   [18.4, '#3b4a8c', '#ff9466', '#ff8a52', 0.9, 0.6],
-  [19.6, '#151d48', '#5a4478', '#b49cff', 0.3, 0.4],
-  [24, '#0c1433', '#26335f', '#8fa6ff', 0.25, 0.35],
+  [19.6, '#1b2656', '#5e4a80', '#b49cff', 0.35, 0.55],
+  [24, '#14204a', '#34467a', '#a9bcff', 0.3, 0.6],
 ].map(k => [k[0], new THREE.Color(k[1]), new THREE.Color(k[2]), new THREE.Color(k[3]), k[4], k[5]]);
 
 export function createSky(scene) {
@@ -32,7 +32,7 @@ export function createSky(scene) {
         float y = max(d.y, 0.);
         vec3 c = mix(uHor, mix(uHor, uTop, 0.45), smoothstep(0.0, 0.18, y));   // dải sáng mờ sát chân trời
         c = mix(c, uTop, smoothstep(0.12, 0.85, y));                          // lên đỉnh đậm dần (3 tầng)
-        c = mix(c, uHor * 0.92, smoothstep(0.0, -0.25, d.y));
+        c = mix(c, uHor * 0.92, 1. - smoothstep(-0.25, 0.0, d.y));   // (cạnh smoothstep phải tăng dần: ngược thứ tự là không xác định)
         float s = max(dot(d, uSun), 0.);
         // quầng bình minh/hoàng hôn: dải sáng ấm ôm chân trời phía mặt trời (mặt trời càng thấp càng rộng)
         float low = smoothstep(-0.22, 0.02, uSun.y) * (1. - smoothstep(0.05, 0.4, uSun.y));
@@ -42,13 +42,14 @@ export function createSky(scene) {
         // sao lấp lánh + dải Ngân Hà mờ
         vec3 cell = floor(d * 240.); float r = h(cell), up = smoothstep(0.05, 0.3, d.y);
         c += step(0.9975, r) * uNight * up * (0.55 + 0.45 * sin(uTime * (1.5 + r * 6.) + r * 50.));
-        float mw = exp(-pow(dot(d, normalize(vec3(0.35, 0.25, -0.9))) * 5., 2.)) * (0.65 + 0.35 * sin(d.x * 23. + sin(d.z * 17.) * 2.) * sin(d.y * 19. - d.z * 11.));
+        float mk = dot(d, normalize(vec3(0.35, 0.25, -0.9))) * 5., mw = exp(-mk * mk) * (0.65 + 0.35 * sin(d.x * 23. + sin(d.z * 17.) * 2.) * sin(d.y * 19. - d.z * 11.));
         c += vec3(0.07, 0.065, 0.11) * mw * uNight * up;
         // trăng có pha: chỗ sáng = phần được Mặt Trời chiếu (pha 0 trăng non · 0.5 trăng tròn)
         float m = dot(d, uMoon);
-        if (m > 0.995) {
+        c += vec3(0.55, 0.62, 0.8) * pow(max(m, 0.), 60.) * 0.35 * smoothstep(-0.05, 0.05, uMoon.y) * uNight * (0.2 + 0.8 * sin(uPhase * 3.1416)); // quầng trăng
+        if (m > 0.989) {
           vec3 rt = normalize(cross(uMoon, vec3(0., 1., 0.))), u2 = cross(rt, uMoon);
-          vec2 p = vec2(dot(d, rt), dot(d, u2)) / 0.03; float L = length(p);
+          vec2 p = vec2(dot(d, rt), dot(d, u2)) / 0.045; float L = length(p);
           float pa = uPhase * 6.2832, lit = smoothstep(-0.08, 0.08, dot(vec3(p, sqrt(max(0., 1. - L * L))), vec3(sin(pa), 0., -cos(pa))));
           float crater = 0.85 + 0.15 * h(floor(vec3(p * 5., 1.)));
           float vis = smoothstep(-0.05, 0.05, uMoon.y) * (0.25 + 0.75 * uNight);
@@ -89,6 +90,10 @@ export function createSky(scene) {
 
   const state = { hour: CFG.time.startHour, night: 0, sunDir: new THREE.Vector3(), day: 4, moonPhase: 0.5, low: 0, cloudTint: new THREE.Color('#fff') }; // day: ngày thứ mấy (đổi pha trăng)
   const PHASES = 8, pink = new THREE.Color('#ffb3c8'), nightCloud = new THREE.Color('#7d86b8'), _w = new THREE.Color();
+  // Pha trăng THỰC theo lịch: 0 = trăng non, 0,5 = trăng tròn (rằm), 1 = hết tháng âm lịch
+  const SYNODIC = 29.530588853, NEW_MOON = Date.UTC(2000, 0, 6, 18, 14);
+  const realMoonPhase = () => { const d = (Date.now() - NEW_MOON) / 864e5; return ((d / SYNODIC) % 1 + 1) % 1; };
+  const MOON_COL = new THREE.Color('#c8d6ff');
   function apply() {
     const h = state.hour; let i = 0; while (i < KEYS.length - 2 && KEYS[i + 1][0] <= h) i++;
     const A = KEYS[i], B = KEYS[i + 1], t = (h - A[0]) / (B[0] - A[0]);
@@ -103,8 +108,16 @@ export function createSky(scene) {
     U.uSunCol.value.copy(sun.color);
     state.night = Math.min(1, Math.max(0, (0.1 - el) / 0.25)); U.uNight.value = state.night;
     // trăng: lệch khỏi mặt trời một góc = pha × 2π (trăng tròn đối diện mặt trời), mỗi ngày đổi 1/8 vòng
-    state.moonPhase = (state.day % PHASES) / PHASES; const am = a - state.moonPhase * Math.PI * 2;
+    state.moonPhase = realMoonPhase(); const am = a - state.moonPhase * Math.PI * 2;
     U.uMoon.value.set(Math.cos(am) * 0.8, Math.sin(am), 0.45).normalize(); U.uPhase.value = state.moonPhase;
+    state.moonLit = (1 - Math.cos(state.moonPhase * Math.PI * 2)) / 2;                 // 0 trăng non → 1 trăng tròn
+    const moonUp = Math.min(1, Math.max(0, U.uMoon.value.y / 0.15));
+    if (state.night > 0.5 && moonUp > 0) {
+      const k = (state.night - 0.5) * 2 * moonUp;
+      state.sunDir.lerp(U.uMoon.value, k); state.sunDir.y = Math.max(state.sunDir.y, 0.2); state.sunDir.normalize();
+      sun.color.lerp(MOON_COL, k); sun.intensity += k * (0.25 + 0.75 * state.moonLit);    // trăng tròn sáng rõ cảnh vật
+      hemi.intensity += k * 0.25 * state.moonLit;
+    }
     // mây nhuộm hồng cam lúc mặt trời thấp, xanh tím ban đêm
     state.low = Math.max(0, 1 - Math.abs(el - 0.05) / 0.3);
     state.cloudTint.set('#fff').lerp(_w.copy(sun.color).lerp(pink, 0.35), state.low * 0.8).lerp(nightCloud, state.night * 0.7);

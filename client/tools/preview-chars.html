@@ -23,12 +23,17 @@ if (set !== 'students') LIST.push(
   { kind: 'student-male-b', h: 1.82, look: { role: 'adult', shirt: '#5a7a4a', pants: '#3a4a2a', cap: '#3a4a2a', brim: '#2a3a1a' } },
   { kind: 'student-male-e', h: 1.8, look: { role: 'adult', shirt: '#e07a3a', pants: '#5a4a3a', prop: 'rod', hat: '#e8c873', hatStyle: 'nonla' } },
   { kind: 'student-female-d', h: 1.75, look: { role: 'adult', shirt: '#7fd1c0', pants: '#f0e0c0', hat: '#e8c873', sun: true } },
+  { kind: 'student-male-c', h: 1.72, look: { role: 'adult', shirt: '#3d7bd9', pants: '#c8b48a', tee: true, stripe: '#ffffff', shorts: true } },
+  { kind: 'student-female-b', h: 1.72, look: { role: 'adult', shirt: '#f28fb0', dress: true } },
+  { kind: 'student-male-f', h: 1.7, look: { role: 'adult', shirt: '#9a7a5a', pants: '#4a4a4a', old: true, hat: '#e8c873', hatStyle: 'nonla' } },
+  { kind: 'student-female-e', h: 1.68, look: { role: 'adult', shirt: '#7a9a6a', pants: '#3a3a3a', old: true, tee: true } },
 );
 if (Q.get('kay')) LIST.unshift({ kind: 'hero-rogue', h: 1.7 }, { kind: 'hero-knight', h: 1.7 });
 const heroes = [], gap = 1.15; let tris = [];
 for (let i = 0; i < LIST.length; i++) {
   const L = LIST[i], h = await loadHero(L.kind, L.h, L.look); if (!h) continue;
   h.model.position.set((i - (LIST.length - 1) / 2) * gap, 0, 0); scene.add(h.model);
+  if (Q.get('happy') && i % 2) h.happyUntil = 1e15; // thử mắt cười (người thứ 2, 4…)
   const a = h.anim.play(anim, 0) || h.anim.play('Idle', 0); h.anim.update(T + i * 0.13 * (Q.get('stagger') === '0' ? 0 : 1)); heroes.push(h); tris.push(h.tris);
 }
 const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.1, 100), zoom = parseFloat(Q.get('zoom') || '1'), W = LIST.length * gap;
@@ -37,7 +42,7 @@ if (Q.get('cx')) { cam.position.set(+Q.get('cx'), +(Q.get('cy') || 1.2), +(Q.get
 if (Q.get('yaw')) heroes.forEach(h => h.model.rotation.y = +Q.get('yaw'));
 if (Q.get('lift')) heroes.forEach(h => h.model.position.y = +Q.get('lift'));
 ctl.update();
-document.getElementById('info').textContent = `${heroes.length} nhân vật · tam giác: ${Math.min(...tris)}–${Math.max(...tris)} · anim ${anim}`;
+document.getElementById('info').textContent = `${heroes.length} nhân vật · cao/hông ${heroes.map(h => (h.model.scale.x * h.model.getObjectByName('upperlegl').getWorldPosition(new THREE.Vector3()).y / h.model.scale.x / h.height).toFixed(2)).slice(0, 1)} · tam giác: ${Math.min(...tris)}–${Math.max(...tris)} · anim ${anim}`;
 window.info = { tris, n: heroes.length };
 const clock = new THREE.Clock(), play = Q.get('play') === '1';
 r.setAnimationLoop(() => { const dt = clock.getDelta(); if (play) heroes.forEach(h => h.anim.update(dt)); ctl.update(); r.render(scene, cam); });

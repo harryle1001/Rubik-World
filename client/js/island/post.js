@@ -47,7 +47,10 @@ export function createPost(renderer, scene, camera) {
   composer.setSize(innerWidth, innerHeight);   // đúng kích thước theo pixelRatio khi tự tạo render target
   return {
     composer, bloom, grade: vignette.uniforms,   // grade: ambience.js chỉnh theo giờ/thời tiết
-    setSize(w, h) { composer.setSize(w, h); bloom.resolution.set(w / 2, h / 2); },
+    // composer giữ pixelRatio riêng (lấy lúc tạo) → phải đồng bộ, nếu không hạ chất lượng không giảm độ phân giải thật
+    setSize(w, h) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h); bloom.resolution.set(w / 2, h / 2); },
+    // đổi số mẫu MSAA (0 = tắt) khi máy yếu: cấp phát lại 2 render target ở lần vẽ sau
+    setMSAA(n) { for (const t of [composer.renderTarget1, composer.renderTarget2]) if (t.samples !== n) { t.samples = n; t.dispose(); } },
     render() { composer.render(); },
   };
 }

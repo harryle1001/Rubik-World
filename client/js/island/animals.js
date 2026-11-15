@@ -9,7 +9,7 @@ import { T, damp, dampAngle } from './motion.js';
 import { TEMPLE_C, ISLAND_R, blocked } from './layout.js';
 
 const clean = n => n.split('|').pop(); // 'AnimalArmature|...|Walk' → 'Walk'
-const SPECIES = [
+export const SPECIES = [
   { id: 'animal-deer', name: 'Hươu', n: 3, size: 1.5, speed: 1.6, shy: 9, beach: false, walk: 'Walk', run: 'Gallop', idle: ['Idle_2', 'Eating', 'Idle_Headlow'], fact: 'Hươu đực rụng sừng mỗi năm rồi mọc sừng mới.' },
   { id: 'animal-fox', name: 'Cáo', n: 2, size: 0.8, speed: 1.8, shy: 8, beach: false, walk: 'Walk', run: 'Gallop', idle: ['Idle', 'Idle_2', 'Eating'], fact: 'Cáo nghe được tiếng chuột kêu dưới lớp đất dày.' },
   { id: 'animal-shiba', name: 'Chó Shiba', n: 2, size: 0.7, speed: 2.0, shy: 0, beach: false, walk: 'Walk', run: 'Gallop', idle: ['Idle', 'Idle_2'], fact: 'Chó nhận ra chủ nhờ mũi: khứu giác của chó nhạy hơn người hàng nghìn lần.' },
@@ -42,7 +42,7 @@ export function createAnimals(ctx) {
   ctx.renderer.domElement.addEventListener('pointerup', e => {
     ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ndc, ctx.camera); ray.far = 25;
     const hit = ray.intersectObjects(list.map(a => a.root), true).find(h => h.object.userData.animal);
-    if (hit) { const S = hit.object.userData.animal; ctx.toast(`<b>${S.name}</b><br>${S.fact}`, 4500); ctx.sfx && ctx.sfx('ui'); }
+    if (hit) { const S = hit.object.userData.animal; ctx.toast(`<b>${S.name}</b><br>${S.fact}`, 4500); ctx.sfx && ctx.sfx("ui"); ctx.discover && ctx.discover(S); }
   });
 
   const fauna = createFauna(ctx); // chim, bướm, cá (InstancedMesh)

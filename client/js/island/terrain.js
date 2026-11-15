@@ -79,8 +79,18 @@ export function createTerrain(scene) {
     col.set([c.r, c.g, c.b], i * 3);
   }
   g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
-  const ground = new THREE.Mesh(g, new THREE.MeshToonMaterial({ vertexColors: true, gradientMap })); ground.receiveShadow = true; ground.name = 'ground';
-  scene.add(ground);
+  // chia thành ô 44×44 mắt lưới (dùng chung thuộc tính đỉnh, chỉ khác chỉ mục) → camera loại bỏ (frustum culling) phần ngoài khung hình;
+  // trước đây 1 mesh ~190k tam giác luôn được vẽ toàn bộ
+  const ground = new THREE.Group(); ground.name = 'ground'; scene.add(ground);
+  { const gm = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap }), TS = 44, n = NX + 1, bb = new THREE.Box3(), v = new THREE.Vector3();
+    for (let tz = 0; tz < NZ; tz += TS) for (let tx = 0; tx < NX; tx += TS) {
+      const ex = Math.min(NX, tx + TS), ez = Math.min(NZ, tz + TS), idx = []; bb.makeEmpty();
+      for (let iz = tz; iz < ez; iz++) for (let ix = tx; ix < ex; ix++) { const a = iz * n + ix, b = a + n, c = b + 1, d = a + 1; idx.push(a, b, d, b, c, d); }
+      for (let iz = tz; iz <= ez; iz++) for (let ix = tx; ix <= ex; ix++) bb.expandByPoint(v.fromBufferAttribute(pos, iz * n + ix));
+      const tg = new THREE.BufferGeometry(); for (const k of ['position', 'normal', 'color']) tg.setAttribute(k, g.attributes[k]);
+      tg.setIndex(idx); tg.boundingBox = bb.clone(); tg.boundingSphere = bb.getBoundingSphere(new THREE.Sphere());
+      const m = new THREE.Mesh(tg, gm); m.receiveShadow = true; m.name = 'ground'; ground.add(m);
+    } }
 
   // ---------- Nước: màu theo độ sâu + bọt trắng ở bờ (đọc bản đồ độ cao, không cần depth texture) ----------
   const TS = 256, hd = new Uint8Array(TS * TS);
