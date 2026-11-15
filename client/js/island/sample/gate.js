@@ -6,6 +6,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { BLOCKS, PHI } from '../layout.js';
 import { Batch, GLOW_MATS } from '../decor.js';
 import { toon, gradientMap } from '../style.js';
+import { PAL } from './palette.js';
 
 const softOutline = new THREE.MeshBasicMaterial({ color: '#4a3548', side: THREE.BackSide });
 softOutline.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n transformed += normalize(normal) * 0.022;'); };
@@ -37,10 +38,11 @@ export function buildGate(a) {
 const HU = 1.7, A = HU * PHI ** 3 / PHI, R = A / 2, HS = HU * PHI ** 3 - R, P1 = A / PHI, A2 = A / PHI, P2 = P1 / PHI;
 const W = A + 2 * P1 + 2 * A2 + 2 * P2, XC = A / 2 + P1, HB = A + 2 * P1, HW = HB / PHI, DEP = R, Z0 = R / PHI ** 2;
 const ET = HS + R + 0.65, PL = HU / PHI ** 2, SW = HB / PHI ** 0.6, SH = SW / 4;   // ET: gờ đầu cột; PL: đế; biển tên SW×SH (tỷ lệ 4:1 như canvas)
+const H_ = n => PAL[n].hex;   // màu từ bảng chuẩn sample/palette.js
 const G = {
-  stone: '#efe2c6', stone2: '#ddcca8', light: '#f8efdc', niche: '#c9b48c', relief: '#f4e9d1', gold: '#d9aa4c',
-  roof: '#a9442a', roof2: '#953b24', ridge: '#7a2f1e', soffit: '#6f4b3a', moss: '#5b8a3c', moss2: '#4a7531', ivy: '#3f7d3a', ivy2: '#5f9e48',
-  red: '#c8372d', glow: '#ffe28a', glowR: '#ff9a5c', iron: '#3b3346',
+  stone: H_('stoneCream'), stone2: H_('stoneCreamD'), light: H_('stoneCreamL'), niche: H_('stoneWarm'), relief: H_('plaster'), gold: H_('brass'),
+  roof: H_('roof'), roof2: H_('roofL'), ridge: H_('roofD'), soffit: H_('woodD'), moss: H_('leaf'), moss2: H_('leafD'), ivy: H_('leafD'), ivy2: H_('leaf'),
+  red: H_('flowerRed'), glow: H_('lampGlow'), glowR: H_('rubikO'), iron: H_('iron'),
 };
 const _w = new THREE.Vector3();
 // trụ có rãnh (12 rãnh lõm hình sin, bóng toon tách từng rãnh)
