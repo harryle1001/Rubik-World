@@ -501,5 +501,5 @@ export function buildZen({ ctx, low = false }) {
     }
   }
   console.info('[zen] tam giác mỗi công trình:', budget);
-  return { update, root, budget, seats, bell: { x: bellX, z: bellZ } };
+  return (ctx.zen = { update, root, budget, seats, bell: { x: bellX, z: bellZ } });   // ctx.zen: gỡ lỗi (__island.zen)
 }
