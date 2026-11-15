@@ -12,6 +12,8 @@ import { createNet } from './island/net.js';
 import { createAnimals } from './island/animals.js';
 import { createSchoolTown } from './island/school-town.js';
 import { createWorldMap } from './island/world-map.js';
+import { SPAWN, landDist } from './island/layout.js';
+import { createVehicles } from './island/vehicles.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 
@@ -48,7 +50,7 @@ const player = ctx.player = createPlayer(ctx);
   const beach = [], rocks = [];
   for (let i = 0; i < 400 && (beach.length < 6 || rocks.length < 24); i++) {
     const a = Math.random() * 6.283, r = 40 + Math.random() * 45, x = Math.cos(a) * r, z = Math.sin(a) * r, h = terrain.heightAt(x, z);
-    if (h > 0.25 && h < 1.2) (beach.length < 6 && i % 3 === 0 ? beach : rocks).push([x, h, z, 0.6 + Math.random() * 0.9, Math.random() * 6.28]);
+    if (h > 0.25 && h < 1.2 && landDist(x, z) > 4) (beach.length < 6 && i % 3 === 0 ? beach : rocks).push([x, h, z, 0.6 + Math.random() * 0.9, Math.random() * 6.28]);
   }
   scatterModel(scene, 'rua', beach); scatterModel(scene, 'da', rocks);
   for (const [x, , z, s] of rocks) ctx.colliders.push({ x, z, r: 0.6 * s });
@@ -61,7 +63,10 @@ const animals = ctx.animals = createAnimals(ctx);
 ctx.sky = sky;
 const school = createSchoolTown(ctx);
 const worldMap = ctx.worldMap = createWorldMap(ctx); // bản đồ: phím M / nút 🗺️
+const vehicles = createVehicles(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
+// Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
+player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2;
 document.getElementById('bMenu').onclick = () => school.menu();
 
 // Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại cạnh bãi xuất phát, hoa, nấm, gốc cây, pha lê quanh đền
@@ -89,6 +94,7 @@ renderer.setAnimationLoop(() => {
   net.update(dt);
   animals.update(dt);
   school.update(dt, clock.elapsedTime);
+  vehicles.update(dt);
   sky.update(dt, camera, player.pos);
   ctx.flushOffer();
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D

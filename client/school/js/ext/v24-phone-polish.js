@@ -21,7 +21,7 @@ function v24Init(){
   let frames = 0, t0 = performance.now(), low = 0, warned = false;
   (function tick(t){ frames++; if(t - t0 >= 2000){ const fps = frames*1000/(t - t0); frames = 0; t0 = t;
       if(!document.hidden && !document.querySelector('.modal:not([hidden])')) low = fps < 32 ? low + 1 : 0;
-      if(low >= 2 && !warned && M.saver === 'auto' && MOB.touch){ warned = true; cloudsOff(); toast('Máy hơi chậm nên đã tắt mây bay cho mượt hơn. Vẫn giật thì bật "Tiết kiệm pin" trong Cài đặt.'); } }
+      if(low >= 2 && !warned && M.saver === 'auto' && MOB.touch && !(window.RS && RS.embedded)){ warned = true; cloudsOff(); toast('Máy hơi chậm nên đã tắt mây bay cho mượt hơn. Vẫn giật thì bật "Tiết kiệm pin" trong Cài đặt.'); } }
     requestAnimationFrame(tick); })(performance.now());
   // --- gentle vibration on level up ---
   const lv = $('#lvlUp');

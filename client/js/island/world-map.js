@@ -4,9 +4,11 @@
 // Bật/tắt từng lớp bằng các nút trên bản đồ; "Gần tôi" chỉ hiện những thứ trong bán kính NEAR mét.
 // Kéo để di chuyển, lăn chuột / chụm 2 ngón / nút +− để phóng to. Bấm vào biểu tượng để xem tên (con vật: điều thú vị).
 import { TEMPLES } from './temple.js';
-import { S, TX, TZ, REGION_COL, X_MAX, Y_MIN, Y_MAX } from './school-town.js';
+import { REGION_COL, Y_MIN, Y_MAX } from './school-town.js';
+import { WORLD, BLOCKS, EXTRA, to2, to3 } from './layout.js';
 
-const B = { x0: -100, x1: TX + X_MAX * S + 10, z0: TZ + Y_MIN * S - 10, z1: 100 }; // khung thế giới (m)
+const B = WORLD; // khung thế giới (m), theo bố cục layout.js
+const EXTRA_COL = { F: '#c9c27a', G: '#e9cfa0', H: '#f1dca2' };
 const PPM = 2, NEAR = 60;                       // ảnh nền: 2 điểm ảnh / mét; "Gần tôi": 60 m
 const ANIMAL_ICON = { 'animal-deer': '🦌', 'animal-fox': '🦊', 'animal-shiba': '🐕', 'animal-cat': '🐈', 'animal-frog': '🐸', 'animal-crab': '🦀' };
 const NPC_ICON = { swim: '🏊', surf: '🏄', sun: '😎', bike: '🚲', camp: '⛺', picnic: '🧺', fishing: '🎣', walk: '🚶', kite: '🪁' };
@@ -49,14 +51,14 @@ body.rs-modal #bMap{display:none}`;
   function buildBase() {
     const W = Math.round((B.x1 - B.x0) * PPM), H = Math.round((B.z1 - B.z0) * PPM); base.width = W; base.height = H;
     const b = base.getContext('2d'), img = b.createImageData(W, H), d = img.data, land = new Uint8Array(W * H);
-    const RS = ctx.school && ctx.school.RS, tb = ctx.school && ctx.school.bounds, rgb = {}, hex = h => rgb[h] || (rgb[h] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)));
+    const RS = ctx.school && ctx.school.RS, rgb = {}, hex = h => rgb[h] || (rgb[h] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)));
     const lerp = (a, c, t) => a.map((v, i) => v + (c[i] - v) * t);
     for (let py = 0; py < H; py++) for (let px = 0; px < W; px++) {
       const x = B.x0 + px / PPM, z = B.z0 + py / PPM, i = py * W + px; let c;
-      if (RS && tb && x >= tb.x0 && x <= tb.x1 && z >= tb.z0 && z <= tb.z1) {
-        let reg = 'north'; try { reg = RS.regionAt((x - TX) / S, (z - TZ) / S); } catch (e) {}
-        c = hex(REGION_COL[reg] || '#d8cdb5'); land[i] = 1;
-      } else {
+      const p2 = RS && to2(x, z), ex = !p2 && EXTRA.find(e => !e.sea && x >= e.r[0] && x <= e.r[2] && z >= e.r[1] && z <= e.r[3]);
+      if (p2) { let reg = 'north'; try { reg = RS.regionAt(p2[0], p2[1]); } catch (e) {} c = hex(REGION_COL[reg] || '#d8cdb5'); land[i] = 1; }
+      else if (ex) { c = hex(EXTRA_COL[ex.id] || '#e6d6a8'); land[i] = 1; }
+      else {
         const h = ctx.terrain.heightAt(x, z);
         if (h < 0.15) { const t = Math.min(1, Math.max(0, -h / 6)); c = lerp([116, 214, 205], [52, 160, 168], t); }
         else if (h < 1.1) { c = [244, 221, 156]; land[i] = 1; }
@@ -81,21 +83,22 @@ body.rs-modal #bMap{display:none}`;
     // nhà, tường của thị trấn
     b.fillStyle = 'rgba(122,86,52,.75)';
     for (const r of ctx.boxes || []) b.fillRect((r.x0 - B.x0) * PPM, (r.z0 - B.z0) * PPM, Math.max(1.5, (r.x1 - r.x0) * PPM), Math.max(1.5, (r.z1 - r.z0) * PPM));
-    // cầu gỗ
-    const br = ctx.school && ctx.school.bridge;
-    if (br) { b.fillStyle = '#a87445'; b.fillRect((br.x - br.w - B.x0) * PPM, (br.zb - B.z0) * PPM, br.w * 2 * PPM, (br.za - br.zb) * PPM); b.strokeStyle = '#6b4a2b'; b.lineWidth = 1; b.strokeRect((br.x - br.w - B.x0) * PPM, (br.zb - B.z0) * PPM, br.w * 2 * PPM, (br.za - br.zb) * PPM); }
-    baseTown = !!(RS && tb); baseDone = true;
+    // sàn gỗ, bến nổi (làng nổi trên biển)
+    b.fillStyle = '#b07f4e'; b.strokeStyle = '#6b4a2b'; b.lineWidth = 1;
+    for (const k of ctx.decks || []) { const r = [(k.x0 - B.x0) * PPM, (k.z0 - B.z0) * PPM, (k.x1 - k.x0) * PPM, (k.z1 - k.z0) * PPM]; b.fillRect(...r); b.strokeRect(...r); }
+    baseTown = !!RS; baseDone = true;
   }
 
   // ---------- Địa danh ----------
   function places() {
-    const L = [{ n: 'ĐẢO RUBIK', x: -38, z: 52, big: 2 }, { n: 'Khu cắm trại', x: 8, z: 15, ic: '🏕️' }, { n: 'Bãi xuất phát', x: 0, z: 26 }];
+    const L = [];
+    for (const b of BLOCKS) L.push({ n: b.name.toUpperCase(), x: (b.r[0] + b.r[2]) / 2, z: b.r[1] + 6, big: 2 });
+    for (const e of EXTRA) L.push({ n: e.name.toUpperCase(), x: (e.r[0] + e.r[2]) / 2, z: (e.r[1] + e.r[3]) / 2, big: 2 });
     for (const t of TEMPLES) L.push({ n: t.name, x: t.x, z: t.z, ic: '⛩️' });
     const sc = ctx.school; if (!sc) return L;
-    if (sc.bridge) L.push({ n: 'Cầu sang trường', x: sc.bridge.x, z: (sc.bridge.za + sc.bridge.zb) / 2, ic: '🌉' });
-    if (sc.gate) L.push({ n: 'TRƯỜNG RUBIK', x: sc.gate[0], z: sc.gate[1] + 4, ic: '🏫', big: 1 });
+    if (sc.gate) L.push({ n: 'Cổng trường', x: sc.gate[0], z: sc.gate[1], ic: '🏫' });
     const RS = sc.RS;
-    if (RS && RS.R) for (const k in RS.R) { const r = RS.R[k]; if (!r || !r.name || r.w == null) continue; const cx = TX + (r.x + r.w / 2) * S, cz = TZ + (r.y + r.h / 2) * S; if (cz < B.z0 || cz > B.z1) continue; L.push({ n: r.name, x: cx, z: cz, ext: Math.min(r.w, r.h) * S }); }
+    if (RS && RS.R) for (const k in RS.R) { const r = RS.R[k]; if (!r || !r.name || r.w == null || r.y + r.h / 2 < Y_MIN || r.y + r.h / 2 > Y_MAX) continue; const [cx, cz] = to3(r.x + r.w / 2, r.y + r.h / 2); L.push({ n: r.name, x: cx, z: cz, ext: Math.min(r.w, r.h, 2400) * 0.05 }); }
     for (const q of sc.doors || []) L.push({ n: q.d.n.split('·')[0].trim(), x: q.x, z: q.z, door: true });
     return L;
   }
@@ -131,7 +134,7 @@ body.rs-modal #bMap{display:none}`;
     if (v === open) return; open = v; root.hidden = !v; tip = null;
     if (v) {
       ctx.sfx && ctx.sfx('ui');
-      if (!baseDone || (!baseTown && ctx.school && ctx.school.RS && ctx.school.bounds)) buildBase();
+      if (!baseDone || (!baseTown && ctx.school && ctx.school.RS)) buildBase();
       placeList = places(); focusMe(opts.near ? 4 : zoom); frozenBefore = ctx.player.frozen; ctx.player.frozen = true;
     } else ctx.player.frozen = frozenBefore;
   }
@@ -162,7 +165,7 @@ body.rs-modal #bMap{display:none}`;
     // địa danh
     if (opts.places) for (const L of placeList) {
       if (!inView(L.x, L.z, 200) || !near(L.x, L.z)) continue; const X = sx(L.x), Y = sy(L.z);
-      if (L.big) { text(L.n, X, Y - (L.ic ? 26 : 0), L.big === 2 ? 26 : 20, '#fff3d6'); if (L.ic) { bubble(X, Y, L.ic, 15, '#e0a030'); icons.push({ x: X, y: Y, t: L.n }); } continue; }
+      if (L.big) { const fs = Math.round(Math.max(13, Math.min(26, zoom * 9))); g.font = `900 ${fs}px system-ui`; if (free(X, Y - (L.ic ? 26 : 0), g.measureText(L.n).width / 2 + 4, fs * 0.7)) text(L.n, X, Y - (L.ic ? 26 : 0), fs, '#fff3d6'); if (L.ic) { bubble(X, Y, L.ic, 15, '#e0a030'); icons.push({ x: X, y: Y, t: L.n }); } continue; }
       if (L.door) { if (zoom < 5) continue; g.beginPath(); g.arc(X, Y, 4, 0, 7); g.fillStyle = '#f0a23a'; g.fill(); if (zoom > 8) { g.font = '900 11px system-ui'; if (free(X, Y - 12, g.measureText(L.n).width / 2 + 3, 8)) text(L.n, X, Y - 12, 11); } icons.push({ x: X, y: Y, t: '🚪 ' + L.n }); continue; }
       if (L.ic) { bubble(X, Y, L.ic, 14, '#e0a030'); free(X, Y, 14); icons.push({ x: X, y: Y, t: L.n }); if (zoom > 1.6) { g.font = '900 13px system-ui'; if (free(X, Y + 24, g.measureText(L.n).width / 2 + 3, 9)) text(L.n, X, Y + 24, 13); } continue; }
       const ext = (L.ext || 10) * zoom; if (ext < 34) continue;
@@ -178,7 +181,7 @@ body.rs-modal #bMap{display:none}`;
     if (opts.people && RS && zoom > 1.5) {
       const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
       for (const a of list) {
-        const x = TX + a.x * S, z = TZ + a.y * S; if (a.y < Y_MIN || a.y > Y_MAX || !inView(x, z) || !near(x, z)) continue; const X = sx(x), Y = sy(z);
+        const [x, z] = to3(a.x, a.y); if (a.y < Y_MIN || a.y > Y_MAX || !inView(x, z) || !near(x, z)) continue; const X = sx(x), Y = sy(z);
         const teacher = !a.kind && a.student === false, ic = a.kind ? NPC_ICON[a.kind] || '🧍' : teacher ? (a.long ? '👩‍🏫' : '👨‍🏫') : '🧒';
         if (!free(X, Y, 10)) continue; bubble(X, Y, ic, 11, teacher ? '#ffd23f' : a.kind ? '#9ad26e' : '#ff8a8a');
         icons.push({ x: X, y: Y, t: a.kind ? NPC_NAME[a.kind] || 'Người dân' : teacher ? `${a.name} · ${String(a.role || '').split(',')[0]}` : `${a.name} (học sinh)` });

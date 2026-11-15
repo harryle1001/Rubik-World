@@ -50,7 +50,7 @@ export function createPlayer(ctx) {
   });
   const up = e => { if (e.pointerId === jid) { jid = null; input.x = input.z = 0; joy.style.opacity = 0; knob.style.transform = ''; } drags.delete(e.pointerId); };
   el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
-  el.addEventListener('wheel', e => { cam.dist = clamp(cam.dist + e.deltaY * 0.01, 4, 16); }, { passive: true });
+  el.addEventListener('wheel', e => { cam.dist = clamp(cam.dist + e.deltaY * 0.01, 5, 28); }, { passive: true });
   const hold = (id, k) => { const b = document.getElementById(id); if (!b) return; b.addEventListener('pointerdown', e => { e.preventDefault(); input[k] = true; }); for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) b.addEventListener(ev, () => { if (k === 'run') input.run = false; }); };
   hold('bJump', 'jump'); hold('bRun', 'run');
 
@@ -71,39 +71,51 @@ export function createPlayer(ctx) {
   self.emote = name => { if (hero) emote(hero, animState, name); };
   let stepT = 0;
   const want = new THREE.Vector3(), look = new THREE.Vector3(pos.x, pos.y + 1.5, pos.z), tmp = new THREE.Vector3();
+  // Phương tiện (vehicles.js gán): self.vehicle = { speed, turn, accel, water, fly, lift, anim, seat, camAdd, maxAlt } hoặc null
+  self.vehicle = null; self.vel = vel; self.setRot = r => { rot = r; };
+  Object.defineProperty(self, 'hero', { get: () => hero });
+  Object.defineProperty(self, 'vy', { get: () => vy, set: v => { vy = v; } });
   self.update = (dt) => {
+    const V = self.vehicle;
     let ix = input.x, iz = input.z;
     if (keys.has('KeyA') || keys.has('ArrowLeft')) ix -= 1; if (keys.has('KeyD') || keys.has('ArrowRight')) ix += 1;
     if (keys.has('KeyW') || keys.has('ArrowUp')) iz -= 1; if (keys.has('KeyS') || keys.has('ArrowDown')) iz += 1;
     const mag = self.frozen ? 0 : Math.min(1, Math.hypot(ix, iz)), n = Math.hypot(ix, iz) || 1;
     const running = input.run || keys.has('ShiftLeft') || keys.has('ShiftRight') || (input.x * input.x + input.z * input.z > 0.9);
-    const sp = (running ? P.run : P.walk) * mag;
+    const sp = (V ? V.speed : running ? P.run : P.walk) * mag;
     const fx = -Math.sin(cam.yaw), fz = -Math.cos(cam.yaw), mx = (Math.cos(cam.yaw) * ix - fx * iz) / n, mz = (-Math.sin(cam.yaw) * ix - fz * iz) / n;
-    const k = 1 - Math.exp(-dt * (grounded ? 12 : 3));
+    const k = 1 - Math.exp(-dt * (V ? V.accel : grounded ? 12 : 3));
     vel.x += (mx * sp - vel.x) * k; vel.z += (mz * sp - vel.z) * k; self.speed = Math.hypot(vel.x, vel.z);
-    if (mag > 0.05) { let d = Math.atan2(mx, mz) - rot; d = Math.atan2(Math.sin(d), Math.cos(d)); rot += d * Math.min(1, dt * 12); }
+    if (mag > 0.05) { let d = Math.atan2(mx, mz) - rot; d = Math.atan2(Math.sin(d), Math.cos(d)); rot += d * Math.min(1, dt * (V ? V.turn : 12)); }
 
     // di chuyển + va chạm cây/đá + không ra nước sâu
     let nx = pos.x + vel.x * dt, nz = pos.z + vel.z * dt;
-    for (const c of ctx.colliders) { const dx = nx - c.x, dz = nz - c.z, rr = c.r + 0.35, d2 = dx * dx + dz * dz; if (d2 < rr * rr && d2 < 100) { const d = Math.sqrt(d2) || 1e-3; nx = c.x + dx / d * rr; nz = c.z + dz / d * rr; } }
+    if (!V || !V.fly) for (const c of ctx.colliders) { const dx = nx - c.x, dz = nz - c.z, rr = c.r + 0.35, d2 = dx * dx + dz * dz; if (d2 < rr * rr && d2 < 100) { const d = Math.sqrt(d2) || 1e-3; nx = c.x + dx / d * rr; nz = c.z + dz / d * rr; } }
     // tường/nhà hình hộp (ctx.boxes: {x0,z0,x1,z1,top}) — đẩy ra theo cạnh gần nhất
-    for (const b of ctx.boxes || []) {
+    for (const b of (V && V.fly) ? [] : ctx.boxes || []) {
       const r = 0.35; if (nx < b.x0 - r || nx > b.x1 + r || nz < b.z0 - r || nz > b.z1 + r || pos.y > b.top) continue;
       const pl = nx - (b.x0 - r), pr = (b.x1 + r) - nx, pt = nz - (b.z0 - r), pb = (b.z1 + r) - nz, m = Math.min(pl, pr, pt, pb);
       if (m === pl) nx = b.x0 - r; else if (m === pr) nx = b.x1 + r; else if (m === pt) nz = b.z0 - r; else nz = b.z1 + r;
     }
     const sup = (x, z) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, pos.y) : -99);
-    if (sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = pos.x; nz = pos.z; vel.set(0, 0, 0); }
+    if (V && V.water) { if (sup(nx, nz) > CFG.island.waterLevel - 0.3) { nx = pos.x; nz = pos.z; vel.multiplyScalar(0.3); } } // thuyền: chỉ đi trên nước
+    else if (!(V && V.fly) && sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = pos.x; nz = pos.z; vel.set(0, 0, 0); }
     pos.x = nx; pos.z = nz;
     const g = Math.max(terrain.heightAt(pos.x, pos.z), ctx.groundExtra ? ctx.groundExtra(pos.x, pos.z, pos.y) : -99);
-    if (input.jump && grounded && !self.frozen) { vy = P.jump; grounded = false; ctx.sfx && ctx.sfx('jump'); }
+    if (input.jump && grounded && !self.frozen && !V) { vy = P.jump; grounded = false; ctx.sfx && ctx.sfx('jump'); }
     input.jump = false;
+    if (V && V.water) { pos.y = V.waterY(pos.x, pos.z); vy = 0; grounded = true; }
+    else if (V && V.fly) { // khinh khí cầu: bay lơ lửng, V.lift = tốc độ lên/xuống mong muốn
+      vy += (V.lift - vy) * Math.min(1, dt * 1.5); pos.y = Math.min(V.maxAlt, pos.y + vy * dt);
+      const floor = Math.max(g, CFG.island.waterLevel + 0.6); if (pos.y <= floor) { pos.y = floor; vy = Math.max(0, vy); grounded = g >= floor - 0.01; } else grounded = false;
+    } else {
     vy -= P.gravity * dt; pos.y += vy * dt;
     if (pos.y <= g) { if (!grounded && vy < -6) { puff(8, 2.5); ctx.sfx && ctx.sfx('land'); } pos.y = g; vy = 0; grounded = true; } else if (pos.y > g + 0.3) grounded = false;
+    }
 
     // animation KayKit + tiếng bước chân
-    if (hero) { driveHero(hero, { speed: self.speed, grounded, walk: P.walk, oneShot: animState.oneShot }); hero.anim.update(dt); }
-    if (grounded && self.speed > 0.8 && (stepT -= dt) <= 0) { stepT = self.speed > P.walk * 1.1 ? 0.3 : 0.42; ctx.sfx && ctx.sfx('step'); }
+    if (hero) { if (V) { if (!animState.oneShot || animState.oneShot.until < performance.now()) hero.anim.play(V.anim, 0.25); hero.model.position.set(0, V.seat || 0, V.seatZ || 0); } else { hero.model.position.set(0, 0, 0); driveHero(hero, { speed: self.speed, grounded, walk: P.walk, oneShot: animState.oneShot }); } hero.anim.update(dt); }
+    if (!V && grounded && self.speed > 0.8 && (stepT -= dt) <= 0) { stepT = self.speed > P.walk * 1.1 ? 0.3 : 0.42; ctx.sfx && ctx.sfx('step'); }
     // dáng chạy (nhân vật dựng bằng khối, dùng khi chưa nạp xong model)
     phase += dt * self.speed * 2.1;
     const a = Math.min(1, self.speed / P.walk) * (running ? 1.0 : 0.7);
@@ -112,25 +124,26 @@ export function createPlayer(ctx) {
     h.armL.rotation.x = -Math.sin(phase) * a; h.armR.rotation.x = Math.sin(phase) * a;
     h.body.position.y = Math.abs(Math.cos(phase)) * 0.08 * a; h.body.rotation.x = running ? 0.15 * a : 0;
     if (!grounded) { h.legL.rotation.x = -0.7; h.legR.rotation.x = 0.4; h.armL.rotation.z = -0.8; h.armR.rotation.z = 0.8; } else { h.armL.rotation.z = h.armR.rotation.z = 0; }
-    if (grounded && self.speed > P.walk * 1.1 && (dustT += dt) > 0.06) { dustT = 0; puff(1, 0.6); }
+    if (!V && grounded && self.speed > P.walk * 1.1 && (dustT += dt) > 0.06) { dustT = 0; puff(1, 0.6); }
     for (let i = 0; i < NDust; i++) if (dl[i] > 0) { dl[i] = Math.max(0, dl[i] - dt * 1.4); dp[i * 3] += dv[i].x * dt; dp[i * 3 + 1] += dv[i].y * dt; dp[i * 3 + 2] += dv[i].z * dt; }
     dg.attributes.position.needsUpdate = dg.attributes.life.needsUpdate = true;
 
     // camera bám sau lưng, tự xoay theo hướng chạy khi người chơi không kéo
     if (mag > 0.2 && performance.now() - cam.drag > 1500 && -iz > 0.2) { let d = rot + Math.PI - cam.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); cam.yaw += d * Math.min(1, dt * 1.2); }
     const cp = Math.cos(cam.pitch);
-    want.set(pos.x + Math.sin(cam.yaw) * cam.dist * cp, pos.y + C.height + Math.sin(cam.pitch) * cam.dist, pos.z + Math.cos(cam.yaw) * cam.dist * cp);
+    const cd = cam.dist + (V ? V.camAdd || 0 : 0); want.set(pos.x + Math.sin(cam.yaw) * cd * cp, pos.y + C.height + Math.sin(cam.pitch) * cd, pos.z + Math.cos(cam.yaw) * cd * cp);
     // không cho camera chui vào tán cây: kéo camera lại gần nhân vật nếu vướng
     const tx = pos.x, ty = pos.y + C.height, tz = pos.z;
     for (const f of [1, 0.85, 0.7, 0.55, 0.4]) {
       const cx = tx + (want.x - tx) * f, cy = ty + (want.y - ty) * f, cz = tz + (want.z - tz) * f; let hit = false;
       for (const c of ctx.colliders) { const dx = cx - c.x, dz = cz - c.z; if (dx * dx + dz * dz < (c.r * 3.4 + 0.3) ** 2 && cy < terrain.heightAt(c.x, c.z) + 5.5) { hit = true; break; } }
+      if (!hit) for (const b of ctx.boxes || []) if (cx > b.x0 - 0.3 && cx < b.x1 + 0.3 && cz > b.z0 - 0.3 && cz < b.z1 + 0.3 && cy < b.top + 0.5) { hit = true; break; } // không cho camera chui vào nhà
       if (!hit || f === 0.4) { want.set(cx, cy, cz); break; }
     }
     want.y = Math.max(want.y, terrain.heightAt(want.x, want.z) + 0.8, (ctx.groundExtra ? ctx.groundExtra(want.x, want.z, 99) : -99) + 0.8, CFG.island.waterLevel + 0.5);
     camera.position.lerp(want, 1 - Math.exp(-dt * C.follow));
     look.lerp(tmp.set(pos.x, pos.y + 1.4, pos.z), 1 - Math.exp(-dt * C.follow * 1.6)); camera.lookAt(look);
   };
-  self.teleport = (x, z) => { pos.set(x, terrain.heightAt(x, z), z); vel.set(0, 0, 0); };
+  self.teleport = (x, z, y) => { pos.set(x, y ?? terrain.heightAt(x, z), z); vel.set(0, 0, 0); vy = 0; };
   return self;
 }

@@ -17,7 +17,7 @@ export const CFG = {
   counts: { trees: isMobile ? 140 : 220, pines: isMobile ? 70 : 110, rocks: 90, grass: isMobile ? 7000 : 14000 },
   clearings: [[0, 10, 16], [0, -6, 13]], // [x, z, bán kính]: chỗ không mọc cây/cỏ (bãi xuất phát, đền)
   player: { walk: 5.5, run: 9.5, jump: 7.5, gravity: 22 },
-  camera: { distance: 8, height: 2.4, pitch: 0.35, follow: 7 },
+  camera: { distance: 15, height: 2.6, pitch: 0.62, follow: 7 },   // camera xa + cao: nhân vật nhỏ, thấy toàn cảnh
   toon: { steps: [0.35, 0.7, 1.0] },   // 3 bậc sáng của MeshToonMaterial
   outline: { thickness: 0.035, color: '#1b1626' },
 };

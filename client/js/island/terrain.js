@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { CFG } from './config.js';
 import { gradientMap, toon } from './style.js';
+import { LAND, WORLD, FLAT, rectDist } from './layout.js';
 
 // ---------- noise ----------
 const hash = (x, y) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -23,27 +24,38 @@ export function rawHeight(x, z) {
   const hills = 2.2 + fbm(x * 0.025, z * 0.025) * 9 + Math.max(0, fbm(x * 0.012 + 9, z * 0.012) - 0.55) * 30;
   const plaza = 1 - smooth(10, 22, Math.hypot(x, z - 10)); // khoảng đất phẳng cho người chơi xuất phát
   const h = hills * (1 - plaza * 0.85) + plaza * 0.85 * 2.5;
-  return h * land - 6 * (1 - land);
+  let out = h * land - 6 * (1 - land);
+  // các khu quanh đảo (layout.js): đất bằng trong khu, đồi thấp + bãi cát ở viền, nối liền nhau thành 1 vùng đất
+  let d = 1e9; for (const r of LAND) d = Math.min(d, rectDist(r, x, z));
+  if (d < 40) {
+    const n = fbm(x * 0.03 + 3, z * 0.03 - 7), m = 1 - smooth(13, 20 + 9 * n, d);
+    const zh = (FLAT + n * 7 * smooth(3, 13, d)) * m - 6 * (1 - m);
+    out = Math.max(out, zh);
+    const w = 1 - smooth(0, 5, d); out = out + (FLAT - out) * w;
+  }
+  return out;
 }
 
 export function createTerrain(scene) {
-  const S = CFG.island.size, N = CFG.island.segments, step = S / N, half = S / 2, W = CFG.island.waterLevel;
-  const H = new Float32Array((N + 1) * (N + 1));
-  for (let iz = 0; iz <= N; iz++) for (let ix = 0; ix <= N; ix++) H[iz * (N + 1) + ix] = rawHeight(-half + ix * step, -half + iz * step);
+  // lưới chữ nhật phủ cả đảo lẫn các khu (WORLD trong layout.js)
+  const step = CFG.isMobile ? 2.8 : 2.2, SX = WORLD.x1 - WORLD.x0, SZ = WORLD.z1 - WORLD.z0, NX = Math.round(SX / step), NZ = Math.round(SZ / step), W = CFG.island.waterLevel;
+  const CX = (WORLD.x0 + WORLD.x1) / 2, CZ = (WORLD.z0 + WORLD.z1) / 2, half = 0;
+  const H = new Float32Array((NX + 1) * (NZ + 1));
+  for (let iz = 0; iz <= NZ; iz++) for (let ix = 0; ix <= NX; ix++) H[iz * (NX + 1) + ix] = rawHeight(WORLD.x0 + ix * step, WORLD.z0 + iz * step);
   const heightAt = (x, z) => {
-    const gx = Math.min(N - 0.001, Math.max(0, (x + half) / step)), gz = Math.min(N - 0.001, Math.max(0, (z + half) / step));
-    const ix = Math.floor(gx), iz = Math.floor(gz), fx = gx - ix, fz = gz - iz, n = N + 1;
+    const gx = Math.min(NX - 0.001, Math.max(0, (x - WORLD.x0) / step)), gz = Math.min(NZ - 0.001, Math.max(0, (z - WORLD.z0) / step));
+    const ix = Math.floor(gx), iz = Math.floor(gz), fx = gx - ix, fz = gz - iz, n = NX + 1;
     const a = H[iz * n + ix], b = H[(iz + 1) * n + ix], c = H[(iz + 1) * n + ix + 1], d = H[iz * n + ix + 1];
     return fx + fz <= 1 ? a + (d - a) * fx + (b - a) * fz : c + (b - c) * (1 - fx) + (d - c) * (1 - fz);
   };
   const slopeAt = (x, z) => Math.hypot(heightAt(x + 1, z) - heightAt(x - 1, z), heightAt(x, z + 1) - heightAt(x, z - 1)) / 2;
 
   // ---------- Mặt đất (toon, màu theo độ cao/độ dốc) ----------
-  const g = new THREE.PlaneGeometry(S, S, N, N); g.rotateX(-Math.PI / 2);
+  const g = new THREE.PlaneGeometry(SX, SZ, NX, NZ); g.rotateX(-Math.PI / 2); g.translate(CX, 0, CZ);
   const pos = g.attributes.position, col = new Float32Array(pos.count * 3);
-  const cSand = new THREE.Color('#ecd9a0'), cG1 = new THREE.Color('#6fbf4a'), cG2 = new THREE.Color('#9bd256'), cRock = new THREE.Color('#9a9488'), cDeep = new THREE.Color('#c8b27a'), c = new THREE.Color();
+  const cSand = new THREE.Color('#f5d6a3'), cG1 = new THREE.Color('#6fbf4a'), cG2 = new THREE.Color('#9bd256'), cRock = new THREE.Color('#9a9488'), cDeep = new THREE.Color('#c8b27a'), c = new THREE.Color();
   for (let i = 0; i < pos.count; i++) {
-    const x = pos.getX(i), z = pos.getZ(i), h = H[Math.round((z + half) / step) * (N + 1) + Math.round((x + half) / step)];
+    const x = pos.getX(i), z = pos.getZ(i), h = H[Math.round((z - WORLD.z0) / step) * (NX + 1) + Math.round((x - WORLD.x0) / step)];
     pos.setY(i, h);
     c.copy(cG1).lerp(cG2, fbm(x * 0.06, z * 0.06));
     c.lerp(cSand, 1 - smooth(W + 0.6, W + 1.6, h));
@@ -57,20 +69,20 @@ export function createTerrain(scene) {
 
   // ---------- Nước: màu theo độ sâu + bọt trắng ở bờ (đọc bản đồ độ cao, không cần depth texture) ----------
   const TS = 256, hd = new Uint8Array(TS * TS);
-  for (let j = 0; j < TS; j++) for (let i = 0; i < TS; i++) hd[j * TS + i] = Math.max(0, Math.min(255, Math.round((heightAt(-half + (i + 0.5) / TS * S, -half + (j + 0.5) / TS * S) + 8) * 12)));
+  for (let j = 0; j < TS; j++) for (let i = 0; i < TS; i++) hd[j * TS + i] = Math.max(0, Math.min(255, Math.round((heightAt(WORLD.x0 + (i + 0.5) / TS * SX, WORLD.z0 + (j + 0.5) / TS * SZ) + 8) * 12)));
   const hTex = new THREE.DataTexture(hd, TS, TS, THREE.RedFormat); hTex.magFilter = hTex.minFilter = THREE.LinearFilter; hTex.needsUpdate = true;
   const waterMat = new THREE.ShaderMaterial({
     transparent: true, fog: true,
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uHalf: { value: half }, uShallow: { value: new THREE.Color('#5fd3d6') }, uDeep: { value: new THREE.Color('#1f6fa8') }, uLight: { value: 1 } }]),
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 } }]),
     vertexShader: `varying vec3 vW;
 #include <fog_pars_vertex>
       void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; vec4 mvPosition = viewMatrix*w; gl_Position = projectionMatrix*mvPosition;
 #include <fog_vertex>
       }`,
-    fragmentShader: `uniform sampler2D uH; uniform float uHalf; uniform vec3 uShallow, uDeep; uniform float uLight; uniform float uTime; varying vec3 vW;
+    fragmentShader: `uniform sampler2D uH; uniform vec2 uMin, uSize; uniform vec3 uShallow, uDeep; uniform float uLight; uniform float uTime; varying vec3 vW;
 #include <fog_pars_fragment>
       void main(){
-        vec2 uv = (vW.xz + uHalf) / (uHalf*2.);
+        vec2 uv = (vW.xz - uMin) / uSize;
         float h = (uv.x < 0. || uv.x > 1. || uv.y < 0. || uv.y > 1.) ? -8. : texture2D(uH, uv).r * 255. / 12. - 8.;
         float depth = max(0., -h);
         vec3 c = mix(uShallow, uDeep, smoothstep(0.3, 5., depth));
@@ -104,8 +116,9 @@ export function createTerrain(scene) {
   }
 
   // chỗ đặt cây/đá: trên cạn, không quá dốc, tránh bãi xuất phát
-  const clear = (x, z) => CFG.clearings.every(([cx, cz, r]) => Math.hypot(x - cx, z - cz) > r);
-  const spot = (minH = W + 1.4) => { for (let k = 0; k < 40; k++) { const a = rand() * 6.283, r = Math.sqrt(rand()) * R * 1.05, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z)) return [x, h, z]; } return null; };
+  const clear = (x, z) => CFG.clearings.every(([cx, cz, r]) => Math.hypot(x - cx, z - cz) > r) && LAND.every(r => rectDist(r, x, z) > 4);
+  // 55% trên đảo cũ, 45% trên đồi viền giữa các khu
+  const spot = (minH = W + 1.4) => { for (let k = 0; k < 40; k++) { const isl = rand() < 0.55, a = rand() * 6.283, r = Math.sqrt(rand()) * R * 1.05, x = isl ? Math.cos(a) * r : WORLD.x0 + rand() * SX, z = isl ? Math.sin(a) * r : WORLD.z0 + rand() * SZ, h = heightAt(x, z); if (h > minH && slopeAt(x, z) < 0.9 && clear(x, z)) return [x, h, z]; } return null; };
   const colliders = [];
   const o = new THREE.Object3D(), tint = new THREE.Color();
   // LOD: mỗi loại có 2 bộ InstancedMesh — gần (đủ chi tiết, đổ bóng) và xa (hình đơn giản, không đổ bóng).
@@ -141,7 +154,7 @@ export function createTerrain(scene) {
   const chunks = new Map(), CH = 24;
   for (let i = 0; i < CFG.counts.grass; i++) {
     const a = rand() * 6.283, r = Math.sqrt(rand()) * R, x = Math.cos(a) * r, z = Math.sin(a) * r, h = heightAt(x, z);
-    if (h < W + 1.0 || slopeAt(x, z) > 0.8 || Math.hypot(x, z + 6) < 9) continue;
+    if (h < W + 1.0 || slopeAt(x, z) > 0.8 || Math.hypot(x, z + 6) < 9 || LAND.some(r => rectDist(r, x, z) < 2)) continue;
     const k = Math.floor(x / CH) + ',' + Math.floor(z / CH); if (!chunks.has(k)) chunks.set(k, []); chunks.get(k).push([x, h, z]);
   }
   const grass = [];

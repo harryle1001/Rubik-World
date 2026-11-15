@@ -17,6 +17,10 @@ canvas{touch-action:none}
 #inv{position:fixed;right:64px;top:20px;color:#fff;font:700 16px system-ui;text-shadow:0 1px 3px #000}
 #bAct{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);padding:14px 22px;border-radius:30px;border:2px solid #fff;background:#f0a23a;color:#2a1a0a;font:800 17px system-ui;box-shadow:0 6px 20px #0005}
 [hidden]{display:none!important}
+.vbtns{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 96px);display:flex;gap:10px;z-index:26}
+.vbtns button{width:52px;height:52px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:24px;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer}
+@media (pointer:fine){.vbtns{bottom:20px}}body.rs-modal .vbtns{display:none}
+#bUp{background:#d8632acc}#bDown{background:#3d6fb0cc}
 #quiz{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#0a1a2acc;padding:14px}
 #quiz .card{width:min(100%,520px);background:#fff8ec;color:#3a2a1a;border-radius:22px;padding:18px;border-top:8px solid #3d8f4a;text-align:center}
 #quiz .sub{margin:0;font-weight:700;opacity:.65;font-size:13px}#quiz h3{font-size:19px;margin:10px 0 14px}#quiz .big{font-size:60px}
@@ -29,6 +33,7 @@ canvas{touch-action:none}
 <div class="topbtns"><button id="bSchool">🏫 Đến trường</button><button id="bMenu">📚 Menu trường</button></div><div id="info"></div>
 <button id="bAct" hidden></button>
 <div id="joy"><div id="knob"></div></div>
-<div class="btns"><button id="bRun">Chạy</button><button id="bJump">Nhảy</button></div>
+<div class="vbtns"><button id="bBike" title="Xe đạp (B)">🚲</button><button id="bBalloon" title="Khinh khí cầu (F)">🎈</button><button id="bBell" title="Chuông (R)" hidden>🔔</button></div>
+<div class="btns"><button id="bRun">Chạy</button><button id="bJump">Nhảy</button><button id="bDown" hidden>⬇ Xuống</button><button id="bUp" hidden>⬆ Lên</button></div>
 <script type="module" src="/js/ocean.js"></script>
 </body></html>
