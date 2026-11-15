@@ -156,6 +156,9 @@ body.rs-modal #bMap{display:none}`;
   let dexT = 0;
   function scanDex(dt) { // 2 lần/giây: con vật nào trong 7 m quanh người chơi
     if ((dexT -= dt) > 0 || !ctx.animals) return; dexT = 0.5; const p = ctx.player.pos;
+    const amb = ctx.ambience; // cá nhảy & đom đóm do ambience.js vẽ
+    if (amb && amb.fish && amb.fish.visible) ctx.discover(FAUNA_INFO.fish);
+    if (amb && ctx.sky && ctx.sky.state.night > 0.8) ctx.discover(FAUNA_INFO.firefly);
     for (const A of ctx.animals.list.concat(ctx.animals.flocks || [])) { const q = A.root.position; if (!dex[A.S.id] && Math.abs(q.x - p.x) < 7 && Math.abs(q.z - p.z) < 7 && (A.S.id !== 'firefly' || Math.hypot(q.x - p.x, q.z - p.z) < 40)) ctx.discover(A.S); }
   }
 

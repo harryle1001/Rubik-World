@@ -11,7 +11,7 @@ const { chromium } = require('playwright');
     const L = await import('/js/island/layout.js'), I = window.__island, A = I.school.arch;
     const inBox = (x, z, m) => I.boxes.find(q => x > q.x0 - m && x < q.x1 + m && z > q.z0 - m && z < q.z1 + m);
     const inFoot = (x, z, m) => A.foot.find(q => x > q[0] - m && x < q[2] + m && z > q[1] - m && z < q[3] + m) || A.footC.find(([cx, cz, rr]) => Math.hypot(x - cx, z - cz) < rr + m);
-    const why = (x, z, m, wild) => inBox(x, z, m) ? 'tường/nhà' : inFoot(x, z, m) ? 'nền công trình' : L.houseAt(x, z, m) ? 'nhà trong lô' : L.roadDist(x, z) < L.ROAD_W / 2 + m ? 'mặt đường' : (wild && L.lotAt(x, z, m)) ? 'lô đất' : (wild && L.landDist(x, z) <= m) ? 'trong khu' : null;
+    const why = (x, z, m, wild) => inBox(x, z, m) ? 'tường/nhà' : inFoot(x, z, m) ? 'nền công trình' : L.houseAt(x, z, m) ? 'nhà trong lô' : (L.roadDist(x, z) < L.ROAD_W / 2 + m || L.pathDist(x, z) < L.PATH_W / 2 + m) ? 'mặt đường' : (wild && L.lotAt(x, z, m)) ? 'lô đất' : (wild && L.landDist(x, z) <= m) ? 'trong khu' : null;
     const out = { tong: 0, trung: 0, loai: {}, viDu: [] };
     const check = (list, wild) => { for (const [x, z, rr, k] of list) { out.tong++; const w = why(x, z, Math.min(rr, 1.2) * 0.8, wild); if (w) { out.trung++; out.loai[w] = (out.loai[w] || 0) + 1; if (out.viDu.length < 8) out.viDu.push([k, x.toFixed(1), z.toFixed(1), w]); } } };
     check(I.terrain.plants, true);   // cây/thông/đá rải ngẫu nhiên: không được vào khu, lô, đường

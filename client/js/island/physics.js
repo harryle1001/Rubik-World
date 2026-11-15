@@ -4,6 +4,7 @@
 // - Chỉ mô phỏng vật trong bán kính SIM quanh người chơi, vật xa/đứng yên thì "ngủ". Số vật và bán kính giảm theo ctx.qualityLevel.
 // - Thêm vật: ctx.physics.add('ball' | 'beach' | 'crate' | 'stone', x, z)
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { CFG } from './config.js';
 import { toon } from './style.js';
 import { SPAWN, to3, TOWN_Y } from './layout.js';
@@ -15,6 +16,11 @@ const KIND = {
   beach: { r: 0.4,  m: 0.15, e: 0.75, f: 0.7, rho: 0.03, roll: true, drag: 0.6 },
   crate: { r: 0.42, m: 25,   e: 0.12, f: 7,   rho: 0.6,  roll: false, half: 0.4 },
   stone: { r: 0.2,  m: 4,    e: 0.25, f: 2.2, rho: 2.6,  roll: true },
+  // living.js: ghế nhựa (nhẹ, trượt), quả dừa (nổi), chai nhựa & lon (rác nhặt được)
+  chair: { r: 0.32, m: 1.6,  e: 0.3,  f: 4,   rho: 0.4,  roll: false, half: 0.3 },
+  fruit: { r: 0.16, m: 1.5,  e: 0.35, f: 1.2, rho: 0.6,  roll: true },
+  bottle:{ r: 0.12, m: 0.05, e: 0.45, f: 1.6, rho: 0.2,  roll: true },
+  can:   { r: 0.09, m: 0.03, e: 0.4,  f: 1.4, rho: 0.3,  roll: true },
 };
 const SIM = [40, 34, 26, 18], MAXN = [48, 36, 24, 14]; // theo mức chất lượng 0..3
 const FACTS = {
@@ -22,6 +28,8 @@ const FACTS = {
   crate: '📦 Thùng gỗ nặng nên khó đẩy hơn bóng: vật càng nặng, quán tính càng lớn.',
   float: '🏖️ Vật nhẹ hơn nước thì nổi — nước đẩy vật lên (lực đẩy Ác-si-mét).',
   sink: '🪨 Đá nặng hơn nước (khối lượng riêng lớn hơn) nên chìm xuống đáy.',
+  chair: '🪑 Ghế nhựa nhẹ nên chỉ khẽ chạm là trượt đi — nhưng ma sát với đất làm nó dừng lại nhanh.',
+  fruit: '🥥 Quả dừa nổi được trên biển và trôi rất xa — nhờ vậy cây dừa mọc khắp các đảo nhiệt đới!',
   slope: '⛰️ Trên dốc, trọng lực kéo vật lăn xuống — dốc càng đứng, lăn càng nhanh.',
 };
 
@@ -52,6 +60,11 @@ export function createPhysics(ctx) {
     beach: paint(new THREE.SphereGeometry(KIND.beach.r, 12, 8), (c, x, y, z) => c.set(Math.abs(y) > KIND.beach.r * 2.6 ? '#ffffff' : ['#ff4d4d', '#ffd23f', '#3fa7ff', '#ffffff', '#52d273', '#ff8c3f'][Math.floor((Math.atan2(z, x) / Math.PI + 1) * 3) % 6])),
     crate: paint(new THREE.BoxGeometry(0.8, 0.8, 0.8), (c, x, y, z, f) => c.set(f % 4 < 2 ? '#b07a45' : '#9a6638')),
     stone: paint(new THREE.DodecahedronGeometry(KIND.stone.r, 0), (c, x, y, z, f) => c.set(f % 3 ? '#8d8f94' : '#a3a5aa')),
+    chair: paint(mergeGeometries([new THREE.BoxGeometry(0.5, 0.06, 0.5).translate(0, 0.05, 0), new THREE.BoxGeometry(0.5, 0.44, 0.06).translate(0, 0.3, -0.22),
+      ...[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([i, j]) => new THREE.BoxGeometry(0.06, 0.32, 0.06).translate(i * 0.21, -0.14, j * 0.21))]), (c, x, y, z, f) => c.set(f % 5 ? '#e8473c' : '#c93a30')),
+    fruit: paint(new THREE.IcosahedronGeometry(KIND.fruit.r, 1).scale(1, 1.15, 1), (c, x, y, z) => c.set(y > 0.25 ? '#6b8f3a' : '#7d5a32')),
+    bottle: paint(mergeGeometries([new THREE.CylinderGeometry(0.06, 0.06, 0.22, 7), new THREE.CylinderGeometry(0.025, 0.05, 0.08, 7).translate(0, 0.15, 0), new THREE.CylinderGeometry(0.028, 0.028, 0.03, 7).translate(0, 0.2, 0)]).rotateZ(Math.PI / 2), (c, x, y, z, f) => c.set(x > 0.38 ? '#2f7de1' : '#bfe6f0')),
+    can: paint(new THREE.CylinderGeometry(0.055, 0.055, 0.15, 8).rotateZ(Math.PI / 2), (c, x, y, z, f) => c.set(f % 3 ? '#d23c3c' : '#e8e8e8')),
   };
   const mat = toon('#ffffff', { vertexColors: true });
   const meshes = {};
@@ -65,7 +78,7 @@ export function createPhysics(ctx) {
     
     bodies.push(b); draw(b); return b;
   }
-  function draw(b) { o.position.copy(b.pos); if (b.kind === 'crate') o.position.y -= b.K.r - b.K.half; o.quaternion.copy(b.q); o.updateMatrix(); const m = meshes[b.kind]; m.setMatrixAt(b.idx, o.matrix); m.instanceMatrix.needsUpdate = true; }
+  function draw(b) { o.position.copy(b.pos); if (b.K.half) o.position.y -= b.K.r - b.K.half; o.scale.setScalar(b.dead ? 0 : 1); o.quaternion.copy(b.q); o.updateMatrix(); const m = meshes[b.kind]; m.setMatrixAt(b.idx, o.matrix); m.instanceMatrix.needsUpdate = true; }
   const told = new Set(); const fact = k => { if (told.has(k) || !ctx.toast) return; told.add(k); ctx.toast(FACTS[k], 4200); };
   const nrm = new THREE.Vector3();
   const normalAt = (x, z, y) => { // pháp tuyến mặt đất (dốc địa hình); sàn phẳng của thị trấn → thẳng đứng
@@ -188,6 +201,7 @@ export function createPhysics(ctx) {
     // chọn vật đang thức (gần người chơi, tối đa MAXN)
     const act = []; let near = null, nd = 2.2;
     for (const b of bodies) {
+      if (b.dead) continue;
       const d2 = (b.pos.x - P.x) ** 2 + (b.pos.z - P.z) ** 2;
       if (d2 > R2 || act.length >= MAXN[L]) { if (!b.sleep) { b.sleep = true; if (b.home.distanceToSquared(b.pos) > 9 && d2 > R2) { b.pos.copy(b.home); b.vel.set(0, 0, 0); draw(b); } } continue; } // vật xa: ngủ, về chỗ cũ
       if (b.sleep && d2 > 9) continue; // vật đứng yên chỉ thức khi người chơi lại gần
@@ -208,12 +222,13 @@ export function createPhysics(ctx) {
       if (b.pos.y < -12) { b.pos.copy(b.home); b.vel.set(0, 0, 0); }
     }
     // nút hành động: sút bóng (E)
-    if (near && !pl.vehicle && !flying) ctx.offer && ctx.offer(near.kind === 'stone' ? '🪨 Ném đá' : '⚽ Sút bóng', () => kick(near), 1);
+    if (near && !pl.vehicle && !flying) ctx.offer && ctx.offer({ stone: '🪨 Ném đá', chair: '🦶 Đá ghế', fruit: '🥥 Đá quả dừa', bottle: '🦶 Đá chai', can: '🦶 Đá lon' }[near.kind] || '⚽ Sút bóng', () => kick(near), 1);
     simT = act.length;
   }
   function kick(b) {
     const pl = ctx.player, f = Math.atan2(b.pos.x - pl.pos.x, b.pos.z - pl.pos.z), a = Number.isFinite(f) ? f : pl.rot, pw = b.kind === 'stone' ? 8 : b.kind === 'beach' ? 9 : 14;
-    b.vel.set(Math.sin(a) * pw, pw * 0.45, Math.cos(a) * pw); b.sleep = false; b.still = 0; ctx.sfx && ctx.sfx('jump'); pl.emote && pl.emote('kick'); if (b.kind !== 'stone') fact('ball');
+    b.vel.set(Math.sin(a) * pw, pw * 0.45, Math.cos(a) * pw); b.sleep = false; b.still = 0; ctx.sfx && ctx.sfx('jump'); pl.emote && pl.emote('kick'); fact(FACTS[b.kind] ? b.kind : b.kind !== 'stone' ? 'ball' : 'slope');
   }
-  return { update, add, bodies, kick, grid, solid, push, get active() { return simT; } };
+  const remove = b => { b.dead = true; b.sleep = true; draw(b); };   // living.js: nhặt rác
+  return { update, add, remove, bodies, kick, grid, solid, push, get active() { return simT; } };
 }
