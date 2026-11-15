@@ -22,7 +22,7 @@ export function buildGate(a) {
     GB.box(w, 0.05, 3.6, cxp, Y, gz, '#d6c39b'); for (const s of [-1, 1]) GB.box(w, 0.07, 0.25, cxp, Y, gz + s * 1.9, '#b89c6e');
     GB.push(new THREE.RingGeometry(3.2, 4.2, 24).rotateX(-Math.PI / 2), '#cdb68a', x1 - 6, Y + 0.07, gz); GB.push(new THREE.RingGeometry(1.0, 1.5, 16).rotateX(-Math.PI / 2), '#b89c6e', x1 - 6, Y + 0.075, gz);
     DG.follow(null); for (let x = x0 + 1, k = 0; x < x1; x += 2.4, k++) for (const s of [-1, 1]) DG.box(1.0, 0.012, 3.6, x, Y + 0.05, gz + s * 7.5, k % 2 ? '#d8cbaa' : '#e0d4b6');
-    for (const s of [-1, 1]) { for (let x = x0 + 1.5; x < x1 - 0.5; x += 2.6) kit('bush', x, Y, gz + s * 11.8, 1.05 + rnd() * 0.2, rnd() * 6); lampPost(GB, x0 + 3, gz + s * 4.2);   // cột đèn sát cổng bỏ: cổng có đèn lồng riêng, bậc thềm quạt chiếm chỗ stoneBench(GB, x1 - 9, gz + s * 9.5, 0); }
+    for (const s of [-1, 1]) { for (let x = x0 + 1.5; x < x1 - 0.5; x += 2.6) kit('bush', x, Y, gz + s * 11.8, 1.05 + rnd() * 0.2, rnd() * 6); lampPost(GB, x0 + 3, gz + s * 4.2); stoneBench(GB, x1 - 9, gz + s * 9.5, 0); }   // cột đèn sát cổng bỏ: cổng có đèn lồng, bậc thềm quạt chiếm chỗ
   }
   if (D.BOOTH) { const x = X3(D.BOOTH[0]), z = Z3(D.BOOTH[1]), b = GB;   // chốt bảo vệ: nhà nhỏ tường kem, cửa sổ, mái ngói
     b.box(2.0, 0.3, 2.0, x, Y, z, C.plinth); b.box(1.8, 2.1, 1.8, x, Y + 0.3, z, ROOM.hall.wall); b.box(1.9, 0.18, 1.9, x, Y + 2.3, z, C.trim);
