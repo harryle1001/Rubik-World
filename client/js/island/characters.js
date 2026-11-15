@@ -115,7 +115,7 @@ export function drivePlayer(hero, st, { speed, grounded, vy = 0, impact = 0, dt 
   st.airT = grounded ? 0 : (st.airT || 0) + dt;
   if (impact > 7) st.landT = 0.3;
   if (oneShot && oneShot.until > performance.now()) return;
-  if (!grounded) {
+  if (!grounded && (st.airT > 0.12 || vy > 0.5)) { // bước hụt xuống lề thấp (< 0,12 s trên không) không đổi sang dáng nhảy
     if (vy > 0.5 && st.airT < 0.45 && a.has('Jump_Start')) a.play('Jump_Start', 0.08, true); else a.play(N.jump, 0.22);
     return;
   }
