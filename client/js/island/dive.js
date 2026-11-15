@@ -176,7 +176,7 @@ export function createDive(ctx) {
       if (!tipShown) { tipShown = true; ctx.toast && ctx.toast(`🏊 Đang bơi! ${CFG.isMobile ? 'Giữ 🤿 để lặn, ⬆ để nổi' : 'Giữ Q/Shift để lặn, Space để nổi'}.<br>🦺 Ngoài đời, chỉ bơi khi có người lớn và áo phao nhé!`, 5500); }
     } else if (depth < SWIM_OUT && !S.diving) { S.swimming = false; return false; }   // lên bờ: đi bộ lại
     // giới hạn trong phạm vi bản đồ
-    p.x = clamp(p.x, -320, 335); p.z = clamp(p.z, -320, 320);
+    p.x = clamp(p.x, -550, 550); p.z = clamp(p.z, -550, 550);   // biển mở tới 550 m (đáy biển nối dài: terrain.js, mặt sóng: ocean-water.js)
     const low = g + 0.35;   // không xuyên đáy
     if (!S.diving) {
       if (wantDown() && !forceUp && S.oxygen > 0.1 && depth > 1.6) { S.diving = true; vV = -VSPD * 0.6; ctx.sfx && ctx.sfx('jump'); splash(5, p.x, p.z, 0.8); }
@@ -243,6 +243,7 @@ export function createDive(ctx) {
       ctx.underwater = uw; dispatchEvent(new CustomEvent('island:underwater', { detail: uw }));
       under.visible = caustic.visible = rays.visible = uw; audioUnder(uw);
       const G = ctx.post && ctx.post.grade;
+      scene.background = uw ? fogC : null;   // cắt xa theo sương → phần sau mặt phẳng xa là màu sương, không đen
       if (uw) { saved = { amt: G ? G.uAmt.value : 0, far: camera.far }; cAt.set(1e9, 1e9); for (const r of rayPos) r.x = 1e9; }
       else if (saved) { if (G) G.uAmt.value = saved.amt; camera.far = saved.far; camera.updateProjectionMatrix(); }
     }

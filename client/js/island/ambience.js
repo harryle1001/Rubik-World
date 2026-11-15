@@ -42,6 +42,7 @@ export function createAmbience(ctx) {
 
   // ---------- Nối nước với bầu trời (phản chiếu chân trời, lấp lánh nắng) ----------
   wU.uSunW.value = sky.U.uSun.value; wU.uSkyH.value = sky.U.uHor.value; wU.uSunC.value = sky.U.uSunCol.value;
+  if (wU.uSkyT) { wU.uSkyT.value = sky.U.uTop.value; wU.uMoon.value = sky.U.uMoon.value; wU.uNight = sky.U.uNight; }   // ocean-water.js: trời đỉnh, trăng
 
   // ---------- Đèn: quầng sáng + vũng sáng dưới chân đèn (chỉ hiện khi tối) ----------
   const L = { n: -1, halo: null, pool: null, night: { value: 0 } };

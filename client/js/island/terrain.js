@@ -5,6 +5,7 @@ import { CFG } from './config.js';
 import { gradientMap, toon } from './style.js';
 import { LAND, WORLD, FLAT, rectDist, SPAWN, ISLAND_R, TEMPLE_C, blocked, flatDist, lagoonDist, roadDist, houseAt, ROAD_W } from './layout.js';
 import { loadModel } from './models.js';
+import { createOceanWater } from './ocean-water.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 // ---------- noise ----------
@@ -79,6 +80,7 @@ export function createTerrain(scene) {
   // bảng màu docs/art-style.md: cát hồng-kem, cát ướt, cỏ tươi có mảng sáng/tối, đá ấm
   const cSand = new THREE.Color('#f3d6a8'), cWet = new THREE.Color('#e8c391'), cG1 = new THREE.Color('#63ab50'), cG2 = new THREE.Color('#84c362'), cG3 = new THREE.Color('#4f9a4a'), cMeadow = new THREE.Color('#9fcf6c');
   const cRock = new THREE.Color('#b3aa9b'), cDeep = new THREE.Color('#e6cc9a'), c = new THREE.Color();
+  const cWeed = new THREE.Color('#7f9a4c'), cReef = new THREE.Color('#a89a86'), cAbyss = new THREE.Color('#5f8290');
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), z = pos.getZ(i), h = H[Math.round((z - WORLD.z0) / step) * (NX + 1) + Math.round((x - WORLD.x0) / step)];
     pos.setY(i, h);
@@ -89,15 +91,40 @@ export function createTerrain(scene) {
       c.lerp(cSand, 1 - smooth(W + 0.7, W + 1.7, h));
       c.lerp(cWet, 1 - smooth(W + 0.05, W + 0.6, h));      // dải cát ướt sát mép nước
     }
-    if (h < W - 0.05) c.copy(cDeep).lerp(cWet, smooth(-3, -0.05, h) * 0.5);
+    if (h < W - 0.05) {   // đáy biển: cát ướt → cát đáy → thảm rong / đá ngầm → vùng sâu tối dần
+      const d = W - h;
+      c.copy(cWet).lerp(cDeep, smooth(0.05, 1.5, d));
+      c.lerp(cWeed, smooth(0.58, 0.72, fbm(x * 0.045 + 70, z * 0.045 - 30)) * smooth(1, 2.6, d) * 0.75);
+      c.lerp(cReef, smooth(0.62, 0.8, fbm(x * 0.08 - 20, z * 0.08 + 50)) * smooth(0.5, 1.6, d) * 0.6);
+      c.lerp(cAbyss, smooth(2.6, 6.5, d) * 0.7);
+    }
     c.lerp(cRock, smooth(0.9, 1.5, slopeAt(x, z)) * 0.85);
     col.set([c.r, c.g, c.b], i * 3);
   }
   g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
+  const groundMat = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap });
+  // đáy biển: gợn cát (sóng cát song song bờ) + vân sáng khúc xạ (caustics) lay động dưới nước nông — chỉ vài phép sin/điểm ảnh
+  groundMat.onBeforeCompile = sh => {
+    sh.uniforms.uTime = WIND.uTime;
+    sh.vertexShader = 'varying vec3 vWp;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vWp = (modelMatrix * vec4(transformed, 1.)).xyz;');
+    sh.fragmentShader = 'uniform float uTime; varying vec3 vWp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+      float sd = ${W.toFixed(2)} - vWp.y;
+      if (sd > 0.03) {
+        vec2 q = vWp.xz;
+        float rip = sin(dot(q, vec2(0.62, 0.79)) * 4.2 + sin(dot(q, vec2(-0.79, 0.62)) * 0.7) * 1.8);
+        diffuseColor.rgb *= 1. - 0.06 * rip * smoothstep(0.03, 0.4, sd) * (1. - smoothstep(3., 6., sd));
+        vec2 p = q * 0.55;
+        float c1 = abs(sin(p.x + sin(p.y * 1.3 + uTime * 0.9) * 1.4 + uTime * 0.6) + sin(p.y * 1.1 + sin(p.x * 0.8 - uTime * 0.7) * 1.3 - uTime * 0.5));
+        float c2 = abs(sin(p.x * 1.618 - p.y * 0.9 + sin(p.y * 1.7 - uTime) * 1.1 + uTime * 0.8));
+        float cs = (1. - smoothstep(0., 0.35, c1)) + (1. - smoothstep(0., 0.25, c2)) * 0.6;
+        diffuseColor.rgb += vec3(0.32, 0.36, 0.3) * cs * smoothstep(0.05, 0.5, sd) * (1. - smoothstep(1.5, 5., sd));
+      }`);
+  };
+  groundMat.customProgramCacheKey = () => 'seabed';
   // chia thành ô 44×44 mắt lưới (dùng chung thuộc tính đỉnh, chỉ khác chỉ mục) → camera loại bỏ (frustum culling) phần ngoài khung hình;
   // trước đây 1 mesh ~190k tam giác luôn được vẽ toàn bộ
   const ground = new THREE.Group(); ground.name = 'ground'; scene.add(ground);
-  { const gm = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap }), TS = 44, n = NX + 1, bb = new THREE.Box3(), v = new THREE.Vector3();
+  { const gm = groundMat, TS = 44, n = NX + 1, bb = new THREE.Box3(), v = new THREE.Vector3();
     for (let tz = 0; tz < NZ; tz += TS) for (let tx = 0; tx < NX; tx += TS) {
       const ex = Math.min(NX, tx + TS), ez = Math.min(NZ, tz + TS), idx = []; bb.makeEmpty();
       for (let iz = tz; iz < ez; iz++) for (let ix = tx; ix < ex; ix++) { const a = iz * n + ix, b = a + n, c = b + 1, d = a + 1; idx.push(a, b, d, b, c, d); }
@@ -107,49 +134,17 @@ export function createTerrain(scene) {
       const m = new THREE.Mesh(tg, gm); m.receiveShadow = true; m.name = 'ground'; ground.add(m);
     } }
 
-  // ---------- Nước: màu theo độ sâu + bọt trắng ở bờ (đọc bản đồ độ cao, không cần depth texture) ----------
+  // đáy biển nối dài ra khơi ngoài lưới địa hình (lặn xa bờ không thấy khoảng trống) — 1 mặt phẳng, thấp hơn đáy sâu nhất 0,3 m
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(1597, 1597).rotateX(-Math.PI / 2), new THREE.MeshToonMaterial({ color: new THREE.Color('#e6cc9a').lerp(cAbyss, 0.7), gradientMap }));
+  floor.position.set(CX, -6.3, CZ); floor.receiveShadow = true; floor.name = 'seafloor'; floor.visible = false; scene.add(floor);
+  addEventListener('island:underwater', e => { floor.visible = e.detail; });   // chỉ vẽ khi lặn (trên mặt nước: nước sâu đục, không thấy) → không tốn draw call
+
+  // ---------- Nước: bản đồ độ cao (độ sâu) cho shader nước + cá + hạt ----------
   const TS = 256, hd = new Uint8Array(TS * TS);
   for (let j = 0; j < TS; j++) for (let i = 0; i < TS; i++) hd[j * TS + i] = Math.max(0, Math.min(255, Math.round((heightAt(WORLD.x0 + (i + 0.5) / TS * SX, WORLD.z0 + (j + 0.5) / TS * SZ) + 8) * 12)));
   const hTex = new THREE.DataTexture(hd, TS, TS, THREE.RedFormat); hTex.magFilter = hTex.minFilter = THREE.LinearFilter; hTex.needsUpdate = true;
-  const waterMat = new THREE.ShaderMaterial({
-    transparent: true, fog: true, depthWrite: false,   // không ghi độ sâu: cá dưới nước (ambience.js) vẫn vẽ lên được
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) }, uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 }, uSunW: { value: new THREE.Vector3(0, 1, 0) }, uSunC: { value: new THREE.Color('#fff') }, uSkyH: { value: new THREE.Color('#bfe6f6') }, uPlayer: { value: null } }]), // uSun*/uSkyH: ambience.js nối với bầu trời
-    vertexShader: `varying vec3 vW;
-#include <fog_pars_vertex>
-      void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; vec4 mvPosition = viewMatrix*w; gl_Position = projectionMatrix*mvPosition;
-#include <fog_vertex>
-      }`,
-    fragmentShader: `uniform sampler2D uH; uniform vec2 uMin, uSize; uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uPlayer; uniform float uLight; uniform float uTime; varying vec3 vW;
-#include <fog_pars_fragment>
-      void main(){
-        vec2 uv = (vW.xz - uMin) / uSize;
-        float h = (uv.x < 0. || uv.x > 1. || uv.y < 0. || uv.y > 1.) ? -8. : texture2D(uH, uv).r * 255. / 12. - 8.;
-        float depth = max(0., -h);
-        vec3 c = mix(uShallow, uDeep, smoothstep(0.3, 5., depth));
-        c = mix(c, uDeep*0.8, step(3.5, depth)*0.35);             // dải màu kiểu toon
-        float ca = sin(vW.x*0.9 + uTime*0.8) * sin(vW.z*0.8 - uTime*0.6) + sin((vW.x + vW.z)*0.45 + uTime*0.5);
-        c += vec3(0.1, 0.16, 0.12) * smoothstep(1.0, 1.7, ca) * (1. - smoothstep(0.4, 3., depth));   // vân sáng đáy nước nông
-        float wave = sin(depth*5. - uTime*1.6 + sin(vW.x*0.3+uTime)*0.6);
-        float foam = step(depth, 0.35) + step(0.75, wave) * (1. - smoothstep(0.4, 1.4, depth));
-        float sparkle = step(0.993, sin(vW.x*1.7 + uTime*1.3)*sin(vW.z*1.9 - uTime*1.1));
-        // sóng vỗ bờ: từng đợt sóng dâng lên rồi rút, để lại viền bọt trắng
-        float surge = 0.5 + 0.5 * sin(uTime * 0.9 + vW.x * 0.045 + vW.z * 0.035);
-        foam += smoothstep(0.14, 0., abs(depth - 0.25 - surge * 0.9)) * (1. - smoothstep(1.1, 1.5, depth)) * (0.4 + 0.6 * step(0.5, fract(vW.x * 0.7 + vW.z * 0.5 + uTime * 0.2)));
-        // gợn tròn quanh chân khi lội nước
-        float pd = length(vW.xz - uPlayer.xz), wade = step(uPlayer.y, 0.55) * step(-1.6, uPlayer.y);
-        foam += smoothstep(0.7, 1., sin(pd * 5.5 - uTime * 4.5)) * (1. - smoothstep(0.4, 2.6, pd)) * wade * 0.8;
-        // phản chiếu: chân trời phản lên mặt nước khi nhìn xiên + lấp lánh nắng
-        vec3 V = normalize(cameraPosition - vW), N = normalize(vec3(sin(vW.x * 0.9 + uTime * 1.3) * 0.06 + sin(vW.z * 1.7 - uTime) * 0.04, 1., sin(vW.z * 0.8 - uTime * 1.1) * 0.06));
-        float fres = pow(1. - max(V.y, 0.), 4.);
-        c = mix(c, uSkyH, fres * 0.45);
-        c += uSunC * pow(max(dot(reflect(-uSunW, N), V), 0.), 90.) * 0.9 * step(0.02, uSunW.y);
-        c = mix(c, vec3(1.), clamp(foam, 0., 1.)*0.85) + sparkle*0.25;
-        gl_FragColor = vec4(c * uLight, max(mix(0.52, 0.95, smoothstep(0., 2.8, depth)), clamp(foam, 0., 1.) * 0.9));   // nông: trong thấy cát
-#include <fog_fragment>
-      }`,
-  });
-  waterMat.uniforms.uH.value = hTex; waterMat.uniforms.uTime = WIND.uTime; waterMat.uniforms.uPlayer = WIND.uPlayer;
-  const water = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600).rotateX(-Math.PI / 2), waterMat); water.position.y = W; scene.add(water);
+  // sóng Gerstner + lưới theo camera: ocean-water.js
+  const ocean = createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND }), waterMat = ocean.mat;
 
   // ---------- Vật liệu lay theo gió (cây, cỏ) ----------
   function windy(mat, amp, push = 0) {
@@ -235,7 +230,7 @@ export function createTerrain(scene) {
 
   let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55 };
   function update(dt, t, player) {
-    WIND.uTime.value = t;
+    WIND.uTime.value = t; ocean.update();
     if (player) WIND.uPlayer.value.copy(player);
     if ((lodT += dt) > 0.4 && player) {
       lodT = 0; for (const c of grass) c.m.visible = Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist;
@@ -243,7 +238,7 @@ export function createTerrain(scene) {
     }
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
-  return { heightAt, slopeAt, update, colliders, ground, waterMat, state, plants, trunks, nature: { add: addNature } };
+  return { heightAt, slopeAt, update, colliders, ground, waterMat, waveHeight: ocean.waveHeight, waveNormal: ocean.waveNormal, water: ocean, state, plants, trunks, nature: { add: addNature } };
 }
 
 // Gộp nhiều geometry (cùng thuộc tính) thành 1
