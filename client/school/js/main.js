@@ -9,7 +9,7 @@ extFinalInit();
   // ---------- 3D World bridge: the same game, drawn by js/three/view3d.js ----------
   window.RS = {
     get PLAYER(){ return PLAYER; }, get agents(){ return agents; }, get npcs(){ return npcs; }, get cars(){ return cars; }, get ships(){ return ships; }, npcShown,
-    R, HOUSES, TREES, FOREST_TREES, LIGHTHOUSE, ROOMS:['rubik', 'chess', 'music', 'hall', 'rubikyard', 'office', 'elec'], W, H, NY,
+    R, HOUSES, TREES, FOREST_TREES, LIGHTHOUSE, LAKE, LOTUS, POND, GBOARD, RMON, FLAG, LAMPS, TENTS, DALAT, BOOTH, CHESS_T, MUSIC_SPOTS, TRAIL, FOREST_GATES, ROOMS:['rubik', 'chess', 'music', 'hall', 'rubikyard', 'office', 'elec'], W, H, NY,
     get cam(){ return cam; }, get clock(){ return clock; }, get season(){ return season; }, get weather(){ return weather; }, get cw(){ return cw; }, get ch(){ return ch; }, get DPR(){ return DPR; },
     covered(){ if(RS.islandOn) return true; try { return v39Covered(); } catch(e){ return false; } },
     get prof(){ return PROF; }, reward(e, m, w, q){ return reward(e, m, w, q); }, save(){ try { saveProfile(); renderProfHud(); } catch(e){} }, toast(t){ toast(t); }, PIER_END,

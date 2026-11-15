@@ -48,7 +48,10 @@ function makeAtlas() {
 
 // ---------- Dữ liệu phụ của bản đồ 2D (hằng số trong iframe, không nằm trong RS) ----------
 function readExtra(win) {
-  try { return win.eval('({LAKE, LOTUS, POND, GBOARD, RMON, FLAG, LAMPS, TREES, FOREST_TREES, TENTS, DALAT, BOOTH, CHESS_T, MUSIC_SPOTS, TRAIL, FOREST_GATES})'); } catch (e) { return {}; }
+  // hằng số bản đồ 2D được xuất qua window.RS (client/school/js/main.js); win.eval không thấy được vì game 2D chạy trong IIFE
+  const RS = (win && win.RS) || {}, out = {};
+  for (const k of ['LAKE', 'LOTUS', 'POND', 'GBOARD', 'RMON', 'FLAG', 'LAMPS', 'TREES', 'FOREST_TREES', 'TENTS', 'DALAT', 'BOOTH', 'CHESS_T', 'MUSIC_SPOTS', 'TRAIL', 'FOREST_GATES']) if (RS[k] !== undefined) out[k] = RS[k];
+  return out;
 }
 
 export function buildTownArchitecture(ctx, RS, env) {
