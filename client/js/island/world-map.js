@@ -4,13 +4,15 @@
 // Bật/tắt từng lớp bằng các nút trên bản đồ; "Gần tôi" chỉ hiện những thứ trong bán kính NEAR mét.
 // Kéo để di chuyển, lăn chuột / chụm 2 ngón / nút +− để phóng to. Bấm vào biểu tượng để xem tên (con vật: điều thú vị).
 import { TEMPLES } from './temple.js';
+import { SPECIES } from './animals.js';
+import { FAUNA_INFO } from './fauna.js';
 import { REGION_COL, Y_MIN, Y_MAX } from './school-town.js';
 import { WORLD, BLOCKS, EXTRA, to2, to3, LOTS, LOT_W, LOT_L, RING_ROAD_R, ROAD_W, RADIALS, HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1, flatDist, lagoonDist } from './layout.js';
 
 const B = WORLD; // khung thế giới (m), theo bố cục layout.js
 const EXTRA_COL = { F: '#c9c27a', G: '#e9cfa0', H: '#f1dca2', K: '#cfc8b8' };
 const PPM = 2, NEAR = 60;                       // ảnh nền: 2 điểm ảnh / mét; "Gần tôi": 60 m
-const ANIMAL_ICON = { gull: '🕊️', sparrow: '🐦', butterfly: '🦋', fish: '🐟', 'animal-deer': '🦌', 'animal-fox': '🦊', 'animal-shiba': '🐕', 'animal-cat': '🐈', 'animal-frog': '🐸', 'animal-crab': '🦀' };
+const ANIMAL_ICON = { duck: '🦆', dragonfly: '🪰', firefly: '✨', gull: '🕊️', sparrow: '🐦', butterfly: '🦋', fish: '🐟', 'animal-deer': '🦌', 'animal-fox': '🦊', 'animal-shiba': '🐕', 'animal-cat': '🐈', 'animal-frog': '🐸', 'animal-crab': '🦀' };
 const NPC_ICON = { swim: '🏊', surf: '🏄', sun: '😎', bike: '🚲', camp: '⛺', picnic: '🧺', fishing: '🎣', walk: '🚶', kite: '🪁' };
 const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', sun: 'Khách du lịch', bike: 'Người đạp xe', camp: 'Bạn cắm trại', picnic: 'Dã ngoại', fishing: 'Bác câu cá', walk: 'Người đi dạo', kite: 'Bạn thả diều' };
 const OPT_KEY = 'island.mapOpts';
@@ -30,12 +32,13 @@ export function createWorldMap(ctx) {
 #wmap .zoom{position:absolute;right:max(10px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px}
 #wmap .zoom button{width:44px;height:44px;padding:0;font-size:20px}
 #wmap .hint{position:absolute;left:12px;bottom:max(12px,env(safe-area-inset-bottom));color:#fff3d6;font:700 12px system-ui;opacity:.8;text-shadow:0 1px 2px #000}
+#wmap .dex{position:absolute;left:50%;top:64px;transform:translateX(-50%);width:min(92vw,460px);max-height:calc(100% - 140px);overflow:auto;background:#fff3d6;border:3px solid #7a5a2e;border-radius:16px;padding:10px 14px;color:#4a3218;font:14px system-ui;box-shadow:0 6px 0 #7a5a2e}#wmap .dex h3{margin:4px 0 8px;font-size:16px}#wmap .dex .it{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-top:1px dashed #c9a86a}#wmap .dex .it.no{opacity:.55}#wmap .dex b{font-size:15px}
 #bMap{position:fixed;right:12px;top:58px;width:42px;height:42px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:20px;z-index:26}
 body.rs-modal #bMap{display:none}`;
   document.head.appendChild(css);
   const root = document.createElement('div'); root.id = 'wmap'; root.hidden = true;
   root.innerHTML = `<canvas></canvas><div class="bar">
-<button data-k="places">📍 Địa danh</button><button data-k="animals">🐾 Con vật</button><button data-k="people">🧑 Mọi người</button><button data-k="near">🔎 Gần tôi</button></div>
+<button data-k="places">📍 Địa danh</button><button data-k="animals">🐾 Con vật</button><button data-k="people">🧑 Mọi người</button><button data-d="1">📗 Sổ sinh vật</button><button data-k="near">🔎 Gần tôi</button></div>
 <button class="x" title="Đóng (M)">✕</button><div class="zoom"><button data-z="1.4">＋</button><button data-z="0.7">－</button><button data-z="me" title="Về chỗ tôi">🎯</button></div>
 <div class="hint">M: đóng bản đồ · kéo để xem · bấm biểu tượng để xem tên</div>`;
   document.body.appendChild(root);
@@ -138,6 +141,24 @@ body.rs-modal #bMap{display:none}`;
   cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
   cv.addEventListener('wheel', e => { e.preventDefault(); const k = Math.exp(-e.deltaY * 0.0015), wx = (e.offsetX - W() / 2) / zoom + cx, wz = (e.offsetY - H() / 2) / zoom + cz; zoom *= k; clampView(); cx = wx - (e.offsetX - W() / 2) / zoom; cz = wz - (e.offsetY - H() / 2) / zoom; clampView(); }, { passive: false });
 
+  // ---------- Sổ sinh vật: lại gần (≤ 7 m) hoặc bấm vào con vật → ghi vào sổ (lưu trên máy) ----------
+  const DEX_KEY = 'island.dex', ALL = [...SPECIES.map(S => ({ id: S.id, name: S.name, fact: S.fact })), ...Object.values(FAUNA_INFO)];
+  let dex = {}; try { dex = JSON.parse(localStorage.getItem(DEX_KEY) || '{}'); } catch (e) {}
+  const dexBtn = root.querySelector('[data-d]'), dexBox = document.createElement('div'); dexBox.className = 'dex'; dexBox.hidden = true; root.appendChild(dexBox);
+  const dexCount = () => ALL.filter(S => dex[S.id]).length;
+  const dexLabel = () => { dexBtn.textContent = `📗 Sổ sinh vật ${dexCount()}/${ALL.length}`; };
+  const renderDex = () => { dexBox.innerHTML = `<h3>📗 Sổ sinh vật · ${dexCount()}/${ALL.length} loài</h3>` + [...ALL].sort((a, b) => (dex[b.id] ? 1 : 0) - (dex[a.id] ? 1 : 0)).map(S => dex[S.id]
+    ? `<div class="it"><b>${ANIMAL_ICON[S.id] || '🐾'} ${S.name}</b><span>${S.fact}</span></div>` : `<div class="it no"><b>❓ ???</b><span>Chưa gặp — đi khám phá đảo để tìm nhé!</span></div>`).join(''); };
+  dexBtn.onclick = () => { dexBox.hidden = !dexBox.hidden; if (!dexBox.hidden) renderDex(); };
+  ctx.discover = S => { if (!S || !S.id || dex[S.id]) return; dex[S.id] = Date.now(); try { localStorage.setItem(DEX_KEY, JSON.stringify(dex)); } catch (e) {} dexLabel();
+    ctx.toast && ctx.toast(`📗 Loài mới trong Sổ sinh vật: <b>${ANIMAL_ICON[S.id] || ''} ${S.name}</b> (${dexCount()}/${ALL.length})<br>${S.fact}`, 6000); ctx.sfx && ctx.sfx('ok'); };
+  dexLabel();
+  let dexT = 0;
+  function scanDex(dt) { // 2 lần/giây: con vật nào trong 7 m quanh người chơi
+    if ((dexT -= dt) > 0 || !ctx.animals) return; dexT = 0.5; const p = ctx.player.pos;
+    for (const A of ctx.animals.list.concat(ctx.animals.flocks || [])) { const q = A.root.position; if (!dex[A.S.id] && Math.abs(q.x - p.x) < 7 && Math.abs(q.z - p.z) < 7 && (A.S.id !== 'firefly' || Math.hypot(q.x - p.x, q.z - p.z) < 40)) ctx.discover(A.S); }
+  }
+
   function toggle(v = !open) {
     if (v === open) return; open = v; root.hidden = !v; tip = null;
     if (v) {
@@ -158,7 +179,9 @@ body.rs-modal #bMap{display:none}`;
     g.font = `900 ${size}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
     g.lineWidth = Math.max(3, size / 4); g.strokeStyle = stroke; g.strokeText(t, x, y); g.fillStyle = fill; g.fillText(t, x, y);
   }
+  let lastT = performance.now();
   function update() {
+    const now = performance.now(); scanDex(Math.min(0.1, (now - lastT) / 1000)); lastT = now;
     if (!open) return;
     const dpr = Math.min(devicePixelRatio, 2), w = W(), h = H();
     if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
