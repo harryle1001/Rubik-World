@@ -63,7 +63,7 @@ export function createSky(scene) {
   const hemi = new THREE.HemisphereLight('#d6ecff', '#c2ad7e', 0.8);   // đất hắt ánh ấm (cát/cỏ) thay vì xanh rêu tối scene.add(hemi);
   const sun = new THREE.DirectionalLight('#fff0d2', 1.7); sun.castShadow = true;
   const r = CFG.quality.shadowRange; Object.assign(sun.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: 1, far: 200 });
-  sun.shadow.mapSize.set(CFG.quality.shadowSize, CFG.quality.shadowSize); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05;
+  sun.shadow.mapSize.set(CFG.quality.shadowSize, CFG.quality.shadowSize); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05; sun.shadow.intensity = 0.618;   // bóng 1/φ: dịu, dưới tán cây đa không tối đen
   scene.add(sun, sun.target);
   scene.fog = new THREE.Fog('#cfeefa', 150, 400);
 
