@@ -10,7 +10,7 @@ import { T, damp, dampAngle, dampV3, ease, wrapAngle } from './motion.js';
 const P = CFG.player, C = CFG.camera;
 // Camera thứ 3 theo φ (khu mẫu cổng trường): cách 13 m (Fibonacci), góc ngẩng atan(1/φ³) ≈ 13,3°, nhìn vào điểm cao φ² m trên chân
 // → nhân vật nằm gần đường 1/3 dưới, cổng/mặt tiền chiếm dải 1/3 trên; FOV dọc 50° (ít méo hình hơn 55°); zoom 8…34 m (Fibonacci)
-const CAM = { dist: 13, pitch: Math.atan(1 / PHI ** 3), height: PHI ** 2, min: 8, max: 34, lead: 1 / PHI ** 3, fov: 50 };
+const CAM = { dist: 8.5, pitch: Math.atan(1 / PHI ** 3), height: PHI ** 2, min: 5, max: 34, lead: 1 / PHI ** 3, fov: 50 };
 const ACC = PHI ** 4, DEC = PHI ** 5, AIR = PHI ** 2, TURN_MAX = 2 * Math.PI * PHI; // tăng tốc ≈6,9/s · hãm ≈11/s · xoay tối đa ≈10 rad/s
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 

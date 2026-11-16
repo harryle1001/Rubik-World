@@ -48,11 +48,11 @@ async function doLogin(name, pass){
   if(!u){ const c = await cloudGetAccount(name); if(c){ u = {salt:c.salt, hash:c.hash, profile:JSON.parse(c.profile || 'null')}; all.users[name] = u; } }
   if(!u) return 'Không tìm thấy tài khoản này. Hãy bấm "Tạo tài khoản mới".';
   if(await passHash(pass, u.salt) !== u.hash) return 'Sai mật khẩu.';
-  all.last = name; accSaveAll(all); ACC_NAME = name;
+  all.last = name; all.remember = (typeof document !== 'undefined' && document.getElementById('lgRemember') && document.getElementById('lgRemember').checked) ? name : null; accSaveAll(all); ACC_NAME = name;
   if(u.profile){ PROF = Object.assign(newProfile(name, u.profile.look), u.profile); enterGame(); } else openCreator();
   return null;
 }
-function logout(){ saveProfile(); if(PLAYER){ extUncontrol(PLAYER); PLAYER.controlled = false; PLAYER.visible = false; } PROF = null; ACC_NAME = null; PLAYER = null; renderProfHud(); openLogin(); }
+function logout(){ const al = accLoad(); if(al.remember){ al.remember = null; accSaveAll(al); } saveProfile(); if(PLAYER){ extUncontrol(PLAYER); PLAYER.controlled = false; PLAYER.visible = false; } PROF = null; ACC_NAME = null; PLAYER = null; renderProfHud(); openLogin(); }
 
 // ---------- character styles ----------
 const HAIRSTYLES = [['short','Ngắn gọn'],['long','Dài thẳng'],['pony','Buộc đuôi ngựa'],['bun','Búi tóc'],['spiky','Dựng ngầu'],['afro','Xoăn bồng'],['twin','Hai bím'],['bob','Tóc bob']];
@@ -384,7 +384,7 @@ function renderCreator(){
 function crAnim(){ if(!openModal || openModal.id !== 'mCreator') return; const cv = $('#crPrev'); withCtx(cv.getContext('2d'), () => { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); const g = ctx.createRadialGradient(110, 150, 10, 110, 150, 140); g.addColorStop(0, '#3a4a8a'); g.addColorStop(1, '#141b3a'); ctx.fillStyle = g; ctx.fillRect(0, 0, 220, 240); ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(110, 212, 50, 10, 0, 0, Math.PI*2); ctx.fill(); const f = lookFor(0); applyLook(f, CR.look); f.dir = Math.sin(realT*.8) > 0 ? 1 : -1; f.moving = true; f.walk = realT*5; ctx.translate(110, 212 - Math.abs(Math.sin(realT*5))*2); ctx.scale(5, 5); drawBody(f, false); }); requestAnimationFrame(crAnim); }
 function finishCreator(){
   if(!ACC_NAME) return; PROF = newProfile(ACC_NAME, CR.look); PROF.look.preset = PRESETS[CR.preset].n;
-  const all = accLoad(); if(all.users && all.users[ACC_NAME]){ all.users[ACC_NAME].profile = PROF; accSaveAll(all); }
+  const all = accLoad(); if(all.users && all.users[ACC_NAME]){ all.users[ACC_NAME].profile = PROF; const rb = document.getElementById('lgRemember'); if(rb && rb.checked) all.remember = ACC_NAME; accSaveAll(all); }
   hideModal(); enterGame(true);
 }
 function enterGame(first){
@@ -430,6 +430,9 @@ function ext7Init(){
   setInterval(() => { drawAvatar(); }, 120);
   setInterval(() => { if(PROF) saveProfile(); }, 30000);
   const all = accLoad();
-  setTimeout(() => { if(!openModal) openLogin(); }, 900);
+  // "Lưu đăng nhập": máy này đã lưu → vào thẳng, không hỏi mật khẩu
+  const rem = accLoad(); const ru = rem.remember && rem.users && rem.users[rem.remember];
+  if(ru && ru.profile){ ACC_NAME = rem.remember; PROF = Object.assign(newProfile(rem.remember, ru.profile.look), ru.profile); setTimeout(() => enterGame(), 300); }
+  else setTimeout(() => { if(!openModal) openLogin(); }, 900);
 }
 

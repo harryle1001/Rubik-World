@@ -136,8 +136,8 @@ export function arcadeFront(b, g, xs, ys, top, rise, cw, depth, z, col = FC.wall
     s.absellipse(c, ys, rx, Math.min(rise, top - ys - 0.18), 0, Math.PI, false);
     s.lineTo(xs[i - 1] - cw, ys);
   }
-  const g = new THREE.ExtrudeGeometry(s, { depth, curveSegments: 9, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 1 });
-  b.push(g.translate(0, 0, -depth / 2), col, 0, 0, z);
+  const geo = new THREE.ExtrudeGeometry(s, { depth, curveSegments: 9, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 1 });
+  b.push(geo.translate(0, 0, -depth / 2), col, 0, 0, z);
   for (let i = 1; i <= n; i++) {                                                      // vành vòm trắng (archivolt)
     const c = (xs[i - 1] + xs[i]) / 2, rx = (xs[i] - xs[i - 1]) / 2 - cw, ry = Math.min(rise, top - ys - 0.18), t = 0.12, a = new THREE.Shape();
     a.moveTo(rx + t, 0); a.absellipse(0, 0, rx + t, ry + t, 0, Math.PI, false); a.lineTo(-rx, 0); a.absellipse(0, 0, rx, ry, Math.PI, 0, true); a.lineTo(rx + t, 0);

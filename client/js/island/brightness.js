@@ -14,13 +14,14 @@ export function createBrightness(ctx) {
 #brightBox input{width:min(52vw,220px);accent-color:#ffc23e}#brightBox span{min-width:3.2em;text-align:right;font-variant-numeric:tabular-nums}
 body.rs-modal #brightBox{display:none}
 @media (max-width:600px){#brightBox{top:calc(max(12px,env(safe-area-inset-top)) + 96px);right:max(12px,env(safe-area-inset-right))}}
-#brightBox{flex-wrap:wrap}#qMode{display:flex;gap:6px;width:100%}#qMode button{flex:1;padding:6px 8px;border-radius:12px;border:1px solid #fff4;background:#ffffff14;color:#f2f4ff;font:600 13px system-ui}
-#qMode button[aria-pressed=true]{background:#ffc23e;color:#231600;border-color:#ffc23e}`;
+#brightBox{flex-wrap:wrap}#qMode,#tMode{display:flex;gap:6px;width:100%}#tMode button,#qMode button{flex:1;padding:6px 8px;border-radius:12px;border:1px solid #fff4;background:#ffffff14;color:#f2f4ff;font:600 13px system-ui}
+#tMode button[aria-pressed=true],#qMode button[aria-pressed=true]{background:#ffc23e;color:#231600;border-color:#ffc23e}`;
   document.head.appendChild(css);
-  const btn = document.createElement('button'); btn.id = 'bBright'; btn.title = 'Độ sáng & chất lượng hình ([ ])'; btn.textContent = '☀️ Sáng';
+  const btn = document.createElement('button'); btn.id = 'bBright'; btn.title = 'Độ sáng, giờ trong ngày & chất lượng hình ([ ])'; btn.textContent = '☀️ Sáng';
   (document.querySelector('.topbtns') || document.body).appendChild(btn);
   const box = document.createElement('div'); box.id = 'brightBox'; box.hidden = true;
   box.innerHTML = `🌙<input id="brightRange" type="range" min="${(1 / PHI).toFixed(3)}" max="${PHI}" step="0.01" aria-label="Độ sáng">☀️<span></span>
+  <div id="tMode" role="group" aria-label="Giờ trong ngày"><button data-t="real">⏱ Thật</button><button data-t="8.5">🌅 Sáng</button><button data-t="12.5">☀️ Trưa</button><button data-t="17">🌇 Chiều</button><button data-t="20.5">🌙 Tối</button></div>
   <div id="qMode" role="group" aria-label="Chất lượng hình"><button data-q="fast">⚡ Mượt</button><button data-q="auto">Tự động</button><button data-q="pretty">✨ Đẹp</button></div>`;
   document.body.appendChild(box);
   const range = box.querySelector('input'), label = box.querySelector('span');
@@ -32,7 +33,16 @@ body.rs-modal #brightBox{display:none}
     if (save) try { localStorage.setItem(QK, m); } catch (e) {}
   };
   box.querySelector('#qMode').addEventListener('click', e => { const m = e.target.dataset && e.target.dataset.q; if (m) setQ(m); });
-  setTimeout(() => setQ(qmode, false), 0);   // ctx.setQuality được tạo ở cuối ocean.js
+  setTimeout(() => setQ(qmode, false), 0);
+  // giờ trong ngày: Thật (theo đồng hồ trường) hoặc khoá Sáng/Trưa/Chiều/Tối
+  const TK = 'island.tmode'; let tmode = 'real'; try { tmode = localStorage.getItem(TK) || 'real'; } catch (e) {}
+  const setT = (m, save = true) => {
+    tmode = m; for (const b of box.querySelectorAll('#tMode button')) b.setAttribute('aria-pressed', b.dataset.t === m);
+    if (ctx.sky) ctx.sky.state.lock = m === 'real' ? null : +m;
+    if (save) try { localStorage.setItem(TK, m); } catch (e) {}
+  };
+  box.querySelector('#tMode').addEventListener('click', e => { const m = e.target.dataset && e.target.dataset.t; if (m) setT(m); });
+  setTimeout(() => setT(tmode, false), 0);   // ctx.setQuality được tạo ở cuối ocean.js
 
   const set = (nv, save = true) => {
     v = Math.min(PHI, Math.max(1 / PHI, nv)); range.value = v; label.textContent = Math.round(v * 100) + '%';
@@ -49,7 +59,7 @@ body.rs-modal #brightBox{display:none}
   // mỗi khung: phơi sáng = gốc × mức người chơi chọn × bù đêm (đêm sáng thêm tối đa 1/φ³ ≈ 0,24: đã có ánh trời lam, giữ đêm dịu)
   function update() {
     const night = ctx.sky ? ctx.sky.state.night : 0;
-    renderer.toneMappingExposure = base * v * (1 + night / PHI ** 3);
+    renderer.toneMappingExposure = base * v * (1 + night * 0.38);   // đêm sáng bù 1/φ² để vẫn thấy cảnh vật
   }
   return { update, get value() { return v; }, set };
 }

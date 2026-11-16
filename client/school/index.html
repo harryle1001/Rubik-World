@@ -392,6 +392,7 @@
       <p class="now">Tạo tên đăng nhập và mật khẩu để lưu level, tiền thưởng và đồ của bạn. Không dùng mật khẩu thật của bạn ở nơi khác nhé.</p>
       <label class="fld">Tên đăng nhập<input id="lgName" maxlength="20" autocomplete="username"></label>
       <label class="fld">Mật khẩu<input id="lgPass" type="password" maxlength="40" autocomplete="current-password"></label>
+      <label class="row" style="gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="lgRemember" checked> Lưu đăng nhập trên máy này (lần sau vào thẳng, không cần mật khẩu)</label>
       <div class="row"><button id="lgGo" class="primary">Đăng nhập</button><button id="lgNew">Tạo tài khoản mới</button><button id="lgGuest">Chỉ xem, chưa chơi</button></div>
       <p class="now" id="lgMsg" aria-live="polite"></p>
       <p class="legend">Tài khoản được lưu trên trình duyệt này; khi mở trên claude.ai còn được lưu online riêng tư để đăng nhập ở máy khác. Mật khẩu được mã hóa (PBKDF2) trước khi lưu.</p>
@@ -786,7 +787,8 @@ if (/[?&]embed=1/.test(location.search)) {
   addEventListener('keydown', fwd); addEventListener('keyup', fwd);
   window.addEventListener('rs-ready', () => { const RS = window.RS; RS.islandOn = true; RS.embedded = true; try { RS.enable3D(); } catch (e) {} });
   // vào Đảo 3D: không bật hộp đăng nhập lúc mở game (tự chọn "Chỉ xem"), người chơi vẫn đăng nhập được từ 📚 Menu trường sau đó
-  const t0 = Date.now(), autoGuest = setInterval(() => {
+  let remembered = false; try { remembered = !!(JSON.parse(localStorage.getItem('truong-accounts-v1') || '{}') || {}).remember; } catch (e) {}
+  const t0 = Date.now(), autoGuest = remembered ? 0 : setInterval(() => {
     const g = document.getElementById('lgGuest'), m = g && g.closest('.modal');
     if (m && !m.hidden && getComputedStyle(m).display !== 'none') g.click();
     if (Date.now() - t0 > 90000) clearInterval(autoGuest);

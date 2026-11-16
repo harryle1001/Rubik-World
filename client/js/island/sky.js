@@ -10,8 +10,8 @@ const PHI = (1 + Math.sqrt(5)) / 2, CLOUD_R = 200;
 // Bảng 4 thời điểm mẫu (docs/style-guide.md): 8h30 trong trẻo · 13h không cháy · 17h40 vàng đào (không cam gắt) · 22h lam dịu + trăng.
 // Nắng ấm ↔ trời (hemi) mát: bóng đổ mang sắc lam nhạt như tranh màu nước. Cường độ nắng trưa ≤ φ, trời ≈ 1/φ² … 1/φ.
 const KEYS = [
-  [0, '#0f1a3d', '#26365f', '#9fb4ff', 0.25, 0.28],
-  [5.5, '#25356b', '#d39a8c', '#ffbe9c', 0.4, 0.36],
+  [0, '#1a2a5e', '#3a5288', '#b4c6ff', 0.42, 0.62],   // đêm: lam ánh trăng, đủ sáng để thấy thế giới (không chói như ngày)
+  [5.5, '#2b3d75', '#d39a8c', '#ffbe9c', 0.45, 0.5],
   [6.4, '#5677c0', '#f4cdb0', '#ffd2a6', 0.95, 0.44],   // bình minh: hồng đào nhạt
   [8, '#4a95e2', '#d6ebf7', '#fff1dc', 1.35, 0.52],     // sáng sớm trong trẻo: chân trời lam sữa, nắng trắng ấm
   [10, '#3f8ee0', '#cde8f6', '#fff4e2', 1.5, 0.56],
@@ -20,8 +20,8 @@ const KEYS = [
   [17.6, '#6687c6', '#f2d8bc', '#ffe0bc', 1.2, 0.52],    // giờ vàng: vàng đào, giữ trời lam ở đỉnh
 
   [18.4, '#46559a', '#ecab90', '#ffb894', 0.75, 0.44],
-  [19.6, '#1d2a5c', '#4f5486', '#aab8ff', 0.3, 0.32],
-  [24, '#0f1a3d', '#26365f', '#9fb4ff', 0.25, 0.28],
+  [19.6, '#22336a', '#5a6194', '#b0bdff', 0.4, 0.55],
+  [24, '#1a2a5e', '#3a5288', '#b4c6ff', 0.42, 0.62],
 ].map(k => [k[0], new THREE.Color(k[1]), new THREE.Color(k[2]), new THREE.Color(k[3]), k[4], k[5]]);
 
 export function createSky(scene) {
@@ -134,6 +134,7 @@ export function createSky(scene) {
 
   let prevH = state.hour;
   function update(dt, cam, target) {
+    if (state.lock != null) state.hour = state.lock;   // người chơi chọn Sáng/Trưa/Chiều/Tối (brightness.js)
     const slow = state.hour > 9 && state.hour < 16.5 ? 0.6 : 1;   // giờ đẹp ban ngày trôi chậm hơn
     state.hour += slow * dt / CFG.time.dayLengthSec * 24; if (state.hour >= 24) state.hour -= 24;
     if (state.hour < prevH - 12) state.day++; prevH = state.hour; U.uTime.value += dt; apply();   // qua nửa đêm (kể cả khi trường đặt giờ) → sang ngày mới
