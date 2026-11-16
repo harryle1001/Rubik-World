@@ -11,7 +11,7 @@ export const CFG = {
     msaa: isMobile ? 2 : 4,             // khử răng cưa MSAA (điện thoại 2x, máy tính 4x) trong render target hậu kỳ (máy yếu: tự giảm 2 → 0)
     bloom: !isMobile, bloomStrength: 0.18, bloomRadius: 0.382, bloomThreshold: 0.92,  // bloom tinh tế: chỉ đèn/mặt trời toả, bán kính 1/φ² (điện thoại tắt cho mượt)
     vignette: 0.146,                    // 1/φ⁴: viền tối rất nhẹ, không làm mờ
-    exposure: 0.92, saturation: 1.04, contrast: 1.06, warmth: 0.015,   // chỉnh màu hậu kỳ (ấm, tươi nhẹ)
+    exposure: 0.86, saturation: 1.14, contrast: 1.1, warmth: 0.015,   // chỉnh màu hậu kỳ (ấm, tươi nhẹ)
     anisotropy: isMobile ? 8 : 16,      // lọc dị hướng cho texture (chữ biển, nền) nét khi nhìn xiên
     lowFps: 40, highFps: 57,            // tự giảm / tăng chất lượng theo FPS
   },
