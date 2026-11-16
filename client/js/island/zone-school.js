@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { toon } from './style.js';
-import { BLOCKS } from './layout.js';
+import { BLOCKS, PHI } from './layout.js';
 import { Batch } from './decor.js';
 import { placeKit } from './kit.js';
 
@@ -277,7 +277,24 @@ export function buildSchoolZone(a) {
     d.push(new THREE.RingGeometry(1.0, 1.3, 7).rotateX(-Math.PI / 2), '#8fb8ee', hx + 6.4, py + 0.008, hz);
     const ox = cx + 3.5, oz = cz - 0.5; line(5.2, 0.08, ox, oz - 1.0); line(5.2, 0.08, ox, oz + 1.0); line(5.2, 0.08, ox, oz); for (let i = 0; i <= 5; i++) line(0.08, 2.0, ox - 2.6 + i * 1.04, oz);
     for (const s of [-1, 1]) d.push(new THREE.RingGeometry(0.95, 1.05, 10, 1, s < 0 ? Math.PI / 2 : -Math.PI / 2, Math.PI).rotateX(-Math.PI / 2), C.paint, ox + s * 2.6, py, oz);
-    d.push(new THREE.RingGeometry(2.4, 2.55, 20).rotateX(-Math.PI / 2), C.paint, cx - 0.5, py, cz - 3.0);
+    // CÂY ĐA CỔ THỤ giữa sân (thay vòng tròn vẽ): cao 21 m (Fibonacci) vượt mái trường, thân 21/φ² ≈ 8 m, tán rộng 21/φ ≈ 13 m che bóng mát
+    const tx = cx - 1.0, tz = cz - 3.35, b = SB, HT = 21, HK = HT / (PHI * PHI), CR = HT / PHI, GA = 2 * Math.PI / (PHI * PHI), up = new THREE.Vector3(0, 1, 0);
+    const limb = (x0, y0, z0, x1, y1, z1, r0, r1, c = '#7a5a40', seg = 7) => { const v = new THREE.Vector3(x1 - x0, y1 - y0, z1 - z0), L = v.length(); b.push(new THREE.CylinderGeometry(r1, r0, L, seg).translate(0, L / 2, 0).applyQuaternion(new THREE.Quaternion().setFromUnitVectors(up, v.normalize())).translate(x0, y0, z0), c); };
+    b.cyl(1.6, 1.7, 0.45, tx, Y, tz, C.stone, 13); b.cyl(1.42, 1.42, 0.04, tx, Y + 0.44, tz, '#6f5236', 13);   // bồn đá tròn, mép cao 0,45 m ngồi được
+    limb(tx, Y, tz, tx, Y + HK, tz, 1.0, 0.7);   // thân chính
+    for (let i = 0; i < 5; i++) { const a = i * GA; limb(tx + Math.cos(a) * 1.3, Y + 0.4, tz + Math.sin(a) * 1.3, tx + Math.cos(a) * 0.4, Y + 2.6, tz + Math.sin(a) * 0.4, 0.42, 0.22, '#6a4c36', 5); }   // rễ bạnh quanh gốc
+    const ends = [];
+    for (let i = 0; i < 5; i++) {   // 5 cành chính toả ra, mỗi cành tách 2 nhánh
+      const a = i * 2 * Math.PI / 5 + 0.3, ex = tx + Math.cos(a) * CR * 0.5, ez = tz + Math.sin(a) * CR * 0.5, ey = Y + HK + 4;
+      limb(tx, Y + HK - 0.6, tz, ex, ey, ez, 0.48, 0.3);
+      for (const s of [-1, 1]) { const a2 = a + s * 0.42, fx = tx + Math.cos(a2) * CR * 0.78, fz = tz + Math.sin(a2) * CR * 0.78; limb(ex, ey, ez, fx, ey + 1.6, fz, 0.28, 0.14, '#7a5a40', 5); ends.push([fx, ey + 1.6, fz]); }
+    }
+    const leaf = (r, x, y, z, c, sy = 0.62) => b.push(new THREE.IcosahedronGeometry(r, 1), c, x, y, z, (x + z) % 6.28, 0, 0, 1.15, sy, 1.15), G3 = ['#4f8f3e', '#5c9c46', '#467f38', '#62a54c'];
+    leaf(CR * 0.5, tx, Y + HT - 5, tz, '#5a9a45'); leaf(CR * 0.3, tx + 1.2, Y + HT - 2.2, tz - 0.8, '#6cae52', 0.7);   // tán giữa, đỉnh ≈ 21 m
+    ends.forEach(([x, y, z], i) => leaf(3.6 + (i % 3) * 0.5, x, y + 0.9, z, G3[i % 4]));   // 10 cụm ở đầu nhánh
+    for (let i = 0; i < 21; i++) { const a = i * GA, r = CR * (0.45 + (i % 5) * 0.1), y = Y + HK + 5.2 + (i % 4) * 0.9; leaf(1.6 + (i % 3) * 0.5, tx + Math.cos(a) * r, y, tz + Math.sin(a) * r, G3[(i + 1) % 4], 0.75); }   // 21 cụm nhỏ (Fibonacci) xếp theo góc vàng → viền tán bồng bềnh
+    for (let i = 0; i < 13; i++) { const a = i * GA, r = 3 + (i % 5) * 0.9, x = tx + Math.cos(a) * r, z = tz + Math.sin(a) * r, y1 = Y + HK + 2.5 + (i % 3); limb(x, y1 - 3 - (i % 4), z, x, y1, z, 0.05, 0.08, '#8a6a4c', 4); }   // 13 rễ phụ buông lơ lửng (không chạm sân chơi)
+    col(tx, tz, 1.5, Y + HT);
   }
 
   // ================= SÂN TRƯỜNG: bồn cây phượng, ghế đá, đèn, lối đi, vỉa hè, bảng tin, thùng rác, xe kem, sân chơi =================
