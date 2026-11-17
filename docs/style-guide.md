@@ -78,8 +78,8 @@ Vàng φ (`brass`) ≤ 1/13 khung hình. Độ bão hoà ≤ 0,62; màu sáng nh
 
 - `sky.js` KEYS: 8h30 trong trẻo (nắng `#fff1dc` 1,35–1,5) · 13h nắng 1,5 (không cháy) · 17h40 vàng đào `#ffe0bc` · 22h lam dịu + trăng theo lịch thật.
 - Đèn trời (hemi) lam pha trắng → bóng đổ mát, nắng ấm. Sương = đúng màu chân trời.
-- Hậu kỳ: ACES, MSAA 4x (tự giảm), bloom 0,18 (ngưỡng 0,92), vignette 1/φ⁴. Không thêm pass mới cho từng khu.
-- Camera (player.js): cách 13 m, ngẩng atan(1/φ³) ≈ 13,3°, nhìn cao φ² m, FOV 50° (màn dọc tới 72°).
+- Hậu kỳ: ACES, MSAA 4x máy tính · 2x điện thoại (độ phân giải tối đa 2 · 1,5), bloom 0,18 (ngưỡng 0,92), vignette 1/φ⁴. Không thêm pass mới cho từng khu.
+- Camera (player.js): cách 8,5 m (gần nhất 5 m), ngẩng atan(1/φ³) ≈ 13,3°, nhìn cao φ² m, FOV 50° (màn dọc tới 72°).
 
 ## 8. Cách chụp kiểm tra (bắt buộc trước mỗi commit khu)
 
