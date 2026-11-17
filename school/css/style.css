@@ -885,3 +885,8 @@ body.v44fs #mSudoku .sdkpad button{min-height:0!important;height:100%}
 body.v44fs #mSudoku .sdkpad{max-height:none!important;flex:0 0 auto!important;grid-auto-rows:auto!important}
 body.v44fs #mSudoku .sdkpad button{height:clamp(54px, calc((100dvh - 100vw - 250px)/2), 112px)!important;font-size:26px!important}
 @media (orientation:landscape){body.v44fs #mSudoku .sdkpad button{height:clamp(44px, 9dvh, 70px)!important}}
+
+/* ===== v45 sports ===== */
+/* ski, football, tanks fill the whole screen in both orientations: no "rotate your phone" hint */
+body.v45arc #v44Rot{display:none!important}
+body.v45arc #mArcade #arcCv{touch-action:none}
