@@ -30,6 +30,7 @@ Mỗi SESSION là một phiên làm việc riêng: dán đúng phần session đ
   - Đo FPS trước và sau mỗi thay đổi về hình vẽ.
 - **Quy trình duyệt:**
   - Làm xong mỗi phần thì gửi ảnh chụp trước/sau, khoanh đỏ chỗ đã sửa, kèm danh sách thay đổi ngắn bằng tiếng Việt.
+  - Ảnh duyệt lưu ở `school/REVIEW_v4x_<tên>.png` và **mở thẳng ra khung bên phải** (gửi file ở chế độ hiển thị) ngay khi xong, không chỉ ghi đường dẫn.
   - **Chờ chủ game duyệt** rồi mới xuất file và up lên Netlify.
   - Commit vào GitHub, không ghi tên model trong commit.
 
