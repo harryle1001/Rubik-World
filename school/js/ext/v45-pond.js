@@ -1,13 +1,13 @@
 // ================= EXT53 (v45 · Session 5): every pond/lake opens a full-screen, chill fishing game — your own
 // character sits on a wooden dock, many kinds of fish swim below, tap the water to cast, tap the 🍞 to feed them;
 // the World Flags plaza is spread out wider and every flag asks one question about its country (once a day per player) =================
-const V45 = {spots:['🎣 Hồ câu', '🐟 Hồ Koi', '🪷 Đầm sen'], bg:null, bgKey:''};
-const V45_DAYK = 'v45-pond-day', V45_FLAGK = 'v45-flag-day';
-const v45Today = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
-const v45Who = () => (typeof PROF !== 'undefined' && PROF && PROF.name) || 'guest';
-function v45Day(key, bump){ let o = {}; try { o = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch(e){} const t = v45Today(), w = v45Who(); if(!o[w] || o[w].d !== t) o[w] = {d:t, n:0}; if(bump){ o[w].n++; try { localStorage.setItem(key, JSON.stringify(o)); } catch(e){} } return o[w].n; }
+const V45P = {spots:['🎣 Hồ câu', '🐟 Hồ Koi', '🪷 Đầm sen'], bg:null, bgKey:''};
+const V45P_DAYK = 'v45-pond-day', V45P_FLAGK = 'v45-flag-day';
+const v45pToday = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+const v45pWho = () => (typeof PROF !== 'undefined' && PROF && PROF.name) || 'guest';
+function v45pDay(key, bump){ let o = {}; try { o = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch(e){} const t = v45pToday(), w = v45pWho(); if(!o[w] || o[w].d !== t) o[w] = {d:t, n:0}; if(bump){ o[w].n++; try { localStorage.setItem(key, JSON.stringify(o)); } catch(e){} } return o[w].n; }
 // ---------- fish: name, colours, length px, depth band (0 top … 1 bottom), speed, kg, rarity, shape, fact ----------
-const V45_FISH = [
+const V45P_FISH = [
   {n:'Cá rô phi', c:['#8fa3a8', '#5d7378'], L:40, d:[.1, .55], v:34, w:[.3, 1.2], r:0, sh:'carp', f:'Cá rô phi ăn rong tảo và lớn rất nhanh.'},
   {n:'Cá chép', c:['#d9a441', '#9c6b1f'], L:54, d:[.45, .95], v:24, w:[.8, 3.5], r:0, sh:'carp', f:'Cá chép có râu để dò thức ăn dưới bùn.'},
   {n:'Cá vàng', c:['#ffb347', '#ff7a1a'], L:26, d:[.05, .4], v:38, w:[.05, .2], r:0, sh:'round', f:'Cá vàng nhớ được đường đi tới vài tháng.'},
@@ -21,23 +21,23 @@ const V45_FISH = [
   {n:'Cá chép vàng', c:['#ffe066', '#e0a800'], L:58, d:[.2, .8], v:30, w:[2, 5], r:3, sh:'koi', f:'Truyền thuyết kể cá chép vượt Vũ Môn hoá rồng.'}
 ];
 // spawn weights for the three waters (pond · koi lake · lotus marsh)
-const V45_MIX = [[6, 5, 3, 3, 3, 3, 1, 2, 1, 1, .4], [3, 3, 4, 1, 1, 2, 0, 1, 8, 1, .8], [4, 3, 1, 2, 4, 1, 3, 5, 0, 2, .4]];
-function v45Pick(sp){ const w = V45_MIX[sp] || V45_MIX[0]; let t = 0; w.forEach(x => t += x); let r = Math.random()*t; for(let i=0;i<w.length;i++){ r -= w[i]; if(r <= 0) return V45_FISH[i]; } return V45_FISH[0]; }
-function v45Size(){ const W = innerWidth, H = innerHeight, side = W > H && typeof MOB !== 'undefined' && MOB.touch, aw = W - (side ? 116 : 0); if(H > aw) return [480, Math.round(Math.max(600, Math.min(1100, 480*H/aw)))]; return [800, Math.round(Math.max(360, Math.min(700, 800*H/aw)))]; }
-function v45Fish(s, x){ const sp = v45Pick(s.spot), d = sp.d[0] + Math.random()*(sp.d[1] - sp.d[0]), y = s.sy + 26 + d*(s.bot - s.sy - 46); return {sp, x:x != null ? x : s.vw*.15 + Math.random()*s.vw*.85, y, by:y, dir:Math.random() < .5 ? -1 : 1, v:sp.v*(.7 + Math.random()*.5), ph:Math.random()*6, st:'swim', t:0, k:.85 + Math.random()*.35}; }
+const V45P_MIX = [[6, 5, 3, 3, 3, 3, 1, 2, 1, 1, .4], [3, 3, 4, 1, 1, 2, 0, 1, 8, 1, .8], [4, 3, 1, 2, 4, 1, 3, 5, 0, 2, .4]];
+function v45pPick(sp){ const w = V45P_MIX[sp] || V45P_MIX[0]; let t = 0; w.forEach(x => t += x); let r = Math.random()*t; for(let i=0;i<w.length;i++){ r -= w[i]; if(r <= 0) return V45P_FISH[i]; } return V45P_FISH[0]; }
+function v45pSize(){ const W = innerWidth, H = innerHeight, side = W > H && typeof MOB !== 'undefined' && MOB.touch, aw = W - (side ? 116 : 0); if(H > aw) return [480, Math.round(Math.max(600, Math.min(1100, 480*H/aw)))]; return [800, Math.round(Math.max(360, Math.min(700, 800*H/aw)))]; }
+function v45pFish(s, x){ const sp = v45pPick(s.spot), d = sp.d[0] + Math.random()*(sp.d[1] - sp.d[0]), y = s.sy + 26 + d*(s.bot - s.sy - 46); return {sp, x:x != null ? x : s.vw*.15 + Math.random()*s.vw*.85, y, by:y, dir:Math.random() < .5 ? -1 : 1, v:sp.v*(.7 + Math.random()*.5), ph:Math.random()*6, st:'swim', t:0, k:.85 + Math.random()*.35}; }
 GAMES.pond = {
-  title:'Câu cá thư giãn', opts:V45.spots.slice(), v44own:true,
+  title:'Câu cá thư giãn', opts:V45P.spots.slice(), v44own:true,
   help:'Chạm xuống nước để thả lưỡi câu tới đó. Khi phao chìm và hiện ❗ thì chạm ngay để giật cần. Giữ ngón tay để kéo dây, thả ra khi dây căng đỏ. Chạm 🍞 để cho cá ăn: cá vui sẽ dễ cắn câu hơn. Mỗi lượt có 8 mồi câu.',
-  init(o){ const [vw, vh] = v45Size(), cv = $('#arcCv'); if(cv && (cv.width !== vw || cv.height !== vh)){ cv.width = vw; cv.height = vh; }
+  init(o){ const [vw, vh] = v45pSize(), cv = $('#arcCv'); if(cv && (cv.width !== vw || cv.height !== vh)){ cv.width = vw; cv.height = vh; }
     const s = {vw, vh, spot:o || 0, sy:Math.round(vh*.382), bot:vh - 34, t:0, st:'idle', bait:8, food:5, happy:0, fish:[], fx:[], food_:[], bag:[], msg:'👆 Chạm xuống nước để thả câu', msgT:99, night:(() => { try { return isNight(); } catch(e){ return false; } })()};
     s.dock = Math.round(vw*(vh > vw ? .3 : .236)); s.px = s.dock - 26; s.tip = [s.dock + (vh > vw ? 84 : 104), s.sy - (vh > vw ? 150 : 120)];
-    for(let i=0;i<(vh > vw ? 11 : 10);i++) s.fish.push(v45Fish(s)); return s; },
+    for(let i=0;i<(vh > vw ? 11 : 10);i++) s.fish.push(v45pFish(s)); return s; },
   pointer(s, ty, ax, ay){ if(ty !== 'down' || s.over) return; const x = ax*s.vw/AW, y = ay*s.vh/AH;
-    if(s.st === 'card'){ s.st = 'idle'; s.card = null; if(s.bait <= 0) v45End(s); return; }
-    if(Math.hypot(x - (s.vw - 50), y - (s.vh - 52)) < 40){ v45Feed(s); return; }
+    if(s.st === 'card'){ s.st = 'idle'; s.card = null; if(s.bait <= 0) v45pEnd(s); return; }
+    if(Math.hypot(x - (s.vw - 50), y - (s.vh - 52)) < 40){ v45pFeed(s); return; }
     if(s.st === 'bite'){ s.st = 'fight'; s.ten = 25; s.prog = 22; s.msg = '✊ Giữ để kéo · thả ra khi dây căng đỏ'; s.msgT = 3; kickSfx(.6); return; }
     if(s.st === 'fight' || s.st === 'cast') return;
-    if(y > s.sy + 14 && x > s.dock + 20){ if(s.bait <= 0){ s.msg = '🪱 Hết mồi rồi!'; s.msgT = 2; return; } v45Cast(s, x, Math.min(y, s.bot - 14)); } },
+    if(y > s.sy + 14 && x > s.dock + 20){ if(s.bait <= 0){ s.msg = '🪱 Hết mồi rồi!'; s.msgT = 2; return; } v45pCast(s, x, Math.min(y, s.bot - 14)); } },
   update(s, dt){
     if(s.over) return; s.t += dt; s.msgT -= dt; s.happy = Math.max(0, s.happy - dt);
     const hold = (typeof holdKey === 'function' ? holdKey() : ARC.ptr.down);
@@ -50,43 +50,43 @@ GAMES.pond = {
     s.fish.forEach(f => { if(f.st !== 'swim' || f === s.on) return; const p = s.food_.find(p => Math.hypot(p.x - f.x, p.y - f.y) < 260); if(p && Math.random() < dt*2){ f.st = 'eat'; f.tx = p.x; f.ty = p.y; f.t = 6; } });
     s.food_ = s.food_.filter(p => { const f = s.fish.find(f => f.st === 'eat' && Math.hypot(p.x - f.x, p.y - f.y) < 14); if(f){ s.fx.push({k:'heart', x:p.x, y:p.y - 10, t:0}); f.st = 'swim'; f.by = f.y; return false; } return p.t < 14; });
     // line states
-    if(s.st === 'cast'){ s.ct += dt/.6; if(s.ct >= 1){ s.st = 'wait'; s.bob = 0; s.fx.push({k:'ring', x:s.hx, y:s.sy, t:0}); try { v45Splash(.35); } catch(e){} s.msg = '⏳ Chờ cá cắn câu…'; s.msgT = 2.5; s.look = .6; } }
+    if(s.st === 'cast'){ s.ct += dt/.6; if(s.ct >= 1){ s.st = 'wait'; s.bob = 0; s.fx.push({k:'ring', x:s.hx, y:s.sy, t:0}); try { v45pSplash(.35); } catch(e){} s.msg = '⏳ Chờ cá cắn câu…'; s.msgT = 2.5; s.look = .6; } }
     else if(s.st === 'wait'){ s.look -= dt; s.bob = Math.sin(s.t*2)*1.2;
       const on = s.fish.find(f => f.st === 'go' || f.st === 'nib');
       if(!on && s.look <= 0){ s.look = .5; const R = s.happy > 0 ? 340 : 210, c = s.fish.filter(f => f.st === 'swim' && Math.hypot(f.x - s.hx, f.y - s.hy) < R); if(c.length && Math.random() < (s.happy > 0 ? .55 : .3)){ const f = c[Math.floor(Math.random()*c.length)]; if(Math.random() < 1/(1 + f.sp.r*.5)) f.st = 'go'; } }
       if(on && on.st === 'nib'){ on.x = s.hx - on.dir*on.sp.L*.45*on.k; on.y = s.hy; if(on.t <= 0){ if(s.nib-- > 0){ on.t = .55 + Math.random()*.5; s.bob = 5; s.fx.push({k:'ring', x:s.hx, y:s.sy, t:.3}); } else { s.st = 'bite'; s.bt = 1.7; s.on = on; s.msg = '❗ Chạm ngay để giật cần!'; s.msgT = 1.7; blipSfx(1320); } } else on.t -= dt; } }
-    else if(s.st === 'bite'){ s.bt -= dt; s.bob = 12 + Math.sin(s.t*30)*2; if(s.bt <= 0){ v45Lost(s, '🐟 Cá nhả mồi rồi, chờ con khác nhé'); s.st = 'wait'; } }
+    else if(s.st === 'bite'){ s.bt -= dt; s.bob = 12 + Math.sin(s.t*30)*2; if(s.bt <= 0){ v45pLost(s, '🐟 Cá nhả mồi rồi, chờ con khác nhé'); s.st = 'wait'; } }
     else if(s.st === 'fight'){ const f = s.on, pw = .5 + f.sp.r*.35 + f.sp.w[1]*.06, pull = pw*(.55 + .7*Math.max(0, Math.sin(s.t*2.1 + f.ph))); if(hold){ s.prog += 20/(.7 + pw*.5)*dt; s.ten += (24*pull + 6)*dt; } else { s.ten -= 36*dt; s.prog -= 5*pull*dt; } s.ten = Math.max(0, s.ten); s.bob = 6 + Math.sin(s.t*14)*3;
       const k = Math.min(1, s.prog/100), tx = s.dock + 30; f.x = s.hx + (tx - s.hx)*k + Math.sin(s.t*7)*8*(1 - k); f.y = s.hy + (s.sy + 14 - s.hy)*k; f.dir = Math.sin(s.t*3 + f.ph) > 0 ? 1 : -1; s.lx = f.x; s.ly = f.y;
-      if(s.ten >= 100){ v45Lost(s, '💥 Dây đứt! Lần sau thả tay sớm hơn nhé'); s.st = 'idle'; if(s.bait <= 0) v45End(s); }
-      else if(s.prog <= 0){ v45Lost(s, '🐟 Cá thoát rồi, thử lại nhé'); s.st = 'idle'; if(s.bait <= 0) v45End(s); }
-      else if(s.prog >= 100) v45Caught(s); }
-    else if(s.st === 'card'){ s.ct -= dt; if(s.ct <= 0){ s.st = 'idle'; s.card = null; if(s.bait <= 0) v45End(s); } }
-    else if(s.st === 'idle' && s.bait <= 0 && !s.over) v45End(s);
+      if(s.ten >= 100){ v45pLost(s, '💥 Dây đứt! Lần sau thả tay sớm hơn nhé'); s.st = 'idle'; if(s.bait <= 0) v45pEnd(s); }
+      else if(s.prog <= 0){ v45pLost(s, '🐟 Cá thoát rồi, thử lại nhé'); s.st = 'idle'; if(s.bait <= 0) v45pEnd(s); }
+      else if(s.prog >= 100) v45pCaught(s); }
+    else if(s.st === 'card'){ s.ct -= dt; if(s.ct <= 0){ s.st = 'idle'; s.card = null; if(s.bait <= 0) v45pEnd(s); } }
+    else if(s.st === 'idle' && s.bait <= 0 && !s.over) v45pEnd(s);
     s.fx.forEach(p => p.t += dt); s.fx = s.fx.filter(p => p.t < (p.k === 'heart' ? 1.4 : p.k === 'drop' ? .8 : 1.6));
     if(Math.random() < dt*1.2){ const f = s.fish[Math.floor(Math.random()*s.fish.length)]; if(f) s.fx.push({k:'bub', x:f.x + f.dir*f.sp.L*.5, y:f.y - 4, t:0}); }
   },
-  draw(s, c){ v45Draw(s, c); }
+  draw(s, c){ v45pDraw(s, c); }
 };
-function v45Cast(s, x, y){ s.bait--; s.st = 'cast'; s.ct = 0; s.hx = x; s.hy = Math.max(s.sy + 26, y); s.on = null; s.fish.forEach(f => { if(f.st === 'go' || f.st === 'nib') f.st = 'swim'; }); s.msgT = 0; try { v45Splash(.15, 900); } catch(e){} }
-function v45Lost(s, m){ const f = s.on || s.fish.find(f => f.st === 'go' || f.st === 'nib'); if(f){ f.st = 'flee'; f.t = 1.8; f.by = Math.max(s.sy + 30, Math.min(s.bot - 20, f.y)); f.dir = f.x < s.hx ? -1 : 1; } s.on = null; s.msg = m; s.msgT = 2.6; }
-function v45Feed(s){ if(s.food <= 0){ s.msg = '🍞 Hết thức ăn cho cá rồi'; s.msgT = 2; return; } s.food--; s.happy = 20; const cx = s.st === 'wait' || s.st === 'bite' ? s.hx : s.dock + (s.vw - s.dock)*.45;
+function v45pCast(s, x, y){ s.bait--; s.st = 'cast'; s.ct = 0; s.hx = x; s.hy = Math.max(s.sy + 26, y); s.on = null; s.fish.forEach(f => { if(f.st === 'go' || f.st === 'nib') f.st = 'swim'; }); s.msgT = 0; try { v45pSplash(.15, 900); } catch(e){} }
+function v45pLost(s, m){ const f = s.on || s.fish.find(f => f.st === 'go' || f.st === 'nib'); if(f){ f.st = 'flee'; f.t = 1.8; f.by = Math.max(s.sy + 30, Math.min(s.bot - 20, f.y)); f.dir = f.x < s.hx ? -1 : 1; } s.on = null; s.msg = m; s.msgT = 2.6; }
+function v45pFeed(s){ if(s.food <= 0){ s.msg = '🍞 Hết thức ăn cho cá rồi'; s.msgT = 2; return; } s.food--; s.happy = 20; const cx = s.st === 'wait' || s.st === 'bite' ? s.hx : s.dock + (s.vw - s.dock)*.45;
   for(let i=0;i<7;i++){ const x = Math.max(s.dock + 30, Math.min(s.vw - 20, cx + (Math.random() - .5)*120)); s.food_.push({x, y:s.sy + 4, t:0}); s.fx.push({k:'drop', x, y:s.sy, t:Math.random()*.2}); }
-  s.feeds = (s.feeds || 0) + 1; s.msg = '💖 Cá đang vui, dễ cắn câu hơn!'; s.msgT = 2.6; try { v45Splash(.12, 1400); } catch(e){} }
-function v45Caught(s){ const f = s.on, sp = f.sp, w = +(sp.w[0] + Math.random()*(sp.w[1] - sp.w[0])*f.k).toFixed(2), isNew = !s.bag.some(b => b.n === sp.n);
+  s.feeds = (s.feeds || 0) + 1; s.msg = '💖 Cá đang vui, dễ cắn câu hơn!'; s.msgT = 2.6; try { v45pSplash(.12, 1400); } catch(e){} }
+function v45pCaught(s){ const f = s.on, sp = f.sp, w = +(sp.w[0] + Math.random()*(sp.w[1] - sp.w[0])*f.k).toFixed(2), isNew = !s.bag.some(b => b.n === sp.n);
   s.bag.push({n:sp.n, w, r:sp.r}); s.card = {sp, w, isNew}; s.st = 'card'; s.ct = 3.8; s.on = null; s.fx.push({k:'ring', x:f.x, y:s.sy, t:0}, {k:'ring', x:f.x, y:s.sy, t:.4});
-  s.fish.splice(s.fish.indexOf(f), 1); setTimeout(() => { if(ARC.s === s) s.fish.push(v45Fish(s, Math.random() < .5 ? 10 : s.vw - 10)); }, 1500);
-  try { v45Splash(.5, 600); blipSfx(1760); } catch(e){}
+  s.fish.splice(s.fish.indexOf(f), 1); setTimeout(() => { if(ARC.s === s) s.fish.push(v45pFish(s, Math.random() < .5 ? 10 : s.vw - 10)); }, 1500);
+  try { v45pSplash(.5, 600); blipSfx(1760); } catch(e){}
   try { FS.bag.push({n:sp.n, w, p:['hồ', 'hồ Koi', 'đầm sen'][s.spot]}); if(FS.bag.length > 200) FS.bag.shift(); localStorage.setItem('truong-fishbag-v1', JSON.stringify(FS.bag)); } catch(e){}
   try { if(PROF){ const d = PROF.fish[sp.n] || {n:0, best:0}; d.n++; d.best = Math.max(d.best, w); PROF.fish[sp.n] = d; PROF.stats.catches = (PROF.stats.catches || 0) + 1; } mprog('fish3'); if(sp.sh === 'koi') mprog('koi'); } catch(e){} }
-function v45End(s){ if(s.over) return; const n = s.bag.length, kinds = new Set(s.bag.map(b => b.n)).size, pts = s.bag.reduce((a, b) => a + 2 + b.r*3 + b.w*1.5, 0) + (s.feeds || 0);
-  const plays = v45Day(V45_DAYK, true), half = plays > 10; let money = Math.max(1, Math.min(20, Math.round(1 + pts*.6))), exp = Math.max(6, Math.min(40, Math.round(6 + pts*1.4)));
+function v45pEnd(s){ if(s.over) return; const n = s.bag.length, kinds = new Set(s.bag.map(b => b.n)).size, pts = s.bag.reduce((a, b) => a + 2 + b.r*3 + b.w*1.5, 0) + (s.feeds || 0);
+  const plays = v45pDay(V45P_DAYK, true), half = plays > 10; let money = Math.max(1, Math.min(20, Math.round(1 + pts*.6))), exp = Math.max(6, Math.min(40, Math.round(6 + pts*1.4)));
   if(half){ money = Math.max(1, Math.ceil(money/2)); exp = Math.max(1, Math.ceil(exp/2)); } s.rw = [money, exp, half];
   s.over = n ? `Câu được ${n} con · ${kinds} loài` : 'Hết mồi câu!'; s.sub = (typeof PROF !== 'undefined' && PROF) ? `+$${money} · +${exp} EXP${half ? ' (lượt thứ ' + plays + ' hôm nay, thưởng một nửa)' : ''}` : 'Đăng nhập để nhận tiền và EXP'; }
-function v45Splash(v, f){ try { sfx(); const t = AC.currentTime; if(f) tone(t, f, .08, v*.4, 'sine'); woodKnock(t, 180 + Math.random()*60, v, .12); } catch(e){} }
+function v45pSplash(v, f){ try { sfx(); const t = AC.currentTime; if(f) tone(t, f, .08, v*.4, 'sine'); woodKnock(t, 180 + Math.random()*60, v, .12); } catch(e){} }
 // ---------- drawing (static backdrop cached offscreen; only water life is drawn each frame) ----------
-const V45_PAL = [{w:['#5fb7c9', '#1d5f78', '#123c52'], t:'#3f7d4a', t2:'#2e5f3a'}, {w:['#7fd0e0', '#2a7f9e', '#174f6a'], t:'#4b8a52', t2:'#356b3c'}, {w:['#79b59a', '#2f6e5a', '#1c4a3c'], t:'#5a8f45', t2:'#3c6b32'}];
-function v45Back(s){ const key = [s.vw, s.vh, s.spot, s.night].join(); if(V45.bgKey === key) return V45.bg; const cv = V45.bg || document.createElement('canvas'); cv.width = s.vw; cv.height = s.vh; const c = cv.getContext('2d'), W = s.vw, H = s.vh, SY = s.sy, P = V45_PAL[s.spot], N = s.night;
+const V45P_PAL = [{w:['#5fb7c9', '#1d5f78', '#123c52'], t:'#3f7d4a', t2:'#2e5f3a'}, {w:['#7fd0e0', '#2a7f9e', '#174f6a'], t:'#4b8a52', t2:'#356b3c'}, {w:['#79b59a', '#2f6e5a', '#1c4a3c'], t:'#5a8f45', t2:'#3c6b32'}];
+function v45pBack(s){ const key = [s.vw, s.vh, s.spot, s.night].join(); if(V45P.bgKey === key) return V45P.bg; const cv = V45P.bg || document.createElement('canvas'); cv.width = s.vw; cv.height = s.vh; const c = cv.getContext('2d'), W = s.vw, H = s.vh, SY = s.sy, P = V45P_PAL[s.spot], N = s.night;
   // sky
   let g = c.createLinearGradient(0, 0, 0, SY); if(N){ g.addColorStop(0, '#141a44'); g.addColorStop(1, '#3d3f7a'); } else { g.addColorStop(0, '#8fd0ee'); g.addColorStop(.7, '#d9f0f4'); g.addColorStop(1, '#fbeed2'); } c.fillStyle = g; c.fillRect(0, 0, W, SY);
   if(N){ for(let i=0;i<70;i++){ c.fillStyle = `rgba(255,250,220,${.3 + (i % 5)*.14})`; c.fillRect((i*97) % W, (i*53) % (SY*.7), i % 9 ? 2 : 3, i % 9 ? 2 : 3); } c.fillStyle = '#fff6d0'; c.beginPath(); c.arc(W*.8, SY*.25, 22, 0, 7); c.fill(); }
@@ -109,8 +109,8 @@ function v45Back(s){ const key = [s.vw, s.vh, s.spot, s.night].join(); if(V45.bg
   c.fillStyle = N ? '#5a4330' : '#9a6b3f'; c.fillRect(0, SY - 22, D, 14); c.fillStyle = N ? '#4a3626' : '#7a5230'; for(let x=0;x<D;x+=18) c.fillRect(x, SY - 22, 2, 14); c.fillRect(0, SY - 9, D, 3);
   // shore grass at far right edge for spot 2: reeds
   if(s.spot === 2){ c.strokeStyle = N ? '#2f4a2a' : '#4f7a32'; c.lineWidth = 3; for(let i=0;i<10;i++){ const x = W - 12 - i*9; c.beginPath(); c.moveTo(x, SY + 6); c.quadraticCurveTo(x - 6, SY - 30, x - 2, SY - 54 - (i % 3)*10); c.stroke(); } }
-  V45.bg = cv; V45.bgKey = key; return cv; }
-function v45DrawFish(c, f, t){ const sp = f.sp, L = sp.L*f.k, h = L*(sp.sh === 'round' ? .55 : sp.sh === 'long' ? .28 : .38), [c1, c2] = sp.c, wag = Math.sin(f.ph*2.6)*(f.st === 'swim' ? .25 : .5);
+  V45P.bg = cv; V45P.bgKey = key; return cv; }
+function v45pDrawFish(c, f, t){ const sp = f.sp, L = sp.L*f.k, h = L*(sp.sh === 'round' ? .55 : sp.sh === 'long' ? .28 : .38), [c1, c2] = sp.c, wag = Math.sin(f.ph*2.6)*(f.st === 'swim' ? .25 : .5);
   c.save(); c.translate(f.x, f.y); c.scale(f.dir, 1);
   if(sp.sh === 'turtle'){ c.fillStyle = '#8fbf6a'; c.beginPath(); c.ellipse(L*.5, 0, 7, 5, 0, 0, 7); c.fill(); for(const [x, y] of [[-L*.3, h*.6], [L*.3, h*.6], [-L*.3, -h*.6], [L*.3, -h*.6]]){ c.beginPath(); c.ellipse(x, y + Math.sin(f.ph*2)*2, 6, 3, 0, 0, 7); c.fill(); } c.fillStyle = c2; c.beginPath(); c.ellipse(0, 0, L*.45, h*.55, 0, 0, 7); c.fill(); c.fillStyle = c1; c.beginPath(); c.ellipse(0, 0, L*.34, h*.42, 0, 0, 7); c.fill(); c.restore(); return; }
   // tail
@@ -124,9 +124,9 @@ function v45DrawFish(c, f, t){ const sp = f.sp, L = sp.L*f.k, h = L*(sp.sh === '
   if(sp.sh === 'cat' || sp.n === 'Cá chép'){ c.strokeStyle = c2; c.lineWidth = 1.2; c.beginPath(); c.moveTo(L*.46, h*.08); c.quadraticCurveTo(L*.6, h*.3, L*.56 + Math.sin(t*3)*3, h*.5); c.moveTo(L*.46, h*.1); c.quadraticCurveTo(L*.66, h*.12, L*.7, h*.3); c.stroke(); }
   if(sp.r >= 3){ c.fillStyle = 'rgba(255,240,160,.9)'; const a = t*4 + f.ph; c.fillRect(Math.cos(a)*L*.4, Math.sin(a)*h*.8, 3, 3); }
   c.restore(); }
-function v45Round(c, x, y, w, h, r){ c.beginPath(); if(c.roundRect) c.roundRect(x, y, w, h, r); else c.rect(x, y, w, h); }
-function v45Draw(s, c){ const W = s.vw, H = s.vh, SY = s.sy, t = s.t;
-  c.drawImage(v45Back(s), 0, 0);
+function v45pRound(c, x, y, w, h, r){ c.beginPath(); if(c.roundRect) c.roundRect(x, y, w, h, r); else c.rect(x, y, w, h); }
+function v45pDraw(s, c){ const W = s.vw, H = s.vh, SY = s.sy, t = s.t;
+  c.drawImage(v45pBack(s), 0, 0);
   // lotus pads / lily pads on the surface
   if(s.spot !== 1){ for(let i=0;i<(s.spot === 2 ? 9 : 3);i++){ const x = s.dock + 40 + ((i*173) % (W - s.dock - 60)), y = SY + 2 + Math.sin(t*.8 + i)*1.2; c.fillStyle = s.night ? '#2f5a3a' : '#4f9a45'; c.beginPath(); c.ellipse(x, y, 22, 6, 0, .3, Math.PI*2 - .1); c.lineTo(x, y); c.fill(); if(s.spot === 2 && i % 2 === 0){ c.fillStyle = '#ff9ec0'; c.beginPath(); c.moveTo(x - 7, y - 3); c.quadraticCurveTo(x - 9, y - 16, x, y - 20); c.quadraticCurveTo(x + 9, y - 16, x + 7, y - 3); c.fill(); c.fillStyle = '#fff1f6'; c.beginPath(); c.ellipse(x, y - 9, 3, 7, 0, 0, 7); c.fill(); } } }
   // swaying weeds
@@ -134,7 +134,7 @@ function v45Draw(s, c){ const W = s.vw, H = s.vh, SY = s.sy, t = s.t;
   // food pellets
   c.fillStyle = '#d7a35a'; s.food_.forEach(p => c.fillRect(p.x - 2, p.y - 2, 4, 4));
   // fish
-  s.fish.forEach(f => v45DrawFish(c, f, t));
+  s.fish.forEach(f => v45pDrawFish(c, f, t));
   // surface shimmer
   c.strokeStyle = 'rgba(255,255,255,.35)'; c.lineWidth = 2; for(let i=0;i<7;i++){ const x = ((i*151 + t*14) % (W + 60)) - 30; c.beginPath(); c.moveTo(x, SY + 3 + (i % 3)*4); c.lineTo(x + 26, SY + 3 + (i % 3)*4); c.stroke(); }
   c.fillStyle = 'rgba(255,255,255,.16)'; c.fillRect(0, SY - 1, W, 3);
@@ -143,7 +143,7 @@ function v45Draw(s, c){ const W = s.vw, H = s.vh, SY = s.sy, t = s.t;
   // fireflies at night
   if(s.night){ for(let i=0;i<10;i++){ const x = (i*113 + Math.sin(t*.4 + i)*40 + W) % W, y = SY*.55 + Math.sin(t*.7 + i*2)*SY*.2, a = .4 + .6*Math.abs(Math.sin(t*2 + i)); c.fillStyle = `rgba(220,255,140,${a})`; c.beginPath(); c.arc(x, y, 2.4, 0, 7); c.fill(); } }
   // the player sitting on the dock with the rod
-  v45Angler(s, c);
+  v45pAngler(s, c);
   // line + bobber
   const [tx, ty] = s.tip; let bx = s.hx, by = SY + (s.bob || 0);
   if(s.st === 'cast'){ const u = s.ct; bx = tx + (s.hx - tx)*u; by = ty + (SY - ty)*u - Math.sin(u*Math.PI)*80; }
@@ -152,21 +152,21 @@ function v45Draw(s, c){ const W = s.vw, H = s.vh, SY = s.sy, t = s.t;
     c.fillStyle = '#e53935'; c.beginPath(); c.arc(bx, by - 2, 6, Math.PI, 0); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.arc(bx, by - 2, 6, 0, Math.PI); c.fill(); c.fillStyle = '#263238'; c.fillRect(bx - 1, by - 14, 2, 7);
     if(s.st === 'bite'){ c.font = '900 34px Nunito, sans-serif'; c.fillStyle = '#ffd23f'; c.textAlign = 'center'; c.fillText('❗', bx, by - 26 - Math.abs(Math.sin(t*10))*6); c.textAlign = 'left'; } }
   // fight meters
-  if(s.st === 'fight'){ const mw = Math.min(260, W*.6), mx = (W - mw)/2, my = SY + 76; c.fillStyle = 'rgba(10,15,34,.55)'; v45Round(c, mx - 10, my - 8, mw + 20, 50, 14); c.fill();
+  if(s.st === 'fight'){ const mw = Math.min(260, W*.6), mx = (W - mw)/2, my = SY + 76; c.fillStyle = 'rgba(10,15,34,.55)'; v45pRound(c, mx - 10, my - 8, mw + 20, 50, 14); c.fill();
     c.fillStyle = 'rgba(255,255,255,.2)'; c.fillRect(mx, my, mw, 10); c.fillStyle = '#2fbf71'; c.fillRect(mx, my, mw*Math.min(1, s.prog/100), 10);
     c.fillStyle = 'rgba(255,255,255,.2)'; c.fillRect(mx, my + 20, mw, 10); c.fillStyle = s.ten > 75 ? '#ef4b4b' : s.ten > 50 ? '#ffb020' : '#4fc3f7'; c.fillRect(mx, my + 20, mw*Math.min(1, s.ten/100), 10);
     c.font = '800 13px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText('🐟', mx - 2 + mw*Math.min(1, s.prog/100) - 6, my + 9); c.fillText('〰', mx - 2 + mw*Math.min(1, s.ten/100) - 6, my + 30); }
   // HUD pill: bait · catches · feed button
-  c.fillStyle = 'rgba(10,15,34,.5)'; v45Round(c, 12, H - 48, 182, 36, 18); c.fill(); c.font = '800 17px Nunito, sans-serif'; c.fillStyle = '#fff'; c.textAlign = 'left'; c.fillText(`🪱 ${s.bait}   🐟 ${s.bag.length}`, 26, H - 24);
+  c.fillStyle = 'rgba(10,15,34,.5)'; v45pRound(c, 12, H - 48, 182, 36, 18); c.fill(); c.font = '800 17px Nunito, sans-serif'; c.fillStyle = '#fff'; c.textAlign = 'left'; c.fillText(`🪱 ${s.bait}   🐟 ${s.bag.length}`, 26, H - 24);
   c.fillStyle = s.happy > 0 ? 'rgba(255,170,200,.85)' : 'rgba(10,15,34,.55)'; c.beginPath(); c.arc(W - 50, H - 52, 32, 0, 7); c.fill(); c.strokeStyle = 'rgba(255,255,255,.7)'; c.lineWidth = 2; c.stroke(); c.font = '26px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('🍞', W - 50, H - 43); c.font = '800 13px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText('×' + s.food, W - 50, H - 12); c.textAlign = 'left';
   // message
-  if(s.msgT > 0 && s.msg && !s.over){ c.globalAlpha = Math.min(1, s.msgT*2); c.font = '800 18px Nunito, sans-serif'; const mw = c.measureText(s.msg).width + 32, mx = (W - mw)/2, my = SY + 22; c.fillStyle = 'rgba(10,15,34,.6)'; v45Round(c, mx, my, mw, 36, 18); c.fill(); c.fillStyle = '#fff'; c.textAlign = 'center'; c.fillText(s.msg, W/2, my + 24); c.textAlign = 'left'; c.globalAlpha = 1; }
+  if(s.msgT > 0 && s.msg && !s.over){ c.globalAlpha = Math.min(1, s.msgT*2); c.font = '800 18px Nunito, sans-serif'; const mw = c.measureText(s.msg).width + 32, mx = (W - mw)/2, my = SY + 22; c.fillStyle = 'rgba(10,15,34,.6)'; v45pRound(c, mx, my, mw, 36, 18); c.fill(); c.fillStyle = '#fff'; c.textAlign = 'center'; c.fillText(s.msg, W/2, my + 24); c.textAlign = 'left'; c.globalAlpha = 1; }
   // catch card
-  if(s.card) v45Card(s, c);
+  if(s.card) v45pCard(s, c);
   if(s.over){ c.fillStyle = 'rgba(5,8,20,.55)'; c.fillRect(0, 0, W, H); c.textAlign = 'center'; c.font = '900 30px Nunito, sans-serif'; c.fillStyle = '#ffd23f'; c.fillText(s.over, W/2, H*.36); c.font = '800 18px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText(s.sub || '', W/2, H*.36 + 34);
-    const kinds = [...new Set(s.bag.map(b => b.n))].slice(0, 6); kinds.forEach((n, i) => { const sp = V45_FISH.find(f => f.n === n); v45DrawFish(c, {sp, x:W/2 + (i - (kinds.length - 1)/2)*Math.min(90, W/7), y:H*.36 + 84, dir:1, ph:t, k:.9, st:'swim'}, t); }); c.textAlign = 'left'; }
+    const kinds = [...new Set(s.bag.map(b => b.n))].slice(0, 6); kinds.forEach((n, i) => { const sp = V45P_FISH.find(f => f.n === n); v45pDrawFish(c, {sp, x:W/2 + (i - (kinds.length - 1)/2)*Math.min(90, W/7), y:H*.36 + 84, dir:1, ph:t, k:.9, st:'swim'}, t); }); c.textAlign = 'left'; }
 }
-function v45Angler(s, c){ const x = s.px, y = s.sy - 20, sc = s.vh > s.vw ? 2.8 : 2.6, look = (typeof myLook === 'function' ? myLook() : agentLook(2, {}));
+function v45pAngler(s, c){ const x = s.px, y = s.sy - 20, sc = s.vh > s.vw ? 2.8 : 2.6, look = (typeof myLook === 'function' ? myLook() : agentLook(2, {}));
   const breathe = Math.sin(s.t*1.6)*.6, [tx, ty] = s.tip;
   // rod (drawn behind the hands)
   const hx = x + 9*sc, hy = y - 15*sc, bend = s.st === 'fight' ? 26 + Math.sin(s.t*12)*4 : s.st === 'bite' ? 12 : 4; c.strokeStyle = s.night ? '#c8a27a' : '#6d4c2e'; c.lineWidth = 3.5; c.beginPath(); c.moveTo(hx - 8, hy + 10); c.quadraticCurveTo((hx + tx)/2, (hy + ty)/2 + bend, tx, ty); c.stroke(); c.strokeStyle = '#3e2723'; c.lineWidth = 5; c.beginPath(); c.moveTo(hx - 8, hy + 10); c.lineTo(hx + 6, hy - 2); c.stroke();
@@ -178,14 +178,14 @@ function v45Angler(s, c){ const x = s.px, y = s.sy - 20, sc = s.vh > s.vw ? 2.8 
   // bucket next to the player
   c.fillStyle = '#4f7fb0'; c.beginPath(); c.moveTo(x - 22*sc, y - 1); c.lineTo(x - 12*sc, y - 1); c.lineTo(x - 13*sc, y - 9*sc); c.lineTo(x - 21*sc, y - 9*sc); c.fill(); c.strokeStyle = '#cfd8dc'; c.lineWidth = 1.5; c.beginPath(); c.arc(x - 17*sc, y - 9*sc, 4*sc, Math.PI, 0); c.stroke();
   if(s.bag.length){ c.font = `${Math.round(5*sc)}px Nunito, sans-serif`; c.fillText('🐟', x - 21*sc, y - 9*sc); } }
-function v45Card(s, c){ const W = s.vw, H = s.vh, cw = Math.min(380, W - 40), ch = 210, cx = (W - cw)/2, cy = Math.max(20, s.sy - ch/2 + 40), {sp, w, isNew} = s.card;
-  c.fillStyle = '#fffbf0'; v45Round(c, cx, cy, cw, ch, 22); c.fill(); c.strokeStyle = sp.r >= 3 ? '#e0a800' : '#8bc34a'; c.lineWidth = 3; c.stroke();
-  v45DrawFish(c, {sp, x:W/2, y:cy + 60, dir:1, ph:s.t*2, k:1.5, st:'swim'}, s.t);
+function v45pCard(s, c){ const W = s.vw, H = s.vh, cw = Math.min(380, W - 40), ch = 210, cx = (W - cw)/2, cy = Math.max(20, s.sy - ch/2 + 40), {sp, w, isNew} = s.card;
+  c.fillStyle = '#fffbf0'; v45pRound(c, cx, cy, cw, ch, 22); c.fill(); c.strokeStyle = sp.r >= 3 ? '#e0a800' : '#8bc34a'; c.lineWidth = 3; c.stroke();
+  v45pDrawFish(c, {sp, x:W/2, y:cy + 60, dir:1, ph:s.t*2, k:1.5, st:'swim'}, s.t);
   c.textAlign = 'center'; c.fillStyle = '#1b2a33'; c.font = '900 22px Nunito, sans-serif'; c.fillText(`${sp.n}${isNew ? ' · MỚI ✨' : ''}`, W/2, cy + 120); c.font = '800 17px Nunito, sans-serif'; c.fillStyle = '#3d5a66'; c.fillText(`⚖️ ${w} kg · ${['Thường gặp', 'Khá hiếm', 'Hiếm', 'Huyền thoại'][sp.r]}`, W/2, cy + 146);
   c.font = '700 16px Nunito, sans-serif'; c.fillStyle = '#2e4b3a'; const words = ('💡 ' + sp.f).split(' '); let line = '', ly = cy + 174; for(const wd of words){ const tt = line ? line + ' ' + wd : wd; if(c.measureText(tt).width > cw - 30 && line){ c.fillText(line, W/2, ly); line = wd; ly += 20; } else line = tt; } c.fillText(line, W/2, ly); c.textAlign = 'left'; }
-function v45OpenPond(spot){ openArcade('pond', spot || 0); }
+function v45pOpenPond(spot){ openArcade('pond', spot || 0); }
 // ---------- world flags: wider plaza, tap a flag = one question a day ----------
-const V45_FQ = {
+const V45P_FQ = {
   vn:['Hà Nội', 'Việt Nam có hình dáng giống chữ cái nào?', ['S', 'C', 'L', 'O'], 'Dải đất hình chữ S trải dài hơn 3.200 km bờ biển.'],
   jp:['Tokyo', 'Ngọn núi nổi tiếng nhất Nhật Bản là?', ['Núi Phú Sĩ', 'Everest', 'Kilimanjaro', 'Núi Alps'], 'Nhật Bản được gọi là “xứ sở mặt trời mọc”.'],
   us:['Washington, D.C.', 'Lá cờ Hoa Kỳ có bao nhiêu ngôi sao?', ['50', '13', '48', '51'], 'Mỗi ngôi sao là một bang; 13 sọc là 13 bang đầu tiên.'],
@@ -207,26 +207,26 @@ const V45_FQ = {
   ar:['Buenos Aires', 'Argentina vô địch World Cup 2022 ở môn nào?', ['Bóng đá', 'Bóng rổ', 'Quần vợt', 'Bơi lội'], 'Điệu tango nổi tiếng ra đời ở Argentina.']
 };
 // 64 px apart (was 35), with a gap around the lighthouse
-const V45_FL = {x0:1600, dx:64, y:856};
-const v45FlagXY = i => { const x = V45_FL.x0 + i*V45_FL.dx; return [x > LIGHTHOUSE[0] - 70 ? x + 150 : x, V45_FL.y]; };
-function v45Plaza(){ const x1 = v45FlagXY(WORLD_FLAGS.length - 1)[0] + 40; if(VB.x1 < V45_FL.x0 - 60 || VB.x0 > x1) return;
-  const y = V45_FL.y, done = v45Day(V45_FLAGK) > 0; rect('rgba(214,196,160,.55)', V45_FL.x0 - 28, y - 6, LIGHTHOUSE[0] - 60 - V45_FL.x0, 12); rect('rgba(214,196,160,.55)', LIGHTHOUSE[0] + 80, y - 6, x1 - LIGHTHOUSE[0] - 80, 12);
-  WORLD_FLAGS.forEach(([c], i) => { const [x] = v45FlagXY(i); rect('#eceff1', x, y - 66, 3, 66); rect('#90a4ae', x - 4, y - 3, 11, 5); ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(x + 1.5, y - 67, 2.5, 0, 7); ctx.fill(); drawFlag(c, x + 3, y - 66 + Math.sin(realT*2.4 + i*.7)*.8, 28, 18); });
-  const lb = done ? '🌍 CỜ CÁC NƯỚC · hẹn câu hỏi mới ngày mai' : '🌍 CỜ CÁC NƯỚC · chạm lá cờ để nhận câu hỏi 🎁'; ctx.font = '800 14px Nunito, sans-serif'; const lw = ctx.measureText(lb).width + 20; ctx.fillStyle = 'rgba(255,248,230,.92)'; ctx.fillRect(V45_FL.x0 - 30, y - 104, lw, 22); ctx.fillStyle = '#5a4a2a'; ctx.fillText(lb, V45_FL.x0 - 20, y - 88); }
-function v45FlagOpen(i){ const [code, name] = WORLD_FLAGS[i] || []; const Q = V45_FQ[code]; if(!Q) return; const asked = v45Day(V45_FLAGK) > 0;
-  let box = $('#v45Q'); if(!box){ box = document.createElement('div'); box.id = 'v45Q'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); document.body.appendChild(box); box.addEventListener('click', e => { if(e.target === box) box.hidden = true; }); addEventListener('keydown', e => { if(e.key === 'Escape' && !box.hidden) box.hidden = true; }); }
-  box.innerHTML = '<div class="v45card"><button type="button" class="v45x" aria-label="Đóng">✕</button><canvas width="84" height="56"></canvas><h3></h3><p class="v45cap"></p><p class="v45q"></p><div class="v45opts"></div><p class="v45fact"></p></div>';
-  box.hidden = false; box.querySelector('.v45x').onclick = () => { box.hidden = true; };
+const V45P_FL = {x0:1600, dx:64, y:856};
+const v45pFlagXY = i => { const x = V45P_FL.x0 + i*V45P_FL.dx; return [x > LIGHTHOUSE[0] - 70 ? x + 150 : x, V45P_FL.y]; };
+function v45pPlaza(){ const x1 = v45pFlagXY(WORLD_FLAGS.length - 1)[0] + 40; if(VB.x1 < V45P_FL.x0 - 60 || VB.x0 > x1) return;
+  const y = V45P_FL.y, done = v45pDay(V45P_FLAGK) > 0; rect('rgba(214,196,160,.55)', V45P_FL.x0 - 28, y - 6, LIGHTHOUSE[0] - 60 - V45P_FL.x0, 12); rect('rgba(214,196,160,.55)', LIGHTHOUSE[0] + 80, y - 6, x1 - LIGHTHOUSE[0] - 80, 12);
+  WORLD_FLAGS.forEach(([c], i) => { const [x] = v45pFlagXY(i); rect('#eceff1', x, y - 66, 3, 66); rect('#90a4ae', x - 4, y - 3, 11, 5); ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(x + 1.5, y - 67, 2.5, 0, 7); ctx.fill(); drawFlag(c, x + 3, y - 66 + Math.sin(realT*2.4 + i*.7)*.8, 28, 18); });
+  const lb = done ? '🌍 CỜ CÁC NƯỚC · hẹn câu hỏi mới ngày mai' : '🌍 CỜ CÁC NƯỚC · chạm lá cờ để nhận câu hỏi 🎁'; ctx.font = '800 14px Nunito, sans-serif'; const lw = ctx.measureText(lb).width + 20; ctx.fillStyle = 'rgba(255,248,230,.92)'; ctx.fillRect(V45P_FL.x0 - 30, y - 104, lw, 22); ctx.fillStyle = '#5a4a2a'; ctx.fillText(lb, V45P_FL.x0 - 20, y - 88); }
+function v45pFlagOpen(i){ const [code, name] = WORLD_FLAGS[i] || []; const Q = V45P_FQ[code]; if(!Q) return; const asked = v45pDay(V45P_FLAGK) > 0;
+  let box = $('#v45pQ'); if(!box){ box = document.createElement('div'); box.id = 'v45pQ'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); document.body.appendChild(box); box.addEventListener('click', e => { if(e.target === box) box.hidden = true; }); addEventListener('keydown', e => { if(e.key === 'Escape' && !box.hidden) box.hidden = true; }); }
+  box.innerHTML = '<div class="v45pcard"><button type="button" class="v45px" aria-label="Đóng">✕</button><canvas width="84" height="56"></canvas><h3></h3><p class="v45pcap"></p><p class="v45pq"></p><div class="v45popts"></div><p class="v45pfact"></p></div>';
+  box.hidden = false; box.querySelector('.v45px').onclick = () => { box.hidden = true; };
   const fc = box.querySelector('canvas'); try { withCtx(fc.getContext('2d'), () => drawFlag(code, 2, 2, 80, 52)); } catch(e){}
-  box.querySelector('h3').textContent = name; box.querySelector('.v45cap').textContent = '🏛️ Thủ đô: ' + Q[0];
-  const fact = box.querySelector('.v45fact'), qp = box.querySelector('.v45q'), ob = box.querySelector('.v45opts');
+  box.querySelector('h3').textContent = name; box.querySelector('.v45pcap').textContent = '🏛️ Thủ đô: ' + Q[0];
+  const fact = box.querySelector('.v45pfact'), qp = box.querySelector('.v45pq'), ob = box.querySelector('.v45popts');
   if(asked){ qp.textContent = '📅 Hôm nay bạn đã trả lời câu hỏi rồi. Hẹn ngày mai nhé!'; fact.textContent = '💡 ' + Q[3]; return; }
   // alternate between a capital question and a fun-fact question by day
-  const capQ = new Date().getDate() % 2 === 0, codes = Object.keys(V45_FQ).filter(k => k !== code);
-  let q, opts, ans; if(capQ){ q = `Thủ đô của ${name} là?`; ans = Q[0]; opts = [ans]; while(opts.length < 4){ const o = V45_FQ[codes[Math.floor(Math.random()*codes.length)]][0]; if(!opts.includes(o)) opts.push(o); } box.querySelector('.v45cap').textContent = '🌍 Câu hỏi hôm nay'; }
+  const capQ = new Date().getDate() % 2 === 0, codes = Object.keys(V45P_FQ).filter(k => k !== code);
+  let q, opts, ans; if(capQ){ q = `Thủ đô của ${name} là?`; ans = Q[0]; opts = [ans]; while(opts.length < 4){ const o = V45P_FQ[codes[Math.floor(Math.random()*codes.length)]][0]; if(!opts.includes(o)) opts.push(o); } box.querySelector('.v45pcap').textContent = '🌍 Câu hỏi hôm nay'; }
   else { q = Q[1]; ans = Q[2][0]; opts = Q[2].slice(); }
   opts.sort(() => Math.random() - .5); qp.textContent = '❓ ' + q;
-  opts.forEach(o => { const b = document.createElement('button'); b.type = 'button'; b.textContent = o; b.onclick = () => { if(ob.dataset.done) return; ob.dataset.done = 1; v45Day(V45_FLAGK, true); const ok = o === ans;
+  opts.forEach(o => { const b = document.createElement('button'); b.type = 'button'; b.textContent = o; b.onclick = () => { if(ob.dataset.done) return; ob.dataset.done = 1; v45pDay(V45P_FLAGK, true); const ok = o === ans;
     ob.querySelectorAll('button').forEach(x => { x.disabled = true; if(x.textContent === ans) x.classList.add('ok'); else if(x === b) x.classList.add('no'); });
     fact.textContent = (ok ? '🎉 Chính xác! ' : '🙂 Chưa đúng, đáp án là: ' + ans + '. ') + '💡 ' + Q[3];
     if(ok){ try { reward(25, 15, `Câu hỏi cờ ${name}`); } catch(e){} try { blipSfx(1760); } catch(e){} } else { try { blipSfx(330); } catch(e){} }
@@ -234,16 +234,16 @@ function v45FlagOpen(i){ const [code, name] = WORLD_FLAGS[i] || []; const Q = V4
 // ---------- init ----------
 function v45PondInit(){
   // every pond/lake: the new fishing game (the sea pier keeps the old fishing window)
-  const of = openFishing; openFishing = function(spot){ if(spot === 'pond') return v45OpenPond(0); return of.apply(this, arguments); };
-  XHOT.push({r:{x:LAKE.cx - LAKE.rx*.9, y:LAKE.cy - LAKE.ry*.85, w:LAKE.rx*1.8, h:LAKE.ry*1.7}, f:() => v45OpenPond(1)}, {r:{x:LOTUS.cx - LOTUS.rx*.9, y:LOTUS.cy - LOTUS.ry*.85, w:LOTUS.rx*1.8, h:LOTUS.ry*1.7}, f:() => v45OpenPond(2)});
+  const of = openFishing; openFishing = function(spot){ if(spot === 'pond') return v45pOpenPond(0); return of.apply(this, arguments); };
+  XHOT.push({r:{x:LAKE.cx - LAKE.rx*.9, y:LAKE.cy - LAKE.ry*.85, w:LAKE.rx*1.8, h:LAKE.ry*1.7}, f:() => v45pOpenPond(1)}, {r:{x:LOTUS.cx - LOTUS.rx*.9, y:LOTUS.cy - LOTUS.ry*.85, w:LOTUS.rx*1.8, h:LOTUS.ry*1.7}, f:() => v45pOpenPond(2)});
   // flag plaza: wider spacing, every flag is tappable
-  drawFlagPlaza = v45Plaza;
-  WORLD_FLAGS.forEach((f, i) => { const [x, y] = v45FlagXY(i); XHOT.unshift({r:{x:x - 16, y:y - 80, w:48, h:92}, f:() => v45FlagOpen(i)}); });
+  drawFlagPlaza = v45pPlaza;
+  WORLD_FLAGS.forEach((f, i) => { const [x, y] = v45pFlagXY(i); XHOT.unshift({r:{x:x - 16, y:y - 80, w:48, h:92}, f:() => v45pFlagOpen(i)}); });
   // canvas sizing: the pond canvas follows the screen shape like the balloon
   const oa = openArcade; openArcade = function(id){ const r = oa.apply(this, arguments); document.body.classList.toggle('v45pond', id === 'pond'); if(id === 'pond') try { v44Fit(); } catch(e){} return r; };
-  addEventListener('resize', () => { if(ARC.id === 'pond' && document.body.classList.contains('v44arc') && ARC.s){ const [vw, vh] = v45Size(), cv = $('#arcCv'); if(cv.width !== vw || cv.height !== vh){ cv.width = vw; cv.height = vh; const s = ARC.s, k = vh/s.vh; s.vw = vw; s.vh = vh; s.sy = Math.round(vh*.382); s.bot = vh - 34; s.dock = Math.round(vw*(vh > vw ? .3 : .236)); s.px = s.dock - 26; s.tip = [s.dock + (vh > vw ? 84 : 104), s.sy - (vh > vw ? 150 : 120)]; s.fish.forEach(f => { f.x = Math.min(vw - 20, f.x); f.y = f.by = s.sy + 26 + (f.by - s.sy)*k; }); } v44Fit(); } });
+  addEventListener('resize', () => { if(ARC.id === 'pond' && document.body.classList.contains('v44arc') && ARC.s){ const [vw, vh] = v45pSize(), cv = $('#arcCv'); if(cv.width !== vw || cv.height !== vh){ cv.width = vw; cv.height = vh; const s = ARC.s, k = vh/s.vh; s.vw = vw; s.vh = vh; s.sy = Math.round(vh*.382); s.bot = vh - 34; s.dock = Math.round(vw*(vh > vw ? .3 : .236)); s.px = s.dock - 26; s.tip = [s.dock + (vh > vw ? 84 : 104), s.sy - (vh > vw ? 150 : 120)]; s.fish.forEach(f => { f.x = Math.min(vw - 20, f.x); f.y = f.by = s.sy + 26 + (f.by - s.sy)*k; }); } v44Fit(); } });
   // the edge fill behind the canvas: plain water colour for the pond (no blurred stretch)
   const fl = v44Fill; v44Fill = function(){ if(ARC.id === 'pond'){ const bg = $('#v44Bg'); if(bg){ if(bg.width !== 4){ bg.width = 4; bg.height = 4; } const g = bg.getContext('2d'); g.fillStyle = ARC.s && ARC.s.night ? '#0c1b33' : '#1d5f78'; g.fillRect(0, 0, 4, 4); } return; } return fl.apply(this, arguments); };
-  // rewards: $1–20 with half pay from the 11th round of the day (computed in v45End)
+  // rewards: $1–20 with half pay from the 11th round of the day (computed in v45pEnd)
   const ar = arcReward; arcReward = function(id, s){ if(id === 'pond'){ if(!PROF){ loginNudge(); return; } const [m, e] = s.rw || [1, 6]; reward(e, m, 'Câu cá thư giãn'); return; } return ar.apply(this, arguments); };
 }
