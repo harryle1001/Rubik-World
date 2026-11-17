@@ -127,7 +127,7 @@ function v45DrawInstr(k, x, y, dir, t){
 function v45MusicRoom(){
   const r = R.music; if(!v45Vis(r, 20)) return;
   V45_INSTR.forEach((d, i) => { if(i === 0) return; const [x, y] = v45InstrPos(i); ctx.fillStyle = ['#5c4b8a', '#3f6e8a', '#8a5a3f', '#7a3f6e'][i - 1]; ctx.beginPath(); ctx.ellipse(x, y - 2, 30, 12, 0, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y - 2, 26, 9, 0, 0, 7); ctx.stroke(); });
-  ctx.font = 'bold 9px Nunito, sans-serif'; ctx.textAlign = 'center'; V45_INSTR.forEach((d, i) => { const [x, y] = v45InstrPos(i); const ly = i === 0 ? r.y + r.h*.47 : y + 16; ctx.fillStyle = 'rgba(20,16,40,.75)'; const w = ctx.measureText(d.n).width + 8; ctx.fillRect(x - w/2, ly - 9, w, 12); ctx.fillStyle = '#ffe082'; ctx.fillText(d.n, x, ly); }); ctx.textAlign = 'left';
+  ctx.font = 'bold 9px Nunito, sans-serif'; ctx.textAlign = 'center'; V45_INSTR.forEach((d, i) => { const [x, y] = v45InstrPos(i); const ly = i === 0 ? r.y + r.h*.45 + 16 : y + 16; ctx.fillStyle = 'rgba(20,16,40,.75)'; const w = ctx.measureText(d.n).width + 8; ctx.fillRect(x - w/2, ly - 9, w, 12); ctx.fillStyle = '#ffe082'; ctx.fillText(d.n, x, ly); }); ctx.textAlign = 'left';
 }
 function v45MusicSprites(sp){
   const r = R.music; if(!v45Vis(r, 30)) return; const t = realT;
@@ -144,7 +144,9 @@ function v45OperaSprites(sp){
     const seats = [];
     [['violin', 7, 52, 106], ['cello', 4, 94, 132], ['flute', 2, 36, 128], ['horn', 2, 70, 148], ['timpani', 1, 0, 158]].forEach(([k, n, rad, dy]) => {
       for(let j=0;j<n;j++){ const a = n === 1 ? Math.PI/2 : Math.PI*(.15 + .7*j/(n - 1)); seats.push([k, cx + Math.cos(a)*rad*(k === 'timpani' ? 0 : 1) + (k === 'timpani' ? 128 : 0), r.y + dy + Math.sin(a)*12]); } });
-    seats.forEach(([k, x, y], i) => { if(!inVB(x, y)) return; const dir = x < cx ? 1 : -1; sp.push({y, f:() => { rect('#3e2723', x - 6, y - 2, 12, 3); v45Sit(360 + i, x, y, dir, {shirt:'#212121', pants:'#111'}); v45DrawInstr(k, x, y, dir, t + i*.3); }}); });
+    // seated players are drawn once into a cached layer (cheap on phones); instruments stay animated
+    const oc = V45.cache.orch || (V45.cache.orch = v45Layer(r.w, 170, () => seats.forEach(([k, x, y], i) => { const lx = x - r.x, ly = y - r.y - 20; rect('#3e2723', lx - 6, ly - 2, 12, 3); v45Sit(360 + i, lx, ly, x < cx ? 1 : -1, {shirt:'#212121', pants:'#111'}); })));
+    sp.push({y:r.y + 160, f:() => { ctx.drawImage(oc, r.x, r.y + 20); seats.forEach(([k, x, y], i) => v45DrawInstr(k, x, y + 4, x < cx ? 1 : -1, t + i*.3)); }});
     // conductor on a podium, baton follows the music beat
     const py = r.y + 190; sp.push({y:py, f:() => { rect('#5d4037', cx - 14, py - 4, 28, 7); rect('#795548', cx - 14, py - 4, 28, 2); const f = fakeAt(380, cx, py - 4, 1, {icon:null, moving:false, shirt:'#111', pants:'#111'}); bodyAt(f);
       const ph = beat % 1, sw = Math.sin(ph*Math.PI*2), bx = cx + 4 + sw*10, byy = py - 26 - Math.abs(Math.cos(ph*Math.PI))*8; rect('#f2c9a0', bx - 1, byy, 3, 3); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(bx + 1, byy); ctx.lineTo(bx + 8 + sw*5, byy - 10); ctx.stroke(); rect('#f2c9a0', cx - 9 - sw*3, py - 24, 3, 3); }});
@@ -152,15 +154,19 @@ function v45OperaSprites(sp){
     if(V45.th.opera && V45.th.opera.w > .03) sp.push({y:r.y + 200, f:() => { ctx.font = '13px Nunito, sans-serif'; for(let i=0;i<5;i++){ const u = (t*.35 + i*.2) % 1; ctx.fillStyle = `rgba(255,236,150,${1 - u})`; ctx.fillText(i % 2 ? '♪' : '♫', cx - 80 + i*40 + Math.sin(t + i)*6, r.y + 120 - u*40); } }});
   }
   // student audience on the benches (same grid as the hall seats)
-  for(let row=0; row<5; row++) for(let c=0; c<4; c++){ const bx = r.x + 46 + c*84, y = r.y + 210 + row*68 + 6; if(!inVB(bx + 26, y)) continue;
-    for(let s=0;s<2;s++){ if(v45H(row*4 + c, s) < .25) continue; const x = bx + 14 + s*24, id = 400 + row*8 + c*2 + s; sp.push({y, f:() => { const f = v45Sit(id, x, y, x < cx ? 1 : -1); if(Math.sin(t*.8 + id) > .97) { ctx.fillStyle = '#ffd54f'; ctx.font = '10px Nunito, sans-serif'; ctx.fillText('♥', x - 3, y - 36); } }}); } }
+  for(let row=0; row<5; row++){ const y = r.y + 210 + row*68 + 6; if(y < VB.y0 - 10 || y - 50 > VB.y1) continue;
+    const lc = V45.cache['aud' + row] || (V45.cache['aud' + row] = v45Layer(r.w, 50, () => { for(let c=0; c<4; c++) for(let s=0;s<2;s++){ if(v45H(row*4 + c, s) < .25) continue; const lx = 46 + c*84 + 14 + s*24; v45Sit(400 + row*8 + c*2 + s, lx, 44, lx < r.w/2 ? 1 : -1); } }));
+    sp.push({y, f:() => { ctx.drawImage(lc, r.x, y - 44); const k = Math.floor(t*.5) % 8, x = r.x + 60 + ((row*3 + k)*53) % (r.w - 120); if(Math.sin(t*1.6 + row) > .8){ ctx.fillStyle = '#ffd54f'; ctx.font = '10px Nunito, sans-serif'; ctx.fillText('♥', x, y - 38); } }}); }
 }
+function v45Layer(w, h, fn){ const [cv, g] = v45Cv(w, h, 1); withCtx(g, fn); return cv; }
 function v45OpBeat(){ if(V45.ac && V45.op0 && V45.th.opera && V45.th.opera.w > .01) return (V45.ac.currentTime - V45.op0)*V45.opBpm/60; return realT*V45.opBpm/60; }
 
 // ---------- 5. Background music engine (Web Audio, original pieces, CC0) ----------
+const V45_LITE = (() => { try { return matchMedia('(pointer:coarse)').matches; } catch(e){ return false; } })();
 const v45M = m => 440*Math.pow(2, (m - 69)/12);
 function v45Env(o, out, t, a, d, v){ const g = V45.ac.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + a); g.gain.exponentialRampToValueAtTime(.0001, t + a + d); o.connect(g); g.connect(out); return g; }
 function v45Note(kind, m, t, d, v, out){
+  if(!out) return;
   const A = V45.ac, o = A.createOscillator(); let src = o, extra = [];
   if(kind === 'pluck' || kind === 'koto'){ o.type = 'triangle'; o.frequency.setValueAtTime(v45M(m)*(kind === 'koto' ? 1.01 : 1), t); if(kind === 'koto') o.frequency.exponentialRampToValueAtTime(v45M(m), t + .08); v45Env(o, out, t, .005, d, v); }
   else if(kind === 'box'){ o.type = 'sine'; o.frequency.value = v45M(m); v45Env(o, out, t, .004, d, v); const o2 = A.createOscillator(); o2.frequency.value = v45M(m)*4; v45Env(o2, out, t, .002, d*.3, v*.25); extra.push(o2); }
@@ -168,8 +174,8 @@ function v45Note(kind, m, t, d, v, out){
   else if(kind === 'bowl'){ o.type = 'sine'; o.frequency.value = v45M(m); v45Env(o, out, t, .02, d, v); [2.71, 5.1].forEach((k, i) => { const p = A.createOscillator(); p.frequency.value = v45M(m)*k; v45Env(p, out, t, .02, d*(.6 - i*.2), v*.3/(i + 1)); extra.push(p); }); }
   else { // sustained voices: bowed, flute, brass, sax, pad
     const lp = A.createBiquadFilter(); lp.type = kind === 'sax' ? 'bandpass' : 'lowpass'; lp.frequency.value = {bowed:1700, flute:2600, brass:1300, sax:1100, pad:900}[kind] || 1500; lp.Q.value = kind === 'sax' ? 1.2 : .7;
-    o.type = kind === 'flute' ? 'sine' : kind === 'brass' ? 'square' : 'sawtooth'; o.frequency.value = v45M(m); if(kind === 'pad'){ o.detune.value = -7; const o2 = A.createOscillator(); o2.type = 'sawtooth'; o2.frequency.value = v45M(m); o2.detune.value = 7; o2.connect(lp); extra.push(o2); }
-    if(kind !== 'pad' && kind !== 'brass'){ const l = A.createOscillator(), lg = A.createGain(); l.frequency.value = 5.2; lg.gain.value = v45M(m)*.006; l.connect(lg); lg.connect(o.frequency); extra.push(l); }
+    o.type = kind === 'flute' ? 'sine' : kind === 'brass' ? 'square' : 'sawtooth'; o.frequency.value = v45M(m); if(kind === 'pad' && !V45_LITE){ o.detune.value = -7; const o2 = A.createOscillator(); o2.type = 'sawtooth'; o2.frequency.value = v45M(m); o2.detune.value = 7; o2.connect(lp); extra.push(o2); }
+    if(!V45_LITE && kind !== 'pad' && kind !== 'brass'){ const l = A.createOscillator(), lg = A.createGain(); l.frequency.value = 5.2; lg.gain.value = v45M(m)*.006; l.connect(lg); lg.connect(o.frequency); extra.push(l); }
     o.connect(lp); const g = A.createGain(), at = kind === 'pad' ? Math.min(.9, d*.4) : kind === 'brass' ? .05 : .09; g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + at); g.gain.setValueAtTime(v, t + Math.max(at, d - .15)); g.gain.exponentialRampToValueAtTime(.0001, t + d + .25); lp.connect(g); g.connect(out); src = null; }
   const end = t + d + .35; o.start(t); o.stop(end); extra.forEach(x => { x.start(t); x.stop(end); });
 }
@@ -214,15 +220,16 @@ function v45Ensure(){
   V45.out = A.createGain(); V45.out.gain.value = 0; V45.out.connect(A.destination);
   const dl = A.createDelay(1), fb = A.createGain(), lp = A.createBiquadFilter(), wet = A.createGain(); dl.delayTime.value = .27; fb.gain.value = .33; lp.type = 'lowpass'; lp.frequency.value = 2400; wet.gain.value = .32;
   V45.wet = A.createGain(); V45.wet.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(V45.out);
-  for(const k in V45_THEMES){ const T = V45_THEMES[k], g = A.createGain(); g.gain.value = 0; g.connect(V45.out); g.connect(V45.wet); const th = {g, w:0, i:0, next:0, on:false};
+  for(const k in V45_THEMES){ const T = V45_THEMES[k], g = A.createGain(); g.gain.value = 0; g.connect(V45.out); if(!V45_LITE) g.connect(V45.wet); const th = {g, w:0, i:0, next:0, on:false};
     if(T.voices){ th.v = {}; T.voices.forEach(n => { const vg = A.createGain(); vg.gain.value = 0; vg.connect(g); th.v[n] = vg; }); } V45.th[k] = th; }
   V45.timer = setInterval(v45Sched, 90); return true;
 }
 function v45Sched(){
   const A = V45.ac; if(!A || A.state !== 'running' || document.hidden) return; const now = A.currentTime;
-  for(const k in V45.th){ const th = V45.th[k], T = V45_THEMES[k]; if(th.w < .01){ th.on = false; continue; }
+  const top = Object.keys(V45.th).sort((a, b) => V45.th[b].w - V45.th[a].w).slice(0, V45_LITE ? 1 : 2);
+  for(const k in V45.th){ const th = V45.th[k], T = V45_THEMES[k]; if(th.w < .03 || !top.includes(k)){ th.on = false; continue; }
     const e = 60/T.bpm/2; if(!th.on){ th.on = true; th.i = 0; th.next = now + .1; if(k === 'opera') V45.op0 = th.next; }
-    let n = 0; while(th.next < now + .35 && n++ < 8){ try { T.step(th.i, th.next, th.v || th.g, e); } catch(err){} th.next += e; th.i++; } }
+    let n = 0; while(th.next < now + .35 && n++ < 8){ try { T.step(th.i, th.next, th.v ? th.vo : th.g, e); } catch(err){} th.next += e; th.i++; } }
 }
 function v45Update(dt){
   V45.ck -= dt; if(V45.ck > 0) return; V45.ck = .25;
@@ -230,7 +237,7 @@ function v45Update(dt){
   const p = PLAYER && PLAYER.visible ? PLAYER : cam, {w, rv} = v45Sources(p.x, p.y);
   let duck = 1; if(typeof musicOn !== 'undefined' && musicOn) duck *= .3; if(typeof openModal !== 'undefined' && openModal && openModal.id !== 'mZen') duck *= .4;
   V45.out.gain.setTargetAtTime(ambOn && !document.hidden ? V45.vol*duck : 0, now, .6);
-  let best = '', bw = 0; for(const k in V45.th){ const th = V45.th[k]; th.w = w[k] || 0; th.g.gain.setTargetAtTime(th.w, now, .8); if(th.v) for(const n in th.v) th.v[n].gain.setTargetAtTime(rv[n] || 0, now, .5); if(th.w > bw){ bw = th.w; best = k; } }
+  let best = '', bw = 0; for(const k in V45.th){ const th = V45.th[k]; th.w = w[k] || 0; th.g.gain.setTargetAtTime(th.w, now, .8); if(th.v){ th.vo = {}; for(const n in th.v){ th.v[n].gain.setTargetAtTime(rv[n] || 0, now, .5); th.vo[n] = (rv[n] || 0) > .04 ? th.v[n] : null; } } if(th.w > bw){ bw = th.w; best = k; } }
   if(best !== V45.cur){ V45.cur = best; const b = $('#v45Now'); if(b) b.textContent = '🎵 ' + V45_THEMES[best].n; }
 }
 function v45SettingsUi(){
