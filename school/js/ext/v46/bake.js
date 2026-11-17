@@ -76,8 +76,7 @@ function v46Paint(g, x0, y0, w, h, lod){
   for(const z of V46.Z){ const n = z.n; if(n.x1 < x0 || n.x0 > x1 || n.y1 < y0 || n.y0 > y1) continue;
     if(z.flip){ v46PaintHarbor(g, z, se); continue; }
     g.save(); v46ClipZone(g, z, 0); g.translate(z.d[0], z.d[1]);
-    const e = z.e, src = (cv, sy0, sy1, oy) => { if(!cv) return; const ya = Math.max(e.y0, sy0), yb = Math.min(e.y1, sy1), xa = Math.max(0, e.x0), xb = Math.min(W, e.x1); if(yb <= ya || xb <= xa) return; g.drawImage(cv, xa, ya - oy, xb - xa, yb - ya, xa, ya, xb - xa, yb - ya); };
-    src(groundCache, 0, 790, 0); src(northCache, NY, 0, NY);
+    g.drawImage(v47wPatch(z), z.e.x0, z.e.y0);   // v47: nền cũ đã bỏ màu cỏ cũ + dải đường cũ ở lề (v47w-worldfix.js)
     g.restore(); }
 }
 // clip to a zone's cut-out (expanded rect minus the real rects of other zones that poke in)
