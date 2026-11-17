@@ -949,3 +949,44 @@ body.v32phone #stage .prof .v45heart{font-size:16px}
 /* ski, football, tanks fill the whole screen in both orientations: no "rotate your phone" hint */
 body.v45arc #v44Rot{display:none!important}
 body.v45arc #mArcade #arcCv{touch-action:none}
+/* ===== v45 rubik chess ===== */
+/* golden split: cube 1.618 : controls 1 (landscape); one column on portrait phones */
+body.v44fs #mRubik .rubikwrap,body.v44fs #mLab .arcwrap{display:grid!important;grid-template-columns:minmax(0,1.618fr) minmax(0,1fr);gap:14px;align-items:start}
+body.v44fs #mRubik .rside,body.v44fs #mLab .arcside{min-width:0;max-height:calc(100dvh - 120px);overflow:auto}
+.v45col{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;width:100%}
+.v45stage{position:relative;width:min(100%, calc(100dvh - 250px));aspect-ratio:1}
+.v45stage #rubikCv{width:100%!important;max-width:none!important;height:100%;display:block}
+.v45ov{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+body.v44fs #mLab .arcmain{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+body.v44fs #mLab #labCv{width:min(100%, calc((100dvh - 270px)*560/520))!important;max-width:none!important;height:auto}
+.v45sol{width:100%;max-width:640px;font:700 16px/1.35 Nunito,system-ui,sans-serif;color:#F7F5EF}
+.v45bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.v45b{min-width:48px;min-height:44px;border-radius:12px;font:800 18px Nunito,system-ui,sans-serif;background:#1d2a5c;color:#fff;border:1px solid rgba(232,194,122,.45)}
+.v45b.v45go{background:#2fbf71;color:#0b1020;padding:0 16px}
+.v45b.v45play{background:#ffd23f;color:#1a1206}
+.v45ctl{display:inline-flex;gap:8px}
+.v45ctl[hidden],.v45b[hidden],.v45plan[hidden]{display:none!important}
+.v45cnt{font-weight:800;color:#ffe9a8;margin-left:4px}
+.v45say{margin:6px 0 0;min-height:1.35em;color:#dfe6ff}
+.v45hist,.v45plan{margin-top:6px;display:flex;align-items:center;gap:8px}
+.v45hist>b,.v45plan>b{flex:0 0 auto;font-size:14px;color:#e8c27a}
+.v45mv{display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin;padding:2px 0;flex:1 1 auto;min-height:32px;align-items:center}
+.v45mv i{color:#9aa6cf;font-style:normal;font-size:14px}
+.v45m{flex:0 0 auto;min-width:30px;padding:3px 7px;border-radius:8px;background:#26315e;color:#fff;font:800 15px Nunito,system-ui,sans-serif;text-align:center}
+.v45m.scr{background:#1a2142;color:#8d97bf}
+.v45m.sol{background:#1f5a3c;color:#c8ffe0}
+.v45m.done{background:#1f5a3c;color:#c8ffe0;opacity:.7}
+.v45m.now{background:#ffd23f;color:#1a1206;outline:2px solid #fff}
+@media (orientation:portrait){
+  body.v44fs #mRubik .rubikwrap,body.v44fs #mLab .arcwrap{grid-template-columns:1fr}
+  body.v44fs #mRubik .rside,body.v44fs #mLab .arcside{max-height:none;overflow:visible}
+  .v45stage{width:min(100%, calc(100dvh - 430px))}
+  body.v44fs #mLab #labCv{width:min(100%, calc((100dvh - 460px)*560/520))!important}
+  body.v44fs #mRubik .mbox,body.v44fs #mLab .mbox{overflow-y:auto}
+}
+@media (orientation:landscape) and (max-height:520px){.v45stage{width:min(100%, calc(100dvh - 175px))}body.v44fs #mLab #labCv{width:min(100%, calc((100dvh - 190px)*560/520))!important}.v45say{font-size:15px}}
+/* chess window: board fits the screen (board 1.618 : side panel 1) */
+body.v44fs #mChess .chesswrap{display:grid!important;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start}
+body.v44fs #mChess .cboardwrap{width:min(calc(100vw*.618), calc(100dvh - 80px));max-width:none!important;flex:none}
+@media (orientation:portrait){body.v44fs #mChess .chesswrap{grid-template-columns:1fr}body.v44fs #mChess .cboardwrap{width:min(100%, calc(100dvh - 300px))}}
+@media (orientation:landscape) and (max-height:520px){body.v44fs #mChess .cboardwrap{width:calc(100dvh - 66px)}}
