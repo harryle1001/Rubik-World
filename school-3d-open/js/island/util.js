@@ -32,7 +32,7 @@ export function heightAt(x, z){
   return h*land + (-5)*(1 - land) + (land < 1 ? -2*(1 - land) : 0);
 }
 // areas kept flat for buildings/fields
-export const FLAT = [[0, -20, 120], [-300, 0, 110], [300, -60, 120], [0, 300, 130], [0, -330, 170], [300, 200, 90], [-300, 160, 70], [110, 110, 36], [-280, 340, 62], [340, 380, 34], [300, -322, 44]];
+export const FLAT = [[0, -20, 120], [-300, 0, 110], [300, -60, 120], [0, 300, 130], [0, -330, 170], [300, 200, 90], [-300, 160, 70]];
 export const SEA_LEVEL = 0;
 
 // ---------- coloured primitives (non-indexed, vertex colours) ----------
@@ -63,5 +63,9 @@ export const addRect = (x, z, w, d) => COLLIDERS.push({t:1, x0:x - w/2, x1:x + w
 export function blocked(x, z, rad = .45){ for(const c of COLLIDERS){ if(c.t === 0){ if(Math.hypot(x - c.x, z - c.z) < c.r + rad) return true; } else if(x > c.x0 - rad && x < c.x1 + rad && z > c.z0 - rad && z < c.z1 + rad) return true; } return false; }
 // interactive places: {x, z, en, vi, icon, play}
 export const PLACES = [];
+// ---------- map editor layout: moved buildings are saved as {id: [x, z]} and applied when the world is built ----------
+export const LAYOUT = (() => { try { return JSON.parse(localStorage.getItem('rubik3d-layout')) || {}; } catch(e){ return {}; } })();
+export const MOVABLE = [];   // {id, en, vi, x, z, w, d, g}
+export function placeAt(id, obj, info){ const o = LAYOUT[id]; if(o){ obj.x = o[0]; obj.z = o[1]; } MOVABLE.push(Object.assign({id, x:obj.x, z:obj.z, obj}, info)); return obj; }
 export const store = { get(k, d){ try { const v = localStorage.getItem('rubik3d-' + k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } }, set(k, v){ try { localStorage.setItem('rubik3d-' + k, JSON.stringify(v)); } catch(e){} } };
 export function canvasTex(w, h, draw){ const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = IS_PHONE ? 4 : 8; return t; }

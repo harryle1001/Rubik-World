@@ -10,3 +10,14 @@ body.inIsland #v41Col,body.inIsland #v40Btn{display:none!important}
 body.inIsland .modal,body.inIsland #v40Coach,body.inIsland #v40Quiz,body.inIsland #v40Rep,body.inIsland #v43J,body.inIsland #v43Pop,body.inIsland .v38guide,body.inIsland #v39Say,body.inIsland .mghtour{z-index:92!important}
 body.inIsland #toast:not(#isl #toast){z-index:93}
 #isl .tile .ic svg{width:30px;height:30px;display:block}
+/* world map + layout editor */
+#isl #mapEd{position:fixed;inset:0;z-index:40;background:#1e6fa8;touch-action:none}
+#isl #mapEd canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
+#isl #mapEd.editing canvas{cursor:move}
+#isl #mapEd .mTop{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;background:linear-gradient(#0B1020ee,#0B102000);color:#F7F5EF;font-family:Nunito,system-ui,sans-serif}
+#isl #mapEd .mTop b{font-size:17px;white-space:nowrap}#isl #mapEd .mTop small{flex:1;opacity:.85;font-size:13px}
+#isl #mapEd .mTop button{width:44px;height:44px;border-radius:50%;border:1px solid #ffffff33;background:#141B33;color:#fff;font-size:18px}
+#isl #mapEd .mBar{position:absolute;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(#0B102000,#0B1020ee)}
+#isl #mapEd .mBar button{min-height:44px;padding:0 14px;border-radius:22px;border:1px solid #ffffff33;background:#141B33;color:#F7F5EF;font:700 14px Nunito,system-ui,sans-serif}
+#isl #mapEd .mBar button.gold{background:#E8C27A;color:#1a1530;border-color:#E8C27A}
+#isl #mapEd textarea{position:absolute;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));height:90px;border-radius:12px;font:12px monospace;padding:8px}

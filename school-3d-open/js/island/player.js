@@ -12,17 +12,22 @@ function bindInput(){
   cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, {x:e.clientX, y:e.clientY}); tapT = performance.now(); tapX = e.clientX; tapY = e.clientY; moved = false;
     if(ptrs.size === 2){ const [a, b] = [...ptrs.values()]; pinch = Math.hypot(a.x - b.x, a.y - b.y); jid = null; P.joy.on = false; joy.hidden = true; return; }
     if(e.pointerType !== 'mouse' && e.clientX < innerWidth*.45 && jid == null){ jid = e.pointerId; jx = e.clientX; jy = e.clientY; P.joy.on = true; joy.hidden = false; joy.style.left = (jx - 60) + 'px'; joy.style.top = (jy - 60) + 'px'; knob.style.transform = ''; }
-    else { camId = e.pointerId; lx = e.clientX; ly = e.clientY; } });
+    else { camId = e.pointerId; lx = e.clientX; ly = e.clientY; P.camHeld = true; } });
   cv.addEventListener('pointermove', e => { const p = ptrs.get(e.pointerId); if(!p) return; p.x = e.clientX; p.y = e.clientY; if(Math.hypot(e.clientX - tapX, e.clientY - tapY) > 10) moved = true;
     if(ptrs.size === 2){ const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y); if(pinch) P.camDist = Math.max(4, Math.min(40, P.camDist*pinch/d)); pinch = d; return; }
     if(e.pointerId === jid){ let dx = e.clientX - jx, dy = e.clientY - jy; const L = Math.hypot(dx, dy), m = 55; if(L > m){ dx *= m/L; dy *= m/L; } P.joy.x = dx/m; P.joy.y = dy/m; knob.style.transform = `translate(${dx}px, ${dy}px)`; P.target = null; }
     else if(e.pointerId === camId){ P.camYaw -= (e.clientX - lx)*.006; P.camPitch = Math.max(.08, Math.min(1.25, P.camPitch + (e.clientY - ly)*.004)); lx = e.clientX; ly = e.clientY; } });
-  const up = e => { ptrs.delete(e.pointerId); if(e.pointerId === jid){ jid = null; P.joy.x = P.joy.y = 0; P.joy.on = false; joy.hidden = true; } if(e.pointerId === camId) camId = null; if(ptrs.size < 2) pinch = 0;
+  const up = e => { ptrs.delete(e.pointerId); if(e.pointerId === jid){ jid = null; P.joy.x = P.joy.y = 0; P.joy.on = false; joy.hidden = true; } if(e.pointerId === camId){ camId = null; P.camHeld = false; } if(ptrs.size < 2) pinch = 0;
     if(!moved && performance.now() - tapT < 300 && e.type === 'pointerup') tapAt(e.clientX, e.clientY); };
   cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
   cv.addEventListener('wheel', e => { e.preventDefault(); P.camDist = Math.max(4, Math.min(40, P.camDist*(e.deltaY > 0 ? 1.1 : .9))); }, {passive:false});
-  addEventListener('keydown', e => { if(e.target.tagName === 'INPUT') return; P.keys[e.code] = true; if(e.code === 'Space'){ jump(); e.preventDefault(); } if(e.code === 'KeyQ' && P.fly) P.up = 1; if(e.code === 'KeyE' && P.fly) P.up = -1; });
-  addEventListener('keyup', e => { P.keys[e.code] = false; if(e.code === 'KeyQ' || e.code === 'KeyE') P.up = 0; });
+  const MOVE = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight', 'Space', 'KeyQ', 'KeyE']);
+  const mine = e => window.ISL_ON !== false && MOVE.has(e.code) && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !document.querySelector('.modal:not([hidden]), #v40Coach:not([hidden]), #isl #mg:not([hidden]), #isl #menu:not([hidden]), #isl #mapEd:not([hidden])');
+  // the island owns movement keys while it is on screen (the hidden 2D game does not also walk)
+  addEventListener('keydown', e => { if(mine(e)) e.stopPropagation(); }, true); addEventListener('keyup', e => { if(MOVE.has(e.code)){ P.keys[e.code] = false; if(e.code === 'KeyQ' || e.code === 'KeyE') P.up = 0; } }, true);
+  addEventListener('keydown', e => { if(mine(e)) handleKey(e); }, true);
+  addEventListener('blur', () => { P.keys = {}; P.up = 0; });
+  function handleKey(e){ if(e.repeat && e.code !== 'Space') { P.keys[e.code] = true; return; } P.keys[e.code] = true; if(e.code === 'Space'){ jump(); e.preventDefault(); } if(e.code === 'KeyQ' && P.fly) P.up = 1; if(e.code === 'KeyE' && P.fly) P.up = -1; }
 }
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 let groundTap = null; export const setGroundTap = f => { groundTap = f; }; let floorFn = null; export const setFloor = f => { floorFn = f; };
@@ -50,7 +55,12 @@ export function boardCarriage(on){ if(on){ dismount(); P.ride = 'carriage'; pers
 // ---------- per-frame movement ----------
 const fwd = new THREE.Vector3();
 export function updatePlayer(dt, t){
-  const k = P.keys; let ix = P.joy.x + ((k.KeyD || k.ArrowRight) ? 1 : 0) - ((k.KeyA || k.ArrowLeft) ? 1 : 0), iz = P.joy.y + ((k.KeyS || k.ArrowDown) ? 1 : 0) - ((k.KeyW || k.ArrowUp) ? 1 : 0);
+  const k = P.keys, tx = ((k.KeyD || k.ArrowRight) ? 1 : 0) - ((k.KeyA || k.ArrowLeft) ? 1 : 0), tz = ((k.KeyS || k.ArrowDown) ? 1 : 0) - ((k.KeyW || k.ArrowUp) ? 1 : 0);
+  // keys ease in/out (~0.12 s) so turning and diagonals feel smooth, like a stick
+  const kr = Math.min(1, dt*9); P.kx = (P.kx || 0) + (tx - (P.kx || 0))*kr; P.kz = (P.kz || 0) + (tz - (P.kz || 0))*kr; if(!tx && Math.abs(P.kx) < .02) P.kx = 0; if(!tz && Math.abs(P.kz) < .02) P.kz = 0;
+  let ix = P.joy.x + P.kx, iz = P.joy.y + P.kz;
+  // camera gently swings behind you while you walk forward (W, W+A, W+D)
+  if(!P.camHeld && iz < -.2 && !P.target) P.camYaw += Math.atan2(Math.sin(P.yaw + Math.PI - P.camYaw), Math.cos(P.yaw + Math.PI - P.camYaw))*Math.min(1, dt*1.4*(-iz));
   if(P.ride === 'carriage'){ const c = CARRIAGE.cart; P.x = c.position.x; P.z = c.position.z; P.y = c.position.y + 1.3; person.yaw = c.rotation.y + Math.PI/2; return finish(dt, 0); }
   let tw = null; if(P.target && !ix && !iz){ const dx = P.target[0] - P.x, dz = P.target[1] - P.z, d = Math.hypot(dx, dz); if(d < 1.2){ P.target = null; const cb = P.onArrive; P.onArrive = null; if(cb) cb(); } else tw = [dx/d, dz/d]; }
   const L = Math.hypot(ix, iz); if(L > 1){ ix /= L; iz /= L; }
@@ -61,7 +71,7 @@ export function updatePlayer(dt, t){
   let sp = Math.hypot(P.vx, P.vz); if(sp < .08 && want < .1){ P.vx = P.vz = 0; sp = 0; } if(sp > .05){ const nx = P.x + P.vx*dt, nz = P.z + P.vz*dt, r = Math.hypot(nx, nz), lim = 900;
     const okXY = (x, z) => { if(Math.hypot(x, z) > lim && ((x - 0)/640)**2 + ((z - 1180)/460)**2 > 1) return false; if(P.fly) return true; const h = heightAt(x, z); if(M && M.sea) return h < -.4; if(M && !M.sea && h < -1.6) return false; return !blocked(x, z, M ? .9 : .45); };
     if(okXY(nx, nz)){ P.x = nx; P.z = nz; } else if(okXY(nx, P.z)) P.x = nx; else if(okXY(P.x, nz)) P.z = nz; else { P.vx *= .3; P.vz *= .3; }
-    const ty = Math.atan2(P.vx, P.vz); let d = ty - P.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); if(sp > .4) P.yaw += d*Math.min(1, dt*12); }
+    const ty = Math.atan2(P.vx, P.vz); let d = ty - P.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); if(sp > .4) P.yaw += d*Math.min(1, dt*9); }
   const gh = heightAt(P.x, P.z); P.swim = !M && gh < -1.2 && !(floorFn && floorFn(P.x, P.z, P.y) > -1e8);
   if(P.fly){ P.alt = Math.max(2, Math.min(170, P.alt + P.up*12*dt + (iz < -.2 && !P.up ? 0 : 0))); P.y = Math.max(gh, 0) + P.alt; }
   else if(M && M.sea){ P.y = -.25 + Math.sin(t*1.5)*.08; }

@@ -1,12 +1,14 @@
 // Landmarks (open world): Old Town street of narrow tube houses with a clock tower, a five-tier pagoda tower with a lotus
 // pond, three windmills, a striped lighthouse on the east cliff and a covered wooden bridge over the stream.
 import * as THREE from 'three';
-import { PAL, heightAt, box, boxAt, cyl, cone, sphere, torus, merge, meshOf, MAT, colorize, addCircle, addRect, rng, edgeR } from './util.js';
+import { PAL, heightAt, box, boxAt, cyl, cone, sphere, torus, merge, meshOf, MAT, colorize, addCircle, addRect, rng, edgeR, FLAT, placeAt } from './util.js';
 import { sign, LAMPS, MOVERS } from './zones.js';
 import { CLOCK } from './ui.js';
 const H = (x, z) => heightAt(x, z);
 export const LIGHT = {x:0, z:0};
-export const TOWN = {x:-280, z:340}, PAGODA = {x:340, z:370}, MILLS = {x:300, z:-330};
+export const TOWN = placeAt('town', {x:-280, z:340}, {en:'Old Town', vi:'Phố cổ + Tháp đồng hồ', w:130, d:44, g:'land'}), PAGODA = placeAt('pagoda', {x:340, z:370}, {en:'Pagoda Tower', vi:'Tháp chùa cổ', w:24, d:50, g:'land'}), MILLS = placeAt('mills', {x:300, z:-330}, {en:'Windmill Hill', vi:'Đồi cối xay gió', w:90, d:50, g:'land'});
+export const LIGHTPOS = placeAt('light', (() => { const a = -.32, d = edgeR(Math.cos(a)*500, Math.sin(a)*500) - 58; return {x:Math.cos(a)*d, z:Math.sin(a)*d}; })(), {en:'Lighthouse', vi:'Ngọn hải đăng', w:16, d:12, g:'land'});
+FLAT.push([TOWN.x, TOWN.z, 62], [PAGODA.x, PAGODA.z + 10, 34], [MILLS.x, MILLS.z + 8, 44]);
 const TILE = '#b5532f', WALLS = ['#f6d365', '#f8c9a0', '#c8e6c9', '#b3e5fc', '#ffe0ac', '#f3e5f5', '#fff3c4'];
 const pivot = (geo, scene, x, y, z) => { const m = new THREE.Mesh(geo, MAT.solid); m.position.set(x, y, z); m.castShadow = true; scene.add(m); return m; };
 
@@ -71,8 +73,7 @@ function buildMills(scene){
 }
 // ================= LIGHTHOUSE (east cliff) =================
 function buildLighthouse(scene){
-  const a = -.32, d = edgeR(Math.cos(a)*500, Math.sin(a)*500) - 58;
-  const x = Math.cos(a)*d, z = Math.sin(a)*d; LIGHT.x = x - Math.cos(a)*30; LIGHT.z = z - Math.sin(a)*30; const y = H(x, z), G = [];
+  const x = LIGHTPOS.x, z = LIGHTPOS.z, a = Math.atan2(z, x); LIGHT.x = x - Math.cos(a)*30; LIGHT.z = z - Math.sin(a)*30; const y = H(x, z), G = [];
   G.push(cyl(5, 5.5, 1, '#9e9e9e', x, y - .4, z, 14));
   for(let k=0;k<6;k++){ const r0 = 2.8 - k*.18; G.push(cyl(r0 - .18, r0, 3.2, k % 2 ? '#e53935' : '#fafafa', x, y + .6 + k*3.2, z, 14)); }
   const top = y + .6 + 6*3.2; G.push(cyl(2.4, 2.4, .4, '#37474f', x, top, z, 14), cyl(1.6, 1.6, 2.2, '#fff59d', x, top + .4, z, 10), cone(2, 1.8, '#c62828', x, top + 2.6, z, 10), sphere(.3, '#fafafa', x, top + 4.5, z, 0));

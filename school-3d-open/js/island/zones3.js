@@ -1,9 +1,10 @@
 // Games Plaza (open world): six colourful kiosks around a fountain. Each one opens a group of the 2D game's mini games
 // and tools (chess, football, piano, shop, quests, AI Coach…), so every 2D feature lives in the 3D open world too.
 import * as THREE from 'three';
-import { PAL, heightAt, box, cyl, cone, sphere, torus, meshOf, addCircle, PLACES } from './util.js';
+import { PAL, heightAt, box, cyl, cone, sphere, torus, meshOf, addCircle, PLACES, FLAT, placeAt } from './util.js';
 import { sign, LAMPS, MOVERS } from './zones.js';
-export const PLAZA = {x:110, z:110, r:20};
+export const PLAZA = placeAt('plaza', {x:110, z:110, r:20}, {en:'Games Plaza', vi:'Quảng trường Trò chơi', w:52, d:52, g:'land'});
+FLAT.push([PLAZA.x, PLAZA.z, 36]);
 export const KIOSKS = [
   ['brain', 'Brain Games', 'Trò chơi trí tuệ', '🧠', '#6E8BFF'], ['sports', 'Sports', 'Thể thao', '⚽', '#3FD4A0'], ['play', 'Fun & Play', 'Vui chơi', '🎡', '#FF8A7A'],
   ['art', 'Music & Art', 'Nhạc & vẽ', '🎹', '#E8C27A'], ['life', 'Life & Shops', 'Cuộc sống', '🛍️', '#5FD3E6'], ['tools', 'School Office', 'Văn phòng trường', '🏫', '#B8C0D8']

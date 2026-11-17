@@ -3,7 +3,7 @@
 // houses, the six observatories, mall, festival plaza, Đà Lạt street, lotus pond, koi lake, harbour with the navy ship…).
 // Tap / left-click a building's sign to walk there and open its mini game or tool from the 2D game (window.RS bridge).
 import * as THREE from 'three';
-import { PAL, heightAt, box, boxAt, cyl, cone, sphere, torus, merge, MAT, colorize, place, addCircle, addRect, rng, PLACES, store } from './util.js';
+import { PAL, heightAt, box, boxAt, cyl, cone, sphere, torus, merge, MAT, colorize, place, addCircle, addRect, rng, PLACES, store, LAYOUT, MOVABLE } from './util.js';
 import { LAMPS, MOVERS } from './zones.js';
 import { P } from './player.js';
 export const CITY = {x:0, z:1180, rx:560, rz:380};
@@ -141,7 +141,8 @@ function signsMesh(items){
   const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({map:tex, side:THREE.DoubleSide})); return m;
 }
 export function buildCity(scene){
-  const items = layout(), {x:cx, z:cz, rx, rz} = CITY, chunks = [[], [], [], []];
+  const items = layout(), {x:cx, z:cz, rx, rz} = CITY, chunks = [[], [], [], []]; let outside = false;
+  for(const it of items){ const id = 'c:' + it.en, o = LAYOUT[id]; if(o){ it.x = o[0]; it.z = o[1]; if(!inCity(it.x, it.z)) outside = true; } MOVABLE.push({id, en:it.en, vi:it.vi, x:it.x, z:it.z, w:it.w, d:it.d, g:'city', obj:it}); }
   // ground: grass oval with a sandy beach rim, streets, lamps
   const gg = new THREE.CircleGeometry(1, 64); gg.rotateX(-Math.PI/2); gg.scale(rx - 8, 1, rz - 8); const ground = new THREE.Mesh(colorize(gg, '#7cc35a'), MAT.solid); ground.position.set(cx, 1.48, cz); ground.receiveShadow = true; scene.add(ground);
   const sg = new THREE.CircleGeometry(1, 64); sg.rotateX(-Math.PI/2); sg.scale(rx + 30, 1, rz + 30); const sand = new THREE.Mesh(colorize(sg, '#e9d8a6'), MAT.solid); sand.position.set(cx, .35, cz); scene.add(sand);
@@ -169,7 +170,7 @@ export function buildCity(scene){
   // garden: saplings, bushes and fruit trees (instanced), growth saved in localStorage
   buildGarden(scene);
   // hide the whole city when far away (saves draw calls and triangles on the main island)
-  const all = [ground, sand, sm, ...meshes.slice(1), GARDEN.group]; MOVERS.push({update(){ const far = Math.hypot(P.x - cx, P.z - cz) > 760; for(const m of all) if(m) m.visible = !far; }});
+  const all = [ground, sand, sm, ...meshes.slice(1), GARDEN.group]; MOVERS.push({update(){ const far = !outside && Math.hypot(P.x - cx, P.z - cz) > 760; for(const m of all) if(m) m.visible = !far; }});
 }
 export function cityBridgeTop(x, z){ const B = CBRIDGE; if(Math.abs(x - B.x) < B.w && z > B.z0 - 2 && z < B.z1 + 2) return B.y; return -1e9; }
 export const inCity = (x, z) => ((x - CITY.x)/(CITY.rx + 40))**2 + ((z - CITY.z)/(CITY.rz + 40))**2 < 1;
