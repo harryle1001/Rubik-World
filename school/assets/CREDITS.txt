@@ -13,3 +13,7 @@ assets/sfx/k-*.mp3 (coin, step, land, impact, gem, confirm)
 
 All files were converted to mono MP3 at 64 kbps. Bike bell, birds, waves and wind are
 synthesized in the browser with the Web Audio API (no files).
+
+Shop pictures (v45): every bike, pet, outfit, hat, jewel, boat, chess set, rod and lure picture in the shop
+is drawn by code in js/ext/v45-shop.js (original pixel art, no image files, no third-party art).
+One master bike kit (wheel, tube, saddle, crank parts) builds all 15 bike designs; colour variants are generated in code.

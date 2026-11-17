@@ -885,3 +885,32 @@ body.v44fs #mSudoku .sdkpad button{min-height:0!important;height:100%}
 body.v44fs #mSudoku .sdkpad{max-height:none!important;flex:0 0 auto!important;grid-auto-rows:auto!important}
 body.v44fs #mSudoku .sdkpad button{height:clamp(54px, calc((100dvh - 100vw - 250px)/2), 112px)!important;font-size:26px!important}
 @media (orientation:landscape){body.v44fs #mSudoku .sdkpad button{height:clamp(44px, 9dvh, 70px)!important}}
+/* ===== v45 shop ===== */
+/* golden ratio: picture 1.618 : 1, picture : info = φ : 1, spacing 5 / 8 / 13 / 21 (Fibonacci) */
+#mShop .mbox{font-family:"Nunito",system-ui,sans-serif}
+#mShop .cstatus{font:800 17px/1.3 "Nunito",sans-serif;color:#ffd23f}
+#mShop #shopTabs{flex-shrink:0;flex-wrap:nowrap;overflow-x:auto;gap:8px;padding:2px 2px 8px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+#mShop #shopTabs button{flex:0 0 auto;font:700 16px/1.2 "Nunito",sans-serif;min-height:44px;padding:5px 13px;border-radius:13px;gap:5px;box-shadow:none}
+#mShop #shopTabs .v45ti{font-size:18px;line-height:1}
+#mShop .legend{font:700 16px/1.4 "Nunito",sans-serif;color:#c3c9de}
+.shopgrid.v45grid{grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:13px}
+.scard.v45c{container-type:inline-size;padding:0;gap:0;border-radius:13px;overflow:hidden;background:linear-gradient(180deg,#1b2348,#121835);border:2px solid rgba(255,255,255,.13);box-shadow:0 5px 13px rgba(0,0,0,.35)}
+.scard.v45c:hover{border-color:rgba(255,210,63,.7)}
+.v45c .v45fig{position:relative;height:calc(100cqw / 1.618);background:#0f142e;overflow:hidden}
+.v45c .v45fig canvas{display:block;width:100%;height:100%;aspect-ratio:auto;image-rendering:pixelated;image-rendering:crisp-edges}
+.v45badge{position:absolute;left:8px;top:8px;font:800 16px/1 "Nunito",sans-serif;color:#0b1020;background:#e8ecf6;border-radius:999px;padding:4px 8px}
+.v45badge.on{background:#2fbf71;color:#06240f}.v45badge.have{background:#ffd23f;color:#2a1f00}.v45badge.lk{background:rgba(11,16,32,.85);color:#f7f5ef;border:1px solid rgba(255,255,255,.25)}
+.v45c .v45info{display:flex;flex-direction:column;gap:5px;padding:8px 13px 5px;min-height:calc(100cqw / 2.618);flex:1}
+.v45c .sname{font:800 18px/1.25 "Nunito",sans-serif;color:#f7f5ef;letter-spacing:0}
+.v45c .sdesc{font:700 16px/1.35 "Nunito",sans-serif;color:#c3c9de;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer;flex:0 0 auto}
+.v45c .sdesc.open{-webkit-line-clamp:unset;display:block}
+.v45stat{display:flex;align-items:center;gap:8px;font:800 16px/1 "Nunito",sans-serif;color:#ffd23f;margin-top:auto;padding-top:3px}
+.v45stat .v45bar{flex:1;height:8px;border-radius:5px;background:rgba(255,255,255,.13);overflow:hidden}
+.v45stat .v45bar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#ffd23f,#ff8a2b)}
+.v45c .v16col{font:700 16px/1.2 "Nunito",sans-serif;color:#c3c9de;padding:3px 13px 0}
+.v45c .v16col input{width:44px;height:30px;border-radius:8px}
+.v45c > button{margin:8px 13px 13px;min-height:44px;font:800 17px/1.2 "Nunito",sans-serif;border-radius:11px;box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.scard.v45c.eq{border-color:#2fbf71;box-shadow:0 0 0 1px #2fbf71 inset,0 5px 13px rgba(0,0,0,.35)}
+.scard.v45c.lock{opacity:1}
+.v45c.lock .v45fig canvas{filter:grayscale(.75) brightness(.7)}
+.v45c.lock > button:disabled{opacity:1;color:#c3c9de;background:rgba(255,255,255,.06)}
