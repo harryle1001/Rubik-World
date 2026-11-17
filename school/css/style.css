@@ -885,3 +885,53 @@ body.v44fs #mSudoku .sdkpad button{min-height:0!important;height:100%}
 body.v44fs #mSudoku .sdkpad{max-height:none!important;flex:0 0 auto!important;grid-auto-rows:auto!important}
 body.v44fs #mSudoku .sdkpad button{height:clamp(54px, calc((100dvh - 100vw - 250px)/2), 112px)!important;font-size:26px!important}
 @media (orientation:landscape){body.v44fs #mSudoku .sdkpad button{height:clamp(44px, 9dvh, 70px)!important}}
+/* ===== v45 online ===== */
+#mArena{--phi:1.618;--a1:#0b1020;--a2:#141b33;--a3:rgba(255,255,255,.07);--al:rgba(255,255,255,.14);--at:#f7f5ef;--am:#b9c0dc;--ay:#ffd43b;padding:0!important;z-index:60;background:var(--a1)}
+#mArena .v45box{width:100%;height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,var(--a1),var(--a2));color:var(--at);font:700 16px/1.35 "Nunito",system-ui,sans-serif}
+#mArena button{font:700 16px/1.2 "Nunito",system-ui,sans-serif;color:var(--at);background:var(--a3);border:1px solid var(--al);border-radius:13px;box-shadow:none;min-height:44px;padding:8px 13px;cursor:pointer;text-transform:none;letter-spacing:0}
+#mArena button:disabled{opacity:.45;cursor:not-allowed}
+#mArena button[aria-pressed="true"]{border-color:var(--ay);background:rgba(255,212,59,.16)}
+#mArena .v45top{display:flex;align-items:center;gap:8px;padding:max(8px,env(safe-area-inset-top)) max(13px,env(safe-area-inset-right)) 8px max(13px,env(safe-area-inset-left));border-bottom:1px solid var(--al)}
+#mArena .v45top h2{margin:0;font:800 21px "Nunito",sans-serif;flex:0 0 auto}
+#mArena .v45net{flex:1;min-width:0;color:var(--am);font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mArena .v45x{width:44px;padding:0;font-size:18px}
+#mArena .v45body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.618fr) minmax(0,1fr);gap:13px;padding:13px max(13px,env(safe-area-inset-right)) max(13px,env(safe-area-inset-bottom)) max(13px,env(safe-area-inset-left))}
+#mArena .v45main,#mArena .v45side{min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,.03);border:1px solid var(--al);border-radius:21px;padding:13px}
+#mArena h3{margin:0;font:800 19px "Nunito",sans-serif}#mArena h3 small{color:var(--am);font-size:16px;font-weight:700}
+#mArena h4{margin:5px 0 0;font:800 16px "Nunito",sans-serif;color:var(--am)}
+#mArena .v45empty,#mArena .v45tip{margin:0;color:var(--am);font-size:16px}
+#mArena .v45rooms{display:flex;flex-direction:column;gap:8px}
+#mArena .v45room{display:flex;align-items:center;gap:13px;text-align:left;justify-content:flex-start;padding:8px 13px;min-height:60px}
+#mArena .v45room .ic,#mArena .v45game .ic{font-size:26px;line-height:1}
+#mArena .v45room .tx{flex:1;display:flex;flex-direction:column;min-width:0}#mArena .v45room small{color:var(--am);font-size:16px}
+#mArena .v45room .ct{font:800 19px "Nunito",sans-serif;color:var(--ay)}
+#mArena .v45games{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+#mArena .v45game{flex-direction:column;aspect-ratio:1.618/1;gap:3px;padding:8px;text-align:center}
+#mArena .v45game small{color:var(--am);font-size:16px}
+#mArena .v45hero{display:flex;gap:13px;align-items:center}#mArena .v45hero .ic{font-size:42px}#mArena .v45hero p{margin:3px 0 0;color:var(--am)}
+#mArena .v45seg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}#mArena .v45seg button{font-size:19px}
+#mArena .v45btn{width:100%}#mArena .v45btn.pri{background:var(--ay);color:#1a1400;border-color:var(--ay);font-weight:800}
+#mArena .v45seats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#mArena .v45seat{border:2px solid;border-radius:13px;padding:8px;min-height:44px;display:flex;align-items:center;font-size:16px;overflow:hidden;text-overflow:ellipsis}#mArena .v45seat.bot{border-style:dashed;color:var(--am)}
+#mArena .v45chat{min-height:55px;max-height:110px;overflow-y:auto;background:rgba(0,0,0,.25);border-radius:13px;padding:8px;font-size:16px;display:flex;flex-direction:column;gap:3px}#mArena .v45chat b{color:var(--ay)}
+#mArena .v45quick{display:flex;flex-wrap:wrap;gap:5px}#mArena .v45quick button{min-height:40px;padding:5px 10px;font-size:16px;border-radius:21px}
+#mArena .v45act{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+#mArena .v45stage{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+#mArena .v45cw,#mArena .v45rw{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+#mArena .v45cw canvas{width:min(100%,100%);max-height:100%;aspect-ratio:1;height:auto;max-width:100%;border-radius:13px;touch-action:none}
+#mArena .v45rw canvas{height:100%;max-height:100%;max-width:100%;aspect-ratio:360/582;border-radius:13px;touch-action:none}
+#mArena .v45mq{display:flex;flex-direction:column;align-items:center;gap:21px;width:100%;max-width:520px}
+#mArena .v45q{font:900 clamp(42px,9vw,68px) "Nunito",sans-serif;color:var(--ay)}
+#mArena .v45opts{display:grid;grid-template-columns:1fr 1fr;gap:13px;width:100%}#mArena .v45opt{min-height:68px;font-size:30px;font-weight:900}#mArena .v45opt.bad{border-color:#ff6b6b;background:rgba(255,107,107,.2)}
+#mArena .v45srow{position:relative;display:flex;justify-content:space-between;gap:8px;padding:8px 13px 13px;background:var(--a3);border-radius:13px;overflow:hidden}#mArena .v45srow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#mArena .v45srow i{position:absolute;left:0;bottom:0;height:5px;background:var(--ay);transition:width .3s}
+#mArena #v45Score{display:flex;flex-direction:column;gap:8px}
+#mArena .v45over{display:flex;flex-direction:column;gap:8px;padding:13px;border-radius:13px;background:rgba(255,212,59,.14);border:1px solid var(--ay)}#mArena .v45over b{font:900 21px "Nunito",sans-serif}#mArena .v45over[hidden]{display:none}
+@media (orientation:portrait),(max-width:700px){
+  #mArena .v45body{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.618fr) minmax(0,1fr)}
+  #mArena .v45body.inroom{grid-template-rows:minmax(0,1fr) minmax(0,1.618fr)}
+  #mArena .v45body.play{grid-template-rows:minmax(0,1.618fr) minmax(0,1fr)}
+  #mArena .v45games{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+}
+@media (orientation:landscape) and (max-height:500px){#mArena .v45game{aspect-ratio:auto}#mArena .v45hero .ic{font-size:30px}#mArena .v45body{gap:8px;padding-top:8px}}
+#mArena .v45act{position:sticky;bottom:-13px;margin:0 -13px -13px;padding:8px 13px 13px;background:linear-gradient(180deg,rgba(20,27,51,0),#141b33 21%)}
