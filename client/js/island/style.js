@@ -13,7 +13,7 @@ gradientMap.minFilter = gradientMap.magFilter = THREE.NearestFilter; gradientMap
 if (!THREE.ShaderLib.toon.__painted) {
   const L = THREE.ShaderLib.toon;
   L.vertexShader = L.vertexShader
-    .replace('void main() {', 'varying vec3 vPaintW;\nvoid main() {')
+    .replace('void main() {', 'varying highp vec3 vPaintW;\nvoid main() {')
     .replace('#include <project_vertex>', `#include <project_vertex>
   { vec4 pw = vec4(transformed, 1.0);
   #ifdef USE_INSTANCING
@@ -21,9 +21,10 @@ if (!THREE.ShaderLib.toon.__painted) {
   #endif
     vPaintW = (modelMatrix * pw).xyz; }`);
   L.fragmentShader = L.fragmentShader
-    .replace('void main() {', `varying vec3 vPaintW;
-float pH(vec3 p){ p = fract(p * 0.3183 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
-float pN(vec3 x){ vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
+    .replace('void main() {', `varying highp vec3 vPaintW;
+// hash nhỏ gọn (số luôn < ~40) để điện thoại chạy mediump không tràn số → NaN → màn hình đen
+float pH(highp vec3 p){ p = fract(p * 0.1031); p += dot(p, p.yzx + 19.19); return fract((p.x + p.y) * p.z); }
+float pN(highp vec3 x){ x = mod(x, 289.0); vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
   return mix(mix(mix(pH(i), pH(i + vec3(1,0,0)), f.x), mix(pH(i + vec3(0,1,0)), pH(i + vec3(1,1,0)), f.x), f.y),
              mix(mix(pH(i + vec3(0,0,1)), pH(i + vec3(1,0,1)), f.x), mix(pH(i + vec3(0,1,1)), pH(i + vec3(1,1,1)), f.x), f.y), f.z); }
 void main() {`)
@@ -35,7 +36,8 @@ void main() {`)
     vec3 cool = outgoingLight * vec3(0.84, 0.88, 1.10), warm = outgoingLight * vec3(1.05, 1.0, 0.92);
     outgoingLight = mix(cool, warm, smoothstep(0.18, 0.62, lum));                             // bóng lam, sáng ấm
     float rim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 3.0);
-    outgoingLight += rim * 0.10 * diffuseColor.rgb; }                                        // viền sáng mép
+    outgoingLight += rim * 0.10 * diffuseColor.rgb;
+    outgoingLight = max(outgoingLight, vec3(0.0)); }                                        // viền sáng mép
 #include <opaque_fragment>`);
   L.__painted = true;
 }
