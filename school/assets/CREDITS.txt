@@ -13,3 +13,5 @@ assets/sfx/k-*.mp3 (coin, step, land, impact, gem, confirm)
 
 All files were converted to mono MP3 at 64 kbps. Bike bell, birds, waves and wind are
 synthesized in the browser with the Web Audio API (no files).
+
+v45 Session 6: nhạc nền theo khu, nhạc cụ (violin, trumpet, sáo, saxophone), chuông, sáo trúc vườn thiền và bản "Ode to Joy" (Beethoven, phạm vi công cộng) đều tạo bằng code WebAudio, không dùng file âm thanh ngoài.
