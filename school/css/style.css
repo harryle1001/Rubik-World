@@ -795,3 +795,62 @@ body.touchdev #arcPad,body.touchdev #mArcade .padrow,body.touchdev #arcAct,body.
 body.touchdev #mArcade .legend{font-size:0}
 body.touchdev #mArcade .legend::after{content:attr(data-touch);font-size:14px}
 body.touchdev #arcCv{touch-action:none}
+/* ===== v44 · Session 1–3 ===== */
+/* readable text everywhere (pixel font only for short titles) */
+:root{--f-body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif}
+body{font-weight:700;font-size:17px;line-height:1.35}
+.legend,.now,p{line-height:1.45}
+/* no text-selection pop-up / long-press callout on the game (it froze the character) */
+#stage,#stage *,.modal canvas,#v44Bar,#v41Col{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text}
+/* menu button sits under the profile card; no Coach button; Boat/Fly only while in use */
+body.v32phone .v32ic.v32menu{top:var(--v44mt, calc(var(--v32t) + 112px))!important}
+#v40Btn{display:none!important}
+#v41Boat[hidden],#v41Fly[hidden]{display:none!important}
+#v44Lamp .ic{font-size:24px;display:grid;place-items:center}
+/* ---- mini games: full screen, edge to edge ---- */
+body.v44fs .modal{padding:0!important}
+body.v44fs .modal .mbox,body.v44fs .modal .mbox.wide{width:100vw!important;max-width:none!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important;border:0!important;margin:0!important;padding:max(6px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))!important;background:radial-gradient(120% 80% at 50% 0%,#1d2a5c 0%,#0b1020 70%)!important}
+body.v44fs .modal .legend,body.v44fs .modal .mgh,body.v44fs .modal .v38guide,body.v44fs .modal .mghtour{display:none!important}
+body.v44fs .modal.v44help .legend{display:block!important;background:rgba(232,194,122,.12);border:1px solid rgba(232,194,122,.4);border-radius:12px;padding:8px 10px;color:#F7F5EF}
+.v44q{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.25);background:#1d2a5c;color:#ffd23f;font:900 20px Nunito,sans-serif;margin-left:auto;margin-right:8px}
+/* arcade: the canvas is the screen; a slim bar on top; blurred live copy as background */
+body.v44arc #mArcade .mhead,body.v44arc #mArcade .arcside{display:none!important}
+body.v44arc #mArcade .mbox{padding:0!important;overflow:hidden!important}
+body.v44arc #mArcade .arcwrap{position:fixed;inset:0;display:grid;place-items:center;padding:0;margin:0;background:#0b1020}
+body.v44arc #mArcade .arcmain{position:relative;z-index:1;display:grid;place-items:center;width:100%;height:100%;padding-top:0}
+body.v44arc #mArcade #arcCv{max-width:none!important;max-height:none!important;border:0!important;border-radius:0!important;box-shadow:0 10px 40px rgba(0,0,0,.45);display:block}
+@media (orientation:portrait){body.v44arc #mArcade .arcmain{padding-top:56px}}
+#v44Bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;filter:blur(22px) brightness(.62) saturate(1.2);transform:scale(1.15);pointer-events:none}
+#v44Bar{position:fixed;z-index:5;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:max(8px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) 8px max(10px,env(safe-area-inset-left));pointer-events:none}
+#v44Bar>*{pointer-events:auto;display:flex;gap:8px}
+body:not(.v44arc) #v44Bar,body:not(.v44arc) #v44Again,body:not(.v44arc) #v44Help,body:not(.v44arc) #v44Rot{display:none!important}
+.v44b{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.28);background:rgba(11,16,32,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font:900 19px Nunito,sans-serif;display:grid;place-items:center;padding:0}
+.v44b.v44mode{font-size:21px}.v44b.v44mode[aria-pressed=true]{background:rgba(232,194,122,.95);border-color:#fff3c4}
+.v44modes[hidden]{display:none!important}
+#v44Again{position:absolute;z-index:3;left:50%;bottom:max(18%,64px);transform:translateX(-50%);padding:14px 30px;border-radius:30px;border:0;background:linear-gradient(160deg,#ffe680,#f0b400);color:#1a1400;font:900 20px Nunito,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:v44pop .35s cubic-bezier(.2,1.4,.4,1)}
+#v44Again[hidden]{display:none}
+@keyframes v44pop{from{transform:translate(-50%,10px) scale(.8);opacity:0}}
+#v44Help{position:fixed;z-index:6;left:50%;top:64px;transform:translateX(-50%);width:min(440px,92vw);background:rgba(11,16,32,.94);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:14px 16px;color:#F7F5EF;font:700 16px/1.45 Nunito,sans-serif}
+#v44Help b{display:block;font-size:18px;color:#ffd23f;margin-bottom:4px}#v44Help .v44tip{color:#B8C0D8;font-size:14.5px;margin-top:8px}
+#v44Help[hidden],#v44Rot[hidden]{display:none}
+#v44Rot{position:fixed;z-index:6;left:50%;bottom:max(12%,40px);transform:translateX(-50%);background:rgba(11,16,32,.85);color:#fff;padding:10px 16px;border-radius:20px;font:800 15px Nunito,sans-serif}
+/* ---- Coach Ru 2.0: chat only ---- */
+#v40Coach.v44chat #v40Today,#v40Coach.v44chat #v40Chips,#v40Coach.v44chat #v40Grade,#v40Coach.v44chat #v40En{display:none!important}
+#v40Coach.v44chat{gap:0;padding:0;overflow:hidden}
+#v40Coach.v44chat .v40h{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
+#v40Coach.v44chat #v40Name{font-size:17px}#v40Coach.v44chat #v40Sub{color:#3FD4A0;font-size:12.5px}
+#v40Coach.v44chat .v40log{flex:1;padding:14px;gap:10px}
+#v40Coach.v44chat .v40m{font-size:16px;line-height:1.45;padding:10px 13px;border-radius:18px}
+#v40Coach.v44chat .v40m.me{background:linear-gradient(160deg,#3d5bd9,#2f4ab8)}
+#v40Coach.v44chat .v40form{padding:10px 12px max(10px,env(safe-area-inset-bottom));border-top:1px solid rgba(255,255,255,.08);gap:8px}
+#v40Coach.v44chat #v40In{border-radius:22px;padding:12px 16px;font:700 16px Nunito,sans-serif}
+@media (max-width:899px){#v40Coach.v44chat{height:min(78dvh,680px)}}
+body.v44arc #mArcade .mghq,.modal:has(.v44q) .mghq{display:none!important}
+body.v44arc .mentor,body.v44arc #mentor{display:none!important}
+#v44Rot{bottom:auto!important;top:calc(max(8px,env(safe-area-inset-top)) + 58px)}
+#v44Bg{filter:blur(20px) brightness(.85) saturate(1.25)!important}
+body.v44fs .mentor,body.v44fs #mentor{display:none!important}
+body.v44arc:not(.v44side) #mArcade .arcmain{padding-top:56px}
+body.v44side #v44Bar{bottom:0;align-items:stretch}
+body.v44side #v44Bar>*{flex-direction:column;justify-content:flex-start}

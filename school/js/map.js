@@ -184,11 +184,7 @@ function buildGround(){
   rect('#7a4b2a', 34, 360, 10, 16); rect('#7a4b2a', 34, 426, 10, 16);
   rect('#2d4a8a', 46, 436, 50, 34); rect('#1d2c52', 42, 430, 58, 8); rect('#bfe3ff', 56, 446, 14, 10);
   if(season === 'dong') rect('#ffffff', 42, 428, 58, 4);
-  for(let x=40; x<1572; x+=14){ if(x > 1124 && x < 1176) continue; rect('#8a6a4a', x, 22, 4, 18); }
-  rect('#8a6a4a', 40, 28, 1086, 4); rect('#8a6a4a', 1176, 28, 396, 4); rect('#5a3a1a', 1122, 16, 8, 24); rect('#5a3a1a', 1170, 16, 8, 24); rect('#b9b2a3', 1130, 0, 40, 60);
-  for(let y=30; y<786; y+=14){ if(y > 682 && y < 732) continue; rect('#8a6a4a', 1566, y, 4, 10); }
-  rect('#8a6a4a', 1567, 30, 2, 652); rect('#8a6a4a', 1567, 732, 2, 54);
-  rect('#5a3a1a', 1562, 680, 12, 10); rect('#5a3a1a', 1562, 728, 12, 10);
+  rect('#b9b2a3', 1130, 0, 40, 60);   // v44: school fences removed (open paths everywhere)
   rect('#9aa1b3', 1430, 742, 120, 3); for(let i=0;i<7;i++) rect('#9aa1b3', 1432 + i*19, 734, 2, 12);
   ctx.fillStyle = '#3a3f4f'; ctx.font = '14px VT323, monospace'; ctx.fillText('Bãi xe đạp', 1440, 728);
   const f = R.field;
@@ -323,7 +319,7 @@ function updateShips(dtR){
 }
 function walls(r, color){
   const t = 10, g = 22;
-  if(r.fence){
+  if(r.fence){ return;   // v44: no fences
     ctx.fillStyle = '#c8a46a';
     for(let x=r.x; x<=r.x+r.w; x+=12){ if(Math.abs(x - r.dw[0]) < g) continue; ctx.fillRect(x, r.y-4, 4, 10); ctx.fillRect(x, r.y+r.h-4, 4, 10); }
     for(let y=r.y; y<=r.y+r.h; y+=12){ ctx.fillRect(r.x-2, y, 4, 8); ctx.fillRect(r.x+r.w-2, y, 4, 8); }
