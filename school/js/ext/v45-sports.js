@@ -2,6 +2,15 @@
 // Ski (5 mountain maps, one mode each), Football 3 vs 3 on a bigger pitch, Tanks (5 different tanks, big map with
 // obstacles). Full screen like the v44 balloon, touch only on phones: swipe = move, tap = pass/shoot/fire, hold = power.
 // Money follows the game rule: $1–20 per mini game, halved from the 11th reward of the day =================
+// v47 golden: φ constants + tank obstacles placed on golden lines (0.146 · 0.382 · 0.618 · 0.854)
+const V47G = {P:1.618, a:.382, b:.618};
+function v47gTankWalls(W, H){ const o = [], t = 40, hl = 233, vl = 144;
+  for(const [fx, sx] of [[.146, 1], [.854, -1]]) for(const [fy, sy] of [[.146, 1], [.854, -1]]){ const x = Math.round(W*fx), y = Math.round(H*fy);
+    o.push([sx > 0 ? x : x - hl, sy > 0 ? y : y - t, hl, t], [sx > 0 ? x : x - t, sy > 0 ? y : y - vl, t, vl]); }
+  o.push([Math.round(W/2 - 89), Math.round(H/2 - 55), 178, 110]); // golden rectangle in the centre
+  for(const f of [.382, .618]) o.push([Math.round(W*f - t/2), Math.round(H/2 - 89), t, 178]);
+  for(const f of [.236, .764]) o.push([Math.round(W/2 - 34), Math.round(H*f - 55), 68, 110]);
+  return o; }
 const V45SP = {pts:new Map(), spr:{}, ids:new Set(['ski', 'football', 'tanks'])};
 const v45R = seed => () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; };
 const v45On = () => !!(ARC.g && ARC.g.v45 && openModal && openModal.id === 'mArcade');
@@ -28,10 +37,10 @@ function v45Key(s, id, codes){ s._k = s._k || {}; const down = codes.some(c => A
   if(down){ if(t0 == null) s._k[id] = s.t; return {hold:s.t - (t0 == null ? s.t : t0)}; }
   if(t0 != null){ s._k[id] = null; const d = s.t - t0; return d < .25 ? {tap:1} : {rel:d}; } return {}; }
 // ---------- shared HUD ----------
-function v45Panel(c, W, H, h){ const w = Math.min(W - 24, 540), x = (W - w)/2, y = H - h - 12; c.fillStyle = 'rgba(10,15,34,.84)'; v45RR(c, x, y, w, h, 18); c.fill(); return [x, y, w]; }
-function v45End(c, s, W, H){ c.fillStyle = 'rgba(5,8,20,.62)'; c.fillRect(0, 0, W, H); c.textAlign = 'center'; c.font = '900 34px Nunito, sans-serif'; c.fillStyle = '#ffd23f'; c.fillText(s.over, W/2, H*.36);
-  c.font = '800 21px Nunito, sans-serif'; c.fillStyle = '#fff'; String(s.sub || '').split('\n').forEach((l, i) => c.fillText(l, W/2, H*.36 + 38 + i*28));
-  if(s.paid){ c.font = '900 26px Nunito, sans-serif'; c.fillStyle = '#7cf29c'; c.fillText(`+$${s.paid}` + (s.half ? '  (từ lượt 11: ½)' : ''), W/2, H*.36 + 44 + String(s.sub || '').split('\n').length*28 + 8); } c.textAlign = 'left'; }
+function v45Panel(c, W, H, h){ h = Math.max(h, 55); const w = Math.min(W - 26, Math.round(h*V47G.P*V47G.P*V47G.P*V47G.P)), x = (W - w)/2, y = H - h - 13; c.fillStyle = 'rgba(10,15,34,.84)'; v45RR(c, x, y, w, h, Math.round(h/V47G.P/V47G.P)); c.fill(); return [x, y, w]; }
+function v45End(c, s, W, H){ c.fillStyle = 'rgba(5,8,20,.62)'; c.fillRect(0, 0, W, H); c.textAlign = 'center'; c.font = '900 34px Nunito, sans-serif'; c.fillStyle = '#ffd23f'; c.fillText(s.over, W/2, H*V47G.a);
+  c.font = '800 21px Nunito, sans-serif'; c.fillStyle = '#fff'; String(s.sub || '').split('\n').forEach((l, i) => c.fillText(l, W/2, H*V47G.a + 42 + i*34));
+  if(s.paid){ c.font = '900 26px Nunito, sans-serif'; c.fillStyle = '#7cf29c'; c.fillText(`+$${s.paid}` + (s.half ? '  (từ lượt 11: ½)' : ''), W/2, H*V47G.a + 42 + String(s.sub || '').split('\n').length*34 + 13); } c.textAlign = 'left'; }
 // reward: $1–20 by how well you played; from the 11th mini game reward of the day the money is halved
 function v45Pay(s){ let k = {}; const d = new Date().toDateString(); try { k = JSON.parse(localStorage.getItem('truong-mini-day') || '{}'); } catch(e){} if(k.d !== d) k = {d, n:0}; k.n++; try { localStorage.setItem('truong-mini-day', JSON.stringify(k)); } catch(e){}
   let m = Math.round(1 + 19*clampV(s.perf || 0, 0, 1)); if(k.n > 10){ m = Math.max(1, Math.round(m/2)); s.half = true; } s.paid = m; return m; }
@@ -48,12 +57,12 @@ const V45SKI = [
 function v45Peak(kind, t){ const tri = x => 1 - Math.abs(2*(x - Math.floor(x)) - 1);
   if(kind === 'round') return .3 + .42*Math.sin(t*Math.PI) + .06*Math.sin(t*11);
   if(kind === 'jag') return .25 + .5*tri(t*3.2) + .06*tri(t*17) + .1*Math.sin(t*Math.PI);
-  if(kind === 'twin') return .2 + .62*Math.max(Math.exp(-(((t - .33)/.13)**2)), .82*Math.exp(-(((t - .7)/.15)**2)));
+  if(kind === 'twin') return .2 + .62*Math.max(Math.exp(-(((t - .382)/.13)**2)), .82*Math.exp(-(((t - .618)/.15)**2)));
   if(kind === 'mesa') return .25 + .5*Math.min(1, Math.max(0, Math.round((Math.sin(t*6.5) + 1)*1.5)/3)) + .04*Math.sin(t*40);
-  return .12 + .82*Math.pow(Math.max(0, 1 - Math.abs(t - .45)*2.3), 1.5) + .04*tri(t*9); }
+  return .12 + .82*Math.pow(Math.max(0, 1 - Math.abs(t - .618)*2.3), 1.5) + .04*tri(t*9); }
 function v45Skyline(c, M, x, y, w, h){ const pts = []; for(let i=0;i<=48;i++){ const t = i/48; pts.push([x + t*w, y - v45Peak(M.mt, t)*h]); }
   c.fillStyle = M.mc[0]; c.beginPath(); c.moveTo(x, y); pts.forEach(p => c.lineTo(p[0], p[1])); c.lineTo(x + w, y); c.fill();
-  c.save(); c.beginPath(); c.rect(x, y - h, w, h*.5); c.clip(); c.fillStyle = M.mc[1]; c.beginPath(); c.moveTo(x, y); pts.forEach(p => c.lineTo(p[0], p[1] + (M.mt === 'mesa' ? 2 : 0))); c.lineTo(x + w, y); c.fill(); c.restore(); }
+  c.save(); c.beginPath(); c.rect(x, y - h, w, h*.382); c.clip(); c.fillStyle = M.mc[1]; c.beginPath(); c.moveTo(x, y); pts.forEach(p => c.lineTo(p[0], p[1] + (M.mt === 'mesa' ? 2 : 0))); c.lineTo(x + w, y); c.fill(); c.restore(); }
 function v45spTree(kind){ return v45Spr('tree-' + kind, 44, 64, (g) => {
   if(kind === 'pine'){ g.fillStyle = '#5a3a1e'; g.fillRect(19, 50, 6, 12); [[22, 6, 14, 26], [22, 18, 18, 38], [22, 30, 21, 52]].forEach(([x, t, w, b]) => { g.fillStyle = '#2e6b4a'; g.beginPath(); g.moveTo(x - w, b); g.lineTo(x + w, b); g.lineTo(x, t); g.fill(); g.fillStyle = '#245a3d'; g.beginPath(); g.moveTo(x, t); g.lineTo(x + w, b); g.lineTo(x, b); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.moveTo(x - w*.45, t + (b - t)*.45); g.lineTo(x, t); g.lineTo(x + w*.35, t + (b - t)*.4); g.lineTo(x, t + (b - t)*.3); g.fill(); }); }
   else if(kind === 'birch'){ g.fillStyle = '#e8ecf5'; g.fillRect(19, 18, 6, 44); g.fillStyle = '#2a2f45'; for(let i=0;i<5;i++) g.fillRect(i % 2 ? 19 : 22, 24 + i*8, 3, 2); g.fillStyle = '#3d4a7a'; g.beginPath(); g.ellipse(22, 18, 17, 16, 0, 0, 7); g.fill(); g.fillStyle = '#56649c'; g.beginPath(); g.ellipse(17, 13, 9, 8, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(230,236,255,.85)'; g.beginPath(); g.ellipse(22, 7, 13, 5, 0, 0, 7); g.fill(); }
@@ -115,7 +124,7 @@ GAMES.ski = {
       s.sub = [`Lỡ ${s.miss} cổng · phạt +${s.pen} giây`, `Ngã ${s.crashes} lần · phạt +${s.pen} giây`, `🏮 ${s.stars}/${s.starsN} đèn lồng`, `Bay ${s.air.toFixed(1)} giây trên không`, `🚩 Cứu ${s.flags}/${s.flagsN} cờ hiệu`][s.o] + (best ? `\nKỷ lục: ${Math.min(best, tot).toFixed(1)} giây` : '');
       cheerSfx(); if(s.perf >= .5) mprog('ski'); }
   },
-  draw(s, c){ const W = c.canvas.width, H = c.canvas.height, M = s.M, py = H*.3, oy = s.y - py, ox = s.cam - W/2, y0 = oy - 70, y1 = oy + H + 70;
+  draw(s, c){ const W = c.canvas.width, H = c.canvas.height, M = s.M, py = H*.382, oy = s.y - py, ox = s.cam - W/2, y0 = oy - 70, y1 = oy + H + 70;
     c.fillStyle = M.snow; c.fillRect(0, 0, W, H);
     // snow texture: moguls / ice cracks / gravel / drifts — fixed in the world
     c.strokeStyle = M.mark; c.lineWidth = 2; c.beginPath();
@@ -161,21 +170,21 @@ GAMES.ski = {
       if(blz){ c.fillStyle = 'rgba(225,232,240,.28)'; c.fillRect(0, 0, W, H); const ar = s.wind/170; c.save(); c.translate(W/2, 86); c.globalAlpha = Math.min(1, Math.abs(ar)*1.5); c.fillStyle = '#fff'; c.font = '900 28px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText(ar < 0 ? '⟵ gió' : 'gió ⟶', 0, 0); c.restore(); } }
     v45Stick(c);
     // HUD: mini mountain with your progress + time
-    const [px, pyy, pw] = v45Panel(c, W, H, 62), prog = clampV(s.y/M.L, 0, 1), mx = px + 10, my = pyy + 54, mw = 100, mh = 44; v45Skyline(c, M, mx, my, mw, mh);
-    const t0 = M.mt === 'twin' ? .33 : M.mt === 'spire' ? .45 : M.mt === 'round' ? .5 : .4, tt = t0 + (1 - t0)*prog; c.fillStyle = '#ffd23f'; c.beginPath(); c.arc(mx + tt*mw, my - v45Peak(M.mt, tt)*mh, 5, 0, 7); c.fill();
-    c.font = '800 20px Nunito, sans-serif'; c.fillStyle = '#ffd23f'; c.fillText(`⏱ ${(s.t + s.pen).toFixed(1)}s` + (s.pen ? ` (+${s.pen})` : ''), px + 122, pyy + 27);
-    c.fillStyle = '#fff'; c.fillText([`🚩 ${s.it.filter(q => q.done && q.ok).length}/${s.it.length} cổng`, `${Math.round(s.sp/6)} km/h`, `🏮 ${s.stars}/${s.starsN}`, `✈ ${s.air.toFixed(1)}s`, `🚩 ${s.flags}/${s.flagsN}`][s.o] + ` · ${Math.max(0, Math.ceil((M.L - s.y)/10))} m`, px + 122, pyy + 52);
-    if(s.msgT > 0 && !s.over){ c.globalAlpha = Math.min(1, s.msgT*2); c.font = '900 26px Nunito, sans-serif'; c.textAlign = 'center'; c.lineWidth = 5; c.strokeStyle = 'rgba(10,15,34,.7)'; c.strokeText(s.msg, W/2, H*.52); c.fillStyle = '#fff'; c.fillText(s.msg, W/2, H*.52); c.textAlign = 'left'; c.globalAlpha = 1; }
+    const [px, pyy, pw] = v45Panel(c, W, H, 68), prog = clampV(s.y/M.L, 0, 1), mx = px + 13, my = pyy + 55, mw = 89, mh = 34; v45Skyline(c, M, mx, my, mw, mh);
+    const t0 = M.mt === 'twin' ? .382 : M.mt === 'spire' ? .618 : M.mt === 'round' ? .5 : .4, tt = t0 + (1 - t0)*prog; c.fillStyle = '#ffd23f'; c.beginPath(); c.arc(mx + tt*mw, my - v45Peak(M.mt, tt)*mh, 5, 0, 7); c.fill();
+    c.font = '800 21px Nunito, sans-serif'; c.fillStyle = '#ffd23f'; c.fillText(`⏱ ${(s.t + s.pen).toFixed(1)}s` + (s.pen ? ` (+${s.pen})` : ''), px + 115, pyy + 29);
+    c.fillStyle = '#fff'; c.fillText([`🚩 ${s.it.filter(q => q.done && q.ok).length}/${s.it.length} cổng`, `${Math.round(s.sp/6)} km/h`, `🏮 ${s.stars}/${s.starsN}`, `✈ ${s.air.toFixed(1)}s`, `🚩 ${s.flags}/${s.flagsN}`][s.o] + ` · ${Math.max(0, Math.ceil((M.L - s.y)/10))} m`, px + 115, pyy + 55);
+    if(s.msgT > 0 && !s.over){ c.globalAlpha = Math.min(1, s.msgT*2); c.font = '900 26px Nunito, sans-serif'; c.textAlign = 'center'; c.lineWidth = 5; c.strokeStyle = 'rgba(10,15,34,.7)'; c.strokeText(s.msg, W/2, H*V47G.b); c.fillStyle = '#fff'; c.fillText(s.msg, W/2, H*V47G.b); c.textAlign = 'left'; c.globalAlpha = 1; }
     if(s.over) v45End(c, s, W, H);
   }
 };
 
 // ================= FOOTBALL 3 vs 3 (+ robot keepers) =================
-const V45FB = {L:1300, Wd:760, GW:210};
+const V45FB = {L:1300, Wd:803, GW:210}; // v47 golden: L/Wd = φ
 GAMES.football = {
   title:'Bóng đá 3 đánh 3', opts:['Đấu máy · dễ', 'Đấu máy · khó', '2 người 1 máy'], v45:1, v44top:0,
   help:'👆 Vuốt để chạy theo hướng ngón tay. 👉 Chạm nhanh: chuyền bóng cho bạn (gần khung thành thì sút). ✊ Giữ lâu rồi thả: sút thật mạnh. 🏃 Không có bóng: chạm để lao vào cướp bóng. Người có vòng vàng là bạn. ⌨️ Mũi tên/WASD + Space. 2 người: WASD + Space và mũi tên + Enter (điện thoại: mỗi người một nửa màn hình). Trận 2 phút rưỡi.',
-  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45spStart(); const L = V45FB.L, Wd = V45FB.Wd, home = [[.2, .5], [.42, .26], [.5, .74]], p = [];
+  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45spStart(); const L = V45FB.L, Wd = V45FB.Wd, home = [[.236, .5], [.382, .236], [.5, .764]], p = [];
     for(const team of [0, 1]) for(let r=0;r<3;r++) p.push({team, role:r, u:0, v:0, vu:0, vv:0, fu:team ? -1 : 1, fv:0, walk:0, cd:0, dash:0, think:0, sd:team ? -1 : 1, look:agentLook(team*3 + r + 2, {shirt:team ? '#ef4b4b' : '#3d7bff', pants:team ? '#7a1f1f' : '#1b2f6b'})});
     const k = [0, 1].map(team => ({team, gk:true, u:team ? L - 24 : 24, v:Wd/2, vu:0, vv:0, fu:team ? -1 : 1, fv:0, walk:0, cd:0, dash:0, hold:0, sd:team ? -1 : 1, look:agentLook(team + 9, {shirt:team ? '#ffb300' : '#2fbf71', pants:'#263238'})}));
     if(PLAYER){ try { p[0].look = Object.assign({}, PLAYER, {shirt:'#3d7bff'}); } catch(e){} }
@@ -257,8 +266,8 @@ GAMES.football = {
     const n = 13; for(let i=0;i<n;i++){ c.fillStyle = i % 2 ? '#3f9a4b' : '#4aa856'; if(s.port) c.fillRect(0, i*fh/n, fw, fh/n + 1); else c.fillRect(i*fw/n, 0, fw/n + 1, fh); }
     c.strokeStyle = 'rgba(255,255,255,.9)'; c.lineWidth = 3; c.strokeRect(0, 0, fw, fh);
     const line = (u1, v1, u2, v2) => { const [a, b] = T(u1, v1), [x, y] = T(u2, v2); c.moveTo(a, b); c.lineTo(x, y); }, box = (u1, v1, u2, v2) => { line(u1, v1, u2, v1); line(u2, v1, u2, v2); line(u2, v2, u1, v2); };
-    c.beginPath(); line(L/2, 0, L/2, Wd); box(0, Wd/2 - 210, 170, Wd/2 + 210); box(L, Wd/2 - 210, L - 170, Wd/2 + 210); box(0, Wd/2 - 120, 60, Wd/2 + 120); box(L, Wd/2 - 120, L - 60, Wd/2 + 120); c.stroke();
-    const [cx, cy] = T(L/2, Wd/2); c.beginPath(); c.arc(cx, cy, 90, 0, 7); c.stroke(); c.fillStyle = '#fff'; [[L/2, Wd/2], [120, Wd/2], [L - 120, Wd/2]].forEach(([u, v]) => { const [x, y] = T(u, v); c.beginPath(); c.arc(x, y, 4, 0, 7); c.fill(); });
+    c.beginPath(); line(L/2, 0, L/2, Wd); const pb = GW*V47G.P*V47G.P/2, pd = pb*2/V47G.P/V47G.P, gb = GW*V47G.P/2, gd = gb*2/V47G.P/V47G.P/V47G.P; box(0, Wd/2 - pb, pd, Wd/2 + pb); box(L, Wd/2 - pb, L - pd, Wd/2 + pb); box(0, Wd/2 - gb, gd, Wd/2 + gb); box(L, Wd/2 - gb, L - gd, Wd/2 + gb); c.stroke();
+    const [cx, cy] = T(L/2, Wd/2); c.beginPath(); c.arc(cx, cy, Math.round(GW/V47G.P), 0, 7); c.stroke(); c.fillStyle = '#fff'; [[L/2, Wd/2], [Math.round(pd/V47G.P), Wd/2], [L - Math.round(pd/V47G.P), Wd/2]].forEach(([u, v]) => { const [x, y] = T(u, v); c.beginPath(); c.arc(x, y, 4, 0, 7); c.fill(); });
     // goals: net + posts
     for(const [gu, dd] of [[0, -1], [L, 1]]){ const [x1, y1] = T(gu, Wd/2 - GW/2), [x2, y2] = T(gu + dd*38, Wd/2 + GW/2), rx = Math.min(x1, x2), ry = Math.min(y1, y2), rw = Math.abs(x2 - x1), rh = Math.abs(y2 - y1);
       c.fillStyle = 'rgba(255,255,255,.18)'; c.fillRect(rx, ry, rw, rh); c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 1; c.beginPath(); for(let k=0;k<=rw;k+=9){ c.moveTo(rx + k, ry); c.lineTo(rx + k, ry + rh); } for(let k=0;k<=rh;k+=9){ c.moveTo(rx, ry + k); c.lineTo(rx + rw, ry + k); } c.stroke();
@@ -272,9 +281,9 @@ GAMES.football = {
       if(p.human){ c.fillStyle = p.team ? '#ff8a2b' : '#ffd23f'; c.beginPath(); c.moveTo(e.x - 7, e.y - 52); c.lineTo(e.x + 7, e.y - 52); c.lineTo(e.x, e.y - 43); c.fill(); const ch = s.charge[p.team]; if(ch > 0){ c.fillStyle = 'rgba(0,0,0,.5)'; c.fillRect(e.x - 22, e.y - 64, 44, 7); c.fillStyle = ch > .8 ? '#ef4b4b' : '#ffd23f'; c.fillRect(e.x - 21, e.y - 63, 42*ch, 5); } }
       if(p.gk){ c.fillStyle = '#fff'; c.font = '800 12px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('🧤', e.x, e.y - 40); c.textAlign = 'left'; } }
     c.restore(); v45Stick(c);
-    const [px, py, pw] = v45Panel(c, W, H, 48), mm = Math.floor(Math.max(0, s.time)/60), ss = String(Math.floor(Math.max(0, s.time) % 60)).padStart(2, '0');
-    c.font = '900 22px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#7fb0ff'; c.fillText(s.two ? 'Xanh' : 'Bạn', px + pw*.18, py + 32); c.fillStyle = '#fff'; c.fillText(`${s.sc[0]}  –  ${s.sc[1]}`, px + pw*.4, py + 32); c.fillStyle = '#ff8a80'; c.fillText(s.two ? 'Đỏ' : 'Máy', px + pw*.6, py + 32); c.fillStyle = '#ffd23f'; c.fillText(`⏱ ${mm}:${ss}`, px + pw*.84, py + 32); c.textAlign = 'left';
-    if(s.msgT > 0 && !s.over){ c.globalAlpha = Math.min(1, s.msgT*2); c.font = '900 32px Nunito, sans-serif'; c.textAlign = 'center'; c.lineWidth = 6; c.strokeStyle = 'rgba(10,15,34,.75)'; c.strokeText(s.msg, W/2, H*.42); c.fillStyle = '#ffd23f'; c.fillText(s.msg, W/2, H*.42); c.textAlign = 'left'; c.globalAlpha = 1; }
+    const [px, py, pw] = v45Panel(c, W, H, 55), mm = Math.floor(Math.max(0, s.time)/60), ss = String(Math.floor(Math.max(0, s.time) % 60)).padStart(2, '0');
+    c.font = '900 24px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#7fb0ff'; c.fillText(s.two ? 'Xanh' : 'Bạn', px + pw*.146, py + 36); c.fillStyle = '#fff'; c.fillText(`${s.sc[0]}  –  ${s.sc[1]}`, px + pw*.382, py + 36); c.fillStyle = '#ff8a80'; c.fillText(s.two ? 'Đỏ' : 'Máy', px + pw*.618, py + 36); c.fillStyle = '#ffd23f'; c.fillText(`⏱ ${mm}:${ss}`, px + pw*.854, py + 36); c.textAlign = 'left';
+    if(s.msgT > 0 && !s.over){ c.globalAlpha = Math.min(1, s.msgT*2); c.font = '900 32px Nunito, sans-serif'; c.textAlign = 'center'; c.lineWidth = 6; c.strokeStyle = 'rgba(10,15,34,.75)'; c.strokeText(s.msg, W/2, H*V47G.a); c.fillStyle = '#ffd23f'; c.fillText(s.msg, W/2, H*V47G.a); c.textAlign = 'left'; c.globalAlpha = 1; }
     if(s.over) v45End(c, s, W, H);
   }
 };
@@ -304,10 +313,10 @@ function v45Ground(){ return v45Spr('ground', 256, 256, (g) => { g.fillStyle = '
 GAMES.tanks = {
   title:'Đấu xe tăng', opts:V45TK.map(t => t.n), v45:1, v44top:0,
   help:'👆 Vuốt về hướng nào, xe tăng chạy về hướng đó. 👉 Chạm để bắn — nòng tự ngắm xe gần nhất. ✊ Giữ ngón tay để bắn liên tục. 5 xe tăng đấu tự do: hạ 5 xe trước là thắng. 📦 Bắn vỡ hộp gỗ để nhặt 🔧 hồi máu hoặc ⚡ tăng tốc. Đạn nảy tường tùy loại xe. ⌨️ Mũi tên/WASD + Space · Người 2 bấm Enter để vào (mũi tên + Enter).',
-  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45spStart(); const port = vh > vw, WW = port ? 1300 : 1800, WH = port ? 1800 : 1300, R = v45R(4242 + o), tr = a => port ? [a[1], a[0], a[3], a[2]] : a;
+  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45spStart(); const port = vh > vw, WW = port ? 1300 : 2103, WH = port ? 2103 : 1300, R = v45R(4242 + o), tr = a => port ? [a[1], a[0], a[3], a[2]] : a;
     const walls = [[0, 0, WW, 30], [0, WH - 30, WW, 30], [0, 0, 30, WH], [WW - 30, 0, 30, WH]];
-    [[300, 250, 240, 40], [300, 250, 40, 200], [1260, 250, 240, 40], [1460, 250, 40, 200], [300, 1010, 240, 40], [300, 850, 40, 200], [1260, 1010, 240, 40], [1460, 850, 40, 200], [820, 580, 160, 140], [600, 560, 40, 180], [1160, 560, 40, 180], [860, 170, 80, 150], [860, 980, 80, 150]].forEach(a => walls.push(tr(a)));
-    const ponds = [[560, 420, 70], [1240, 880, 80]].map(([x, y, r]) => port ? {x:y, y:x, r} : {x, y, r}), spawns = [[130, 130], [1670, 130], [130, 1170], [1670, 1170], [900, 470]].map(([x, y]) => port ? [y, x] : [x, y]);
+    v47gTankWalls(2103, 1300).forEach(a => walls.push(tr(a)));
+    const ponds = [[Math.round(2103*.236), Math.round(1300*.382), 55], [Math.round(2103*.764), Math.round(1300*.618), 89]].map(([x, y, r]) => port ? {x:y, y:x, r} : {x, y, r}), spawns = [[130, 130], [1973, 130], [130, 1170], [1973, 1170], [1052, Math.round(1300*.382)]].map(([x, y]) => port ? [y, x] : [x, y]);
     const free = (x, y, r) => x > 50 + r && y > 50 + r && x < WW - 50 - r && y < WH - 50 - r && !walls.some(([wx, wy, ww, wh]) => x > wx - r && x < wx + ww + r && y > wy - r && y < wy + wh + r) && !ponds.some(p => Math.hypot(p.x - x, p.y - y) < p.r + r) && !spawns.some(([sx, sy]) => Math.hypot(sx - x, sy - y) < 110);
     const crates = [], rocks = []; for(let i=0;i<300 && crates.length < 22;i++){ const x = 80 + R()*(WW - 160), y = 80 + R()*(WH - 160); if(free(x, y, 30) && !crates.some(q => Math.hypot(q.x - x, q.y - y) < 60)) crates.push({x, y, hp:2}); }
     for(let i=0;i<400 && rocks.length < 34;i++){ const x = 80 + R()*(WW - 160), y = 80 + R()*(WH - 160), r = 14 + R()*10; if(free(x, y, r + 10) && !crates.some(q => Math.hypot(q.x - x, q.y - y) < 50) && !rocks.some(q => Math.hypot(q.x - x, q.y - y) < 50)) rocks.push({x, y, r, k:R() < .6 ? 'tree' : 'rock'}); }
@@ -398,10 +407,10 @@ GAMES.tanks = {
     for(const [x, y, w, h] of s.walls) c.fillRect(mxp + x*k, myp + y*k, Math.max(1, w*k), Math.max(1, h*k)); c.fillStyle = '#3f8fd1'; for(const p of s.ponds){ c.beginPath(); c.arc(mxp + p.x*k, myp + p.y*k, p.r*k, 0, 7); c.fill(); }
     for(const t of s.T){ if(t.dead > 0) continue; c.fillStyle = V45TK[t.ty].col; c.beginPath(); c.arc(mxp + t.x*k, myp + t.y*k, t.human ? 4 : 3, 0, 7); c.fill(); if(t.human){ c.strokeStyle = '#fff'; c.lineWidth = 1.5; c.stroke(); } }
     // HUD
-    const me = s.T[0], [px, py, pw] = v45Panel(c, W, H, 52), mm = Math.floor(Math.max(0, s.time)/60), ss = String(Math.floor(Math.max(0, s.time) % 60)).padStart(2, '0');
-    c.font = '800 20px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText(`❤️ ${Math.max(0, me.hp)}/${me.max}`, px + 16, py + 33); c.fillStyle = '#ffd23f'; c.fillText(`★ ${me.kills}/5`, px + pw*.3, py + 33);
-    const lead = s.T.slice().sort((a, b) => b.kills - a.kills)[0]; c.fillStyle = '#cfe3ff'; c.fillText(`👑 ${lead.name} ${lead.kills}`, px + pw*.48, py + 33); c.fillStyle = '#fff'; c.textAlign = 'right'; c.fillText(`⏱ ${mm}:${ss}`, px + pw - 16, py + 33); c.textAlign = 'left';
-    if(me.dead > 0 && !s.over){ c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(0, 0, W, H); c.font = '900 28px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#fff'; c.fillText(`Quay lại sau ${Math.ceil(me.dead)}…`, W/2, H*.45); c.textAlign = 'left'; }
+    const me = s.T[0], [px, py, pw] = v45Panel(c, W, H, 55), mm = Math.floor(Math.max(0, s.time)/60), ss = String(Math.floor(Math.max(0, s.time) % 60)).padStart(2, '0');
+    c.font = '800 21px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#fff'; c.fillText(`❤️ ${Math.max(0, me.hp)}/${me.max}`, px + pw*.146, py + 35); c.fillStyle = '#ffd23f'; c.fillText(`★ ${me.kills}/5`, px + pw*.382, py + 35);
+    const lead = s.T.slice().sort((a, b) => b.kills - a.kills)[0]; c.fillStyle = '#cfe3ff'; c.fillText(`👑 ${lead.name} ${lead.kills}`, px + pw*.618, py + 35); c.fillStyle = '#fff'; c.fillText(`⏱ ${mm}:${ss}`, px + pw*.854, py + 35); c.textAlign = 'left';
+    if(me.dead > 0 && !s.over){ c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(0, 0, W, H); c.font = '900 28px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#fff'; c.fillText(`Quay lại sau ${Math.ceil(me.dead)}…`, W/2, H*V47G.a); c.textAlign = 'left'; }
     if(s.msgT > 0 && !s.over){ c.globalAlpha = Math.min(1, s.msgT*2); c.font = '900 24px Nunito, sans-serif'; c.textAlign = 'center'; c.lineWidth = 5; c.strokeStyle = 'rgba(10,15,34,.75)'; const yy = small ? 64 + mh + 40 : 92; c.strokeText(s.msg, W/2, yy); c.fillStyle = '#fff'; c.fillText(s.msg, W/2, yy); c.textAlign = 'left'; c.globalAlpha = 1; }
     if(s.over) v45End(c, s, W, H);
   }

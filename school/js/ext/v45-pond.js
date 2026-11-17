@@ -30,7 +30,7 @@ GAMES.pond = {
   help:'Chạm xuống nước để thả lưỡi câu tới đó. Khi phao chìm và hiện ❗ thì chạm ngay để giật cần. Giữ ngón tay để kéo dây, thả ra khi dây căng đỏ. Chạm 🍞 để cho cá ăn: cá vui sẽ dễ cắn câu hơn. Mỗi lượt có 8 mồi câu.',
   init(o){ const [vw, vh] = v45pSize(), cv = $('#arcCv'); if(cv && (cv.width !== vw || cv.height !== vh)){ cv.width = vw; cv.height = vh; }
     const s = {vw, vh, spot:o || 0, sy:Math.round(vh*.382), bot:vh - 34, t:0, st:'idle', bait:8, food:5, happy:0, fish:[], fx:[], food_:[], bag:[], msg:'👆 Chạm xuống nước để thả câu', msgT:99, night:(() => { try { return isNight(); } catch(e){ return false; } })()};
-    s.dock = Math.round(vw*(vh > vw ? .3 : .236)); s.px = s.dock - 26; s.tip = [s.dock + (vh > vw ? 84 : 104), s.sy - (vh > vw ? 150 : 120)];
+    s.dock = Math.round(vw*(vh > vw ? .382 : .236)); s.px = s.dock - 26; s.tip = [s.dock + (vh > vw ? 84 : 104), s.sy - (vh > vw ? 150 : 120)];
     for(let i=0;i<(vh > vw ? 11 : 10);i++) s.fish.push(v45pFish(s)); return s; },
   pointer(s, ty, ax, ay){ if(ty !== 'down' || s.over) return; const x = ax*s.vw/AW, y = ay*s.vh/AH;
     if(s.st === 'card'){ s.st = 'idle'; s.card = null; if(s.bait <= 0) v45pEnd(s); return; }
@@ -89,8 +89,8 @@ const V45P_PAL = [{w:['#5fb7c9', '#1d5f78', '#123c52'], t:'#3f7d4a', t2:'#2e5f3a
 function v45pBack(s){ const key = [s.vw, s.vh, s.spot, s.night].join(); if(V45P.bgKey === key) return V45P.bg; const cv = V45P.bg || document.createElement('canvas'); cv.width = s.vw; cv.height = s.vh; const c = cv.getContext('2d'), W = s.vw, H = s.vh, SY = s.sy, P = V45P_PAL[s.spot], N = s.night;
   // sky
   let g = c.createLinearGradient(0, 0, 0, SY); if(N){ g.addColorStop(0, '#141a44'); g.addColorStop(1, '#3d3f7a'); } else { g.addColorStop(0, '#8fd0ee'); g.addColorStop(.7, '#d9f0f4'); g.addColorStop(1, '#fbeed2'); } c.fillStyle = g; c.fillRect(0, 0, W, SY);
-  if(N){ for(let i=0;i<70;i++){ c.fillStyle = `rgba(255,250,220,${.3 + (i % 5)*.14})`; c.fillRect((i*97) % W, (i*53) % (SY*.7), i % 9 ? 2 : 3, i % 9 ? 2 : 3); } c.fillStyle = '#fff6d0'; c.beginPath(); c.arc(W*.8, SY*.25, 22, 0, 7); c.fill(); }
-  else { c.fillStyle = 'rgba(255,246,200,.95)'; c.beginPath(); c.arc(W*.8, SY*.24, 26, 0, 7); c.fill(); c.fillStyle = 'rgba(255,255,255,.85)'; [[.18, .2], [.55, .32], [.9, .5]].forEach(([x, y]) => { c.beginPath(); c.ellipse(W*x, SY*y, 46, 13, 0, 0, 7); c.ellipse(W*x + 28, SY*y - 8, 30, 12, 0, 0, 7); c.fill(); }); }
+  if(N){ for(let i=0;i<70;i++){ c.fillStyle = `rgba(255,250,220,${.3 + (i % 5)*.14})`; c.fillRect((i*97) % W, (i*53) % (SY*.7), i % 9 ? 2 : 3, i % 9 ? 2 : 3); } c.fillStyle = '#fff6d0'; c.beginPath(); c.arc(W*.618, SY*.382, 21, 0, 7); c.fill(); }
+  else { c.fillStyle = 'rgba(255,246,200,.95)'; c.beginPath(); c.arc(W*.618, SY*.382, 26, 0, 7); c.fill(); c.fillStyle = 'rgba(255,255,255,.85)'; [[.146, .236], [.382, .618], [.854, .5]].forEach(([x, y]) => { c.beginPath(); c.ellipse(W*x, SY*y, 46, 13, 0, 0, 7); c.ellipse(W*x + 28, SY*y - 8, 30, 12, 0, 0, 7); c.fill(); }); }
   // far hills + tree line
   c.fillStyle = N ? '#262a55' : '#a9cfb4'; c.beginPath(); c.moveTo(0, SY); for(let x=0;x<=W;x+=10) c.lineTo(x, SY - 40 - Math.sin(x*.011)*16 - Math.sin(x*.027 + 1)*8); c.lineTo(W, SY); c.fill();
   c.fillStyle = N ? '#1b1f40' : P.t; for(let x = -10; x < W + 20; x += 22){ const h = 18 + ((x*7) % 13); c.beginPath(); c.arc(x, SY - 8, h*.7, Math.PI, 0); c.fill(); }
@@ -157,14 +157,14 @@ function v45pDraw(s, c){ const W = s.vw, H = s.vh, SY = s.sy, t = s.t;
     c.fillStyle = 'rgba(255,255,255,.2)'; c.fillRect(mx, my + 20, mw, 10); c.fillStyle = s.ten > 75 ? '#ef4b4b' : s.ten > 50 ? '#ffb020' : '#4fc3f7'; c.fillRect(mx, my + 20, mw*Math.min(1, s.ten/100), 10);
     c.font = '800 13px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText('🐟', mx - 2 + mw*Math.min(1, s.prog/100) - 6, my + 9); c.fillText('〰', mx - 2 + mw*Math.min(1, s.ten/100) - 6, my + 30); }
   // HUD pill: bait · catches · feed button
-  c.fillStyle = 'rgba(10,15,34,.5)'; v45pRound(c, 12, H - 48, 182, 36, 18); c.fill(); c.font = '800 17px Nunito, sans-serif'; c.fillStyle = '#fff'; c.textAlign = 'left'; c.fillText(`🪱 ${s.bait}   🐟 ${s.bag.length}`, 26, H - 24);
-  c.fillStyle = s.happy > 0 ? 'rgba(255,170,200,.85)' : 'rgba(10,15,34,.55)'; c.beginPath(); c.arc(W - 50, H - 52, 32, 0, 7); c.fill(); c.strokeStyle = 'rgba(255,255,255,.7)'; c.lineWidth = 2; c.stroke(); c.font = '26px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('🍞', W - 50, H - 43); c.font = '800 13px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText('×' + s.food, W - 50, H - 12); c.textAlign = 'left';
+  c.font = '800 21px Nunito, sans-serif'; const v47hud = `🪱 ${s.bait}   🐟 ${s.bag.length}`, v47hw = Math.max(144, Math.ceil(c.measureText(v47hud).width) + 42); c.fillStyle = 'rgba(10,15,34,.5)'; v45pRound(c, 13, H - 55, v47hw, 42, 21); c.fill(); c.fillStyle = '#fff'; c.textAlign = 'left'; c.fillText(v47hud, 34, H - 27);
+  c.fillStyle = s.happy > 0 ? 'rgba(255,170,200,.85)' : 'rgba(10,15,34,.55)'; c.beginPath(); c.arc(W - 55, H - 68, 34, 0, 7); c.fill(); c.strokeStyle = 'rgba(255,255,255,.7)'; c.lineWidth = 2; c.stroke(); c.font = '26px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('🍞', W - 55, H - 59); c.font = '800 16px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText('×' + s.food, W - 55, H - 13); c.textAlign = 'left';
   // message
-  if(s.msgT > 0 && s.msg && !s.over){ c.globalAlpha = Math.min(1, s.msgT*2); c.font = '800 18px Nunito, sans-serif'; const mw = c.measureText(s.msg).width + 32, mx = (W - mw)/2, my = SY + 22; c.fillStyle = 'rgba(10,15,34,.6)'; v45pRound(c, mx, my, mw, 36, 18); c.fill(); c.fillStyle = '#fff'; c.textAlign = 'center'; c.fillText(s.msg, W/2, my + 24); c.textAlign = 'left'; c.globalAlpha = 1; }
+  if(s.msgT > 0 && s.msg && !s.over){ c.globalAlpha = Math.min(1, s.msgT*2); c.font = '800 21px Nunito, sans-serif'; const mw = c.measureText(s.msg).width + 42, mx = (W - mw)/2, my = SY + 21; c.fillStyle = 'rgba(10,15,34,.6)'; v45pRound(c, mx, my, mw, 42, 21); c.fill(); c.fillStyle = '#fff'; c.textAlign = 'center'; c.fillText(s.msg, W/2, my + 28); c.textAlign = 'left'; c.globalAlpha = 1; }
   // catch card
   if(s.card) v45pCard(s, c);
-  if(s.over){ c.fillStyle = 'rgba(5,8,20,.55)'; c.fillRect(0, 0, W, H); c.textAlign = 'center'; c.font = '900 30px Nunito, sans-serif'; c.fillStyle = '#ffd23f'; c.fillText(s.over, W/2, H*.36); c.font = '800 18px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText(s.sub || '', W/2, H*.36 + 34);
-    const kinds = [...new Set(s.bag.map(b => b.n))].slice(0, 6); kinds.forEach((n, i) => { const sp = V45P_FISH.find(f => f.n === n); v45pDrawFish(c, {sp, x:W/2 + (i - (kinds.length - 1)/2)*Math.min(90, W/7), y:H*.36 + 84, dir:1, ph:t, k:.9, st:'swim'}, t); }); c.textAlign = 'left'; }
+  if(s.over){ c.fillStyle = 'rgba(5,8,20,.55)'; c.fillRect(0, 0, W, H); c.textAlign = 'center'; c.font = '900 30px Nunito, sans-serif'; c.fillStyle = '#ffd23f'; c.fillText(s.over, W/2, H*.382); c.font = '800 21px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText(s.sub || '', W/2, H*.382 + 34);
+    const kinds = [...new Set(s.bag.map(b => b.n))].slice(0, 6); kinds.forEach((n, i) => { const sp = V45P_FISH.find(f => f.n === n); v45pDrawFish(c, {sp, x:W/2 + (i - (kinds.length - 1)/2)*Math.min(90, W/7), y:H*.382 + 89, dir:1, ph:t, k:.9, st:'swim'}, t); }); c.textAlign = 'left'; }
 }
 function v45pAngler(s, c){ const x = s.px, y = s.sy - 20, sc = s.vh > s.vw ? 2.8 : 2.6, look = (typeof myLook === 'function' ? myLook() : agentLook(2, {}));
   const breathe = Math.sin(s.t*1.6)*.6, [tx, ty] = s.tip;
@@ -178,11 +178,14 @@ function v45pAngler(s, c){ const x = s.px, y = s.sy - 20, sc = s.vh > s.vw ? 2.8
   // bucket next to the player
   c.fillStyle = '#4f7fb0'; c.beginPath(); c.moveTo(x - 22*sc, y - 1); c.lineTo(x - 12*sc, y - 1); c.lineTo(x - 13*sc, y - 9*sc); c.lineTo(x - 21*sc, y - 9*sc); c.fill(); c.strokeStyle = '#cfd8dc'; c.lineWidth = 1.5; c.beginPath(); c.arc(x - 17*sc, y - 9*sc, 4*sc, Math.PI, 0); c.stroke();
   if(s.bag.length){ c.font = `${Math.round(5*sc)}px Nunito, sans-serif`; c.fillText('🐟', x - 21*sc, y - 9*sc); } }
-function v45pCard(s, c){ const W = s.vw, H = s.vh, cw = Math.min(380, W - 40), ch = 210, cx = (W - cw)/2, cy = Math.max(20, s.sy - ch/2 + 40), {sp, w, isNew} = s.card;
-  c.fillStyle = '#fffbf0'; v45pRound(c, cx, cy, cw, ch, 22); c.fill(); c.strokeStyle = sp.r >= 3 ? '#e0a800' : '#8bc34a'; c.lineWidth = 3; c.stroke();
-  v45pDrawFish(c, {sp, x:W/2, y:cy + 60, dir:1, ph:s.t*2, k:1.5, st:'swim'}, s.t);
-  c.textAlign = 'center'; c.fillStyle = '#1b2a33'; c.font = '900 22px Nunito, sans-serif'; c.fillText(`${sp.n}${isNew ? ' · MỚI ✨' : ''}`, W/2, cy + 120); c.font = '800 17px Nunito, sans-serif'; c.fillStyle = '#3d5a66'; c.fillText(`⚖️ ${w} kg · ${['Thường gặp', 'Khá hiếm', 'Hiếm', 'Huyền thoại'][sp.r]}`, W/2, cy + 146);
-  c.font = '700 16px Nunito, sans-serif'; c.fillStyle = '#2e4b3a'; const words = ('💡 ' + sp.f).split(' '); let line = '', ly = cy + 174; for(const wd of words){ const tt = line ? line + ' ' + wd : wd; if(c.measureText(tt).width > cw - 30 && line){ c.fillText(line, W/2, ly); line = wd; ly += 20; } else line = tt; } c.fillText(line, W/2, ly); c.textAlign = 'left'; }
+function v45pCard(s, c){ const W = s.vw, H = s.vh, cw = Math.min(380, W - 42), {sp, w, isNew} = s.card;
+  // v47 golden card: cw × cw/φ, fish in the top 0.382, card centred on the golden line of the water
+  c.font = '700 20px Nunito, sans-serif'; const words = ('💡 ' + sp.f).split(' '), lines = []; let line = ''; for(const wd of words){ const tt = line ? line + ' ' + wd : wd; if(c.measureText(tt).width > cw - 42 && line){ lines.push(line); line = wd; } else line = tt; } lines.push(line);
+  const ch = Math.max(Math.round(cw/1.618), 152 + lines.length*26 + 13), cx = (W - cw)/2, cy = Math.max(21, Math.round(Math.min(H*.618, s.sy + (H - s.sy)*.382) - ch/2));
+  c.fillStyle = '#fffbf0'; v45pRound(c, cx, cy, cw, ch, 21); c.fill(); c.strokeStyle = sp.r >= 3 ? '#e0a800' : '#8bc34a'; c.lineWidth = 3; c.stroke();
+  v45pDrawFish(c, {sp, x:W/2, y:cy + 55, dir:1, ph:s.t*2, k:1.5, st:'swim'}, s.t);
+  c.textAlign = 'center'; c.fillStyle = '#1b2a33'; c.font = '900 26px Nunito, sans-serif'; c.fillText(`${sp.n}${isNew ? ' · MỚI ✨' : ''}`, W/2, cy + 110); c.font = '800 21px Nunito, sans-serif'; c.fillStyle = '#3d5a66'; c.fillText(`⚖️ ${w} kg · ${['Thường gặp', 'Khá hiếm', 'Hiếm', 'Huyền thoại'][sp.r]}`, W/2, cy + 139);
+  c.font = '700 20px Nunito, sans-serif'; c.fillStyle = '#2e4b3a'; lines.forEach((l, k) => c.fillText(l, W/2, cy + 173 + k*26)); c.textAlign = 'left'; }
 function v45pOpenPond(spot){ openArcade('pond', spot || 0); }
 // ---------- world flags: wider plaza, tap a flag = one question a day ----------
 const V45P_FQ = {
@@ -207,12 +210,12 @@ const V45P_FQ = {
   ar:['Buenos Aires', 'Argentina vô địch World Cup 2022 ở môn nào?', ['Bóng đá', 'Bóng rổ', 'Quần vợt', 'Bơi lội'], 'Điệu tango nổi tiếng ra đời ở Argentina.']
 };
 // 64 px apart (was 35), with a gap around the lighthouse
-const V45P_FL = {x0:1600, dx:64, y:856};
+const V45P_FL = {x0:1600, dx:65, y:856}; // v47 golden: 40φ ≈ 65 between flag poles
 const v45pFlagXY = i => { const x = V45P_FL.x0 + i*V45P_FL.dx; return [x > LIGHTHOUSE[0] - 70 ? x + 150 : x, V45P_FL.y]; };
 function v45pPlaza(){ const x1 = v45pFlagXY(WORLD_FLAGS.length - 1)[0] + 40; if(VB.x1 < V45P_FL.x0 - 60 || VB.x0 > x1) return;
   const y = V45P_FL.y, done = v45pDay(V45P_FLAGK) > 0; rect('rgba(214,196,160,.55)', V45P_FL.x0 - 28, y - 6, LIGHTHOUSE[0] - 60 - V45P_FL.x0, 12); rect('rgba(214,196,160,.55)', LIGHTHOUSE[0] + 80, y - 6, x1 - LIGHTHOUSE[0] - 80, 12);
-  WORLD_FLAGS.forEach(([c], i) => { const [x] = v45pFlagXY(i); rect('#eceff1', x, y - 66, 3, 66); rect('#90a4ae', x - 4, y - 3, 11, 5); ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(x + 1.5, y - 67, 2.5, 0, 7); ctx.fill(); drawFlag(c, x + 3, y - 66 + Math.sin(realT*2.4 + i*.7)*.8, 28, 18); });
-  const lb = done ? '🌍 CỜ CÁC NƯỚC · hẹn câu hỏi mới ngày mai' : '🌍 CỜ CÁC NƯỚC · chạm lá cờ để nhận câu hỏi 🎁'; ctx.font = '800 14px Nunito, sans-serif'; const lw = ctx.measureText(lb).width + 20; ctx.fillStyle = 'rgba(255,248,230,.92)'; ctx.fillRect(V45P_FL.x0 - 30, y - 104, lw, 22); ctx.fillStyle = '#5a4a2a'; ctx.fillText(lb, V45P_FL.x0 - 20, y - 88); }
+  WORLD_FLAGS.forEach(([c], i) => { const [x] = v45pFlagXY(i); rect('#eceff1', x, y - 66, 3, 66); rect('#90a4ae', x - 4, y - 3, 11, 5); ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(x + 1.5, y - 67, 2.5, 0, 7); ctx.fill(); drawFlag(c, x + 3, y - 66 + Math.sin(realT*2.4 + i*.7)*.8, 29, 18); });
+  const lb = done ? '🌍 CỜ CÁC NƯỚC · hẹn câu hỏi mới ngày mai' : '🌍 CỜ CÁC NƯỚC · chạm lá cờ để nhận câu hỏi 🎁'; ctx.font = '800 14px Nunito, sans-serif'; const lw = ctx.measureText(lb).width + 20; ctx.fillStyle = 'rgba(255,248,230,.92)'; ctx.fillRect(V45P_FL.x0 - 30, y - 107, lw, 21); ctx.fillStyle = '#5a4a2a'; ctx.fillText(lb, V45P_FL.x0 - 20, y - 92); }
 function v45pFlagOpen(i){ const [code, name] = WORLD_FLAGS[i] || []; const Q = V45P_FQ[code]; if(!Q) return; const asked = v45pDay(V45P_FLAGK) > 0;
   let box = $('#v45pQ'); if(!box){ box = document.createElement('div'); box.id = 'v45pQ'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); document.body.appendChild(box); box.addEventListener('click', e => { if(e.target === box) box.hidden = true; }); addEventListener('keydown', e => { if(e.key === 'Escape' && !box.hidden) box.hidden = true; }); }
   box.innerHTML = '<div class="v45pcard"><button type="button" class="v45px" aria-label="Đóng">✕</button><canvas width="84" height="56"></canvas><h3></h3><p class="v45pcap"></p><p class="v45pq"></p><div class="v45popts"></div><p class="v45pfact"></p></div>';
@@ -241,7 +244,7 @@ function v45PondInit(){
   WORLD_FLAGS.forEach((f, i) => { const [x, y] = v45pFlagXY(i); XHOT.unshift({r:{x:x - 16, y:y - 80, w:48, h:92}, f:() => v45pFlagOpen(i)}); });
   // canvas sizing: the pond canvas follows the screen shape like the balloon
   const oa = openArcade; openArcade = function(id){ const r = oa.apply(this, arguments); document.body.classList.toggle('v45pond', id === 'pond'); if(id === 'pond') try { v44Fit(); } catch(e){} return r; };
-  addEventListener('resize', () => { if(ARC.id === 'pond' && document.body.classList.contains('v44arc') && ARC.s){ const [vw, vh] = v45pSize(), cv = $('#arcCv'); if(cv.width !== vw || cv.height !== vh){ cv.width = vw; cv.height = vh; const s = ARC.s, k = vh/s.vh; s.vw = vw; s.vh = vh; s.sy = Math.round(vh*.382); s.bot = vh - 34; s.dock = Math.round(vw*(vh > vw ? .3 : .236)); s.px = s.dock - 26; s.tip = [s.dock + (vh > vw ? 84 : 104), s.sy - (vh > vw ? 150 : 120)]; s.fish.forEach(f => { f.x = Math.min(vw - 20, f.x); f.y = f.by = s.sy + 26 + (f.by - s.sy)*k; }); } v44Fit(); } });
+  addEventListener('resize', () => { if(ARC.id === 'pond' && document.body.classList.contains('v44arc') && ARC.s){ const [vw, vh] = v45pSize(), cv = $('#arcCv'); if(cv.width !== vw || cv.height !== vh){ cv.width = vw; cv.height = vh; const s = ARC.s, k = vh/s.vh; s.vw = vw; s.vh = vh; s.sy = Math.round(vh*.382); s.bot = vh - 34; s.dock = Math.round(vw*(vh > vw ? .382 : .236)); s.px = s.dock - 26; s.tip = [s.dock + (vh > vw ? 84 : 104), s.sy - (vh > vw ? 150 : 120)]; s.fish.forEach(f => { f.x = Math.min(vw - 20, f.x); f.y = f.by = s.sy + 26 + (f.by - s.sy)*k; }); } v44Fit(); } });
   // the edge fill behind the canvas: plain water colour for the pond (no blurred stretch)
   const fl = v44Fill; v44Fill = function(){ if(ARC.id === 'pond'){ const bg = $('#v44Bg'); if(bg){ if(bg.width !== 4){ bg.width = 4; bg.height = 4; } const g = bg.getContext('2d'); g.fillStyle = ARC.s && ARC.s.night ? '#0c1b33' : '#1d5f78'; g.fillRect(0, 0, 4, 4); } return; } return fl.apply(this, arguments); };
   // rewards: $1–20 with half pay from the 11th round of the day (computed in v45pEnd)
