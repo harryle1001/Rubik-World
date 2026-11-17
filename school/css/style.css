@@ -885,3 +885,19 @@ body.v44fs #mSudoku .sdkpad button{min-height:0!important;height:100%}
 body.v44fs #mSudoku .sdkpad{max-height:none!important;flex:0 0 auto!important;grid-auto-rows:auto!important}
 body.v44fs #mSudoku .sdkpad button{height:clamp(54px, calc((100dvh - 100vw - 250px)/2), 112px)!important;font-size:26px!important}
 @media (orientation:landscape){body.v44fs #mSudoku .sdkpad button{height:clamp(44px, 9dvh, 70px)!important}}
+
+/* ===== v45 farm ===== */
+#v45Act{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - 32px);pointer-events:none}
+#v45Act[hidden]{display:none}
+#v45Act .v45b{pointer-events:auto;width:auto;aspect-ratio:auto;flex:0 0 auto;display:flex;align-items:center;gap:8px;min-height:50px;padding:10px 16px;border-radius:16px;border:2px solid rgba(255,255,255,.85);background:#2f7d4a;color:#fff;font:700 17px/1 Nunito,sans-serif;box-shadow:0 6px 16px rgba(0,0,0,.35);cursor:pointer;touch-action:manipulation;animation:v45pop .25s ease-out}
+#v45Act .v45b .ic{font-size:22px}
+#v45Act .v45b.v45ride{background:#3d6bd6}
+#v45Act .v45b.v45help{background:#d6457a}
+#v45Act .v45b.v45down{background:#5b4636}
+#v45Act .v45b:active{transform:scale(.95)}
+@keyframes v45pop{from{transform:translateY(8px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+.prof .v45heart{color:#ff8fab;font:800 15px/1 Nunito,sans-serif;white-space:nowrap}
+body.v32phone #stage .prof .v45heart{font-size:16px}
+.v45shopnote{grid-column:1/-1;margin:0 0 6px;font:700 16px/1.4 Nunito,sans-serif;color:#ffd7e1}
+.scard.v45card button.primary{background:#d6457a;border-color:#ff8fab}
+@media (orientation:landscape) and (max-height:500px){#v45Act{bottom:calc(14px + env(safe-area-inset-bottom))}#v45Act .v45b{min-height:46px;padding:8px 14px}}
