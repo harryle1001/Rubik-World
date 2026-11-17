@@ -885,3 +885,17 @@ body.v44fs #mSudoku .sdkpad button{min-height:0!important;height:100%}
 body.v44fs #mSudoku .sdkpad{max-height:none!important;flex:0 0 auto!important;grid-auto-rows:auto!important}
 body.v44fs #mSudoku .sdkpad button{height:clamp(54px, calc((100dvh - 100vw - 250px)/2), 112px)!important;font-size:26px!important}
 @media (orientation:landscape){body.v44fs #mSudoku .sdkpad button{height:clamp(44px, 9dvh, 70px)!important}}
+/* ===== v45 pond ===== */
+#v45Q{position:fixed;inset:0;z-index:9000;display:grid;place-items:center;padding:16px;background:rgba(10,20,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#v45Q[hidden]{display:none}
+#v45Q .v45card{position:relative;width:min(420px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#fffaf0;color:#1b2a33;border-radius:22px;padding:22px 20px 18px;box-shadow:0 18px 50px rgba(0,0,0,.35);font:700 16px/1.45 Nunito,'Be Vietnam Pro',system-ui,sans-serif;text-align:center}
+#v45Q canvas{width:84px;height:56px;border-radius:6px;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+#v45Q h3{margin:10px 0 2px;font:900 22px Nunito,system-ui,sans-serif}
+#v45Q .v45cap{margin:0 0 10px;color:#4a6470}
+#v45Q .v45q{margin:6px 0 12px;font-size:18px}
+#v45Q .v45opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#v45Q .v45opts button{min-height:52px;padding:8px 10px;border:2px solid #d7e3e8;border-radius:14px;background:#fff;color:#1b2a33;font:800 16px Nunito,system-ui,sans-serif;cursor:pointer}
+#v45Q .v45opts button.ok{background:#dff5e3;border-color:#2fbf71}
+#v45Q .v45opts button.no{background:#fde4e4;border-color:#ef4b4b}
+#v45Q .v45fact{margin:12px 0 0;color:#2e4b3a;min-height:1em}
+#v45Q .v45x{position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;border-radius:50%;background:#eef3f5;color:#1b2a33;font:900 18px Nunito,sans-serif;cursor:pointer}
