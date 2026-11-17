@@ -232,7 +232,7 @@ function sched(){
 }
 function applyVolume(){
   let f = 1;
-  if($('#spatial').checked){ const src = concert ? [1375,150] : [930,180]; f = Math.max(.12, Math.min(1, 1.15 - dist(cam.x, cam.y, src[0], src[1]) / 1300)); }
+  if($('#spatial').checked){ const src = concert ? [1375,150] : [930,180]; f = Math.max(.12, Math.min(1, 1.15 - dist(...v46CamOld(), src[0], src[1]) /* v46 */ / 1300)); }
   if(master) master.gain.value = vol*.8*f;
   if(fileAudio) fileAudio.volume = Math.max(0, Math.min(1, vol*f));
 }
@@ -371,15 +371,16 @@ let toastT = null;
 function toast(text){ const t = $('#toast'); t.textContent = text; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3500); }
 setInterval(() => {
   if(paused) return;
-  const near = (x, y, r) => dist(cam.x, cam.y, x, y) < r && cam.z > .35;
+  const _co = v46CamOld(); // v46: missions measure the camera in game (old) coordinates
+  const near = (x, y, r) => dist(_co[0], _co[1], x, y) < r && cam.z > .35;
   if(WHALES.some(w => near(w.x, w.y, 420))) mprog('whale');
   if(near(POD.x, 1030, 420)) mprog('dolphin');
   if(ships.some(s => (s.k === 'pirate' || s.k === 'pirate2') && near(s.x, s.y, 420))) mprog('pirate');
   const c = agents.find(a => a.controlled);
-  if(c && c.y > 800) mprog('beach');
+  if(c && !v46Raw(c.x) && c.y > 800) mprog('beach');
   if(c && regionAt(c.x, c.y) === 'lake') mprog('koi');
-  if(cam.y < -80) mprog('park');
-  if(isNight() && cam.y + ch/cam.z/2 > 950) mprog('night');
+  if(_co[1] < -80) mprog('park');
+  if(isNight() && _co[1] + ch/cam.z/2 > 950) mprog('night');
   if(weather === 'saobang') mprog('meteor');
   if(immersive) mprog('imm', 1);
   if(cam.y < -800) mprog('sky');

@@ -163,11 +163,14 @@ function clampCam(){
   cam.x = vw >= W ? W/2 : Math.max(vw/2, Math.min(W - vw/2, cam.x));
   cam.y = vh >= H - Y0 ? (H + Y0)/2 : Math.max(Y0 + vh/2, Math.min(H - vh/2, cam.y));
 }
-const toScreen = (x,y) => [(x - cam.x)*cam.z + cw/2, (y - cam.y)*cam.z + ch/2];
-const toWorld = (sx,sy) => [(sx - cw/2)/cam.z + cam.x, (sy - ch/2)/cam.z + cam.y];
+// v46: toScreen/toWorld speak the game's (old) coordinates; v46TS/v46TW map them onto the round island. Camera maths uses the raw ones.
+const toScreenRaw = (x,y) => [(x - cam.x)*cam.z + cw/2, (y - cam.y)*cam.z + ch/2];
+const toWorldRaw = (sx,sy) => [(sx - cw/2)/cam.z + cam.x, (sy - ch/2)/cam.z + cam.y];
+const toScreen = (x,y) => { const p = v46TS(x, y); return toScreenRaw(p[0], p[1]); };
+const toWorld = (sx,sy) => { const p = toWorldRaw(sx, sy); return v46TW(p[0], p[1]); };
 function zoomAt(f, sx, sy){
-  const [wx, wy] = toWorld(sx, sy);
+  const [wx, wy] = toWorldRaw(sx, sy);
   cam.z *= f; clampCam();
-  if(!followCam){ const [nx, ny] = toWorld(sx, sy); cam.x += wx - nx; cam.y += wy - ny; clampCam(); }
+  if(!followCam){ const [nx, ny] = toWorldRaw(sx, sy); cam.x += wx - nx; cam.y += wy - ny; clampCam(); }
 }
 
