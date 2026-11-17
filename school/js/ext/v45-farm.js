@@ -1,8 +1,8 @@
 // ================= v45 (Session 4): trang trại lớn + sở thú + cho ăn + cưỡi thú + trái tim ❤️ =================
 // Bố cục theo tỷ lệ vàng trong R.farm (870 × 500): phần trên 1/φ là trang trại, phần dưới là sở thú trước cổng lớn.
-const V45_PHI = 1.618;
-const V45 = {near:null, help:null, helpT:40, rideA:null, litterN:0, litterW:null, cdFeed:0, cdWater:0, act:null, tap:null, mill:0};
-const V45L = (() => { const r = R.farm, top = Math.round(r.h / V45_PHI); return {x:r.x, y:r.y, w:r.w, h:r.h, fy:r.y + top, gx:Math.round(r.x + r.w/2)}; })();
+const V45F_PHI = 1.618;
+const V45F = {near:null, help:null, helpT:40, rideA:null, litterN:0, litterW:null, cdFeed:0, cdWater:0, act:null, tap:null, mill:0};
+const V45FL = (() => { const r = R.farm, top = Math.round(r.h / V45F_PHI); return {x:r.x, y:r.y, w:r.w, h:r.h, fy:r.y + top, gx:Math.round(r.x + r.w/2)}; })();
 // ---------- thú mới (sở thú) + tên tiếng Anh + một điều thú vị để học ----------
 const V45_ANI = {
   elephant:{name:'Voi', sp:140, ride:-34, c:'#9aa3ad', d:'#7d8690'},
@@ -42,7 +42,7 @@ const v45PlotPos = i => [4364 + (i%5)*58, -350 + Math.floor(i/5)*52];
 // ---------- vẽ thú ----------
 function v45DrawAnimal(kind, x, y, dir, ph, moving){
   const A = ANI[kind], st = moving ? Math.round(Math.sin(ph)*2) : 0;
-  if(kind === 'zebra' || kind === 'unicorn'){ const H = ANI.horse, oc = H.c, od = H.d; H.c = A.c; H.d = A.d; try { V45.base.drawAnimal('horse', x, y, dir, ph, moving); } finally { H.c = oc; H.d = od; } }
+  if(kind === 'zebra' || kind === 'unicorn'){ const H = ANI.horse, oc = H.c, od = H.d; H.c = A.c; H.d = A.d; try { V45F.base.drawAnimal('horse', x, y, dir, ph, moving); } finally { H.c = oc; H.d = od; } }
   ctx.save(); ctx.translate(Math.round(x), Math.round(y)); if(dir < 0) ctx.scale(-1, 1);
   const c = A.c, d = A.d;
   if(kind === 'zebra'){ [-10, -6, -2, 2, 6].forEach(sx => rect('#2a2a2a', sx, -26, 2, 12)); rect('#2a2a2a', 9, -34, 6, 2); rect('#2a2a2a', 9, -30, 6, 2); }
@@ -96,9 +96,9 @@ function v45Sign(txt, sub, cx, y){
 function v45Round(x, y, w, h, r, fill, stroke, lw){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); if(fill){ ctx.fillStyle = fill; ctx.fill(); } if(stroke){ ctx.strokeStyle = stroke; ctx.lineWidth = lw || 2; ctx.stroke(); } }
 function v45Fence(x0, x1, y, gap0, gap1){ for(let x = x0; x <= x1; x += 22){ if(gap0 !== undefined && x > gap0 - 8 && x < gap1 + 4) continue; rect('#6b4628', x, y - 14, 4, 16); rect('#8d6340', x, y - 15, 4, 2); }
   [[x0, gap0 === undefined ? x1 : gap0], gap0 === undefined ? null : [gap1, x1]].forEach(s => { if(!s) return; rect('#8d6340', s[0], y - 11, s[1] - s[0] + 4, 3); rect('#8d6340', s[0], y - 5, s[1] - s[0] + 4, 3); }); }
-function v45Tree(x, y, s, dong){ rect('#5a3a1e', x - 2*s, y - 8*s, 4*s, 10*s); const g = dong ? ['#dfe9ee','#c9d8df'] : season === 'thu' ? ['#d9822b','#b9651c'] : ['#3f9a4a','#2f7d3a']; circ(x, y - 16*s, 10*s, g[1]); circ(x - 5*s, y - 13*s, 7*s, g[0]); circ(x + 5*s, y - 18*s, 7*s, g[0]); }
+function v45fTree(x, y, s, dong){ rect('#5a3a1e', x - 2*s, y - 8*s, 4*s, 10*s); const g = dong ? ['#dfe9ee','#c9d8df'] : season === 'thu' ? ['#d9822b','#b9651c'] : ['#3f9a4a','#2f7d3a']; circ(x, y - 16*s, 10*s, g[1]); circ(x - 5*s, y - 13*s, 7*s, g[0]); circ(x + 5*s, y - 18*s, 7*s, g[0]); }
 function v45DrawFarmStatic(){
-  if(!FARM) return; const L = V45L, dong = season === 'dong', thu = season === 'thu';
+  if(!FARM) return; const L = V45FL, dong = season === 'dong', thu = season === 'thu';
   const g0 = dong ? '#eaf0f2' : thu ? '#a4c063' : '#8fc65c', g1 = dong ? '#dde6ea' : thu ? '#97b357' : '#83ba51';
   ctx.save(); v45Round(L.x, L.y, L.w, L.h, 130); ctx.clip();
   rect(g0, L.x, L.y, L.w, L.h); for(let i = 0; i < 260; i++){ const x = L.x + (i*137) % L.w, y = L.y + (i*89) % L.h; rect(g1, x, y, 3, 2); }
@@ -162,7 +162,7 @@ function v45DrawFarmStatic(){
     const I = V45_INFO[z.k]; v45Sign(ANI[z.k].name.toUpperCase(), I[1], z.x + z.w/2, z.y - 12);
   });
   // góc: quầy kem, ghế đá, cây bóng mát
-  v45Tree(4372, -96, 1.3, dong); v45Tree(5086, -92, 1.3, dong); v45Tree(4352, -238 + 2, 1, dong); v45Tree(5150, -238 + 2, 1, dong);
+  v45fTree(4372, -96, 1.3, dong); v45fTree(5086, -92, 1.3, dong); v45fTree(4352, -238 + 2, 1, dong); v45fTree(5150, -238 + 2, 1, dong);
   rect('#ff8fb1', 4380, -76, 40, 22); rect('#fff', 4380, -82, 40, 6); for(let k = 0; k < 4; k++) rect(k%2 ? '#ff6f91' : '#fff', 4380 + k*10, -90, 10, 8); v45Sign('KEM', 'Ice cream', 4400, -112 + 2);
   rect('#9e9a92', 5056, -66, 34, 6); rect('#7a7670', 5058, -60, 4, 6); rect('#7a7670', 5084, -60, 4, 6);
   plate('NÔNG TRẠI & SỞ THÚ · LẠI GẦN THÚ ĐỂ CHO ĂN · CHẠM VÀO THÚ ĐỂ CƯỠI', L.gx, L.y + L.h - 19);
@@ -183,13 +183,13 @@ function v45SetupAnimals(){
 }
 function v45Sprites(sp){
   // bong bóng "cần giúp" + hào quang/đèn lồng trái tim (ở mọi nơi)
-  const H = V45.help; if(H && H.a && H.a.visible && inVB(H.a.x, H.a.y)) sp.push({y:H.a.y + 40, f:() => { const x = H.a.x + 26, y = H.a.y - 66 + Math.sin(realT*3)*3; v45Round(x - 17, y - 16, 34, 28, 10, '#fff', '#ff4f7b', 3); tri(x - 9, y + 10, x - 1, y + 10, x - 18, y + 26, '#ff4f7b'); ctx.font = '18px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(H.kind[0], x, y + 5); ctx.textAlign = 'left'; }});
+  const H = V45F.help; if(H && H.a && H.a.visible && inVB(H.a.x, H.a.y)) sp.push({y:H.a.y + 40, f:() => { const x = H.a.x + 26, y = H.a.y - 66 + Math.sin(realT*3)*3; v45Round(x - 17, y - 16, 34, 28, 10, '#fff', '#ff4f7b', 3); tri(x - 9, y + 10, x - 1, y + 10, x - 18, y + 26, '#ff4f7b'); ctx.font = '18px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(H.kind[0], x, y + 5); ctx.textAlign = 'left'; }});
   const P = PLAYER; if(P && P.visible && PROF && PROF.heq && inVB(P.x, P.y)){
     if(PROF.heq.aura) sp.push({y:P.y - .2, f:() => { ctx.font = '11px sans-serif'; for(let k = 0; k < 5; k++){ const a = realT*1.4 + k*1.2566; ctx.globalAlpha = .55 + .35*Math.sin(realT*3 + k); ctx.fillText('❤️', P.x - 6 + Math.cos(a)*20, P.y - 16 + Math.sin(a)*9); } ctx.globalAlpha = 1; }});
     if(PROF.heq.lantern) sp.push({y:P.y + .3, f:() => { const x = P.x + 14, y = P.y - 52 + Math.sin(realT*2)*3; rect('#6d4c2e', x - 1, y + 8, 1, 14); ctx.fillStyle = 'rgba(255,120,150,.25)'; ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI*2); ctx.fill(); ctx.font = '13px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('💗', x, y + 5); ctx.textAlign = 'left'; }});
   }
   if(!FARM || VB.x1 < 4290 || VB.x0 > 5180 || VB.y0 > -30) return;
-  const n = V45.near;
+  const n = V45F.near;
   FARM.animals.forEach(a => { if(!inVB(a.x, a.y)) return; sp.push({y:a.y, f:() => {
     if(a === n){ ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(a.x, a.y, 18, 6, 0, 0, Math.PI*2); ctx.stroke(); }
     drawAnimal(a.kind, a.x, a.y, a.dir, a.ph, a.moving);
@@ -224,14 +224,14 @@ function v45Ride(a){
   if(!PLAYER || !PLAYER.visible){ openLogin(); return; } const P = PLAYER;
   if(P.boat){ toast('Hãy rời thuyền trước rồi mới cưỡi thú.'); return; }
   if(P.mount) dismount(P, true);
-  const i = FARM.animals.indexOf(a); if(i < 0) return; FARM.animals.splice(i, 1); V45.rideA = a;
-  P.cycling = false; P.x = a.x; P.y = a.y; P.dir = a.dir; mount(a.kind); V45.near = null; v45Act();
+  const i = FARM.animals.indexOf(a); if(i < 0) return; FARM.animals.splice(i, 1); V45F.rideA = a;
+  P.cycling = false; P.x = a.x; P.y = a.y; P.dir = a.dir; mount(a.kind); V45F.near = null; v45Act();
 }
-function v45Summon(kind){ if(!PLAYER || !PLAYER.visible){ openLogin(); return; } if(PLAYER.boat){ toast('Hãy rời thuyền trước rồi mới cưỡi thú.'); return; } if(PLAYER.mount) dismount(PLAYER, true); PLAYER.cycling = false; V45.rideA = null; hideModal(); mount(kind); v45Act(); }
+function v45Summon(kind){ if(!PLAYER || !PLAYER.visible){ openLogin(); return; } if(PLAYER.boat){ toast('Hãy rời thuyền trước rồi mới cưỡi thú.'); return; } if(PLAYER.mount) dismount(PLAYER, true); PLAYER.cycling = false; V45F.rideA = null; hideModal(); mount(kind); v45Act(); }
 const V45_HELP = [['📚', 'Bạn làm rơi sách', 'Cảm ơn bạn đã nhặt sách giúp mình!'], ['🎒', 'Bạn cần mang balo nặng', 'Cảm ơn bạn đã xách balo giúp mình!'],
   ['🗺️', 'Bạn bị lạc đường', 'Cảm ơn bạn đã chỉ đường cho mình!'], ['🧹', 'Có rác cạnh bạn', 'Cảm ơn bạn đã cùng nhặt rác!'], ['🌱', 'Cây non cần tưới', 'Cảm ơn bạn đã tưới cây cùng mình!'], ['🩹', 'Bạn bị ngã trầy gối', 'Cảm ơn bạn đã đỡ mình dậy!']];
 function v45Help(){
-  const H = V45.help; if(!H) return; V45.help = null; V45.helpT = 50 + Math.random()*40; if(!PROF){ openLogin(); return; }
+  const H = V45F.help; if(!H) return; V45F.help = null; V45F.helpT = 50 + Math.random()*40; if(!PROF){ openLogin(); return; }
   reward(6, 0, null, true); const D = v45Day(); D.help = (D.help || 0) + 1; v45Hearts(2, 'giúp đỡ ' + (H.a.name || 'bạn'));
   toast(`🤝 ${H.a.name || 'Bạn'}: "${H.kind[2]}" · +2 ❤️`); blipSfx(1320);
 }
@@ -239,31 +239,31 @@ function v45PickHelp(){
   const P = PLAYER; if(!P || !P.visible || P.boat || P.v16fly) return;
   const cand = agents.filter(a => a !== P && !a.isPlayer && a.visible && !a.inSub && !a.flying && !a.boat && Math.hypot(a.x - P.x, a.y - P.y) < 520);
   if(!cand.length) return; const a = cand[Math.floor(Math.random()*cand.length)], k = V45_HELP[Math.floor(Math.random()*V45_HELP.length)];
-  V45.help = {a, kind:k, until:realT + 70}; toast(`${k[0]} ${a.name || 'Một bạn'} đang cần giúp: ${k[1].toLowerCase()}. Lại gần để giúp nhé!`);
+  V45F.help = {a, kind:k, until:realT + 70}; toast(`${k[0]} ${a.name || 'Một bạn'} đang cần giúp: ${k[1].toLowerCase()}. Lại gần để giúp nhé!`);
 }
 
 // ---------- nút hành động nổi (cảm ứng, chữ to) ----------
 function v45Act(){
-  const box = V45.act; if(!box) return; const P = PLAYER, on = P && P.visible && !(openModal && openModal.id);
-  const a = V45.near, H = V45.help, nearH = H && P && Math.hypot(H.a.x - P.x, H.a.y - P.y) < 70, rid = on && P.mount;
+  const box = V45F.act; if(!box) return; const P = PLAYER, on = P && P.visible && !(openModal && openModal.id);
+  const a = V45F.near, H = V45F.help, nearH = H && P && Math.hypot(H.a.x - P.x, H.a.y - P.y) < 70, rid = on && P.mount;
   const want = !on ? '' : [a ? 'feed:' + a.kind : '', a && !rid ? 'ride:' + a.kind : '', nearH ? 'help' : '', rid ? 'down:' + P.mount : ''].join('|');
   if(box.dataset.k === want) return; box.dataset.k = want; box.innerHTML = '';
   const B = (ic, t, f, cls) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'v45b ' + (cls || ''); b.innerHTML = `<span class="ic">${ic}</span><span>${t}</span>`; b.onclick = e => { e.stopPropagation(); f(); v45Act(); }; box.appendChild(b); };
-  if(on && a){ const I = V45_INFO[a.kind] || ['🐾']; B('🥕', `Cho ${ANI[a.kind].name.toLowerCase()} ăn`, () => v45Feed(V45.near), 'v45feed'); if(!rid) B(I[0], 'Cưỡi', () => V45.near && v45Ride(V45.near), 'v45ride'); }
+  if(on && a){ const I = V45_INFO[a.kind] || ['🐾']; B('🥕', `Cho ${ANI[a.kind].name.toLowerCase()} ăn`, () => v45Feed(V45F.near), 'v45feed'); if(!rid) B(I[0], 'Cưỡi', () => V45F.near && v45Ride(V45F.near), 'v45ride'); }
   if(on && nearH) B('🤝', 'Giúp bạn', v45Help, 'v45help');
   if(rid) B('⬇️', 'Xuống', () => dismount(PLAYER), 'v45down');
   box.hidden = !box.children.length;
 }
 
 // ---------- vòng lặp ----------
-function v45Tick(dt){
+function v45fTick(dt){
   const P = PLAYER;
-  if(FARM && P && P.visible && !P.mount && Math.abs(P.x - V45L.gx) < 520 && P.y > -580 && P.y < 0){
-    let best = null, bd = 46; FARM.animals.forEach(a => { const d = Math.hypot(a.x - P.x, a.y - P.y); if(d < bd){ bd = d; best = a; } }); V45.near = best;
-  } else V45.near = null;
-  if(V45.help){ const H = V45.help; if(realT > H.until || !H.a.visible){ V45.help = null; V45.helpT = 40; } }
-  else if(PROF && P && P.visible){ V45.helpT -= dt; if(V45.helpT <= 0){ V45.helpT = 60; v45PickHelp(); } }
-  if(typeof WEV !== 'undefined'){ if(WEV && WEV.T.k === 'litter'){ if(V45.litterW !== WEV){ V45.litterW = WEV; V45.litterN = 0; } const g = WEV.items.filter(i => i.got).length; if(g > V45.litterN){ v45Hearts(g - V45.litterN, g === WEV.items.length ? 'nhặt rác bảo vệ môi trường' : null); V45.litterN = g; } } else if(!WEV) V45.litterW = null; }
+  if(FARM && P && P.visible && !P.mount && Math.abs(P.x - V45FL.gx) < 520 && P.y > -580 && P.y < 0){
+    let best = null, bd = 46; FARM.animals.forEach(a => { const d = Math.hypot(a.x - P.x, a.y - P.y); if(d < bd){ bd = d; best = a; } }); V45F.near = best;
+  } else V45F.near = null;
+  if(V45F.help){ const H = V45F.help; if(realT > H.until || !H.a.visible){ V45F.help = null; V45F.helpT = 40; } }
+  else if(PROF && P && P.visible){ V45F.helpT -= dt; if(V45F.helpT <= 0){ V45F.helpT = 60; v45PickHelp(); } }
+  if(typeof WEV !== 'undefined'){ if(WEV && WEV.T.k === 'litter'){ if(V45F.litterW !== WEV){ V45F.litterW = WEV; V45F.litterN = 0; } const g = WEV.items.filter(i => i.got).length; if(g > V45F.litterN){ v45Hearts(g - V45F.litterN, g === WEV.items.length ? 'nhặt rác bảo vệ môi trường' : null); V45F.litterN = g; } } else if(!WEV) V45F.litterW = null; }
   v45Act();
 }
 
@@ -273,9 +273,9 @@ function v45HitAnimal(wx, wy){
   FARM.animals.forEach(a => { const h = V45_H[a.kind] || 22, r = Math.max(16, h*.55), d = Math.hypot(wx - a.x, wy - (a.y - h/2)); if(d < r && d < bd){ bd = d; best = a; } }); return best;
 }
 function v45TapInit(){
-  window.addEventListener('pointerdown', e => { V45.tap = e.target === cvs ? {x:e.clientX, y:e.clientY, t:performance.now(), id:e.pointerId} : null; }, true);
+  window.addEventListener('pointerdown', e => { V45F.tap = e.target === cvs ? {x:e.clientX, y:e.clientY, t:performance.now(), id:e.pointerId} : null; }, true);
   window.addEventListener('pointerup', e => {
-    const T = V45.tap; V45.tap = null; if(!T || e.pointerId !== T.id || e.target !== cvs || performance.now() - T.t > 350 || Math.hypot(e.clientX - T.x, e.clientY - T.y) > 10) return;
+    const T = V45F.tap; V45F.tap = null; if(!T || e.pointerId !== T.id || e.target !== cvs || performance.now() - T.t > 350 || Math.hypot(e.clientX - T.x, e.clientY - T.y) > 10) return;
     if(!PLAYER || !PLAYER.visible || PLAYER.boat) return;
     const r = cvs.getBoundingClientRect(), [wx, wy] = toWorld(e.clientX - r.left, e.clientY - r.top), a = v45HitAnimal(wx, wy); if(!a) return;
     e.stopImmediatePropagation(); try { drag = null; cvs.classList.remove('dragging'); } catch(_){}
@@ -319,23 +319,23 @@ function v45ShopGrid(){
 
 // ---------- khởi tạo: bọc hàm cũ, không sửa file cũ ----------
 function v45FarmInit(){
-  V45.base = {drawAnimal, dismount, renderProfHud, renderShop, drawZonesStatic, farmWater, farmFeed, reward};
+  V45F.base = {drawAnimal, dismount, renderProfHud, renderShop, drawZonesStatic, farmWater, farmFeed, reward};
   Object.assign(ANI, V45_ANI); Object.assign(ANI.cow, {sp:130, ride:-17}); Object.assign(ANI.goat, {sp:150, ride:-12}); Object.assign(ANI.chicken, {sp:140, ride:-9}); Object.assign(ANI.pig, {sp:120, ride:-10});
-  drawAnimal = function(kind){ return V45_ANI[kind] ? v45DrawAnimal.apply(this, arguments) : V45.base.drawAnimal.apply(this, arguments); };
-  dismount = function(c, quiet){ const had = c && c.mount; const r = V45.base.dismount.apply(this, arguments);
-    if(had && V45.rideA && FARM){ const a = V45.rideA; V45.rideA = null; a.x = c.x + 14; a.y = c.y + 6; a.tx = 0; a.wait = 1.5; a.moving = false; FARM.animals.push(a); } v45Act(); return r; };
-  renderProfHud = function(){ const r = V45.base.renderProfHud.apply(this, arguments); try { v45ProfHud(); } catch(e){} return r; };
+  drawAnimal = function(kind){ return V45_ANI[kind] ? v45DrawAnimal.apply(this, arguments) : V45F.base.drawAnimal.apply(this, arguments); };
+  dismount = function(c, quiet){ const had = c && c.mount; const r = V45F.base.dismount.apply(this, arguments);
+    if(had && V45F.rideA && FARM){ const a = V45F.rideA; V45F.rideA = null; a.x = c.x + 14; a.y = c.y + 6; a.tx = 0; a.wait = 1.5; a.moving = false; FARM.animals.push(a); } v45Act(); return r; };
+  renderProfHud = function(){ const r = V45F.base.renderProfHud.apply(this, arguments); try { v45ProfHud(); } catch(e){} return r; };
   if(!SHOP_TABS.some(t => t[0] === 'v45heart')) SHOP_TABS.push(['v45heart', 'Đặc biệt ❤️']);
-  renderShop = function(){ const r = V45.base.renderShop.apply(this, arguments); if(shopTab === 'v45heart') v45ShopGrid(); return r; };
-  drawZonesStatic = function(){ const r = V45.base.drawZonesStatic.apply(this, arguments); try { v45DrawFarmStatic(); } catch(e){ console.warn('v45 farm static', e); } return r; };
-  farmWater = function(){ const n = FARM ? FARM.plots.filter(p => p.fruit && plotStage(p) < 5).length : 0; const r = V45.base.farmWater.apply(this, arguments); if(n && realT > V45.cdWater){ V45.cdWater = realT + 30; v45Hearts(1, 'tưới cây trong vườn'); } return r; };
-  farmFeed = function(){ const r = V45.base.farmFeed.apply(this, arguments); if(realT > V45.cdFeed){ V45.cdFeed = realT + 90; v45Hearts(1, 'cho cả nông trại ăn'); } return r; };
-  reward = function(exp, money, why){ const r = V45.base.reward.apply(this, arguments); if(why && /chăn cừu/i.test(why)) v45Hearts(2, 'giúp chó chăn cừu lùa đàn'); return r; };
+  renderShop = function(){ const r = V45F.base.renderShop.apply(this, arguments); if(shopTab === 'v45heart') v45ShopGrid(); return r; };
+  drawZonesStatic = function(){ const r = V45F.base.drawZonesStatic.apply(this, arguments); try { v45DrawFarmStatic(); } catch(e){ console.warn('v45 farm static', e); } return r; };
+  farmWater = function(){ const n = FARM ? FARM.plots.filter(p => p.fruit && plotStage(p) < 5).length : 0; const r = V45F.base.farmWater.apply(this, arguments); if(n && realT > V45F.cdWater){ V45F.cdWater = realT + 30; v45Hearts(1, 'tưới cây trong vườn'); } return r; };
+  farmFeed = function(){ const r = V45F.base.farmFeed.apply(this, arguments); if(realT > V45F.cdFeed){ V45F.cdFeed = realT + 90; v45Hearts(1, 'cho cả nông trại ăn'); } return r; };
+  reward = function(exp, money, why){ const r = V45F.base.reward.apply(this, arguments); if(why && /chăn cừu/i.test(why)) v45Hearts(2, 'giúp chó chăn cừu lùa đàn'); return r; };
   farmSprites = v45Sprites;
   v45SetupAnimals();
-  const box = document.createElement('div'); box.id = 'v45Act'; box.hidden = true; document.body.appendChild(box); V45.act = box;
+  const box = document.createElement('div'); box.id = 'v45Act'; box.hidden = true; document.body.appendChild(box); V45F.act = box;
   v45TapInit();
-  const baseUp = extUpdate; extUpdate = function(dtR){ const r = baseUp.apply(this, arguments); try { v45Tick(dtR); } catch(e){ console.warn('v45 tick', e); } return r; };
+  const baseUp = extUpdate; extUpdate = function(dtR){ const r = baseUp.apply(this, arguments); try { v45fTick(dtR); } catch(e){ console.warn('v45 tick', e); } return r; };
   try { northCache = null; } catch(e){}
   v45ProfHud();
 }

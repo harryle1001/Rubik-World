@@ -2,7 +2,7 @@
 // parts + a short spec per design), colour variants made by code; every other shop item goes through the same pixel
 // pipeline (2 px per world unit, hard alpha, 1 px dark outline). Product cards split by the golden ratio 1 : 1.618.
 // The same cached bike sprite is drawn in the shop card and under the rider on the map. =================
-const V45 = {cache:new Map(), K:2, OX:22, OY:31, W:44, H:34, PHI:1.618, OUT:'#0d1020'};
+const V45S = {cache:new Map(), K:2, OX:22, OY:31, W:44, H:34, PHI:1.618, OUT:'#0d1020'};
 const V45_SPRITE_ACC = ['basket', 'light', 'bell', 'flag', 'carrier', 'speaker', 'seat'];
 const V45_TABICON = {bike:'🚲', chess:'♟️', bacc:'🔔', pet:'🐾', outfit:'👕', hat:'🎩', jewel:'💍', boat:'⛵', bgear:'⚓', fish:'🎣'};
 const V45_STAGE = {bike:['#2a3f7a','#0f1533'], bacc:['#2a3f7a','#0f1533'], chess:['#3b2f5e','#141030'], pet:['#24524a','#0d1f22'], outfit:['#4a2f63','#170f2b'], hat:['#4a2f63','#170f2b'], jewel:['#5a4520','#1d1508'], boat:['#1f4f7a','#0a1a33'], bgear:['#1f4f7a','#0a1a33'], fish:['#1f5a6a','#0a1e26']};
@@ -176,11 +176,11 @@ function v45BikeAcc(D, A, accs){
 // sprite cache: design | colour | sprite accessories | wheel phase | glow hue
 function v45BikeSprite(bk, col, accs, phase, gh){
   const sa = V45_SPRITE_ACC.filter(a => accs.includes(a)), dz = v45Design(bk), key = dz + '|' + col + '|' + sa.join(',') + '|' + phase + '|' + gh;
-  let s = V45.cache.get(key); if(s) return s; if(V45.cache.size > 600) V45.cache.clear();
-  const c = document.createElement('canvas'); c.width = V45.W*V45.K; c.height = V45.H*V45.K; const g = c.getContext('2d');
-  const D = v45Kit(v45Painter(g, V45.K, V45.OX, V45.OY), col, phase*Math.PI/12, sa, gh), A = V45_BIKES[dz](D);
-  v45BikeAcc(D, A, sa); v45Pixelize(g, c.width, c.height, V45.OUT);
-  A.flag = [A.rear[0], A.rear[1] - 11]; s = {c, A}; V45.cache.set(key, s); return s;
+  let s = V45S.cache.get(key); if(s) return s; if(V45S.cache.size > 600) V45S.cache.clear();
+  const c = document.createElement('canvas'); c.width = V45S.W*V45S.K; c.height = V45S.H*V45S.K; const g = c.getContext('2d');
+  const D = v45Kit(v45Painter(g, V45S.K, V45S.OX, V45S.OY), col, phase*Math.PI/12, sa, gh), A = V45_BIKES[dz](D);
+  v45BikeAcc(D, A, sa); v45Pixelize(g, c.width, c.height, V45S.OUT);
+  A.flag = [A.rear[0], A.rear[1] - 11]; s = {c, A}; V45S.cache.set(key, s); return s;
 }
 function v45BikeCol(bk, accs){ return accs.includes('paint') ? v45hsl((Math.floor(realT*2) % 12)*30, 72, 56) : v45hex(v45rgb(v16BikeCol(bk))); }
 // drop-in for drawFancyBike(x, y, bk, accs, spin): same origin (ground, between the wheels), returns anchors
@@ -188,8 +188,8 @@ function v45DrawBike(x, y, bk, accs, spin, still){
   accs = accs || []; bk = bk || ITEM.bike1;
   const per = Math.PI/3, ph = Math.floor(((((spin || 0) % per) + per) % per)/per*4) % 4, gh = accs.includes('glow') ? Math.floor(realT*6) % 12 : -1;
   const s = v45BikeSprite(bk, v45BikeCol(bk, accs), accs, ph, gh), A = s.A;
-  const sm = ctx.imageSmoothingEnabled; ctx.imageSmoothingEnabled = false; ctx.drawImage(s.c, x - V45.OX, y - V45.OY, V45.W, V45.H); ctx.imageSmoothingEnabled = sm;
-  if(accs.includes('flag')){ const fx = x + A.flag[0], fy = y + A.flag[1], w = Math.sin(realT*8); ctx.fillStyle = V45.OUT; ctx.beginPath(); ctx.moveTo(fx, fy - .5); ctx.lineTo(fx - 7, fy + 1.5 + w); ctx.lineTo(fx, fy + 4.5); ctx.fill();
+  const sm = ctx.imageSmoothingEnabled; ctx.imageSmoothingEnabled = false; ctx.drawImage(s.c, x - V45S.OX, y - V45S.OY, V45S.W, V45S.H); ctx.imageSmoothingEnabled = sm;
+  if(accs.includes('flag')){ const fx = x + A.flag[0], fy = y + A.flag[1], w = Math.sin(realT*8); ctx.fillStyle = V45S.OUT; ctx.beginPath(); ctx.moveTo(fx, fy - .5); ctx.lineTo(fx - 7, fy + 1.5 + w); ctx.lineTo(fx, fy + 4.5); ctx.fill();
     ctx.fillStyle = '#ef4b4b'; ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(fx - 6, fy + 1.6 + w); ctx.lineTo(fx, fy + 3.8); ctx.fill(); rect('#ffd23f', fx - 2.5, fy + 1.4 + w*.5, 1, 1); }
   if(!still && accs.includes('light') && typeof SKYST !== 'undefined' && SKYST && SKYST.night > .3){ const lx = x + A.lamp[0] + 1.8, ly = y + A.lamp[1] + .8; ctx.fillStyle = 'rgba(255,245,157,.22)'; ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx + 40, ly - 9); ctx.lineTo(lx + 40, ly + 15); ctx.closePath(); ctx.fill(); }
   if(accs.includes('speaker') && Math.floor(realT*4) % 2) rect('#26c6da', x + A.seat[0] + 2.4, y + A.seat[1] + 3.6, 1, 1);
@@ -226,9 +226,9 @@ function v45Fish(P, it){
 
 // ---------- one pixel pipeline for every shop item: draw -> hard alpha + outline -> trim ----------
 function v45ItemSprite(it){
-  const K = V45.K, cat = it.cat, box = cat === 'boat' || cat === 'bgear' ? [150, 96, 75, 66] : cat === 'outfit' || cat === 'hat' || ['face', 'wrist', 'neck', 'ear', 'back', 'aura'].includes(cat) ? [48, 64, 24, 56] : cat === 'pet' ? [40, 40, 20, 34] : [V45.W, V45.H, V45.OX, V45.OY];
+  const K = V45S.K, cat = it.cat, box = cat === 'boat' || cat === 'bgear' ? [150, 96, 75, 66] : cat === 'outfit' || cat === 'hat' || ['face', 'wrist', 'neck', 'ear', 'back', 'aura'].includes(cat) ? [48, 64, 24, 56] : cat === 'pet' ? [40, 40, 20, 34] : [V45S.W, V45S.H, V45S.OX, V45S.OY];
   const c = document.createElement('canvas'); c.width = box[0]*K; c.height = box[1]*K; const g = c.getContext('2d');
-  let outline = V45.OUT;
+  let outline = V45S.OUT;
   if(cat === 'rod' || cat === 'lure') v45Fish(v45Painter(g, K, box[2], box[3]), it);
   else withCtx(g, () => { g.setTransform(K, 0, 0, K, box[2]*K, box[3]*K); g.imageSmoothingEnabled = false;
     if(cat === 'bike' || cat === 'bacc'){ outline = null; v45DrawBike(0, 0, cat === 'bike' ? it : ITEM.bike2, cat === 'bacc' ? [it.id] : [], .3, true); }
@@ -284,7 +284,7 @@ function v45RenderShop(){
   });
   // size each canvas to its real on-screen pixels so the integer pixel scale stays sharp on every phone
   const dpr = Math.min(3, window.devicePixelRatio || 1);
-  todo.forEach(([cv, it]) => { const w = cv.parentNode.clientWidth; if(w > 0){ cv.width = Math.round(w*dpr); cv.height = Math.round(w*dpr/V45.PHI); } drawItemPreview(cv, it); });
+  todo.forEach(([cv, it]) => { const w = cv.parentNode.clientWidth; if(w > 0){ cv.width = Math.round(w*dpr); cv.height = Math.round(w*dpr/V45S.PHI); } drawItemPreview(cv, it); });
 }
 
 function v45ShopInit(){

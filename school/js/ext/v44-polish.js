@@ -27,7 +27,7 @@ function v44Scene(c, s){ const k = s.scene || 0, X = s.x;
     for(let t=0;t<7;t++){ const y = 250 + t*16; c.fillStyle = t % 2 ? '#9ccc65' : '#c5e1a5'; c.beginPath(); c.moveTo(0, AH); for(let x=0;x<=AW;x+=10) c.lineTo(x, y + Math.sin((X*.12 + x)*.01 + t*.6)*14); c.lineTo(AW, AH); c.fill(); } }
 }
 const V44_GROUND = {2:['#eef4fb', '#3a5a4a'], 3:['#4f9a5a', '#2c6b43'], 4:['#1f2a48', '#141c34'], 5:['#7cb342', '#33691e']};
-function v44Balloon(){ const G = GAMES.balloon; if(!G || G.v44own) return;
+function v44BalloonScenes(){ const G = GAMES.balloon; if(!G || G.v44own) return;
   G.opts = V44_SCENES.slice(); const gi = G.init; G.init = function(o){ const s = gi.call(this, o === 1 ? 1 : 0); s.scene = o || 0; return s; };
   const gd = G.draw; G.draw = function(s, c){ if(!(s.scene >= 2)) return gd.call(this, s, c); let first = true; const gc = V44_GROUND[s.scene];
     const px = new Proxy(c, {get(t, k){ if(k === 'fillRect') return (x, y, w, h) => { if(first && x === 0 && y === 0 && w === AW && h === AH){ first = false; v44Scene(t, s); return; } t.fillRect(x, y, w, h); }; const v = t[k]; return typeof v === 'function' ? v.bind(t) : v; },
@@ -43,7 +43,7 @@ function v44CoachQuiet(){ const vm = v40Msg; v40Msg = function(who, text){ if(wh
   setInterval(() => { document.querySelectorAll('#v40Log .v40m.sys').forEach(m => { if(/offline|Claude|kho gợi ý/i.test(m.textContent)) m.remove(); }); const sb = $('#v40Sub'); if(sb && /offline/i.test(sb.textContent)) sb.textContent = '● Sẵn sàng trò chuyện'; }, 400); }
 function v44PolishInit(){
   V44_ICONS.unshift([/núi|snow/i, '🏔️'], [/thác|waterfall/i, '🏞️'], [/sao|star/i, '🌌'], [/ruộng|lúa|terrace/i, '🌾']);
-  v44Balloon(); v44Lamp(); v44Travel(); v44CoachQuiet(); v44ModePicker();
+  v44BalloonScenes(); v44Lamp(); v44Travel(); v44CoachQuiet(); v44ModePicker();
   // edge fill runs every frame while a mini game is open; no rotate hint
   const tk = v44ArcTick; v44ArcTick = function(){ const r = tk.apply(this, arguments); v44Fill(); return r; };
   const rot = $('#v44Rot'); if(rot) rot.remove(); V44.rotSeen = 1;

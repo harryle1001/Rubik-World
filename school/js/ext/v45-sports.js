@@ -2,7 +2,7 @@
 // Ski (5 mountain maps, one mode each), Football 3 vs 3 on a bigger pitch, Tanks (5 different tanks, big map with
 // obstacles). Full screen like the v44 balloon, touch only on phones: swipe = move, tap = pass/shoot/fire, hold = power.
 // Money follows the game rule: $1–20 per mini game, halved from the 11th reward of the day =================
-const V45 = {pts:new Map(), spr:{}, ids:new Set(['ski', 'football', 'tanks'])};
+const V45SP = {pts:new Map(), spr:{}, ids:new Set(['ski', 'football', 'tanks'])};
 const v45R = seed => () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; };
 const v45On = () => !!(ARC.g && ARC.g.v45 && openModal && openModal.id === 'mArcade');
 const v45AD = (a, b) => ((b - a + Math.PI*3) % (Math.PI*2)) - Math.PI;
@@ -10,19 +10,19 @@ const v45AL = (a, b, k) => a + v45AD(a, b)*Math.min(1, k);
 const v45H = (a, b) => { const x = Math.sin(a*127.1 + b*311.7)*43758.5453; return x - Math.floor(x); };
 function v45Size(){ const W = innerWidth, H = innerHeight; return H > W ? [480, Math.round(Math.min(1400, 480*H/W))] : [Math.round(Math.min(1400, 480*W/H)), 480]; }
 function v45Canvas(){ const [vw, vh] = v45Size(), cv = $('#arcCv'); if(cv && (cv.width !== vw || cv.height !== vh)){ cv.width = vw; cv.height = vh; } return [vw, vh]; }
-function v45Start(){ V45.pts.clear(); }
-function v45Spr(k, w, h, fn){ let s = V45.spr[k]; if(!s){ s = document.createElement('canvas'); s.width = w; s.height = h; fn(s.getContext('2d'), w, h); V45.spr[k] = s; } return s; }
+function v45spStart(){ V45SP.pts.clear(); }
+function v45Spr(k, w, h, fn){ let s = V45SP.spr[k]; if(!s){ s = document.createElement('canvas'); s.width = w; s.height = h; fn(s.getContext('2d'), w, h); V45SP.spr[k] = s; } return s; }
 function v45RR(c, x, y, w, h, r){ c.beginPath(); if(c.roundRect) c.roundRect(x, y, w, h, r); else c.rect(x, y, w, h); }
 // ---------- touch: swipe (floating stick) · tap · hold ----------
-function v45Ptr(e, type){ if(!v45On()) return; const cv = $('#arcCv'), r = cv.getBoundingClientRect(), x = (e.clientX - r.left)/r.width*cv.width, y = (e.clientY - r.top)/r.height*cv.height, now = performance.now()/1000, P = V45.pts;
+function v45Ptr(e, type){ if(!v45On()) return; const cv = $('#arcCv'), r = cv.getBoundingClientRect(), x = (e.clientX - r.left)/r.width*cv.width, y = (e.clientY - r.top)/r.height*cv.height, now = performance.now()/1000, P = V45SP.pts;
   if(type === 'down'){ const port = cv.height > cv.width; P.set(e.pointerId, {x0:x, y0:y, x, y, t0:now, moved:false, side:port ? (y > cv.height/2 ? 0 : 1) : (x < cv.width/2 ? 0 : 1)}); return; }
   const p = P.get(e.pointerId); if(!p) return;
   if(type === 'move'){ p.x = x; p.y = y; const dx = x - p.x0, dy = y - p.y0, d = Math.hypot(dx, dy); if(d > 14) p.moved = true; if(d > 70){ p.x0 = x - dx/d*70; p.y0 = y - dy/d*70; } return; }
   P.delete(e.pointerId); if(type !== 'up' || ARC.paused || !ARC.s || ARC.s.over || p.moved) return; const dur = now - p.t0, G = ARC.g;
   if(dur < .28){ if(G.tap) G.tap(ARC.s, p); } else if(G.release) G.release(ARC.s, p, dur); }
-function v45Drag(side){ for(const p of V45.pts.values()){ if(!p.moved || (side != null && p.side !== side)) continue; const dx = p.x - p.x0, dy = p.y - p.y0, len = Math.hypot(dx, dy); if(len < 6) return {dx:0, dy:0, len:0, nx:0, ny:0}; return {dx, dy, len, nx:dx/len, ny:dy/len, k:Math.min(1, len/55)}; } return null; }
-function v45Hold(side){ const now = performance.now()/1000; let m = 0; for(const p of V45.pts.values()) if(!p.moved && (side == null || p.side === side)) m = Math.max(m, now - p.t0); return m > .28 ? m : 0; }
-function v45Stick(c){ for(const p of V45.pts.values()){ if(!p.moved) continue; c.fillStyle = 'rgba(255,255,255,.14)'; c.strokeStyle = 'rgba(255,255,255,.45)'; c.lineWidth = 2; c.beginPath(); c.arc(p.x0, p.y0, 56, 0, 7); c.fill(); c.stroke(); c.fillStyle = 'rgba(255,255,255,.55)'; c.beginPath(); c.arc(p.x0 + clampV(p.x - p.x0, -56, 56), p.y0 + clampV(p.y - p.y0, -56, 56), 22, 0, 7); c.fill(); } }
+function v45Drag(side){ for(const p of V45SP.pts.values()){ if(!p.moved || (side != null && p.side !== side)) continue; const dx = p.x - p.x0, dy = p.y - p.y0, len = Math.hypot(dx, dy); if(len < 6) return {dx:0, dy:0, len:0, nx:0, ny:0}; return {dx, dy, len, nx:dx/len, ny:dy/len, k:Math.min(1, len/55)}; } return null; }
+function v45Hold(side){ const now = performance.now()/1000; let m = 0; for(const p of V45SP.pts.values()) if(!p.moved && (side == null || p.side === side)) m = Math.max(m, now - p.t0); return m > .28 ? m : 0; }
+function v45Stick(c){ for(const p of V45SP.pts.values()){ if(!p.moved) continue; c.fillStyle = 'rgba(255,255,255,.14)'; c.strokeStyle = 'rgba(255,255,255,.45)'; c.lineWidth = 2; c.beginPath(); c.arc(p.x0, p.y0, 56, 0, 7); c.fill(); c.stroke(); c.fillStyle = 'rgba(255,255,255,.55)'; c.beginPath(); c.arc(p.x0 + clampV(p.x - p.x0, -56, 56), p.y0 + clampV(p.y - p.y0, -56, 56), 22, 0, 7); c.fill(); } }
 // keyboard tap / hold on a key group (returns {tap} on a short press, {rel:seconds} on a long one, {hold} while down)
 function v45Key(s, id, codes){ s._k = s._k || {}; const down = codes.some(c => ARC.code[c]), t0 = s._k[id];
   if(down){ if(t0 == null) s._k[id] = s.t; return {hold:s.t - (t0 == null ? s.t : t0)}; }
@@ -54,7 +54,7 @@ function v45Peak(kind, t){ const tri = x => 1 - Math.abs(2*(x - Math.floor(x)) -
 function v45Skyline(c, M, x, y, w, h){ const pts = []; for(let i=0;i<=48;i++){ const t = i/48; pts.push([x + t*w, y - v45Peak(M.mt, t)*h]); }
   c.fillStyle = M.mc[0]; c.beginPath(); c.moveTo(x, y); pts.forEach(p => c.lineTo(p[0], p[1])); c.lineTo(x + w, y); c.fill();
   c.save(); c.beginPath(); c.rect(x, y - h, w, h*.5); c.clip(); c.fillStyle = M.mc[1]; c.beginPath(); c.moveTo(x, y); pts.forEach(p => c.lineTo(p[0], p[1] + (M.mt === 'mesa' ? 2 : 0))); c.lineTo(x + w, y); c.fill(); c.restore(); }
-function v45Tree(kind){ return v45Spr('tree-' + kind, 44, 64, (g) => {
+function v45spTree(kind){ return v45Spr('tree-' + kind, 44, 64, (g) => {
   if(kind === 'pine'){ g.fillStyle = '#5a3a1e'; g.fillRect(19, 50, 6, 12); [[22, 6, 14, 26], [22, 18, 18, 38], [22, 30, 21, 52]].forEach(([x, t, w, b]) => { g.fillStyle = '#2e6b4a'; g.beginPath(); g.moveTo(x - w, b); g.lineTo(x + w, b); g.lineTo(x, t); g.fill(); g.fillStyle = '#245a3d'; g.beginPath(); g.moveTo(x, t); g.lineTo(x + w, b); g.lineTo(x, b); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.moveTo(x - w*.45, t + (b - t)*.45); g.lineTo(x, t); g.lineTo(x + w*.35, t + (b - t)*.4); g.lineTo(x, t + (b - t)*.3); g.fill(); }); }
   else if(kind === 'birch'){ g.fillStyle = '#e8ecf5'; g.fillRect(19, 18, 6, 44); g.fillStyle = '#2a2f45'; for(let i=0;i<5;i++) g.fillRect(i % 2 ? 19 : 22, 24 + i*8, 3, 2); g.fillStyle = '#3d4a7a'; g.beginPath(); g.ellipse(22, 18, 17, 16, 0, 0, 7); g.fill(); g.fillStyle = '#56649c'; g.beginPath(); g.ellipse(17, 13, 9, 8, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(230,236,255,.85)'; g.beginPath(); g.ellipse(22, 7, 13, 5, 0, 0, 7); g.fill(); }
   else if(kind === 'ice'){ g.fillStyle = '#8fd3f4'; g.beginPath(); g.moveTo(6, 60); g.lineTo(14, 14); g.lineTo(24, 4); g.lineTo(32, 20); g.lineTo(40, 60); g.fill(); g.fillStyle = '#d8f3ff'; g.beginPath(); g.moveTo(14, 14); g.lineTo(24, 4); g.lineTo(22, 40); g.fill(); g.strokeStyle = 'rgba(255,255,255,.8)'; g.lineWidth = 2; g.beginPath(); g.moveTo(26, 12); g.lineTo(30, 44); g.stroke(); }
@@ -63,7 +63,7 @@ function v45Tree(kind){ return v45Spr('tree-' + kind, 44, 64, (g) => {
 GAMES.ski = {
   title:'Trượt tuyết 5 ngọn núi', opts:V45SKI.map(m => m.n), v45:1, v44top:0,
   help:'👆 Vuốt trái/phải để nghiêng ván rẽ. 👇 Vuốt xuống để lao nhanh, 👆 vuốt lên để phanh. 👉 Chạm để bật nhảy. 🌲 Đồi thông: qua cổng cờ. 🧊 Sông băng: mặt băng trơn, nhảy qua khe nứt. 🌙 Rừng đêm: nhặt đèn lồng. 🪨 Hẻm đá: bay qua dốc nhảy. 🌨️ Bão tuyết: gió đẩy ngang, cứu cờ hiệu. ⌨️ Mũi tên + Space.',
-  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45Start(); const M = V45SKI[o], R = v45R(77 + o*31), obs = [], it = [], L = M.L;
+  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45spStart(); const M = V45SKI[o], R = v45R(77 + o*31), obs = [], it = [], L = M.L;
     const inC = (y, m) => M.cx(y) + (R()*2 - 1)*(M.hw(y) - m), near = (x, y, d) => it.some(q => Math.abs(q.y - y) < d && Math.abs((q.x != null ? q.x : M.cx(q.y)) - x) < d*1.6);
     if(o === 0) for(let y=420, k=0; y < L - 300; y += 300, k++) it.push({k:'gate', y, x:M.cx(y) + (R()*2 - 1)*(M.hw(y) - 100), w:62, c:k % 2});
     if(o === 1){ for(let y=500; y < L - 400; y += 230 + R()*120) it.push({k:'ice', y, x:inC(y, 80), rx:70 + R()*70, ry:26 + R()*22}); for(let y=1100; y < L - 400; y += 700 + R()*200){ const g = inC(y, 90); it.push({k:'crev', y, gx:g, gw:96}); } for(let y=800; y < L - 400; y += 520) it.push({k:'boost', y:y + 90, x:inC(y + 90, 60)}); }
@@ -129,7 +129,7 @@ GAMES.ski = {
     for(const sg of [-1, 1]){ c.beginPath(); c.moveTo(sg < 0 ? -10 : W + 10, -20); for(let sy = -20; sy <= H + 20; sy += 16){ const wy = sy + oy; c.lineTo(M.cx(wy) + sg*M.hw(wy) - ox + sg*(M.wall ? 0 : 6), sy); } c.lineTo(sg < 0 ? -10 : W + 10, H + 20); c.fill();
       if(M.wall || s.o === 1){ c.strokeStyle = M.wall ? '#5d4c3e' : '#7cc1e8'; c.lineWidth = 4; c.beginPath(); for(let sy = -20; sy <= H + 20; sy += 16){ const wy = sy + oy, X = M.cx(wy) + sg*M.hw(wy) - ox; sy === -20 ? c.moveTo(X, sy) : c.lineTo(X, sy); } c.stroke(); } }
     // edge scenery
-    const spr = v45Tree(M.edge === 'drift' ? 'drift' : M.edge);
+    const spr = v45spTree(M.edge === 'drift' ? 'drift' : M.edge);
     for(let r = Math.floor(y0/64); r*64 < y1; r++) for(const sg of [-1, 1]) for(let k=0;k<2;k++){ const wy = r*64 + v45H(r, sg + k*3)*30, X = M.cx(wy) + sg*(M.hw(wy) + 26 + k*70 + v45H(sg, r + k)*40) - ox, Y = wy - oy; if(X < -40 || X > W + 40) continue; c.drawImage(spr, X - 22, Y - 58); }
     // start banner + summit skyline above the start
     if(oy < H){ const ty = -oy; if(ty > -10){ const g = c.createLinearGradient(0, 0, 0, ty); g.addColorStop(0, M.sky[0]); g.addColorStop(1, M.sky[1]); c.fillStyle = g; c.fillRect(0, 0, W, ty - 20); v45Skyline(c, M, -40, ty - 18, W + 80, Math.min(260, ty + 40)); c.fillStyle = M.snow; c.fillRect(0, ty - 22, W, 26); }
@@ -145,7 +145,7 @@ GAMES.ski = {
       else if(q.k === 'drift'){ c.fillStyle = 'rgba(255,255,255,.9)'; c.beginPath(); c.ellipse(q.x - ox, y, q.rx, q.ry, 0, 0, 7); c.fill(); c.fillStyle = 'rgba(160,175,195,.35)'; c.beginPath(); c.ellipse(q.x - ox, y + q.ry*.4, q.rx*.9, q.ry*.45, 0, 0, 7); c.fill(); }
       else if(q.k === 'flag' && !q.done){ c.fillStyle = '#455a64'; c.fillRect(q.x - ox - 1, y - 34, 3, 36); c.fillStyle = '#ff7043'; c.beginPath(); c.moveTo(q.x - ox + 2, y - 34); c.lineTo(q.x - ox + 24, y - 27 + Math.sin(s.t*8)*2); c.lineTo(q.x - ox + 2, y - 20); c.fill(); c.fillStyle = 'rgba(255,112,67,.25)'; c.beginPath(); c.arc(q.x - ox, y, 26, 0, 7); c.fill(); } }
     // obstacles
-    for(const ob of s.obs){ if(ob.y < y0) continue; if(ob.y > y1) break; c.drawImage(v45Tree(ob.k), ob.x - ox - 22, ob.y - oy - 56); }
+    for(const ob of s.obs){ if(ob.y < y0) continue; if(ob.y > y1) break; c.drawImage(v45spTree(ob.k), ob.x - ox - 22, ob.y - oy - 56); }
     // finish line
     const fy = M.L - oy; if(fy < H + 20){ const cx = M.cx(M.L) - ox, hw = M.hw(M.L); for(let x = cx - hw; x < cx + hw; x += 20){ c.fillStyle = Math.round((x - cx)/20) % 2 ? '#111' : '#fff'; c.fillRect(x, fy, 20, 10); c.fillStyle = Math.round((x - cx)/20) % 2 ? '#fff' : '#111'; c.fillRect(x, fy + 10, 20, 10); } }
     // skier
@@ -175,7 +175,7 @@ const V45FB = {L:1300, Wd:760, GW:210};
 GAMES.football = {
   title:'Bóng đá 3 đánh 3', opts:['Đấu máy · dễ', 'Đấu máy · khó', '2 người 1 máy'], v45:1, v44top:0,
   help:'👆 Vuốt để chạy theo hướng ngón tay. 👉 Chạm nhanh: chuyền bóng cho bạn (gần khung thành thì sút). ✊ Giữ lâu rồi thả: sút thật mạnh. 🏃 Không có bóng: chạm để lao vào cướp bóng. Người có vòng vàng là bạn. ⌨️ Mũi tên/WASD + Space. 2 người: WASD + Space và mũi tên + Enter (điện thoại: mỗi người một nửa màn hình). Trận 2 phút rưỡi.',
-  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45Start(); const L = V45FB.L, Wd = V45FB.Wd, home = [[.2, .5], [.42, .26], [.5, .74]], p = [];
+  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45spStart(); const L = V45FB.L, Wd = V45FB.Wd, home = [[.2, .5], [.42, .26], [.5, .74]], p = [];
     for(const team of [0, 1]) for(let r=0;r<3;r++) p.push({team, role:r, u:0, v:0, vu:0, vv:0, fu:team ? -1 : 1, fv:0, walk:0, cd:0, dash:0, think:0, sd:team ? -1 : 1, look:agentLook(team*3 + r + 2, {shirt:team ? '#ef4b4b' : '#3d7bff', pants:team ? '#7a1f1f' : '#1b2f6b'})});
     const k = [0, 1].map(team => ({team, gk:true, u:team ? L - 24 : 24, v:Wd/2, vu:0, vv:0, fu:team ? -1 : 1, fv:0, walk:0, cd:0, dash:0, hold:0, sd:team ? -1 : 1, look:agentLook(team + 9, {shirt:team ? '#ffb300' : '#2fbf71', pants:'#263238'})}));
     if(PLAYER){ try { p[0].look = Object.assign({}, PLAYER, {shirt:'#3d7bff'}); } catch(e){} }
@@ -304,7 +304,7 @@ function v45Ground(){ return v45Spr('ground', 256, 256, (g) => { g.fillStyle = '
 GAMES.tanks = {
   title:'Đấu xe tăng', opts:V45TK.map(t => t.n), v45:1, v44top:0,
   help:'👆 Vuốt về hướng nào, xe tăng chạy về hướng đó. 👉 Chạm để bắn — nòng tự ngắm xe gần nhất. ✊ Giữ ngón tay để bắn liên tục. 5 xe tăng đấu tự do: hạ 5 xe trước là thắng. 📦 Bắn vỡ hộp gỗ để nhặt 🔧 hồi máu hoặc ⚡ tăng tốc. Đạn nảy tường tùy loại xe. ⌨️ Mũi tên/WASD + Space · Người 2 bấm Enter để vào (mũi tên + Enter).',
-  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45Start(); const port = vh > vw, WW = port ? 1300 : 1800, WH = port ? 1800 : 1300, R = v45R(4242 + o), tr = a => port ? [a[1], a[0], a[3], a[2]] : a;
+  init(o){ o = o || 0; const [vw, vh] = v45Canvas(); v45spStart(); const port = vh > vw, WW = port ? 1300 : 1800, WH = port ? 1800 : 1300, R = v45R(4242 + o), tr = a => port ? [a[1], a[0], a[3], a[2]] : a;
     const walls = [[0, 0, WW, 30], [0, WH - 30, WW, 30], [0, 0, 30, WH], [WW - 30, 0, 30, WH]];
     [[300, 250, 240, 40], [300, 250, 40, 200], [1260, 250, 240, 40], [1460, 250, 40, 200], [300, 1010, 240, 40], [300, 850, 40, 200], [1260, 1010, 240, 40], [1460, 850, 40, 200], [820, 580, 160, 140], [600, 560, 40, 180], [1160, 560, 40, 180], [860, 170, 80, 150], [860, 980, 80, 150]].forEach(a => walls.push(tr(a)));
     const ponds = [[560, 420, 70], [1240, 880, 80]].map(([x, y, r]) => port ? {x:y, y:x, r} : {x, y, r}), spawns = [[130, 130], [1670, 130], [130, 1170], [1670, 1170], [900, 470]].map(([x, y]) => port ? [y, x] : [x, y]);
@@ -367,8 +367,8 @@ GAMES.tanks = {
       s.over = rank === 1 ? 'Chiến thắng! 🏆' : `Hạng ${rank}/5`; s.sub = `Bạn hạ ${me.kills} xe tăng\n${top === me ? 'Bạn dẫn đầu!' : top.name + ' thắng với ' + top.kills + ' xe'}`; s.perf = [1, .72, .5, .34, .2][rank - 1]*.7 + Math.min(1, me.kills/5)*.3; cheerSfx(); }
   },
   draw(s, c){ const W = c.canvas.width, H = c.canvas.height, ox = Math.round(s.camx - W/2), oy = Math.round(s.camy - H/2), vis = (x, y, m) => x > ox - m && x < ox + W + m && y > oy - m && y < oy + H + m;
-    if(!V45.pat || V45.patC !== c){ V45.pat = c.createPattern(v45Ground(), 'repeat'); V45.patC = c; }
-    c.save(); c.translate(-ox, -oy); c.fillStyle = '#3b4a2c'; c.fillRect(ox, oy, W, H); c.fillStyle = V45.pat; c.fillRect(Math.max(0, ox), Math.max(0, oy), Math.min(s.WW, ox + W) - Math.max(0, ox), Math.min(s.WH, oy + H) - Math.max(0, oy));
+    if(!V45SP.pat || V45SP.patC !== c){ V45SP.pat = c.createPattern(v45Ground(), 'repeat'); V45SP.patC = c; }
+    c.save(); c.translate(-ox, -oy); c.fillStyle = '#3b4a2c'; c.fillRect(ox, oy, W, H); c.fillStyle = V45SP.pat; c.fillRect(Math.max(0, ox), Math.max(0, oy), Math.min(s.WW, ox + W) - Math.max(0, ox), Math.min(s.WH, oy + H) - Math.max(0, oy));
     // dirt roads
     c.fillStyle = 'rgba(150,115,70,.5)'; if(s.port){ c.fillRect(s.WW/2 - 40, 0, 80, s.WH); c.fillRect(0, s.WH*.5 - 30, s.WW, 60); } else { c.fillRect(0, s.WH/2 - 40, s.WW, 80); c.fillRect(s.WW*.5 - 30, 0, 60, s.WH); }
     // ponds
@@ -414,8 +414,8 @@ function v45SportsInit(){
   const fit = v44Fit; v44Fit = function(){ if(ARC.g && ARC.g.v45){ const c2 = $('#arcCv'); if(!c2) return; document.body.classList.toggle('v44side', innerWidth > innerHeight && MOB.touch); document.body.classList.add('v45arc'); c2.style.setProperty('width', innerWidth + 'px', 'important'); c2.style.setProperty('height', innerHeight + 'px', 'important'); c2.style.setProperty('object-fit', 'fill', 'important'); return; } document.body.classList.remove('v45arc'); return fit.apply(this, arguments); };
   const fill = v44Fill; v44Fill = function(){ if(ARC.g && ARC.g.v45) return; return fill.apply(this, arguments); };
   const ov = overlay; overlay = function(c, t1, t2){ if(ARC.g && ARC.g.v45 && c && c.canvas){ const W = c.canvas.width, H = c.canvas.height; c.fillStyle = 'rgba(5,8,20,.6)'; c.fillRect(0, 0, W, H); c.textAlign = 'center'; c.font = '900 34px Nunito, sans-serif'; c.fillStyle = '#ffd23f'; c.fillText(t1 === 'Tạm dừng' ? '⏸ Tạm dừng' : t1, W/2, H/2 - 8); c.font = '800 21px Nunito, sans-serif'; c.fillStyle = '#fff'; c.fillText(t1 === 'Tạm dừng' ? 'Bấm ▶ để chơi tiếp' : (t2 || ''), W/2, H/2 + 30); c.textAlign = 'left'; return; } return ov.apply(this, arguments); };
-  const ar = arcReward; arcReward = function(id, s){ if(!(V45.ids.has(id) && GAMES[id] && GAMES[id].v45)) return ar.apply(this, arguments);
+  const ar = arcReward; arcReward = function(id, s){ if(!(V45SP.ids.has(id) && GAMES[id] && GAMES[id].v45)) return ar.apply(this, arguments);
     if(!PROF){ loginNudge(); return; } const m = v45Pay(s); reward(GAME_EXP[id] || 25, m, GAMES[id].title); try { mentorResult(id, 0); } catch(e){} };
-  const oa = openArcade; openArcade = function(id){ V45.pts.clear(); const r = oa.apply(this, arguments); if(GAMES[id] && GAMES[id].v45) v44Fit(); return r; };
+  const oa = openArcade; openArcade = function(id){ V45SP.pts.clear(); const r = oa.apply(this, arguments); if(GAMES[id] && GAMES[id].v45) v44Fit(); return r; };
   addEventListener('resize', () => { if(!v45On()) return; const [vw, vh] = v45Canvas(); if(ARC.s){ ARC.s.vw = vw; ARC.s.vh = vh; } v44Fit(); });
 }
