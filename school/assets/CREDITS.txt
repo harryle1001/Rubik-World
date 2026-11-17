@@ -13,3 +13,8 @@ assets/sfx/k-*.mp3 (coin, step, land, impact, gem, confirm)
 
 All files were converted to mono MP3 at 64 kbps. Bike bell, birds, waves and wind are
 synthesized in the browser with the Web Audio API (no files).
+
+Background music by zone (v45, js/ext/v45-zenmusic.js)
+  Original short pieces composed for this game and synthesized live in the browser with the
+  Web Audio API (zen bowl and zither, painters' music box, music-room ensemble, student opera,
+  library harp, garden flute, calm world theme). No audio files. Released as CC0 1.0.

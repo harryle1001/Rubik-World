@@ -885,3 +885,7 @@ body.v44fs #mSudoku .sdkpad button{min-height:0!important;height:100%}
 body.v44fs #mSudoku .sdkpad{max-height:none!important;flex:0 0 auto!important;grid-auto-rows:auto!important}
 body.v44fs #mSudoku .sdkpad button{height:clamp(54px, calc((100dvh - 100vw - 250px)/2), 112px)!important;font-size:26px!important}
 @media (orientation:landscape){body.v44fs #mSudoku .sdkpad button{height:clamp(44px, 9dvh, 70px)!important}}
+/* ===== v45 zen music ===== */
+#v45Row small{display:block;font-weight:700;font-size:13px;opacity:.8;margin-top:2px}
+#v45Row input[type=range]{width:min(160px,38vw);accent-color:#ffd23f}
+@media (max-width:600px){#v45Row{font-size:16px}}
