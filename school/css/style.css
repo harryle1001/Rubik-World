@@ -854,3 +854,34 @@ body.v44fs .mentor,body.v44fs #mentor{display:none!important}
 body.v44arc:not(.v44side) #mArcade .arcmain{padding-top:56px}
 body.v44side #v44Bar{bottom:0;align-items:stretch}
 body.v44side #v44Bar>*{flex-direction:column;justify-content:flex-start}
+/* v44b: edge-to-edge (edges of the game stretched to fill), no blur, canvas centred */
+#v44Bg{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;filter:none!important;transform:none!important}
+body.v44arc #mArcade .arcmain,body.v44arc:not(.v44side) #mArcade .arcmain{padding-top:0!important;background:transparent}
+body.v44arc #mArcade #arcCv{box-shadow:none!important}
+body.v44arc #mArcade .arcwrap{background:transparent!important}
+/* travel buttons: small, top-left under the menu button */
+#v41Col.v44tl{left:max(10px,env(safe-area-inset-left))!important;right:auto!important;top:calc(var(--v44mt, 120px) + 58px)!important;bottom:auto!important;transform:none!important;gap:8px!important}
+#v41Col.v44tl .v41b .ic{width:40px!important;height:40px!important}
+#v41Col.v44tl .v41b small{font-size:10px!important}
+#v41Col.v44tl .v41b{gap:1px!important}
+@media (min-width:900px) and (min-height:501px){#v41Col.v44tl{top:auto!important;bottom:24px!important;left:20px!important}}
+/* classic British brass lantern */
+.v41b.v44lamp .ic{background:radial-gradient(circle at 50% 40%,#2c3a33,#141c18)!important;border:2px solid #c9a24a!important;box-shadow:inset 0 0 0 1px rgba(255,236,170,.25),0 3px 10px rgba(0,0,0,.4)}
+.v41b.v44lamp.on .ic{box-shadow:0 0 16px rgba(255,196,77,.75),inset 0 0 0 1px rgba(255,236,170,.4)}
+.v41b.v44lamp small{font-family:Georgia,'Times New Roman',serif;font-style:italic;color:#e8c27a}
+/* sudoku fills the screen: big board, big number pad at the bottom */
+body.v44fs #mSudoku .mbox{display:flex!important;flex-direction:column}
+body.v44fs #mSudoku .sdkgrid{width:min(100%, calc(100dvh - 330px))!important;margin:0 auto}
+body.v44fs #mSudoku .sdkpad{margin-top:auto;gap:6px}
+body.v44fs #mSudoku .sdkpad button{min-height:clamp(52px, 8dvh, 76px);font-size:22px}
+#v44Bg{max-height:none!important;max-width:none!important;height:100dvh!important;width:100vw!important}
+#v44Bar{max-width:100vw;box-sizing:border-box}
+.v44modes.v44pick{flex-direction:column}
+.v44modes.v44pick .v44mode:not(.cur){display:none}
+.v44modes.v44pick.open .v44mode:not(.cur){display:grid}
+body.v44side .v44modes.v44pick{flex-direction:column}
+body.v44fs #mSudoku .sdkpad{flex:1 1 auto;grid-auto-rows:1fr;margin-top:8px;max-height:40dvh}
+body.v44fs #mSudoku .sdkpad button{min-height:0!important;height:100%}
+body.v44fs #mSudoku .sdkpad{max-height:none!important;flex:0 0 auto!important;grid-auto-rows:auto!important}
+body.v44fs #mSudoku .sdkpad button{height:clamp(54px, calc((100dvh - 100vw - 250px)/2), 112px)!important;font-size:26px!important}
+@media (orientation:landscape){body.v44fs #mSudoku .sdkpad button{height:clamp(44px, 9dvh, 70px)!important}}

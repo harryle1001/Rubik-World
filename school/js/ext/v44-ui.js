@@ -24,7 +24,7 @@ function v44ArcUI(){
   again.onclick = () => { again.hidden = true; arcNew(); bar.querySelector('[data-k=pause]').textContent = '⏸'; };
 }
 function v44Modes(){ const box = $('#v44Bar .v44modes'); if(!box) return; box.innerHTML = ''; $('#arcOpts').querySelectorAll('button').forEach((o, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'v44b v44mode'; b.textContent = v44Icon(o.textContent); b.title = o.textContent; b.setAttribute('aria-label', o.textContent); b.setAttribute('aria-pressed', o.getAttribute('aria-pressed')); b.onclick = () => { o.click(); v44Modes(); $('#v44Again').hidden = true; }; box.appendChild(b); }); box.hidden = box.childElementCount < 2; }
-function v44Fit(){ const cv = $('#arcCv'); if(!cv) return; const W = innerWidth, H = innerHeight, port = H > W, side = !port && MOB.touch, top = side ? 0 : 64, sideW = side ? 116 : 0, s = Math.min((W - sideW)/AW, (H - top)/AH); document.body.classList.toggle('v44side', side); cv.style.width = Math.floor(AW*s) + 'px'; cv.style.height = Math.floor(AH*s) + 'px'; const r = $('#v44Rot'); if(r){ if(port && MOB.touch && !V44.rotSeen){ V44.rotSeen = 1; r.hidden = false; clearTimeout(V44.rotT); V44.rotT = setTimeout(() => { r.hidden = true; }, 3200); } else if(!port) r.hidden = true; } }
+function v44Fit(){ const cv = $('#arcCv'); if(!cv) return; const W = innerWidth, H = innerHeight, port = H > W, side = !port && MOB.touch, top = 0, sideW = side ? 116 : 0, s = Math.min((W - sideW)/AW, (H - top)/AH); document.body.classList.toggle('v44side', side); cv.style.width = Math.floor(AW*s) + 'px'; cv.style.height = Math.floor(AH*s) + 'px'; const r = $('#v44Rot'); if(r){ if(port && MOB.touch && !V44.rotSeen){ V44.rotSeen = 1; r.hidden = false; clearTimeout(V44.rotT); V44.rotT = setTimeout(() => { r.hidden = true; }, 3200); } else if(!port) r.hidden = true; } }
 function v44ArcTick(){ if(!openModal || openModal.id !== 'mArcade'){ V44.raf = 0; return; }
   const bg = $('#v44Bg'), cv = $('#arcCv'); if(bg && cv){ try { bg.getContext('2d').drawImage(cv, 0, 0, 160, 90); } catch(e){} }
   const a = $('#v44Again'); if(a){ const over = !!(ARC.s && ARC.s.over); if(a.hidden === over) a.hidden = !over; }
@@ -36,7 +36,7 @@ function v44Arcade(){
   // the end-of-game card no longer says 'press "Chơi lại"' — the Play again button appears instead
   const ov = overlay; overlay = function(c, t1, t2){ return ov.call(this, c, t1, String(t2 == null ? '' : t2).replace(/\s*·?\s*Bấm "Chơi lại"/g, '') || ' '); };
   // hot-air balloon: slower, calmer, smoother (everything at 60% speed)
-  if(GAMES.balloon){ const bu = GAMES.balloon.update; GAMES.balloon.update = function(s, dt){ return bu.call(this, s, dt*.6); }; }
+  if(GAMES.balloon && !GAMES.balloon.v44own){ const bu = GAMES.balloon.update; GAMES.balloon.update = function(s, dt){ return bu.call(this, s, dt*.6); }; }
 }
 // every other game window: full screen on every device, instructions only behind "?"
 const V44_FS = /^(mArcade|mHouse|mChess|mRubik|mFish|mFishDeep|mCaro|mGo|mPaint|mLab|mOly|mMusic|mFarm|mZen|mSudoku|mMemory|mMath|mOAQ|mMissile|mObs|mGarden|mScope|mC4|mWatch|mChessLearn|mLib|mAcad|mHall|mKart|mLobby)$/;
