@@ -71,7 +71,7 @@ function v46HarborPass(z, dt){
   v46Up(z, 806, () => { rect('#e8e2d0', 772, 806, 4, 26); rect('#e8e2d0', 792, 806, 4, 26); rect('#ef4b4b', 768, 800, 32, 8); rect('#ffd23f', 770, 790, 28, 10); });
   v46Up(z, 800, () => drawFlagPlaza());
   const sp = [];
-  ships.forEach(s => { const sx = v46ShipX(s); if(sx > VB.x0 - 200 && sx < VB.x1 + 200 && s.y > VB.y0 - 60 && s.y < VB.y1 + 200) sp.push({y:s.y, f:() => { ctx.translate(sx - s.x, 0); drawShip(s); }}); });
+  ships.forEach(s => { if(v47wBigShip(s)) return; const sx = v46ShipX(s); if(sx > VB.x0 - 200 && sx < VB.x1 + 200 && s.y > VB.y0 - 60 && s.y < VB.y1 + 200) sp.push({y:s.y, f:() => { ctx.translate(sx - s.x, 0); drawShip(s); }}); });
   sp.push({y:sub.y, f:drawSub}); sp.push({y:LIGHTHOUSE[1], f:drawLighthouse});
   agents.forEach(a => { if(a.visible && !a.inSub && a._z === 'harbor' && !v46Raw(a.x) && inVB(a.x, a.y)) sp.push({y:a.y, f:() => drawPerson(a)}); });
   npcs.forEach(n => { if(npcShown(n) && inVB(n.x, n.y) && v46ZoneOld(n.x, n.y) === z) sp.push({y:n.y, f:() => drawNpc(n)}); });
@@ -101,9 +101,10 @@ function v46Lighting(VBn){
   if(d > 0 && !v25Dark(d)){ ctx.fillStyle = `rgba(12,18,48,${d})`; ctx.fillRect(x0, y0, w, h); }
   const z = V46.ZI.harbor, beamA = Math.max(.07, d*.9, weather === 'suongmu' ? .5 : 0, isStorm() ? .35 : 0);
   if(v26Beam(beamA)){ const lx = LIGHTHOUSE[0] + z.d[0], ly = z.d[1] - LIGHTHOUSE[1] - 206; ctx.save(); ctx.globalCompositeOperation = 'lighter';
-    [lhAng, lhAng + Math.PI].forEach((ang, k) => { if(k === 1 && pirate) return; const L = 1300, sp = .1, g = ctx.createRadialGradient(lx, ly, 10, lx, ly, L);
+    const la = v47wLhAng(); [la, la + Math.PI].forEach((ang, k) => { if(k === 1 && pirate) return; const L = 2600, sp = .2, g = ctx.createRadialGradient(lx, ly, 10, lx, ly, L);
       g.addColorStop(0, `rgba(255,240,170,${beamA})`); g.addColorStop(1, 'rgba(255,240,170,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(lx, ly);
-      ctx.lineTo(lx + Math.cos(ang - sp)*L, ly + Math.sin(ang - sp)*L*.55); ctx.lineTo(lx + Math.cos(ang + sp)*L, ly + Math.sin(ang + sp)*L*.55); ctx.closePath(); ctx.fill(); });
+      ctx.lineTo(lx + Math.cos(ang - sp)*L, ly + Math.sin(ang - sp)*L*.75); ctx.lineTo(lx + Math.cos(ang + sp)*L, ly + Math.sin(ang + sp)*L*.75); ctx.closePath(); ctx.fill(); });
+    if(d > .05){ const gl = ctx.createRadialGradient(lx, ly, 0, lx, ly, 560); gl.addColorStop(0, `rgba(255,236,160,${Math.min(.45, d*.6)})`); gl.addColorStop(1, 'rgba(255,236,160,0)'); ctx.fillStyle = gl; ctx.fillRect(lx - 560, ly - 560, 1120, 1120); }   // v47: quầng sáng rộng quanh hải đăng
     ctx.restore(); }
   if(flash > 0){ ctx.fillStyle = `rgba(235,240,255,${flash*.22})`; ctx.fillRect(x0, y0, w, h); }
   if(fade > 0){ ctx.fillStyle = `rgba(5,8,20,${fade})`; ctx.fillRect(x0, y0, w, h); }
@@ -114,7 +115,7 @@ function v46WithNew(fn){
   agents.forEach(a => { const p = v46Pos(a); keep.push(a.x, a.y); a.x = p[0]; a.y = p[1]; });
   const sx = sub.x, sy = sub.y, lx = LIGHTHOUSE[0], ly = LIGHTHOUSE[1], shp = ships.map(s => [s.x, s.y]);
   const sp = v46N(hz, sub.x, sub.y); sub.x = sp[0]; sub.y = sp[1]; LIGHTHOUSE[0] = lx + hz.d[0]; LIGHTHOUSE[1] = hz.d[1] - ly;
-  ships.forEach(s => { const p = v46N(hz, v46ShipX(s), s.y); s.x = p[0]; s.y = p[1]; });
+  ships.forEach(s => { const p = v47wBigShip(s) ? v47wShipPos(s) : v46N(hz, v46ShipX(s), s.y); s.x = p[0]; s.y = p[1]; });
   V46.raw = true;
   try { fn(); } finally { V46.raw = false; let i = 0; agents.forEach(a => { a.x = keep[i++]; a.y = keep[i++]; }); sub.x = sx; sub.y = sy; LIGHTHOUSE[0] = lx; LIGHTHOUSE[1] = ly; ships.forEach((s, k) => { s.x = shp[k][0]; s.y = shp[k][1]; }); }
 }
@@ -136,6 +137,7 @@ function v46Render(dt){
   V46.Z.forEach(z => { if(!V46ZC[z.id] && !far && z.n.x1 > VBn.x0 && z.n.x0 < VBn.x1 && z.n.y1 > VBn.y0 && z.n.y0 < VBn.y1 && !z.flip && !V46.zcBuilt){ V46.zcBuilt = 1; v46ZoneCache(z); } }); V46.zcBuilt = 0;
   const raw = agents.filter(a => a.visible && !a.inSub && v46Raw(a.x)).map(a => [v46Pos(a), a]).filter(([p]) => p[0] > VBn.x0 && p[0] < VBn.x1 && p[1] > VBn.y0 && p[1] < VBn.y1);
   raw.sort((p, q) => p[0][1] - q[0][1]).forEach(([, a]) => v46DrawRaw(a));
+  v47wWorld(VBn);   // v47: tàu vòng quanh đảo + chợ phố người chơi
   try { v46DrawGuide(); } catch(e){}
   try { drawParticles(dt); } catch(e){} try { drawMapClouds(); } catch(e){}
   try { v46Lighting(VBn); } catch(e){ console.warn('v46 light', e); }
