@@ -17,3 +17,4 @@ synthesized in the browser with the Web Audio API (no files).
 Shop pictures (v45): every bike, pet, outfit, hat, jewel, boat, chess set, rod and lure picture in the shop
 is drawn by code in js/ext/v45-shop.js (original pixel art, no image files, no third-party art).
 One master bike kit (wheel, tube, saddle, crank parts) builds all 15 bike designs; colour variants are generated in code.
+v45 Session 6: nhạc nền theo khu, nhạc cụ (violin, trumpet, sáo, saxophone), chuông, sáo trúc vườn thiền và bản "Ode to Joy" (Beethoven, phạm vi công cộng) đều tạo bằng code WebAudio, không dùng file âm thanh ngoài.
