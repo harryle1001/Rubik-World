@@ -17,7 +17,7 @@ const ground = (u, v) => { const [x, z] = toWorld(u, v); return heightLocal(u, v
 
 /** Dựng toàn bộ hình lâu đài vào các batch. far = true: chỉ khối ngoài (bóng xa). Trả về hộp va chạm cục bộ, chóp tháp, mặt cầu, instancing. */
 function layout(B, far = false) {
-  const { glow, glass } = B, wall = B.wall, roof = B.roof, win = B.win, seg = far ? 6 : 10;
+  const { glow, glass } = B, wall = B.wall, roof = B.roof, win = B.win, det = far ? null : B.det, seg = far ? 6 : 10;
   const K = makeKit(B, { far, Y, ground }), { boxes, tips, solid, winAt, range, tower } = K;
   const { box: X, H, T } = L;
   // --- 4 dãy bao quanh ---
