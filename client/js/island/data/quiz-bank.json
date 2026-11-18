@@ -110,7 +110,21 @@
         { "q": "1 tấn bằng bao nhiêu ki-lô-gam?", "c": ["1000 kg", "100 kg", "10 kg", "10 000 kg"], "a": 0, "e": "1 tấn = 10 tạ = 1000 kg." },
         { "q": "Góc lớn hơn góc vuông nhưng bé hơn góc bẹt gọi là?", "c": ["Góc tù", "Góc nhọn", "Góc vuông", "Góc đỉnh"], "a": 0, "e": "Góc nhọn < góc vuông < góc tù < góc bẹt." },
         { "q": "Rút gọn phân số 12/18 được?", "c": ["2/3", "3/4", "4/6", "6/8"], "a": 0, "e": "Chia cả tử và mẫu cho 6: 12/18 = 2/3." },
-        { "q": "Năm 2026 thuộc thế kỉ nào?", "c": ["Thế kỉ XXI", "Thế kỉ XX", "Thế kỉ XIX", "Thế kỉ XXII"], "a": 0, "e": "Từ năm 2001 đến 2100 là thế kỉ XXI (21)." }
+        { "q": "Năm 2026 thuộc thế kỉ nào?", "c": ["Thế kỉ XXI", "Thế kỉ XX", "Thế kỉ XIX", "Thế kỉ XXII"], "a": 0, "e": "Từ năm 2001 đến 2100 là thế kỉ XXI (21)." },
+        { "q": "Số 3 405 027 đọc là?", "c": ["Ba triệu bốn trăm linh năm nghìn không trăm hai mươi bảy", "Ba triệu bốn trăm năm mươi nghìn hai trăm bảy mươi", "Ba trăm bốn mươi triệu năm nghìn hai mươi bảy", "Ba triệu bốn mươi lăm nghìn hai trăm bảy mươi"], "a": 0, "e": "Tách lớp từ phải: 3 | 405 | 027 → ba triệu, bốn trăm linh năm nghìn, không trăm hai mươi bảy." },
+        { "q": "Trong số 52 846 193, chữ số 8 thuộc hàng nào?", "c": ["Hàng trăm nghìn", "Hàng chục nghìn", "Hàng triệu", "Hàng nghìn"], "a": 0, "e": "52 | 846 | 193: chữ số 8 đứng ở hàng trăm nghìn của lớp nghìn (giá trị 800 000)." },
+        { "q": "Số nào lớn nhất?", "c": ["1 000 010", "999 999", "1 000 001", "100 999"], "a": 0, "e": "Số có 7 chữ số lớn hơn số có 6 chữ số; so 1 000 010 với 1 000 001: hàng chục 1 > 0." },
+        { "q": "Làm tròn số 2 368 450 đến hàng trăm nghìn được?", "c": ["2 400 000", "2 300 000", "2 370 000", "2 000 000"], "a": 0, "e": "Chữ số hàng chục nghìn là 6 (≥ 5) nên làm tròn lên: 2 368 450 ≈ 2 400 000." },
+        { "q": "345 678 + 254 322 = ?", "c": ["600 000", "599 990", "600 100", "590 000"], "a": 0, "e": "Cộng từng hàng từ phải sang, có nhớ: 345 678 + 254 322 = 600 000." },
+        { "q": "Số gồm 5 triệu, 7 chục nghìn và 3 đơn vị viết là?", "c": ["5 070 003", "5 700 003", "5 007 003", "570 003"], "a": 0, "e": "5 triệu = 5 000 000; 7 chục nghìn = 70 000; 3 đơn vị = 3 → 5 070 003." },
+        { "q": "Phân số 6/8 rút gọn được phân số tối giản nào?", "c": ["3/4", "2/3", "6/4", "1/2"], "a": 0, "e": "Chia cả tử và mẫu cho 2: 6/8 = 3/4. 3 và 4 không cùng chia hết cho số nào lớn hơn 1." },
+        { "q": "So sánh 3/5 và 3/7:", "c": ["3/5 > 3/7", "3/5 < 3/7", "3/5 = 3/7", "Không so sánh được"], "a": 0, "e": "Cùng tử số: phân số nào có mẫu bé hơn thì lớn hơn (chia 5 phần thì mỗi phần to hơn chia 7 phần)." },
+        { "q": "2/9 + 5/9 = ?", "c": ["7/9", "7/18", "10/9", "3/9"], "a": 0, "e": "Cộng hai phân số cùng mẫu: cộng tử số, giữ nguyên mẫu số: (2 + 5)/9 = 7/9." },
+        { "q": "1/2 + 1/4 = ?", "c": ["3/4", "2/6", "1/6", "2/4"], "a": 0, "e": "Quy đồng: 1/2 = 2/4. Rồi 2/4 + 1/4 = 3/4." },
+        { "q": "2/3 × 3/5 = ?", "c": ["2/5", "6/8", "5/8", "5/15"], "a": 0, "e": "Nhân tử với tử, mẫu với mẫu: 6/15, rút gọn (chia cả tử và mẫu cho 3) được 2/5." },
+        { "q": "Lớp có 28 bạn, 3/4 số bạn thích bơi. Có bao nhiêu bạn thích bơi?", "c": ["21 bạn", "7 bạn", "24 bạn", "12 bạn"], "a": 0, "e": "Tìm 3/4 của 28: 28 : 4 × 3 = 7 × 3 = 21 bạn." },
+        { "q": "Phân số nào bé hơn 1?", "c": ["5/6", "6/5", "7/7", "9/4"], "a": 0, "e": "Phân số có tử số bé hơn mẫu số thì bé hơn 1: 5 < 6." },
+        { "q": "Quy đồng mẫu số 2/3 và 1/6, mẫu số chung bé nhất là?", "c": ["6", "3", "9", "18"], "a": 0, "e": "6 chia hết cho 3 nên lấy 6 làm mẫu chung: 2/3 = 4/6, giữ nguyên 1/6." }
       ],
       "tv": [
         { "q": "Trong câu “Chú mèo lười nằm ngủ.”, từ nào là tính từ?", "c": ["lười", "mèo", "nằm", "ngủ"], "a": 0, "e": "“lười” chỉ đặc điểm, tính chất: tính từ." },

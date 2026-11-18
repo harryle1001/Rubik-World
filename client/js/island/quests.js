@@ -1,7 +1,7 @@
 // quests.js — Nhiệm vụ hằng ngày: ô HUD nhỏ 📋 góc trái (chạm / phím L mở rộng; không che cảnh, không khoá nhân vật):
 //   1) Đi tới 3 khu của hôm nay   2) Trả lời đúng 3 câu đố của thầy cô (teacher-quiz.js gọi ctx.questEvent('quiz'))
 //   3) Thu thập 5 viên pha lê (8 viên rải quanh trường, vị trí đổi theo ngày; tới gần là nhặt)
-//   Xong cả 3 → Nhận thưởng 34 🪙 + 💠 Pha lê Tri Thức (island.inventory, dùng chung temple/treasure). Chuỗi ngày liên tiếp 🔥.
+//   Xong cả 3 → Nhận thưởng 13 ⭐ + 💠 Pha lê Tri Thức (sao + 📒 Sổ học tập thay tiền thưởng) (island.inventory, dùng chung temple/treasure). Chuỗi ngày liên tiếp 🔥.
 //   Tiến độ lưu localStorage 'island.quests', tự làm mới khi sang ngày mới (giờ máy).
 // φ: 3 nhiệm vụ · 5 pha lê · 8 viên rải (Fibonacci), bán kính rải 21–89 m, pha lê cao/rộng = φ, nhịp xoay 1/φ vòng/s,
 //    thẻ nhiệm vụ cao 55, chữ 13/21, bo 21, thanh tiến độ 8. Đồ hoạ: 2 draw call (InstancedMesh pha lê + cột sáng).
@@ -10,7 +10,7 @@ import { PHI, BLOCKS, EXTRA, SPAWN, blocked } from './layout.js';
 import { CFG } from './config.js';
 
 const KEY = 'island.quests', INV = 'island.inventory', ZONE_POOL = ['B', 'C', 'D', 'K', 'F', 'G', 'H', 'I'];
-const NEED = { zones: 3, quiz: 3, gems: 5 }, GEMS_N = 8, REWARD_XU = 34;
+const NEED = { zones: 3, quiz: 3, gems: 5 }, GEMS_N = 8, REWARD_SAO = 13;
 const DIRS = ['Đông', 'Đông Nam', 'Nam', 'Tây Nam', 'Tây', 'Tây Bắc', 'Bắc', 'Đông Bắc'];   // -z là hướng bắc
 const dirName = (dx, dz) => DIRS[((Math.round(Math.atan2(dz, dx) / (Math.PI / 4)) % 8) + 8) % 8];
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
@@ -73,12 +73,13 @@ body.rs-modal #questHud,body.mg-on #questHud{display:none}`;
 
   const prog = () => ({ zones: Math.min(NEED.zones, S.zones.length), quiz: Math.min(NEED.quiz, S.quiz), gems: Math.min(NEED.gems, S.gems.length) });
   const doneCount = () => { const p = prog(); return (p.zones >= NEED.zones) + (p.quiz >= NEED.quiz) + (p.gems >= NEED.gems); };
-  const coins = () => load(INV, {}).xu?.n || 0;
+  const coins = () => load(INV, {}).sao?.n || 0;   // ⭐ sao (teacher-quiz.js: ctx.reward)
+  const bookToday = () => { const d = new Date().toDateString(); let k = 0, ok = 0; for (const b of (ctx.book ? ctx.book() : [])) if (b.d === d) { k += b.k; ok += b.ok; } return { k, ok }; };
   function nearestGem() { const p = ctx.player.pos; let b = null, bd = 1e9; gemPos.forEach((g, i) => { if (!gemLeft(i)) return; const d = Math.hypot(g[0] - p.x, g[1] - p.z); if (d < bd) { bd = d; b = g; } }); return b && `${Math.round(bd)} m về hướng ${dirName(b[0] - p.x, b[1] - p.z)}`; }
   function render() {
     const p = prog(), n = doneCount(), ready = n === 3 && !S.claimed;
     const mini = (ok, ic, v, need) => `<b class="${ok ? 'ok' : ''}">${ok ? '✅' : ic} ${v}/${need}<i><u style="width:${v / need * 100}%"></u></i></b>`;
-    let h = `<button class="hd" aria-expanded="${open}"><span>📋 ${S.claimed ? 'Xong hôm nay ✓' : `Nhiệm vụ · ${n}/3`}</span><small>🪙 ${coins()}${S.streak ? ` · 🔥${S.streak}` : ''}</small> ${open ? '▴' : '▾'}</button>`;
+    let h = `<button class="hd" aria-expanded="${open}"><span>📋 ${S.claimed ? 'Xong hôm nay ✓' : `Nhiệm vụ · ${n}/3`}</span><small>⭐ ${coins()}${S.streak ? ` · 🔥${S.streak}` : ''}</small> ${open ? '▴' : '▾'}</button>`;
     if (!S.claimed) h += `<div class="mini">${mini(p.zones >= NEED.zones, '🗺️', p.zones, NEED.zones)}${mini(p.quiz >= NEED.quiz, '📚', p.quiz, NEED.quiz)}${mini(p.gems >= NEED.gems, '💎', p.gems, NEED.gems)}</div>`;
     if (ready && !open) h += `<div class="more"><button class="claim">🎉 Nhận thưởng</button></div>`;
     if (open) {
@@ -86,7 +87,8 @@ body.rs-modal #questHud,body.mg-on #questHud{display:none}`;
       h += `<div class="more"><p>🗺️ <b>Đi tới 3 khu:</b><br>${zonesToday.map(id => `<span class="tag${S.zones.includes(id) ? ' ok' : ''}">${S.zones.includes(id) ? '✓ ' : ''}${zoneById(id).name}</span>`).join('')}</p>
         <p>📚 <b>Đúng 3 câu đố:</b> lại gần thầy cô / người dân, bấm <b>E</b>.</p>
         <p>💎 <b>Nhặt 5 pha lê</b> (cột sáng xanh)${p.gems >= NEED.gems ? ' — đủ rồi!' : ng ? `: gần nhất ${ng}.` : '.'}</p>
-        <p>🎁 Thưởng: <b>${REWARD_XU} 🪙 + 💠 Pha lê Tri Thức</b>${S.claimed ? ' — đã nhận, hẹn ngày mai!' : ''}</p>
+        <p>📒 <b>Sổ học tập hôm nay:</b> đúng ${bookToday().ok}/${bookToday().k} câu</p>
+        <p>🎁 Thưởng: <b>${REWARD_SAO} ⭐ + 💠 Pha lê Tri Thức</b>${S.claimed ? ' — đã nhận, hẹn ngày mai!' : ''}</p>
         ${ready ? '<button class="claim">🎉 Nhận thưởng</button>' : ''}</div>`;
     }
     el.innerHTML = h; el.classList.toggle('ready', ready); el.classList.toggle('claimed', S.claimed);
@@ -100,9 +102,9 @@ body.rs-modal #questHud,body.mg-on #questHud{display:none}`;
     if (S.claimed || doneCount() < 3) return;
     const y = new Date(); y.setDate(y.getDate() - 1); const yd = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}-${String(y.getDate()).padStart(2, '0')}`;
     S.streak = S.lastClaim === yd ? (S.streak || 0) + 1 : 1; S.lastClaim = S.day; S.claimed = true; save(KEY, S);
-    const inv = load(INV, {}); inv.xu = inv.xu || { icon: '🪙', n: 0 }; inv.xu.n += REWARD_XU; inv['pha-le'] = inv['pha-le'] || { icon: '💠', n: 0 }; inv['pha-le'].n++; save(INV, inv);
+    const inv = load(INV, {}); inv.sao = inv.sao || { icon: '⭐', n: 0 }; inv.sao.n += REWARD_SAO; inv['pha-le'] = inv['pha-le'] || { icon: '💠', n: 0 }; inv['pha-le'].n++; save(INV, inv);
     ctx.sfx && ctx.sfx('win'); ctx.player.emote && ctx.player.emote('cheer'); open = false; render();
-    ctx.toast(`🎉 Hoàn thành nhiệm vụ hôm nay! +${REWARD_XU} 🪙 và 💠 Pha lê Tri Thức${S.streak > 1 ? `<br>🔥 Chuỗi ${S.streak} ngày liên tiếp!` : ''}`, 5000);
+    ctx.toast(`🎉 Hoàn thành nhiệm vụ hôm nay! +${REWARD_SAO} ⭐ và 💠 Pha lê Tri Thức${S.streak > 1 ? `<br>🔥 Chuỗi ${S.streak} ngày liên tiếp!` : ''}`, 5000);
   }
   function step() {   // lưu + vẽ lại HUD; đủ cả 3 → nhắc nhận thưởng
     save(KEY, S); render();
@@ -110,7 +112,7 @@ body.rs-modal #questHud,body.mg-on #questHud{display:none}`;
   }
   ctx.questEvent = kind => {
     if (kind === 'quiz' && S.quiz < NEED.quiz) { S.quiz++; ctx.toast(`📚 Đố vui: ${S.quiz}/${NEED.quiz}`, 2000); step(); }
-    else if (kind === 'coins') render();
+    else if (kind === 'coins' || kind === 'stars') render();
   };
   ctx.quests = { toggle, claim, state: () => S, gems: () => gemPos, zones: () => zonesToday };
   render();
