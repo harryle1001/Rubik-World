@@ -1,5 +1,6 @@
 // tools/perf-mobile.mjs — Đo hiệu năng Đảo 3D ở chế độ ĐIỆN THOẠI (390×844, DPR 2, cảm ứng, UA iPhone → CFG.isMobile).
-// Chạy: node server/index.js &  rồi  node tools/perf-mobile.mjs [--out=thu/muc/anh] [--q=1] [--url=http://localhost:3000/ocean.html]
+// Chạy: node server/index.js &  rồi  node tools/perf-mobile.mjs [--out=thu/muc/anh] [--q=1] [--net=4g] [--load-only] [--url=http://localhost:3000/ocean.html]
+// --net=4g: giả lập mạng 4G (9 Mbps, trễ 85 ms) để đo thời gian tải lần đầu; --load-only: chỉ đo tải.
 // In: thời gian tải, dung lượng tải (KB), rồi tại 3 điểm (cổng trường · quảng trường · sân bay): draw call, tam giác, ms/khung
 // (trung bình 89 khung, chất lượng khoá ở mức --q, mặc định 1 = mức điện thoại khởi đầu), NaN-check ảnh (pixel đen/đơn sắc).
 import { createRequire } from 'module';
@@ -17,15 +18,18 @@ const page = await browser.newPage({
 });
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
+if (arg('net') === '4g') { const cdp = await page.context().newCDPSession(page); await cdp.send('Network.enable'); await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 85, downloadThroughput: 9e6 / 8, uploadThroughput: 1.5e6 / 8 }); }
 const t0 = Date.now();
 await page.goto(URL);
+await page.waitForFunction(() => window.__island, null, { timeout: 300000 }); const tFirst = (Date.now() - t0) / 1000;   // khung hình 3D đầu tiên
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready, null, { timeout: 300000 });
 const tLoad = (Date.now() - t0) / 1000;
 const fr = page.frames().find(f => f.url().includes('/school/'));
 if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count().catch(() => 0)) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
 const net = await page.evaluate(() => { let t = 0, d = 0, n = 0, glb = 0; for (const e of performance.getEntriesByType('resource')) { t += e.transferSize || 0; d += e.decodedBodySize || 0; n++; if (/\.glb/.test(e.name)) glb += e.decodedBodySize || 0; } return { files: n, transferKB: Math.round(t / 1024), decodedKB: Math.round(d / 1024), glbKB: Math.round(glb / 1024) }; });
-console.log(`Tải xong (trường sẵn sàng) sau ${tLoad.toFixed(1)} s · ${JSON.stringify(net)} · pixelRatio lúc tải=${await page.evaluate(() => __island.renderer.getPixelRatio())}`);
+console.log(`Khung 3D đầu tiên ${tFirst.toFixed(1)} s · trường sẵn sàng ${tLoad.toFixed(1)} s · ${JSON.stringify(net)} · pixelRatio lúc tải=${await page.evaluate(() => __island.renderer.getPixelRatio())}`);
+if (process.argv.includes('--load-only')) { console.log(errors.length ? 'LỖI CONSOLE:\n' + errors.join('\n') : 'Không lỗi console'); await browser.close(); process.exit(0); }
 await page.evaluate(q => {
   const c = __island; c.setQuality(q, true); c.sky.state.lock = 13; c.renderer.info.autoReset = false;   // khoá 13h: số đo không đổi theo giờ thật
   const P = window.__pm = { n: 0, calls: 0, tris: 0, ms: 0 };

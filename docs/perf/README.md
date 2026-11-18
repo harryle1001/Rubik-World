@@ -13,3 +13,10 @@ tuyệt đối không phản ánh máy thật — chỉ so sánh draw call, tam 
 
 ## Kiểm tra NaN (`node tools/nan-test.mjs`, máy tính, bloom bật)
 Chèn 1 vật xuất NaN trước camera: **trước** sửa 100 % điểm ảnh đen (bloom lan NaN cả màn hình) · **sau** 1,7 % (chỉ đúng chỗ vật lỗi).
+
+## Tải lần đầu (`node tools/perf-mobile.mjs --net=4g --load-only`, giả lập 4G 9 Mbps · trễ 85 ms)
+
+| Bước | Dung lượng qua mạng | Khung 3D đầu tiên | Trường sẵn sàng (vào chơi được) |
+|---|---|---|---|
+| before | 6 475 KB | 9,0 s | 17,0 s |
+| 04-nen-server (brotli/gzip) | 2 455 KB | 7,5 s | 13,0 s |
