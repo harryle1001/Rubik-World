@@ -3,7 +3,7 @@
 // Thêm loài: thêm 1 dòng vào SPECIES. Số lượng mỗi loài: n.
 import * as THREE from 'three';
 import { loadAnimated, animator } from './models.js';
-import { addOutline, outlineMat } from './style.js';
+import { addOutline, isOutlineMat } from './style.js';
 import { createFauna } from './fauna.js';
 import { T, damp, dampAngle } from './motion.js';
 import { TEMPLE_C, ISLAND_R, blocked } from './layout.js';
@@ -32,7 +32,7 @@ export function createAnimals(ctx) {
       const root = new THREE.Group(), model = g.scene; root.add(model);
       model.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(model); const h = box.max.y - box.min.y || 1; model.scale.setScalar(S.size / h); model.position.y = -box.min.y * S.size / h;
       model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.userData.animal = S; } });
-      addOutline(model); const outlines = []; model.traverse(o => { if (o.userData.outline && o.material === outlineMat) outlines.push(o); });
+      addOutline(model); const outlines = []; model.traverse(o => { if (o.userData.outline && isOutlineMat(o.material)) outlines.push(o); });
       const [x, z] = land(S.beach); root.position.set(x, terrain.heightAt(x, z), z); scene.add(root);
       const anim = animator(model, g.animations, clean);
       const A = { S, root, anim, target: null, tgt: new THREE.Vector3(), wait: Math.random() * 4, rot: Math.random() * 6.28, fleeing: false, outlines, outlineOn: true, far: 0, tick: i, sp: 0, kr: { v: 0 }, ks: { v: 0 }, idle: S.idle[0] };

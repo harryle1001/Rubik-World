@@ -50,7 +50,15 @@ export function toon(color, opts = {}) {
   const key = color + JSON.stringify(opts);
   if (!opts.unique && cache.has(key)) return cache.get(key);
   const o = Object.assign({ color, gradientMap }, opts); delete o.unique;
-  const m = new THREE.MeshToonMaterial(o); cache.set(key, m); return m;
+  const m = new THREE.MeshToonMaterial(o); cache.set(key, m); if (!opts.unique) m.userData.shared = true; return m;
+}
+// Bản sao cho InstancedMesh của vật liệu dùng chung (toon theo màu, viền): cùng 1 vật liệu vừa cho Mesh vừa cho InstancedMesh
+// → three đổi chương trình shader mỗi lần vẽ xen kẽ (getProgram mỗi lần đổi). perf.js gán tự động khi quét cảnh.
+const instTwins = new Map();
+export function instancedTwin(m) {
+  if (m === outlineMat) return outlineInstMat;
+  if (!m.userData.shared) return m;
+  let t = instTwins.get(m); if (!t) { t = m.clone(); t.userData = { shared: true, twinOf: m }; instTwins.set(m, t); } return t;
 }
 
 // Viền: vẽ lại mặt sau, đẩy đỉnh theo pháp tuyến ra ngoài
@@ -61,12 +69,17 @@ outlineMat.onBeforeCompile = sh => {
     float oD = -(modelViewMatrix * vec4(transformed, 1.)).z;
     transformed += normalize(normal) * ${CFG.outline.thickness.toFixed(3)} * clamp(oD / ${CFG.outline.ref.toFixed(1)}, 0.618, 2.618);`);
 };
+// bản riêng cho lưới có xương / InstancedMesh: 1 vật liệu dùng chung cho cả 3 kiểu lưới làm three đổi chương trình shader
+// mỗi lần vẽ xen kẽ (getProgram + dựng khoá cache mỗi lần → CPU + rác cho GC), dù không phải biên dịch lại
+export const outlineSkinMat = outlineMat.clone(), outlineInstMat = outlineMat.clone();
+outlineSkinMat.onBeforeCompile = outlineInstMat.onBeforeCompile = outlineMat.onBeforeCompile;
+export const isOutlineMat = m => m === outlineMat || m === outlineSkinMat || m === outlineInstMat;
 export function addOutline(root) {
   const list = []; root.traverse(o => { if (o.isMesh && !o.userData.outline) list.push(o); });
   for (const o of list) {
     if (!o.visible) continue;
     let e;
-    if (o.isSkinnedMesh) { e = new THREE.SkinnedMesh(o.geometry, outlineMat); e.bind(o.skeleton, o.bindMatrix); e.position.copy(o.position); e.quaternion.copy(o.quaternion); e.scale.copy(o.scale); o.parent.add(e); } // nhân vật có xương: viền cùng chuyển động
+    if (o.isSkinnedMesh) { e = new THREE.SkinnedMesh(o.geometry, outlineSkinMat); e.bind(o.skeleton, o.bindMatrix); e.position.copy(o.position); e.quaternion.copy(o.quaternion); e.scale.copy(o.scale); o.parent.add(e); } // nhân vật có xương: viền cùng chuyển động
     else { e = new THREE.Mesh(o.geometry, outlineMat); o.add(e); }
     e.userData.outline = true; e.castShadow = false; e.frustumCulled = false; e.raycast = () => {};
   }

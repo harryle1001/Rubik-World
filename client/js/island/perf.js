@@ -13,11 +13,13 @@
 import * as THREE from 'three';
 import { PHI } from './layout.js';
 import { CFG } from './config.js';
+import { instancedTwin } from './style.js';
 
 const FAR_K = 89, FAR_MIN = 34, OUTLINE_D = 34, SMALL_R = 1.6;   // ngưỡng Fibonacci; SMALL_R ≈ φ m
 const NOSHADOW_R = CFG.isMobile ? 1 / PHI : 0.5;                  // vật nhỏ hơn: không đổ bóng
 const _m = new THREE.Matrix4(), _sc = new THREE.Vector3();
 const _s = new THREE.Sphere(), _v = new THREE.Vector3();
+const DEPTH = new Map();
 
 export function createPerf(ctx) {
   const { scene, camera } = ctx, list = [];
@@ -25,6 +27,14 @@ export function createPerf(ctx) {
     const ud = o.userData; if (ud._pf) return; ud._pf = 1;
     if (!(o.isMesh)) return;
     const g = o.geometry; if (!g || !g.attributes.position) return;
+    if (o.isInstancedMesh && !Array.isArray(o.material)) o.material = instancedTwin(o.material);   // vật liệu dùng chung với Mesh thường → bản riêng (style.js)
+    // pass bóng đổ: three dùng 1 vật liệu chiều sâu cho mọi vật → đổi chương trình mỗi lần xen kẽ lưới thường/instanced/có xương; mỗi kiểu 1 bản riêng
+    //   (bỏ qua vật liệu cắt alpha / displacement: three cần bản chiều sâu riêng theo từng vật liệu để giữ hình lá, hoa…)
+    const mt = o.material;
+    if ((o.isInstancedMesh || o.isSkinnedMesh) && !o.customDepthMaterial && mt && !Array.isArray(mt) && !(mt.alphaTest > 0) && !mt.alphaMap && !mt.displacementMap) {
+      const k = (o.isSkinnedMesh ? 's' : o.instanceColor ? 'c' : 'i') + (mt.map ? 'm' : '');
+      o.customDepthMaterial = DEPTH.get(k) || DEPTH.set(k, new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking })).get(k);   // giống vật liệu mặc định của WebGLShadowMap
+    }
     if (o.isSkinnedMesh) {
       if (!o.frustumCulled) {   // hình cầu bao theo tư thế hiện tại, nới rộng φ lần (tay chân vung, chạy nhảy)
         try { o.computeBoundingSphere(); o.boundingSphere.radius *= PHI; o.frustumCulled = true; } catch (e) { return; }
