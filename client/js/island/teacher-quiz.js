@@ -181,7 +181,7 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
   function open(n, chip) {
     const t = n.role === 'teacher', nm = shortName(n.name), title = t && !/^(Cô|Thầy|Chú|Bác|Anh|Chị) /.test(nm) ? (n.female ? 'Cô ' : 'Thầy ') + nm : nm;
     const ava = t ? (n.female ? '👩‍🏫' : '👨‍🏫') : n.role === 'student' ? (n.female ? '👧' : '👦') : (n.female ? '👩' : '👨');
-    who = { ...n, title, ava, chip, e: n.e }; ctx.talkHold = n.e || null; el.hidden = false; el.className = ''; ctx.sfx && ctx.sfx('ui'); ctx.player.emote && ctx.player.emote('interact');
+    who = { ...n, title, ava, chip, e: n.e, a: n.e && n.e.a }; ctx.talkHold = n.e || null; el.hidden = false; el.className = ''; ctx.sfx && ctx.sfx('ui'); ctx.player.emote && ctx.player.emote('interact');
   }
   async function talk(n) {
     if (task && task.type === 'find' && task.got && n.id === task.giver) return finishTask(n);
@@ -235,13 +235,15 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
   // ---------- Bám bong bóng theo đầu NPC / điểm 3D (chiếu toạ độ 3D → màn hình) ----------
   const v = new THREE.Vector3();
   function place() {
+    if (who.e && who.a && who.e.a !== who.a) { const mm = who.e.hero.model; who.home = who.home || mm.position.clone(); who.e = null; }   // người đã rời pool: giữ bong bóng tại chỗ cũ
     const m = who.e?.hero?.model, p = ctx.player.pos;
     if (who.anchor) v.copy(who.anchor()); else if (m) v.set(m.position.x, m.position.y + (who.e.a?._look3d?.h || 1.7) + 0.34, m.position.z); else v.set(p.x, p.y + 2.2, p.z);
     const hx = who.home ? who.home.x : m ? m.position.x : p.x, hz = who.home ? who.home.z : m ? m.position.z : p.z;
     if (Math.hypot(hx - p.x, hz - p.z) > (who.far || 6.5)) { ctx.toast && ctx.toast('👋 Tạm biệt! Lại gần và bấm <b>E</b> để nói chuyện tiếp nhé.', 2000); return close(); }
     v.project(ctx.camera);
     const W = innerWidth, H = innerHeight, w = el.offsetWidth, h = el.offsetHeight, ax = (v.x + 1) / 2 * W, ay = v.z > 1 ? 0 : (1 - v.y) / 2 * H;
-    const x = Math.max(13, Math.min(W - w - 13, ax - w / 2)), top = Math.max(55, Math.min(H - h - 89, ay - h - 13));   // tránh hàng nút trên (55) và nút dưới (89)
+    const tb = document.querySelector('.topbtns'), y0 = Math.max(55, tb ? tb.getBoundingClientRect().bottom + 8 : 0);   // điện thoại: hàng nút trên cao hơn
+    const x = Math.max(13, Math.min(W - w - 13, ax - w / 2)), top = Math.max(y0, Math.min(H - h - 89, ay - h - 13));   // tránh hàng nút trên và nút dưới (89)
     el.style.transform = `translate(${Math.round(x)}px,${Math.round(top)}px)`;
     el.style.setProperty('--tail', Math.max(21, Math.min(w - 21, ax - x)) + 'px');
   }

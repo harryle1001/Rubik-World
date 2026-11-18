@@ -88,7 +88,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
     const t0 = performance.now(), p = ctx.player.pos;
     const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
     const near = list.filter(a => a.y > Y_MIN && a.y < Y_MAX).map(a => { const [x, z] = P(a.x, a.y); return [a, Math.hypot(x - p.x, z - p.z)]; }).filter(q => q[1] < 70).sort((a, b) => a[1] - b[1]).slice(0, POOL).map(q => q[0]);
-    const want = new Set(near);
+    const want = new Set(near); if (ctx.talkHold && ctx.talkHold.a) want.add(ctx.talkHold.a);   // đang nói chuyện: không đổi người trong pool
     for (const e of pool) if (e.a && !want.has(e.a)) { e.a = null; e.hero.model.visible = false; if (e.seat) { e.seat.by = null; e.seat = null; } }
     for (const a of near) {
       if (pool.some(e => e.a === a)) continue;
