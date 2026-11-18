@@ -16,6 +16,7 @@ import { createWorldMap } from './island/world-map.js';
 import { SPAWN, landDist, blocked, ISLAND_R, TEMPLE_C } from './island/layout.js';
 import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
+import { createMounts } from './island/mounts.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
@@ -51,7 +52,7 @@ const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
 {
   const act = document.getElementById('bAct'); let best = null, cur = null;
   ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) best = { label, fn, pri }; };
-  ctx.flushOffer = () => { cur = best; best = null; act.hidden = !cur || ctx.player.frozen; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
+  ctx.flushOffer = () => { cur = best; best = null; act.hidden = !cur || ctx.player.frozen; if (cur && act._l !== cur.label) { act._l = cur.label; act.innerHTML = cur.label; } }; // nhãn có thể chứa biểu tượng SVG
   act.onclick = () => cur && cur.fn();
   addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
 }
@@ -97,6 +98,7 @@ const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao 
 const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
+const mounts = createMounts(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -132,6 +134,7 @@ renderer.setAnimationLoop(() => {
   school.update(dt, clock.elapsedTime);
   vehicles.update(dt);
   aircraft.update(dt, clock.elapsedTime);
+  mounts.update(dt);
   sky.update(dt, camera, player.pos);
   weather.update(dt, clock.elapsedTime);
   eggs.update(dt, clock.elapsedTime);

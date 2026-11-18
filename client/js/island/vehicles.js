@@ -1,57 +1,18 @@
-// vehicles.js — Phương tiện của học sinh: 🚲 xe đạp, ⛵ thuyền chèo, 🎈 khinh khí cầu (low poly toon, gộp geometry).
-// Phím: B lên/xuống xe đạp · R chuông xe · E lên thuyền khi ra mép nước / lên bờ · F khinh khí cầu (Space bay lên, Shift/C hạ xuống).
-// Điện thoại: nút 🚲 🎈 🔔 ⬆ ⬇ cạnh nút Chạy/Nhảy; lên xe/thuyền đỗ sẵn bằng nút hành động chung (ctx.offer).
+// vehicles.js — Hệ thống cưỡi/đi phương tiện dùng chung: 🚲 20 kiểu xe đạp (bikes.js), ⛵ thuyền chèo, khinh khí cầu,
+// và thú cưỡi / phượng hoàng (mounts.js đăng ký qua ctx.vehicles.register).
+// Phím: E tương tác (lên/xuống mọi thứ) · B xe đạp · V đổi kiểu xe · R chuông · F khinh khí cầu · H huýt sáo gọi thú cưỡi (mounts.js)
+//       Shift chạy nhanh · khi bay: Space lên, C/Ctrl xuống. Điện thoại: các nút cạnh Chạy/Nhảy.
 import * as THREE from 'three';
 import { BLOCKS } from './layout.js';
 import { CFG } from './config.js';
-import { toon, addOutline } from './style.js';
+import { addOutline } from './style.js';
 import { mergeGeos } from './terrain.js';
+import { colorMat, paint, at, tube, mesh, tris, ICON } from './geo.js';
+import { makeBike, BIKES } from './bikes.js';
 import { T, damp, wrapAngle } from './motion.js';
 
 const W = CFG.island.waterLevel, P = CFG.player;
-const colorMat = toon('#ffffff', { vertexColors: true });
 const c3 = new THREE.Color();
-
-// ---------- Dựng mesh: mỗi phần tô 1 màu (vertex color) rồi gộp thành 1 geometry ----------
-function paint(geo, color) {
-  const g = geo.index ? geo.toNonIndexed() : geo; c3.set(color);
-  const col = new Float32Array(g.attributes.position.count * 3); for (let i = 0; i < col.length; i += 3) col.set([c3.r, c3.g, c3.b], i);
-  g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.deleteAttribute('uv'); return g;
-}
-const at = (geo, x, y, z, rx = 0, ry = 0, rz = 0) => geo.rotateX(rx).rotateY(ry).rotateZ(rz).translate(x, y, z);
-function tube(a, b, r, color, seg = 6) { // ống nối 2 điểm
-  const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b), d = B.clone().sub(A), L = d.length();
-  const g = new THREE.CylinderGeometry(r, r, L, seg, 1, true);
-  g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize())); g.translate((A.x + B.x) / 2, (A.y + B.y) / 2, (A.z + B.z) / 2);
-  return paint(g, color);
-}
-function mesh(parts, mat = colorMat) { const m = new THREE.Mesh(mergeGeos(parts), mat); m.castShadow = true; m.receiveShadow = true; return m; }
-const tris = o => { let n = 0; o.traverse(m => { if (m.isMesh && !m.userData.outline) n += m.geometry.attributes.position.count / 3; }); return n; };
-
-// ---------- 🚲 Xe đạp (có giỏ trước, kiểu xe đi học) ----------
-const WR = 0.34;
-function makeBike(color) {
-  const g = new THREE.Group(), dark = '#2a2630', zF = 0.56, zB = -0.52;
-  const wheel = () => { const p = [paint(new THREE.TorusGeometry(WR, 0.045, 4, 14).rotateY(Math.PI / 2), dark), paint(new THREE.BoxGeometry(0.02, WR * 1.9, 0.025), '#c9c9cf'), paint(new THREE.BoxGeometry(0.02, 0.025, WR * 1.9), '#c9c9cf'), paint(new THREE.CylinderGeometry(0.05, 0.05, 0.1, 6).rotateZ(Math.PI / 2), '#c9c9cf')]; return mesh(p); };
-  const wf = wheel(), wb = wheel(); wf.position.set(0, WR, zF); wb.position.set(0, WR, zB); g.add(wf, wb);
-  const seat = [0, 0.86, -0.26], head = [0, 0.98, 0.45], crank = [0, WR, 0.02];
-  const frame = [
-    tube([0, WR, zB], crank, 0.03, color), tube(crank, [0, 0.8, -0.22], 0.035, color), tube([0, 0.8, -0.22], [0, 0.86, 0.4], 0.035, color),
-    tube(crank, [0, 0.86, 0.4], 0.035, color), tube([0, 0.8, -0.22], [0, WR, zB], 0.025, color), tube([0, 0.98, 0.45], [0, WR, zF], 0.03, color),
-    paint(at(new THREE.BoxGeometry(0.2, 0.06, 0.3), ...seat), dark),                                                  // yên
-    tube([-0.3, head[1] + 0.06, head[2] - 0.05], [0.3, head[1] + 0.06, head[2] - 0.05], 0.025, '#c9c9cf'),           // ghi đông
-    paint(at(new THREE.BoxGeometry(0.08, 0.08, 0.08), -0.3, head[1] + 0.06, head[2] - 0.05), dark), paint(at(new THREE.BoxGeometry(0.08, 0.08, 0.08), 0.3, head[1] + 0.06, head[2] - 0.05), dark),
-    paint(at(new THREE.BoxGeometry(0.4, 0.26, 0.3), 0, 0.84, 0.72), '#d9b46a'), paint(at(new THREE.BoxGeometry(0.42, 0.04, 0.32), 0, 0.98, 0.72), '#b88a40'), // giỏ mây
-    paint(at(new THREE.BoxGeometry(0.22, 0.03, 0.4), 0, 0.72, -0.48), dark),                                          // baga
-    paint(at(new THREE.CylinderGeometry(0.035, 0.035, 0.05, 6).rotateX(Math.PI / 2), 0.22, head[1] + 0.09, head[2] - 0.05), '#f2c14e'), // chuông
-  ];
-  g.add(mesh(frame));
-  const cr = new THREE.Group(); cr.position.set(...crank);
-  cr.add(mesh([paint(new THREE.CylinderGeometry(0.1, 0.1, 0.03, 8).rotateZ(Math.PI / 2), '#c9c9cf'), paint(at(new THREE.BoxGeometry(0.03, 0.03, 0.34), 0.08, 0, 0), dark),
-    paint(at(new THREE.BoxGeometry(0.03, 0.03, 0.34), -0.08, 0, 0), dark), paint(at(new THREE.BoxGeometry(0.12, 0.03, 0.08), 0.15, 0, 0.17), dark), paint(at(new THREE.BoxGeometry(0.12, 0.03, 0.08), -0.15, 0, -0.17), dark)]));
-  g.add(cr); addOutline(g);
-  return { type: 'bike', group: g, wheels: [wf, wb], crank: cr, tris: tris(g) };
-}
 
 // ---------- ⛵ Thuyền chèo gỗ ----------
 function makeBoat(color) {
@@ -76,7 +37,7 @@ function makeBoat(color) {
     pv.add(o); g.add(pv); return pv;
   });
   addOutline(g);
-  return { type: 'boat', group: g, oars, body, tris: tris(g) };
+  return { type: 'boat', group: g, oars, body, tris: tris(g), r: 3.5, label: '⛵ Lên thuyền' };
 }
 
 // ---------- 🎈 Khinh khí cầu ----------
@@ -97,7 +58,7 @@ function makeBalloon() {
   m.castShadow = true; g.add(m); addOutline(g);
   const flame = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.7, 6).rotateX(Math.PI), new THREE.MeshBasicMaterial({ color: '#ffb02e', transparent: true, opacity: 0.9 }));
   flame.position.y = mouthY - 0.35; flame.userData.outline = true; g.add(flame);
-  return { type: 'balloon', group: g, flame, tris: tris(g) };
+  return { type: 'balloon', group: g, flame, tris: tris(g), r: 3.5, label: ICON.balloon + ' Lên khinh khí cầu' };
 }
 
 export function createVehicles(ctx) {
@@ -107,13 +68,21 @@ export function createVehicles(ctx) {
   const waterY = (x, z, t = clock) => W - 0.02 + Math.sin(t * 1.6 + x * 0.35) * 0.06 + Math.sin(t * 1.1 + z * 0.42) * 0.05;
   let clock = 0;
   const all = [];
-  const park = (v, x, z, ry) => { v.group.position.set(x, v.type === 'boat' ? waterY(x, z) : sup(x, z), z); v.group.rotation.set(0, ry, 0); scene.add(v.group); if (!all.includes(v)) all.push(v); return v; };
+  const register = v => { if (!all.includes(v)) all.push(v); if (!v.group.parent) scene.add(v.group); return v; };
+  const park = (v, x, z, ry) => { v.group.position.set(x, v.type === 'boat' ? waterY(x, z) : sup(x, z), z); v.group.rotation.set(0, ry, 0); return register(v); };
+  const BOAT_MODE = { speed: 5.2, boost: 1.4, turn: 1.8, accel: 0.9, water: true, anim: 'sit', seat: -0.05, seatZ: -0.35, camAdd: 2.5, waterY: (x, z) => waterY(x, z) };
+  const BALLOON_MODE = { speed: 6.5, turn: 1.2, accel: 0.6, fly: true, climb: 4, lift: 0, maxAlt: 75, anim: 'idle', seat: 0.12, seatZ: 0, camAdd: 9 };
+  const boat = c => Object.assign(makeBoat(c), { mode: BOAT_MODE });
+  const balloon = () => Object.assign(makeBalloon(), { mode: BALLOON_MODE, takeoff: 2.2 });
 
-  // Xe đỗ ở bãi xuất phát (cạnh khu cắm trại)
-  const BIKE_COLORS = ['#3d8fd9', '#e8453c', '#3fa36b', '#f08fb0', '#f2a23a'];
-  [[-6, 13.5], [-7, 14.6], [-8, 15.7]].forEach(([x, z], i) => park(makeBike(BIKE_COLORS[i]), x, z, 0.5));
+  // Bãi xe thế giới: 20 kiểu xe xếp vòng cung phía nam bãi xuất phát
+  for (let i = 0, k = 0; i < BIKES.length && k < 60; k++) {
+    const a = 0.15 * Math.PI + k * 0.042, x = Math.cos(a) * 15.5, z = 10 + Math.sin(a) * 15.5;
+    if (terrain.heightAt(x, z) < 1.3 || terrain.slopeAt(x, z) > 0.6 || ctx.colliders.some(c => Math.hypot(c.x - x, c.z - z) < c.r + 0.8)) continue;
+    park(makeBike(i++), x, z, -a);
+  }
   // Thuyền đỗ ở bờ đảo: bờ nam gần bãi xuất phát và bờ bắc cạnh cầu
-  const shoreBoat = (x, z, dx, dz) => { for (let k = 0; k < 140; k++, x += dx, z += dz) if (isWater(x, z) && sup(x, z) < W - 0.8) return park(makeBoat(k % 2 ? '#3d8fd9' : '#d8452f'), x, z, Math.atan2(dx, dz) + Math.PI / 2); };
+  const shoreBoat = (x, z, dx, dz) => { for (let k = 0; k < 140; k++, x += dx, z += dz) if (isWater(x, z) && sup(x, z) < W - 0.8) return park(boat(k % 2 ? '#3d8fd9' : '#d8452f'), x, z, Math.atan2(dx, dz) + Math.PI / 2); };
   shoreBoat(4, 10, 0, 1); shoreBoat(-7, -20, 0, -1); shoreBoat(7, -20, 0, -1);
   // Trước cổng trường + bãi biển thị trấn: đặt khi thị trấn nạp xong
   let townDone = false;
@@ -121,71 +90,79 @@ export function createVehicles(ctx) {
     const gate = ctx.school && ctx.school.gate; if (!gate) return; townDone = true;
     const free = (x, z) => ctx.groundExtra(x, z, 9) > 0.9 && [[0, 0], [1.2, 0], [-1.2, 0], [0, 1.2], [0, -1.2]].every(([a, b]) => ctx.groundExtra(x + a, z + b, 9) > 0.9) && !(ctx.boxes || []).some(b => x > b.x0 - 1 && x < b.x1 + 1 && z > b.z0 - 1 && z < b.z1 + 1);
     let nb = 0; // 2 xe dựng sát mép quảng trường trước cổng (để quảng trường thoáng), chỉ đặt chỗ có nền thị trấn và không vướng tường
-    for (const dz of [7.6, 6.4, 5.2, 4]) for (const dx of [8.6, 7.4, -7.4, 6.2, -6.2, 5, -5]) { const x = gate[0] + dx, z = gate[1] + dz; if (nb < 2 && free(x, z) && all.every(v => Math.hypot(v.group.position.x - x, v.group.position.z - z) > 1.1)) park(makeBike(BIKE_COLORS[(++nb) % 5]), x, z, Math.PI / 2 * Math.sign(dx)); }
+    for (const dz of [7.6, 6.4, 5.2, 4]) for (const dx of [8.6, 7.4, -7.4, 6.2, -6.2, 5, -5]) { const x = gate[0] + dx, z = gate[1] + dz; if (nb < 2 && free(x, z) && all.every(v => Math.hypot(v.group.position.x - x, v.group.position.z - z) > 1.1)) park(makeBike([0, 15][nb++]), x, z, Math.PI / 2 * Math.sign(dx)); }
     let n = 0; // thuyền ở mép bãi cát của thị trấn
     for (let x = BLOCKS[0].r[0] + 10; x < BLOCKS[0].r[2] && n < 3; x += 3) for (const [z, dz] of [[BLOCKS[0].r[3] - 1, 1]]) {   // bãi biển phía nam trường (layout.js)
       if (n >= 3 || ctx.groundExtra(x, z - dz * 2, 9) < 0.9 || (ctx.surfaceAt && ctx.surfaceAt(x, z - dz * 2, 9) !== 'sand')) continue;
       let wz = z; for (let k = 0; k < 10 && !isWater(x, wz); k++) wz += dz;
-      if (isWater(x, wz) && all.every(v => Math.hypot(v.group.position.x - x, v.group.position.z - wz) > 30)) { park(makeBoat(n % 2 ? '#3d8fd9' : '#d8452f'), x, wz + dz * 1.2, Math.PI / 2); n++; }
+      if (isWater(x, wz) && all.every(v => Math.hypot(v.group.position.x - x, v.group.position.z - wz) > 30)) { park(boat(n % 2 ? '#3d8fd9' : '#d8452f'), x, wz + dz * 1.2, Math.PI / 2); n++; }
     }
   }
 
-  // ---------- Đi phương tiện ----------
-  const leanSt = { v: 0 }, rollSt = { v: 0 }, pitchSt = { v: 0 }; let lastRot = null, lastSp = 0, roll = 0, pitch = 0;
-  let cur = null, mine = { bike: null, boat: null, balloon: null }, spin = 0, lean = 0, rowT = 0, wakeT = 0, bellT = 0, lift = 0, takeoff = 0, burnT = 0;
-  const MODES = {
-    bike: { speed: P.run * 1.35, turn: 5, accel: 2.6, anim: 'drive', seat: 0.42, seatZ: -0.22, camAdd: 1.5 },        // ~2.2 lần đi bộ
-    boat: { speed: 5.2, turn: 1.8, accel: 0.9, water: true, anim: 'sit', seat: -0.05, seatZ: -0.35, camAdd: 2.5, waterY: (x, z) => waterY(x, z) },
-    balloon: { speed: 6.5, turn: 1.2, accel: 0.6, fly: true, lift: 0, maxAlt: 75, anim: 'idle', seat: 0.12, seatZ: 0, camAdd: 9 },
-  };
+  // ---------- Lên / xuống ----------
+  const leanSt = { v: 0 }, rollSt = { v: 0 }, pitchSt = { v: 0 }; let lastSp = 0, roll = 0, pitch = 0;
+  let cur = null, mine = { bike: null, boat: null, balloon: null }, lean = 0, rowT = 0, wakeT = 0, bellT = 0, lift = 0, takeoff = 0, burnT = 0;
+  let myStyle = +(localStorage.getItem('island.bike') || 0);
   const ui = id => document.getElementById(id);
   function setUI() {
-    const t = cur && cur.type;
-    ui('bBike').textContent = t === 'bike' ? '🚶' : '🚲'; ui('bBalloon').textContent = t === 'balloon' ? '🚶' : '🎈';
-    ui('bBell').hidden = t !== 'bike'; ui('bUp').hidden = ui('bDown').hidden = t !== 'balloon'; ui('bRun').hidden = ui('bJump').hidden = !!t;
+    const t = cur && cur.type, fly = cur && cur.mode.fly;
+    ui('bBike').textContent = t === 'bike' ? '🚶' : '🚲'; ui('bBalloon').innerHTML = t === 'balloon' ? '🚶' : ICON.balloon;
+    ui('bBell').hidden = ui('bStyle').hidden = t !== 'bike'; ui('bUp').hidden = ui('bDown').hidden = !fly;
+    ui('bJump').hidden = !!t; ui('bRun').hidden = !!t && !cur.mode.boost; ui('bRun').textContent = t ? 'Nhanh' : 'Chạy';
   }
+  const say = (v, txt, ms = 3500) => ctx.toast(txt, ms);
   function mount(v) {
     if (cur || pl.frozen) return;
-    cur = v; const g = v.group; lastRot = null; lastSp = 0; lean = roll = pitch = 0; leanSt.v = rollSt.v = pitchSt.v = 0;
-    if (v.type === 'boat') pl.teleport(g.position.x, g.position.z, waterY(g.position.x, g.position.z));
-    else pl.teleport(g.position.x, g.position.z, sup(g.position.x, g.position.z, g.position.y + 1));
-    // quay người theo hướng xe
-    const r = g.rotation.y; scene.remove(g); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); pl.root.add(g);
-    pl.vehicle = Object.assign({}, MODES[v.type]); pl.setRot && pl.setRot(r);
-    if (v.type === 'balloon') { takeoff = 2.2; ctx.sfx('burner'); ctx.toast('🎈 Bay lên ngắm toàn cảnh! <b>Space/⬆</b> lên · <b>Shift/⬇</b> xuống · <b>F</b> rời khi đã chạm đất', 4000); }
-    else if (v.type === 'bike') { ctx.sfx('bell'); ctx.toast('🚲 Đạp xe nhanh gấp đôi! <b>B</b> xuống xe · <b>R</b> bấm chuông', 3000); }
-    else { ctx.sfx('splash'); ctx.toast('⛵ Chèo thuyền ra biển! Cập bờ rồi bấm <b>E</b> để lên bờ', 3000); }
+    cur = v; lastRot = null; lastSp = 0; lean = roll = pitch = 0; leanSt.v = rollSt.v = pitchSt.v = 0; const g = v.group, x = g.position.x, z = g.position.z, r = g.rotation.y;
+    if (v.type === 'boat') pl.teleport(x, z, waterY(x, z));
+    else pl.teleport(x, z, v.mode.fly ? Math.max(g.position.y, sup(x, z, g.position.y + 1)) : sup(x, z, g.position.y + 1));
+    if (g.parent) g.parent.remove(g); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); pl.root.add(g);
+    pl.vehicle = Object.assign({}, v.mode); pl.setRot(r); lift = 0; takeoff = v.takeoff || 0;
+    v.onMount && v.onMount();
+    if (v.type === 'balloon') { ctx.sfx('burner'); say(v, `${ICON.balloon} Bay lên ngắm toàn cảnh! <b>Space/⬆</b> lên · <b>C/⬇</b> xuống · chạm đất bấm <b>E</b> để rời`, 4500); }
+    else if (v.type === 'bike') { ctx.sfx('bell'); myStyle = v.style; try { localStorage.setItem('island.bike', myStyle); } catch (e) {} say(v, `🚲 <b>${v.info.name}</b> (${v.info.from})<br>${v.info.fact}<br><small><b>Shift</b> nhanh · <b>V</b> đổi xe · <b>R</b> chuông · <b>E</b> xuống</small>`, 5500); }
+    else if (v.type === 'boat') { ctx.sfx('splash'); say(v, '⛵ Chèo thuyền ra biển! Cập bờ rồi bấm <b>E</b> để lên bờ'); }
+    else if (v.hello) say(v, v.hello, 5500);
     setUI();
   }
   function dismount(land) {
-    if (!cur) return; const v = cur, g = v.group; cur = null;
-    pl.root.remove(g); pl.root.rotation.z = pl.root.rotation.x = 0; pl.vehicle = null;
+    if (!cur) return; const v = cur, g = v.group;
+    if (v.mode.fly && !(pl.grounded && sup(pl.pos.x, pl.pos.z, pl.pos.y) > W)) { ctx.toast('Hạ xuống chạm đất rồi mới xuống nhé (C/⬇)', 2200); return; }
+    cur = null; pl.root.remove(g); pl.root.rotation.z = pl.root.rotation.x = 0; pl.vehicle = null;
     const r = pl.rot, p = pl.pos;
-    if (v.type === 'boat') { g.position.set(p.x, waterY(p.x, p.z), p.z); g.rotation.set(0, r, 0); scene.add(g); pl.teleport(land[0], land[1], sup(land[0], land[1], 9)); ctx.sfx('splash'); }
-    else if (v.type === 'bike') { g.position.set(p.x + Math.cos(r) * 0.9, sup(p.x, p.z, p.y + 1), p.z - Math.sin(r) * 0.9); g.rotation.set(0, r, 0); scene.add(g); }
-    else { g.position.set(p.x, p.y, p.z); g.rotation.set(0, r, 0); scene.add(g); pl.teleport(p.x + Math.cos(r) * 1.4, p.z - Math.sin(r) * 1.4, sup(p.x, p.z, p.y + 1)); }
-    v.flame && (v.flame.scale.setScalar(0.4));
+    g.rotation.set(0, r, 0); scene.add(g);
+    if (v.type === 'boat') { g.position.set(p.x, waterY(p.x, p.z), p.z); pl.teleport(land[0], land[1], sup(land[0], land[1], 9)); ctx.sfx('splash'); }
+    else if (v.type === 'bike') g.position.set(p.x + Math.cos(r) * 0.9, sup(p.x, p.z, p.y + 1), p.z - Math.sin(r) * 0.9);
+    else { g.position.set(p.x, p.y, p.z); const sx = p.x + Math.cos(r) * (v.side || 1.4), sz = p.z - Math.sin(r) * (v.side || 1.4); pl.teleport(sx, sz, sup(sx, sz, p.y + 1)); }
+    v.onDismount && v.onDismount();
     setUI();
   }
-  const nearest = (type, r) => { let best = null, bd = r; for (const v of all) if (v.type === type && v !== cur) { const d = Math.hypot(v.group.position.x - pl.pos.x, v.group.position.z - pl.pos.z); if (d < bd && Math.abs(v.group.position.y - pl.pos.y) < 3) { bd = d; best = v; } } return best; };
+  // vật gần nhất có thể cưỡi (trong bán kính v.r của nó)
+  const nearestAny = () => { let best = null, bd = 1e9; for (const v of all) if (v !== cur && v.group.parent === scene && v.group.visible !== false) { const d = Math.hypot(v.group.position.x - pl.pos.x, v.group.position.z - pl.pos.z); if (d < (v.r || 2.6) && d < bd && Math.abs(v.group.position.y - pl.pos.y) < 3) { bd = d; best = v; } } return best; };
+  const nearest = (type, R) => { let best = null, bd = R; for (const v of all) if (v.type === type && v !== cur && v.group.parent === scene) { const d = Math.hypot(v.group.position.x - pl.pos.x, v.group.position.z - pl.pos.z); if (d < bd && Math.abs(v.group.position.y - pl.pos.y) < 3) { bd = d; best = v; } } return best; };
   const onLand = () => sup(pl.pos.x, pl.pos.z, pl.pos.y) > W - 0.3;
+  const bring = v => { register(v); if (v.group.parent) v.group.parent.remove(v.group); v.group.position.copy(pl.pos); v.group.rotation.set(0, pl.rot, 0); scene.add(v.group); return v; };
   function toggleBike() {
     if (cur && cur.type === 'bike') return dismount();
     if (cur || !onLand() || !pl.grounded) return;
     let v = nearest('bike', 4);
-    if (!v) { v = mine.bike || (mine.bike = makeBike(BIKE_COLORS[(ctx.hue / 72 | 0) % 5])); all.includes(v) || all.push(v); v.group.parent && v.group.parent.remove(v.group); v.group.position.set(pl.pos.x, pl.pos.y, pl.pos.z); v.group.rotation.set(0, pl.rot, 0); }
+    if (!v) { if (!mine.bike || mine.bike.style !== myStyle) mine.bike = makeBike(myStyle); v = bring(mine.bike); }
     mount(v);
   }
+  function nextStyle(d = 1) { // đổi sang kiểu xe khác ngay khi đang đạp
+    if (!cur || cur.type !== 'bike') return;
+    const old = cur, nb = makeBike((old.style + d + BIKES.length) % BIKES.length); pl.root.remove(old.group); all.splice(all.indexOf(old), 1);
+    if (mine.bike === old) mine.bike = null; register(nb); scene.remove(nb.group); cur = null; pl.vehicle = null;
+    nb.group.position.copy(pl.pos); nb.group.rotation.set(0, pl.rot, 0); scene.add(nb.group); mount(nb);
+  }
   function toggleBalloon() {
-    if (cur && cur.type === 'balloon') { if (pl.grounded) dismount(); else ctx.toast('🎈 Hạ xuống chạm đất rồi mới rời khinh khí cầu nhé (Shift/⬇)', 2200); return; }
+    if (cur && cur.type === 'balloon') return dismount();
     if (cur || !onLand() || !pl.grounded) return;
-    if (pl.pos.y > 0.9 && ctx.groundExtra && ctx.groundExtra(pl.pos.x, pl.pos.z, pl.pos.y) > pl.pos.y - 0.3 && (ctx.boxes || []).some(b => pl.pos.x > b.x0 - 3 && pl.pos.x < b.x1 + 3 && pl.pos.z > b.z0 - 3 && pl.pos.z < b.z1 + 3 && b.top > pl.pos.y + 1)) { ctx.toast('🎈 Chỗ này chật quá, ra chỗ trống để thả khinh khí cầu!', 2200); return; }
-    let v = nearest('balloon', 6) || mine.balloon || (mine.balloon = makeBalloon()); all.includes(v) || all.push(v);
-    if (v.group.parent) v.group.parent.remove(v.group); v.group.position.copy(pl.pos); v.group.rotation.set(0, pl.rot, 0);
+    if ((ctx.boxes || []).some(b => pl.pos.x > b.x0 - 3 && pl.pos.x < b.x1 + 3 && pl.pos.z > b.z0 - 3 && pl.pos.z < b.z1 + 3 && b.top > pl.pos.y + 1)) { ctx.toast(`${ICON.balloon} Chỗ này chật quá, ra chỗ trống để thả khinh khí cầu!`, 2200); return; }
+    const v = nearest('balloon', 6) || bring(mine.balloon || (mine.balloon = balloon()));
     mount(v);
   }
   function ring() { if (cur && cur.type === 'bike' && bellT <= 0) { bellT = 0.5; ctx.sfx('bell'); } }
-  // điểm mặt nước gần nhất quanh người chơi (để lên thuyền) / điểm đất gần nhất quanh thuyền (để lên bờ)
   function findAround(test, r0, r1) {
     for (let r = r0; r <= r1; r += 0.75) for (let k = 0; k < 12; k++) { const a = pl.rot + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * Math.PI / 6; const x = pl.pos.x + Math.sin(a) * r, z = pl.pos.z + Math.cos(a) * r; if (test(x, z)) return [x, z]; }
     return null;
@@ -193,21 +170,21 @@ export function createVehicles(ctx) {
   const landOK = (x, z) => { const h = sup(x, z, 9); return h > W + 0.15 && h < W + 3.2 && !(ctx.boxes || []).some(b => x > b.x0 - 0.4 && x < b.x1 + 0.4 && z > b.z0 - 0.4 && z < b.z1 + 0.4 && b.top > h + 0.5); };
   function boardBoatAt(pt) {
     let v = nearest('boat', 7);
-    if (!v) { v = mine.boat || (mine.boat = makeBoat('#3fa36b')); all.includes(v) || all.push(v); if (v.group.parent) v.group.parent.remove(v.group); v.group.position.set(pt[0], 0, pt[1]); v.group.rotation.set(0, Math.atan2(pt[0] - pl.pos.x, pt[1] - pl.pos.z), 0); scene.add(v.group); }
+    if (!v) { v = register(mine.boat || (mine.boat = boat('#3fa36b'))); if (v.group.parent) v.group.parent.remove(v.group); v.group.position.set(pt[0], 0, pt[1]); v.group.rotation.set(0, Math.atan2(pt[0] - pl.pos.x, pt[1] - pl.pos.z), 0); scene.add(v.group); }
     mount(v);
   }
 
   // phím tắt + nút
+  const blocked = () => ctx.freeCam || ctx.mapOpen || document.body.classList.contains('rs-modal');
   addEventListener('keydown', e => {
-    if (e.repeat || ctx.freeCam || document.body.classList.contains('rs-modal')) return;
-    if (e.code === 'KeyB') toggleBike(); else if (e.code === 'KeyF') toggleBalloon(); else if (e.code === 'KeyR') ring();
+    if (e.repeat || blocked()) return;
+    if (e.code === 'KeyB') toggleBike(); else if (e.code === 'KeyF') toggleBalloon(); else if (e.code === 'KeyR') ring(); else if (e.code === 'KeyV') nextStyle(e.shiftKey ? -1 : 1);
   });
   const tap = (id, fn) => ui(id).addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); fn(); });
-  tap('bBike', toggleBike); tap('bBalloon', toggleBalloon); tap('bBell', ring);
+  tap('bBike', toggleBike); tap('bBalloon', toggleBalloon); tap('bBell', ring); tap('bStyle', () => nextStyle(1));
   const held = { up: false, down: false };
   for (const [id, k] of [['bUp', 'up'], ['bDown', 'down']]) { const b = ui(id); b.addEventListener('pointerdown', e => { e.preventDefault(); held[k] = true; }); for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) b.addEventListener(ev, () => { held[k] = false; }); }
   const keys = new Set(); addEventListener('keydown', e => keys.add(e.code)); addEventListener('keyup', e => keys.delete(e.code)); addEventListener('blur', () => keys.clear());
-  setUI();
 
   // ---------- Vệt nước sau thuyền ----------
   const NW = 60, wg = new THREE.BufferGeometry(), wp = new Float32Array(NW * 3), wl = new Float32Array(NW);
@@ -217,56 +194,67 @@ export function createVehicles(ctx) {
     fragmentShader: 'varying float vL; void main(){ float d = length(gl_PointCoord-.5); gl_FragColor = vec4(1.,1.,1., smoothstep(.5,.3,d)*smoothstep(.15,.3,d)*vL*0.8); }' }));
   wake.frustumCulled = false; scene.add(wake); let wi = 0;
 
-  let scanT = 0, edge = null, landPt = null;
+  let scanT = 0, edge = null, landPt = null, cullT = 0, lastRot = null, splashT = 0;
   function update(dt) {
     clock += dt; if (!townDone) placeTown();
     bellT -= dt;
-    // thuyền đang đỗ dập dềnh
-    for (const v of all) if (v !== cur && v.type === 'boat') { const g = v.group; g.position.y = waterY(g.position.x, g.position.z); g.rotation.z = Math.sin(clock * 1.3 + g.position.x) * 0.04; g.rotation.x = Math.sin(clock * 1.7 + g.position.z) * 0.03; }
+    const p = pl.pos, V = pl.vehicle;
+    if ((cullT -= dt) <= 0) { cullT = 0.5; for (const v of all) if (v !== cur && v.group.parent === scene) v.group.visible = Math.hypot(v.group.position.x - p.x, v.group.position.z - p.z) < (v.far || 50); }
+    for (const v of all) if (v !== cur && v.type === 'boat' && v.group.visible) { const g = v.group; g.position.y = waterY(g.position.x, g.position.z); g.rotation.z = Math.sin(clock * 1.3 + g.position.x) * 0.04; g.rotation.x = Math.sin(clock * 1.7 + g.position.z) * 0.03; }
     for (let i = 0; i < NW; i++) if (wl[i] > 0) wl[i] = Math.max(0, wl[i] - dt * 0.55);
     wg.attributes.life.needsUpdate = true;
-    const p = pl.pos, V = pl.vehicle;
 
     if (!cur) {
       if (pl.frozen) return;
-      const b = nearest('bike', 2.6); if (b) ctx.offer('🚲 Lên xe', () => mount(b), 3);
-      const bl = nearest('balloon', 3.5); if (bl) ctx.offer('🎈 Lên khinh khí cầu', toggleBalloon, 3);
+      const v = nearestAny(); if (v) { if (v.offer) v.offer(); else ctx.offer(v.label, () => v.type === 'balloon' ? toggleBalloon() : mount(v), 3); } // thú cưỡi tự quyết định nhãn (thuần phục / cưỡi)
       if ((scanT -= dt) <= 0) { scanT = 0.25; edge = onLand() && p.y < W + 3.5 && pl.grounded ? findAround(isWater, 1.5, 4.5) : null; }
       if (edge) { const e = edge; ctx.offer('⛵ Lên thuyền', () => boardBoatAt(e), 1); }
       return;
     }
-    const g = cur.group, sp = pl.speed, wr = lastRot === null ? 0 : wrapAngle(pl.rot - lastRot) / Math.max(dt, 1e-3), acc = (sp - lastSp) / Math.max(dt, 1e-3); // tốc độ rẽ (rad/s), gia tốc
+    const sp = pl.speed, M = cur.mode;
+    // Shift / nút Nhanh: tăng tốc
+    const fast = keys.has('ShiftLeft') || keys.has('ShiftRight') || pl.input.run;
+    V.speed = M.speed * (fast && M.boost ? M.boost : 1);
+    // bay: Space/⬆ lên, C/Ctrl/⬇ xuống
+    if (M.fly) {
+      const up = keys.has('Space') || held.up, down = keys.has('KeyC') || keys.has('ControlLeft') || keys.has('KeyQ') || held.down;
+      takeoff -= dt; const want = takeoff > 0 ? M.climb * 0.9 : up ? M.climb : down ? -M.climb : 0; lift += (want - lift) * Math.min(1, dt * 3); V.lift = lift;
+      ctx.altitude = Math.round(p.y);
+    }
+    // nghiêng khi rẽ
+    const wr = lastRot === null ? 0 : wrapAngle(pl.rot - lastRot) / Math.max(dt, 1e-3), acc = (sp - lastSp) / Math.max(dt, 1e-3); // tốc độ rẽ (rad/s), gia tốc
     lastRot = pl.rot; lastSp = sp;
+    lean = damp(lean, THREE.MathUtils.clamp(-wr * sp * 0.035, -0.4, 0.4), leanSt, T.quick, dt); // nghiêng vào cua (lò xo)
     if (cur.type === 'bike') {
-      spin += sp * dt / WR; for (const w of cur.wheels) w.rotation.x = spin; cur.crank.rotation.x = spin * 0.55;
-      // nghiêng khi rẽ: theo tốc độ quay của hướng đi
-      lean = damp(lean, THREE.MathUtils.clamp(-wr * sp * 0.035, -0.4, 0.4), leanSt, T.quick, dt); pl.root.rotation.z = lean; // nghiêng vào cua (lò xo)
-      pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.012, -0.06, 0.04), pitchSt, T.soft, dt); pl.root.rotation.x = pitch;     // phanh: chúi đầu xe nhẹ
-      const hero = pl.hero; if (hero) { const L = (hero.model.getObjectByName('leg-left') || hero.model.getObjectByName('upperlegl')), R = (hero.model.getObjectByName('leg-right') || hero.model.getObjectByName('upperlegr')), a = spin * 0.55; if (L && R) { L.rotateX(Math.sin(a) * 0.55 - 0.25); R.rotateX(-Math.sin(a) * 0.55 - 0.25); } }
+      for (const w of cur.wheels) w.m.rotation.x += sp * dt / w.r; cur.crank.rotation.x += sp * dt / 0.34 * 0.55;
+      pl.root.rotation.z = cur.lean ? lean : 0;
+      pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.012, -0.06, 0.04), pitchSt, T.soft, dt); pl.root.rotation.x = pitch; // phanh: chúi đầu xe nhẹ
+      const hero = pl.hero; if (hero) { const L = (hero.model.getObjectByName('leg-left') || hero.model.getObjectByName('upperlegl')), R = (hero.model.getObjectByName('leg-right') || hero.model.getObjectByName('upperlegr')), a = cur.crank.rotation.x; if (L && R) { L.rotateX(Math.sin(a) * 0.55 - 0.25); R.rotateX(-Math.sin(a) * 0.55 - 0.25); } }
       ctx.offer('🚶 Xuống xe', dismount, 0.5);
-      if (!onLand()) { /* xe không xuống nước: player.js đã chặn */ }
     } else if (cur.type === 'boat') {
       rowT += dt * (0.8 + Math.min(1, sp / 3) * 2.2) * (sp > 0.3 ? 1 : 0.25);
       cur.oars.forEach((o, i) => { const s = i ? 1 : -1; o.rotation.y = s * Math.sin(rowT * 2) * 0.55; o.rotation.z = s * (Math.cos(rowT * 2) * 0.18 - 0.05); });
-      if (sp > 0.6 && Math.sin(rowT * 2) > 0.95 && (update.splashT ?? 0) < clock) { update.splashT = clock + 0.5; ctx.sfx('splash'); }
+      if (sp > 0.6 && Math.sin(rowT * 2) > 0.95 && splashT < clock) { splashT = clock + 0.5; ctx.sfx('splash'); }
       // dập dềnh + nghiêng ra ngoài khi rẽ + ngóc mũi khi tăng tốc (lò xo, không giật)
       roll = damp(roll, THREE.MathUtils.clamp(wr * sp * 0.025, -0.12, 0.12), rollSt, T.soft, dt); pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.04, -0.08, 0.06), pitchSt, T.slow, dt);
       pl.root.rotation.z = Math.sin(clock * 1.3 + p.x) * 0.05 + roll; pl.root.rotation.x = Math.sin(clock * 1.7 + p.z) * 0.035 + pitch;
       if (sp > 0.5 && (wakeT -= dt) <= 0) { wakeT = 0.07; const i = wi++ % NW, r = pl.rot; wp.set([p.x - Math.sin(r) * 1.6 + (Math.random() - 0.5) * 0.5, W + 0.05, p.z - Math.cos(r) * 1.6 + (Math.random() - 0.5) * 0.5], i * 3); wl[i] = 1; wg.attributes.position.needsUpdate = true; }
       if ((scanT -= dt) <= 0) { scanT = 0.25; landPt = findAround(landOK, 1.2, 3.6); }
       if (landPt) { const L = landPt; ctx.offer('🏝️ Lên bờ', () => dismount(L), 4); }
-    } else { // balloon
-      const up = keys.has('Space') || held.up, down = keys.has('ShiftLeft') || keys.has('ShiftRight') || keys.has('KeyC') || held.down;
-      takeoff -= dt; const want = takeoff > 0 ? 3.5 : up ? 4 : down ? -3.5 : 0; lift += (want - lift) * Math.min(1, dt * 3); V.lift = lift;
-      const burning = want > 0; cur.flame.visible = burning || Math.random() < 0.05; cur.flame.scale.set(1, (burning ? 1 : 0.4) * (0.8 + Math.random() * 0.4), 1);
+    } else if (cur.type === 'balloon') {
+      const burning = lift > 0.5; cur.flame.visible = burning || Math.random() < 0.05; cur.flame.scale.set(1, (burning ? 1 : 0.4) * (0.8 + Math.random() * 0.4), 1);
       if (burning && (burnT -= dt) <= 0) { burnT = 0.9; ctx.sfx('burner'); }
       roll = damp(roll, THREE.MathUtils.clamp(wr * 0.05, -0.06, 0.06), rollSt, T.lazy, dt); pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.03, -0.05, 0.05), pitchSt, T.lazy, dt); // giỏ treo đung đưa theo quán tính
       pl.root.rotation.z = Math.sin(clock * 0.7) * 0.03 + (pl.speed / 6.5) * 0.02 + roll; pl.root.rotation.x = Math.sin(clock * 0.5) * 0.02 + pitch;
-      if (pl.grounded && sup(p.x, p.z, p.y) > W) ctx.offer('🎈 Rời khinh khí cầu', toggleBalloon, 4);
-      ctx.altitude = Math.round(p.y);
+      if (pl.grounded && sup(p.x, p.z, p.y) > W) ctx.offer(ICON.balloon + ' Rời khinh khí cầu', dismount, 4);
+    } else {
+      cur.tick && cur.tick(dt, sp, { lean, lift, clock, fast, grounded: pl.grounded });
+      if (!M.fly || (pl.grounded && sup(p.x, p.z, p.y) > W)) ctx.offer(cur.bye || '🚶 Xuống', dismount, M.fly ? 4 : 0.5);
     }
   }
-  const self = { update, all, get riding() { return cur && cur.type; }, mount, dismount, toggleBike, toggleBalloon, get tris() { return { bike: makeBike('#fff').tris, boat: makeBoat('#fff').tris, balloon: makeBalloon().tris }; } };
+  const self = { update, all, register, get current() { return cur; }, get riding() { return cur && cur.type; }, mount, dismount, toggleBike, toggleBalloon, nextStyle, sup, setUI, keys, held,
+    get tris() { return { bike: BIKES.map((b, i) => makeBike(i).tris), boat: makeBoat('#fff').tris, balloon: makeBalloon().tris }; } };
   ctx.vehicles = self;
+  setUI();
   return self;
 }

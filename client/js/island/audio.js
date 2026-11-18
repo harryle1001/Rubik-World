@@ -85,6 +85,16 @@ export function createAudio(ctx) {
     s.connect(g).connect(listener.getInput()); s.start();
   };
 
+  // Huýt sáo (tổng hợp): semis = các nốt tính theo nửa cung so với nốt gốc, mỗi thú cưỡi một giai điệu riêng
+  ctx.whistle = (semis, base = 1175) => {
+    if (!on || listener.context.state !== 'running') return;
+    const ac = listener.context, o = ac.createOscillator(), g = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain(), t0 = ac.currentTime + 0.02;
+    lfo.frequency.value = 6; lg.gain.value = 14; lfo.connect(lg).connect(o.frequency); o.connect(g).connect(listener.getInput());
+    g.gain.setValueAtTime(0, t0); o.frequency.setValueAtTime(base * 2 ** (semis[0] / 12) * 0.9, t0);
+    let t = t0; semis.forEach((s, i) => { const f = base * 2 ** (s / 12), d = i === semis.length - 1 ? 0.38 : 0.19; o.frequency.exponentialRampToValueAtTime(f, t + 0.05); g.gain.setTargetAtTime(0.16, t, 0.012); g.gain.setTargetAtTime(0.06, t + d - 0.05, 0.02); t += d; });
+    g.gain.setTargetAtTime(0, t, 0.04); o.start(t0); lfo.start(t0); o.stop(t + 0.3); lfo.stop(t + 0.3);
+  };
+
   let zoneT = 0;
   function update(dt, st) {
     if (!ready) return;

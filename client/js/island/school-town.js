@@ -31,7 +31,11 @@ export function createSchoolTown(ctx) {
   fr.src = '/school/index.html?embed=1'; fr.title = 'Trường Rubik';
   fr.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;z-index:25;background:transparent;pointer-events:none;color-scheme:dark';
   fr.setAttribute('allowtransparency', 'true'); document.body.appendChild(fr);
-  const waitRS = setInterval(() => { const w = fr.contentWindow; if (w && w.RS && w.RS.doors) { clearInterval(waitRS); town.RS = w.RS; town.win = w; w.addEventListener('pointerdown', () => ctx.audio && ctx.audio.start()); build(); } }, 300);
+  const waitRS = setInterval(() => { const w = fr.contentWindow; if (w && w.RS && w.RS.doors) { clearInterval(waitRS); town.RS = w.RS; town.win = w; w.addEventListener('pointerdown', () => ctx.audio && ctx.audio.start());
+    // phím lọt vào iframe khi không có bảng 2D nào mở (vd M bản đồ, E, B…) → chuyển về thế giới 3D, không mở nhầm bản đồ 2D
+    w.addEventListener('keydown', e => { if (modalOpen) return; e.stopImmediatePropagation(); e.preventDefault(); fr.blur(); window.focus(); dispatchEvent(new KeyboardEvent('keydown', { code: e.code, key: e.key, repeat: e.repeat })); }, true);
+    w.addEventListener('keyup', e => { if (modalOpen) return; e.stopImmediatePropagation(); dispatchEvent(new KeyboardEvent('keyup', { code: e.code, key: e.key })); }, true);
+    build(); } }, 300);
 
   // ---------- Mặt đất các khu: cao TOWN_Y (địa hình đã được làm phẳng bên dưới, xem terrain.js) ----------
   ctx.decks = ctx.decks || [];   // sàn gỗ/bến nổi: {x0,x1,z0,z1,y}
