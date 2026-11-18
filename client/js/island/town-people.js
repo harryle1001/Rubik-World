@@ -68,9 +68,9 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
     k.fillStyle = '#fff'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(text, 262, 41, 440); tag.material.map.needsUpdate = true;
   };
   const groundY = (x, z) => { const g = ctx.groundExtra(x, z, 9); return g > -50 ? g : TOWN_Y; };
-  // LOD xa (> 34 m, Fibonacci): người đứng/đi thay bằng hình khối đơn giản (chân · áo · mặt · tóc = 4 khúc trụ 8 cạnh),
+  // LOD xa (> 34 m, điện thoại > 21 m, Fibonacci): người đứng/đi thay bằng hình khối đơn giản (chân · áo · mặt · tóc = 4 khúc trụ 8 cạnh),
   // tất cả gộp vào 1 InstancedMesh → mọi người ở xa chỉ tốn 1 draw call (trước: 1–3 call mỗi người). Người ngồi vẫn dùng model đầy đủ.
-  const LOD_D = 34, imp = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 8).translate(0, 0.5, 0), toon('#ffffff'), POOL * 4);
+  const LOD_D = CFG.isMobile ? 21 : 34, imp = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 8).translate(0, 0.5, 0), toon('#ffffff'), POOL * 4);
   imp.count = 0; imp.visible = false; imp.frustumCulled = false; imp.name = 'person-lod'; imp.castShadow = false; imp.receiveShadow = true; scene.add(imp);
   const _io = new THREE.Object3D(), _ic = new THREE.Color(), SKIN = '#f2c9a0', HAIR = '#2a1d17';
   const impPart = (i, x, y, z, yaw, y0, hh, w, d, col) => { _io.position.set(x, y + y0, z); _io.rotation.set(0, yaw, 0); _io.scale.set(w, hh, d); _io.updateMatrix(); imp.setMatrixAt(i, _io.matrix); imp.setColorAt(i, _ic.set(col)); };

@@ -4,12 +4,16 @@
 //  · Vật nhỏ ở xa: ẩn khi khoảng cách tới camera > max(34, 89·bán kính) (Fibonacci) — vật cỡ 1 m mất ở ~89 m, còn ~13 px.
 //    InstancedMesh từ scatterModel mang userData.itemR (bán kính 1 vật) → cả ô 55 m ẩn khi điểm gần nhất của ô đủ xa.
 //  · Người/thú có xương (SkinnedMesh, trước luôn vẽ): cắt theo khung hình bằng hình cầu bao nới rộng φ lần.
-//  · Vật < 1 m không đổ bóng (bóng đổ của vật nhỏ gần như không thấy, nhưng tốn 1 draw call ở pass bóng).
+//  · Vật < 1 m không đổ bóng (bóng đổ của vật nhỏ gần như không thấy, nhưng tốn 1 draw call ở pass bóng);
+//    điện thoại: bán kính < 1/φ ≈ 0,62 m (cả InstancedMesh không ghi itemR: lấy cỡ 1 vật từ hình cầu bao lưới × tỉ lệ instance đầu).
 // Ẩn bằng layers (không đụng .visible mà file khác đang điều khiển). Quét cảnh tìm vật mới mỗi 2 s, xét khoảng cách mỗi 0,2 s.
 import * as THREE from 'three';
 import { PHI } from './layout.js';
+import { CFG } from './config.js';
 
 const FAR_K = 89, FAR_MIN = 34, OUTLINE_D = 34, SMALL_R = 1.6;   // ngưỡng Fibonacci; SMALL_R ≈ φ m
+const NOSHADOW_R = CFG.isMobile ? 1 / PHI : 0.5;                  // vật nhỏ hơn: không đổ bóng
+const _m = new THREE.Matrix4(), _sc = new THREE.Vector3();
 const _s = new THREE.Sphere(), _v = new THREE.Vector3();
 
 export function createPerf(ctx) {
@@ -27,14 +31,17 @@ export function createPerf(ctx) {
     if (ud.outline) { o.frustumCulled = true; list.push({ o, kind: 'outline' }); return; }
     if (!o.frustumCulled) return;   // vật cố ý luôn vẽ (bầu trời, nước, hiệu ứng) — giữ nguyên
     if (o.isInstancedMesh) {
-      if (ud.itemR === undefined) return;   // InstancedMesh phủ rộng không rõ cỡ từng vật → bỏ qua
-      if (ud.itemR < 0.5) o.castShadow = false;
+      if (ud.itemR === undefined) {   // InstancedMesh phủ rộng không rõ cỡ từng vật → chỉ xét bóng đổ (điện thoại)
+        if (CFG.isMobile && o.castShadow && o.count > 0) { if (!g.boundingSphere) g.computeBoundingSphere(); o.getMatrixAt(0, _m); _sc.setFromMatrixScale(_m); if (g.boundingSphere.radius * Math.max(_sc.x, _sc.y, _sc.z) * o.matrixWorld.getMaxScaleOnAxis() < NOSHADOW_R) o.castShadow = false; }
+        return;
+      }
+      if (ud.itemR < NOSHADOW_R) o.castShadow = false;
       if (ud.itemR < SMALL_R) list.push({ o, kind: 'inst', r: ud.itemR });
       return;
     }
     if (!g.boundingSphere) g.computeBoundingSphere();
     const r = g.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis();
-    if (r < 0.5) o.castShadow = false;
+    if (r < NOSHADOW_R) o.castShadow = false;
     if (r < SMALL_R && !o.isSprite) list.push({ o, kind: 'small', r });
   }
   const scan = () => scene.traverse(register);
