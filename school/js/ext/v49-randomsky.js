@@ -3,7 +3,10 @@
 const V49R = {d:null, s:null};
 const V49R_SEASONS = ['xuan', 'ha', 'thu', 'dong'];
 // mỗi ngày trong game bốc thăm một mùa (có thể trùng hôm trước)
-function v49rDaySeason(){ if(V49R.d !== day || !V49R.s){ V49R.d = day; V49R.s = V49R_SEASONS[Math.floor(Math.random()*4)]; } return V49R.s; }
+// v49b: đổi nhanh hơn — mùa bốc thăm lại mỗi 6 giờ trong game (4 lần/ngày), thời tiết mỗi 1 giờ trong game
+const V49R_SEASON_MIN = 360, V49R_WEATHER_MIN = 60;
+function v49rKey(){ return day*1440/V49R_SEASON_MIN + Math.floor((typeof clock === 'number' ? clock : 0)/V49R_SEASON_MIN); }
+function v49rDaySeason(){ const k = v49rKey(); if(V49R.d !== k || !V49R.s){ V49R.d = k; V49R.s = V49R_SEASONS[Math.floor(Math.random()*4)]; } return V49R.s; }
 const v49rSS0 = setSeason;
 setSeason = function(s, auto){ if(auto) s = v49rDaySeason(); return v49rSS0(s, auto); };
 realSeason = function(){ return v49rDaySeason(); };
@@ -23,4 +26,11 @@ function v49rInit(){
   ['seasons', 'weathers'].forEach(id => { const r = document.getElementById(id); if(!r) return; r.hidden = true; const h = r.previousElementSibling; if(h && h.tagName === 'H2') h.hidden = true; });
   setSeason(v49rDaySeason(), true);
   if(typeof V25 !== 'undefined') V25.wslot = -1; weatherUntil = clock;
+  // thời tiết: ô thời gian 1 giờ thay vì 3 giờ (giữ bỏ sóng thần/động đất/siêu bão như v25)
+  if(typeof v25Weather === 'function') v25Weather = function(){
+    if(!SETTINGS.weatherHourly) return; const slot = day*(1440/V49R_WEATHER_MIN) + Math.floor(clock/V49R_WEATHER_MIN); if(slot === V25.wslot) return; V25.wslot = slot;
+    const wts = Object.assign({}, W_WEIGHTS[season]); ['songthan', 'dongdat', 'sieubao'].forEach(k => delete wts[k]); let tot = 0; for(const k in wts) tot += wts[k];
+    let r = Math.random()*tot, choice = 'nang'; for(const k in wts){ r -= wts[k]; if(r <= 0){ choice = k; break; } } setWeather(choice, false); weatherUntil = 1e9; };
+  // mùa: kiểm tra mỗi 2 giây, sang ô 6 giờ mới thì đổi
+  setInterval(() => { try { const s = v49rDaySeason(); if(s !== season){ setSeason(s, true); if(typeof V25 !== 'undefined'){ V25.wslot = -1; v25Weather(); } } } catch(e){} }, 2000);
 }
