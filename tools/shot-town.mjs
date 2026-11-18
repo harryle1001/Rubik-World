@@ -16,6 +16,12 @@ const VIEWS = {
   ringEye: { cam: pol(103, lotA(3) - 0.07, 3.9), look: pol(121, lotA(3), 4.2), player: pol(107, lotA(3) - 0.02, 0) },
   ringAir: { cam: pol(88, lotA(3) - 0.42, 27), look: pol(120, lotA(3) - 0.05, 2) },
   ringEye2: { cam: pol(104, lotA(12) + 0.08, 3.9), look: pol(121, lotA(12), 4.2) },
+  // phố theo toạ độ 2D của trường (RS.R / DALAT) → 3D qua layout.to3; dx/dz: lệch camera so với điểm nhìn
+  dalatEye: { at2: [3560, 690], d: [-7, 3.4, 13], l: [0, 3.8, -4] },
+  dalatAir: { at2: [3560, 690], d: [-26, 24, 30], l: [0, 2, -3] },
+  shopEye: { reg: 'shopst', fy: 0.32, d: [-6, 3.4, 14], l: [0, 3.6, -6] },
+  shopAir: { reg: 'shopst', fy: 0.32, d: [-24, 24, 30], l: [0, 2, -6] },
+  pstreetAir: { reg: 'pstreet', fy: 0.5, d: [-22, 26, 30], l: [0, 1, 0] },
 };
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const page = await browser.newPage(MOBILE ? { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 } : { viewport: { width: 1280, height: 720 } });
@@ -37,12 +43,17 @@ await page.evaluate(() => {
 const stats = {};
 for (const [name, v] of Object.entries(VIEWS)) {
   if (ONLY && !ONLY.split(',').includes(name)) continue;
+  if (v.at2 || v.reg) Object.assign(v, await page.evaluate(async v => {
+    const L = await import('/js/island/layout.js'); let p;
+    if (v.reg) { const r = __island.school.RS.R[v.reg]; p = L.to3(r.x + r.w / 2, r.y + r.h * v.fy, r.x + r.w / 2); } else p = L.to3(...v.at2);
+    return { cam: [p[0] + v.d[0], v.d[1], p[1] + v.d[2]], look: [p[0] + v.l[0], v.l[1], p[1] + v.l[2]], player: [p[0] + v.d[0] * 0.6, 0, p[1] + v.d[2] * 0.6] };
+  }, v));
   await page.evaluate(v => { const c = __island, Y = 1.2; v = { cam: [v.cam[0], v.cam[1] + Y, v.cam[2]], look: [v.look[0], v.look[1] + Y, v.look[2]], player: v.player }; window.__view = v; const p = v.player || v.look; c.player.teleport(p[0], p[2]); }, v);
   for (const H of (name.includes('Air') || MOBILE ? HOURS.slice(0, 2) : HOURS)) {
     await page.evaluate(H => window.__setHour(H), H);
     await page.waitForTimeout(2500);
-    const f = `${OUT}/${name}-${String(H).replace('.', 'h')}${MOBILE ? '-mobile' : ''}.png`;
-    await page.screenshot({ path: f }); stats[`${name}@${H}`] = await page.evaluate(() => window.__ri);
+    const f = `${OUT}/${name}-${String(H).replace('.', 'h')}${MOBILE ? '-mobile' : ''}.jpg`;
+    await page.screenshot({ path: f, type: 'jpeg', quality: 84 }); stats[`${name}@${H}`] = await page.evaluate(() => window.__ri);
   }
 }
 console.log(JSON.stringify(stats));

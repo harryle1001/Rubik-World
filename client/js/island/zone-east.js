@@ -14,6 +14,8 @@ import { Batch } from './decor.js';
 import { loadModel } from './models.js';
 import { KIT } from './kit.js';
 import { BLOCKS, PHI } from './layout.js';
+import { buildHouse, houseVariant } from './sample/house-kit.js';
+import { PAL } from './sample/palette.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 // Bảng màu (docs/art-style.md)
@@ -164,20 +166,13 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
   if (sh) measure(b, 'shopst', () => {
     pave(sh.x0 + 0.5, sh.z0 + 0.5, sh.x1 - 0.5, sh.z1 - 0.3, '#eadfca');
     for (let x = sh.x0 + 1; x < sh.x1 - 1; x += 1.6) d.box(0.05, 0.012, sh.d - 2, x, Y + 0.03, sh.cz, '#d9ccb4');
-    const SHOPS = [['SÁCH & BÚT', K.sky, '#2b63d9'], ['KEM MÁT', K.pink, '#e85d8a'], ['BÁNH NGỌT', K.butter, '#e8913c'], ['ĐỒ CHƠI', K.mint, '#2f9e44'], ['HOA TƯƠI', '#e9d5f2', '#9b59d0']];
-    const n = SHOPS.length, sw = (sh.w - 2) / n, fz = sh.z0 + 10;
-    SHOPS.forEach(([name, wall, acc], i) => {
-      const x = sh.x0 + 1 + sw * (i + 0.5), w = sw - 0.6, h = 5 + (i % 2) * 1.2;
-      b.group(x, Y, fz - 4.5, 0, () => {
-        body(b, w, h, 8.5, wall, K.white);
-        if (i % 2) barrel(b, 9, 2.0, w + 0.4, 0, h + 0.1, 0, i === 3 ? K.tileD : K.tile, PI / 2); else { b.box(w + 0.5, 0.5, 9, 0, h + 0.1, 0, K.white); for (let j = 0; j < 5; j++) b.box(w * 0.18, 0.4, 0.4, -w / 2 + w * (j + 0.5) / 5, h + 0.6, 4.3, j % 2 ? wall : K.white); }
-        b.box(w * 0.7, 2.2, 0.12, -w * 0.12, 0.6, 4.26, K.glass); b.box(w * 0.72, 0.12, 0.2, -w * 0.12, 2.8, 4.28, K.white);
-        doorF(b, w * 0.36, 4.26, 1.1, 2.3, acc);
-        win(b, -w * 0.2, 3.7, 4.26, 1.0, 1.0); win(b, w * 0.25, 3.7, 4.26, 1.0, 1.0);
-        awning(b, w - 0.2, 0, 3.3, 4.25, acc, K.white, 1.6);
-        b.box(w * 0.85, 0.75, 0.18, 0, h - 0.95, 4.3, acc);
-        sign(b, name, w * 0.8, 0.6, 0, h - 0.57, 4.42);
-      });
+    // 5 cửa hàng từ bộ mô-đun (sample/house-kit.js): biển hiệu + mái hiên sọc màu nhấn Rubik
+    const SHOPS = [['SÁCH & BÚT', 'rubikB'], ['KEM MÁT', 'rubikR'], ['BÁNH NGỌT', 'rubikO'], ['ĐỒ CHƠI', 'rubikG'], ['HOA TƯƠI', 'shutter']];
+    const n = SHOPS.length, sw = (sh.w - 2) / n, fz = sh.z0 + 10, ink = PAL.ink.hex, cream = PAL.stoneCreamL.hex, brass = PAL.brass.hex;
+    const kitSign = (bb, text, w, h, x, y, z) => sign(bb, text, w, h, x, y, z, 0, ink, cream, brass);
+    SHOPS.forEach(([name, acc], i) => {
+      const x = sh.x0 + 1 + sw * (i + 0.5), w = sw - 0.6;
+      b.group(x, Y, fz - 0.25, 0, () => buildHouse(b, houseVariant(i + 21, { w, dep: 8.5, floors: 1 + (i % 2) + (i === 2 ? 1 : 0), shop: { sign: name, acc } }), { d, signAt: kitSign }));
       // quầy hàng trước cửa
       d.group(x - w * 0.15, Y, fz + 1.4, 0, () => { d.box(1.6, 0.8, 0.7, 0, 0, 0, K.wood); for (let j = 0; j < 4; j++) d.ball(0.15, -0.55 + j * 0.37, 0.92, 0, ['#e8453c', '#f5c518', '#ff8ac2', '#7fd0ff'][(i + j) % 4]); });
       planter(d, x + w * 0.45, fz + 1.0, acc);
@@ -393,25 +388,22 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
   const ps = rect('pstreet');
   if (ps) measure(e, 'pstreet', () => {
     lawn(ps.x0 + 0.3, ps.z0 + 0.3, ps.x1 - 0.3, ps.z1 - 0.3, '#9bd47a');
-    const WALL = [K.pink, K.sky, K.butter, K.mint, '#e9d5f2', '#fbe0c4', '#d4ecf7', '#f6d3e0'], ROOF = [K.tile, '#5b8fd0', K.tileD, '#3f9a6a', '#8a5ab0', '#d9683f', '#c0503a', '#4f7fbf'];
+    const ROOF = [K.tile, '#5b8fd0', K.tileD, '#3f9a6a', '#8a5ab0', '#d9683f', '#c0503a', '#4f7fbf'];
     const doorsP = RS.doors().filter(q => /^Nhà của/.test(q.n || '')).map(q => ({ n: q.n, p: at(q.x, q.y) }));
     for (let i = 0; i < 8; i++) {
       const X0 = 8760 + (i % 4) * 215, Y0 = i < 4 ? -500 : -265, [px0, pz0] = at(X0, Y0), pw = 195 * S, pd = 200 * S, cx = px0 + pw / 2;
       const dr = doorsP.find(q => Math.abs(q.p[0] - cx) < 2 && Math.abs(q.p[1] - (pz0 + pd)) < 1.5), fz = (dr ? dr.p[1] : pz0 + pd) - 1.2;   // mặt tiền ngay sau cửa
-      const w = 6.2 + (i % 3) * 0.6, dd = w / PHI, h = 3.4 + (i % 2) * 1.3, wall = WALL[i], roof = ROOF[i];
+      const w = 6.2 + (i % 3) * 0.6, dd = w / PHI;
       pave(cx - 0.8, fz, cx + 0.8, pz0 + pd + 0.2, K.pave);
-      e.group(cx, Y, fz - dd / 2, 0, () => {
-        body(e, w, h, dd, wall, K.white);
-        if (i % 2) barrel(e, w + 0.7, 2.0, dd + 0.8, 0, h + 0.1, 0, roof); else e.push(new THREE.SphereGeometry(1, 10, 4, 0, 2 * PI, 0, PI / 2), roof, 0, h + 0.1, 0, 0, 0, 0, (w + 0.8) * 0.62, 2.0, (dd + 0.8) * 0.62);
-        e.box(0.6, 1.4, 0.6, w * 0.28, h + 0.6, -0.8, K.stoneD);
-        doorF(e, 0, dd / 2 + 0.02, 1.1, 2.1, ROOF[(i + 3) % 8]); for (const s of [-1, 1]) win(e, s * w * 0.3, 1.4, dd / 2 + 0.02, 1.0, 1.1);
-        if (h > 4) win(e, 0, 3.4, dd / 2 + 0.02, 1.0, 0.9);
-        e.box(1.8, 0.1, 0.9, 0, 2.6, dd / 2 + 0.4, roof, 0, -0.2);                 // mái hiên nhỏ trên cửa
-        if (dr) sign(e, dr.n.replace('Nhà của ', 'Nhà '), 2.6, 0.42, 0, h - 0.55, dd / 2 + 0.06);
+      let h = 4;
+      e.group(cx, Y, fz, 0, () => {   // nhà từ bộ mô-đun (sample/house-kit.js)
+        const o = houseVariant(i + 40, { w, dep: dd, door: ['single', 'arch', 'double'][i % 3], floors: 1 + (i % 2) });
+        h = buildHouse(e, o, { d }).H;
       });
-      collide(cx - w / 2 - 0.2, fz - dd - 0.2, cx + w / 2 + 0.2, fz + 0.05, h + 1.5);
+      collide(cx - w / 2 - 0.2, fz - dd - 0.2, cx + w / 2 + 0.2, fz + 0.05, h);
       // không rào: viền hoa & bụi thấp tự nhiên dọc mép lô, hộp thư
       for (const s of [-1, 1]) for (let k = 0; k < 3; k++) bush(d, cx + s * (2.2 + k * 1.3), pz0 + pd - 0.6, 0.45, k % 2 ? '#5aa04a' : K.grassD);
+      if (dr) { for (const s2 of [-1, 1]) e.box(0.08, 1.5, 0.08, cx - 2.2 + s2 * 0.95, Y, pz0 + pd - 0.8, PAL.woodD.hex); sign(e, dr.n.replace('Nhà của ', 'Nhà '), 2.0, 0.34, cx - 2.2, Y + 1.32, pz0 + pd - 0.76, 0, PAL.ink.hex, PAL.stoneCreamL.hex, PAL.brass.hex); }   // bảng tên chủ nhà cạnh lối vào
       d.box(0.1, 1.0, 0.1, cx + 1.4, Y, pz0 + pd - 0.8, K.woodD); d.box(0.45, 0.32, 0.3, cx + 1.4, Y + 1.0, pz0 + pd - 0.8, ROOF[i]);
       bush(d, cx - w / 2 - 0.3, fz - 0.4, 0.6); flowers(cx + 1.2, fz + 0.1, cx + pw / 2 - 0.6, pz0 + pd - 0.8, 6); flowers(cx - pw / 2 + 0.6, fz + 0.1, cx - 1.2, pz0 + pd - 0.8, 6);
       if (i < 4) tree(px0 + 0.8, pz0 + 1.2, 'leaf', 0.8);

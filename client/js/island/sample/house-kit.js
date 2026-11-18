@@ -136,7 +136,7 @@ export function buildHouse(b, o, opt = {}) {
       b.box(bw, 0.06, 0.06, 0, y + 0.95, bd - 0.05, iron); b.box(bw, 0.05, 0.05, 0, y + 0.12, bd - 0.05, iron);
       for (let u = -bw / 2; u <= bw / 2 + 1e-3; u += bw / Math.round(bw / 0.9)) b.box(0.05, 0.85, 0.05, u, y + 0.12, bd - 0.05, iron);
       for (const s of [-1, 1]) b.box(0.05, 0.9, bd, s * bw / 2, y + 0.06, bd / 2, iron);
-      for (let u = -bw / 2 + 0.5; u < bw / 2; u += step) b.box(0.14, 0.42, 0.7, u, y - 0.6, 0.35, trim, 0, 0.5);   // con-xon
+      if (!shop) for (let u = -bw / 2 + 0.5; u < bw / 2; u += step) b.box(0.14, 0.42, 0.7, u, y - 0.6, 0.35, trim, 0, 0.5);   // con-xon (nhà ở; cửa hàng đã có băng biển)
     }
   }
 

@@ -12,7 +12,7 @@ import { Batch, DetailGrid, createLife, detailMats } from './decor.js';
 import { buildSchoolZone, rubikCube as rubikCubeReal } from './zone-school.js';
 import { buildZoneEast } from './zone-east.js';
 import { buildExtraZones, buildBoats, placePalms } from './zone-extra.js';
-import { buildNorth, house } from './zone-north.js';
+import { buildNorth } from './zone-north.js';
 import { buildZen } from './zone-zen.js';
 
 const _o = new THREE.Object3D(), _c = new THREE.Color();

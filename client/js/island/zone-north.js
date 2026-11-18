@@ -1,4 +1,4 @@
-// zone-north.js — KHU PHÍA BẮC & PHÍA ĐÔNG TRƯỜNG: nhà ở học sinh (13 kiểu), phố Đà Lạt, công viên trí tuệ
+// zone-north.js — KHU PHÍA BẮC & PHÍA ĐÔNG TRƯỜNG: nhà ở học sinh (13 kiểu → house-kit.js), phố Đà Lạt, công viên trí tuệ
 // (bàn cờ khổng lồ, tượng đài Rubik, hồ câu), cánh đồng hoa, vườn hoa Đà Lạt, rừng thông + đồi thông + thác nước,
 // hồ cá Koi + lều trại + khu picnic, đầm sen, nông trại. Gọi 1 lần từ town-buildings.js (buildNorth).
 // Tối ưu điện thoại: khối dựng bằng code gộp vào Batch theo khu (mỗi khu 1 mesh + viền), chi tiết nhỏ vào DetailGrid
@@ -8,7 +8,7 @@ import { Batch } from './decor.js';
 import { placeKit } from './kit.js';
 import { toon, addOutline } from './style.js';
 import { HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1, PHI } from './layout.js';
-import { buildHouse, LOT_PRESET } from './sample/house-kit.js';
+import { buildHouse, LOT_PRESET, houseVariant } from './sample/house-kit.js';
 
 // Hằng số của bản đồ 2D (client/school/js/core/world.js). Game 2D chạy trong IIFE nên win.eval không đọc được → sao lại ở đây.
 const LAKE = { cx: 3930, cy: 330, rx: 300, ry: 150 }, LOTUS = { cx: 4540, cy: 325, rx: 150, ry: 100 };
@@ -28,129 +28,7 @@ function northData(D) {
   return Object.assign({ LAKE, LOTUS, GBOARD, POND, RMON, FOREST_GATES, TENTS, DALAT }, ...Object.entries(D || {}).filter(([, v]) => v).map(([k, v]) => ({ [k]: v })));
 }
 
-// ================= NHÀ Ở (dùng chung: nhà học sinh, phố Đà Lạt, biệt thự resort) =================
-let _DG = null;
-const CURT = ['#f6d6a8', '#f2b6c6', '#cfe6f7', '#fff3c4', '#d8f0c8'];
-export const KIND = {
-  bietthu:     { wall: '#fbf1de', roof: '#b9502f', trim: '#ffffff', floors: 2, roofT: 'hip', chim: true, balcony: true, porch: 'col' },
-  nhaong:      { wall: '#f7e3a1', roof: '#d9683f', trim: '#ffffff', floors: 3, roofT: 'flat', balcony: true, roofGarden: true },
-  nhago:       { wall: '#b9824f', roof: '#6b4a2b', trim: '#f0dcb4', floors: 1, roofT: 'gable', chim: true, logs: true, porch: 'wood' },
-  nhatron:     { wall: '#fbf1de', roof: '#e8453c', trim: '#ffffff', floors: 1, roofT: 'mush' },
-  resort:      { wall: '#f7fbff', roof: '#46c3d6', trim: '#ffffff', floors: 2, roofT: 'pool', awning: '#46c3d6' },
-  nhat:        { wall: '#f4ead2', roof: '#4a4f5c', trim: '#7a4a2a', floors: 1, roofT: 'hip', eave: 1.0, shoji: true, porch: 'engawa' },
-  laudai:      { wall: '#e2dacb', roof: '#4a6fc4', trim: '#c9bfae', floors: 2, roofT: 'castle' },
-  nhasan:      { wall: '#b9824f', roof: '#d4b06a', trim: '#7a5230', floors: 1, roofT: 'gable', stilt: true, steep: 2.2, horns: true },
-  nhakinh:     { wall: '#ffffff', roof: '#d8cfbf', trim: '#ffffff', floors: 2, roofT: 'flat', glass: true, solar: true },
-  diatrunghai: { wall: '#ffffff', roof: '#2b6fd9', trim: '#2b6fd9', floors: 2, roofT: 'dome', bloom: true },
-  thai:        { wall: '#f7e3c0', roof: '#d9683f', trim: '#a8452a', floors: 1, roofT: 'gable', steep: 2.6, layers: true, horns: true, gold: true },
-  container:   { wall: '#e8453c', roof: '#3d7fd9', trim: '#ffffff', floors: 2, roofT: 'container' },
-  villa:       { wall: '#f6f4ee', roof: '#e8dcc2', trim: '#3a3540', floors: 2, roofT: 'flat', glass: true, balcony: true, wood: true, terrace: true },
-};
-// nhà kiểu chung: gốc ở giữa mặt tiền dưới đất, +z = mặt tiền (hướng ra lối đi), w ngang, d sâu
-export function house(b, w, d, o) {
-  const DG = _DG, fh = o.fh || 1.9, base = o.stilt ? 1.1 : 0, Hh = base + fh * o.floors, zc = -d / 2, win = o.glass ? '#8fd3f0' : '#4f86b8', dk = new THREE.Color(o.roof).offsetHSL(0, 0, -0.12).getStyle();
-  const det = fn => { if (DG) { DG.follow(b); fn(DG); } };
-  if (o.stilt) for (const u of [-w / 2 + 0.3, 0, w / 2 - 0.3]) for (const v of [-d + 0.3, -0.3]) b.box(0.24, base, 0.24, u, 0, v, o.trim);
-  if (o.roofT === 'mush') {   // nhà tròn mái nấm: thân trụ, mũ nấm đỏ chấm trắng, cửa vòm, cửa sổ tròn, ống khói nhỏ
-    const r = Math.min(w, d) / 2 - 0.05; b.cyl(r * 0.88, r, fh * 1.25, 0, 0, zc, o.wall, 10); b.cyl(r + 0.08, r + 0.12, 0.3, 0, 0, zc, '#d8cfbf', 10);
-    b.push(new THREE.SphereGeometry(r * 1.4, 12, 5, 0, Math.PI * 2, 0, Math.PI / 2), o.roof, 0, fh * 1.2, zc, 0, 0, 0, 1, 0.78, 1);
-    b.cyl(r * 1.38, r * 1.3, 0.18, 0, fh * 1.12, zc, '#f4ead2', 12);
-    for (let i = 0; i < 7; i++) { const a = i * 0.9 + 0.3, q = i % 2 ? 0.55 : 0.85; b.ball(0.26, Math.cos(a) * r * q * 1.1, fh * 1.2 + (1 - q * q) * r * 1.0 + 0.15, zc + Math.sin(a) * r * q * 1.1, '#ffffff', 1, 0.45, 1); }
-    b.box(0.95, 1.55, 0.12, 0, 0, zc + r * 0.95, '#8a5a34'); b.cyl(0.48, 0.48, 0.12, 0, 1.55, zc + r * 0.95, '#8a5a34', 8, 0, Math.PI / 2);
-    for (const s of [-1, 1]) { b.cyl(0.32, 0.32, 0.08, s * r * 0.62, 1.25, zc + r * 0.78, '#ffffff', 8, s * 0.7, Math.PI / 2); b.cyl(0.24, 0.24, 0.1, s * r * 0.62, 1.25, zc + r * 0.79, win, 8, s * 0.7, Math.PI / 2); }
-    b.cyl(0.14, 0.16, 1.0, r * 0.5, fh * 1.2 + 0.6, zc - r * 0.3, '#8a5a34', 6);
-    det(q => { for (let i = 0; i < 9; i++) { const a = Math.PI * 0.15 + i * 0.09 * Math.PI; q.ball(0.18, Math.cos(a) * (r + 0.35), 0.2, zc + Math.sin(a) * (r + 0.35), ['#e85d8a', '#f5c518', '#ffffff'][i % 3], 1, 0.8, 1); } });
-    return;
-  }
-  if (o.roofT === 'container') {   // 2 container xếp lệch, gân tôn, cầu thang ngoài, sàn gỗ
-    b.box(w, fh, d, 0, 0, zc, o.wall); b.box(w * 0.9, fh, d * 0.85, -w * 0.05, fh, zc - d * 0.07, o.roof);
-    for (let u = -w / 2 + 0.2; u < w / 2; u += 0.35) b.box(0.08, fh * 0.9, 0.05, u, fh * 0.05, 0.02, '#b8322b');
-    for (let u = -w * 0.5 + 0.2; u < w * 0.4; u += 0.35) b.box(0.08, fh * 0.9, 0.05, u, fh * 1.05, -d * 0.07 + 0.03, '#2f62ad');
-    b.box(1.0, 1.7, 0.08, w * 0.25, 0, 0.04, '#2b2633'); b.box(w * 0.4, 0.9, 0.06, -w * 0.15, fh + 0.5, -d * 0.07 + 0.03, '#8fd3f0');
-    b.box(w * 0.35, 0.9, 0.06, -w * 0.22, 0.6, 0.04, '#8fd3f0'); b.box(w + 0.2, 0.12, 0.5, 0, fh * 2, zc, '#2b2633');
-    for (let i = 0; i < 6; i++) b.box(0.7, 0.08, 0.28, w / 2 + 0.4, i * 0.32, zc + d * 0.3 - i * 0.28, '#7a7f88');   // cầu thang thép
-    b.box(0.05, fh * 1.1, 0.05, w / 2 + 0.75, 0, zc + d * 0.3, '#3a3540');
-    det(q => { q.box(w * 0.6, 0.1, 0.9, -w * 0.15, 0, 0.5, '#b9824f'); q.cyl(0.25, 0.2, 0.4, -w / 2 + 0.4, 0, 0.5, '#e8f1f4', 8); q.ball(0.35, -w / 2 + 0.4, 0.65, 0.5, '#4f9a4a'); });
-    return;
-  }
-  // thân nhà + chân tường đá + trụ góc
-  b.box(w, Hh - base, d, 0, base, zc, o.wall);
-  b.box(w + 0.12, 0.32, d + 0.12, 0, base, zc, '#d8cfbf');
-  if (!o.glass && o.roofT !== 'castle') for (const u of [-w / 2, w / 2]) for (const v of [0, -d]) b.cyl(0.16, 0.16, Hh - base - 0.32, u, base + 0.32, v, o.trim, 8);   // góc bo tròn
-  if (o.floors > 1 && !o.glass) b.box(w + 0.1, 0.14, d + 0.1, 0, base + fh - 0.07, zc, o.trim);   // gờ tầng
-  if (o.logs) for (let y = 0.55; y < Hh - 0.1; y += 0.32) b.box(w + 0.04, 0.07, d + 0.04, 0, y, zc, '#8a5a34');   // vân gỗ súc
-  if (o.wood) { b.box(w * 0.32, Hh - 0.3, 0.06, w * 0.34, 0.3, 0.03, '#b9824f'); for (let u = w * 0.2; u < w * 0.5; u += 0.18) b.box(0.03, Hh - 0.3, 0.08, u, 0.3, 0.04, '#8a5a34'); }
-  // cửa chính có khung + mái che nhỏ + bậc
-  const dc = o.glass ? '#3a3540' : o.roofT === 'castle' ? '#7a4a2a' : '#8a5a34';
-  b.box(1.22, 1.95, 0.08, 0, base + 0.02, 0.03, o.trim); b.box(1.0, 1.78, 0.1, 0, base + 0.05, 0.05, dc);
-  if (o.roofT === 'castle') b.cyl(0.5, 0.5, 0.1, 0, base + 1.83, 0.05, dc, 8, 0, Math.PI / 2);
-  if (!o.porch && !o.glass && o.roofT !== 'castle') b.push(new THREE.CylinderGeometry(0.8, 0.8, 1.6, 10, 1, false, 0, Math.PI), dk, 0, base + 2.1, 0.45, 0, 0, Math.PI / 2, 0.45, 1, 0.75);   // mái hiên cong
-  b.box(1.4, 0.12, 0.7, 0, 0, 0.35, '#d8cfbf');
-  if (o.stilt) for (let i = 0; i < 4; i++) b.box(1.0, 0.08, 0.3, 0, base - 0.25 - i * 0.27, 0.3 + i * 0.3, o.trim);
-  det(q => { q.box(0.06, 0.06, 0.06, 0.38, base + 0.95, 0.12, '#f2c14e'); });
-  // cửa sổ mặt tiền + 2 bên, mỗi tầng
-  for (let f = 0; f < o.floors; f++) {
-    const y = base + f * fh + 0.7, n = Math.max(1, Math.floor((w - 0.4) / 1.5));
-    for (let i = 0; i < n; i++) {
-      const u = -w / 2 + (i + 0.5) * w / n; if (f === 0 && Math.abs(u) < 0.85) continue;
-      if (o.glass) { b.plane(w / n - 0.2, 1.35, u, y + 0.55, 0.05, win); b.box(0.08, 1.45, 0.08, u + (w / n) / 2 - 0.05, y - 0.15, 0.06, o.trim); continue; }
-      b.box(0.9, 1.05, 0.06, u, y, 0.03, o.trim); b.plane(0.7, 0.85, u, y + 0.52, 0.07, win);
-      if (o.shoji) { b.box(0.03, 0.85, 0.02, u, y + 0.1, 0.08, o.trim); b.box(0.7, 0.03, 0.02, u, y + 0.5, 0.08, o.trim); }
-      det(q => { for (const s of [-1, 1]) q.plane(0.2, 0.8, u + s * 0.25, y + 0.52, 0.075, CURT[(f + i) % CURT.length]); if (f > 0 || !o.balcony) { q.box(0.85, 0.16, 0.22, u, y - 0.12, 0.13, '#8a5a34'); q.ball(0.13, u - 0.22, y + 0.09, 0.14, '#e85d8a'); q.ball(0.13, u + 0.22, y + 0.09, 0.14, '#f5c518'); q.ball(0.11, u, y + 0.08, 0.15, '#4f9a4a'); } });
-      if (!o.glass && o.roofT !== 'castle' && !o.shoji) for (const s of [-1, 1]) b.box(0.28, 1.0, 0.05, u + s * 0.6, y + 0.02, 0.05, o.trim === '#2b6fd9' ? '#2b6fd9' : '#5f9a6b');   // cửa chớp
-    }
-    for (const s of [-1, 1]) if (d > 2.4) { b.box(0.06, 1.0, 0.85, s * (w / 2 + 0.03), y, zc, o.trim); b.plane(0.7, 0.8, s * (w / 2 + 0.07), y + 0.5, zc, win, s * Math.PI / 2); }
-  }
-  // ban công (mỗi tầng trên) + chậu hoa
-  if (o.balcony && o.floors > 1) for (let f = 1; f < (o.roofT === 'flat' && !o.glass ? o.floors : 2); f++) {
-    const bw = Math.min(w - 0.4, 3.2), by = base + fh * f;
-    b.box(bw, 0.12, 0.8, 0, by, 0.4, o.trim); for (let u = -bw / 2; u <= bw / 2 + 0.01; u += 0.4) b.box(0.06, 0.6, 0.06, u, by + 0.12, 0.76, o.trim); b.box(bw, 0.08, 0.1, 0, by + 0.7, 0.76, o.trim);
-    det(q => { q.box(0.5, 0.25, 0.25, bw / 2 - 0.4, by + 0.12, 0.55, '#d9683f'); q.ball(0.3, bw / 2 - 0.4, by + 0.5, 0.55, '#e85d8a'); q.ball(0.22, -bw / 2 + 0.35, by + 0.82, 0.78, '#4f9a4a', 1.6, 0.6, 1); });
-  }
-  // hiên: cột kiểu biệt thự / hiên gỗ / hiên engawa kiểu Nhật
-  if (o.porch === 'col') { for (const s of [-1, 1]) { b.cyl(0.14, 0.17, 2.3, s * 0.95, 0, 1.1, '#ffffff', 8); b.box(0.36, 0.14, 0.36, s * 0.95, 0, 1.1, '#d8cfbf'); } b.box(2.4, 0.18, 1.4, 0, 2.3, 0.6, '#ffffff'); b.prism(1.5, 0.6, 2.5, 0, 2.48, 0.6, o.roof, Math.PI / 2); }
-  if (o.porch === 'wood') { b.box(w, 0.16, 1.3, 0, 0, 0.65, '#a8743f'); for (const s of [-1, 1]) b.box(0.14, 2.1, 0.14, s * (w / 2 - 0.15), 0.16, 1.2, '#7a5230'); b.box(w + 0.3, 0.1, 1.6, 0, 2.2, 0.6, o.roof, 0, 0.25); for (const s of [-1, 1]) b.box(w / 2 - 0.8, 0.08, 0.06, s * (w / 4 + 0.4), 0.75, 1.25, '#7a5230'); }
-  if (o.porch === 'engawa') { b.box(w + 0.4, 0.22, 1.0, 0, 0, 0.5, '#9a6a3e'); for (const s of [-1, 0, 1]) b.box(0.12, 2.1, 0.12, s * (w / 2), 0.22, 0.95, '#5a3a22'); }
-  if (o.awning) { b.box(w * 0.7, 0.08, 1.1, 0, 2.35, 0.5, o.awning, 0, -0.18); det(q => { for (let u = -w * 0.35 + 0.15; u < w * 0.35; u += 0.6) q.box(0.3, 0.09, 1.12, u, 2.36, 0.5, '#ffffff', 0, -0.18); }); }
-  // mái
-  const top = Hh, ov = o.eave || 0.4;
-  if (o.roofT === 'gable') {
-    const st = o.steep || 1.6; b.prism(w + 2 * ov, st, d + 2 * ov, 0, top, zc, o.roof); b.box(w + 2 * ov + 0.1, 0.14, 0.22, 0, top + st - 0.06, zc, dk);
-    b.prism(w + 2 * ov + 0.02, 0.12, d + 2 * ov + 0.04, 0, top - 0.05, zc, dk);   // diềm mái
-    if (o.layers) { b.prism(w * 0.62, st * 0.7, d * 0.62, 0, top + st * 0.65, zc, o.roof); b.box(w * 0.62 + 0.1, 0.12, 0.18, 0, top + st * 1.33, zc, o.gold ? '#e9b949' : dk); }
-    if (o.horns) for (const s of [-1, 1]) { const hy = top + st * (o.layers ? 1.35 : 1); b.box(0.1, 0.9, 0.1, s * (w / 2 + ov * 0.9), hy - 0.2, zc + 0.25, o.gold ? '#e9b949' : '#5a3a22', 0, 0.5 * s, 0); b.box(0.1, 0.9, 0.1, s * (w / 2 + ov * 0.9), hy - 0.2, zc - 0.25, o.gold ? '#e9b949' : '#5a3a22', 0, -0.5 * s, 0); }
-    if (o.gold) b.box(w + 0.06, 0.12, d + 0.06, 0, top - 0.12, zc, '#e9b949');
-  } else if (o.roofT === 'hip') {
-    b.hip(w + 2 * ov, o.eave ? 1.3 : 1.7, d + 2 * ov, 0, top, zc, o.roof); b.box(w + 2 * ov, 0.1, d + 2 * ov, 0, top - 0.04, zc, dk);
-    if (o.eave) { b.hip(w * 0.55, 0.9, d * 0.55, 0, top + 1.05, zc, o.roof); det(q => { q.cyl(0.18, 0.22, 0.7, w / 2 + 0.9, 0, 0.9, '#c9c1b2', 6); q.box(0.45, 0.35, 0.45, w / 2 + 0.9, 0.7, 0.9, '#d8cfbf'); q.hip(0.6, 0.3, 0.6, w / 2 + 0.9, 1.05, 0.9, '#a9a297'); for (let i = 0; i < 4; i++) q.cyl(0.05, 0.06, 2.4 + i * 0.3, -w / 2 - 0.5 - (i % 2) * 0.3, 0, 0.6 - i * 0.35, '#6fb85a', 5); }); }   // đèn đá + khóm trúc
-    else if (o.floors > 1) { b.box(1.0, 0.8, 0.8, -w * 0.25, top + 0.25, -0.3, o.wall); b.prism(1.0, 0.5, 1.15, -w * 0.25, top + 1.05, -0.3, o.roof, Math.PI / 2); b.plane(0.5, 0.45, -w * 0.25, top + 0.6, 0.11, win); }   // cửa sổ mái
-  } else if (o.roofT === 'flat' || o.roofT === 'pool') {
-    b.box(w + 0.3, 0.22, d + 0.3, 0, top, zc, o.roof);
-    for (const [u, v, L, ry] of [[0, 0.1, w, 0], [0, -d - 0.1, w, 0], [-w / 2 - 0.1, zc, d, Math.PI / 2], [w / 2 + 0.1, zc, d, Math.PI / 2]]) b.box(L + 0.2, 0.5, 0.12, u, top + 0.22, v, o.glass ? '#bfe6f2' : o.trim, ry);
-    if (o.roofT === 'pool') { b.box(w * 0.66, 0.06, d * 0.6, -w * 0.1, top + 0.25, zc, '#46e3c6'); for (let i = 0; i < 3; i++) b.box(0.5, 0.1, 1.2, w * 0.33, top + 0.25, zc - 1.2 + i * 1.2, '#ffffff', 0, 0.15); b.cyl(0.04, 0.04, 1.4, w * 0.36, top + 0.22, zc + d * 0.3, '#ffffff', 5); b.cone(0.85, 0.4, w * 0.36, top + 1.5, zc + d * 0.3, '#f5c518', 8); }
-    if (o.solar) { b.box(w * 0.9, 0.04, d * 0.9, 0, top + 0.22, zc, '#9fd36e'); } if (o.solar) for (const s of [-1, 1]) { b.box(w * 0.38, 0.06, d * 0.4, s * w * 0.22, top + 0.45, zc, '#2f4f8a', 0, -0.35); b.box(0.05, 0.3, 0.05, s * w * 0.22, top + 0.22, zc - d * 0.12, '#a9a297'); }
-    if (o.roofGarden) { b.box(w - 0.3, 0.3, d * 0.5, 0, top + 0.22, zc - d * 0.15, '#8a5a34'); det(q => { for (let u = -w / 2 + 0.4; u < w / 2 - 0.2; u += 0.5) q.ball(0.26, u, top + 0.62, zc - d * 0.15, ['#4f9a4a', '#6fb85a'][(u * 4 | 0) & 1]); for (const s of [-1, 1]) q.box(0.05, 1.4, 0.05, s * (w / 2 - 0.2), top + 0.22, zc + d * 0.2, '#7a5230'); q.box(w - 0.3, 0.06, 0.6, 0, top + 1.6, zc + d * 0.1, '#7a5230'); }); }
-    if (o.wood && o.floors > 1) b.box(w * 0.55, 0.25, 1.1, -w * 0.2, base + fh * 2 - 0.1, 0.4, '#4a4f5a');   // tầng trên đua ra (villa)
-    if (o.terrace) {   // sân thượng: sàn gỗ, bể bơi nhỏ, ghế nằm, dù, chậu cây
-      b.box(w * 0.55, 0.06, d * 0.7, w * 0.18, top + 0.22, zc, '#b9824f'); b.box(w * 0.32, 0.07, d * 0.5, -w * 0.25, top + 0.22, zc, '#46e3c6');
-      for (let i = 0; i < 2; i++) b.box(0.55, 0.12, 1.3, w * 0.1 + i * 0.8, top + 0.28, zc + 0.3, '#ffffff', 0, 0.12);
-      b.cyl(0.03, 0.03, 1.5, w * 0.35, top + 0.28, zc - 0.5, '#ffffff', 4); b.cone(0.9, 0.35, w * 0.35, top + 1.7, zc - 0.5, '#e8453c', 8);
-      det(q => { for (let i = 0; i < 4; i++) { q.cyl(0.22, 0.18, 0.4, -w / 2 + 0.4 + i * (w - 0.8) / 3, top + 0.22, -d + 0.4, '#e8f1f4', 7); q.ball(0.32, -w / 2 + 0.4 + i * (w - 0.8) / 3, top + 0.8, -d + 0.4, '#4f9a4a'); } });
-    }
-  } else if (o.roofT === 'dome') {
-    b.box(w + 0.2, 0.2, d + 0.2, 0, top, zc, '#ffffff'); for (let u = -w / 2; u <= w / 2 + 0.01; u += w / 4) b.box(0.25, 0.35, 0.25, u, top + 0.2, 0, '#ffffff');
-    b.cyl(Math.min(w, d) * 0.26, Math.min(w, d) * 0.26, 0.5, w * 0.15, top + 0.2, zc, '#ffffff', 10);
-    b.push(new THREE.SphereGeometry(Math.min(w, d) * 0.28, 10, 4, 0, Math.PI * 2, 0, Math.PI / 2), o.roof, w * 0.15, top + 0.7, zc); b.ball(0.12, w * 0.15, top + 0.75 + Math.min(w, d) * 0.28, zc, '#e9b949');
-    det(q => { for (let i = 0; i < 14; i++) q.ball(0.22 + (i % 3) * 0.06, -w / 2 + 0.15 + (i % 3) * 0.12, 0.6 + i * 0.22, (i * 0.37) % 1.2 - 0.6 + zc * 0.2, ['#e85d8a', '#f27fb0', '#d94f86'][i % 3], 0.6, 1, 1); });   // hoa giấy leo tường
-  } else if (o.roofT === 'castle') {
-    for (let u = -w / 2; u <= w / 2 + 0.01; u += 0.6) b.box(0.3, 0.4, 0.3, u, top, 0, o.trim);
-    for (let v = -d; v <= 0.01; v += 0.6) for (const s of [-1, 1]) b.box(0.3, 0.4, 0.3, s * w / 2, top, v, o.trim);
-    b.box(w + 0.1, 0.12, d + 0.1, 0, top - 0.1, zc, o.trim);
-    for (const [u, v] of [[-w / 2, 0], [w / 2, 0], [-w / 2, -d], [w / 2, -d]]) { b.cyl(0.55, 0.6, top + 1.2, u, 0, v, o.wall, 8); b.cone(0.78, 1.6, u, top + 1.2, v, o.roof, 8); b.cyl(0.02, 0.02, 0.6, u, top + 2.7, v, '#3a3540', 4); b.box(0.35, 0.22, 0.02, u + 0.17, top + 3.05, v, '#e8453c'); b.box(0.2, 0.45, 0.06, u, top * 0.6, v + 0.57, '#4a3f55'); }
-    b.box(0.9, 1.1, 0.04, 0, top - 1.3, 0.06, '#e8453c'); b.box(0.5, 0.5, 0.05, 0, top - 1.0, 0.08, '#f5c518');   // cờ hiệu
-  }
-  if (o.chim) { b.box(0.5, 1.5, 0.5, w * 0.28, top + 0.2, zc - d * 0.15, o.logs ? '#a9a297' : '#9a5b3e'); b.box(0.62, 0.12, 0.62, w * 0.28, top + 1.7, zc - d * 0.15, '#7a6a5a'); }
-}
+// NHÀ Ở: dựng bằng bộ mô-đun sample/house-kit.js (buildHouse) — nhà học sinh trên lô, phố Đà Lạt
 
 // màu thay cho bộ kit (Kenney gốc: lá xanh ngọc, gỗ hồng cá hồi) — theo tên vật liệu, riêng từng model
 const KIT_COL = {
@@ -162,7 +40,7 @@ const KIT_COL = {
 // k: { ctx, RS, R, D, B, DG, atlas, signAt, measure, chessPiece, rubikCube, X3, Z3, Y, S, nearDoor, reg, rnd, low, pads, flowers, waters }
 export function buildNorth(k) {
   const { ctx, RS, R, B, DG, atlas, signAt, X3, Z3, Y, S, nearDoor, reg, rnd, low, pads, flowers, waters } = k, scene = ctx.scene;
-  const D = northData(k.D); _DG = DG;
+  const D = northData(k.D);
   const nb = {}, measure = (b, name, fn) => { const t0 = b.tris; k.measure(b, name, fn); nb[name] = Math.round(b.tris - t0); };
   const P = (x2, y2) => [X3(x2), Z3(y2)];
   const [wfx, wfz] = P(3915, -470), nearFall = (x, z) => Math.hypot(x - wfx, z - wfz + 1) < 11;
@@ -194,25 +72,24 @@ export function buildNorth(k) {
   }
 
   // ---------- 2. PHỐ ĐÀ LẠT ----------
-  const DROOF = ['#b9502f', '#d9683f', '#4a6fa5', '#8a4a3a', '#5f8a5a', '#c4452f', '#6b5a8a'];
-  const DSTYLE = [{ roofT: 'gable', floors: 2, balcony: true, steep: 2.0 }, { roofT: 'hip', floors: 2, chim: true }, { roofT: 'gable', floors: 1, steep: 2.4, chim: true, porch: 'wood' }, { roofT: 'gable', floors: 2, balcony: true, steep: 2.6 }];
+  // nhà phố từ bộ mô-đun (sample/house-kit.js): quán có biển + mái hiên sọc; biển chữ in vào atlas chung
+  const kitSign = (b, text, w, h, x, y, z) => { const uv = atlas.sign(text, '#3d2b3f', '#f7efdc', '#d4a24a'); if (uv) signAt(b, uv, w, h, x, y, z); };
   let sx0 = 1e9, sx1 = -1e9, front = 0;
   for (const h of D.DALAT) {
-    const w = h.w * S, d = h.h * S, st = DSTYLE[h.style % 4], o = Object.assign({ wall: h.wall, roof: DROOF[h.idx % DROOF.length], trim: '#ffffff', chim: h.chim }, st), x = X3(h.x) + w / 2, z = Z3(h.y) + d;
-    sx0 = Math.min(sx0, X3(h.x) - 2); sx1 = Math.max(sx1, X3(h.x) + w + 2); front = z;
+    const w = h.w * S, d = h.h * S, x = X3(h.x) + w / 2, z = Z3(h.y) + d;
+    const o = houseVariant(h.idx + 3, { w, dep: d, shop: h.sign ? { sign: h.sign } : null }); if (w < 5) o.floors = Math.min(o.floors, 2);
+    sx0 = Math.min(sx0, X3(h.x) - 2); sx1 = Math.max(sx1, X3(h.x) + w + 2); front = z; let top = 4;
     measure(B.dalat, 'dalat' + h.idx, () => B.dalat.group(x, Y, z, 0, () => {
-      house(B.dalat, w, d, o);
-      if (h.sign) {   // quán: mái hiên sọc + biển hiệu + đồ bày trước cửa
-        const ac = ['#e8453c', '#2f9e44', '#2f62ad', '#d9683f'][h.idx % 4], b = B.dalat;
-        b.box(w * 0.8, 0.08, 1.0, 0, 2.25, 0.5, ac, 0, -0.3); const q = DG.follow(b); for (let u = -w * 0.4 + 0.15; u < w * 0.4; u += 0.5) q.box(0.25, 0.09, 1.02, u, 2.26, 0.5, '#ffffff', 0, -0.3);
-        signAt(b, atlas.sign(h.sign, '#3b2a1e', '#fff', '#f2c14e'), Math.min(3, w * 0.6), 0.4, 0, 2.95, 0.14);
+      top = buildHouse(B.dalat, o, { d: DG, signAt: kitSign }).H;
+      if (h.sign) {   // đồ bày trước quán
+        const q = DG.follow(B.dalat);
         if (h.sign === 'Cà phê') for (const s of [-1, 1]) { q.cyl(0.32, 0.32, 0.05, s * 1.3, 0.7, 1.6, '#ffffff', 8); q.cyl(0.04, 0.04, 0.7, s * 1.3, 0, 1.6, '#3a3540', 5); for (const t of [-1, 1]) q.box(0.32, 0.45, 0.32, s * 1.3 + t * 0.55, 0, 1.6, '#8a5a34'); q.cyl(0.03, 0.03, 1.9, s * 1.3, 0.7, 1.6, '#ffffff', 4); q.cone(0.9, 0.35, s * 1.3, 2.5, 1.6, s < 0 ? '#e8453c' : '#f5c518', 8); }
         if (h.sign === 'Tiệm hoa') for (let i = 0; i < 6; i++) { const u = -1.6 + i * 0.64; q.cyl(0.2, 0.16, 0.35, u, 0, 1.0, '#a9a297', 7); q.ball(0.24, u, 0.5, 1.0, FCOL[i % 6]); q.ball(0.16, u + 0.1, 0.62, 1.05, FCOL[(i + 2) % 6]); }
         if (h.sign === 'Tiệm bánh') { q.box(1.6, 0.8, 0.5, -0.9, 0, 0.9, '#b9824f'); for (let i = 0; i < 4; i++) q.ball(0.13, -1.45 + i * 0.36, 0.86, 0.9, ['#e8b04a', '#f5d08a', '#c98a52'][i % 3], 1.3, 0.7, 1); }
         if (h.sign === 'Homestay' || h.sign === 'Nhà nghỉ') { q.box(0.1, 1.4, 0.1, w / 2 - 0.4, 0, 1.3, '#5a3a22'); q.box(0.9, 0.5, 0.06, w / 2 - 0.4, 1.0, 1.3, '#fbf1de'); }
       }
     }));
-    ctx.boxes.push({ x0: X3(h.x), x1: X3(h.x) + w, z0: Z3(h.y), z1: Z3(h.y) + d, top: Y + 4 });
+    ctx.boxes.push({ x0: X3(h.x), x1: X3(h.x) + w, z0: Z3(h.y), z1: Z3(h.y) + d, top: Y + top });
     addKit(h.idx % 2 ? 'tree_pine_tall' : 'tree_pine', x + (rnd() - 0.5) * w * 0.6, Y, Z3(h.y) - 1.8, 3.6 + rnd(), rnd() * 6);   // thông sau nhà
   }
   if (D.DALAT.length) {   // vỉa hè lát gạch + bó vỉa, đèn đường cổ, ghế, xe đạp, chậu hoa; cổng gỗ vào rừng thông
