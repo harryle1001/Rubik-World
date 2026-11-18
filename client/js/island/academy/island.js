@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { CFG } from '../config.js';
 import { matV, mat } from '../sample/palette.js';
 import { Batch } from './geo.js';
-import { castleMassing } from './far.js';
+import { buildCastle } from './castle.js';
 import { ROT, C, ISLE, PLAT, QUAY, RUNWAY, heightLocal, toWorld, plateauDist, isleDist, LAKE } from './plan.js';
 
 const COL = {
@@ -77,7 +77,7 @@ export function buildIsland(ctx) {
   const add = (geo, m, shadow = false) => { const o = new THREE.Mesh(geo, m); o.receiveShadow = true; o.castShadow = shadow; o.matrixAutoUpdate = false; o.updateMatrix(); group.add(o); return o; };
   const land = add(terrainGeo(), matV());
   add(quayGeo(), matV(), true); add(lampGeo(), mat('lampGlow')); add(runwayGeo(), matV());
-  const castle = add(castleMassing(10), matV(), true);
+  const castle = buildCastle(ctx); group.add(castle.group);
   group.updateMatrixWorld(true); ctx.scene.add(group);
   return {
     group, castle, land,

@@ -1,5 +1,5 @@
 // academy/plan.js — MẶT BẰNG ĐẢO HỌC VIỆN PHA LÊ (số liệu thuần, không dựng hình).
-// Hệ toạ độ cục bộ của đảo: u = hướng về đảo chính (mặt tiền lâu đài, bến thuyền), v = ngang (vuông góc u).
+// Hệ toạ độ cục bộ của đảo: u = trục nam (+z, mặt tiền lâu đài, lạch + bến thuyền), v = trục đông (+x).
 // Mọi kích thước theo Fibonacci / φ:  đảo 466 × 466 m (bo góc 89) · cao nguyên 178 × 288 m, cao 34 m · hồ rộng 55 m ·
 // lạch vào hồ rộng 34 m · dốc đá lên cao nguyên dài 89 m (dốc 34/89 = 1/φ²) · đường băng 233 × 13 m.
 import { ACADEMY, PHI } from '../layout.js';
@@ -7,10 +7,11 @@ import { fbm } from '../terrain.js';
 
 export { PHI };
 export const C = ACADEMY.c;                                   // tâm đảo (thế giới)
-const fx = -C[0] / Math.hypot(C[0], C[1]), fz = -C[1] / Math.hypot(C[0], C[1]);
-export const F = [fx, fz];                                    // trục u (thế giới): từ tâm đảo nhìn về đảo chính
-export const S = [fz, -fx];                                   // trục v (thế giới)
-export const ROT = Math.atan2(fx, fz);                        // group.rotation.y: x cục bộ = v, z cục bộ = u
+// Lâu đài đặt thẳng trục thế giới (u = +z nam, v = +x đông): mặt tiền nhìn về phía nam, đảo chính ở đông nam → từ thuyền/máy bay
+// thấy lâu đài chéo 3/4 (hai mặt cùng lúc, bóng dáng dày hơn); va chạm tường dùng hộp thẳng trục ctx.boxes.
+export const F = [0, 1];                                      // trục u (thế giới)
+export const S = [1, 0];                                      // trục v (thế giới)
+export const ROT = 0;                                         // group.rotation.y: x cục bộ = v, z cục bộ = u
 export const toWorld = (u, v) => [C[0] + u * F[0] + v * S[0], C[1] + u * F[1] + v * S[1]];
 export const toLocal = (x, z) => { const dx = x - C[0], dz = z - C[1]; return [dx * F[0] + dz * F[1], dx * S[0] + dz * S[1]]; };
 
@@ -66,22 +67,4 @@ export function heightLocal(u, v, x, z) {
 }
 export function heightAt(x, z) { const [u, v] = toLocal(x, z); return heightLocal(u, v, x, z); }
 
-// ---------- khối lâu đài (greybox, dùng chung cho bóng xa và bước dựng khối) ----------
-// tháp: [u, v, bán kính, cao thân, cao mái]; cánh nhà: [u0, u1, v0, v1, cao tường, cao mái]
-const H = PLAT.y;
-export const TOWERS = [
-  [-72, 0, 8, 89, 21],                                                  // tháp thiên văn (cao nhất 89 m)
-  [38, -116.5, 6.5, 55, 13], [38, 116.5, 6.5, 55, 13], [-106, -116.5, 6.5, 55, 13], [-106, 116.5, 6.5, 55, 13],   // 4 tháp góc 55 m
-  [38, -21, 5, 34, 8], [38, 21, 5, 34, 8], [-34, -116.5, 5, 34, 8], [-34, 116.5, 5, 34, 8],                      // 4 tháp 34 m: cổng + 2 bên
-];
-export const WINGS = [
-  [30, 38, -116.5, 116.5, 21, 8],      // dãy mặt tiền
-  [-106, -98, -116.5, 116.5, 21, 8],   // dãy sau
-  [-106, 38, -116.5, -108.5, 21, 8],   // dãy trái
-  [-106, 38, 108.5, 116.5, 21, 8],     // dãy phải
-  [-31.5, -10.5, -17, 17, 21, 13],     // đại sảnh 34 × 21 × 21 m
-  [-55, 30, -40, -32, 13, 5],          // dãy ngăn sân trong 1–2
-  [-55, 30, 32, 40, 13, 5],            // dãy ngăn sân trong 2–3
-  [-98, -55, -108.5, 108.5, 13, 5],    // dãy thư viện / phòng học phía sau
-];
-export const BASE_Y = H;
+export const BASE_Y = PLAT.y;

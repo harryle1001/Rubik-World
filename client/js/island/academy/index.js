@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { ACADEMY } from '../layout.js';
 import { Batch } from './geo.js';
 import { matV, mat } from '../sample/palette.js';
-import { C, F, S, R_BOUND, heightAt as acadH, toWorld, toLocal, quayY, RUNWAY, QUAY, DOCK, ISLE, isleDist } from './plan.js';
+import { BASE_Y as BASE, C, F, S, R_BOUND, heightAt as acadH, toWorld, toLocal, quayY, RUNWAY, QUAY, DOCK, ISLE, isleDist } from './plan.js';
 import { buildIsland, plantIsland } from './island.js';
 import { createFar } from './far.js';
 import { createFerry } from './ferry.js';
@@ -21,7 +21,7 @@ export function createAcademy(ctx) {
   terrain.heightAt = (x, z) => { const dx = x - C[0], dz = z - C[1]; return dx * dx + dz * dz < RB2 ? Math.max(base(x, z), acadH(x, z)) : base(x, z); };
 
   // ---------- bến ở đảo chính: dò bờ theo hướng về học viện ----------
-  const D = [-F[0], -F[1]], N = [S[0], S[1]];   // D: từ tâm thế giới ra học viện; N: ngang
+  const D = [C[0] / Math.hypot(C[0], C[1]), C[1] / Math.hypot(C[0], C[1])], N = [-D[1], D[0]];   // D: từ tâm thế giới ra học viện; N: ngang
   let r1 = 200, rs = 200;
   for (let r = 200; r < 420; r += 0.5) { const h = base(D[0] * r, D[1] * r); if (h < PIER_Y - 0.3 && r1 === 200) r1 = r; if (h < -1.6) { rs = r; break; } }
   const pr0 = r1 - 3, pr1 = rs + 21, PW = 1.5;   // cầu tàu: từ bờ cát ra 21 m quá chỗ nước sâu, rộng 3 m
@@ -49,7 +49,7 @@ export function createAcademy(ctx) {
     let h = prevExtra ? prevExtra(x, z, y) : -99;
     if (onPier(x, z)) h = Math.max(h, PIER_Y);
     const dx = x - C[0], dz = z - C[1];
-    if (dx * dx + dz * dz < RB2) { const [u, v] = toLocal(x, z), q = quayY(u, v); if (q !== null) h = Math.max(h, q); }
+    if (dx * dx + dz * dz < RB2) { const [u, v] = toLocal(x, z), q = quayY(u, v); if (q !== null) h = Math.max(h, q); const k = isle && isle.castle.deckY(u, v); if (k != null && (y === undefined || y > k - 2.5)) h = Math.max(h, k); }
     return h;
   };
 
@@ -76,25 +76,31 @@ export function createAcademy(ctx) {
 
   // ---------- tải / dỡ theo khoảng cách ----------
   const far = createFar(ctx);
-  let isle = null, planted = false;
+  let isle = null, planted = false; const boxes = ctx.boxes = ctx.boxes || [];
   const P = new THREE.Vector3();
   function stream() {
     const p = ferry.riding || (ctx.aircraft && ctx.aircraft.flying) ? ctx.camera.position : player.pos;
     const [u, v] = toLocal(p.x, p.z), d = Math.max(0, isleDist(u, v));
-    if (!isle && d < LOAD) { isle = buildIsland(ctx); if (!planted) { plantIsland(ctx); planted = true; } }
-    else if (isle && d > UNLOAD) { isle.dispose(); isle = null; }
+    if (!isle && d < LOAD) { isle = buildIsland(ctx); boxes.push(...isle.castle.boxes); if (!planted) { plantIsland(ctx); planted = true; } }
+    else if (isle && d > UNLOAD) { for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
     far.moundOn = !isle;
-    if (isle) isle.castle.visible = far.dist < 296 + 34;
+    if (isle) isle.castle.group.visible = far.dist < 296 + 89;
   }
 
   function update(dt) {
     ferry.update(dt);
     stream(); far.update();
+    if (isle) isle.castle.update(dt, performance.now() / 1000, player.pos);
     if (ferry.riding || player.vehicle) return;
     const pp = player.pos;
     if (Math.hypot(pp.x - pierEnd[0], pp.z - pierEnd[1]) < 8 && ferry.idle === 'A') ctx.offer('⛵ Đi thuyền tới Học viện Pha Lê', () => ferry.start(1), 8);
     else if (Math.hypot(pp.x - pierEnd[0], pp.z - pierEnd[1]) < 8) ctx.offer('⛵ Gọi thuyền đèn lồng', () => ferry.start(1), 8);
     const [qu, qv] = toLocal(pp.x, pp.z);
+    if (isle) {   // tháp thiên văn: cầu thang xoắn bên trong (dịch chuyển) lên ban công 55 m / xuống sân
+      const A = isle.castle.L.astro, da = Math.hypot(qu - A.u, qv - A.v);
+      if (da < A.r + 3 && pp.y < BASE + 3) ctx.offer('🪜 Lên ban công tháp thiên văn', () => { const [x, z] = toWorld(A.u + A.r2 + 2.5, A.v); player.teleport(x, z, BASE + A.h1); }, 8);
+      else if (da < A.deck && pp.y > BASE + A.h1 - 1) ctx.offer('🪜 Xuống sân', () => { const [x, z] = toWorld(A.u + A.r + 2.5, A.v); player.teleport(x, z, BASE); }, 8);
+    }
     if (qu > QUAY.u0 - 2 && qu < QUAY.u0 + QUAY.w + 4 && qv > -3 && qv < QUAY.v1 + 3 && Math.abs(pp.y - QUAY.y) < 2) ctx.offer('⛵ Đi thuyền về đảo Rubik', () => ferry.start(-1), 8);
   }
   return { update, far, ferry, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) } };
