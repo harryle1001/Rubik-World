@@ -189,7 +189,7 @@ function v51tWorldInit(){
     V46.raw = true; try { v25Push(G.door[0], G.gy - 20, 110, on, 2); v25Push(G.sign[0], G.sign[1] - 30, 90, on, 2); v25Push(G.x0 + G.main + 90, G.gy - 120, 140, on*.8, 3); v25Push((G.yard.x0 + G.yard.x1)/2, G.track.y1, 120, on*.7, 2); } finally { V46.raw = false; } };
   // bản đồ lớn: thêm địa điểm
   if(typeof mapPlaces === 'function'){ const mp0 = mapPlaces; mapPlaces = function(){ const P = mp0(); if(!V46.on || !Array.isArray(P) || P.some(p => p.k === 'v51t')) return P; const G = v51tGeo(), d = [G.door[0], G.gy + 24];
-    P.push({k:'v51t', name:'Trường Tin học', icon:'💻', x:G.cx, y:G.cy, ox:d[0] + V46E, oy:d[1], door:[d[0] + V46E, d[1]], r:true}); return P; }; }
+    P.push({k:'v51t', name:'Trường Tin học', ic:'💻', icon:'💻', desc:'Trường Tin học', cat:'school', x:G.cx, y:G.cy, ox:d[0] + V46E, oy:d[1], door:[d[0] + V46E, d[1]], r:true}); return P; }; }
   cvs.addEventListener('pointerup', e => { if(e.pointerType === 'mouse' && e.button !== 0) return; if(V51TW.dn && Math.hypot(e.clientX - V51TW.dn[0], e.clientY - V51TW.dn[1]) < 10 && performance.now() - V51TW.dn[2] < 450) v51tTapWorld(e); V51TW.dn = null; }, true);
   cvs.addEventListener('pointerdown', e => { V51TW.dn = [e.clientX, e.clientY, performance.now()]; }, true);
   setInterval(() => { try { v51tTick(); } catch(e){} }, 250);

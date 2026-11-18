@@ -226,7 +226,7 @@ function v53cWorldInit(){
   const vc0 = v25Collect; v25Collect = function(dk){ vc0(dk); if(!V46.on || V46.sky) return; const on = v25Ramp(clock, 1080, 330); if(on <= 0) return;
     V46.raw = true; try { for(const id of v53cIds()){ const G = v53cGeo(id); v25Push(G.door[0], G.gy - 20, 120, on, 2); if(id === 'tower81'){ v25Push(G.cx, G.gy - 60, 220, on, 3); v25Push(G.cx, G.y1, 140, on*.8, 2); } else v25Push(G.door[0], G.y1 - 20, 120, on*.8, 2); } } finally { V46.raw = false; } };
   if(typeof mapPlaces === 'function'){ const mp0 = mapPlaces; mapPlaces = function(){ const P = mp0(); if(!V46.on || !Array.isArray(P) || P.some(p => p.k === 'v53c')) return P;
-    for(const id of v53cIds()){ const G = v53cGeo(id), D = V53C_Z[id], d = [G.door[0], G.gy + 24]; P.push({k:'v53c', name:D.vi, icon:D.ic, x:G.cx, y:G.cy, ox:d[0] + V46E, oy:d[1], door:[d[0] + V46E, d[1]], r:true}); } return P; }; }
+    for(const id of v53cIds()){ const G = v53cGeo(id), D = V53C_Z[id], d = [G.door[0], G.gy + 24]; P.push({k:'v53c', name:D.vi, ic:D.ic, icon:D.ic, desc:D.vi, cat:'world', x:G.cx, y:G.cy, ox:d[0] + V46E, oy:d[1], door:[d[0] + V46E, d[1]], r:true}); } return P; }; }
   cvs.addEventListener('pointerdown', e => { V53CW.dn = [e.clientX, e.clientY, performance.now()]; }, true);
   cvs.addEventListener('pointerup', e => { if(e.pointerType === 'mouse' && e.button !== 0) return; if(V53CW.dn && Math.hypot(e.clientX - V53CW.dn[0], e.clientY - V53CW.dn[1]) < 10 && performance.now() - V53CW.dn[2] < 450) v53cTapWorld(e); V53CW.dn = null; }, true);
   setInterval(() => { try { v53cTick(); } catch(e){} }, 250);
