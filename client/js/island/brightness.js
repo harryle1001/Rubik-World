@@ -22,7 +22,7 @@ body.rs-modal #brightBox{display:none}
   const box = document.createElement('div'); box.id = 'brightBox'; box.hidden = true;
   box.innerHTML = `🌙<input id="brightRange" type="range" min="${(1 / PHI).toFixed(3)}" max="${PHI}" step="0.01" aria-label="Độ sáng">☀️<span></span>
   <div id="tMode" role="group" aria-label="Giờ trong ngày"><button data-t="real">⏱ Thật</button><button data-t="8.5">🌅 Sáng</button><button data-t="12.5">☀️ Trưa</button><button data-t="17">🌇 Chiều</button><button data-t="20.5">🌙 Tối</button></div>
-  <div id="qMode" role="group" aria-label="Chất lượng hình"><button data-q="fast">⚡ Mượt</button><button data-q="auto">Tự động</button><button data-q="pretty">✨ Đẹp</button></div>`;
+  <div id="qMode" role="group" aria-label="Chất lượng hình"><button data-q="fast">⚡ Mượt</button><button data-q="auto">Tự động</button><button data-q="pretty">✨ Đẹp</button><button id="bTut" title="Xem lại hướng dẫn chơi">❓</button></div>`;
   document.body.appendChild(box);
   const range = box.querySelector('input'), label = box.querySelector('span');
   // chế độ hình: Mượt (khoá mức 2: độ phân giải 1, không MSAA/bloom) · Tự động (theo FPS) · Đẹp (khoá mức 0)
@@ -33,6 +33,7 @@ body.rs-modal #brightBox{display:none}
     if (save) try { localStorage.setItem(QK, m); } catch (e) {}
   };
   box.querySelector('#qMode').addEventListener('click', e => { const m = e.target.dataset && e.target.dataset.q; if (m) setQ(m); });
+  box.querySelector('#bTut').onclick = () => { box.hidden = true; ctx.tutorial && ctx.tutorial.show(); };   // ❓ xem lại hướng dẫn (tutorial.js)
   setTimeout(() => setQ(qmode, false), 0);
   // giờ trong ngày: Thật (theo đồng hồ trường) hoặc khoá Sáng/Trưa/Chiều/Tối
   const TK = 'island.tmode'; let tmode = 'real'; try { tmode = localStorage.getItem(TK) || 'real'; } catch (e) {}

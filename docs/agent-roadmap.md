@@ -19,8 +19,8 @@ Agent đọc file này mỗi lần chạy, làm lần lượt các việc từ �
 6. Sự kiện theo giờ: chào cờ sáng thứ Hai, giờ ra chơi có học sinh chơi đá cầu, tối có đèn lồng.
 7. Âm thanh: tiếng mưa trên mái, tiếng động cơ máy bay thu thật (CC0), nhạc theo thời tiết.
 8. Thêm phương tiện: thuyền buồm đi giữa các đảo, xe buýt trường chạy theo đường vòng.
-9. Hướng dẫn chơi lần đầu (3 bước ngắn, có thể bỏ qua) cho học sinh nhỏ tuổi.
 10. Kiểm tra tổng thể: tìm lỗi (rơi khỏi bản đồ, kẹt tường, nút không bấm được) và sửa.
 
 ## Nhật ký
 - 2026-11-15: Tạo lộ trình. Bản hiện tại: sân bay + máy bay cổ điển, nhân vật dáng Zelda, vật lý, thời tiết, quy hoạch tỷ lệ vàng + π.
+- 2026-11-18: Ghép nhánh island-vehicles (20 kiểu xe đạp, thú cưỡi + huýt sáo; nút vẫn ở cột dọc bên phải; bản đồ M dùng world-map.js). Sửa phím M lọt vào iframe 2D làm khoá màn hình. Bật Cờ vua khổng lồ 3D; làm mới Phòng Arcade 3D (ném rổ phép tính, đập khối số) và Đài thiên văn 3D (tìm chòm sao qua kính); host truyền onExit cho game sân khấu riêng; cửa Phòng nhạc/Vẽ tranh mở xưởng 3D. Hướng dẫn chơi lần đầu 3 bước (tutorial.js, nút ❓ trong bảng ☀️). Kiểm thử máy tính + 390×844, 0 lỗi console.
