@@ -120,9 +120,10 @@ function makePlane(st, pilot = false) {
   return { group: g, prop, disc, style: st, seat: new THREE.Vector3(0, 0.95, -0.05) };
 }
 
-// Âm thanh động cơ piston (tự tổng hợp, lặp 1 giây không vấp)
+// Âm thanh động cơ piston (tự tổng hợp, lặp 1/3 giây không vấp: 18, 27, 54, 108, 162 Hz đều tròn chu kỳ trong 1/3 s;
+// trước 1 s → tổng hợp lâu gấp 3, khựng ~16 ms máy tính / ~80 ms điện thoại lúc âm thanh bật)
 function engineBuffer(ac) {
-  const sr = ac.sampleRate, n = sr, b = ac.createBuffer(1, n, sr), d = b.getChannelData(0); let lp = 0;
+  const sr = ac.sampleRate, n = Math.round(sr / 3), b = ac.createBuffer(1, n, sr), d = b.getChannelData(0); let lp = 0;
   for (let i = 0; i < n; i++) {
     const t = i / sr, beat = 0.55 + 0.45 * Math.max(0, Math.sin(2 * Math.PI * 18 * t));
     const s = 0.5 * Math.sin(2 * Math.PI * 54 * t) + 0.28 * Math.sin(2 * Math.PI * 108 * t) + 0.16 * Math.sign(Math.sin(2 * Math.PI * 27 * t)) + 0.12 * Math.sin(2 * Math.PI * 162 * t);
