@@ -35,12 +35,28 @@ rồi đọc `window.RS`. Nay 3D có lớp dữ liệu riêng `client/js/island/
 
 Server (`server/index.js`) không có API tài khoản REST (chỉ Socket.io cho đa người chơi) → tài khoản lưu trên máy như bản 2D.
 
-## Số đo (Playwright, Chromium headless, 1280×800, server cục bộ)
+## Số đo (Playwright, Chromium headless + SwiftShader, 1280×800, server cục bộ, trung bình 3 lần)
 
 | | Trước (có iframe) | Sau |
 |---|---|---|
-| Thời gian tới khi thị trấn dựng xong | 13,8 s | _xem cuối file_ |
-| Số request | 256 | |
-| Dung lượng tải | 15,8 MB | |
-| JS heap | 199 MB | |
-| Iframe | 1 | |
+| Sự kiện `load` (đảo hiện ra) | 9,8 s | **5,6 s** |
+| Thị trấn trường dựng xong (`school.ready`) | 15,2 s | 15,1 s (dựng 3D tốn CPU, không đổi) |
+| Số request | 256 | **188** |
+| Dung lượng tải | 15,8 MB | **7,3–7,9 MB** |
+| JS heap | 157–225 MB | **123–131 MB** |
+| Iframe | 1 | **0** |
+
+Thời gian tuyệt đối trên máy thật nhanh hơn nhiều (GPU thật); tỷ lệ request/dung lượng/bộ nhớ giữ nguyên.
+
+## Kiểm tra (máy tính 1280×800 và điện thoại 390×844)
+- Không lỗi console; chip đồng hồ đúng tiết (☀️ Sáng → 08:30 Tiết 1, đủ 21 người; Chiều → 17:00 Tan học, còn 8 người đang về).
+- Thầy cô / bảo vệ đi tuần, học sinh đi theo tiết; khách NPC theo giờ sáng/tối.
+- Đăng nhập, Chơi khách, Lưu đăng nhập (tải lại vào thẳng), chuyển tài khoản 2D cũ (cấp, xu, đồ còn nguyên).
+- Cửa chưa có bản 3D → “🚧 … Sắp mở”; 📚 Menu trường liệt kê mini game 3D đã có.
+- Phím M mở bản đồ; lên máy bay cất cánh được.
+
+Ảnh: `docs/img/3d-standalone/` (desk-gate, phone-school, desk-menu, login-phone, desk-map, desk-plane).
+
+## Còn lại
+- `mg/arts/books.js` vẫn `fetch` file dữ liệu sách trong `/school/js/…` (chỉ đọc file, không chạy iframe) — để session mini game (nhánh `claude/up-finish`) chuyển, tránh xung đột `mg/*`.
+- Tên trong đa người chơi đổi theo tài khoản từ lần tải trang sau.

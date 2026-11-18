@@ -28,7 +28,7 @@ export function createSchoolTown(ctx) {
   // dữ liệu trường (island/data/): bản đồ, đồng hồ, người — town.RS giữ tên cũ cho các module dựng 3D (world-map, zone-*…)
   const data = createSchoolData(ctx);
   const town = { RS: data.RS, data, clock: data.clock, doors: [], ready: false };
-  setTimeout(build, 0);   // dựng sau khi ocean.js tạo xong mọi module (âm thanh, mg host…), như lúc chờ iframe trước đây
+  requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(build, 0)));   // dựng sau 2 khung hình đầu: đảo hiện ngay, ocean.js đã tạo xong mọi module
 
   // ---------- Mặt đất các khu: cao TOWN_Y (địa hình đã được làm phẳng bên dưới, xem terrain.js) ----------
   ctx.decks = ctx.decks || [];   // sàn gỗ/bến nổi: {x0,x1,z0,z1,y}
