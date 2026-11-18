@@ -61,3 +61,8 @@ v53c · Thành phố an toàn (Trạm cứu hỏa 114, Đồn cảnh sát 113, T
   đều vẽ pixel bằng code (canvas) rồi cache thành sprite; còi xe, chuông báo sự cố, tiếng phun nước tạo bằng WebAudio
   trong js/ext/v53c-*.js. "Tháp Rubik 81" là thiết kế gốc (kiểu bó tre, tỷ lệ vàng), không dùng tên, logo hay hình
   của toà nhà thương mại nào.
+
+v53s Biển khơi (câu cá thả neo ngoài biển, sổ tay cá, tàu hải tặc Râu Cam):
+không dùng file ảnh hay âm thanh bên ngoài. Chim hải âu, phao câu, rác biển, bản đồ kho báu kiểu Rubik,
+boong tàu, buồm, cờ và mũ hải tặc đều tự vẽ pixel art bằng code canvas (js/ext/v53s-*.js) và cache thành sprite.
+Cá dùng lại hình vẽ bằng code sẵn có (drawSea2, EXT12); âm thanh dùng lại các hàm WebAudio sẵn có và file CC0 đã ghi ở trên.
