@@ -10,9 +10,12 @@ const PHI = (1 + Math.sqrt(5)) / 2, CLOUD_R = 200;
 // Bảng 4 thời điểm mẫu (docs/style-guide.md): 8h30 trong trẻo · 13h không cháy · 17h40 vàng đào (không cam gắt) · 22h lam dịu + trăng.
 // Nắng ấm ↔ trời (hemi) mát: bóng đổ mang sắc lam nhạt như tranh màu nước. Cường độ nắng trưa ≤ φ, trời ≈ 1/φ² … 1/φ.
 const KEYS = [
-  [0, '#1a2a5e', '#3a5288', '#b4c6ff', 0.42, 0.62],   // đêm: lam ánh trăng, đủ sáng để thấy thế giới (không chói như ngày)
-  [5.5, '#2b3d75', '#d39a8c', '#ffbe9c', 0.45, 0.5],
-  [6.4, '#5677c0', '#f4cdb0', '#ffd2a6', 0.95, 0.44],   // bình minh: hồng đào nhạt
+  [0, '#1a2a5e', '#3a5288', '#b4c6ff', 0.46, 0.68],   // đêm: lam ánh trăng, đủ sáng để thấy thế giới (không chói như ngày)
+  [4, '#1c2c62', '#41598f', '#b4c6ff', 0.47, 0.69],     // 4h: vẫn đêm, chân trời bắt đầu ửng lam
+  [5, '#2a3b78', '#9c7fa6', '#d9b8d6', 0.5, 0.66],      // rạng đông: chân trời tím hồng
+  [5.5, '#3a4d8c', '#eaa38e', '#ffb796', 0.6, 0.68],    // 5h30: hồng cam, sáng hơn đêm (không tụt sáng)
+  [6, '#4a66ae', '#f6b996', '#ffc39a', 0.78, 0.6],
+  [6.4, '#5677c0', '#f4cdb0', '#ffd2a6', 0.95, 0.54],   // bình minh: hồng đào nhạt
   [8, '#4a95e2', '#d6ebf7', '#fff1dc', 1.35, 0.52],     // sáng sớm trong trẻo: chân trời lam sữa, nắng trắng ấm
   [10, '#3f8ee0', '#cde8f6', '#fff4e2', 1.5, 0.56],
   [14, '#3b89dd', '#c9e5f5', '#fff2de', 1.5, 0.56],     // trưa: nắng ≈ φ − 1/φ³, không trắng cháy
@@ -21,7 +24,7 @@ const KEYS = [
 
   [18.4, '#46559a', '#ecab90', '#ffb894', 0.75, 0.44],
   [19.6, '#22336a', '#5a6194', '#b0bdff', 0.4, 0.55],
-  [24, '#1a2a5e', '#3a5288', '#b4c6ff', 0.42, 0.62],
+  [24, '#1a2a5e', '#3a5288', '#b4c6ff', 0.46, 0.68],
 ].map(k => [k[0], new THREE.Color(k[1]), new THREE.Color(k[2]), new THREE.Color(k[3]), k[4], k[5]]);
 
 export function createSky(scene) {
@@ -126,8 +129,8 @@ export function createSky(scene) {
     if (state.night > 0.5 && moonUp > 0) {
       const k = (state.night - 0.5) * 2 * moonUp;
       state.sunDir.lerp(U.uMoon.value, k); state.sunDir.y = Math.max(state.sunDir.y, 0.2); state.sunDir.normalize();
-      sun.color.lerp(MOON_COL, k); sun.intensity += k * (0.25 + 0.75 * state.moonLit);    // trăng tròn sáng rõ cảnh vật
-      hemi.intensity += k * 0.25 * state.moonLit;
+      sun.color.lerp(MOON_COL, k); sun.intensity += k * (0.15 + 0.4 * state.moonLit);    // trăng sáng rõ cảnh vật nhưng vẫn là đêm (sao/trăng nổi)
+      hemi.intensity += k * 0.12 * state.moonLit;
     }
     // mây nhuộm hồng cam lúc mặt trời thấp, xanh tím ban đêm
     state.low = Math.max(0, 1 - Math.abs(el - 0.05) / 0.3);
@@ -136,11 +139,19 @@ export function createSky(scene) {
   }
   apply();
 
-  let prevH = state.hour;
+  // state.real: giờ thật (tự trôi / đồng hồ trường ghi vào) · state.lock: giờ người chơi chọn · state.hour: giờ đang hiển thị
+  // Đổi giờ (nút Sáng/Trưa/Chiều/Tối, về Thật) → tua dần trong φ giây: trời, nắng, sương, đèn đều chuyển mượt
+  state.real = state.hour;
+  let prevH = state.hour, tw = null;
   function update(dt, cam, target) {
-    if (state.lock != null) state.hour = state.lock;   // người chơi chọn Sáng/Trưa/Chiều/Tối (brightness.js)
-    const slow = state.hour > 9 && state.hour < 16.5 ? 0.6 : 1;   // giờ đẹp ban ngày trôi chậm hơn
-    state.hour += slow * dt / CFG.time.dayLengthSec * 24; if (state.hour >= 24) state.hour -= 24;
+    const slow = state.real > 9 && state.real < 16.5 ? 0.6 : 1;   // giờ đẹp ban ngày trôi chậm hơn
+    state.real = (state.real + slow * dt / CFG.time.dayLengthSec * 24) % 24;
+    const goal = state.lock != null ? state.lock : state.real, gap = d => { d = ((d % 24) + 24) % 24; return d > 12 ? d - 24 : d; };
+    if (!tw && Math.abs(gap(goal - state.hour)) > 0.25) tw = { from: state.hour, t: 0 };
+    if (tw) {
+      tw.t += dt; const x = Math.min(1, tw.t / PHI), e = x * x * (3 - 2 * x);
+      state.hour = ((tw.from + gap(goal - tw.from) * e) % 24 + 24) % 24; if (x >= 1) tw = null;
+    } else state.hour = goal;
     if (state.hour < prevH - 12) state.day++; prevH = state.hour; U.uTime.value += dt; apply();   // qua nửa đêm (kể cả khi trường đặt giờ) → sang ngày mới
     dome.position.copy(cam.position);
     sun.target.position.copy(target); sun.position.copy(target).addScaledVector(state.sunDir, 80);

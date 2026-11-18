@@ -6,6 +6,7 @@
 // Draw call: sao 1 · đường nối chòm 1 · sao băng 1 · sao băng lớn 1 · mây ti 1. Mọi chuyển động trên GPU; CPU chỉ tính lại ~90 sao mỗi 0,5 s.
 import * as THREE from 'three';
 import { PHI } from './layout.js';
+import { LIGHTS } from './decor.js';
 
 const LAT = 16 * Math.PI / 180, R = 370, NM = 34;
 // [tên sao, xích kinh (giờ), xích vĩ (độ), cấp sáng, màu]
@@ -191,13 +192,30 @@ export function createSkyshow(ctx) {
     st.gaze = on; pl.frozen = on; btn.style.background = on ? '#f0a23acc' : ''; st.sel = -1; SU.uSel.value = -1;
     const r = pl.root;
     if (on) {
-      st.look.pitch0 = pl.cam.pitch; st.look.pitch = 1.05; r.rotation.order = 'YXZ'; fadeIn = 0;
+      st.look.pitch0 = pl.cam.pitch; st.look.pitch = 1.05; r.rotation.order = 'YXZ'; fadeIn = 0; clearView();
       const night = sky.state.night > 0.5;
       ctx.toast(night ? '🌌 Nằm ngắm sao: kéo màn hình để nhìn quanh, <b>chạm vào ngôi sao</b> để biết tên. Nhìn thấy sao băng thì bấm <b>Ước điều</b>!'
         : '☁️ Nằm ngắm mây: chạm vào một đám mây xem nó giống gì! (Ban đêm quay lại để ngắm sao)', 6500);
     } else {
       r.rotation.x = 0; r.rotation.order = 'XYZ'; camera.fov = savedFov; camera.updateProjectionMatrix(); pl.cam.pitch = st.look.pitch0 ?? 0.6;
     }
+  }
+  // né vật gần (cột đèn, tường, mái): thử 21 hướng (Fibonacci), chọn hướng khung nhìn trống nhất; nếu quanh đâu cũng vướng thì ngửa gần thẳng đứng
+  function clearView() {
+    const hx = pl.pos.x, hy = pl.pos.y + 0.55, hz = pl.pos.z, R = 13, obs = [];
+    for (const L of LIGHTS) { const d = Math.hypot(L.x - hx, L.z - hz); if (d < R && L.y + 0.6 > hy) obs.push([L.x, L.z, L.y + 0.6, d, 0.3]); }
+    for (const b of ctx.boxes || []) {
+      const cx = Math.max(b.x0, Math.min(hx, b.x1)), cz = Math.max(b.z0, Math.min(hz, b.z1)), d = Math.hypot(cx - hx, cz - hz);
+      if (d < R && d > 0.3 && b.top > hy) obs.push([(b.x0 + b.x1) / 2, (b.z0 + b.z1) / 2, b.top, d, Math.max(b.x1 - b.x0, b.z1 - b.z0) / 2]);
+    }
+    if (!obs.length) return;
+    const bad = (yaw, pitch) => { let p = 0; for (const [x, z, top, d, w] of obs) {
+      let a = Math.atan2(-(x - hx), -(z - hz)) - yaw; a = Math.atan2(Math.sin(a), Math.cos(a));
+      const el = Math.atan2(top - hy, Math.max(d, 0.3)), lo = pitch - 0.7;   // mép dưới khung (nửa góc nhìn 35°)
+      if (Math.abs(a) < 1.0 + Math.atan(w / Math.max(d, 0.3)) && el > lo) p += (el - lo) / Math.max(d, 1); } return p; };
+    let best = pl.cam.yaw, bs = bad(best, 1.05);
+    for (let i = 0; i < 21 && bs > 0; i++) { const y = pl.cam.yaw + i * 2 * Math.PI / 21, v = bad(y, 1.05); if (v < bs - 1e-4) { bs = v; best = y; } }
+    pl.cam.yaw = best; if (bs > 0) st.look.pitch = 1.42;
   }
   btn.onclick = () => gaze(); addEventListener('keydown', e => { if (e.code === 'KeyG' && !e.repeat) gaze(); else if (st.gaze && /^(Key[WASD]|Arrow)/.test(e.code)) gaze(false); });
   // chạm sao / mây
