@@ -1463,3 +1463,87 @@ body.v52on .floater,body.v52on #lvlUp,body.v52wdevon .floater{z-index:90!importa
 .v52wdch.bad{background:#ef9a9a!important}
 .v52wdbig{font-size:34px;font-weight:800;color:#ffd23f;margin:6px 0}
 .v52wdapp .v52grid .v52item{color:#2b1d14}
+
+/* ===== v52 · CUỘC SỐNG: no bụng, bếp, căn tin, nấu ăn, flycam (tỷ lệ vàng 1:1.618, Nunito ≥16px) ===== */
+.v52lhun{display:inline-flex;align-items:center;gap:5px;margin-left:6px;padding:2px 8px;min-height:26px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);border-radius:13px;color:#fff6dc;font:800 16px/1 Nunito,'Be Vietnam Pro',sans-serif;cursor:pointer;white-space:nowrap}
+.v52lhun .ic{font-size:16px}.v52lhun .bar{display:inline-block;width:42px;height:8px;background:rgba(0,0,0,.45);border-radius:4px;overflow:hidden}
+.v52lhun .bar i{display:block;height:100%;width:80%;background:linear-gradient(90deg,#9be38a,#2fbf71);transition:width .6s}
+.v52lhun[data-lv="1"] .bar i{background:linear-gradient(90deg,#ffe066,#ffd23f)}
+.v52lhun[data-lv="2"] .bar i,.v52lhun[data-lv="3"] .bar i{background:linear-gradient(90deg,#ffb74d,#ff8a2b)}
+.v52lhun[data-lv="2"],.v52lhun[data-lv="3"]{border-color:#ff8a2b;animation:v52lPulse 1.6s ease-in-out infinite}
+@keyframes v52lPulse{50%{box-shadow:0 0 0 4px rgba(255,138,43,.35)}}
+@media (max-width:600px){.v52lhun{font-size:16px;padding:2px 6px;gap:3px}.v52lhun .bar{width:26px}}
+#v52lEnter{display:block;max-width:min(320px,80vw);white-space:nowrap;position:absolute;left:50%;bottom:calc(132px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;padding:10px 20px;min-height:52px;border:2px solid #0a0f22;border-radius:26px;background:linear-gradient(180deg,#ffd23f,#ff8a2b);color:#2b1400;font:800 18px/1.15 Nunito,sans-serif;box-shadow:0 6px 0 #7a3a08;cursor:pointer;text-align:center}
+#v52lEnter small{display:block;font:700 16px/1.2 Nunito,sans-serif;opacity:.85}
+#v52lEnter[hidden]{display:none}
+.v52lbox{max-width:min(960px,96vw);font-family:Nunito,'Be Vietnam Pro',sans-serif}
+.v52lbox h2{font-family:Nunito,sans-serif;font-weight:800}
+.v52ltop{display:grid;grid-template-columns:1.618fr 1fr;gap:8px 14px;align-items:center;margin:4px 0 8px}
+.v52lmeter{display:flex;align-items:center;gap:8px;font:800 17px Nunito,sans-serif}
+.v52lmeter .bar{flex:1;height:12px;background:rgba(0,0,0,.4);border-radius:6px;overflow:hidden}.v52lmeter .bar i{display:block;height:100%;background:linear-gradient(90deg,#9be38a,#2fbf71)}
+.v52lmeter[data-lv="2"] .bar i,.v52lmeter[data-lv="3"] .bar i{background:linear-gradient(90deg,#ffb74d,#ff8a2b)}
+.v52lmeals{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.v52lmeals span{font:700 16px Nunito,sans-serif;padding:3px 8px;border-radius:12px;background:rgba(255,255,255,.08)}.v52lmeals .ok{background:#2fbf71;color:#05210f}
+.v52ltip{grid-column:1/-1;margin:0;font:700 16px/1.35 Nunito,sans-serif;color:#cfe8ff}
+.v52ltabs{margin:4px 0 10px}.v52ltabs button,.v52lbody .seg button{font:800 16px Nunito,sans-serif}
+.v52lbody{max-height:min(58vh,520px);overflow:auto;-webkit-overflow-scrolling:touch}
+.v52lbody .now{font:700 16px/1.4 Nunito,sans-serif}
+.v52lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.v52lcard{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:center;padding:8px 10px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:12px}
+.v52lcard .ic{width:62px;height:52px;display:grid;place-items:center;font-size:34px;background:rgba(0,0,0,.25);border-radius:10px}
+.v52lcard .ic canvas{width:58px;height:48px;image-rendering:pixelated;object-fit:contain}
+.v52lgrid.ing .v52lcard .ic canvas{width:44px;height:44px}
+.v52lcard .tx b{display:block;font:800 17px/1.2 Nunito,sans-serif}.v52lcard .tx b i{font-style:normal}
+.v52lcard .tx small{display:block;font:700 16px/1.35 Nunito,sans-serif;color:#b9c4ea}
+.v52lcard .tx small span{white-space:nowrap}.v52lcard .tx small .ok{color:#9be38a}.v52lcard .tx small .no{color:#ffab91;text-decoration:line-through}
+.v52lcard button{font:800 16px Nunito,sans-serif;min-height:44px;padding:6px 12px;white-space:nowrap}
+.v52lroomk{margin:4px 0 8px;font:800 17px Nunito,sans-serif;min-height:44px}
+@media (max-width:600px){.v52ltop{grid-template-columns:1fr}.v52lmeals{justify-content:flex-start}.v52lgrid{grid-template-columns:1fr}.v52lcard{grid-template-columns:52px 1fr auto}.v52lcard .ic{width:52px}}
+
+/* mini game nấu ăn: tràn viền, thanh trên mỏng trong suốt (trái: món · giữa: các bước · phải: ? ✕) */
+#v52lc{position:fixed;inset:0;z-index:62;background:#2b1d14;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none;font-family:Nunito,'Be Vietnam Pro',sans-serif;color:#fff6dc}
+#v52lc[hidden],#v52lc [hidden]{display:none!important}
+#v52lc>canvas{position:absolute;inset:0;touch-action:none}
+.v52lc-top{position:absolute;left:0;right:0;top:0;height:52px;display:grid;grid-template-columns:1fr 1.618fr 1fr;align-items:center;padding:0 max(10px,env(safe-area-inset-left));background:linear-gradient(180deg,rgba(11,16,32,.72),rgba(11,16,32,.25));pointer-events:none}
+.v52lc-top>*{pointer-events:auto}.v52lc-top .l{display:flex;align-items:center;gap:6px;font:800 17px Nunito,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v52lc-top .l .em{font-size:22px}
+.v52lc-top .c{display:flex;justify-content:center;gap:4px}.v52lc-top .c span{display:flex;flex-direction:column;align-items:center;font-size:18px;opacity:.45;padding:0 4px;border-radius:8px}
+.v52lc-top .c span i{font:800 16px/1 Nunito,sans-serif;font-style:normal}.v52lc-top .c .on{opacity:1;background:rgba(255,210,63,.25)}.v52lc-top .c .ok{opacity:.85;color:#9be38a}
+.v52lc-top .r{display:flex;justify-content:flex-end;gap:8px}
+.v52lc-top .r button,.v52ld-top .r button{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.6);background:rgba(11,16,32,.55);color:#fff;font:800 18px Nunito,sans-serif;cursor:pointer}
+@media (max-width:600px){.v52lc-top{grid-template-columns:auto 1fr auto;gap:6px}.v52lc-top .l .nm{display:none}.v52lc-top .c span{padding:0 1px}.v52lc-top .c span i{display:none}.v52lc-top .c span.on i{display:block}}
+.v52lc-hint{position:absolute;left:50%;top:62px;transform:translateX(-50%);max-width:92vw;padding:8px 16px;border-radius:20px;background:rgba(11,16,32,.8);font:800 17px/1.3 Nunito,sans-serif;text-align:center;pointer-events:none;transition:opacity .5s}
+.v52lc-hint.off{opacity:0}
+.v52lc-help,.v52ld-help{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,92vw);padding:16px 18px;border-radius:16px;background:#17203f;border:2px solid #34427a;box-shadow:0 12px 40px rgba(0,0,0,.5);font:700 16px/1.45 Nunito,sans-serif;color:#eef1ff;z-index:3}
+.v52lc-help h3,.v52ld-help h3{margin:0 0 8px;font:800 20px Nunito,sans-serif}.v52lc-help p,.v52ld-help p{margin:0 0 8px}.v52lc-help button,.v52ld-help button{width:100%;min-height:44px;font:800 17px Nunito,sans-serif}
+.v52lc-end{position:absolute;inset:0;display:grid;place-items:center;background:rgba(11,16,32,.45);z-index:2}
+.v52lc-end .box{width:min(420px,92vw);padding:18px;border-radius:18px;background:#17203f;border:2px solid #ffd23f;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,.55)}
+.v52lc-end canvas{width:154px;height:128px;image-rendering:pixelated}
+.v52lc-end h3{margin:6px 0 2px;font:800 22px Nunito,sans-serif}.v52lc-end .stars{margin:0;font-size:30px;color:#ffd23f;letter-spacing:4px}.v52lc-end .info{font:700 16px/1.4 Nunito,sans-serif;color:#cfe8ff}
+.v52lc-end .row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.v52lc-end .row button{min-height:48px;font:800 16px Nunito,sans-serif;padding:4px}
+.v52lc-end .again{min-height:48px;width:61.8%;font:800 18px Nunito,sans-serif;background:#2fbf71;color:#05210f;border:2px solid #0a0f22;border-radius:24px;cursor:pointer}
+
+/* flycam chủ game: khung camera kiểu drone, phủ trong suốt lên thế giới */
+#v52ldBtn{position:absolute;right:calc(12px + env(safe-area-inset-right));bottom:calc(210px + env(safe-area-inset-bottom));z-index:6;width:62px;height:62px;border-radius:50%;border:2px solid #0a0f22;background:radial-gradient(circle at 40% 35%,#7fe3ff,#1d5a8a);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 5px 0 #0a2a44;cursor:pointer}
+#v52ldBtn span{font-size:24px;line-height:1}#v52ldBtn small{font:800 12px/1 Nunito,sans-serif;margin-top:2px}
+#v52ldBtn[hidden]{display:none}
+#v52ld{position:fixed;inset:0;z-index:61;touch-action:none;user-select:none;-webkit-user-select:none;font-family:Nunito,'Be Vietnam Pro',sans-serif;color:#fff}
+#v52ld[hidden],#v52ld [hidden]{display:none!important}
+#v52ld canvas.fr{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+body.v52ld-on #stage>*:not(#world):not(#toast):not(canvas){visibility:hidden}
+.v52ld-top{position:absolute;left:0;right:0;top:0;height:52px;display:grid;grid-template-columns:1fr 1.618fr 1fr;align-items:center;padding:0 max(10px,env(safe-area-inset-left));background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,0));text-shadow:0 1px 2px #000}
+.v52ld-top .l{display:flex;gap:8px;align-items:center;font:800 17px Nunito,sans-serif;white-space:nowrap;overflow:hidden}
+.v52ld-top .rec{color:#ff4d4d;font:800 16px Nunito,sans-serif;animation:v52ldRec 1s steps(2) infinite}@keyframes v52ldRec{50%{opacity:.2}}
+.v52ld-top .c{display:flex;justify-content:center;gap:12px;font:800 16px Nunito,sans-serif;white-space:nowrap}.v52ld-top .c .low{color:#ff8a65}
+.v52ld-top .r{display:flex;justify-content:flex-end;gap:8px}
+@media (max-width:600px){.v52ld-top{grid-template-columns:auto 1fr auto;gap:6px}.v52ld-top .l b{display:none}.v52ld-top .c{gap:8px}.v52ld-top .c .tm{display:none}}
+.v52ld-bar{position:absolute;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:6px;max-width:calc(100vw - 16px);overflow-x:auto;padding:6px;border-radius:18px;background:rgba(11,16,32,.72)}
+.v52ld-bar button{flex:0 0 auto;min-width:58px;height:58px;border-radius:14px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+.v52ld-bar button span{font-size:22px;line-height:1}.v52ld-bar button i{font:800 16px/1 Nunito,sans-serif;font-style:normal}.v52ld-bar button.on{background:#ff8fc4;color:#2b0a1a}
+@media (max-width:600px){.v52ld-bar button{min-width:50px;height:56px}.v52ld-bar button i{font-size:16px}}
+.v52ld-pop{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(560px,94vw);max-height:42vh;overflow:auto;display:flex;flex-wrap:wrap;gap:6px;padding:10px;border-radius:14px;background:rgba(11,16,32,.86);border:1.5px solid rgba(255,255,255,.2)}
+.v52ld-pop button{min-height:44px;padding:6px 12px;border-radius:12px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.07);color:#fff;font:800 16px Nunito,sans-serif;cursor:pointer}.v52ld-pop button.on{background:#2fbf71;color:#05210f}
+.v52ld-chip{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);max-width:94vw;display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;padding:8px 12px;border-radius:16px;background:rgba(11,16,32,.82);border:1.5px solid #ffd23f;font:800 16px Nunito,sans-serif}
+.v52ld-chip small{font:700 16px Nunito,sans-serif;color:#b9c4ea}.v52ld-chip button{min-height:40px;padding:4px 10px;border-radius:10px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font:800 16px Nunito,sans-serif;cursor:pointer}
+.v52ld-thumb{position:absolute;left:14px;top:64px;width:min(160px,36vw);border:3px solid #fff;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.5);transform:rotate(-3deg)}
+#v52ld:has(.v52ld-pop:not([hidden])) .v52ld-chip{display:none}
+@media (pointer:coarse){.v52ld-bar [data-k=zo],.v52ld-bar [data-k=zi]{display:none}}
+@media (max-height:520px){.v52lc-end .box{max-height:94vh;overflow:auto;padding:10px 14px;display:grid;grid-template-columns:auto 1fr;gap:0 14px;align-items:center;text-align:left;width:min(640px,94vw)}.v52lc-end canvas{grid-row:1/4;width:116px;height:96px}.v52lc-end .row,.v52lc-end .again{grid-column:1/-1}.v52lc-end .again{justify-self:center}.v52lc-end .row{margin:6px 0}}

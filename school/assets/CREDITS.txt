@@ -50,3 +50,8 @@ v52 Thế giới rộng (đất liền, cầu, sông, đồi, rừng, đồng l�
 không dùng tệp ảnh/âm thanh ngoài. Mọi hình (địa hình, nhà, TTTM, quầy hàng, sản phẩm điện máy, người, đèn) là pixel art
 tự vẽ bằng code canvas trong js/ext/v52w-*.js và cache thành sprite/ô nền. Tên cửa hàng, sản phẩm là tên tự đặt, không dùng thương hiệu thật.
 Nội thất trong nhà tái dùng bộ đồ nội thất vẽ bằng code có sẵn (drawDecor, drawWallFloor, demoRoom).
+v52 (Cuộc sống: no bụng, bếp, căn tin, quầy ăn, flycam chủ game) — js/ext/v52l-*.js
+  Không dùng file ảnh hay âm thanh bên ngoài. 21 nguyên liệu, 13 món ăn, chòi bếp, quầy căn tin, xe đẩy đồ ăn,
+  bong bóng "đói" đều là pixel art tự vẽ bằng code (canvas), vẽ một lần rồi cache thành sprite.
+  Tiếng bụng kêu, tiếng xèo xèo, tiếng dao, tiếng cánh quạt flycam và tiếng màn trập tạo bằng Web Audio API.
+  Tên flycam "Chuồn Chuồn RB-1" và mọi thiết kế là tự đặt, không dùng tên thương hiệu thật.
