@@ -293,6 +293,7 @@ export function createAircraft(ctx) {
   function placeName(x, z, gh) {
     const zr = BLOCKS.find(b => x > b.r[0] && x < b.r[2] && z > b.r[1] && z < b.r[3]) || EXTRA.find(e => x > e.r[0] && x < e.r[2] && z > e.r[1] && z < e.r[3]);
     if (zr) return zr.name;
+    const za = ctx.zoneAt && ctx.zoneAt(x, z); if (za) return za;   // đảo khác (Học viện Pha Lê…)
     if (meadowAt(x, z)) return 'Vườn tròn giữa đồi cỏ';
     if (lagoonDist(x, z) < 0) return 'Hồ bán nguyệt';
     const r = Math.hypot(x, z); if (r < TOWN_DISC && gh >= W) return 'Phố nhà vườn quanh trường';
@@ -362,6 +363,7 @@ export function createAircraft(ctx) {
     me = pl; pl.parked = false; yaw = pl.yaw; pitch = 0.1; roll = 0; spd = 0; phase = 'takeoff'; pl._touched = false;
     // cất cánh từ đầu Đông đường băng, mũi hướng Tây (vào đảo) → không lao ra mép bản đồ
     if (inAir(pl.group.position.x, pl.group.position.z)) { pl.group.position.set(RWY.x1 - 4, GY, RWY.z); yaw = -Math.PI / 2; ctx.toast('🛫 Ra đường băng... cất cánh về phía đảo!', 2500); }
+    else if ((ctx.runways || []).some(r => r.inside(pl.group.position.x, pl.group.position.z))) { const rw = ctx.runways.find(r => r.inside(pl.group.position.x, pl.group.position.z)); pl.group.position.set(rw.start[0], rw.y, rw.start[1]); yaw = rw.yaw; ctx.toast('🛫 Ra ' + rw.name + '... cất cánh!', 2500); }   // đường băng ở đảo khác (academy/index.js)
     else ctx.toast('🛫 Cất cánh!', 2000);
     player.vehicle = { speed: 0, turn: 0, accel: 4, fly: true, lift: 0, maxAlt: 999, anim: 'sit', seat: 0, seatZ: 0, camAdd: 0, plane: true };
     camPos.copy(camera.position); camLook.copy(pl.group.position); camV.set(0, 0, 0); lookV.set(0, 0, 0);
@@ -409,7 +411,7 @@ export function createAircraft(ctx) {
     }
     // mép vùng bay: rẽ dần về đảo (càng ra xa càng rẽ mạnh), không giật lái
     const rC = Math.hypot(P.x, P.z), edge = Math.min(1, Math.max(0, (rC - BOUND) / EDGE));
-    if (edge > 0 && phase !== 'takeoff') {
+    if (edge > 0 && phase !== 'takeoff' && !(ctx.flyZones || []).some(f => f(P.x, P.z))) {   // vùng bay thêm (Học viện Pha Lê): ctx.flyZones
       let d = Math.atan2(-P.x, -P.z) - yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
       const turn = -Math.max(-1, Math.min(1, d * 1.5)); ix = ix * (1 - edge) + turn * edge; wantRoll = wantRoll * (1 - edge) + turn * 0.6 * edge;
       if (!pl._btoast) { pl._btoast = true; ctx.toast('🧭 Phía trước là biển khơi xa: máy bay đang vòng về đảo.', 3000); }
@@ -487,5 +489,5 @@ export function createAircraft(ctx) {
     if (best) ctx.offer(best.label || (best.label = '✈️ Lái máy bay ' + best.style.name), best.boardFn || (best.boardFn = () => board(best)), 7);
   }
 
-  return { update, planes, birds: NB, board: (i = 0) => board(planes[i]), land, get flying() { return !!me; }, get phase() { return phase; } };
+  return { update, planes, birds: NB, board: (i = 0) => board(planes[i]), land, get flying() { return !!me; }, get phase() { return phase; }, get yaw() { return yaw; }, set yaw(v) { yaw = v; } };
 }

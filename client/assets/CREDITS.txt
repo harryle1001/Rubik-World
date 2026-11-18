@@ -89,3 +89,7 @@ models/kit/ đợt 3 (furn_*, school_*, chess_*, music_*, play_*, house_city_*, 
     prop_umbrella_cute "Cute umbrella" https://opengameart.org/content/cute-umbrella · prop_inner_tube "Inner tube" https://opengameart.org/content/inner-tube
   Tự dựng bằng tools/kit/make_props.py (CC0 của dự án): sport_hoop, sport_net, sport_goal_mini, play_seesaw, prop_beach_umbrella, prop_swim_ring
   house_suburb_*_warm: bản đổi màu mái (ngói cam) của Kenney City Kit Suburban.
+
+Học viện Pha Lê (client/js/island/academy/): không thêm file tài nguyên mới. Lâu đài, thuyền, đũa phép, đèn lồng,
+vân đá + rêu (canvas 512 px) và hiệu ứng (sương, đom đóm, cú, cờ) đều dựng bằng code trong game.
+Cây thông/đá trên đảo dùng lại bộ kit CC0 đã ghi ở trên.

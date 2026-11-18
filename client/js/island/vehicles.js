@@ -1,6 +1,6 @@
 // vehicles.js — Hệ thống cưỡi/đi phương tiện dùng chung: 🚲 20 kiểu xe đạp (bikes.js), ⛵ thuyền chèo, khinh khí cầu,
 // và thú cưỡi / phượng hoàng (mounts.js đăng ký qua ctx.vehicles.register).
-// Phím: E tương tác (lên/xuống mọi thứ) · B xe đạp · V đổi kiểu xe · R chuông · F khinh khí cầu · H huýt sáo gọi thú cưỡi (mounts.js)
+// Phím: E tương tác (lên/xuống mọi thứ) · B xe đạp · V đổi kiểu xe · R chuông · T khinh khí cầu (F: đũa phép Học viện Pha Lê) · H huýt sáo gọi thú cưỡi (mounts.js)
 //       Shift chạy nhanh · khi bay: Space lên, C/Ctrl xuống. Điện thoại: các nút cạnh Chạy/Nhảy.
 import * as THREE from 'three';
 import { BLOCKS } from './layout.js';
@@ -107,7 +107,7 @@ export function createVehicles(ctx) {
   let cur = null, mine = { bike: null, boat: null, balloon: null }, lean = 0, rowT = 0, wakeT = 0, bellT = 0, lift = 0, takeoff = 0, burnT = 0;
   let myStyle = +(localStorage.getItem('island.bike') || 0);
   const ui = id => document.getElementById(id);
-  function dimUI() { for (const [id, k] of [['bBike', 'bike'], ['bBalloon', 'balloon']]) { const r = why(k), b = ui(id); b.classList.toggle('off', !!r); b.title = r ? r.replace(/^\S+ /, '') : k === 'bike' ? 'Xe đạp (B)' : 'Khinh khí cầu (F)'; } }
+  function dimUI() { for (const [id, k] of [['bBike', 'bike'], ['bBalloon', 'balloon']]) { const r = why(k), b = ui(id); b.classList.toggle('off', !!r); b.title = r ? r.replace(/^\S+ /, '') : k === 'bike' ? 'Xe đạp (B)' : 'Khinh khí cầu (T)'; } }
   function setUI() {
     const t = cur && cur.type, fly = cur && cur.mode.fly;
     ui('bBike').textContent = t === 'bike' ? '🚶' : '🚲'; ui('bBalloon').innerHTML = t === 'balloon' ? '🚶' : ICON.balloon;
@@ -185,7 +185,8 @@ export function createVehicles(ctx) {
   const blocked = () => ctx.freeCam || ctx.mapOpen || document.body.classList.contains('rs-modal');
   addEventListener('keydown', e => {
     if (e.repeat || blocked()) return;
-    if (e.code === 'KeyB') toggleBike(); else if (e.code === 'KeyF') toggleBalloon(); else if (e.code === 'KeyR') ring(); else if (e.code === 'KeyV') nextStyle(e.shiftKey ? -1 : 1);
+    // T khinh khí cầu (F dành cho đũa phép — academy/magic.js; H huýt sáo gọi thú cưỡi — mounts.js)
+    if (e.code === 'KeyB') toggleBike(); else if (e.code === 'KeyT') toggleBalloon(); else if (e.code === 'KeyR') ring(); else if (e.code === 'KeyV') nextStyle(e.shiftKey ? -1 : 1);
   });
   const tap = (id, fn) => ui(id).addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); fn(); });
   tap('bBike', toggleBike); tap('bBalloon', toggleBalloon); tap('bBell', ring); tap('bStyle', () => nextStyle(1));

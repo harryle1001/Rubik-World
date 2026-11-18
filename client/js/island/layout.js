@@ -158,3 +158,7 @@ export function blocked(x, z, m = 0) {
 export const GATE2 = [26, 400];
 export const GATE3 = to3(...GATE2);
 export const SPAWN = [GATE3[0] - 7, GATE3[1]];
+
+// ===== HỌC VIỆN PHA LÊ: đảo riêng ngoài khơi hướng tây bắc (sau Rừng & Đền Tri Thức) =====
+// Khoảng nước giữa 2 bờ 610 m (Fibonacci) → tâm đảo cách tâm thế giới ISLAND_R + 610 + 233 ≈ 1 148 m. Chi tiết: academy/plan.js
+export const ACADEMY = (() => { const ang = zoneAngle(7), r = ISLAND_R + 610 + 233; return { ang, r, c: polar(r, ang), name: 'Học viện Pha Lê' }; })();
