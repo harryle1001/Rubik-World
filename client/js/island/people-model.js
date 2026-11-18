@@ -1,7 +1,7 @@
 // people-model.js — Dựng nhân vật học sinh / thầy cô / người dân kiểu "Zelda toon" bằng khối low-poly,
 // gắn cứng từng khối vào xương của bộ KayKit Adventurers (CC0) để dùng lại 14 animation của KayKit.
 // - Chân/tay được kéo dài (dáng cân đối hơn KayKit chibi), sửa lại các track vị trí của animation cho khớp.
-// - Mỗi nhân vật = 2 SkinnedMesh dùng chung 1 vật liệu toon (màu theo đỉnh): thân (có viền) + chi tiết nhỏ (mắt, miệng, khuy… không viền).
+// - Mỗi nhân vật = 1 SkinnedMesh (thân + chi tiết nhỏ mắt, miệng, khuy… gộp 1 lưới, vật liệu toon màu theo đỉnh) + 1 viền chỉ theo hình thân.
 // - Geometry dùng chung theo kiểu trang phục (cache); ≤ 3.000 tam giác/nhân vật.
 import * as THREE from 'three';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -236,8 +236,10 @@ export function buildPerson(J, look) {
   else if (L.prop === 'cam') { add(rbox(0.18, 0.13, 0.26, 0.15), 'handr', '#2a2a33', at(hr_.x, hr_.y - 0.09, hr_.z + 0.06)); add(new THREE.CylinderGeometry(0.04, 0.04, 0.05, 8).rotateX(Math.PI / 2), 'handr', '#7fd1ff', at(hr_.x, hr_.y - 0.09, hr_.z + 0.2), true); }
   else if (L.prop === 'rod') { const d = new THREE.Vector3(0.7, 0, 0.71); add(new THREE.CylinderGeometry(0.012, 0.022, 1.7, 4), 'handr', '#6b4a2b', along(hr_.clone().addScaledVector(d, -0.15), hr_.clone().addScaledVector(d, 1.55))); } // tay buông: cần chĩa ra trước, chếch lên
   const geoB = mergeGeometries(body), geoD = det.length ? mergeGeometries(det) : null;
-  geoB.computeBoundingBox(); geoB.computeBoundingSphere(); if (geoD) geoD.computeBoundingSphere();
-  return { body: geoB, detail: geoD, tris: (geoB.index.count + (geoD ? geoD.index.count : 0)) / 3, top: geoB.boundingBox.max.y };
+  geoB.computeBoundingBox(); geoB.computeBoundingSphere();
+  // hình vẽ = thân + chi tiết gộp 1 lưới (1 draw call/người thay vì 2); viền chỉ dùng hình thân (mắt, miệng không viền)
+  const geoA = geoD ? mergeGeometries([geoB, geoD]) : geoB; geoA.computeBoundingSphere();
+  return { body: geoB, all: geoA, tris: geoA.index.count / 3, top: geoB.boundingBox.max.y };
 }
 
 // váy xếp ly: hình nón cụt, bán kính đỉnh so le tạo nếp
@@ -281,10 +283,10 @@ export function jointsOf(model) {
   const J = {}; for (const n of DEFORM) { const b = model.getObjectByName(n); J[n] = b ? b.getWorldPosition(new THREE.Vector3()) : new THREE.Vector3(); } return J;
 }
 // Gắn geometry vào bộ xương của bản sao
+// Trả về { body, outlineGeo }: body vẽ cả chi tiết (vật liệu chớp mắt riêng mỗi người, chung 1 chương trình shader);
+// addOutline (style.js) dựng viền từ body.geometry → tạm gán hình thân trước khi gọi addOutline rồi trả lại (loadHero lo việc này).
 export function skinTo(model, G) {
   const bones = DEFORM.map(n => model.getObjectByName(n)), skel = new THREE.Skeleton(bones);
-  const mk = (geo, name) => { const m = new THREE.SkinnedMesh(geo, MAT); m.name = name; m.bind(skel, new THREE.Matrix4()); m.frustumCulled = false; m.castShadow = true; model.add(m); return m; };
-  const b = mk(G.body, 'person-body'); let d = null;
-  if (G.detail) { d = mk(G.detail, 'person-detail'); d.material = detailMat(); d.userData.outline = true; d.castShadow = false; }
-  return { body: b, detail: d };
+  const m = new THREE.SkinnedMesh(G.all, detailMat()); m.name = 'person-body'; m.bind(skel, new THREE.Matrix4()); m.frustumCulled = false; m.castShadow = true; model.add(m);
+  return { body: m };
 }

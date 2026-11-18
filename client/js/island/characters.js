@@ -49,19 +49,19 @@ export async function loadHero(kind, height = 1.65, look = null) {
   if (!geoCache.has(key)) geoCache.set(key, buildPerson(jointCache.get(bk), L));
   const G = geoCache.get(key);
   const parts = skinTo(model, G); model.scale.setScalar(height / G.top);
-  addOutline(model);
+  parts.body.geometry = G.body; addOutline(model); parts.body.geometry = G.all;   // viền theo hình thân (không viền mắt, miệng)
   const outlines = []; model.traverse(o => { if (o.userData.outline && o.material === outlineMat) outlines.push(o); });
   const anim = animator(model, rigClips(g.animations, B, model));
   const N = NAMES.person; for (const [k, v] of Object.entries({ ...N, drive: N.sit })) if (!anim.actions[k] && anim.actions[v]) anim.actions[k] = anim.actions[v]; // tên cũ (vehicles: 'drive', 'sit', 'idle')
-  const hero = { model, anim, set: N, height, outlines, head: model.getObjectByName('head'), outlineOn: true, tris: G.tris, detail: parts.detail, happyUntil: 0 };
+  const hero = { model, anim, set: N, height, outlines, head: model.getObjectByName('head'), outlineOn: true, tris: G.tris, happyUntil: 0 };
   // Biểu cảm: chớp mắt ngẫu nhiên (2–5 s/lần, ~0,13 s); mắt cười híp "^^" khi reo/chào (happyUntil)
-  if (parts.detail) {
+  {
     const upd = anim.update; let next = 1 + Math.random() * 3, t = 0;
     anim.update = dt => {
       upd(dt); t += dt; let o = 1;
       if (performance.now() < hero.happyUntil) o = 0.12;
       else if (t > next) { const k = (t - next) / 0.13; if (k >= 1) { t = 0; next = 2 + Math.random() * 3; } else o = Math.abs(k * 2 - 1) * 0.9 + 0.1; }
-      parts.detail.material.userData.blink.value = o;
+      parts.body.material.userData.blink.value = o;
     };
   }
   return hero;
@@ -79,8 +79,8 @@ async function loadKayKit(kind, height) {
 }
 
 // Bật/tắt viền (chỉ người gần mới cần viền: đỡ 1 lần vẽ mỗi người ở xa)
-// Ở xa: tắt viền và chi tiết nhỏ (mắt, miệng, khuy…) — bớt 2 lần vẽ mỗi người
-export function setOutline(hero, on) { if (hero.outlineOn === on) return; hero.outlineOn = on; for (const o of hero.outlines) o.visible = on; if (hero.detail) hero.detail.visible = on; }
+// (mắt, miệng, khuy… đã gộp vào lưới thân: 1 lần vẽ/người, không cần bật/tắt riêng)
+export function setOutline(hero, on) { if (hero.outlineOn === on) return; hero.outlineOn = on; for (const o of hero.outlines) o.visible = on; }
 
 // Quay đầu nhìn mục tiêu (gọi SAU anim.update, mỗi khung hình): quay quanh trục đứng, tối đa ±65°, mượt theo w (0..1)
 const _q = new THREE.Quaternion(), _qp = new THREE.Quaternion(), _qi = new THREE.Quaternion(), _up = new THREE.Vector3(0, 1, 0), _v = new THREE.Vector3();
