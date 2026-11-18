@@ -44,13 +44,13 @@ function v61fTableDone(T, i, m){
   if(watchT === i) renderWatch();
 }
 
-// bầu trời sao: đúng thuật toán buildStars (js/map.js), chia 2000 chấm mỗi bước
+// bầu trời sao: đúng thuật toán buildStars (js/map.js), chia 500 chấm mỗi bước
 function* v61fStars(){
   if(starCache) return;
   const hgt = NY - SY0, c = document.createElement('canvas'); c.width = W; c.height = hgt; const g = c.getContext('2d');
   let s = 99; const r = () => (s = (s*16807) % 2147483647) / 2147483647;
-  for(let i=0;i<14000;i++){ g.fillStyle = `rgba(${200 + r()*55|0},${210 + r()*45|0},255,${.15 + r()*.6})`; g.fillRect(r()*W, r()*hgt, 1, 1); if(i % 2000 === 1999){ yield; if(starCache) return; } }
-  for(let i=0;i<16000;i++){ const t = r(); g.fillStyle = `rgba(220,215,255,${.03 + r()*.08})`; g.fillRect(t*W, hgt*.12 + t*hgt*.45 + (r() + r() + r() - 1.5)*70, 2, 2); if(i % 2000 === 1999){ yield; if(starCache) return; } }
+  for(let i=0;i<14000;i++){ g.fillStyle = `rgba(${200 + r()*55|0},${210 + r()*45|0},255,${.15 + r()*.6})`; g.fillRect(r()*W, r()*hgt, 1, 1); if(i % 500 === 499){ yield; if(starCache) return; } }
+  for(let i=0;i<16000;i++){ const t = r(); g.fillStyle = `rgba(220,215,255,${.03 + r()*.08})`; g.fillRect(t*W, hgt*.12 + t*hgt*.45 + (r() + r() + r() - 1.5)*70, 2, 2); if(i % 500 === 499){ yield; if(starCache) return; } }
   for(let i=0;i<500;i++){ g.fillStyle = 'rgba(255,255,255,.95)'; g.fillRect(r()*W, r()*hgt, 2, 2); }
   if(!starCache) starCache = c;
 }
