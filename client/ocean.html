@@ -32,10 +32,12 @@ body.rs-modal .vbtns{display:none}@media (pointer:fine){#info{bottom:max(12px,en
 #quiz .ch{display:grid;grid-template-columns:1fr 1fr;gap:9px}#quiz button{padding:13px 10px;border-radius:12px;border:2px solid transparent;background:#efe3cc;font:700 15px system-ui;color:#3a2a1a}
 #quiz button.ok{background:#c9efc9;border-color:#3fa36b}#quiz button.bad{background:#ffd0c8;border-color:#d2553f}#quiz .ex{font-size:15px;line-height:1.5}#quiz .ex button,#qOk{margin-top:10px;width:100%;background:#f0a23a}
 @media(max-width:420px){#quiz .ch{grid-template-columns:1fr}}
+@media (max-width:600px){.topbtns{gap:6px;flex-wrap:nowrap;max-width:calc(100vw - 70px)}.topbtns button{padding:6px 9px;font-size:13px;white-space:nowrap}.topbtns .lbl{display:none}}
 #info{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:calc(max(12px,env(safe-area-inset-bottom)) + 150px);max-width:min(78vw,360px);text-align:left!important;background:#0009;color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:.3s;pointer-events:none;text-align:center}</style>
+<link rel="preload" href="/assets/models/hero-rogue.glb" as="fetch" crossorigin="anonymous"><!-- xương + animation nhân vật: tải trước tiên -->
 <script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script>
 </head><body>
-<div class="topbtns"><button id="bSchool">🏫 Đến trường</button><button id="bMenu">📚 Menu trường</button></div><div id="info"></div>
+<div class="topbtns"><button id="bSchool" title="Đến trường">🏫<span class="lbl"> Đến trường</span></button><button id="bMenu" title="Menu trường">📚<span class="lbl"> Menu trường</span></button></div><div id="info"></div>
 <button id="bAct" hidden></button>
 <div id="o2"><i><b id="o2f"></b></i></div>
 <div id="joy"><div id="knob"></div></div>

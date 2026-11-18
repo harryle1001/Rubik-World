@@ -37,7 +37,7 @@ export function createPlayer(ctx) {
   // FOV dọc 50° cho màn ngang; màn dọc (điện thoại) mở rộng theo (1/tỷ lệ)^(1/φ), tối đa 72° (= 2 × 36°, góc ngũ giác vàng) → cổng không bị cắt hai bên
   const fitFov = () => { const a = innerWidth / innerHeight; camera.fov = a >= 1 ? CAM.fov : Math.min(72, 2 * THREE.MathUtils.radToDeg(Math.atan(Math.tan(THREE.MathUtils.degToRad(CAM.fov / 2)) / a ** (1 / PHI)))); camera.updateProjectionMatrix(); };
   camera.far = CFG.view.far; fitFov(); addEventListener('resize', fitFov);   // cắt xa = nơi sương đặc hẳn
-  const h = makeHero(ctx.hue); scene.add(h.root);
+  const h = makeHero(ctx.hue); h.body.visible = false; scene.add(h.root);   // khối tạm chỉ hiện nếu nạp nhân vật học sinh lỗi (không còn cảnh đổi nhân vật lúc vào game)
   const pos = new THREE.Vector3(0, 0, 10); pos.y = terrain.heightAt(pos.x, pos.z);
   const vel = new THREE.Vector3(); let vy = 0, grounded = true, rot = Math.PI, phase = 0;
   const cam = { yaw: 0, pitch: CAM.pitch, dist: CAM.dist, drag: -9, yawV: 0, pitchV: 0 }; // yawV/pitchV: quán tính sau khi thả tay kéo
@@ -82,7 +82,7 @@ export function createPlayer(ctx) {
   const self = { pos, cam, input, get rot() { return rot; }, frozen: false, speed: 0, root: h.root, get grounded() { return grounded; } };
   // Nhân vật KayKit có animation: nạp xong thì thay cho nhân vật dựng bằng khối
   let hero = null; const animState = {};
-  loadHero(ctx.heroKind || 'student-male-a').then(r => { if (!r) return; hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
+  self.ready = loadHero(ctx.heroKind || 'student-male-a').then(r => { if (!r) { h.body.visible = true; self.heroFailed = true; return; } hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
   self.emote = name => { if (hero) emote(hero, animState, name); };
   let stepT = 0, stepPh = 1, jumpBuf = 0, coyote = 0;
   // trạng thái chuyển động mượt (tạo 1 lần, không cấp phát mỗi khung hình)

@@ -14,6 +14,7 @@ import { buildZoneEast } from './zone-east.js';
 import { buildExtraZones, buildBoats, placePalms } from './zone-extra.js';
 import { buildNorth, house } from './zone-north.js';
 import { buildZen } from './zone-zen.js';
+import * as MAP from './data/map.js';
 
 const _o = new THREE.Object3D(), _c = new THREE.Color();
 const shade = (hex, l) => '#' + new THREE.Color(hex).offsetHSL(0, 0, l).getHexString();
@@ -47,16 +48,12 @@ function makeAtlas() {
   return api;
 }
 
-// ---------- Dữ liệu phụ của bản đồ 2D (hằng số trong iframe, không nằm trong RS) ----------
-function readExtra(win) {
-  // hằng số bản đồ 2D được xuất qua window.RS (client/school/js/main.js); win.eval không thấy được vì game 2D chạy trong IIFE
-  const RS = (win && win.RS) || {}, out = {};
-  for (const k of ['LAKE', 'LOTUS', 'POND', 'GBOARD', 'RMON', 'FLAG', 'LAMPS', 'TREES', 'FOREST_TREES', 'TENTS', 'DALAT', 'BOOTH', 'CHESS_T', 'MUSIC_SPOTS', 'TRAIL', 'FOREST_GATES']) if (RS[k] !== undefined) out[k] = RS[k];
-  return out;
-}
+// ---------- Dữ liệu phụ của bản đồ (hồ, đèn, cây, lều, phố Đà Lạt…) — lớp dữ liệu riêng island/data/map.js ----------
+const D_KEYS = ['LAKE', 'LOTUS', 'POND', 'GBOARD', 'RMON', 'FLAG', 'LAMPS', 'TREES', 'FOREST_TREES', 'TENTS', 'DALAT', 'BOOTH', 'CHESS_T', 'MUSIC_SPOTS', 'TRAIL', 'FOREST_GATES'];
+const readExtra = () => Object.fromEntries(D_KEYS.map(k => [k, MAP[k]]));
 
 export function buildTownArchitecture(ctx, RS, env) {
-  const { scene } = ctx, { P, S, Y, H, T, gap } = env, R = RS.R, D = readExtra(env.win), low = !!ctx.lowEnd;
+  const { scene } = ctx, { P, S, Y, H, T, gap } = env, R = RS.R, D = readExtra(), low = !!ctx.lowEnd;
   // X3/Z3: đổi 1 toạ độ 2D sang 3D theo khối của bố cục; Z3 dùng khối của lần gọi X3 gần nhất (luôn gọi X3 trước Z3 cho cùng 1 điểm)
   let _b = BLOCKS[0]; const X3 = x => { _b = blockOf2D(x); return _b.o[0] + (x - _b.x2[0]) * S; }, Z3 = y => _b.o[1] + (Math.max(_b.y2[0], Math.min(_b.y2[1], y)) - _b.y2[0]) * S;
   const doors = RS.doors().map(d => P(d.x, d.y));
