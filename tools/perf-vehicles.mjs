@@ -39,8 +39,12 @@ async function openPage() {
     const info = c.renderer.info, r = c.post.render;
     let prog = 0, geo = 0, tex = 0; const seen = new Set();
     const label = o => { let n = o.name, q = o.parent; while (!n && q) { n = q.name; q = q.parent; } return n || o.type; };
-    const newMats = () => { const out = []; c.scene.traverse(o => { if (!o.material) return; for (const m of [].concat(o.material)) { if (seen.has(m)) continue; const pr = c.renderer.properties.get(m); if (pr.currentProgram) { seen.add(m); out.push(label(o) + ':' + (m.name || m.type)); } } }); return out.length ? out : ['(bóng đổ/nội bộ)']; };
-    c.scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) if (c.renderer.properties.get(m).currentProgram) seen.add(m); });
+    const pSeen = new Set(), mProg = new WeakMap();
+    const newMats = () => { const out = [], fresh = info.programs.filter(q => !pSeen.has(q)); fresh.forEach(q => pSeen.add(q));
+      c.scene.traverse(o => { if (!o.material) return; for (const m of [].concat(o.material)) { const cp = c.renderer.properties.get(m).currentProgram; if (cp && fresh.includes(cp)) { out.push(label(o) + ':' + (m.name || m.type) + (mProg.get(m) ? '(đổi)' : '')); fresh.splice(fresh.indexOf(cp), 1); } if (cp) mProg.set(m, cp); } });
+      for (const q of fresh) out.push('?' + q.cacheKey.slice(0, 40).replace(/\s+/g, ' '));
+      return out; };
+    for (const q of info.programs) pSeen.add(q); c.scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) { const cp = c.renderer.properties.get(m).currentProgram; if (cp) mProg.set(m, cp); } });
     c.post.render = function () {
       info.reset(); const s = performance.now(); r.apply(this, arguments); const rd = performance.now() - s;
       const np = info.programs.length, ng = info.memory.geometries, nt = info.memory.textures;
@@ -111,7 +115,7 @@ for (const [name, S] of Object.entries(SCEN)) {
     const pl = __island.aircraft.planes.find(q => !q.parked && !q.route), P = pl ? pl.group.position : __island.player.pos;
     return { n: fr.length, calls: Math.round(avg('calls')), tris: Math.round(avg('tris') / 1000) + 'k', jsAvg: +avg('js').toFixed(1), jsP95: +js[Math.floor(n * 0.95)]?.toFixed(1), jsMax: +js[n - 1]?.toFixed(1), rd: +avg('rd').toFixed(0), spikes: sp.length, shader: fr.reduce((s, f) => s + f.prog, 0), geo: fr.reduce((s, f) => s + Math.max(0, f.geo), 0), far: Math.round(fr[n - 1]?.far || 0), y: Math.round(P.y), top, why: sp.slice(0, 6).map(why), pn: [...new Set(fr.flatMap(f => f.pn || []))] };
   });
-  if (OUT) await page.screenshot({ path: `${OUT}/${name}.png` });
+  if (OUT) await page.screenshot({ path: `${OUT}/${name}.jpg`, quality: 72, scale: 'css' });
   spikes[name] = m.why; const pn = m.pn; delete m.why; delete m.pn; rows.push({ name, ...m });
   console.log(name, JSON.stringify(m), '\n   giật:', spikes[name].join(' | ') || '-', '\n   shader mới:', pn.join(', ') || '-');
   await page.close();
