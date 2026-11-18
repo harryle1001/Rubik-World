@@ -177,22 +177,24 @@ export function createTerrain(scene) {
   const pick = a => a[Math.floor(rand() * a.length)];
   function kitSet(kind, items = []) {
     const def = NATURE[kind], mat = natureMat(def.wind || 0, def.push || 0);
-    const set = { kind, items, near: null, far: null, cap: 0, at: new THREE.Vector3(1e9, 0, 0), last: new THREE.Vector3(0, 0, 10) };
-    const mk = (geo, shadow) => { const m = new THREE.InstancedMesh(geo, mat, set.cap); m.castShadow = shadow; m.receiveShadow = true; m.frustumCulled = false; m.name = 'nature-' + kind; scene.add(m); return m; };
+    const lodOK = def.far && def.type !== 'rock';   // cây: tầng thứ 3 > 89 m dùng khối giản lược (lowGeo)
+    const set = { kind, items, near: null, far: null, lod: null, cap: 0, at: new THREE.Vector3(1e9, 0, 0), last: new THREE.Vector3(0, 0, 10) };
+    const mk = (geo, shadow, mt = mat) => { const m = new THREE.InstancedMesh(geo, mt, set.cap); m.castShadow = shadow; m.receiveShadow = true; m.frustumCulled = false; m.name = 'nature-' + kind; scene.add(m); return m; };
     set.build = () => {
       if (!set.geo || !items.length) return;
       if (set.cap >= items.length) return set.relayout(set.last);
-      for (const m of [set.near, set.far]) if (m) { scene.remove(m); m.dispose(); }
-      set.cap = Math.ceil(items.length * 1.1); set.near = mk(set.geo, !!def.shadow); set.far = def.far ? mk(set.geo, false) : null; set.relayout(set.last);
+      for (const m of [set.near, set.far, set.lod]) if (m) { scene.remove(m); m.dispose(); }
+      set.cap = Math.ceil(items.length * 1.1); set.near = mk(set.geo, !!def.shadow); set.far = def.far ? mk(set.geo, false) : null;
+      set.lod = lodOK ? mk(set.low || (set.low = lowGeo(set.geo, def.type)), false, natureMat(0, 0)) : null; set.relayout(set.last);
     };
     const fill = (m, idx) => { for (let j = 0; j < idx.length; j++) { const q = items[idx[j]]; m.setMatrixAt(j, q.m); m.setColorAt(j, q.c); } m.count = idx.length; m.visible = idx.length > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
     set.relayout = p => {
       set.last.copy(p); if (!set.near) return;
-      const dNear = def.dist === 'tree' ? state.treeDist : def.dist === 'grass' ? state.grassDist : def.dist === 'flower' ? state.grassDist * 0.75 : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = set._a || (set._a = []), b = set._b || (set._b = []);
-      a.length = b.length = 0; const n2 = dNear * dNear, f2 = dFar * dFar;   // dùng lại mảng, so bình phương khoảng cách (không tạo rác mỗi lần)
+      const dNear = def.dist === 'tree' ? state.treeDist : def.dist === 'grass' ? state.grassDist : def.dist === 'flower' ? state.grassDist * 0.75 : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = set._a || (set._a = []), b = set._b || (set._b = []), c = set._c || (set._c = []);
+      a.length = b.length = c.length = 0; const n2 = dNear * dNear, f2 = dFar * dFar, l2 = set.lod ? LOD_D * LOD_D : 1e12;   // dùng lại mảng, so bình phương khoảng cách (không tạo rác mỗi lần)
       // tắt bóng đổ (chất lượng 3) → gần/xa như nhau: gộp hết vào 1 mesh, đỡ 1 draw call mỗi loại
-      const one = !state.shadows; for (let k = 0; k < items.length; k++) { const e = items[k].m.elements, dx = e[12] - p.x, dz = e[14] - p.z, d = dx * dx + dz * dz; if (d < n2) a.push(k); else if (set.far && d < f2) (one ? a : b).push(k); }
-      fill(set.near, a); if (set.far) fill(set.far, b);
+      const one = !state.shadows; for (let k = 0; k < items.length; k++) { const e = items[k].m.elements, dx = e[12] - p.x, dz = e[14] - p.z, d = dx * dx + dz * dz; if (d < n2) a.push(k); else if (set.far && d < f2) (d > l2 ? c : one ? a : b).push(k); }
+      fill(set.near, a); if (set.far) fill(set.far, b); if (set.lod) fill(set.lod, c);
     };
     kitGeo(kind).then(g => { set.geo = g; set.build(); });
     lodSets.push(set); KS[kind] = set; return set;
@@ -244,6 +246,24 @@ export function createTerrain(scene) {
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
   return { heightAt, slopeAt, update, colliders, ground, waterMat, waveHeight: ocean.waveHeight, waveNormal: ocean.waveNormal, water: ocean, state, plants, trunks, nature: { add: addNature } };
+}
+
+// LOD cây xa (> 89 m, Fibonacci; style-guide §5 "55–144 m: hình khối + màu"): tán = khối 20 mặt (cây tròn) / chóp 6 cạnh (thông),
+// thân = trụ 5 cạnh, cỡ và màu lấy từ hộp bao + màu trung bình phần lá (tint = 1) / thân (tint = 0) của model gốc → ~40 tam giác thay 50–230
+const LOD_D = 89;
+function lowGeo(src, type) {
+  const P = src.attributes.position, C = src.attributes.color, T = src.attributes.tint, parts = [];
+  for (const t of [1, 0]) {
+    const bb = new THREE.Box3(), v = new THREE.Vector3(), col = [0, 0, 0]; let n = 0;
+    for (let i = 0; i < P.count; i++) if ((T.getX(i) > 0.5) === !!t) { bb.expandByPoint(v.fromBufferAttribute(P, i)); col[0] += C.getX(i); col[1] += C.getY(i); col[2] += C.getZ(i); n++; }
+    if (!n) continue;
+    const sz = bb.getSize(new THREE.Vector3()), ct = bb.getCenter(new THREE.Vector3());
+    let g = t ? (type === 'pine' ? new THREE.ConeGeometry(0.5, 1, 6, 1) : new THREE.IcosahedronGeometry(0.5, 0)) : new THREE.CylinderGeometry(0.5, 0.5, 1, 5, 1, true);
+    g = g.toNonIndexed(); g.deleteAttribute('uv'); g.scale(t ? sz.x : sz.x * 0.618, sz.y, t ? sz.z : sz.z * 0.618).translate(ct.x, ct.y, ct.z); g.computeVertexNormals();
+    const k = g.attributes.position.count; g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(k * 3).map((_, j) => col[j % 3] / n), 3));
+    g.setAttribute('tint', new THREE.BufferAttribute(new Float32Array(k).fill(t), 1)); parts.push(g);
+  }
+  const g = mergeGeometries(parts); g.computeBoundingSphere(); return g;
 }
 
 // Gộp nhiều geometry (cùng thuộc tính) thành 1
