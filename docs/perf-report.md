@@ -42,3 +42,25 @@ Không phải nguyên nhân: đêm và mưa (đo tách ±10 %), số đèn (2), 
 
 ## 3. Thứ tự đề xuất sửa
 1 (shader) → 5 (perf.js, nhanh, ít rủi ro) → 4 (school.update) → 2 (chia khối gộp) → 3 (gỡ khu xa). Mỗi bước 1 commit, đo lại bằng `tools/perf-tour.mjs`.
+
+## 4. Sau khi sửa (cùng kịch bản `tools/perf-tour.mjs`)
+
+| Điểm | ms/khung (tương đối) | Draw call (bóng) | Tam giác | JS ms/khung | Shader mới khi tới |
+|---|---|---|---|---|---|
+| Cổng trường | 998 → **819** | 173 (38) → 168 (35) | 723 k → **666 k** | 3,33 → **1,50** | 100 → **50** |
+| Quảng trường | 733 → 563 | 144 (37) → 140 (33) | 521 k → 467 k | 1,72 → 1,24 | 2 → 1 |
+| Khu trường | 832 → 691 | 208 (65) → 198 (57) | 654 k → 584 k | 2,51 → 1,67 | 8 → 1 |
+| Thị trấn Đà Lạt | 602 → 440 | 130 (43) → 100 (20) | 361 k → 285 k | 2,36 → 0,75 | 0 → 0 |
+| Sân bay | 541 → 425 | 105 (21) → 97 (19) | 274 k → 267 k | 1,20 → 0,91 | 2 → 0 |
+| Bờ biển | 730 → 590 | 130 (10) → 138 (16) | 472 k → 473 k | 1,25 → 0,85 | 1 → 0 |
+| Lặn biển | 426 → 333 | 56 (7) → 51 (6) | 107 k → 82 k | 1,62 → 1,16 | 5 → 0 |
+| Đêm mưa (cổng) | 1350 → 911 | 177 (41) → 169 (37) | 723 k → 660 k | 2,39 → 1,12 | 8 → 0 |
+| Khinh khí cầu | 1193 → 935 | 180 (38) → 180 (35) | 727 k → 674 k | 1,88 → 1,47 | 2 → 1 |
+| Bay máy bay | 516 → 451 | 109 (22) → 102 (20) | 188 k → 175 k | 2,48 → 1,24 | 1 → 0 |
+
+Kết quả từng mục: (1) shader biên dịch đúng biến thể trước → đi vòng 5 khu 205 → 145 chương trình, gần như hết biên dịch khi tới
+khu mới · (5) đỉnh JS perf.js 36 → ~5 ms · (4) dựng nhân vật dồn 1 lúc 30 → 10–13 ms, nhãn cửa không tạo texture mới ·
+(2) chỉ đạt −8–20 % tam giác (bóng đổ chia ô); chia cả thân/viền làm tăng draw call nên bỏ · (3) không phải rò vật thể; rò thật là
+texture xương của người bị đổi khỏi pool (+22–34 texture/vòng → 0).
+ms/khung giảm cả ở chỗ ít đổi (sân bay −21 %) → một phần do dao động máy đo; tin cậy hơn là tam giác, draw call, JS, shader.
+Chưa làm: bộ tự chỉnh chất lượng (mức 1↔2) — chưa đo được trên máy không GPU.
