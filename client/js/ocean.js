@@ -169,14 +169,16 @@ function unfreezeGuard(dt) {
 // ---------- Chất lượng tự động: mức (0..3) + độ phân giải động (logic trong autoq.js) ----------
 // mức 0: đầy đủ · 1: tắt bloom, giảm độ phân giải · 2: không MSAA, cỏ/cây chi tiết gần hơn, bóng nhỏ · 3: tắt bóng đổ
 const AQ = createAutoQ({ low: CFG.quality.lowFps, high: CFG.quality.highFps, prl: [pr, Math.min(pr, 1.15), 1.0, 0.85] }), Q = AQ.q;
-let qLock = false, appliedL = -1;
+let qLock = false, appliedL = -1; const cheapMSAA = renderer.extensions.has('WEBGL_multisampled_render_to_texture');
 const base = { grass: terrain.state.grassDist, tree: terrain.state.treeDist };
 function applyQuality() {
   const L = Q.level;
   pr = AQ.pr(); renderer.setPixelRatio(pr); post.setSize(innerWidth, innerHeight); ctx.resScale = SK[Q.k];
   post.bloom.enabled = L === 0 && (CFG.quality.bloom || (CFG.isMobile && Q.mode === 'pretty'));   // điện thoại: bloom 1/4 độ phân giải, chỉ ở ✨ Đẹp
   if (L === appliedL) return; appliedL = L;   // dưới đây là phần nặng (dựng lại cỏ/cây, bóng, shader): chỉ khi đổi mức
-  post.setMSAA(L >= 2 ? 0 : CFG.quality.msaa);
+  // MSAA: điện thoại mức 1 chỉ bật khi GPU có WEBGL_multisampled_render_to_texture (khử răng cưa ngay trong ô nhớ của GPU, gần như miễn phí);
+  // không có (iPhone…) thì mẫu phụ ghi ra bộ nhớ + bước gộp → đo: chiếm ~48 % thời gian khung → bỏ, làm nét bù (ambience.js)
+  post.setMSAA(L >= 2 || (L === 1 && CFG.isMobile && !cheapMSAA) ? 0 : CFG.quality.msaa);
   terrain.state.grassDist = base.grass * (L >= 2 ? 0.6 : 1); terrain.state.treeDist = base.tree * (L >= 2 ? 0.7 : 1); terrain.state.shadows = L < 3; terrain.state.relayoutAll(player.pos);
   const ss = L >= 2 ? 512 : CFG.quality.shadowSize; if (sky.sun.shadow.mapSize.x !== ss) { sky.sun.shadow.mapSize.set(ss, ss); sky.sun.shadow.map?.dispose(); sky.sun.shadow.map = null; }
   if (renderer.shadowMap.enabled !== (L < 3)) { renderer.shadowMap.enabled = L < 3; scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => m.needsUpdate = true); }); }
