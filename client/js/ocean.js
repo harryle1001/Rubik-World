@@ -149,12 +149,20 @@ renderer.setAnimationLoop(() => {
   // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong
   // → không khựng lần đầu khi quay camera/đi tới khu mới (three chỉ biên dịch lúc vật thể lần đầu vào khung hình)
   // chờ người chơi đóng bảng đăng nhập 2D (biên dịch chặn luồng chính → bảng đăng nhập bật lại, khoá nhân vật)
-  if (!ctx.warmed && school.ready && !player.frozen && !document.body.classList.contains('rs-modal') && (ctx.warmT = (ctx.warmT || 0) + dt) > 1.618) { ctx.warmed = true; renderer.compileAsync(scene, camera).catch(() => {}); }
+  // biên dịch ĐÚNG biến thể: cảnh vẽ vào render target hậu kỳ (màu tuyến tính, không tone mapping) — biên dịch khi chưa đặt
+  // render target ra biến thể "màn hình" (sRGB + ACES) không bao giờ dùng → phí công, lúc vẽ thật lại khựng biên dịch lần nữa.
+  // Sau đó: mỗi 5 s, nếu cảnh có vật mới (khu/model nạp thêm, đèn đêm bật…) → biên dịch trước phần mới.
+  if (!ctx.warmed && school.ready && !player.frozen && !document.body.classList.contains('rs-modal') && (ctx.warmT = (ctx.warmT || 0) + dt) > 1.618) { ctx.warmed = true; warmShaders(); }
+  else if (ctx.warmed && (ctx.warmT += dt) > 5) { ctx.warmT = 0; const sig = scene.children.length + ':' + perf.list.length + ':' + (sky.state.night > 0.5); if (sig !== ctx.warmSig) { ctx.warmSig = sig; warmShaders(); } }
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
   quality(dt);
 });
 
+function warmShaders() {
+  const prev = renderer.getRenderTarget(); renderer.setRenderTarget(post.composer.renderTarget1);   // compile() lấy biến thể theo render target hiện tại
+  try { renderer.compileAsync(scene, camera).catch(() => {}); } catch (e) {} finally { renderer.setRenderTarget(prev); }
+}
 // ---------- Lưới an toàn: nhân vật bị khoá (player.frozen) mà không còn bảng nào mở → mở khoá ----------
 // Cờ frozen dùng chung (bảng trường, bản đồ, câu đố đền, sổ bí mật, bảng φ & π); bên này đóng/mở chồng lên bên kia
 // (vd. mở bản đồ khi bảng trường đang mở → đóng bản đồ khôi phục frozen = true) làm nhân vật đứng yên mãi.
