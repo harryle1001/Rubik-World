@@ -40,7 +40,8 @@ function layout(B, far = false) {
   // --- cầu cạn nhiều nhịp vòm: đường băng → cổng sau (nhánh A dọc v, nhánh B dọc u) ---
   const vw = VIA.w, yA0 = ground(VIA.uA, VIA.vA0) + 0.3, sl = (Y - yA0) / (-vw - VIA.vA0 + VIA.uB1 - VIA.uA - vw), yC = yA0 + (-vw - VIA.vA0) * sl;
   K.arcade('v', VIA.vA0, -vw, VIA.uA, yA0, yC, vw);                 // nhánh A
-  K.arcade('v', -vw, vw, VIA.uA, yC, yC, vw);                       // chiếu nghỉ ở góc
+  K.arcade('v', -vw, vw, VIA.uA, yC, yC, vw, [-1]);                 // chiếu nghỉ ở góc (mở về phía nhánh B)
+  wall.box(vw - 0.5, vw, yC, yC + 1.1, VIA.uA - vw, VIA.uA + vw, C_WALL_D); solid(VIA.uA - vw, VIA.uA + vw, vw - 0.5, vw, yC + 1.1);
   K.arcade('u', VIA.uA + vw, VIA.uB1 + 1, 0, yC, Y + sl, vw);       // nhánh B → mép vách, cổng sau
   // tháp thiên văn: thân dưới r 8 tới 55 m, ban công r 10,5, thân trên r 6 tới 89 m, mái nón 21 m
   const A = L.astro;
@@ -120,6 +121,7 @@ function layout(B, far = false) {
 /** Bóng xa: khối (1 geometry tô màu đỉnh) + ô cửa sổ (để sáng ban đêm) */
 export function castleFarGeo() {
   const b = new Batch(), w = new Batch(), B = { wall: b, roof: b, glow: b, glass: b, win: w };
+  b.box(-PLAT.hv + 8, PLAT.hv - 8, -3, Y - 0.5, PLAT.u - PLAT.hu + 8, PLAT.u + PLAT.hu - 8, '#8a857c');   // khối vách đá dưới lâu đài (bóng xa khi gò đảo bị ẩn)
   layout(B, true); return { geo: b.build(), win: w.build() };
 }
 

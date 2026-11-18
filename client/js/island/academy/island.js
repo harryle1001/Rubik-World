@@ -99,7 +99,7 @@ function cragMesh() {
     const d = Math.hypot(u - cu, v - cv) || 1, nu = (u - cu) / d, nv = (v - cv) / d;                // pháp tuyến ra ngoài (góc bo)
     if (d > PLAT.r * 0.7 && d < PLAT.r * 1.5) { u = cu + nu * PLAT.r; v = cv + nv * PLAT.r; }
     if (u > PLAT.u + PLAT.hu - 3 && v > QUAY.v0 - QUAY.land - 5 && v < QUAY.v1 + 21) continue;     // chừa đường mòn + bến + lạch
-    const off = 1.5 + rnd() * 3, h = 13 + rnd() * 34, r = 3 + rnd() * 3.4;
+    const off = 0.3 + rnd() * 1.6, h = 13 + rnd() * 34, r = 3 + rnd() * 3.4;
     o.position.set(v + nv * off, -3 + h * 0.42, u + nu * off); o.rotation.set(rnd() * 0.3, rnd() * 6.28, rnd() * 0.3); o.scale.set(r, h * 0.5, r * 0.8); o.updateMatrix(); list.push(o.matrix.clone());
   }
   const m = new THREE.InstancedMesh(geo, matV(), list.length); list.forEach((mx, i) => m.setMatrixAt(i, mx)); m.castShadow = m.receiveShadow = true; m.computeBoundingSphere(); return m;

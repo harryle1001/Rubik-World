@@ -159,17 +159,17 @@ export function makeKit(B, { far = false, Y, ground }) {
   };
 
   /** Cầu / cầu cạn đầy đủ: mặt cầu dốc đều y0 → y1, lan can 2 bên (va chạm theo từng nhịp), nhịp vòm + trụ; ghi vào decks */
-  const arcade = (axis, a0, a1, f, y0, y1, w) => {
+  const arcade = (axis, a0, a1, f, y0, y1, w, rails = [-1, 1]) => {
     const len = Math.abs(a1 - a0), L = Math.hypot(len, y1 - y0), ang = Math.atan((y1 - y0) / (a1 - a0)), am = (a0 + a1) / 2, ym = (y0 + y1) / 2;
     const slab = (wd, h, off, yc, col) => axis === 'v'
       ? wall.add(new THREE.BoxGeometry(L, h, wd), col, am, yc, f + off, 0, 0, ang)
       : wall.add(new THREE.BoxGeometry(wd, h, L), col, f + off, yc, am, 0, -ang, 0);
     slab(2 * w, 1.2, 0, ym - 0.6 / Math.cos(ang), COL.wall);                                // mặt cầu
-    if (!far) for (const s of [-1, 1]) slab(0.5, 1.1, s * (w - 0.25), ym + 0.55, COL.wallD);  // lan can 1,1 m
+    if (!far) for (const s of rails) slab(0.5, 1.1, s * (w - 0.25), ym + 0.55, COL.wallD);  // lan can 1,1 m
     arches(axis, a0, a1, f, y0, y1, w);
     const lo = Math.min(a0, a1), hi = Math.max(a0, a1), yAt = a => lerp(y0, y1, (a - a0) / (a1 - a0));
     decks.push({ axis, a0: lo, a1: hi, f, w, y: yAt });
-    if (!far) for (let a = lo; a < hi - 0.01; a += 8) { const b = Math.min(hi, a + 8), top = Math.max(yAt(a), yAt(b)) + 1.1; for (const s of [-1, 1]) { const c = f + s * (w - 0.25); if (axis === 'v') solid(c - 0.25, c + 0.25, a, b, top); else solid(a, b, c - 0.25, c + 0.25, top); } }
+    if (!far) for (let a = lo; a < hi - 0.01; a += 8) { const b = Math.min(hi, a + 8), top = Math.max(yAt(a), yAt(b)) + 1.1; for (const s of rails) { const c = f + s * (w - 0.25); if (axis === 'v') solid(c - 0.25, c + 0.25, a, b, top); else solid(a, b, c - 0.25, c + 0.25, top); } }
   };
 
   return { solid, winAt, range, tower, mass, turret, curtain, watch, arches, arcade, merlons, boxes, tips, decks, inst, put };
