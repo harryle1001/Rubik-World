@@ -45,7 +45,7 @@ export function createPerf(ctx) {
     if (r < NOSHADOW_R) o.castShadow = false;
     if (r < SMALL_R && !o.isSprite) list.push({ o, kind: 'small', r });
   }
-  // quét: chỉ gom vật CHƯA đăng ký (rẻ); đăng ký (tính hình cầu bao…) chia 34 vật/khung → không dồn vài chục ms vào 1 khung
+  // quét: chỉ gom vật CHƯA đăng ký (rẻ); đăng ký (tính hình cầu bao…) tối đa 1,5 ms/khung → không dồn vài chục ms vào 1 khung
   const pending = [];
   const scan = () => scene.traverse(o => { const u = o.userData; if (!u._pf && !u._pq) { u._pq = 1; pending.push(o); } });
   const cam = new THREE.Vector3();
@@ -63,7 +63,7 @@ export function createPerf(ctx) {
   let tScan = 6.5, cur = 0;
   function update(dt) {
     if ((tScan += dt) > 8) { tScan = 0; scan(); }
-    for (let j = 0; j < 34 && pending.length; j++) { const o = pending.pop(); delete o.userData._pq; register(o); }
+    const t0 = performance.now(); while (pending.length && performance.now() - t0 < 1.5) { const o = pending.pop(); delete o.userData._pq; register(o); }   // ≤ 1,5 ms/khung
     if (!list.length) return;
     camera.getWorldPosition(cam);
     const k = (ctx.underwater ? 0.5 : 1) * (ctx.perfScale || 1);   // dưới nước nhìn gần hơn; chất lượng thấp: ẩn sớm hơn
