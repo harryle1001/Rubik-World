@@ -86,8 +86,12 @@ function runwayGeo() {
 
 // mỏm đá lởm chởm dọc chân vách (1 InstancedMesh): vách 55 m nhìn dựng đứng, bóng đổ gãy khúc
 function cragMesh() {
-  const geo = new THREE.IcosahedronGeometry(1, 0), n = geo.attributes.position.count, col = new Float32Array(n * 3), c = new THREE.Color('#6a6660');
-  for (let i = 0; i < n; i++) { const k = 0.85 + 0.15 * Math.sin(i * 2.3); col.set([c.r * k, c.g * k, c.b * k], i * 3); }
+  const geo = new THREE.DodecahedronGeometry(1, 0).toNonIndexed(), n = geo.attributes.position.count, col = new Float32Array(n * 3), c = new THREE.Color(), rock = new THREE.Color('#6a6660'), moss = new THREE.Color('#5f7352');
+  geo.computeVertexNormals();
+  for (let i = 0; i < n; i += 3) {                                                              // mỗi mặt 1 màu: mặt hướng lên phủ rêu, mặt đứng đá phong hoá
+    const ny = geo.attributes.normal.getY(i), k = 0.8 + 0.2 * Math.abs(Math.sin(i * 1.7));
+    c.copy(rock).lerp(moss, Math.max(0, ny - 0.35) * 1.4).multiplyScalar(k); for (let j = 0; j < 3; j++) col.set([c.r, c.g, c.b], (i + j) * 3);
+  }
   geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
   const list = [], o = new THREE.Object3D(); let s = 233; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
   const P = 2 * (2 * PLAT.hu + 2 * PLAT.hv), N = 144;
@@ -99,8 +103,8 @@ function cragMesh() {
     const d = Math.hypot(u - cu, v - cv) || 1, nu = (u - cu) / d, nv = (v - cv) / d;                // pháp tuyến ra ngoài (góc bo)
     if (d > PLAT.r * 0.7 && d < PLAT.r * 1.5) { u = cu + nu * PLAT.r; v = cv + nv * PLAT.r; }
     if (u > PLAT.u + PLAT.hu - 3 && v > QUAY.v0 - QUAY.land - 5 && v < QUAY.v1 + 21) continue;     // chừa đường mòn + bến + lạch
-    const off = 0.3 + rnd() * 1.6, h = 13 + rnd() * 34, r = 3 + rnd() * 3.4;
-    o.position.set(v + nv * off, -3 + h * 0.42, u + nu * off); o.rotation.set(rnd() * 0.3, rnd() * 6.28, rnd() * 0.3); o.scale.set(r, h * 0.5, r * 0.8); o.updateMatrix(); list.push(o.matrix.clone());
+    const off = rnd() * 1.3, h = 8 + rnd() * 34, r = 3.4 + rnd() * 4.2;
+    o.position.set(v + nv * off, -3 + h * 0.42, u + nu * off); o.rotation.set(rnd() * 0.3, rnd() * 6.28, rnd() * 0.3); o.scale.set(r, h * 0.5, r * 0.62); o.updateMatrix(); list.push(o.matrix.clone());
   }
   const m = new THREE.InstancedMesh(geo, matV(), list.length); list.forEach((mx, i) => m.setMatrixAt(i, mx)); m.castShadow = m.receiveShadow = true; m.computeBoundingSphere(); return m;
 }
