@@ -6,7 +6,8 @@
 //  · Người/thú có xương (SkinnedMesh, trước luôn vẽ): cắt theo khung hình bằng hình cầu bao nới rộng φ lần.
 //  · Vật < 1 m không đổ bóng (bóng đổ của vật nhỏ gần như không thấy, nhưng tốn 1 draw call ở pass bóng);
 //    điện thoại: bán kính < 1/φ ≈ 0,62 m (cả InstancedMesh không ghi itemR: lấy cỡ 1 vật từ hình cầu bao lưới × tỉ lệ instance đầu).
-// Ẩn bằng layers (không đụng .visible mà file khác đang điều khiển). Quét cảnh tìm vật mới mỗi 2 s, xét khoảng cách mỗi 0,2 s.
+// Ẩn bằng layers (không đụng .visible mà file khác đang điều khiển). Quét cảnh tìm vật mới mỗi 8 s (lần đầu sau 1,5 s);
+// xét khoảng cách XOAY VÒNG: mỗi khung 1/8 danh sách → mỗi vật được xét ~8 khung/lần, không dồn cả danh sách vào 1 khung (hết giật định kỳ).
 import * as THREE from 'three';
 import { PHI } from './layout.js';
 import { CFG } from './config.js';
@@ -44,7 +45,9 @@ export function createPerf(ctx) {
     if (r < NOSHADOW_R) o.castShadow = false;
     if (r < SMALL_R && !o.isSprite) list.push({ o, kind: 'small', r });
   }
-  const scan = () => scene.traverse(register);
+  // quét: chỉ gom vật CHƯA đăng ký (rẻ); đăng ký (tính hình cầu bao…) chia 34 vật/khung → không dồn vài chục ms vào 1 khung
+  const pending = [];
+  const scan = () => scene.traverse(o => { const u = o.userData; if (!u._pf && !u._pq) { u._pq = 1; pending.push(o); } });
   const cam = new THREE.Vector3();
   function hide(o, h) {
     const L = o.layers;
@@ -57,15 +60,18 @@ export function createPerf(ctx) {
     else { const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); _s.copy(g.boundingSphere); }
     _s.applyMatrix4(o.matrixWorld); return Math.max(0, _s.center.distanceTo(cam) - _s.radius);
   }
-  let tScan = 1.5, tCheck = 0;
+  let tScan = 6.5, cur = 0;
   function update(dt) {
-    if ((tScan += dt) > 2) { tScan = 0; scan(); }
-    if ((tCheck += dt) < 0.2) return; tCheck = 0;
+    if ((tScan += dt) > 8) { tScan = 0; scan(); }
+    for (let j = 0; j < 34 && pending.length; j++) { const o = pending.pop(); delete o.userData._pq; register(o); }
+    if (!list.length) return;
     camera.getWorldPosition(cam);
     const k = (ctx.underwater ? 0.5 : 1) * (ctx.perfScale || 1);   // dưới nước nhìn gần hơn; chất lượng thấp: ẩn sớm hơn
-    for (let i = list.length - 1; i >= 0; i--) {
-      const e = list[i], o = e.o;
-      if (!o.parent) { hide(o, false); list.splice(i, 1); continue; }   // vật đã bị gỡ khỏi cảnh
+    let n = Math.ceil(list.length / 8);
+    while (n-- > 0 && list.length) {
+      if (cur >= list.length) cur = 0;
+      const i = cur++, e = list[i], o = e.o;
+      if (!o.parent) { hide(o, false); list.splice(i, 1); cur--; continue; }   // vật đã bị gỡ khỏi cảnh
       const d = near(o);
       if (e.kind === 'outline') hide(o, d > OUTLINE_D * k);
       else if (e.kind === 'skin') hide(o, d > FAR_K * k);
