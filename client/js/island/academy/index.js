@@ -15,6 +15,9 @@ import { createMagic, WOODS, CORES } from './magic.js';
 import { createSpells } from './spells.js';
 import { createAtmos } from './atmos.js';
 import { createContent } from './content.js';
+import { create as createPaintings } from './paintings.js';   // tranh biết cử động
+import { create as createCreatures } from './creatures.js';   // sinh vật kỳ ảo
+import { create as createTree } from './tree.js';             // cây cổ thụ biết nói
 import { L as CL } from './castle.js';
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
@@ -83,6 +86,7 @@ export function createAcademy(ctx) {
   // ---------- đũa phép: Tiệm Đũa Pha Lê cạnh cầu tàu đảo chính ----------
   const magic = ctx.magic = createMagic(ctx);
   const spells = createSpells(ctx, magic, { toWorld, L: CL, Y: BASE }), content = createContent(ctx, magic, { toWorld, L: CL, Y: BASE });
+  const extras = [createPaintings, createCreatures, createTree].map(f => f(ctx, magic, { toWorld, toLocal, L: CL, Y: BASE }));   // mỗi mô-đun 1 file riêng
   const shop = pw(pr0 - 5, -7), shopY = base(shop[0], shop[1]);
   {
     const b = new Batch(), wood = '#a8744a', woodD = '#6e4a30';
@@ -106,8 +110,8 @@ export function createAcademy(ctx) {
   function stream() {
     const p = ferry.riding || (ctx.aircraft && ctx.aircraft.flying) ? ctx.camera.position : player.pos;
     const [u, v] = toLocal(p.x, p.z), d = Math.max(0, isleDist(u, v));
-    if (!isle && d < LOAD) { isle = buildIsland(ctx); isle.atmos = createAtmos(ctx, isle.group); boxes.push(...isle.castle.boxes); spells.build(isle.group); content.build(); if (!planted) { plantIsland(ctx); planted = true; } }
-    else if (isle && d > UNLOAD) { spells.unbuild(); content.unbuild(); for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
+    if (!isle && d < LOAD) { isle = buildIsland(ctx); isle.atmos = createAtmos(ctx, isle.group); boxes.push(...isle.castle.boxes); spells.build(isle.group); content.build(); for (const x of extras) x.build(); if (!planted) { plantIsland(ctx); planted = true; } }
+    else if (isle && d > UNLOAD) { spells.unbuild(); content.unbuild(); for (const x of extras) x.unbuild(); for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
     far.moundOn = !isle;
     if (isle) isle.castle.group.visible = far.dist < 296 + 89;
   }
@@ -115,7 +119,7 @@ export function createAcademy(ctx) {
   function update(dt) {
     ferry.update(dt);
     stream(); far.update();
-    if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); }
+    if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); for (const x of extras) x.update(dt, t); }
     magic.update(dt); spells.update(dt); content.update(dt, performance.now() / 1000);
     if (ferry.riding || player.vehicle) return;
     const pp = player.pos;
