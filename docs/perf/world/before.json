@@ -1,0 +1,47 @@
+[
+ {
+  "name": "cong-truong",
+  "calls": 179,
+  "sh": 40,
+  "ktris": 749,
+  "js": 7.7,
+  "gpu": 1060.7,
+  "top": "Mesh:35 detail-cell:6 Points:5 ground:4 person-body:4"
+ },
+ {
+  "name": "quang-truong",
+  "calls": 141,
+  "sh": 37,
+  "ktris": 522,
+  "js": 1.9,
+  "gpu": 820.4,
+  "top": "Mesh:27 Points:5 kit-plant_palm_bend:4 kit-plant_beach_grass:4 ground:3"
+ },
+ {
+  "name": "thi-tran",
+  "calls": 146,
+  "sh": 35,
+  "ktris": 432,
+  "js": 1.8,
+  "gpu": 667.9,
+  "top": "Mesh:37 person-body:6 Points:5 ground:4 Crystal_Big:4"
+ },
+ {
+  "name": "rung-doi",
+  "calls": 161,
+  "sh": 56,
+  "ktris": 338,
+  "js": 1.6,
+  "gpu": 548.6,
+  "top": "Mesh:34 Deer:7 kit-plant_beach_grass:5 Points:5 ground:3"
+ },
+ {
+  "name": "bo-bien",
+  "calls": 85,
+  "sh": 22,
+  "ktris": 206,
+  "js": 1.8,
+  "gpu": 500.2,
+  "top": "Mesh:23 Points:5 ground:2 nature-oak:2 nature-fat:2"
+ }
+]
