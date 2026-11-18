@@ -95,3 +95,21 @@ Vàng φ (`brass`) ≤ 1/13 khung hình. Độ bão hoà ≤ 0,62; màu sáng nh
 8. Tự chấm ≥ 9/10 theo: hình khối đọc rõ ở 21 m · màu đúng bảng · không cháy/không bệt · viền đều · draw call trong ngân sách.
 
 Ảnh khu mẫu: `docs/shots/sample-look/` (trước/sau, 4 giờ, 1:1, điện thoại).
+
+## 9. Ngoại lệ: Học viện Pha Lê (đảo lâu đài, `client/js/island/academy/`)
+
+Lâu đài Gothic dùng bảng màu và vật liệu riêng. Mọi quy tắc khác của file này vẫn giữ nguyên.
+
+| Nhóm | Hex | Dùng cho |
+|---|---|---|
+| Đá xám phong hoá | `#9f9a92` · tối `#7f7a73` · chân tường rêu `#6f7466` | tường, tháp, trụ chống, chân tường |
+| Mái đá phiến · đồng xanh | `#3f4a56` · `#4f6f66` | mái nón tháp cao (≥ 55 m) · tháp thấp, cầu có mái |
+| Cửa sổ | ngày `#2a3440` (kính tối) → đêm `#ffd98a` (ánh nến) | hàng trăm ô kính nhọn, sáng dần theo `sky.state.night` |
+| Gỗ · nến | `#6e4a30` · `#a8744a` · `#f6f1e6` | bàn dài, kệ sách, nến bay |
+
+- **Hình khối:** mái nón tháp cao = bán kính × φ³; tháp chính 89 m, tháp góc 55 m, tháp nhỏ 34 m. Dọc nóc mái có tháp nhọn nhỏ, mỗi chiếc cách nhau 34 m, để bóng dáng lởm chởm.
+- **Texture (chỉ ở đây):** vân đá + rêu vẽ bằng canvas 512 px (không tải file ngoài), chiếu tam diện theo toạ độ thế giới. Chỉ phủ lên màu xám (độ bão hoà thấp), không phủ lên gỗ. Phương án A = toon thuần như cả game, B = toon + vân đá. Chọn bằng `?castle=a|b` (lưu `academy.look`).
+- **Ánh sáng:** vẫn không dùng `PointLight`. Cửa sổ, nến và đèn lồng tự phát sáng bằng vật liệu emissive. Ánh trăng xanh lạnh tương phản với cửa sổ vàng ấm.
+- **Phép thuật khắp nơi:** đom đóm/hạt sáng (Points, 1 draw call), sương hồ (InstancedMesh 21 tấm, 1 draw call), cờ đuôi nheo, cú bay quanh tháp. Mỗi thứ chỉ tốn 1 draw call.
+- **LOD:** < 144 m vẽ đủ chi tiết (trụ chống, tháp nhọn, cờ, cửa sổ tháp) · 144–296 m chỉ còn khối chính + cửa sổ · > 296 m bóng xa (`far.js`, có đốm cửa sổ ban đêm).
+- **Ngân sách:** đứng trong lâu đài ≤ 233 draw call cả khung hình (điện thoại), tam giác lâu đài ≤ 144 k.
