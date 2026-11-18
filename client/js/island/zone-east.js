@@ -544,16 +544,30 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
     pave(gy.x0 + 0.3, gy.z0 + 0.3, gy.x1 - 0.3, gy.z1 - 0.3, '#e3dccd');
     const cx = gy.cx, cz = gy.cz + 0.6, w = 18, dd = 11;
     e.group(cx, Y, cz, PI, () => {   // mặt tiền quay ra phố phía bắc
-      body(e, w, 4.2, dd, '#f2d4a0', K.white);
-      e.push(new THREE.CylinderGeometry(6.0, 6.0, w + 0.4, 14, 1, false, 0, PI), '#e8913c', 0, 4.1, 0, 0, 0, PI / 2, 0.5, 1, 1);
-      for (let i = -2; i <= 2; i++) e.push(new THREE.TorusGeometry(6.02, 0.09, 3, 10, PI), K.white, i * 4, 4.1, 0, PI / 2, 0, 0, 1, 0.5, 1);
-      e.box(10, 2.8, 0.12, 0, 0.6, dd / 2 + 0.02, K.glass); for (let i = 0; i <= 5; i++) e.box(0.12, 2.8, 0.18, -5 + i * 2, 0.6, dd / 2 + 0.03, K.white);
-      doorF(e, 0, dd / 2 + 0.06, 2.0, 2.4, '#2b63d9');
-      for (const s of [-1, 1]) { e.box(0.08, 1.8, 0.08, s * 0.7, 4.6, dd / 2 + 0.6, K.ink); e.push(new THREE.TorusGeometry(0.42, 0.09, 4, 12), '#d9a441', s * 0.7, 4.3, dd / 2 + 0.6); }
-      e.box(2.2, 0.12, 0.12, 0, 6.4, dd / 2 + 0.6, K.ink);
-      sign(e, 'NHÀ THI ĐẤU', 4.6, 0.65, 0, 3.6, dd / 2 + 0.12, 0, '#8a3b2e', '#fff', '#f2c14e');
+      // NHÀ THỂ CHẤT: tường học viện cao 3,4·φ ≈ 5,5 m, cửa sổ vòm cao (cao : rộng = φ²) cách φ³ m; mái vòm cuốn lợp ngói (vồng = nửa nhịp / φ),
+      // gân mái đỏ sẫm cách φ³ m, đầu hồi bán nguyệt có ô tròn; trán cửa chính mang biểu tượng 2 vòng treo đồng thau.
+      const H = 3.4 * PHI, HV = H + 0.62, WW = 1.3, WH = WW * PHI * PHI, RV = dd / 2 + 0.5, KV = 1 / PHI;
+      hall(e, w, dd, H, HV, [[1.0, WW, WH]], PHI ** 3, (u, sd) => sd === 'f' && Math.abs(u) < 2.4);
+      e.push(new THREE.CylinderGeometry(RV, RV, w + 0.9, 21, 1, true, 0, PI), FC.roof, 0, HV + 0.02, 0, 0, 0, PI / 2, KV, 1, 1);
+      e.push(new THREE.CylinderGeometry(RV - 0.12, RV - 0.12, w + 0.86, 21, 1, true, 0, PI).scale(1, 1, -1), FC.ridge, 0, HV, 0, 0, 0, PI / 2, KV, 1, 1);   // mặt dưới mái
+      const nr = Math.round(w / PHI ** 3); for (let i = 0; i <= nr; i++) e.push(new THREE.TorusGeometry(RV + 0.04, 0.12, 4, 14, PI), i % nr ? FC.ridge : FC.trim, -w / 2 - 0.3 + i * (w + 0.6) / nr, HV + 0.02, 0, PI / 2, 0, 0, 1, KV, 1);
+      for (const s of [-1, 1]) {   // đầu hồi bán nguyệt + ô tròn
+        e.push(new THREE.CircleGeometry(RV - 0.3, 21, 0, PI), FC.frieze, s * (w / 2 + 0.1), HV, 0, s * PI / 2, 0, 0, 1, KV, 1);
+        oculus(e, e, s * (w / 2 + 0.12), HV + (RV - 0.3) * KV * 0.42, 0, 0.62, s * PI / 2);
+      }
+      // cửa chính đôi 2,6 × 1,6 (φ²) + ô quạt; tiền sảnh có trán tường nhô lên khỏi mái
+      e.group(0, 0, dd / 2 + 0.25, 0, () => { const dg = d.follow(e); G.pre = e.pre;
+        for (const s of [-1, 1]) { cbox(e, 0.36, 3.1, 0.5, s * 1.05, 0, 0.05, FC.trim, 0.04); e.box(0.8, 2.6, 0.08, s * 0.42, 0, 0.02, FC.door); }
+        cbox(e, 2.8, 0.2, 0.5, 0, 3.0, 0.05, FC.trim, 0.04); fanlight(e, G, dg, 3.2, 0.25, 0.8, 0.62);
+        cbox(e, 4.2, 0.15, 1.2, 0, 0, 0.75, FC.stone, 0.03);
+        G.pre = null; d.follow(null); });
+      const pd = pediment(e, 5.2, HV, dd / 2 + 0.6, 2.0, 0.62, false);
+      sign(e, 'NHÀ THỂ CHẤT', 4.4, 0.5, 0, HV + 0.31, pd.zf + 0.06, 0, PAL.roofD.hex, PAL.stoneCreamL.hex, PAL.brass.hex);
+      for (const s of [-1, 1]) { const x = s * 0.62, y = pd.y1 + pd.hp * 0.5; e.box(0.05, 0.5, 0.05, x, y, pd.zf + 0.1, FC.dark); e.push(new THREE.TorusGeometry(0.3, 0.06, 4, 13), FC.gold, x, y - 0.06, pd.zf + 0.12); }
+      e.box(1.6, 0.06, 0.06, 0, pd.y1 + pd.hp * 0.5 + 0.48, pd.zf + 0.1, FC.dark);
+      for (const s of [-1, 1]) vine(d.follow(e), s * (w / 2 + 0.42), dd / 2 + 0.42, HV - 0.4, s + 7); d.follow(null);
     });
-    collide(cx - w / 2 - 0.2, cz - dd / 2 - 0.2, cx + w / 2 + 0.2, cz + dd / 2 + 0.2, 7);
+    collide(cx - w / 2 - 0.2, cz - dd / 2 - 0.2, cx + w / 2 + 0.2, cz + dd / 2 + 0.2, 10);
     for (const s of [-1, 1]) planter(d, cx + s * 3, cz - dd / 2 - 1.2, s > 0 ? K.yellow : '#ff8ac2');
   });
 
