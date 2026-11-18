@@ -1,6 +1,7 @@
 // ================= v47 · WORLD FIX: mép khu sạch, phố người chơi đông vui, biển mở quanh đảo, đường vào phòng =================
 // Mọi tên toàn cục ở đây có tiền tố v47w. Gắn vào v46 bằng cách bọc hàm (không sửa file cũ ngoài v46/).
 const V47W = {pc:{}, key:'', band:null, stalls:null, ped:null};
+const V47W_FEATHER = 55;   // school yard margin kept around buildings, faded over its outer 61.8%
 const V47W_BIG = {sail:1, navy:1, pirate2:1, cargo:1, tour:1, fish:1};   // tàu lớn: chạy vòng quanh đảo ngoài khơi
 
 // ---------- 1. nền khu: bỏ màu cỏ cũ (để cỏ mới của đảo lộ ra) + bỏ dải đường cũ ở lề khu ----------
@@ -19,7 +20,10 @@ function v47wPatch(z){
     const ix0 = o.x - e.x0 - 1, ix1 = o.x + o.w - e.x0, iy0 = o.y - e.y0 - 1, iy1 = o.y + o.h - e.y0;
     for(let y = 0; y < h; y++){ const inY = y > iy0 && y < iy1;
       for(let x = 0, i = y*w*4; x < w; x++, i += 4){ if(!d[i + 3]) continue;
-        if(eq(i, G[0]) || eq(i, G[1]) || (!school && !(inY && x > ix0 && x < ix1))) d[i + 3] = 0; } }
+        if(eq(i, G[0]) || eq(i, G[1]) || (!school && !(inY && x > ix0 && x < ix1))){ d[i + 3] = 0; continue; }
+        // school yards: keep the old paving only close to the building and fade it out softly (no hard cut edges)
+        if(school){ const ox = x < ix0 ? ix0 - x : x > ix1 ? x - ix1 : 0, oy = y < iy0 ? iy0 - y : y > iy1 ? y - iy1 : 0, dd = Math.max(ox, oy);
+          if(dd > V47W_FEATHER) d[i + 3] = 0; else if(dd > V47W_FEATHER*.382) d[i + 3] = Math.round(d[i + 3]*(V47W_FEATHER - dd)/(V47W_FEATHER*.618)); } } }
     g.putImageData(im, 0, 0);
   } catch(err){}
   V47W.pc[z.id] = c; return c;
@@ -166,3 +170,11 @@ const v47wOB0 = v46OverviewBuildings;
 v46OverviewBuildings = function(g){ v47wOB0(g); try { v47wFarHouses(g, true); const B = v47wBand(); if(B){ g.fillStyle = '#d8c8a0'; g.fillRect(B.x0, B.y0, B.x1 - B.x0, B.y1 - B.y0); V47W.stalls.forEach(s => { g.fillStyle = s.c; g.fillRect(s.x - 56, s.y - 86, 112, 50); }); } } catch(e){} };
 // called from v46Render after the zones are drawn
 function v47wWorld(VBn){ try { v47wShips(VBn); } catch(e){} try { v47wStreet(VBn); } catch(e){} }
+
+// ---------- v47x: walking down to the beach in a zone must not jump into a boat by itself (use the Boat button) ----------
+const v47wOW0 = openWorldTick;
+openWorldTick = function(dt){ const c = agents.find(a => a.controlled);
+  if(typeof V46 !== 'undefined' && V46.on && c && !c.boat && !c.v16fly && keys.down && c.y > 940){ const k = keys.down; keys.down = false;
+    if(!V47W.boatHint && c._z === 'harbor'){ V47W.boatHint = 1; toast('⛵ Muốn đi thuyền thì bấm nút Thuyền nhé.'); }
+    try { return v47wOW0(dt); } finally { keys.down = k; } }
+  return v47wOW0(dt); };
