@@ -86,8 +86,8 @@ export function createDive(ctx) {
   const UU = { uFog: { value: new THREE.Color() }, uSky: { value: new THREE.Color() }, uSun: { value: new THREE.Color() }, uSunDir: { value: new THREE.Vector3(0, 1, 0) }, uTime: WIND.uTime, uFar: { value: 34 } };
   const under = new THREE.Mesh(new THREE.PlaneGeometry(220, 220, 1, 1).rotateX(Math.PI / 2), new THREE.ShaderMaterial({
     uniforms: UU, fog: false,
-    vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }',
-    fragmentShader: `uniform vec3 uFog, uSky, uSun, uSunDir; uniform float uTime, uFar; varying vec3 vW;
+    vertexShader: 'varying highp vec3 vW; void main(){ vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }',
+    fragmentShader: `uniform vec3 uFog, uSky, uSun, uSunDir; uniform float uFar; uniform highp float uTime; varying highp vec3 vW;
       void main(){ vec3 V = normalize(vW - cameraPosition);
         float rip = sin(vW.x * 1.3 + uTime * 1.1) * sin(vW.z * 1.1 - uTime * 0.9) + 0.5 * sin((vW.x - vW.z) * 2.3 + uTime * 1.7);
         float win = smoothstep(0.6, 0.74, V.y + rip * 0.025);                       // góc tới hạn ≈ 48,6° (cos ≈ 0,66)
@@ -104,8 +104,8 @@ export function createDive(ctx) {
   const CU = { uTex: { value: causticTex() }, uTime: WIND.uTime, uA: { value: 1 }, uFar: { value: 34 } };
   const caustic = new THREE.Mesh(cGeo, new THREE.ShaderMaterial({
     uniforms: CU, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2,
-    vertexShader: 'attribute float dep; varying vec3 vW; varying float vD; void main(){ vD = dep; vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }',
-    fragmentShader: `uniform sampler2D uTex; uniform float uTime, uA, uFar; varying vec3 vW; varying float vD;
+    vertexShader: 'attribute float dep; varying highp vec3 vW; varying float vD; void main(){ vD = dep; vec4 w = modelMatrix*vec4(position,1.); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }',
+    fragmentShader: `uniform sampler2D uTex; uniform float uA, uFar; uniform highp float uTime; varying highp vec3 vW; varying float vD;
       void main(){ vec2 p = vW.xz;
         float a = texture2D(uTex, p * 0.21 + vec2(uTime * 0.03, uTime * 0.019)).r, b = texture2D(uTex, p * 0.16 - vec2(uTime * 0.024, -uTime * 0.027)).r;
         float k = min(a, b) * 0.6 + a * b * 0.25;
@@ -133,7 +133,7 @@ export function createDive(ctx) {
         float d = length(p - cameraPosition); vF = smoothstep(1.5, 6., d) * (1. - smoothstep(18., 34., d));
         gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.); }`,
     fragmentShader: `uniform float uTime, uA; uniform vec3 uCol; varying vec2 vUv; varying float vF, vS;
-      void main(){ float s = sin(3.1416 * vUv.x); float a = pow(1. - vUv.y, 1.618) * s * s * (0.55 + 0.45 * sin(uTime * 0.7 + vS)) * vF * uA;
+      void main(){ float s = sin(3.1416 * vUv.x); float a = pow(max(1. - vUv.y, 0.), 1.618) * s * s * (0.55 + 0.45 * sin(uTime * 0.7 + vS)) * vF * uA;
         gl_FragColor = vec4(uCol * a, 1.); }`,
   }), NR);
   rays.visible = false; rays.frustumCulled = false; rays.renderOrder = 2; scene.add(rays);

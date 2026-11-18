@@ -14,9 +14,36 @@ const ADMIN_FILE = path.join(ROOT, 'data', 'admin.json');
 const app = express();
 app.get('/sw.js', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'sw.js')); });
 app.get('/manifest.webmanifest', (req, res) => { res.type('application/manifest+json'); res.sendFile(path.join(ROOT, 'client', 'manifest.webmanifest')); });
+// Nén brotli/gzip (zlib có sẵn của Node, không thêm thư viện): JS, HTML, model .glb (meshopt được thiết kế để nén tiếp),
+// wasm… Nén 1 lần rồi giữ trong bộ nhớ (theo thời điểm sửa file). three.module.js 1,27 MB → ~0,25 MB qua mạng.
+const zlib = require('zlib');
+const ZIP_EXT = /\.(js|mjs|json|html|css|glb|wasm|svg|txt|webmanifest)$/i, zipCache = new Map();
+function compressed(dir, prefix = '') {
+  return (req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+    const rel = decodeURIComponent(req.path); if (!ZIP_EXT.test(rel) || rel.includes('..')) return next();
+    const ae = req.headers['accept-encoding'] || '', enc = /\bbr\b/.test(ae) ? 'br' : /\bgzip\b/.test(ae) ? 'gzip' : null; if (!enc) return next();
+    const file = path.join(dir, rel); let st; try { st = fs.statSync(file); } catch (e) { return next(); }
+    if (!st.isFile() || st.size < 1024) return next();
+    const key = enc + ':' + file, tag = `W/"${st.size.toString(36)}-${st.mtimeMs.toString(36)}-${enc}"`;
+    let c = zipCache.get(key);
+    if (!c || c.tag !== tag) {
+      const raw = fs.readFileSync(file);
+      const body = enc === 'br' ? zlib.brotliCompressSync(raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 9, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }) : zlib.gzipSync(raw, { level: 9 });
+      if (body.length > raw.length * 0.95) return next();   // nén không lợi (ảnh đã nén…) → gửi nguyên
+      c = { tag, body }; zipCache.set(key, c);
+    }
+    res.set({ 'Content-Encoding': enc, 'Vary': 'Accept-Encoding', 'ETag': c.tag, 'Last-Modified': st.mtime.toUTCString(), 'Cache-Control': 'public, max-age=0' });
+    res.type(path.extname(file));
+    if (req.headers['if-none-match'] === c.tag) return res.status(304).end();
+    res.set('Content-Length', c.body.length); res.end(req.method === 'HEAD' ? undefined : c.body);
+  };
+}
+app.use(compressed(path.join(ROOT, 'client')));
 app.use(express.static(path.join(ROOT, 'client')));
 app.use('/assets', express.static(path.join(ROOT, 'public', 'assets')));
-app.get('/lib/phaser.min.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'phaser', 'dist', 'phaser.min.js')));
+app.get('/lib/phaser.min.js', (req, res, next) => { req.url = '/phaser.min.js'; compressed(path.join(ROOT, 'node_modules', 'phaser', 'dist'))(req, res, () => res.sendFile(path.join(ROOT, 'node_modules', 'phaser', 'dist', 'phaser.min.js'))); });
+app.use('/lib/three', compressed(path.join(ROOT, 'node_modules', 'three')));
 app.use('/lib/three', express.static(path.join(ROOT, 'node_modules', 'three')));
 app.get('/lib/chess.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'chess.js', 'chess.js')));
 const server = http.createServer(app);

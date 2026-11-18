@@ -45,10 +45,11 @@ export function createSchoolTown(ctx) {
   };
 
   // ---------- Dựng greybox từ dữ liệu trường ----------
-  const label = (text, x, y, z, scale = 1) => {
-    const c = document.createElement('canvas'); c.width = 512; c.height = 96; const k = c.getContext('2d');
-    k.font = 'bold 44px system-ui'; const w = Math.min(500, k.measureText(text).width + 40);
+  const label = (text, x, y, z, scale = 1, reuse = null) => {
+    const c = reuse ? reuse.material.map.image : document.createElement('canvas'); c.width = 512; c.height = 96; const k = c.getContext('2d');
+    k.clearRect(0, 0, 512, 96); k.font = 'bold 44px system-ui'; const w = Math.min(500, k.measureText(text).width + 40);
     k.fillStyle = 'rgba(27,22,38,.75)'; k.beginPath(); k.roundRect((512 - w) / 2, 12, w, 72, 30); k.fill(); k.fillStyle = '#fff'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(text, 256, 49, 480);
+    if (reuse) { reuse.material.map.needsUpdate = true; reuse.scale.set(5.3 * scale, 1 * scale, 1); reuse.position.set(x, y, z); reuse.visible = true; return reuse; }   // vẽ lại trên canvas cũ: không tạo texture/vật liệu mới
     const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false })); sp.scale.set(5.3 * scale, 1 * scale, 1); sp.position.set(x, y, z); scene.add(sp); (town.labels = town.labels || []).push(sp); return sp;
   };
   function build() {
@@ -154,7 +155,7 @@ export function createSchoolTown(ctx) {
   function update(dt, t) {
     if (town.ring) town.ring.material.opacity = 0.55 + 0.35 * Math.sin(t * 3);
     if (town.arch) town.arch.update(ctx.player.pos, t, dt);
-    if (town.labels) { const p = ctx.player.pos; for (const sp of town.labels) sp.visible = Math.abs(sp.position.x - p.x) + Math.abs(sp.position.z - p.z) < 70; }   // nhãn chữ chỉ hiện khi ở gần
+    if (town.labels) { const p = ctx.player.pos; for (const sp of town.labels) if (sp !== nameTag) sp.visible = Math.abs(sp.position.x - p.x) + Math.abs(sp.position.z - p.z) < 70; }   // nhãn chữ chỉ hiện khi ở gần
     if (!town.RS) return;
     // giờ trong ngày theo đồng hồ trường (để giờ học, ngày/đêm khớp nhau)
     if (ctx.sky && ctx.sky.state.lock == null && typeof town.RS.clock === 'number') ctx.sky.state.hour = ((town.RS.clock / 60) % 24 + 24) % 24;
@@ -169,7 +170,8 @@ export function createSchoolTown(ctx) {
     for (const q of town.doors) { const d = Math.abs(q.x - p.x) + Math.abs(q.z - p.z); if (d < bd) { bd = d; best = q; } }
     if (best) ctx.offer('🚪 ' + best.d.n.split('·')[0].trim(), () => town.enter(best), 2);
     if (town.info && Math.abs(town.info.x - p.x) + Math.abs(town.info.z - p.z) < 5) ctx.offer('📜 Đọc bảng φ & π', showInfo, 1);
-    if (best !== nearDoor) { nearDoor = best; if (nameTag) { scene.remove(nameTag); town.labels.splice(town.labels.indexOf(nameTag), 1); nameTag = null; } if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8); }
+    // nhãn tên cửa: 1 sprite dùng lại (trước: mỗi cửa mới tạo canvas + texture + vật liệu, không giải phóng → giật + rò bộ nhớ GPU)
+    if (best !== nearDoor) { nearDoor = best; if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8, nameTag); else if (nameTag) nameTag.visible = false; }
     updatePeople(dt);
   }
   ctx.school = town;

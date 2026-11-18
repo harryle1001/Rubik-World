@@ -51,6 +51,39 @@ export class Batch {
     m.castShadow = shadow; m.receiveShadow = true; m.name = 'town-' + this.name; return m;
   }
 }
+// Chia 1 khối gộp lớn (cả khu 1 lưới, bán kính > minR) thành các mảnh theo ô cell×cell m (Fibonacci): mảnh dùng CHUNG thuộc tính
+// đỉnh (tải lên GPU 1 lần), chỉ khác chỉ mục → camera và pass bóng (tầm 40 m) cắt bỏ mảnh ngoài khung, perf.js ẩn viền mảnh xa.
+// Trả về [mảnh...] (hoặc [m] nếu không cần chia).
+const _bb = new THREE.Box3(), _sp = new THREE.Vector3();
+export function splitCells(m, cell = 89, minR = 34) {
+  const g = m.geometry; if (!g.boundingSphere) g.computeBoundingSphere();
+  if (g.boundingSphere.radius < minR || g.groups.length || m.isInstancedMesh || m.isSkinnedMesh) return [m];
+  const pos = g.attributes.position, idx = g.index, n = idx ? idx.count : pos.count, B = new Map();
+  for (let t = 0; t < n; t += 3) {
+    const a = idx ? idx.getX(t) : t, b = idx ? idx.getX(t + 1) : t + 1, c = idx ? idx.getX(t + 2) : t + 2;
+    const x = (pos.getX(a) + pos.getX(b) + pos.getX(c)) / 3, z = (pos.getZ(a) + pos.getZ(b) + pos.getZ(c)) / 3, k = Math.floor(x / cell) + ',' + Math.floor(z / cell);
+    let L = B.get(k); if (!L) B.set(k, L = []); L.push(a, b, c);
+  }
+  if (B.size < 2) return [m];
+  const big = pos.count > 65535, out = [];
+  for (const [k, L] of B) {
+    const sg = new THREE.BufferGeometry(); for (const nm in g.attributes) sg.setAttribute(nm, g.attributes[nm]);
+    sg.setIndex(new THREE.BufferAttribute(big ? new Uint32Array(L) : new Uint16Array(L), 1));
+    _bb.makeEmpty(); for (const i of L) _bb.expandByPoint(_sp.fromBufferAttribute(pos, i));
+    sg.boundingBox = _bb.clone(); sg.boundingSphere = _bb.getBoundingSphere(new THREE.Sphere());
+    const p = new THREE.Mesh(sg, m.material); p.name = m.name + '@' + k; p.castShadow = m.castShadow; p.receiveShadow = m.receiveShadow;
+    p.position.copy(m.position); p.quaternion.copy(m.quaternion); p.scale.copy(m.scale); p.renderOrder = m.renderOrder; out.push(p);
+  }
+  return out;
+}
+// Bóng đổ theo ô: thân khối gộp KHÔNG đổ bóng; thay bằng các mảnh ô 55 m chỉ nằm ở layer 1 (camera chính không thấy, chỉ camera
+// bóng của mặt trời thấy — sky.js bật layer 1) → pass bóng (tầm 40 m quanh người chơi) chỉ vẽ mảnh gần, không vẽ trọn cả khu.
+export function shadowCells(m, cell = 55) {
+  if (!m.castShadow) return false;
+  const parts = splitCells(m, cell); if (parts.length < 2) return false;
+  for (const p of parts) { p.castShadow = true; p.receiveShadow = false; p.layers.set(1); p.raycast = () => {}; p.userData.shadowOnly = true; m.add(p); }
+  m.castShadow = false; return true;
+}
 export function prismGeo(w, h, d) {
   const x = w / 2, z = d / 2, p = [
     -x, 0, z, -x, h, 0, -x, 0, -z, x, 0, -z, x, h, 0, x, 0, z,

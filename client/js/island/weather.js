@@ -81,8 +81,8 @@ export function createWeather(ctx) {
       patched.add(m);
       m.onBeforeCompile = sh => {
         Object.assign(sh.uniforms, WET);
-        sh.vertexShader = 'varying vec3 vWP; varying float vUp;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n vWP = (modelMatrix * vec4(transformed, 1.)).xyz; vUp = normalize(mat3(modelMatrix) * objectNormal).y;');
-        sh.fragmentShader = 'uniform float uWet, uRainNow, uWT, uCloudSh; varying vec3 vWP; varying float vUp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+        sh.vertexShader = 'varying highp vec3 vWP; varying float vUp;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n vWP = (modelMatrix * vec4(transformed, 1.)).xyz; vUp = normalize(mat3(modelMatrix) * objectNormal).y;');
+        sh.fragmentShader = 'uniform float uWet, uRainNow, uCloudSh; uniform highp float uWT; varying highp vec3 vWP; varying float vUp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
           if (uCloudSh > 0.01) {   // bóng mây: vệt tối mềm trôi theo gió
             vec2 cq = vWP.xz * 0.018 + vec2(uWT * 0.035, uWT * 0.012);
             float cn = sin(cq.x * 1.7 + sin(cq.y * 1.3) * 1.9) * sin(cq.y * 1.9 + sin(cq.x * 0.9) * 2.2);

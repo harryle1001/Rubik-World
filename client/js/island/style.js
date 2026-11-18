@@ -23,6 +23,7 @@ if (!THREE.ShaderLib.toon.__painted) {
   L.fragmentShader = L.fragmentShader
     .replace('void main() {', `varying highp vec3 vPaintW;
 // hash nhỏ gọn (số luôn < ~40) để điện thoại chạy mediump không tràn số → NaN → màn hình đen
+bool pBad(float x){ return (floatBitsToUint(x) & 0x7f800000u) == 0x7f800000u; }   // NaN/inf (kiểm tra bit: fast-math không bỏ qua)
 float pH(highp vec3 p){ p = fract(p * 0.1031); p += dot(p, p.yzx + 19.19); return fract((p.x + p.y) * p.z); }
 float pN(highp vec3 x){ x = mod(x, 289.0); vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
   return mix(mix(mix(pH(i), pH(i + vec3(1,0,0)), f.x), mix(pH(i + vec3(0,1,0)), pH(i + vec3(1,1,0)), f.x), f.y),
@@ -37,7 +38,8 @@ void main() {`)
     outgoingLight = mix(cool, warm, smoothstep(0.18, 0.62, lum));                             // bóng lam, sáng ấm
     float rim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 3.0);
     outgoingLight += rim * 0.10 * diffuseColor.rgb;
-    outgoingLight = max(outgoingLight, vec3(0.0)); }                                        // viền sáng mép
+    outgoingLight = max(outgoingLight, vec3(0.0));                                          // viền sáng mép
+    if (pBad(outgoingLight.r) || pBad(outgoingLight.g) || pBad(outgoingLight.b)) outgoingLight = diffuseColor.rgb * 0.5; }   // chặn NaN: không để 1 vật lỗi làm đen màn hình
 #include <opaque_fragment>`);
   L.__painted = true;
 }

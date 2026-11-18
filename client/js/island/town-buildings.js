@@ -8,7 +8,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { toon, addOutline, outlineMat, gradientMap } from './style.js';
 import { BLOCKS, EXTRA, blockOf2D, SPAWN, WORLD, PHI, ISLAND_R, ZONES_N, zoneAngle, LOTS, LOTS_N, HOUSE_LOTS, GARDEN_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1, LOT_W, LOT_L, LOT_BACK,
   RING_ROAD_R, ROAD_W, RADIALS, LAGOON, MEADOWS, lotAt, landDist, pathDist, PATH_W, blocked, houseAt, roadDist, lagoonDist } from './layout.js';
-import { Batch, DetailGrid, createLife, detailMats } from './decor.js';
+import { Batch, DetailGrid, createLife, detailMats, shadowCells } from './decor.js';
 import { buildSchoolZone, rubikCube as rubikCubeReal } from './zone-school.js';
 import { buildZoneEast } from './zone-east.js';
 import { buildExtraZones, buildBoats, placePalms } from './zone-extra.js';
@@ -234,7 +234,7 @@ export function buildTownArchitecture(ctx, RS, env) {
   const zen = buildZen({ ctx, low });   // rừng thiền quanh Đền Tri Thức (zone-zen.js)
   // ================= XUẤT RA SCENE =================
   const mat = toon('#ffffff', { vertexColors: true }), out = [...extraMeshes];
-  for (const k of Object.keys(B)) { const m = B[k].mesh(mat, k !== 'ground'); if (!m) continue; if (k !== 'ground') addOutline(m); scene.add(m); out.push(m); }
+  for (const k of Object.keys(B)) { const m = B[k].mesh(mat, k !== 'ground'); if (!m) continue; if (k !== 'ground') addOutline(m); shadowCells(m); scene.add(m); out.push(m); }   // bóng đổ chia ô 55 m (decor.js)
   out.push(...SZ.meshes);
   { const [mb, mg] = detailMats(); DG.build(scene, mb, mg); }
   const sm = atlas.mesh(); if (sm) { sm.position.y = 0; scene.add(sm); out.push(sm); }

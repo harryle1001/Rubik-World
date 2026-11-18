@@ -68,9 +68,9 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
     k.fillStyle = '#fff'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(text, 262, 41, 440); tag.material.map.needsUpdate = true;
   };
   const groundY = (x, z) => { const g = ctx.groundExtra(x, z, 9); return g > -50 ? g : TOWN_Y; };
-  // LOD xa (> 34 m, Fibonacci): người đứng/đi thay bằng hình khối đơn giản (chân · áo · mặt · tóc = 4 khúc trụ 8 cạnh),
+  // LOD xa (> 34 m, điện thoại > 21 m, Fibonacci): người đứng/đi thay bằng hình khối đơn giản (chân · áo · mặt · tóc = 4 khúc trụ 8 cạnh),
   // tất cả gộp vào 1 InstancedMesh → mọi người ở xa chỉ tốn 1 draw call (trước: 1–3 call mỗi người). Người ngồi vẫn dùng model đầy đủ.
-  const LOD_D = 34, imp = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 8).translate(0, 0.5, 0), toon('#ffffff'), POOL * 4);
+  const LOD_D = CFG.isMobile ? 21 : 34, imp = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 8).translate(0, 0.5, 0), toon('#ffffff'), POOL * 4);
   imp.count = 0; imp.visible = false; imp.frustumCulled = false; imp.name = 'person-lod'; imp.castShadow = false; imp.receiveShadow = true; scene.add(imp);
   const _io = new THREE.Object3D(), _ic = new THREE.Color(), SKIN = '#f2c9a0', HAIR = '#2a1d17';
   const impPart = (i, x, y, z, yaw, y0, hh, w, d, col) => { _io.position.set(x, y + y0, z); _io.rotation.set(0, yaw, 0); _io.scale.set(w, hh, d); _io.updateMatrix(); imp.setMatrixAt(i, _io.matrix); imp.setColorAt(i, _ic.set(col)); };
@@ -84,6 +84,9 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
     imp.count = i + 4;
   }
 
+  // bỏ 1 người khỏi pool: giải phóng texture xương trên GPU (mỗi SkinnedMesh/Skeleton 1 DataTexture) + hoạt ảnh
+  // (trước: chỉ gỡ khỏi cảnh → mỗi lần đổi người rò 1–2 texture, đi vòng đảo vài lần tăng hàng chục texture)
+  const dropHero = h => { scene.remove(h.model); const sk = new Set(); h.model.traverse(o => { if (o.isSkinnedMesh) sk.add(o.skeleton); }); for (const k of sk) k.dispose(); const mx = h.anim && h.anim.mixer; if (mx) { mx.stopAllAction(); mx.uncacheRoot(h.model); } };
   return function updatePeople(dt, RS) {
     const t0 = performance.now(), p = ctx.player.pos;
     const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
@@ -94,8 +97,10 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       if (pool.some(e => e.a === a)) continue;
       const L = a._look3d || (a._look3d = lookOf(a));
       let e = pool.find(e => !e.a && e.key === L.key);
+      // dựng LẦN LƯỢT từng người (tối đa 1 người đang dựng): tới khu đông người không còn ~24 người dựng xong cùng 1 khung (giật 40–80 ms)
+      if (!e && loading.size) continue;
       if (!e && pool.length + loading.size >= POOL) { // pool đầy: bỏ 1 model rảnh khác kiểu để nạp kiểu mới
-        const i = pool.findIndex(e => !e.a); if (i >= 0) { scene.remove(pool[i].hero.model); pool.splice(i, 1); }
+        const i = pool.findIndex(e => !e.a); if (i >= 0) { dropHero(pool[i].hero); pool.splice(i, 1); }
       }
       if (!e && pool.length + loading.size < POOL) {
         const id = Symbol(); loading.add(id);

@@ -34,8 +34,8 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
     defines: {}, transparent: true, fog: true, depthWrite: false,   // không ghi độ sâu: cá dưới nước (ambience.js) vẫn vẽ lên được
     uniforms: U,
     vertexShader: `${DEPTH}
-      uniform float uTime, uWaveN, uAmp; uniform vec4 uWA[${N_MAX}], uWB[${N_MAX}];
-      varying vec3 vW, vN; varying float vCrest;
+      uniform highp float uTime; uniform float uWaveN, uAmp; uniform vec4 uWA[${N_MAX}], uWB[${N_MAX}];
+      varying highp vec3 vW; varying vec3 vN; varying float vCrest;
 #include <fog_pars_vertex>
       void main(){
         vec4 w = modelMatrix * vec4(position, 1.); vec2 p = w.xz;
@@ -55,8 +55,8 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
 #include <fog_vertex>
       }`,
     fragmentShader: `${DEPTH}
-      uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uSkyT, uPlayer, uMoon; uniform float uLight, uTime, uNight;
-      varying vec3 vW, vN; varying float vCrest;
+      uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uSkyT, uPlayer, uMoon; uniform float uLight, uNight; uniform highp float uTime;
+      varying highp vec3 vW; varying vec3 vN; varying float vCrest;
 #include <fog_pars_fragment>
       void main(){
         float depth = depthAt(vW.xz), dist = length(cameraPosition - vW), t = uTime;
@@ -83,7 +83,7 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
           gl_FragColor = vec4(c * uLight, 0.92);
         }
 #else
-        float NdV = max(dot(N, V), 0.);
+        float NdV = clamp(dot(N, V), 0., 1.);
         vec3 c = mix(uShallow, uDeep, smoothstep(0.3, 5., depth));
         c = mix(c, uDeep * 0.72, smoothstep(5., 8., depth) * 0.55);         // biển khơi sẫm dần
         float ca = depth > 3. ? 0. : sin(q.x * 0.9 + t * 0.8) * sin(q.y * 0.8 - t * 0.6) + sin((q.x + q.y) * 0.45 + t * 0.5);
@@ -92,7 +92,7 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
         // phản chiếu bầu trời (Fresnel Schlick): nhìn xiên thấy trời, nhìn thẳng xuống thấy nước
         vec3 R = reflect(-V, N); R.y = abs(R.y);
         vec3 sky = mix(uSkyH, uSkyT, smoothstep(0.02, 0.6, R.y));
-        float fres = 0.04 + 0.96 * pow(1. - NdV, 5.);
+        float fres = 0.04 + 0.96 * pow(clamp(1. - NdV, 0., 1.), 5.);   // kẹp: NdV > 1 do sai số → pow(số âm) = NaN
         c = mix(c, sky, min(fres * 0.9, 0.85));
         // bọt: viền sát bờ, dải sóng vỗ chạy dần vào bờ, gợn quanh chân (chỉ tính ở nước nông) · bọt đỉnh sóng (chỉ ở khơi, gần camera)
         float foam = 0.;

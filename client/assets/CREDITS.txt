@@ -6,6 +6,7 @@ models/hero-*.glb (Knight, Rogue, Mage, Barbarian + 14 animation)
   Đã lược bớt animation và nén Meshopt bằng gltf-transform.
 
 Nhân vật học sinh/thầy cô/người dân hiện tại (client/js/island/people-model.js): khối low-poly tự dựng bằng code, gắn lên bộ xương + animation của models/hero-rogue.glb (KayKit Adventurers, CC0) ở trên.
+  models/hero-rogue-rig.glb = bộ xương + 12 animation rút từ hero-rogue.glb (bỏ mesh/ảnh, giải nén meshopt, không mất mát) bằng tools/strip-rig.mjs — cùng giấy phép CC0.
 
 models/student-*.glb (KHÔNG còn dùng trong game — bản cũ: 12 học sinh chibi; code tô lại áo trắng, quần xanh, thêm khăn quàng đỏ, cặp sách): Kenney Mini Characters 1.0, CC0 — https://kenney.nl/assets/mini-characters (qua "@netforge/asset-library-files")
 

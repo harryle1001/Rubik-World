@@ -23,7 +23,7 @@ export const WIND = { uTime: { value: 0 }, uPlayer: { value: new THREE.Vector3(0
   uShk: { value: Array.from({ length: 4 }, () => new THREE.Vector4(0, 0, 0, -99)) } }; // living.js: cây bị va/rung (x, z, biên độ, lúc bắt đầu)
 // GLSL dùng chung: gió có hướng + cơn giật trôi qua đồng cỏ, rẽ cỏ quanh vật di chuyển, cây rung khi bị va (đổi thế giới → hệ bản sao)
 const WIND_GLSL = `uniform float uTime, uWind; uniform vec3 uPlayer; uniform vec4 uGust; uniform vec4 uMov[6]; uniform vec4 uShk[4];
-  vec3 toL(vec3 w){ vec3 c0 = instanceMatrix[0].xyz; return vec3(dot(w, c0), dot(w, instanceMatrix[1].xyz), dot(w, instanceMatrix[2].xyz)) / dot(c0, c0); }
+  vec3 toL(vec3 w){ vec3 c0 = instanceMatrix[0].xyz; return vec3(dot(w, c0), dot(w, instanceMatrix[1].xyz), dot(w, instanceMatrix[2].xyz)) / max(dot(c0, c0), 1e-6); }   // instance ẩn (tỉ lệ 0) → không chia cho 0 (NaN)
   vec2 windOff(vec3 ip){ vec2 d = uGust.xy;
     float fl = sin(uTime*1.7 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.3 + ip.x)*0.3;
     float gust = uGust.z * smoothstep(0.1, 1., sin(dot(ip.xz, d)*0.1 - uTime*1.618 - uGust.w));
@@ -105,10 +105,10 @@ export function createTerrain(scene) {
   g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
   const groundMat = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap });
   // đáy biển: gợn cát (sóng cát song song bờ) + vân sáng khúc xạ (caustics) lay động dưới nước nông — chỉ vài phép sin/điểm ảnh
-  groundMat.onBeforeCompile = sh => {
+  groundMat.onBeforeCompile = sh => {   // highp: toạ độ thế giới tới ±335 m × 4,2 — mediump mất chính xác
     sh.uniforms.uTime = WIND.uTime;
-    sh.vertexShader = 'varying vec3 vWp;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vWp = (modelMatrix * vec4(transformed, 1.)).xyz;');
-    sh.fragmentShader = 'uniform float uTime; varying vec3 vWp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+    sh.vertexShader = 'varying highp vec3 vWp;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vWp = (modelMatrix * vec4(transformed, 1.)).xyz;');
+    sh.fragmentShader = 'uniform highp float uTime; varying highp vec3 vWp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
       float sd = ${W.toFixed(2)} - vWp.y;
       if (sd > 0.03) {
         vec2 q = vWp.xz;

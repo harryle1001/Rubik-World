@@ -30,8 +30,9 @@ export function createSky(scene) {
   const dome = new THREE.Mesh(new THREE.SphereGeometry(400, 32, 16), new THREE.ShaderMaterial({
     side: THREE.BackSide, depthWrite: false, fog: false, uniforms: U,
     vertexShader: 'varying vec3 vD; void main(){ vD = position; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-    fragmentShader: `uniform vec3 uTop, uHor, uSun, uSunCol, uMoon; uniform float uNight, uPhase, uTime; varying vec3 vD;
-      float h(vec3 p){ return fract(sin(dot(p, vec3(12.99,78.23,37.72)))*43758.55); }
+    fragmentShader: `uniform vec3 uTop, uHor, uSun, uSunCol, uMoon; uniform float uNight, uPhase; uniform highp float uTime; varying vec3 vD;
+      // hash nhỏ gọn (số luôn < ~40, không dùng sin×43758) → điện thoại mediump không mất sao / không tràn số
+      float h(highp vec3 p){ p = fract(p * 0.1031); p += dot(p, p.yzx + 19.19); return fract((p.x + p.y) * p.z); }
       void main(){ vec3 d = normalize(vD);
         float y = max(d.y, 0.);
         vec3 c = mix(uHor, mix(uHor, uTop, 0.45), smoothstep(0.0, 0.18, y));   // dải sáng mờ sát chân trời
@@ -69,6 +70,7 @@ export function createSky(scene) {
   scene.add(hemi);
   const sun = new THREE.DirectionalLight('#fff0d2', 1.7); sun.castShadow = true;
   const r = CFG.quality.shadowRange; Object.assign(sun.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: 1, far: 200 });
+  sun.shadow.camera.layers.enable(1);   // layer 1: mảnh 'chỉ đổ bóng' của khối gộp lớn (decor.js shadowCells)
   sun.shadow.mapSize.set(CFG.quality.shadowSize, CFG.quality.shadowSize); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05;
   scene.add(sun, sun.target);
   scene.fog = new THREE.Fog('#cfeefa', CFG.view.fogNear, CFG.view.far);
