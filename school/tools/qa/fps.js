@@ -104,11 +104,13 @@ function analyze(frames, prof, off, lm){
   };
   const worst = [...long].sort((x, y) => y[1] - x[1]).slice(0, 10).map(f => ({ms:Math.round(f[1]), tag:f[2], ...attr(f)}));
   // gom theo bước
-  const byTag = {}; long.forEach(f => { const k = String(f[2]).replace(/ #\d+$/, ''); byTag[k] = (byTag[k] || 0) + 1; });
+  const byTag = {}, tagSelf = {}; long.forEach(f => { const k = String(f[2]).replace(/ #\d+$/, ''); byTag[k] = (byTag[k] || 0) + 1;
+    const m = tagSelf[k] = tagSelf[k] || new Map(); attr(f).incl.forEach(s => { const q = s.match(/^(.*) (\d+)ms$/); m.set(q[1], (m.get(q[1]) || 0) + +q[2]); }); });
+  const tagHot = Object.entries(byTag).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => ({tag:k, n, hot:[...tagSelf[k]].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([q, v]) => `${q} ${v}ms`)}));
   // hàm tốn nhiều nhất trong mọi khung dài (cộng dồn, inclusive)
   const agg = new Map(); long.forEach(f => attr(f).incl.forEach(s => { const m = s.match(/^(.*) (\d+)ms$/); agg.set(m[1], (agg.get(m[1]) || 0) + +m[2]); }));
   return {frames:frames.length, secs:Math.round(tot/1000), avg:+avg.toFixed(1), min:+minF.toFixed(1), long50:long.length, long100:frames.filter(f => f[1] > 100).length,
-    p99:+[...durs].sort((a, b) => a - b)[Math.floor(durs.length*.99)].toFixed(1), worst, byTag, hot:[...agg].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, v]) => `${k} ${v}ms`),
+    tagHot, p99:+[...durs].sort((a, b) => a - b)[Math.floor(durs.length*.99)].toFixed(1), worst, byTag, hot:[...agg].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, v]) => `${k} ${v}ms`),
     hist:frames.map(f => Math.round(f[1])), median:[...durs].sort((a, b) => a - b)[durs.length >> 1]};
 }
 

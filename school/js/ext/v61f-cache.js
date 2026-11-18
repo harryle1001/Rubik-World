@@ -3,7 +3,7 @@
 // NGAY TRONG MỘT KHUNG: nền cũ buildGround + buildNorth, ~40 miếng nền khu v47wPatch (getImageData), ảnh toàn cảnh 2048²
 // và 6 ô nền 1024² → một khung 1–2 giây. Giờ: vẫn vẽ cache cũ, dựng cache mới từng phần trong nền (≤ ~8 ms mỗi khung),
 // xong thì đổi một lần. Ảnh toàn cảnh bị xoá vì lý do khác (đổi mẫu nhà, sân bay…) cũng dựng lại từng dải như vậy.
-const V61F = {job:null, ovJob:null, lastOv:null, budget:8, stat:{steps:0, jobs:0, ovJobs:0}};
+const V61F = {job:null, ovJob:null, bg:[], lastOv:null, budget:8, stat:{steps:0, jobs:0, ovJobs:0}};
 const V61F_STRIP = 1400;   // 1400 đơn vị thế giới = đúng 256 px ảnh toàn cảnh → ghép dải không lộ mép
 
 // ---------- các bước dựng ảnh toàn cảnh theo dải (dùng chung) ----------
@@ -66,7 +66,8 @@ function v61fPump(){
   if(typeof paused !== 'undefined' && document.hidden) return;
   const t0 = performance.now();
   for(let n = 0; n < 40; n++){
-    const J = V61F.job && !V61F.job.done ? V61F.job : V61F.ovJob; if(!J) break;
+    const J = V61F.job && !V61F.job.done ? V61F.job : V61F.ovJob;
+    if(!J){ const B = V61F.bg[0]; if(!B) break; let d = true; try { d = B.next().done; } catch(e){ console.warn('v61f bg', e); } if(d) V61F.bg.shift(); V61F.stat.steps++; if(performance.now() - t0 > V61F.budget) break; continue; }
     let d = false; try { d = J.it.next().done; } catch(e){ console.warn('v61f job', e); d = true; if(J === V61F.job) V61F.job = null; }
     V61F.stat.steps++;
     if(J === V61F.job && (J.done || d)){ V61F.job = null; V61F.ovJob = null; }
