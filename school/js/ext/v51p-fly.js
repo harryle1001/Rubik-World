@@ -66,7 +66,7 @@ function v51pTick(dt){
     if(P.alt > 0){ const lift = v51pClamp((P.spd - pl.vr*.7)/(pl.vr*.5), 0, 1), vsT = climb*pl.climb*lift + (thr < .35 ? -pl.sink*(1 - thr/.35) : 0) - (1 - lift)*70 + (climb < -.1 ? climb*40 : 0);
       P.vs += (vsT - P.vs)*Math.min(1, dt*2.2); P.alt += P.vs*dt; }
   }
-  if(P.alt > 1100){ P.alt = 1100; P.vs = Math.min(P.vs, 0); }
+  const AM = typeof V57P_ALTMAX === 'number' ? V57P_ALTMAX : 1100; if(P.alt > AM){ P.alt = AM; P.vs = Math.min(P.vs, 0); }
   // rẽ: trên đất rẽ chậm theo tốc độ; trực thăng rẽ tại chỗ
   const g = P.alt <= 0, rate = pl.turn*turn*(pl.hover ? 1 : g ? .55*Math.min(1, P.spd/50) : 1);
   P.hdg += rate*dt; P.bank += ((g ? 0 : turn) - P.bank)*Math.min(1, dt*4);
@@ -74,9 +74,7 @@ function v51pTick(dt){
   const wx = Math.cos(V51P.windA*6.283)*W*28, wy = Math.sin(V51P.windA*6.283)*W*28;
   P.x += Math.cos(P.hdg)*P.spd*dt + (g ? 0 : wx*dt); P.y += Math.sin(P.hdg)*P.spd*dt + (g ? 0 : wy*dt);
   P.wob = g ? 0 : Math.sin(realT*3.1)*W*.09 + Math.sin(realT*7.3)*W*.04;
-  // giới hạn vùng bay: quá xa thì tự quay về
-  const C = v51pC(), dC = Math.hypot(P.x - C[0], P.y - C[1]);
-  if(dC > 7900){ const want = Math.atan2(C[1] - P.y, C[0] - P.x); let d = want - P.hdg; d = Math.atan2(Math.sin(d), Math.cos(d)); P.hdg += v51pClamp(d, -1.2*dt, 1.2*dt); if(realT - (V51P.farT || 0) > 6){ V51P.farT = realT; v51pMsg('🌊 Biển xa quá rồi — máy bay tự quay về đảo nhé!'); } }
+  // v57p: bay tự do khắp thế giới (rìa thế giới quay đầu nhẹ trong v57p)
   // chạm đất
   if(air && P.alt <= 0) v51pTouch(surf);
   if(P.alt < 0) P.alt = 0;
@@ -93,7 +91,7 @@ function v51pTick(dt){
 }
 function v51pTouch(surf){
   const P = V51P.P, pl = P.pl, sp = -P.vs, ok = pl.hover ? surf !== 'water' : (surf === 'runway' || (pl.water && surf === 'water'));
-  if(!ok){ P.alt = 2; P.vs = 110; v51pBeep('bad'); v51pMsg(surf === 'water' ? '🌊 Dưới là biển! Máy bay tự kéo lên an toàn. Hạ cánh ở đường băng nhé.' : '🌳 Ở đây không có đường băng — máy bay tự kéo lên an toàn!', 3.5); return; }
+  if(!ok){ P.alt = 6; P.vs = Math.max(0, P.vs); return; }   // v57p: không có đường băng → lướt êm sát mặt đất, không hiện chữ
   if(sp > 150){ P.alt = 2; P.vs = sp*.45; P.spd *= .85; v51pBeep('bounce'); v51pMsg('🏀 Bịch! Hạ cánh hơi mạnh nên máy bay nảy lên. Lần sau kéo ↓ nhẹ hơn nhé!', 3.5); return; }
   P.alt = 0; P.vs = 0; P.ground = true; v51pBeep(sp < 70 ? 'ok' : 'land');
   if(surf === 'water') for(let i = 0; i < 10; i++) v51pPuffAdd(P.x + (Math.random() - .5)*40, P.y + (Math.random() - .5)*30, 0, 1, false);

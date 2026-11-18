@@ -69,13 +69,7 @@ function v53cEmUi(){
 function v53cPlaneInit(){
   if(typeof v51pTick !== 'function') return;
   const t0 = v51pTick; v51pTick = function(dt){
-    const P = V51P.P; if(!P) return t0(dt); const C = v51pC(), dx = P.x - C[0], dy = P.y - C[1], r = Math.hypot(dx, dy); let ox = 0, oy = 0;
-    // bay ra xa: dời tạm về bán kính 7700 để v51p không tự quay đầu, xong trả lại vị trí thật
-    if(r > 7700 && !V51P.mg){ const k = (r - 7700)/r; ox = dx*k; oy = dy*k; P.x -= ox; P.y -= oy; }
-    try { t0(dt); } finally { if(ox || oy){ P.x += ox; P.y += oy; for(const p of V51P.smoke) if(p.t0 === realT){ p.x += ox; p.y += oy; } } }
-    const r2 = Math.hypot(P.x - C[0], P.y - C[1]);
-    if(r2 > V53C_SEA){ const want = Math.atan2(C[1] - P.y, C[0] - P.x); let d = want - P.hdg; d = Math.atan2(Math.sin(d), Math.cos(d)); P.hdg += Math.max(-1.2*dt, Math.min(1.2*dt, d)); if(realT - (V53C.farT || 0) > 6){ V53C.farT = realT; v51pMsg('🌊 Tới rìa vùng biển rồi — máy bay tự quay về đảo nhé!'); } }
-    else if(r2 > 8000 && realT - (V53C.seaT || 0) > 40){ V53C.seaT = realT; v51pMsg('🌊 Đang bay trên biển khơi · cách đảo ' + Math.round((r2 - V46L.ISLAND)*.06) + ' km. Nhớ theo dõi đường về!', 4); }
+    const P = V51P.P; if(!P) return t0(dt); t0(dt);   // v57p: bỏ giới hạn bán kính + thông báo biển xa (rìa thế giới xử lý êm trong v57p)
     // sự cố hiếm: chỉ khi bay cao, đã bay ≥ 35 giây, không trong mini game
     if(!V53C.em && !V51P.mg && P.alt > 140 && realT - (P.tOff || realT) > 35){ const drill = V53C.drill && realT - (P.tOff || realT) > 20;
       if(drill || (v53cSet().inc && realT - (V53C.lastEm || -1e9) > 600 && Math.random() < dt/700)){ V53C.lastEm = realT; v53cEmStart(); v51pMsg('🚨 Động cơ bốc khói! Bình tĩnh nhé — làm theo từng bước trong bảng đỏ.', 5); } }

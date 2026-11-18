@@ -1700,3 +1700,11 @@ body.v58tR #mRubik .rubikwrap{position:relative}
 body.v58tR #mRubik .v45col,body.v58tR #mRubik .v45stage{position:absolute!important;inset:0!important;width:auto!important;height:auto!important}
 body.v58tR #mRubik .v45stage #rubikCv{position:absolute;inset:0;width:100%!important;height:100%!important;aspect-ratio:auto!important}
 @media (orientation:landscape){#v58tMove{left:auto;right:max(18px,env(safe-area-inset-right));transform:none}}
+
+/* ===== v57p: sân bay lớn, góc nhìn thứ 3, bỏ cảnh báo đỏ ===== */
+#v53cEmV{display:none!important}
+.v53cEmBox{background:rgba(11,16,32,.86);border-color:rgba(255,210,63,.55)}
+#v53cLamp{animation:none;background:#ffb020;box-shadow:none}
+@media (max-width:520px){#v53cEmL li:not(.now){display:none}.v53cEmBox{width:min(300px,calc(100vw - 110px));padding:8px 12px}}
+#v57pView{font-size:22px}
+@media (max-width:420px){.v51pTop{gap:6px}#v51pStat{padding:5px 8px;gap:0 8px}}

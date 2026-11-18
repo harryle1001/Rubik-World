@@ -146,7 +146,7 @@ function v53cMgWin(){
 // ---------- 4. cài đặt: bật/tắt sự cố bất ngờ ----------
 function v53cSettingsUi(){
   const m = document.querySelector('#mSet .mbox'); if(!m || document.getElementById('v53cSetBox')) return; const d = document.createElement('section'); d.id = 'v53cSetBox'; d.className = 'v39vol';
-  d.innerHTML = '<h3>🚨 Thành phố an toàn</h3><label class="chk"><input type="checkbox" id="v53cInc"> Sự cố bất ngờ (hiếm): máy bay bốc khói, cháy nhỏ — luôn kết thúc an toàn</label>';
+  d.innerHTML = '<h3>🚨 Thành phố an toàn</h3><label class="chk"><input type="checkbox" id="v53cInc"> Sự cố bất ngờ (hiếm): máy bay bốc khói, cháy nhỏ — luôn kết thúc an toàn (mặc định tắt)</label>';
   const v = document.getElementById('v39Vol'); (v && v.nextSibling) ? m.insertBefore(d, v.nextSibling) : m.appendChild(d);
   const i = d.querySelector('#v53cInc'); i.checked = !!v53cSet().inc; i.onchange = () => { v53cSet().inc = i.checked; v53cSetSave(); toast(i.checked ? '🚨 Đã bật sự cố bất ngờ.' : '🔕 Đã tắt sự cố bất ngờ.'); };
 }
