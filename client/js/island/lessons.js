@@ -28,6 +28,9 @@ export function createLessons(ctx) {
 #lessonChip b{color:#ffd36e}#lessonChip.on{border-color:#ffd36e}body.rs-modal #lessonChip,body.mg-on #lessonChip{display:none}`;
   document.head.appendChild(css);
   const chip = document.createElement('div'); chip.id = 'lessonChip'; chip.title = 'Thời khoá biểu (chạm để xem cả ngày)'; document.body.appendChild(chip);
+  // có hàng chip HUD (data/clock.js, account-hud.js): chip giờ học thay chỗ chip đồng hồ (cùng giờ, thêm môn) — không hiện 2 đồng hồ
+  const row = document.getElementById('chipRow'), inRow = !!row;
+  if (row) { const old = document.getElementById('clockChip'); if (old) old.style.display = 'none'; chip.style.order = 0; row.prepend(chip); css.textContent += '#chipRow #lessonChip{position:static;max-width:62vw;padding:5px 13px;font-size:13px}'; }
   chip.onclick = () => {
     const T = TIMETABLE[dow()];
     const rows = T ? PERIODS.map(([s, e, l], i) => { const L = LESSON[T[i]]; return `${fmt(s)} ${l}: ${L.icon} <b>${L.name}</b>${L.room ? ` · ${ROOM_NAME[L.room]}` : ''}`; }).join('<br>') : 'Hôm nay không có tiết học.';
@@ -43,7 +46,7 @@ export function createLessons(ctx) {
       const c = now(), L = c.subj && LESSON[c.subj], key = c.subj ? `${new Date().toDateString()}#${c.i}` : null;
       const s = L ? `🕰 <b>${fmt(c.m)}</b> · ${c.label} · ${L.icon} ${L.name}` : `🕰 <b>${fmt(c.m)}</b> · ${c.label}`;
       if (s !== last) { chip.innerHTML = s; last = s; chip.classList.toggle('on', !!L); }
-      const qh = document.getElementById('questHud'); if (qh && qh.offsetParent) chip.style.top = Math.round(qh.getBoundingClientRect().bottom + 5) + 'px';
+      const qh = !inRow && document.getElementById('questHud'); if (qh && qh.offsetParent) chip.style.top = Math.round(qh.getBoundingClientRect().bottom + 5) + 'px';
       // chuông vào tiết
       if (key !== lastKey) { lastKey = key; if (L && L.room && !load(DONE, []).includes(key) && !document.body.classList.contains('rs-modal')) { ctx.sfx && ctx.sfx('open'); ctx.toast(`🔔 <b>${c.label}: ${L.icon} ${L.name}</b> ở <b>${ROOM_NAME[L.room]}</b>.<br>Vào lớp đúng giờ để học và nhận ⭐ nhé!`, 4500); } }
       // vào đúng phòng đúng tiết → tiết học (chỉ khi mới bước vào; đóng giữa chừng thì ra rồi vào lại để học tiếp)
