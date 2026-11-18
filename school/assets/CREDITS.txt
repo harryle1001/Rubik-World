@@ -29,3 +29,9 @@ v50 · Học viện Phép thuật Rubik (Rubik Spellcraft Academy)
     License: CC0 1.0 Universal (public domain). https://creativecommons.org/publicdomain/zero/1.0/
   Mọi thứ khác (lâu đài, núi, hồ, cầu, nhà kính, áo choàng, huy hiệu 6 nhà, cú, nến, hạt phép, 7 mini game, âm thanh)
   vẽ / tạo bằng code (canvas + WebAudio), thiết kế gốc, không dùng hình từ phim, game hay trang bán hàng.
+
+v51p · Máy bay & Sân bay Rubik (2D)
+  Không tải tài nguyên ngoài. Toàn bộ máy bay (Cánh Én, Hải Âu, Chuồn Chuồn, Băng Rôn, Sao Băng, Chong Chóng),
+  sân bay (đường băng, hangar, tháp điều khiển, ống gió, đèn đường băng), đảo nhỏ, mây, khói, vòng số, cột mốc,
+  bưu phẩm và tiếng động cơ đều vẽ / tạo bằng code (canvas pixel art + WebAudio), thiết kế gốc,
+  không dùng hình từ hãng máy bay, game hay phim. Giấy phép: cùng giấy phép với mã nguồn của game.
