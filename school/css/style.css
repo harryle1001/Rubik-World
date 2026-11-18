@@ -1667,3 +1667,36 @@ body.v32phone.v53chill #stage #toast.toast{font-size:16px}
 #v56pBtn.v56p-float{position:absolute;z-index:6;right:12px;top:40%}
 #v56pBack{position:absolute;z-index:7;left:50%;transform:translateX(-50%);bottom:calc(98px + env(safe-area-inset-bottom));padding:10px 21px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(11,16,32,.82);color:#F7F5EF;font:800 17px/1.2 Nunito,system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);cursor:pointer}
 #v56pBack[hidden]{display:none}
+/* ===== v58t · Rubik 3D toàn màn hình: chỉ khối + thanh mỏng ===== */
+body.v58tR #mRubik .mbox{display:flex!important;flex-direction:column;padding:0!important;overflow:hidden!important;background:radial-gradient(circle at 50% 42%,#2a3668,#0a0f22 72%)!important}
+body.v58tR #mRubik .mhead,body.v58tR #mRubik .rside,body.v58tR #mRubik .v45sol{display:none!important}
+body.v58tR #mRubik .rubikwrap{display:flex!important;flex:1 1 auto;min-height:0;align-items:center;justify-content:center;gap:0}
+body.v58tR #mRubik .v45col{height:100%;justify-content:center}
+body.v58tR #mRubik .v45stage{width:min(100vw, calc(100dvh - 56px))!important;max-width:none}
+body.v58tR #mRubik #rubikCv{background:transparent!important;border:0!important;border-radius:0}
+#v58tBar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:max(6px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) 6px max(10px,env(safe-area-inset-left));height:auto;min-height:44px;background:rgba(10,15,34,.55);font:800 16px Nunito,system-ui,sans-serif;color:#F7F5EF}
+#v58tBar .v58tclock{flex:1;text-align:center;font-variant-numeric:tabular-nums;font-size:18px;letter-spacing:.5px;color:#ffe9a8}
+.v58tb{width:40px;height:40px;min-width:40px;border-radius:50%;border:1px solid rgba(232,194,122,.45);background:rgba(255,255,255,.08);color:#F7F5EF;font:800 18px Nunito,system-ui,sans-serif;display:grid;place-items:center;padding:0;cursor:pointer;touch-action:manipulation}
+.v58tb:active{transform:scale(.94)}
+#v58tHint.on{background:#ffd23f;color:#1a1206;box-shadow:0 0 0 3px rgba(255,210,63,.35),0 0 18px rgba(255,210,63,.55)}
+#v58tSay{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:6px 14px;border-radius:999px;background:rgba(10,15,34,.85);color:#F7F5EF;font:800 16px Nunito,system-ui,sans-serif;pointer-events:none;white-space:nowrap}
+#v58tSay.bad{color:#ffb4a8}
+#v58tHelp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(88%,340px);padding:14px 18px;border-radius:18px;background:rgba(10,15,34,.92);border:1px solid rgba(232,194,122,.45);color:#F7F5EF;font:700 16px/1.618 Nunito,system-ui,sans-serif}
+#v58tHelp p{margin:0}
+#v58tWin{position:absolute;inset:0;display:grid;place-items:center;background:rgba(10,15,34,.55);backdrop-filter:blur(2px)}
+#v58tWin[hidden],#v58tHelp[hidden],#v58tSay[hidden]{display:none!important}
+.v58tCard{min-width:min(78%,300px);padding:22px 26px;border-radius:22px;background:rgba(15,21,48,.95);border:1px solid #e8c27a;text-align:center;color:#F7F5EF;font:800 16px Nunito,system-ui,sans-serif;display:flex;flex-direction:column;gap:6px;align-items:center}
+.v58tCard .v58tBig{font-size:44px;line-height:1}
+.v58tCard b{font-size:26px;color:#ffe9a8}
+.v58tCard .v58tT{font-size:22px;font-variant-numeric:tabular-nums}
+.v58tPlay{margin-top:10px;padding:12px 28px;border-radius:999px;border:0;background:#ffd23f;color:#1a1206;font:800 18px Nunito,system-ui,sans-serif;cursor:pointer}
+/* v58t · đi bằng chạm: không thẻ chỉ đường, không mũi tên mép màn hình */
+body.v58tgo #v32Nav,body.v58tgo #v32Arrow{display:none!important}
+body.v58tR #mRubik .v45col{width:100%}
+body.v58tR #mRubik .v45stage{width:100%!important;height:100%!important;aspect-ratio:auto!important}
+#v58tMove{position:absolute;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);padding:8px 20px;border-radius:999px;background:#ffd23f;color:#1a1206;font:800 22px Nunito,system-ui,sans-serif;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+#v58tMove[hidden]{display:none!important}
+body.v58tR #mRubik .rubikwrap{position:relative}
+body.v58tR #mRubik .v45col,body.v58tR #mRubik .v45stage{position:absolute!important;inset:0!important;width:auto!important;height:auto!important}
+body.v58tR #mRubik .v45stage #rubikCv{position:absolute;inset:0;width:100%!important;height:100%!important;aspect-ratio:auto!important}
+@media (orientation:landscape){#v58tMove{left:auto;right:max(18px,env(safe-area-inset-right));transform:none}}
