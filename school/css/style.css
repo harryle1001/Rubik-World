@@ -1652,3 +1652,12 @@ body.touchdev #v53sAct{bottom:calc(env(safe-area-inset-bottom) + 168px)}
 .v53sall button{width:100%}
 @media (max-width:420px){.v53srow{grid-template-columns:56px 1fr 1fr}.v53srow img{width:56px;grid-row:1/3}.v53srow>div{grid-column:2/4}}
 @media (prefers-reduced-motion:reduce){#v53sAct #v53sJumpB{animation:none}}
+/* ===== v53v: nhịp chill — menu/modal hiện ra mượt, thông báo dễ đọc; nhân vật sắc nét vẽ trong canvas ===== */
+body.v53chill .modal:not([hidden]){animation:v53vFade .32s cubic-bezier(.22,.8,.3,1) both}
+body.v53chill .modal:not([hidden]) > *{animation:v53vPop .38s cubic-bezier(.22,.8,.3,1) both}
+body.v53chill #toast:not([hidden]){animation:v53vToast .45s cubic-bezier(.22,.8,.3,1) both;font-family:Nunito,"Be Vietnam Pro",sans-serif;font-weight:700}
+body.v32phone.v53chill #stage #toast.toast{font-size:16px}
+@keyframes v53vFade{from{opacity:0}to{opacity:1}}
+@keyframes v53vPop{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes v53vToast{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){body.v53chill .modal:not([hidden]),body.v53chill .modal:not([hidden]) > *,body.v53chill #toast:not([hidden]){animation:none}}
