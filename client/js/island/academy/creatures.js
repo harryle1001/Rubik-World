@@ -142,7 +142,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   const C0 = toWorld(0, 0), A = L.astro;
   const night = () => (ctx.sky && ctx.sky.state ? ctx.sky.state.night || 0 : 0);
   const hAt = (u, v) => { const [x, z] = toWorld(u, v); return ctx.terrain.heightAt(x, z); };
-  const blocked = (u, v, m) => { const [x, z] = toWorld(u, v); for (const b of ctx.boxes || []) if (b.top > Y + 0.6 && x > b.x0 - m && x < b.x1 + m && z > b.z0 - m && z < b.z1 + m) return true; return false; };
+  const blocked = (u, v, m) => { const [x, z] = toWorld(u, v); for (const b of ctx.boxes || []) if (b.top > Y + 0.6 && x > b.x0 - m && x < b.x1 + m && z > b.z0 - m && z < b.z1 + m) return true; for (const c of ctx.colliders || []) if (!c.lan && Math.abs(c.x - x) < c.r + m && Math.abs(c.z - z) < c.r + m && Math.hypot(c.x - x, c.z - z) < c.r + m) return true; return false; };   // tường + vật tròn (cây đa…)
   const HERB = { u0: -92, u1: 24, v0: 46, v1: 102 };   // Sân Thảo Mộc (sân đông)
   let seed = 55; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const spot = (m, tries = 34) => { for (let i = 0; i < tries; i++) { const u = HERB.u0 + rnd() * (HERB.u1 - HERB.u0), v = HERB.v0 + rnd() * (HERB.v1 - HERB.v0); if (!blocked(u, v, m)) return [u, v]; } return [-34, 60]; };
@@ -165,7 +165,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     const tFlip = inst(flipperGeo(), matV(), 4);
     // 🦁 lân mẹ + lân con
     const lBody = inst(lanBody(), matV(), 2, true), lHead = inst(lanHead(), matV(), 2), lLeg = inst(lanLeg(), matV(), 8, true);
-    const lans = [1, 0.72].map(sc => { const [u, v] = spot(2.6); const c = { x: 0, z: 0, r: 1.3 * sc }; ctx.colliders && ctx.colliders.push(c); return { u, v, yaw: rnd() * 6.28, tu: u, tv: v, mode: 'graze', timer: 2 + rnd() * 5, ph: 0, walk: 0, sc, col: c, y: hAt(u, v) }; });
+    const lans = [1, 0.72].map(sc => { const [u, v] = spot(2.6); const c = { x: 0, z: 0, r: 1.3 * sc, lan: true }; ctx.colliders && ctx.colliders.push(c); return { u, v, yaw: rnd() * 6.28, tu: u, tv: v, mode: 'graze', timer: 2 + rnd() * 5, ph: 0, walk: 0, sc, col: c, y: hAt(u, v) }; });
     // 🦋 bướm
     const NF = 21, fMat = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: true, opacity: 0.92, depthWrite: false, toneMapped: false });
     const fWing = inst(bflyWing(), fMat, NF * 2), FCOL = ['#33d6ff', '#a066ff', '#ff4fb8', '#ffd23a', '#4dffa0'].map(c => new THREE.Color(c));
