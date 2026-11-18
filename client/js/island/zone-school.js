@@ -13,22 +13,27 @@ import { Batch } from './decor.js';
 import { placeKit } from './kit.js';
 import { buildGate } from './sample/gate.js';
 import { buildPlaza } from './sample/plaza.js';
+import { PAL, shade } from './sample/palette.js';
 import { FC, cbox, wallBody, archWindow, blindArch, roundPier, vine, arcadeBays, arcadeFront, column, pediment, oculus, fanlight, rubikRelief, gableRoof, hipRoofPlus, bellTower } from './sample/facade.js';
 
-// bảng màu (docs/art-style.md)
+// bảng màu chuẩn (docs/style-guide.md §1, sample/palette.js) — không pha màu mới trong file khu
+const PH = n => PAL[n].hex, SH = (n, k) => '#' + shade(n, k).getHexString();
 const C = {
-  trim: '#fff8ea', plinth: '#b9a78e', roof: '#d9683f', roof2: '#cc5d37', ridge: '#a9472b', fascia: '#f6ead2',
-  shutter: '#4f9a7a', glass: '#86b9d2', floor: '#eadfc8', door: '#8a5a34', step: '#d8cfbf', stone: '#d8cfbf', stone2: '#a9a297',
-  walk: '#e4ddcc', curb: '#b3ab9c', cement: '#d6d0c3', paint: '#fbf6ea', iron: '#3b3346', gold: '#e9b949', lantern: '#ffe08a',
+  trim: PH('stoneCreamL'), plinth: PH('stoneWarm'), roof: PH('roof'), roof2: PH('roofL'), ridge: PH('roofD'), fascia: PH('stoneCreamL'),
+  shutter: PH('shutter'), glass: PH('glass'), floor: PH('stoneWarmL'), door: PH('wood'), step: PH('stoneWarmL'), stone: PH('stoneWarm'), stone2: PH('stoneWarmD'),
+  walk: PH('stoneWarmL'), curb: PH('stoneWarmD'), cement: SH('stoneWarmL', 1.146), paint: PH('stoneCreamL'), iron: PH('iron'), gold: PH('brass'), lantern: PH('lampGlow'),
+  wood: PH('wood'), woodD: PH('woodD'), leaf: PH('leaf'), leafD: PH('leafD'), grass: PH('grass'), board: SH('shutterD', 0.85), pot: SH('roof', 1.146),
+  R: PH('rubikR'), G: PH('rubikG'), B: PH('rubikB'), Yl: PH('rubikY'), O: PH('rubikO'), W: PH('rubikW'), ink: PH('ink'),
+  fl: ['flowerRed', 'flowerPink', 'flowerYellow', 'flowerWhite'].map(PH),
 };
 const ROOM = {
-  rubik:     { wall: '#f7e3a1', acc: '#d9542b', sign: ['LỚP RUBIK', '#c4452f'] },
-  chess:     { wall: '#d3e3f2', acc: '#3b4a6b', sign: ['KHU CỜ VUA', '#2f3b59'] },
-  music:     { wall: '#f6d3cc', acc: '#8f4f8a', sign: ['KHU ÂM NHẠC', '#6b3a8a'] },
-  hall:      { wall: '#fbf1de', acc: '#b9502f', sign: ['HỘI TRƯỜNG LỚN', '#b5432f'] },
-  office:    { wall: '#efe6d2', acc: '#4f6f94', sign: ['VĂN PHÒNG', '#3d4f6b'], flat: true },
-  elec:      { wall: '#cfeadf', acc: '#2f7f6f', sign: ['LỚP LẮP RÁP ĐIỆN', '#2f5f6b'] },
-  rubikyard: { wall: '#f7e3a1', acc: '#d9542b', sign: ['KHU CHƠI RUBIK', '#d9542b'], yard: true },
+  rubik:     { wall: PH('stoneCream'), acc: '#d9542b', sign: ['LỚP RUBIK', '#c4452f'] },
+  chess:     { wall: PH('stoneCream'), acc: '#3b4a6b', sign: ['KHU CỜ VUA', '#2f3b59'] },
+  music:     { wall: PH('stoneCream'), acc: '#8f4f8a', sign: ['KHU ÂM NHẠC', '#6b3a8a'] },
+  hall:      { wall: PH('stoneCream'), acc: '#b9502f', sign: ['HỘI TRƯỜNG LỚN', '#b5432f'] },
+  office:    { wall: PH('stoneCream'), acc: '#4f6f94', sign: ['VĂN PHÒNG', '#3d4f6b'], flat: true },
+  elec:      { wall: PH('stoneCream'), acc: '#2f7f6f', sign: ['LỚP LẮP RÁP ĐIỆN', '#2f5f6b'] },
+  rubikyard: { wall: PH('stoneCream'), acc: '#d9542b', sign: ['KHU CHƠI RUBIK', '#d9542b'], yard: true },
 };
 const FACE = { t: Math.PI, b: 0, l: -Math.PI / 2, r: Math.PI / 2 };
 const _v = new THREE.Vector3(), _o = new THREE.Object3D();
@@ -151,7 +156,7 @@ export function buildSchoolZone(a) {
     // CỬA CHÍNH (khung đá, ô kính quạt) + TRÁN TƯỜNG (bảng tên trên attic, biểu tượng lớp ở tam giác)
     b.group(ox, Y, oz, FACE[side], () => {
       const d = DG.follow(b); GR.pre = b.pre;
-      b.box(2 * gap + 0.6, 0.12, 1.0, 0, 0, st.yard ? 0.5 : VD + 0.7, C.stone);
+      for (let i = 0; i < 3; i++) { const dd = 0.38 * (3 - i); cbox(b, 2 * gap + 0.6 + (2 - i) * 0.38, 0.05 * (i + 1), dd, 0, 0, (st.yard ? 0 : VD + 0.2) + dd / 2, i ? C.stone : C.stone2, 0.03); }   // 3 bậc thềm, sâu 0,15·φ² ≈ 0,38 m/bậc
       if (st.yard) {   // cổng vòm khu sân chơi: 2 trụ bo tròn + vòm + bảng tên (không cánh cổng sắt)
         const px = gap + 0.42;
         for (const s of [-1, 1]) { b.group(s * px, 0, 0, 0, () => roundPier(b, 0, 0, HV + 0.9, 0.42)); cbox(b, 0.7, 0.3, 0.7, s * px, HV + 0.9, 0, FC.stone, 0.06); b.ball(0.3, s * px, HV + 1.45, 0, FC.stone); }
@@ -171,31 +176,31 @@ export function buildSchoolZone(a) {
       const ty = pd.y1 + pd.hp * 0.4, tz = pd.zf;
       if (id === 'rubik') oculus(b, GR, 0, ty, tz, Math.min(0.36, pd.hp * 0.3));
       else if (id === 'chess') chessPiece(b, 'k', 0, VD - 0.2, 0.55, 'w', pd.y1 + pd.hp + 0.05);
-      else if (id === 'music') musicNote(b, -0.15, ty - 0.25, tz + 0.02, 0.36, '#2b2633');
+      else if (id === 'music') musicNote(b, -0.15, ty - 0.25, tz + 0.02, 0.36, C.ink);
       else if (id === 'hall') rubikRelief(b, 0, ty, tz + 0.01, Math.min(1.1, pd.hp * 0.55));   // phù điêu Rubik duy nhất: trán toà chính
-      else if (id === 'elec') { const by = ty - 0.3; b.box(0.18, 0.5, 0.08, 0.05, by + 0.28, tz, '#f5c518', 0, 0, -0.45); b.box(0.18, 0.5, 0.08, -0.05, by - 0.08, tz, '#f5c518', 0, 0, -0.45); b.box(0.36, 0.09, 0.09, 0, by + 0.21, tz, '#f5c518'); }
+      else if (id === 'elec') { const by = ty - 0.3; b.box(0.18, 0.5, 0.08, 0.05, by + 0.28, tz, C.Yl, 0, 0, -0.45); b.box(0.18, 0.5, 0.08, -0.05, by - 0.08, tz, C.Yl, 0, 0, -0.45); b.box(0.36, 0.09, 0.09, 0, by + 0.21, tz, C.Yl); }
       else oculus(b, GR, 0, ty, tz, Math.min(0.36, pd.hp * 0.3));
-      for (const s of [-1, 1]) { const u = s * (DOORBAY / 2 + 0.75); d.cyl(0.32, 0.24, 0.5, u, 0, VD + 0.9, '#c9744a', 8); d.ball(0.4, u, 0.78, VD + 0.9, '#5aa04a'); d.ball(0.13, u + 0.15, 1.05, VD + 1.0, '#e85d8a'); d.ball(0.13, u - 0.15, 1.0, VD + 0.8, '#f5c518'); }
+      for (const s of [-1, 1]) { const u = s * (DOORBAY / 2 + 0.75); d.cyl(0.32, 0.24, 0.5, u, 0, VD + 0.9, C.pot, 8); d.ball(0.4, u, 0.78, VD + 0.9, C.leaf); d.ball(0.13, u + 0.15, 1.05, VD + 1.0, C.fl[1]); d.ball(0.13, u - 0.15, 1.0, VD + 0.8, C.fl[2]); d.ball(0.11, u, 1.12, VD + 0.75, C.fl[0]); }
       GR.pre = null;
     });
     // đồ bên trong
     if (!st.yard && id !== 'office') {
       const opp = { b: 't', t: 'b', l: 'r', r: 'l' }[side], [px, pz, qx, qz] = sides[opp], wl = (opp === 't' || opp === 'b' ? r.w : r.h) * S;
-      b.group((px + qx) / 2, Y, (pz + qz) / 2, FACE[opp] + Math.PI, () => { b.box(Math.min(6, wl * 0.4), 1.5, 0.08, 0, 1.2, T / 2 + 0.05, '#2f5d3f'); b.box(Math.min(6.2, wl * 0.4 + 0.2), 0.1, 0.18, 0, 1.12, T / 2 + 0.1, '#b9824f'); });
+      b.group((px + qx) / 2, Y, (pz + qz) / 2, FACE[opp] + Math.PI, () => { b.box(Math.min(6, wl * 0.4), 1.5, 0.08, 0, 1.2, T / 2 + 0.05, C.board); b.box(Math.min(6.2, wl * 0.4 + 0.2), 0.1, 0.18, 0, 1.12, T / 2 + 0.1, C.wood); });
     }
-    if (id === 'rubik' || id === 'elec') for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) { const x = cx - 2 + i * 4, z = cz - 1.6 + j * 2.6; b.box(1.8, 0.08, 0.7, x, Y + 0.72, z, '#c9955f'); b.box(1.6, 0.72, 0.1, x, Y, z, '#8a5a34'); b.box(1.6, 0.42, 0.4, x, Y, z + 0.7, id === 'rubik' ? '#3d7be0' : '#2f7f6f'); }
-    if (id === 'chess' && D.CHESS_T) for (const [x2, y2] of D.CHESS_T) { const x = X3(x2), z = Z3(y2); b.box(1.3, 0.08, 1.3, x, Y + 0.75, z, '#f4efe4'); b.box(0.66, 0.02, 0.66, x - 0.33, Y + 0.83, z - 0.33, '#2b2633'); b.box(0.66, 0.02, 0.66, x + 0.33, Y + 0.83, z + 0.33, '#2b2633'); b.box(0.2, 0.75, 0.2, x, Y, z, '#5a3a22'); }
-    if (id === 'music' && D.MUSIC_SPOTS) { const [x2, y2] = D.MUSIC_SPOTS.piano, x = X3(x2), z = Z3(y2); b.box(2.0, 1.0, 0.8, x, Y, z, '#1b1626'); b.box(2.0, 0.06, 0.32, x, Y + 0.85, z + 0.5, '#ffffff'); b.box(0.8, 0.5, 0.4, x, Y, z + 1.0, '#5a3a22'); }
-    if (id === 'hall') { b.box(5, 0.6, (bz - az) * 0.6, bx - 2.8, Y, cz, '#b9824f'); for (let i = 0; i < 4; i++) b.box(r.w * S * 0.45, 0.45, 0.5, cx - 1.5, Y, Z3(r.y + 300 + i * 68), '#a0522d'); }
+    if (id === 'rubik' || id === 'elec') for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) { const x = cx - 2 + i * 4, z = cz - 1.6 + j * 2.6; b.box(1.8, 0.08, 0.7, x, Y + 0.72, z, C.wood); b.box(1.6, 0.72, 0.1, x, Y, z, C.woodD); b.box(1.6, 0.42, 0.4, x, Y, z + 0.7, id === 'rubik' ? C.B : C.shutter); }
+    if (id === 'chess' && D.CHESS_T) for (const [x2, y2] of D.CHESS_T) { const x = X3(x2), z = Z3(y2); b.box(1.3, 0.08, 1.3, x, Y + 0.75, z, C.trim); b.box(0.66, 0.02, 0.66, x - 0.33, Y + 0.83, z - 0.33, C.ink); b.box(0.66, 0.02, 0.66, x + 0.33, Y + 0.83, z + 0.33, C.ink); b.box(0.2, 0.75, 0.2, x, Y, z, C.woodD); }
+    if (id === 'music' && D.MUSIC_SPOTS) { const [x2, y2] = D.MUSIC_SPOTS.piano, x = X3(x2), z = Z3(y2); b.box(2.0, 1.0, 0.8, x, Y, z, C.ink); b.box(2.0, 0.06, 0.32, x, Y + 0.85, z + 0.5, C.W); b.box(0.8, 0.5, 0.4, x, Y, z + 1.0, C.woodD); }
+    if (id === 'hall') { b.box(5, 0.6, (bz - az) * 0.6, bx - 2.8, Y, cz, C.wood); for (let i = 0; i < 4; i++) b.box(r.w * S * 0.45, 0.45, 0.5, cx - 1.5, Y, Z3(r.y + 300 + i * 68), C.roof); }
     // MÁI: mesh riêng mỗi lớp, mờ dần khi người chơi vào trong
     if (st.yard) return;
     const OV = 0.9, fx0 = ax - (side === 'l' ? VD + 0.6 : OV), fx1 = bx + (side === 'r' ? VD + 0.6 : OV), fz0 = az - (side === 't' ? VD + 0.6 : OV), fz1 = bz + (side === 'b' ? VD + 0.6 : OV);
     const rb = new Batch('roof-' + id), t0 = rb.tris;
     if (st.flat) {
       const gx0 = fx0 + 0.6, gx1 = fx1 - 0.6, gz0 = fz0 + 0.6, gz1 = fz1 - 0.6, gcx = (gx0 + gx1) / 2, gcz = (gz0 + gz1) / 2;   // sân thượng: tường chắn mái có phào, chậu cây
-      rb.box(gx1 - gx0, 0.3, gz1 - gz0, gcx, Y + HV - 0.2, gcz, '#d9cfbb');
+      rb.box(gx1 - gx0, 0.3, gz1 - gz0, gcx, Y + HV - 0.2, gcz, C.stone);
       for (const [w, d, x, z] of [[gx1 - gx0, 0.3, gcx, gz0], [gx1 - gx0, 0.3, gcx, gz1], [0.3, gz1 - gz0, gx0, gcz], [0.3, gz1 - gz0, gx1, gcz]]) { rb.box(w, 0.5, d, x, Y + HV, z, FC.wall); cbox(rb, w + 0.2, 0.12, d + 0.2, x, Y + HV + 0.5, z, FC.trim, 0.03); }
-      for (const [x, z] of [[gx0 + 1, gz0 + 1], [gx1 - 1, gz0 + 1], [gx0 + 1, gz1 - 1], [gx1 - 1, gz1 - 1]]) { rb.cyl(0.4, 0.3, 0.5, x, Y + HV + 0.1, z, '#c9744a', 8); rb.ball(0.5, x, Y + HV + 0.85, z, '#5aa04a'); }
+      for (const [x, z] of [[gx0 + 1, gz0 + 1], [gx1 - 1, gz0 + 1], [gx0 + 1, gz1 - 1], [gx1 - 1, gz1 - 1]]) { rb.cyl(0.4, 0.3, 0.5, x, Y + HV + 0.1, z, C.pot, 8); rb.ball(0.5, x, Y + HV + 0.85, z, C.leaf); }
     } else if (big) {   // toà chính: mái 4 mái + tháp chuông trên trục cổng trường
       const rr = hipRoofPlus(rb, fx0, fz0, fx1, fz1, Y + HV + 0.02, HV);
       const alongZ = fz1 - fz0 > fx1 - fx0, tx = alongZ ? rr.cx : (side === 't' || side === 'b' ? dx : rr.cx), tz = alongZ ? (side === 'l' || side === 'r' ? dz : rr.cz) : rr.cz;
