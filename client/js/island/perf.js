@@ -8,7 +8,7 @@
 //    điện thoại: bán kính < 1/φ ≈ 0,62 m (cả InstancedMesh không ghi itemR: lấy cỡ 1 vật từ hình cầu bao lưới × tỉ lệ instance đầu).
 //  · Bay/khinh khí cầu cao (camera cách mặt đất/biển > 21 m, Fibonacci): vật nhỏ ẩn sớm hơn 1/φ lần; điện thoại: sương kéo gần
 //    dần còn 1/√φ (296 → 233 m; cây xa, công trình xa tự ẩn theo sương) — từ trên cao thấy nhiều cảnh hơn hẳn, xa hơn chỉ là vệt mờ trong sương.
-// Ẩn bằng layers (không đụng .visible mà file khác đang điều khiển). Quét cảnh tìm vật mới mỗi 2 s, xét khoảng cách mỗi 0,2 s.
+// Ẩn bằng layers (không đụng .visible mà file khác đang điều khiển). Quét cảnh tìm vật mới mỗi 2 s (377 nút/khung), xét khoảng cách mỗi 0,2 s.
 import * as THREE from 'three';
 import { PHI } from './layout.js';
 import { CFG } from './config.js';
@@ -48,6 +48,9 @@ export function createPerf(ctx) {
     if (r < SMALL_R && !o.isSprite) list.push({ o, kind: 'small', r });
   }
   const scan = () => scene.traverse(register);
+  // quét dần: trước đây traverse cả cảnh (hàng nghìn nút) trong 1 khung mỗi 2 s → khựng nhịp đều (5–7 ms máy tính, ~25 ms điện thoại)
+  const stack = [];
+  function scanStep() { for (let n = 0; n < 377 && stack.length; n++) { const o = stack.pop(); register(o); const ch = o.children; for (let i = 0; i < ch.length; i++) stack.push(ch[i]); } }
   const cam = new THREE.Vector3();
   function hide(o, h) {
     const L = o.layers;
@@ -67,7 +70,8 @@ export function createPerf(ctx) {
     if (fogK < 0.999) { F.near *= fogK; F.far *= fogK; }   // mặt cắt xa giữ nguyên: vòm trời (bán kính 400/φ ≈ 247 m) bám người chơi, cắt gần hơn sẽ thủng trời
   }
   function update(dt) {
-    if ((tScan += dt) > 2) { tScan = 0; scan(); }
+    if ((tScan += dt) > 2 && !stack.length) { tScan = 0; stack.push(scene); }
+    scanStep();
     fogByAlt(dt);
     if ((tCheck += dt) < 0.2) return; tCheck = 0;
     camera.getWorldPosition(cam);
