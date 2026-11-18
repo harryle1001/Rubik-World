@@ -28,12 +28,14 @@ const P = await page.evaluate(async () => { const p = await import('/js/island/s
 // khoá chất lượng mức 1 + giờ 13h (số đo không đổi theo FPS/giờ thật); đặt người chơi ở mép quảng trường
 await page.evaluate(([x, z, px]) => { const c = __island; c.setQuality(1, true); c.sky.state.lock = 13; c.renderer.setPixelRatio(px); c.post.setSize(innerWidth, innerHeight); c.player.teleport(x + 21, z); c.player.snapCamera();
   // đo ms từng module (bọc hàm update trong ctx) + ms vẽ (post.render)
-  const M = window.__mod = {}; for (const k of Object.keys(c)) { const o = c[k]; if (!o || typeof o !== 'object' || typeof o.update !== 'function' || o === c.renderer || o === c.camera || o === c.scene) continue; const f = o.update; M[k] = 0; o.update = function () { const s = performance.now(), r = f.apply(this, arguments); M[k] += performance.now() - s; return r; }; }
-  const r = c.post.render; M.render = 0; c.post.render = function () { const s = performance.now(); r.call(this); M.render += performance.now() - s; };
-  const raf = window.requestAnimationFrame; M.frameJs = 0; window.requestAnimationFrame = cb => raf(ts => { const s = performance.now(); cb(ts); M.frameJs += performance.now() - s; });
+  const M = window.__mod = {}, F = {}; window.__spk = []; for (const k of Object.keys(c)) { const o = c[k]; if (!o || typeof o !== 'object' || typeof o.update !== 'function' || o === c.renderer || o === c.camera || o === c.scene) continue; const f = o.update; M[k] = 0; o.update = function () { const s = performance.now(), r = f.apply(this, arguments), d = performance.now() - s; M[k] += d; F[k] = (F[k] || 0) + d; return r; }; }
+  const r = c.post.render; M.render = 0; c.post.render = function () { const s = performance.now(); r.call(this); const d = performance.now() - s; M.render += d; F.render = (F.render || 0) + d; };
+  const raf = window.requestAnimationFrame; M.frameJs = 0; window.__fj = []; window.requestAnimationFrame = cb => raf(ts => { const s = performance.now(); cb(ts); const d = performance.now() - s; M.frameJs += d; if (cb.name === 'onAnimationFrame') { __fj.push(d); if (d > 100) __spk.push({ ms: Math.round(d), prog: __island.renderer.info.programs.length, tex: __island.renderer.info.memory.textures, geo: __island.renderer.info.memory.geometries, ...Object.fromEntries(Object.entries(F).filter(e => e[1] > 5).map(([k, v]) => [k, Math.round(v)])) }); } for (const k in F) F[k] = 0; });
 }, [...P, PX]);
 await page.waitForTimeout(5000);   // chunk/LOD/biên dịch shader ổn định trước khi đo
 // GPU giả lập chỉ ~3 khung/s, dt bị chặn 1/20 s → giờ trong game trôi chậm: chạy sẵn 2 lần quét của perf.js (trạng thái ổn định như máy thật sau vài giây)
+// chờ biên dịch trước shader của ocean.js (1 lần, sau khi đóng bảng đăng nhập) xong rồi mới đo
+await page.waitForFunction(() => __island.warmed, null, { timeout: 120000 }).catch(() => console.log('(chưa warm-up shader)')); await page.waitForTimeout(3000);
 await page.evaluate(() => { const p = __island.perf; if (p && p.frozen) { p.scan(); p.scan(); } });
 // lái: giữ W, cứ 100 ms đặt hướng camera = tiếp tuyến vòng tròn bán kính 21 m (Fibonacci) quanh quảng trường + kéo về bán kính
 await page.evaluate(([cx, cz]) => {
@@ -47,7 +49,7 @@ const gcs = []; cdp.on('Tracing.dataCollected', e => { for (const ev of e.value)
 const done = new Promise(r => cdp.once('Tracing.tracingComplete', r));
 await cdp.send('Tracing.start', { traceConfig: { includedCategories: ['devtools.timeline', 'v8'], recordMode: 'recordContinuously' }, transferMode: 'ReportEvents' });
 const heap0 = await page.evaluate(() => performance.memory ? performance.memory.usedJSHeapSize : 0);
-await page.evaluate(() => { __fr.t.length = 0; for (const k in __mod) __mod[k] = 0; });
+await page.evaluate(() => { __fr.t.length = 0; for (const k in __mod) __mod[k] = 0; __fj.length = 0; __spk.length = 0; });
 await cdp.send('Profiler.start');
 await page.keyboard.down('KeyW'); await page.waitForTimeout(SEC * 1000);                       // đi bộ
 await page.keyboard.down('ShiftLeft'); await page.waitForTimeout(SEC * 1000);                  // chạy
@@ -56,6 +58,7 @@ const { profile } = await cdp.send('Profiler.stop');
 await cdp.send('Tracing.end'); await done;
 const heap1 = await page.evaluate(() => performance.memory ? performance.memory.usedJSHeapSize : 0);
 const ft = await page.evaluate(() => { cancelAnimationFrame(__fr.raf); clearInterval(__steer); return __fr.t; });
+const fj = await page.evaluate(() => __fj.slice()).then(a => a.sort((x, y) => x - y));
 const mod = await page.evaluate(n => Object.fromEntries(Object.entries(__mod).map(([k, v]) => [k, +(v / n).toFixed(2)]).sort((a, b) => b[1] - a[1])), ft.length);
 await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
 // --- tổng hợp self time theo hàm (gộp cùng tên + file:dòng) ---
@@ -72,10 +75,12 @@ const res = {
   frames: ft.length, avgMs: +avg.toFixed(1), p95Ms: +sorted[Math.floor(sorted.length * 0.95)].toFixed(1), maxMs: Math.round(sorted.at(-1)),
   over50: ft.filter(t => t > 50).length, over100: ft.filter(t => t > 100).length,
   gcMinor: minor.length, gcMajor: major.length, gcTraceMs: Math.round(gcs.reduce((a, g) => a + g.dur, 0)), gcProfMs: Math.round(gcMs),
+  // khung JS (vòng lặp game + vẽ phía CPU, không tính chờ GPU giả lập): p95, lớn nhất, số khung > 50 ms
+  jsFrame: { p95: +fj[Math.floor(fj.length * 0.95)].toFixed(1), max: Math.round(fj.at(-1)), over50: fj.filter(t => t > 50).length, over100: fj.filter(t => t > 100).length },
   jsMs: +(jsT / ft.length).toFixed(1), matrixMs: +(matT / ft.length).toFixed(2),
   heapMB: [+(heap0 / 1048576).toFixed(1), +(heap1 / 1048576).toFixed(1)],
 };
-res.msPerFrame = mod;
+res.msPerFrame = mod; res.spikes = await page.evaluate(() => __spk);
 console.table(top); console.log(JSON.stringify(res));
 if (OUT) { fs.writeFileSync(`${OUT}/cpu.cpuprofile`, JSON.stringify(profile)); fs.writeFileSync(`${OUT}/result.json`, JSON.stringify({ res, top }, null, 1)); await page.screenshot({ path: `${OUT}/end.png` }); }
 console.log(errors.length ? 'LỖI CONSOLE:\n' + errors.slice(0, 10).join('\n') : 'Không lỗi console');
