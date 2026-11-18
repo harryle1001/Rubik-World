@@ -374,6 +374,7 @@ export function buildExtraZones(ctx, k) {
       flat(G0, pg, '#efe6d6', px, Y + 0.02, pz, 1.18, 1.35, Math.PI / 2); flat(G0, pg, '#ffffff', px, Y + 0.035, pz, 1.04, 1.06, Math.PI / 2); flat(G0, pg, '#5fd8e6', px, Y + 0.05, pz, 1, 1, Math.PI / 2); flat(G0, pg, '#86e6ef', px - 1, Y + 0.055, pz, 0.6, 0.45, Math.PI / 2);
       addFoot(px - 8.8, pz - 21.8, px + 8.8, pz + 21.8);
       disc(b, 1.6, px - 3.6, Y + 0.08, pz - 5, SAND, 12); kit('plant_palm_bend', px - 3.6, Y, pz - 5, 0.9, 1, true);
+      G0.box(7.2, 0.03, 38, px - 11.2, Y + 0.014, pz, '#ead9b8'); for (let z = pz - 18.4; z < pz + 18.5; z += 2.6) G0.box(7.2, 0.02, 0.06, px - 11.2, Y + 0.03, z, '#d8c49e');   // sàn cát lát quanh hồ: ghế & dù không đứng trên cỏ
       for (let i = 0; i < 9; i++) lounger(px - 10.5, pz - 16 + i * 4, Math.PI / 2, ['#7fd0e8', '#f6c7c0', '#f7e3a1'][i % 3]);
       for (let i = 0; i < 4; i++) kit('prop_beach_umbrella', px - 12, Y, pz - 14 + i * 9.5, 0.8, rnd() * 6);
       gazebo(px + 6, pz + 26, 2.6, '#3f8f9a');

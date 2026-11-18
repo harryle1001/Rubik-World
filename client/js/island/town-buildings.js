@@ -11,7 +11,7 @@ import { BLOCKS, EXTRA, blockOf2D, SPAWN, WORLD, PHI, ISLAND_R, ZONES_N, zoneAng
 import { Batch, DetailGrid, createLife, detailMats } from './decor.js';
 import { buildSchoolZone, rubikCube as rubikCubeReal } from './zone-school.js';
 import { buildZoneEast } from './zone-east.js';
-import { buildExtraZones, buildBoats, placePalms } from './zone-extra.js';
+import { buildExtraZones, buildBoats, placePalms, placeKitCells } from './zone-extra.js';
 import { buildNorth, house } from './zone-north.js';
 import { buildZen } from './zone-zen.js';
 
@@ -165,6 +165,19 @@ export function buildTownArchitecture(ctx, RS, env) {
     }
   };
   measure(B.parks, 'lots', () => { for (const L of HOUSE_LOTS) lotGarden(L, !!L.house); for (const L of GARDEN_LOTS) lotGarden(L, false); });
+  // LÔ ĐẤT: hàng rào gỗ thanh ngang thấp phía đường (chừa cổng), đèn cổng, bụi ôm góc nhà, luống hoa dọc rào, cỏ cụm — model CC0 (Kenney kit + Quaternius qua terrain.nature)
+  { const fence = [], lampK = [], nat = { bush: [], flowers: [], tuft: [], fern: [] }, hw = LOT_W / 2, hl = LOT_L / 2;
+    const at = (L, u, v) => lotToWorld(L, u, v);
+    for (const L of [...HOUSE_LOTS, ...GARDEN_LOTS]) {
+      for (let u = -hw + 0.85; u < hw - 0.6; u += 1.3) { if (Math.abs(u) < 2.4) continue; const [x, z] = at(L, u, hl - 0.25); fence.push([x, Y, z, 1.32, L.ry]); }
+      { const [x, z] = at(L, -2.9, hl - 0.6); lampK.push([x, Y, z, 1.7, L.ry]); }
+      for (let u = -hw + 1.3; u < hw - 1; u += 2.6) { if (Math.abs(u) < 3.2) continue; const [x, z] = at(L, u, hl - 1.1); nat.flowers.push([x, Y - 0.03, z, 1.9 + rnd() * 0.5]); }
+      if (L.house) for (const su of [-1, 1]) for (const v of [HOUSE_V1 - 0.6, HOUSE_V1 - HOUSE_D + 0.6]) { const [x, z] = at(L, su * (HOUSE_W / 2 + 1.0), v); nat.bush.push([x, Y - 0.05, z, 3.0 + rnd() * 0.8]); }
+      for (let i = 0; i < 6; i++) { const u = (rnd() < 0.5 ? -1 : 1) * (2 + rnd() * (hw - 3)), v = (L.house ? HOUSE_V1 + 2 : -hl + 2) + rnd() * (hl - 3 - (L.house ? HOUSE_V1 + 2 : -hl + 2)); const [x, z] = at(L, u, v); (i % 3 ? nat.tuft : nat.fern).push([x, Y - 0.04, z, 2.0 + rnd() * 0.8]); }
+    }
+    placeKitCells(scene, 'fence_simple', fence, 70, { shadow: false }); placeKitCells(scene, 'prop_lantern', lampK, 70, { shadow: false });
+    for (const k of Object.keys(nat)) ctx.terrain.nature.add(k, nat[k]);
+  }
   // HÀNG CÂY & ĐÈN dọc đường vòng và 8 đường hướng tâm (cách nhau ≈ 13 m — Fibonacci), tránh lô, khu, hồ, nút giao
   {
     const okTree = (x, z) => !lotAt(x, z, 1.5) && landDist(x, z) > 2 && lagoonDist(x, z) > 3 && roadDist(x, z) > ROAD_W / 2 + 1.2 && pathDist(x, z) > PATH_W / 2 + 1.5;
