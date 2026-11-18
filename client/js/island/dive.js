@@ -200,7 +200,7 @@ export function createDive(ctx) {
   };
 
   // ---------- Mỗi khung hình (sau ambience): dưỡng khí, tư thế, hiệu ứng, góc nhìn dưới nước ----------
-  const fogC = new THREE.Color(), shallow = new THREE.Color('#39c6b8'), deep = new THREE.Color('#0a3557'), night = new THREE.Color('#06152a'), _c = new THREE.Color();
+  const fogC = new THREE.Color(), shallow = new THREE.Color('#39c6b8'), deep = new THREE.Color('#0a3557'), night = new THREE.Color('#06152a'), _c = new THREE.Color(), FOAM = new THREE.Color('#e8fffb');
   let saved = null;
   S.update = dt => {
     const p = pl.pos, t = WIND.uTime.value; sinceSplash += dt;
@@ -258,7 +258,7 @@ export function createDive(ctx) {
     if (sky) { sky.U.uTop.value.copy(fogC); sky.U.uHor.value.copy(fogC); sky.U.uSunCol.value.setRGB(0, 0, 0); sky.U.uNight.value = 0; }
     UU.uFog.value.copy(fogC); UU.uFar.value = F.far;
     const far = Math.ceil(F.far + 8); if (camera.far !== far) { camera.far = far; camera.updateProjectionMatrix(); }   // cắt xa theo sương → bớt draw call
-    UU.uSky.value.copy(shallow).lerp(_c.set('#e8fffb'), 0.55 * (1 - k)).multiplyScalar(lerp(1, 0.35, nt)).lerp(fogC, k * 0.6);
+    UU.uSky.value.copy(shallow).lerp(FOAM, 0.55 * (1 - k)).multiplyScalar(lerp(1, 0.35, nt)).lerp(fogC, k * 0.6);
     if (sky) { UU.uSunDir.value.copy(sky.state.sunDir); UU.uSun.value.copy(sky.sun.color).multiplyScalar(day * (1 - k)); }
     under.position.set(camera.position.x, cs - 0.02, camera.position.z);
     if (Math.abs(p.x - cAt.x) > 8 || Math.abs(p.z - cAt.y) > 8) relayCaustic(p.x, p.z);
