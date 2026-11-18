@@ -35,7 +35,7 @@ function v60tNG(px, py){
   if(!M.NG){ [M.NG, M.ngg] = v57pCv(N, N); }
   if(Math.hypot(px - M.ngX, py - M.ngY) < N*.2 && !M.ngDirty && realT - M.ngT < 9) return;
   try { v46CheckCaches(); } catch(e){}
-  const first = M.ngX < -1e8; M.tb = first ? 4 : 1; M.zb = first ? 2 : 1; M.ngDirty = false; M.ngT = realT; M.ngX = px; M.ngY = py;
+  M.tb = 1; M.zb = 1; M.ngDirty = false; M.ngT = realT; M.ngX = px; M.ngY = py;   // v61f: mỗi khung tối đa 1 ô nền + 1 cache khu (trước: 4 + 2 ngay khung đầu → khựng ~300 ms)
   const g = M.ngg, x0 = Math.round(px - N/2), y0 = Math.round(py - N/2), x1 = x0 + N, y1 = y0 + N; M.ngx0 = x0; M.ngy0 = y0;
   g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false; g.globalAlpha = 1; g.fillStyle = M.seaC; g.fillRect(0, 0, N, N);
   g.setTransform(1, 0, 0, 1, -x0, -y0);
