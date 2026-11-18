@@ -157,7 +157,7 @@ export function createSchoolTown(ctx) {
     if (town.labels) { const p = ctx.player.pos; for (const sp of town.labels) sp.visible = Math.abs(sp.position.x - p.x) + Math.abs(sp.position.z - p.z) < 70; }   // nhãn chữ chỉ hiện khi ở gần
     if (!town.RS) return;
     // giờ trong ngày theo đồng hồ trường (để giờ học, ngày/đêm khớp nhau)
-    if (ctx.sky && ctx.sky.state.lock == null && typeof town.RS.clock === 'number') ctx.sky.state.hour = ((town.RS.clock / 60) % 24 + 24) % 24;
+    if (ctx.sky && typeof town.RS.clock === 'number') ctx.sky.state.real = ((town.RS.clock / 60) % 24 + 24) % 24;
     // bảng mini game đang mở? → iframe nhận chạm, nhân vật đứng yên
     if ((checkT -= dt) <= 0) {
       checkT = 0.25; const m = isModal();
