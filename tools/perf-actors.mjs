@@ -72,6 +72,12 @@ for (const [name, [x, z], yaw, pitch, dist, clk, dive, fixed] of spots) {
   await page.waitForFunction(n => __pm.n >= n, N, { timeout: 300000 });
   const m = await page.evaluate(() => { const P = __pm, n = P.n, js = {}; let tot = 0; for (const k in P.js) { js[k] = +(P.js[k] / n).toFixed(2); tot += P.js[k] / n; } const tp = __island.townPeople || [];
     return { calls: Math.round(P.calls / n), tris: Math.round(P.tris / n), skinDraw: +(P.sk / n).toFixed(1), skinShadow: +(P.skSh / n).toFixed(1), mixPerF: +(P.mix / n).toFixed(1), mixMs: +(P.mixMs / n).toFixed(2), actorJs: +tot.toFixed(2), ...js, people: tp.filter(e => e.a).length, full: tp.filter(e => e.a && e.hero.model.visible).length, peopleMs: +(__island.perfPeople ? __island.perfPeople() : 0).toFixed(2), renderMs: +(P.ms / n).toFixed(1) }; });
+  if (arg('prof') === name) {   // --prof=<điểm>: đo CPU 8 s, in 21 hàm tốn nhất (self time) của client/js
+    const cdp = await page.context().newCDPSession(page); await cdp.send('Profiler.enable'); await cdp.send('Profiler.setSamplingInterval', { interval: 200 }); await cdp.send('Profiler.start');
+    await page.waitForTimeout(8000); const { profile } = await cdp.send('Profiler.stop'); const self = new Map(), dt = profile.timeDeltas, tot = dt.reduce((a, b) => a + b, 0), byId = new Map(profile.nodes.map(n => [n.id, n]));
+    profile.samples.forEach((id, i) => { const f = byId.get(id).callFrame, k = `${f.functionName || '(anon)'} ${f.url.split('/').slice(-2).join('/')}:${f.lineNumber + 1}`; self.set(k, (self.get(k) || 0) + (dt[i] || 0)); });
+    console.log([...self].sort((a, b) => b[1] - a[1]).slice(0, 21).map(([k, v]) => `${(v / tot * 100).toFixed(1).padStart(5)}%  ${k}`).join('\n'));
+  }
   if (OUT) await page.screenshot({ path: `${OUT}/${name}.png` });
   rows.push({ name, ...m });
 }

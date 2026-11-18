@@ -52,7 +52,8 @@ export async function loadHero(kind, height = 1.65, look = null) {
   const parts = skinTo(model, G); model.scale.setScalar(height / G.top);
   parts.body.geometry = G.body; addOutline(model); parts.body.geometry = G.all;   // viền theo hình thân (không viền mắt, miệng)
   const outlines = []; model.traverse(o => { if (o.userData.outline && o.material === outlineMat) outlines.push(o); });
-  const anim = animator(model, rigClips(g.animations, B, model));
+  const clips = rigClips(g.animations, B, model); for (const [n, k, v] of clips.pose) { const o = model.getObjectByName(n); if (o) o[k].fromArray(v); }   // tư thế cố định (track hằng đã cắt)
+  const anim = animator(model, clips);
   const N = NAMES.person; for (const [k, v] of Object.entries({ ...N, drive: N.sit })) if (!anim.actions[k] && anim.actions[v]) anim.actions[k] = anim.actions[v]; // tên cũ (vehicles: 'drive', 'sit', 'idle')
   const hero = { model, anim, set: N, height, outlines, head: model.getObjectByName('head'), outlineOn: true, tris: G.tris, happyUntil: 0 };
   // Biểu cảm: chớp mắt ngẫu nhiên (2–5 s/lần, ~0,13 s); mắt cười híp "^^" khi reo/chào (happyUntil)

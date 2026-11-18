@@ -53,6 +53,17 @@ export function rigClips(clips, B, model) {
   const idle = by('Idle');
   if (idle) out.push(chairSit(idle, model));
   if (idle) out.push(headNo(idle));
+  // Cắt track thừa (mixer nhẹ hơn ~4 lần: 123 → ~30 track/clip): track của xương không biến dạng (không phải tổ tiên
+  // của xương DEFORM) và track hằng số có CÙNG giá trị ở mọi clip → đặt giá trị đó lên xương 1 lần (out.pose, loadHero).
+  const keep = new Set(); for (const n of DEFORM) for (let o = model.getObjectByName(n); o && o !== model; o = o.parent) keep.add(o.name);
+  const cst = new Map();
+  for (const c of out) for (const t of c.tracks) {
+    const v = t.values, z = t.getValueSize(), pv = cst.get(t.name); let k = true;
+    for (let i = z; i < v.length && k; i++) if (Math.abs(v[i] - v[i % z]) > 1e-5) k = false;
+    if (!k) cst.set(t.name, null); else if (pv === undefined) cst.set(t.name, Array.from(v.subarray(0, z))); else if (pv && pv.some((x, i) => Math.abs(x - v[i]) > 1e-5)) cst.set(t.name, null);
+  }
+  for (const c of out) c.tracks = c.tracks.filter(t => keep.has(t.name.split('.')[0]) && !cst.get(t.name));
+  out.pose = [...cst].filter(([n, v]) => v && keep.has(n.split('.')[0])).map(([n, v]) => [...n.split('.'), v]);
   clipCache.set(key, out); return out;
 }
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _x = new THREE.Vector3(1, 0, 0), _y = new THREE.Vector3(0, 1, 0);

@@ -74,15 +74,17 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
   // tất cả gộp vào 1 InstancedMesh → mọi người ở xa chỉ tốn 1 draw call (trước: 1–3 call mỗi người). Người ngồi vẫn dùng model đầy đủ.
   const LOD_D = CFG.isMobile ? 21 : 34, imp = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 8).translate(0, 0.5, 0), toon('#ffffff'), POOL * 4);
   imp.count = 0; imp.visible = false; imp.frustumCulled = false; imp.name = 'person-lod'; imp.castShadow = false; imp.receiveShadow = true; scene.add(imp);
-  const _io = new THREE.Object3D(), _ic = new THREE.Color(), SKIN = '#f2c9a0', HAIR = '#2a1d17';
-  const impPart = (i, x, y, z, yaw, y0, hh, w, d, col) => { _io.position.set(x, y + y0, z); _io.rotation.set(0, yaw, 0); _io.scale.set(w, hh, d); _io.updateMatrix(); imp.setMatrixAt(i, _io.matrix); imp.setColorAt(i, _ic.set(col)); };
+  const _io = new THREE.Object3D(), SKIN = '#f2c9a0', HAIR = '#2a1d17';
+  const impPart = (i, x, y, z, yaw, y0, hh, w, d, col) => { _io.position.set(x, y + y0, z); _io.rotation.set(0, yaw, 0); _io.scale.set(w, hh, d); _io.updateMatrix(); imp.setMatrixAt(i, _io.matrix); imp.setColorAt(i, col); };
   function impPut(e, x, y, z, yaw, bob) {
-    const L = e.a._look3d, h = L.h || 1.6, lk = L.look, stu = lk.role === 'student', i = imp.count; if (i + 4 > POOL * 4) return;
-    const shirt = stu ? '#f4f4f0' : lk.aodai ? (lk.shirt || '#f4f4f0') : (lk.shirt || '#7fa7d9'), pants = stu ? '#2b3a67' : lk.aodai ? shirt : (lk.pants || '#3a3f55');
-    impPart(i, x, y, z, yaw, 0, h * 0.47 + bob, h * 0.17, h * 0.12, pants);
-    impPart(i + 1, x, y, z, yaw, h * 0.45 + bob, h * 0.33, h * 0.26, h * 0.16, shirt);
-    impPart(i + 2, x, y, z, yaw, h * 0.78 + bob, h * 0.15, h * 0.15, h * 0.15, SKIN);
-    impPart(i + 3, x, y, z, yaw, h * 0.9 + bob, h * 0.07, h * 0.17, h * 0.17, lk.cap || HAIR);
+    const L = e.a._look3d, h = L.h || 1.6, lk = L.look, i = imp.count; if (i + 4 > POOL * 4) return;
+    const C = L.ic || (L.ic = (() => {   // màu quần · áo · da · tóc/mũ: tính 1 lần mỗi người (không phân tích chuỗi màu mỗi khung)
+      const stu = lk.role === 'student', shirt = stu ? '#f4f4f0' : lk.aodai ? (lk.shirt || '#f4f4f0') : (lk.shirt || '#7fa7d9'), pants = stu ? '#2b3a67' : lk.aodai ? shirt : (lk.pants || '#3a3f55');
+      return [pants, shirt, SKIN, lk.cap || HAIR].map(c => new THREE.Color(c)); })());
+    impPart(i, x, y, z, yaw, 0, h * 0.47 + bob, h * 0.17, h * 0.12, C[0]);
+    impPart(i + 1, x, y, z, yaw, h * 0.45 + bob, h * 0.33, h * 0.26, h * 0.16, C[1]);
+    impPart(i + 2, x, y, z, yaw, h * 0.78 + bob, h * 0.15, h * 0.15, h * 0.15, C[2]);
+    impPart(i + 3, x, y, z, yaw, h * 0.9 + bob, h * 0.07, h * 0.17, h * 0.17, C[3]);
     imp.count = i + 4;
   }
 
