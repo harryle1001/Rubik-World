@@ -8,6 +8,7 @@ import { Batch } from './decor.js';
 import { placeKit } from './kit.js';
 import { toon, addOutline } from './style.js';
 import { HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1, PHI } from './layout.js';
+import { buildHouse, LOT_PRESET } from './sample/house-kit.js';
 
 // Hằng số của bản đồ 2D (client/school/js/core/world.js). Game 2D chạy trong IIFE nên win.eval không đọc được → sao lại ở đây.
 const LAKE = { cx: 3930, cy: 330, rx: 300, ry: 150 }, LOTUS = { cx: 4540, cy: 325, rx: 150, ry: 100 };
@@ -185,10 +186,11 @@ export function buildNorth(k) {
   };
   const FCOL = ['#e8453c', '#f5c518', '#e85d8a', '#9b6bd0', '#ffffff', '#ff8a2b'];
 
-  // ---------- 1. NHÀ Ở HỌC SINH: mỗi nhà 1 lô quanh đường vòng (layout.js), nền HOUSE_W × HOUSE_D, tầng cao 1,9·φ^½ ----------
+  // ---------- 1. NHÀ Ở HỌC SINH: mỗi nhà 1 lô quanh đường vòng (layout.js), nền HOUSE_W × HOUSE_D, nhà từ bộ mô-đun house-kit.js (tầng 3,4 m) ----------
   for (const L of HOUSE_LOTS) {
-    const h = L.house; if (!h) continue; const o = Object.assign({ k: h.k, fh: 1.9 * Math.sqrt(PHI) }, KIND[h.k] || KIND.nhago), [fx, fz] = lotToWorld(L, 0, HOUSE_V1);
-    measure(B.homes, h.k, () => B.homes.group(fx, Y, fz, L.ry, () => house(B.homes, HOUSE_W, HOUSE_D, o)));
+    const h = L.house; if (!h) continue; const [fx, fz] = lotToWorld(L, 0, HOUSE_V1);
+    const o = Object.assign({ w: HOUSE_W, dep: HOUSE_D, seed: L.j }, LOT_PRESET[h.k] || LOT_PRESET.nhago);   // bộ nhà mô-đun (sample/house-kit.js)
+    measure(B.homes, h.k, () => B.homes.group(fx, Y, fz, L.ry, () => buildHouse(B.homes, o, { d: DG })));
   }
 
   // ---------- 2. PHỐ ĐÀ LẠT ----------
