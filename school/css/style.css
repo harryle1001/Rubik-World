@@ -1708,3 +1708,5 @@ body.v58tR #mRubik .v45stage #rubikCv{position:absolute;inset:0;width:100%!impor
 @media (max-width:520px){#v53cEmL li:not(.now){display:none}.v53cEmBox{width:min(300px,calc(100vw - 110px));padding:8px 12px}}
 #v57pView{font-size:22px}
 @media (max-width:420px){.v51pTop{gap:6px}#v51pStat{padding:5px 8px;gap:0 8px}}
+/* v59g: chỉ đường nhẹ nhàng — ẩn thẻ hướng dẫn và mũi tên vàng ở mép màn hình, chỉ còn dấu chân + gió trên đường */
+#v32Nav, #v32Arrow { display: none !important; }

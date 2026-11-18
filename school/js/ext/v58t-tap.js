@@ -35,8 +35,7 @@ function v58tTapFn(prev){
     const d = v32Target(wx, wy);
     if(d){ if(Math.hypot(d.x - PLAYER.x, d.y - PLAYER.y) < 46){ try { d.f(); } catch(e){} return; }
       V32.door = d; v58tGo(d.x, d.y, () => { V32.door = null; try { d.f(); } catch(e){} }); return; }
-    V32.door = null;
-    if(v58tGround(wx, wy)) v58tGo(wx, wy);
+    V32.door = null;   // v59: chạm xuống đất không còn tự đi — di chuyển bằng vuốt
   };
 }
 // chấm sáng nhẹ thay cho chữ: ở điểm đến (đang đi) và trên cửa đang đứng cạnh
