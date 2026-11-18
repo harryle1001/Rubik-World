@@ -50,7 +50,7 @@ function v53cState(){
   if(!V53C.G){ let g = null; try { g = JSON.parse(localStorage.getItem('truong-v53c-guest') || 'null'); } catch(e){} V53C.G = Object.assign(v53cDef(), g || {}); } return V53C.G;
 }
 function v53cSave(){ try { if(typeof PROF !== 'undefined' && PROF) saveProfile(); else localStorage.setItem('truong-v53c-guest', JSON.stringify(v53cState())); } catch(e){} }
-function v53cSet(){ if(V53C.set) return V53C.set; let s = null; try { s = JSON.parse(localStorage.getItem('truong-v53c-set') || 'null'); } catch(e){} V53C.set = Object.assign({inc:true}, s || {}); return V53C.set; }
+function v53cSet(){ if(V53C.set) return V53C.set; let s = null; try { s = JSON.parse(localStorage.getItem('truong-v53c-set') || 'null'); } catch(e){} V53C.set = Object.assign({inc:false}, s || {}); return V53C.set; }
 function v53cSetSave(){ try { localStorage.setItem('truong-v53c-set', JSON.stringify(v53cSet())); } catch(e){} }
 function v53cToday(){ const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
 // thưởng $1–$20, EXP 8–40; từ lượt 11 trong ngày còn một nửa

@@ -1667,3 +1667,11 @@ body.v32phone.v53chill #stage #toast.toast{font-size:16px}
 #v56pBtn.v56p-float{position:absolute;z-index:6;right:12px;top:40%}
 #v56pBack{position:absolute;z-index:7;left:50%;transform:translateX(-50%);bottom:calc(98px + env(safe-area-inset-bottom));padding:10px 21px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(11,16,32,.82);color:#F7F5EF;font:800 17px/1.2 Nunito,system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);cursor:pointer}
 #v56pBack[hidden]{display:none}
+
+/* ===== v57p: sân bay lớn, góc nhìn thứ 3, bỏ cảnh báo đỏ ===== */
+#v53cEmV{display:none!important}
+.v53cEmBox{background:rgba(11,16,32,.86);border-color:rgba(255,210,63,.55)}
+#v53cLamp{animation:none;background:#ffb020;box-shadow:none}
+@media (max-width:520px){#v53cEmL li:not(.now){display:none}.v53cEmBox{width:min(300px,calc(100vw - 110px));padding:8px 12px}}
+#v57pView{font-size:22px}
+@media (max-width:420px){.v51pTop{gap:6px}#v51pStat{padding:5px 8px;gap:0 8px}}
