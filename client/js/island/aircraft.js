@@ -275,7 +275,9 @@ export function createAircraft(ctx) {
   function board(pl) {
     if (me || player.vehicle) return;
     me = pl; pl.parked = false; yaw = pl.yaw; pitch = 0.1; roll = 0; spd = 0; phase = 'takeoff';
+    const rw = (ctx.runways || []).find(r => r.inside(pl.group.position.x, pl.group.position.z));   // đường băng ở đảo khác (academy/index.js)
     if (inAir(pl.group.position.x, pl.group.position.z)) { pl.group.position.set(RWY.x0 + 4, GY, RWY.z); yaw = Math.PI / 2; ctx.toast('🛫 Ra đường băng... cất cánh!', 2500); }
+    else if (rw) { pl.group.position.set(rw.start[0], rw.y, rw.start[1]); yaw = rw.yaw; ctx.toast('🛫 Ra ' + rw.name + '... cất cánh!', 2500); }
     else ctx.toast('🛫 Cất cánh!', 2000);
     player.vehicle = { speed: 0, turn: 0, accel: 4, fly: true, lift: 0, maxAlt: 999, anim: 'sit', seat: 0, seatZ: 0, camAdd: 0, plane: true };
     camPos.copy(camera.position); camLook.copy(pl.group.position); camV.set(0, 0, 0); lookV.set(0, 0, 0);
@@ -308,13 +310,14 @@ export function createAircraft(ctx) {
       wantSpd = alt < 1 ? 0 : 13; wantPitch = alt > 2.5 ? -0.16 : alt > 0.4 ? -0.03 : 0; wantRoll = ix * 0.3;
       if (gh < W + 0.3) { // dưới là biển: tự lượn về phía đảo rồi mới đáp
         if (alt < 4) wantPitch = 0.05;
-        let d = Math.atan2(CENTER[0] - P.x, CENTER[1] - P.z) - yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); ix = Math.max(-1, Math.min(1, -d * 1.5)); wantRoll = ix * 0.5;
+        let tg = CENTER, td = Math.hypot(CENTER[0] - P.x, CENTER[1] - P.z); for (const q of ctx.landTargets || []) { const e = Math.hypot(q[0] - P.x, q[1] - P.z); if (e < td) { td = e; tg = q; } }   // về đảo gần nhất
+        let d = Math.atan2(tg[0] - P.x, tg[1] - P.z) - yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); ix = Math.max(-1, Math.min(1, -d * 1.5)); wantRoll = ix * 0.5;
         if (!pl._wtoast) { pl._wtoast = true; ctx.toast('🌊 Dưới là biển: máy bay tự bay về đảo rồi đáp', 2500); }
       }
     }
     // tránh ra khỏi bản đồ: tự rẽ về tâm
     const dx = P.x - CENTER[0], dz = P.z - CENTER[1];
-    if (Math.hypot(dx, dz) > BOUND && phase === 'fly') { let d = Math.atan2(-dx, -dz) - yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); ix = -Math.sign(d) * Math.min(1, Math.abs(d) * 2); wantRoll = ix * 0.75; if (!pl._btoast) { pl._btoast = true; ctx.toast('🧭 Hết bản đồ rồi, quay về đảo nhé!', 2000); } } else pl._btoast = false;
+    if (Math.hypot(dx, dz) > BOUND && phase === 'fly' && !(ctx.flyZones || []).some(f => f(P.x, P.z))) { let d = Math.atan2(-dx, -dz) - yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); ix = -Math.sign(d) * Math.min(1, Math.abs(d) * 2); wantRoll = ix * 0.75; if (!pl._btoast) { pl._btoast = true; ctx.toast('🧭 Hết bản đồ rồi, quay về đảo nhé!', 2000); } } else pl._btoast = false;
     const onGround = alt < 0.35 && phase !== 'fly';
     spd += (wantSpd - spd) * Math.min(1, dt * (onGround && phase === 'landing' ? 0.9 : 0.8));
     pitch += (wantPitch - pitch) * Math.min(1, dt * 1.8); roll += (wantRoll - roll) * Math.min(1, dt * 2.5);
@@ -346,7 +349,7 @@ export function createAircraft(ctx) {
     if ((hudT -= dt) <= 0) {
       hudT = 0.2; const h = ((Math.atan2(fx, -fz) * 180 / Math.PI) + 360 + 22.5) % 360;
       const zr = BLOCKS.find(b => P.x > b.r[0] && P.x < b.r[2] && P.z > b.r[1] && P.z < b.r[3]) || EXTRA.find(e => P.x > e.r[0] && P.x < e.r[2] && P.z > e.r[1] && P.z < e.r[3]);
-      const zn = zr ? zr.name : (g2 < W ? 'Biển xanh' : 'Đảo Rubik');
+      const zn = zr ? zr.name : (ctx.zoneAt && ctx.zoneAt(P.x, P.z)) || (g2 < W ? 'Biển xanh' : 'Đảo Rubik');
       if (zn !== zoneName && phase === 'fly') { zoneName = zn; ctx.toast('🗺️ Đang bay qua: <b>' + zn + '</b>', 2200); factT = Math.max(factT, 4); }
       hud.textContent = `✈️ ${pl.style.name} · ⛰ ${Math.round(P.y - W)} m · ${Math.round(spd * 3.6)} km/h · 🧭 ${DIRS[Math.floor(h / 45) % 8]}`;
     }
@@ -379,5 +382,5 @@ export function createAircraft(ctx) {
     if (best) ctx.offer('✈️ Lái máy bay ' + best.style.name, () => board(best), 7);
   }
 
-  return { update, planes, birds: NB, board: () => board(planes[0]), land, get flying() { return !!me; }, get phase() { return phase; } };
+  return { update, planes, birds: NB, board: () => board(planes[0]), land, get flying() { return !!me; }, get phase() { return phase; }, get yaw() { return yaw; }, set yaw(v) { yaw = v; } };
 }
