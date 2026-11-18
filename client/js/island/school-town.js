@@ -131,7 +131,15 @@ export function createSchoolTown(ctx) {
 
   // ---------- Mở cửa → bảng mini game của trường (iframe nhận chạm) ----------
   let modalOpen = false, nearDoor = null, nameTag = null, checkT = 0;
-  const isModal = () => { try { const doc = fr.contentDocument; return !!doc.querySelector('.modal:not([hidden]), #v32Map:not([hidden]), #v40Quiz:not([hidden]), #v40Rep:not([hidden]), #v43J:not([hidden]), #lvlUp:not([hidden])') || !!(doc.querySelector('#v40Coach') && doc.querySelector('#v40Coach').offsetParent); } catch (e) { return false; } };
+  // bảng nào của trường đang mở? (4 lần/s) — giữ sẵn danh sách .modal (HTMLCollection sống) + tra theo id, thay cho 1 querySelector
+  // nhiều :not([hidden]) quét cả DOM lớn của iframe mỗi lần
+  const MODAL_IDS = ['v32Map', 'v40Quiz', 'v40Rep', 'v43J', 'lvlUp']; let mDoc = null, mods = null;
+  const isModal = () => { try {
+    const doc = fr.contentDocument; if (doc !== mDoc) { mDoc = doc; mods = doc.getElementsByClassName('modal'); }
+    for (let i = 0; i < mods.length; i++) if (!mods[i].hidden) return true;
+    for (const id of MODAL_IDS) { const el = doc.getElementById(id); if (el && !el.hidden) return true; }
+    const c = doc.getElementById('v40Coach'); return !!(c && c.offsetParent);
+  } catch (e) { return false; } };
   town.enter = q => { if (!town.RS) return; ctx.sfx && ctx.sfx('ok'); const k = doorKey(ctx, q.d); if (k && ctx.mg && ctx.miniGames[k] && ctx.mg.start(k, q)) return; town.RS.enterDoor(q.d); checkT = 0; };   // có bản 3D (mg/host.js) → mở 3D, không thì bảng 2D
   town.menu = () => { if (!town.RS) { ctx.toast('Trường Rubik đang tải…'); return; } town.RS.btn2D('hMenu'); checkT = 0; };
   town.goSchool = () => { ctx.player.teleport(SPAWN[0], SPAWN[1]); ctx.player.pos.y = TOWN_Y; ctx.toast('🏫 Chào mừng đến Trường Rubik!'); };
@@ -162,7 +170,7 @@ export function createSchoolTown(ctx) {
     if ((checkT -= dt) <= 0) {
       checkT = 0.25; const m = isModal();
       if (m !== modalOpen) { modalOpen = m; fr.style.pointerEvents = m ? 'auto' : 'none'; ctx.player.frozen = m; document.body.classList.toggle('rs-modal', m); if (!m) { fr.blur(); window.focus(); } }
-      try { const d = fr.contentDocument, per = d.getElementById('hudPeriod').textContent; ctx.schoolHours = !/Ngoài giờ|Nghỉ|Tối|Đêm/i.test(per); if (hudSchool) hudSchool.textContent = `${d.getElementById('hudClock').textContent} · ${per}`; } catch (e) {}
+      try { const d = fr.contentDocument, per = d.getElementById('hudPeriod').textContent; ctx.schoolHours = !/Ngoài giờ|Nghỉ|Tối|Đêm/i.test(per); const ht = `${d.getElementById('hudClock').textContent} · ${per}`; if (hudSchool && hudSchool.textContent !== ht) hudSchool.textContent = ht; } catch (e) {}
     }
     // cửa gần nhất
     const p = ctx.player.pos; let best = null, bd = 2.2;

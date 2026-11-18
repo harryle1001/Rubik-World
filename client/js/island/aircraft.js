@@ -348,7 +348,7 @@ export function createAircraft(ctx) {
       const zr = BLOCKS.find(b => P.x > b.r[0] && P.x < b.r[2] && P.z > b.r[1] && P.z < b.r[3]) || EXTRA.find(e => P.x > e.r[0] && P.x < e.r[2] && P.z > e.r[1] && P.z < e.r[3]);
       const zn = zr ? zr.name : (g2 < W ? 'Biển xanh' : 'Đảo Rubik');
       if (zn !== zoneName && phase === 'fly') { zoneName = zn; ctx.toast('🗺️ Đang bay qua: <b>' + zn + '</b>', 2200); factT = Math.max(factT, 4); }
-      hud.textContent = `✈️ ${pl.style.name} · ⛰ ${Math.round(P.y - W)} m · ${Math.round(spd * 3.6)} km/h · 🧭 ${DIRS[Math.floor(h / 45) % 8]}`;
+      const ht = `✈️ ${pl.style.name} · ⛰ ${Math.round(P.y - W)} m · ${Math.round(spd * 3.6)} km/h · 🧭 ${DIRS[Math.floor(h / 45) % 8]}`; if (hud.textContent !== ht) hud.textContent = ht;
     }
     if (phase === 'fly' && (factT -= dt) <= 0) { factT = 22; ctx.toast('💡 ' + FACTS[factI++ % FACTS.length], 6500); }
   }

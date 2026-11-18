@@ -51,7 +51,7 @@ const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
 {
   const act = document.getElementById('bAct'); let best = null, cur = null;
   ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) best = { label, fn, pri }; };
-  ctx.flushOffer = () => { cur = best; best = null; act.hidden = !cur || ctx.player.frozen; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
+  ctx.flushOffer = () => { cur = best; best = null; const h = !cur || ctx.player.frozen; if (act.hidden !== h) act.hidden = h; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };   // DOM chỉ ghi khi đổi
   act.onclick = () => cur && cur.fn();
   addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
 }

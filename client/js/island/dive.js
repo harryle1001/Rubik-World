@@ -63,11 +63,14 @@ export function createDive(ctx) {
     if (ui('bSurf')) ui('bSurf').hidden = !S.diving;
     if (!V) { ui('bJump').hidden = ui('bRun').hidden = S.swimming; }
   }
+  const hudS = { show: null, low: null, ox: '' };
   function hud(dt) {
     if (!o2) return;
-    const show = S.diving || S.oxygen < 0.999; o2.classList.toggle('on', show);
-    o2f.style.transform = `scaleX(${S.oxygen.toFixed(3)})`;
-    o2.classList.toggle('low', S.diving && S.oxygen < 1 / PHI ** 3);
+    // DOM chỉ ghi khi giá trị đổi (trước: 2 classList + 1 style mỗi khung → tính lại style cả trang)
+    const show = S.diving || S.oxygen < 0.999, low = S.diving && S.oxygen < 1 / PHI ** 3, ox = S.oxygen.toFixed(3);
+    if (show !== hudS.show) o2.classList.toggle('on', hudS.show = show);
+    if (low !== hudS.low) o2.classList.toggle('low', hudS.low = low);
+    if (show && ox !== hudS.ox) o2f.style.transform = `scaleX(${hudS.ox = ox})`;
   }
 
   // ---------- Bong bóng khí + bọt nước (1 Points, 1 draw call) ----------
