@@ -37,6 +37,7 @@ async function openPage() {
     for (const k of subs) { const o = c[k]; if (!o || typeof o.update !== 'function' || o.update._pf) continue; const f = o.update;
       o.update = function () { if (k === 'player' && F.drive) F.drive(); const s = performance.now(); const r = f.apply(this, arguments); const d = performance.now() - s; F.cur[k] = (F.cur[k] || 0) + d; F.js += d; return r; }; o.update._pf = 1; }
     const info = c.renderer.info, r = c.post.render;
+    F.links = []; { const gl = c.renderer.getContext(), lp = gl.linkProgram.bind(gl); gl.linkProgram = p => { if (F.on) F.links.push((new Error().stack.split('\n').filter(l => /island|ocean\.js/.test(l)).slice(0, 3).map(l => l.replace(/.*\/js\//, '').replace(/\)$/, '')).join(' < ')) || '(three)'); return lp(p); }; }
     let prog = 0, geo = 0, tex = 0; const seen = new Set();
     const label = o => { let n = o.name, q = o.parent; while (!n && q) { n = q.name; q = q.parent; } return n || o.type; };
     const pSeen = new Set(), mProg = new WeakMap();
@@ -114,11 +115,11 @@ for (const [name, S] of Object.entries(SCEN)) {
     const sub = {}; for (const f of fr) for (const [k, v] of Object.entries(f.cur)) sub[k] = (sub[k] || 0) + v;
     const top = Object.entries(sub).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => `${k} ${(v / n).toFixed(1)}`).join(' · ');
     const pl = __island.aircraft.planes.find(q => !q.parked && !q.route), P = pl ? pl.group.position : __island.player.pos;
-    return { n: fr.length, calls: Math.round(avg('calls')), tris: Math.round(avg('tris') / 1000) + 'k', jsAvg: +avg('js').toFixed(1), jsP95: +js[Math.floor(n * 0.95)]?.toFixed(1), jsMax: +js[n - 1]?.toFixed(1), rd: +avg('rd').toFixed(0), spikes: sp.length, shader: fr.reduce((s, f) => s + f.prog, 0), geo: fr.reduce((s, f) => s + Math.max(0, f.geo), 0), far: Math.round(fr[n - 1]?.far || 0), y: Math.round(P.y), top, why: sp.slice(0, 6).map(why), pn: [...new Set(fr.flatMap(f => f.pn || []))] };
+    return { n: fr.length, calls: Math.round(avg('calls')), tris: Math.round(avg('tris') / 1000) + 'k', jsAvg: +avg('js').toFixed(1), jsP95: +js[Math.floor(n * 0.95)]?.toFixed(1), jsMax: +js[n - 1]?.toFixed(1), rd: +avg('rd').toFixed(0), spikes: sp.length, shader: fr.reduce((s, f) => s + f.prog, 0), geo: fr.reduce((s, f) => s + Math.max(0, f.geo), 0), far: Math.round(fr[n - 1]?.far || 0), y: Math.round(P.y), top, why: sp.slice(0, 6).map(why), pn: [...new Set(fr.flatMap(f => f.pn || []))], links: Object.entries(F.links.reduce((a, k) => (a[k] = (a[k] || 0) + 1, a), {})).map(([k, v]) => v + '× ' + k) };
   });
   if (OUT) await page.screenshot({ path: `${OUT}/${name}.jpg`, quality: 72, scale: 'css' });
-  spikes[name] = m.why; const pn = m.pn; delete m.why; delete m.pn; rows.push({ name, ...m });
-  console.log(name, JSON.stringify(m), '\n   giật:', spikes[name].join(' | ') || '-', '\n   shader mới:', pn.join(', ') || '-');
+  spikes[name] = m.why; const pn = m.pn, links = m.links; delete m.why; delete m.pn; delete m.links; rows.push({ name, ...m });
+  console.log(name, JSON.stringify(m), '\n   giật:', spikes[name].join(' | ') || '-', '\n   shader mới:', pn.join(', ') || '-', '\n   linkProgram:\n     ' + (links.join('\n     ') || '-'));
   await page.close();
 }
 console.table(rows);
