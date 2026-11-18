@@ -9,7 +9,7 @@ gradientMap.minFilter = gradientMap.magFilter = THREE.NearestFilter; gradientMap
 
 // ===== PHONG CÁCH VẼ TAY (kiểu Zelda/Genshin) — áp cho MỌI MeshToonMaterial một lần, không tốn draw call =====
 // 1) vân cọ vẽ tay theo toạ độ thế giới (mảng màu lớn + nét cọ nhỏ) → hết cảm giác "nhựa phẳng"
-// 2) bóng ngả lam tím, sáng ngả vàng ấm (như tranh màu nước)  3) viền sáng mép (rim) mềm
+// 2) bóng ngả tím, sáng ngả vàng ấm (như tranh màu nước)  3) viền sáng mép (rim) mềm
 if (!THREE.ShaderLib.toon.__painted) {
   const L = THREE.ShaderLib.toon;
   L.vertexShader = L.vertexShader
@@ -33,8 +33,8 @@ void main() {`)
     diffuseColor.rgb *= 0.8 + 0.24 * big + 0.1 * mid + 0.08 * fine;                       // mảng màu + nét cọ
     diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.04, 1.0, 0.95), big * 0.5); }`)
     .replace('#include <opaque_fragment>', `{ float lum = dot(outgoingLight, vec3(0.299, 0.587, 0.114));
-    vec3 cool = outgoingLight * vec3(0.84, 0.88, 1.10), warm = outgoingLight * vec3(1.05, 1.0, 0.92);
-    outgoingLight = mix(cool, warm, smoothstep(0.18, 0.62, lum));                             // bóng lam, sáng ấm
+    vec3 cool = outgoingLight * vec3(0.92, 0.85, 1.10), warm = outgoingLight * vec3(1.05, 1.0, 0.92);
+    outgoingLight = mix(cool, warm, smoothstep(0.18, 0.62, lum));                             // bóng ngả tím oải hương (không xám lạnh), sáng ấm
     float rim = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), 3.0);
     outgoingLight += rim * 0.10 * diffuseColor.rgb;
     outgoingLight = max(outgoingLight, vec3(0.0)); }                                        // viền sáng mép

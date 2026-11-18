@@ -146,6 +146,7 @@ export function createWeather(ctx) {
     S.U.uTop.value.lerp(grey, cur.c * 0.6 * day); S.U.uHor.value.lerp(grey, cur.c * 0.45 * day); S.U.uSunCol.value.multiplyScalar(1 - cur.c * 0.9);
     S.cloudMat.color.copy(S.state.cloudTint).multiplyScalar(1 - cur.c * 0.45); S.cloudMat.emissiveIntensity *= 1 - cur.c * 0.6;
     const nVis = Math.round(5 + cur.c * 9); S.clouds.children.forEach((c, i) => { c.visible = i < nVis; c.position.x += cur.w * 5 * dt; });
+    if (S.farClouds) S.farClouds.geometry.instanceCount = Math.round(S.farClouds.userData.n * (0.618 + 0.382 * cur.c));   // mây xa (sky.js): trời âm u thì dày hơn
     // sương mù: kéo gần + màu xám nhạt
     scene.fog.near = lerp(lerp(fogBase.near, 45, cur.c * 0.5 + cur.r * 0.3), 6, cur.f); scene.fog.far = lerp(lerp(fogBase.far, 200, cur.r), 75, cur.f);
     scene.fog.color.lerp(fogGrey, Math.max(cur.f * 0.8, cur.r * 0.4) * day);
