@@ -2,7 +2,7 @@
 var TEXTS = null, TEXTS_P = null;
 function loadTexts(){
   if(TEXTS) return Promise.resolve(TEXTS); if(TEXTS_P) return TEXTS_P;
-  TEXTS_P = (async () => { try { const bin = atob(TEXT_GZ), u = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i);
+  TEXTS_P = (async () => { try { const bin = atob(await rsLazy('js/data/books-text.js', 'TEXT_GZ')), u = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i);
     const ds = new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip')); TEXTS = JSON.parse(await new Response(ds).text()); } catch(e){ TEXTS = {}; } return TEXTS; })();
   return TEXTS_P;
 }

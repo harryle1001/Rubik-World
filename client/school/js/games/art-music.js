@@ -122,10 +122,9 @@ function parseNote(s){ const r = /^([A-G])(#|b)?(-?\d)$/.exec(s); if(!r) return 
 function pianoOutNode(){ ensureAC(); if(!pOut){ pOut = AC.createGain(); pOut.gain.value = +($('#pvol') ? $('#pvol').value : .8); const comp = AC.createDynamicsCompressor(); pOut.connect(comp); comp.connect(AC.destination); } return pOut; }
 function loadPiano(){
   if(PS.ready || PS.loading) return; PS.loading = true; ensureAC();
-  const keys = Object.keys(PIANO_B64);
   $('#pload').textContent = 'Đang nạp tiếng đàn piano thật…';
-  Promise.all(keys.map(k => { const bin = atob(PIANO_B64[k]), u = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i);
-    return new Promise(res => { try { AC.decodeAudioData(u.buffer, b => { PS.buf[k] = b; res(); }, () => res()); } catch(e){ res(); } }); }))
+  rsLazy('js/data/piano-samples.js', 'PIANO_B64').catch(() => ({})).then(P => Promise.all(Object.keys(P).map(k => { const bin = atob(P[k]), u = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i);
+    return new Promise(res => { try { AC.decodeAudioData(u.buffer, b => { PS.buf[k] = b; res(); }, () => res()); } catch(e){ res(); } }); })))
     .then(() => { PS.ready = Object.keys(PS.buf).length > 0; PS.loading = false; $('#pload').textContent = PS.ready ? 'Tiếng đàn: piano cơ Salamander Grand (mẫu thu âm thật)' : 'Không nạp được mẫu âm, đang dùng tiếng đàn tổng hợp.'; });
 }
 function pianoOn(m, vel){

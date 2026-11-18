@@ -27,3 +27,7 @@ Mạng yếu (`--net=3g`, 1,6 Mbps · 150 ms):
 |---|---|---|---|
 | 04-nen-server | 2 520 KB | 12,7 s | 41,5 s |
 | 05-tai-luoi-thu (thú nạp sau khi trường sẵn sàng) | 1 791 KB | 10,4 s | 37,7 s |
+| 06-rig-nhe (hero-rogue-rig.glb 911 → 119 KB qua mạng) | 1 019 KB | 11,6 s | 36,7 s |
+| 07-truong-2d-tai-luoi (sách 3,1 MB + piano 0,96 MB nạp khi mở) | 1 019 KB + iframe 750 KB (trước ~4 800) | 11,0 s | **15,4 s** |
+
+4G sau bước 07: khung 3D đầu tiên 7,2 s · trường sẵn sàng **9,7 s** (gốc 17,0 s).

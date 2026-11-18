@@ -29,6 +29,7 @@ const fr = page.frames().find(f => f.url().includes('/school/'));
 if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count().catch(() => 0)) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
 const net = await page.evaluate(() => { let t = 0, d = 0, n = 0, glb = 0; for (const e of performance.getEntriesByType('resource')) { t += e.transferSize || 0; d += e.decodedBodySize || 0; n++; if (/\.glb/.test(e.name)) glb += e.decodedBodySize || 0; } return { files: n, transferKB: Math.round(t / 1024), decodedKB: Math.round(d / 1024), glbKB: Math.round(glb / 1024) }; });
+for (const f of page.frames()) if (f !== page.mainFrame()) net.iframeKB = (net.iframeKB || 0) + await f.evaluate(() => Math.round(performance.getEntriesByType('resource').reduce((s, e) => s + (e.transferSize || 0), 0) / 1024)).catch(() => 0);   // trường 2D nhúng
 console.log(`Khung 3D đầu tiên ${tFirst.toFixed(1)} s · trường sẵn sàng ${tLoad.toFixed(1)} s · ${JSON.stringify(net)} · pixelRatio lúc tải=${await page.evaluate(() => __island.renderer.getPixelRatio())}`);
 if (process.argv.includes('--load-only')) { console.log(errors.length ? 'LỖI CONSOLE:\n' + errors.join('\n') : 'Không lỗi console'); await browser.close(); process.exit(0); }
 await page.evaluate(q => {
