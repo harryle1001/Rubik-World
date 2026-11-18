@@ -12,7 +12,7 @@ function v58tBlocked(){
   if(typeof V51P !== 'undefined' && V51P.on) return true;
   if(typeof V53C !== 'undefined' && V53C.mode) return true;
   if(typeof V52LD !== 'undefined' && V52LD.on) return true;
-  if(typeof V57P !== 'undefined' && V57P.on) return true;
+  // V57P.on = module v57p đã bật (luôn true), không phải đang lái máy bay — máy bay đã chặn qua V51P.on ở trên
   return false;
 }
 // đi tới (x, y) bằng chạm: chỉ đường ẩn, tới nơi thì gọi cb
