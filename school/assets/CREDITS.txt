@@ -41,3 +41,8 @@ v51p · Máy bay & Sân bay Rubik (2D)
   sân bay (đường băng, hangar, tháp điều khiển, ống gió, đèn đường băng), đảo nhỏ, mây, khói, vòng số, cột mốc,
   bưu phẩm và tiếng động cơ đều vẽ / tạo bằng code (canvas pixel art + WebAudio), thiết kế gốc,
   không dùng hình từ hãng máy bay, game hay phim. Giấy phép: cùng giấy phép với mã nguồn của game.
+v51t · Trường Tin học Rubik (Rubik Code School)
+  Không dùng file tài nguyên bên ngoài. Toà nhà (kính, mái xanh, biển chữ pixel, ăng-ten), sân robot, phòng máy,
+  phòng robot, góc thư viện code, học sinh / cô giáo, 7 bài học, chứng chỉ và âm thanh đều vẽ / tạo bằng code
+  (canvas + WebAudio) trong js/ext/v51t-*.js. Thiết kế gốc: không dùng tên, logo, giao diện của Scratch, Code.org, Minecraft
+  hay sản phẩm khác. Chữ pixel = font Nunito / Be Vietnam Pro (đã có trong game) vẽ nhỏ rồi phóng to không làm mịn.
