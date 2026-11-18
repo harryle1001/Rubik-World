@@ -1,0 +1,71 @@
+// tools/perf-actors.mjs — Đo hiệu năng NHÂN VẬT ở chế độ điện thoại (390×844, DPR 2, UA iPhone → CFG.isMobile), mức chất lượng 1.
+// Chạy: node server/index.js &  rồi  node tools/perf-actors.mjs [--out=docs/perf/actors/buoc] [--n=89]
+// 4 điểm: quảng trường · sân trường giờ ra chơi (đặt đồng hồ trường 9h05 thứ Ba) · rừng đền có thú · biển (lặn ở rạn san hô).
+// Mỗi điểm (trung bình n khung): draw call, tam giác, số SkinnedMesh được vẽ (lượt chính), số mixer.update, ms JS/khung của
+// các phần nhân vật (player · net · animals · school(people) · ambience(yard) · sealife) và riêng AnimationMixer.update.
+import { createRequire } from 'module';
+import fs from 'fs';
+const require = createRequire(import.meta.url);
+const { chromium } = require('playwright');
+const arg = k => (process.argv.find(a => a.startsWith('--' + k + '=')) || '').split('=')[1];
+const URL = arg('url') || 'http://localhost:3000/ocean.html', OUT = arg('out'), N = +(arg('n') || 89);
+if (OUT) fs.mkdirSync(OUT, { recursive: true });
+const errors = [];
+const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+const page = await browser.newPage({
+  viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+  userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+});
+page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+page.on('pageerror', e => errors.push('pageerror: ' + e.message));
+await page.goto(URL);
+await page.waitForFunction(() => window.__island && __island.school && __island.school.ready, null, { timeout: 300000 });
+const fr = page.frames().find(f => f.url().includes('/school/'));
+if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count().catch(() => 0)) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
+await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
+await page.evaluate(async () => {
+  const c = __island, THREE = await import('three'); c.setQuality(1, true); c.sky.state.lock = 13; c.renderer.info.autoReset = false;
+  const P = window.__pm = { n: 0, calls: 0, tris: 0, ms: 0, sk: 0, mix: 0, mixMs: 0, js: {} };
+  let inMain = false;
+  const sk = THREE.SkinnedMesh.prototype; sk.onBeforeRender = function () { if (inMain) P.sk++; };
+  const mu = THREE.AnimationMixer.prototype.update; THREE.AnimationMixer.prototype.update = function (dt) { const s = performance.now(); const r = mu.call(this, dt); P.mixMs += performance.now() - s; P.mix++; return r; };
+  const wrap = (name, o) => { if (!o || !o.update) return; const f = o.update; o.update = function (...a) { const s = performance.now(); const r = f.apply(this, a); P.js[name] = (P.js[name] || 0) + performance.now() - s; return r; }; };
+  wrap('player', c.player); wrap('net', c.net); wrap('animals', c.animals); wrap('school', c.school); wrap('ambience', c.ambience); wrap('sealife', c.sealife);
+  const r = c.post.render; c.post.render = function () { c.renderer.info.reset(); inMain = false; const s = performance.now(); const oldR = c.renderer.render; c.renderer.render = function (sc, cam) { inMain = sc === c.scene; const x = oldR.call(this, sc, cam); inMain = false; return x; }; r.call(this); c.renderer.render = oldR; P.ms += performance.now() - s; P.n++; P.calls += c.renderer.info.render.calls; P.tris += c.renderer.info.render.triangles; };
+});
+// đồng hồ trường: thứ Ba (dow 1) 9h05 = giờ ra chơi (540–570)
+const setClock = async m => { if (fr) await fr.evaluate(m => { day = 2; clock = m; }, m).catch(e => errors.push('clock: ' + e.message)); };
+const L = await page.evaluate(async () => {
+  const l = await import('/js/island/layout.js'), p = await import('/js/island/sample/plaza.js'), s = await import('/js/island/sealife.js');
+  const R = __island.school.RS.R, y = R.rubikyard || R.yard, yard = l.to3(y.x + y.w / 2, y.y + y.h / 2), reef = s.ZONES.find(z => z.id === 'reef') || s.ZONES[0];
+  return { plaza: [p.PLAZA.x, p.PLAZA.z], yard, temple: l.TEMPLE_C, reef: [reef.x, reef.z] };
+});
+const spots = [
+  ['quang-truong', L.plaza, Math.PI / 2, 0.3, 11, 600],
+  ['san-truong-ra-choi', L.yard, 0.6, 0.35, 11, 545],
+  ['rung-thu', [L.temple[0] + 20, L.temple[1] + 20], 2.4, 0.3, 11, 600],
+  ['bien-ran-san-ho', L.reef, 0, 0.2, 6, 600, true],
+];
+const rows = [];
+for (const [name, [x, z], yaw, pitch, dist, clk, dive] of spots) {
+  await setClock(clk);
+  await page.evaluate(([x, z, yaw, pitch, dist, dive]) => { const p = __island.player; p.teleport(x, z); if (dive) p.pos.y = -4; p.cam.yaw = yaw; p.cam.pitch = pitch; p.cam.dist = dist; p.snapCamera(); }, [x, z, yaw, pitch, dist, !!dive]);
+  await page.waitForTimeout(name.startsWith('san') ? 9000 : 5000);   // chờ người kéo ra sân / chunk / LOD
+  // nhìn vào đám đông: người chơi đứng cách tâm nhóm (người trong pool / thú gần nhất) 8 m, camera hướng vào tâm
+  await page.evaluate(kind => { const c = __island, p = c.player; let pts = [];
+    if (kind === 'people') pts = (c.townPeople || []).filter(e => e.a).map(e => [e.px, e.pz]);
+    if (kind === 'animals') { const a = c.animals.list.map(A => [A.root.position.x, A.root.position.z, Math.hypot(A.root.position.x - p.pos.x, A.root.position.z - p.pos.z)]).sort((a, b) => a[2] - b[2]).slice(0, 3); pts = a; }
+    if (!pts.length) return; const cx = pts.reduce((s, q) => s + q[0], 0) / pts.length, cz = pts.reduce((s, q) => s + q[1], 0) / pts.length;
+    p.teleport(cx + 8 * Math.SQRT1_2, cz + 8 * Math.SQRT1_2); p.cam.yaw = Math.atan2(-(cx - p.pos.x), -(cz - p.pos.z)); p.snapCamera(); }, name === 'rung-thu' ? 'animals' : name.startsWith('bien') ? '' : 'people');
+  await page.waitForTimeout(2500);
+  await page.evaluate(() => Object.assign(__pm, { n: 0, calls: 0, tris: 0, ms: 0, sk: 0, mix: 0, mixMs: 0, js: {} }));
+  await page.waitForFunction(n => __pm.n >= n, N, { timeout: 300000 });
+  const m = await page.evaluate(() => { const P = __pm, n = P.n, js = {}; let tot = 0; for (const k in P.js) { js[k] = +(P.js[k] / n).toFixed(2); tot += P.js[k] / n; } const tp = __island.townPeople || [];
+    return { calls: Math.round(P.calls / n), tris: Math.round(P.tris / n), skinDraw: +(P.sk / n).toFixed(1), mixPerF: +(P.mix / n).toFixed(1), mixMs: +(P.mixMs / n).toFixed(2), actorJs: +tot.toFixed(2), ...js, people: tp.filter(e => e.a).length, renderMs: +(P.ms / n).toFixed(1) }; });
+  if (OUT) await page.screenshot({ path: `${OUT}/${name}.png` });
+  rows.push({ name, ...m });
+}
+console.table(rows);
+if (OUT) fs.writeFileSync(`${OUT}/so-do.json`, JSON.stringify(rows, null, 1));
+console.log(errors.length ? 'LỖI CONSOLE:\n' + errors.slice(0, 13).join('\n') : 'Không lỗi console');
+await browser.close();
