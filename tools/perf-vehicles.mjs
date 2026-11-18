@@ -13,7 +13,7 @@ const URL = arg('url') || 'http://localhost:3000/ocean.html', OUT = arg('out'), 
 const ONLY = arg('only') ? arg('only').split(',') : null;
 if (OUT) fs.mkdirSync(OUT, { recursive: true });
 const errors = [];
-const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-precise-memory-info'] });
 async function openPage() {
   const page = await browser.newPage({
     viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
@@ -49,7 +49,8 @@ async function openPage() {
       return out; };
     for (const q of info.programs) pSeen.add(q); c.scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) { const cp = c.renderer.properties.get(m).currentProgram; if (cp) mProg.set(m, cp); } });
     c.post.render = function () {
-      info.reset(); const s = performance.now(); r.apply(this, arguments); const rd = performance.now() - s;
+      const hm = performance.memory.usedJSHeapSize; if (F.hp && hm > F.hp) F.alloc = (F.alloc || 0) + hm - F.hp; F.hp = hm;   // cấp phát (bỏ qua lúc GC dọn)
+    info.reset(); const s = performance.now(); r.apply(this, arguments); const rd = performance.now() - s;
       const np = info.programs.length, ng = info.memory.geometries, nt = info.memory.textures;
       if (F.on) F.frames.push({ js: F.js, rd, iv: F.last ? s - F.last : 0, calls: info.render.calls, tris: info.render.triangles, prog: np - prog, pn: np > prog ? newMats() : null, geo: ng - geo, tex: nt - tex, cur: F.cur, y: c.camera.position.y, far: c.camera.far });
       F.stable = np === prog ? (F.stable || 0) + 1 : 0; prog = np; geo = ng; tex = nt; F.cur = {}; F.js = 0; F.last = s;
@@ -107,10 +108,10 @@ for (const [name, S] of Object.entries(SCEN)) {
     await page.evaluate(([src, mode, wp]) => { (0, eval)('(' + src + ')')(); Object.assign(__pf, { mode, wp, wi: 0, dv: 0 }); __pf.drive = __pf.mk(); }, [S.setup.toString(), S.drive, S.wp || null]);
     if (S.drive === 'plane') await page.evaluate(() => { __pf.mode = 'plane'; });
   }
-  await page.evaluate(() => { __pf.frames = []; __pf.on = true; });
+  await page.evaluate(() => { __pf.frames = []; __pf.alloc = 0; __pf.on = true; });
   await page.waitForFunction(N => __pf.frames.length >= N, NF, { timeout: 900000 }).catch(() => {});
   const m = await page.evaluate(() => {
-    const F = __pf, fr = F.frames; F.on = false; const n = fr.length || 1;
+    const F = __pf, fr = F.frames; F.on = false; const allocKB = +((F.alloc || 0) / 1024 / (fr.length || 1)).toFixed(1); const n = fr.length || 1;
     const js = fr.map(f => f.js).sort((a, b) => a - b), avg = k => fr.reduce((s, f) => s + f[k], 0) / n;
     const sp = fr.filter(f => f.js + f.rd > 50 && (f.js > 25 || f.prog || f.geo > 2 || f.tex));   // khung giật do JS/biên dịch/tạo mới (không tính render giả lập đều đều)
     const why = f => { const top = Object.entries(f.cur).sort((a, b) => b[1] - a[1])[0] || ['?', 0]; return `${top[0]} ${top[1].toFixed(0)}ms` + (f.prog ? ` +${f.prog} shader` : '') + (f.geo > 0 ? ` +${f.geo} geo` : '') + (f.tex > 0 ? ` +${f.tex} tex` : '') + ` (render ${f.rd.toFixed(0)}ms)`; };
@@ -119,7 +120,7 @@ for (const [name, S] of Object.entries(SCEN)) {
     const topMax = Object.entries(mx).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => `${k} ${v.toFixed(1)}`).join(' · ');
     const top = Object.entries(sub).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => `${k} ${(v / n).toFixed(1)}`).join(' · ');
     const pl = __island.aircraft.planes.find(q => !q.parked && !q.route), P = pl ? pl.group.position : __island.player.pos;
-    return { n: fr.length, calls: Math.round(avg('calls')), tris: Math.round(avg('tris') / 1000) + 'k', jsAvg: +avg('js').toFixed(1), jsP95: +js[Math.floor(n * 0.95)]?.toFixed(1), jsMax: +js[n - 1]?.toFixed(1), rd: +avg('rd').toFixed(0), spikes: sp.length, shader: fr.reduce((s, f) => s + f.prog, 0), geo: fr.reduce((s, f) => s + Math.max(0, f.geo), 0), far: Math.round(fr[n - 1]?.far || 0), y: Math.round(P.y), top, topMax, terrainMax: +(mx.terrain || 0).toFixed(1), perfMax: +(mx.perf || 0).toFixed(1), why: sp.slice(0, 6).map(why), pn: [...new Set(fr.flatMap(f => f.pn || []))], links: Object.entries(F.links.reduce((a, k) => (a[k] = (a[k] || 0) + 1, a), {})).map(([k, v]) => v + '× ' + k) };
+    return { n: fr.length, calls: Math.round(avg('calls')), tris: Math.round(avg('tris') / 1000) + 'k', jsAvg: +avg('js').toFixed(1), jsP95: +js[Math.floor(n * 0.95)]?.toFixed(1), jsMax: +js[n - 1]?.toFixed(1), rd: +avg('rd').toFixed(0), spikes: sp.length, shader: fr.reduce((s, f) => s + f.prog, 0), geo: fr.reduce((s, f) => s + Math.max(0, f.geo), 0), far: Math.round(fr[n - 1]?.far || 0), y: Math.round(P.y), top, topMax, allocKB, terrainMax: +(mx.terrain || 0).toFixed(1), perfMax: +(mx.perf || 0).toFixed(1), why: sp.slice(0, 6).map(why), pn: [...new Set(fr.flatMap(f => f.pn || []))], links: Object.entries(F.links.reduce((a, k) => (a[k] = (a[k] || 0) + 1, a), {})).map(([k, v]) => v + '× ' + k) };
   });
   if (OUT) await page.screenshot({ path: `${OUT}/${name}.jpg`, quality: 72, scale: 'css' });
   spikes[name] = m.why; const pn = m.pn, links = m.links; delete m.why; delete m.pn; delete m.links; rows.push({ name, ...m });
