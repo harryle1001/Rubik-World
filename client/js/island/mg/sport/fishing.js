@@ -196,7 +196,7 @@ function start(ctx, opts = {}) {
   }
 
   // ---------- Camera + cần câu (gọi ngay trước khi vẽ: sau player.update) ----------
-  const camP = new THREE.Vector3(), camL = new THREE.Vector3(), camInit = { v: false }, _v = new THREE.Vector3(), _q = new THREE.Quaternion();
+  const camP = new THREE.Vector3(), camL = new THREE.Vector3(), camInit = { v: false }, _v = new THREE.Vector3(), _h = new THREE.Vector3(), _q = new THREE.Quaternion();
   const bendQ = new THREE.Quaternion(), X = new THREE.Vector3(1, 0, 0);
   function frame() {
     const [fx, fz] = fwd(dir), p = pl.pos;
@@ -217,6 +217,8 @@ function start(ctx, opts = {}) {
     const side = 1 / PHI;   // lệch vai phải
     _q.set(0, 0, 0, 1);
     const want = camL.clone(); want.copy(p).addScaledVector({ x: -fx, y: 0, z: -fz }, back); want.y = p.y + up; want.x += Math.cos(dir) * -side; want.z += -Math.sin(dir) * -side;
+    // thân cây/nhà chắn giữa đầu nhân vật và camera → kéo camera vào trước vật cản (cam-occlude.js, đồ câu cá không tính)
+    if (ctx.camOcc) { _h.set(p.x, p.y + 1.5, p.z); const d = _h.distanceTo(want), c = ctx.camOcc.clear(_h, want, group) - 1 / PHI ** 2; if (c < d) want.sub(_h).multiplyScalar(Math.max(c, 0.8) / d).add(_h); }
     if (!camInit.v) { camP.copy(want); camL.copy(lookAt); camInit.v = true; }
     camP.lerp(want, 1 - Math.exp(-dtLast * 5)); camL.lerp(lookAt, 1 - Math.exp(-dtLast * 4));
     camera.position.copy(camP); camera.lookAt(camL);

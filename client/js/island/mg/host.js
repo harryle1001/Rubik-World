@@ -270,7 +270,7 @@ export function createMiniGameHost(ctx) {
     if (!G.inPlace) api.me.place(0, R * 0.5, Math.PI);
     try { const ex = () => host.exit(); S.game = G.start(ctx, { ...opts, key, door, api, onExit: ex, exit: ex }) || {}; }   // mọi nút Thoát của game (stage.js, kit.js) gọi về host.exit
     catch (e) { console.error('[mg] lỗi khởi động', key, e); S.game = {}; host.exit(); return false; }
-    S.camNow = null; return true;
+    S.camNow = null; S.occD = null; return true;
   }
   function teardown() {
     if (!S || !S.api) return;
@@ -354,6 +354,10 @@ export function createMiniGameHost(ctx) {
     const ry = S.api.root.rotation.y + n.yaw, cp = Math.cos(n.pitch);
     _t.set(n.x, n.y, n.z); S.api.root.localToWorld(_t);
     _p.set(_t.x + Math.sin(ry) * cp * n.dist, _t.y + Math.sin(n.pitch) * n.dist, _t.z + Math.cos(ry) * cp * n.dist);
+    // cây/nhà/vòm của thế giới chắn giữa khu chơi và camera → kéo camera vào trước vật cản (co nhanh, giãn chậm), đồ của game không tính
+    const want = Math.max(Math.min(n.dist, ctx.camOcc ? ctx.camOcc.clear(_t, _p, S.api.root) - 1 / PHI ** 2 : n.dist), Math.min(n.dist, 3));
+    S.occD = S.occD == null ? want : S.occD + (want - S.occD) * (1 - Math.exp(-dt * (want < S.occD ? PHI ** 5 : PHI ** 2)));
+    if (S.occD < n.dist - 1e-3) _p.sub(_t).multiplyScalar(S.occD / n.dist).add(_t);
     _m.lookAt(_p, _t, _up); _q.setFromRotationMatrix(_m);
   }
 
