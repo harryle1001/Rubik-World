@@ -18,3 +18,11 @@
 | `js/main.js` | Khởi động game (luôn đứng CUỐI danh sách) |
 
 **Thêm tính năng mới:** tạo file mới trong `js/` (ví dụ `js/ext/v37-ten.js`) chứa hàm `v37Init()`, thêm tên file vào danh sách FILES trong `index.html` ngay TRƯỚC `'js/main.js'`, rồi gọi `try { v37Init(); } catch(e){ console.warn('v37', e); }` trong `js/main.js` sau v36.
+
+## v61l · Tải nhanh (bản đóng gói `dist/`)
+
+- Trên web, `index.html` nạp **một file** `dist/game.<hash>.js` (đã nối + rút gọn đúng thứ tự FILES). Thiếu bản gói, bản gói lỗi, hoặc danh sách FILES đổi mà chưa build lại → tự quay về tải từng file như cũ.
+- Trên `localhost`/`file:` luôn tải từng file (sửa code thấy ngay). Thêm `?bundle` để thử bản gói, `?nobundle` để tắt bản gói trên web.
+- **Sửa code xong, trước khi đưa lên web: chạy build** (xem `tools/build/README.md`):
+  `cd school/tools/build && npm i && node build.js`
+- Sách lớn và mẫu âm piano nằm ở `dist/books.*.json`, `dist/piano.*.json`, chỉ tải khi mở thư viện / đàn. three.js (Rubik 3D) tải lúc rảnh hoặc khi mở Rubik 3D.

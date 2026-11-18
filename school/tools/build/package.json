@@ -1,0 +1,7 @@
+{
+  "name": "rubik-school-2d-build",
+  "private": true,
+  "description": "Đóng gói js/ của game 2D thành bundle (v61l)",
+  "scripts": { "build": "node build.js" },
+  "devDependencies": { "esbuild": "0.24.2" }
+}
