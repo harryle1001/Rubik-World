@@ -32,10 +32,10 @@ async function openPage() {
   // ---------- đo trong trang: bọc update của từng phần + post.render ----------
   await page.evaluate(q => {
     const c = __island; c.setQuality(q, true); c.sky.state.lock = 13; c.renderer.info.autoReset = false;
-    const F = window.__pf = { on: false, frames: [], cur: {}, js: 0, last: 0, drive: null };
+    const F = window.__pf = { am: {}, on: false, frames: [], cur: {}, js: 0, last: 0, drive: null };
     const subs = ['player', 'terrain', 'vehicles', 'aircraft', 'physics', 'weather', 'eggs', 'ambience', 'sealife', 'treasure', 'skyshow', 'living', 'mg', 'animals', 'perf', 'sky', 'school', 'net', 'audio', 'worldMap', 'dive'];
     for (const k of subs) { const o = c[k]; if (!o || typeof o.update !== 'function' || o.update._pf) continue; const f = o.update;
-      o.update = function () { if (k === 'player' && F.drive) F.drive(); const s = performance.now(); const r = f.apply(this, arguments); const d = performance.now() - s; F.cur[k] = (F.cur[k] || 0) + d; F.js += d; return r; }; o.update._pf = 1; }
+      o.update = function () { if (k === 'player' && F.drive) F.drive(); const h0 = performance.memory.usedJSHeapSize, s = performance.now(); const r = f.apply(this, arguments); const d = performance.now() - s, dh = performance.memory.usedJSHeapSize - h0; F.cur[k] = (F.cur[k] || 0) + d; F.js += d; if (dh > 0 && F.on) F.am[k] = (F.am[k] || 0) + dh; return r; }; o.update._pf = 1; }
     const info = c.renderer.info, r = c.post.render;
     Error.stackTraceLimit = 80; F.links = []; { const gl = c.renderer.getContext(), lp = gl.linkProgram.bind(gl); gl.linkProgram = p => { if (F.on) F.links.push((new Error().stack.split('\n').filter(l => /island|ocean\.js/.test(l)).slice(0, 3).map(l => l.replace(/.*\/js\//, '').replace(/\)$/, '')).join(' < ')) || '(three)'); return lp(p); }; }
     let prog = 0, geo = 0, tex = 0; const seen = new Set();
@@ -108,7 +108,7 @@ for (const [name, S] of Object.entries(SCEN)) {
     await page.evaluate(([src, mode, wp]) => { (0, eval)('(' + src + ')')(); Object.assign(__pf, { mode, wp, wi: 0, dv: 0 }); __pf.drive = __pf.mk(); }, [S.setup.toString(), S.drive, S.wp || null]);
     if (S.drive === 'plane') await page.evaluate(() => { __pf.mode = 'plane'; });
   }
-  await page.evaluate(() => { __pf.frames = []; __pf.alloc = 0; __pf.on = true; });
+  await page.evaluate(() => { __pf.frames = []; __pf.alloc = 0; __pf.am = {}; __pf.on = true; });
   await page.waitForFunction(N => __pf.frames.length >= N, NF, { timeout: 900000 }).catch(() => {});
   const m = await page.evaluate(() => {
     const F = __pf, fr = F.frames; F.on = false; const allocKB = +((F.alloc || 0) / 1024 / (fr.length || 1)).toFixed(1); const n = fr.length || 1;
@@ -120,7 +120,7 @@ for (const [name, S] of Object.entries(SCEN)) {
     const topMax = Object.entries(mx).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => `${k} ${v.toFixed(1)}`).join(' · ');
     const top = Object.entries(sub).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => `${k} ${(v / n).toFixed(1)}`).join(' · ');
     const pl = __island.aircraft.planes.find(q => !q.parked && !q.route), P = pl ? pl.group.position : __island.player.pos;
-    return { n: fr.length, calls: Math.round(avg('calls')), tris: Math.round(avg('tris') / 1000) + 'k', jsAvg: +avg('js').toFixed(1), jsP95: +js[Math.floor(n * 0.95)]?.toFixed(1), jsMax: +js[n - 1]?.toFixed(1), rd: +avg('rd').toFixed(0), spikes: sp.length, shader: fr.reduce((s, f) => s + f.prog, 0), geo: fr.reduce((s, f) => s + Math.max(0, f.geo), 0), far: Math.round(fr[n - 1]?.far || 0), y: Math.round(P.y), top, topMax, allocKB, terrainMax: +(mx.terrain || 0).toFixed(1), perfMax: +(mx.perf || 0).toFixed(1), why: sp.slice(0, 6).map(why), pn: [...new Set(fr.flatMap(f => f.pn || []))], links: Object.entries(F.links.reduce((a, k) => (a[k] = (a[k] || 0) + 1, a), {})).map(([k, v]) => v + '× ' + k) };
+    return { n: fr.length, calls: Math.round(avg('calls')), tris: Math.round(avg('tris') / 1000) + 'k', jsAvg: +avg('js').toFixed(1), jsP95: +js[Math.floor(n * 0.95)]?.toFixed(1), jsMax: +js[n - 1]?.toFixed(1), rd: +avg('rd').toFixed(0), spikes: sp.length, shader: fr.reduce((s, f) => s + f.prog, 0), geo: fr.reduce((s, f) => s + Math.max(0, f.geo), 0), far: Math.round(fr[n - 1]?.far || 0), y: Math.round(P.y), top, topMax, allocKB, allocBy: Object.entries(F.am).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => k + ' ' + (v / 1024 / (fr.length || 1)).toFixed(1)).join(' · '), terrainMax: +(mx.terrain || 0).toFixed(1), perfMax: +(mx.perf || 0).toFixed(1), why: sp.slice(0, 6).map(why), pn: [...new Set(fr.flatMap(f => f.pn || []))], links: Object.entries(F.links.reduce((a, k) => (a[k] = (a[k] || 0) + 1, a), {})).map(([k, v]) => v + '× ' + k) };
   });
   if (OUT) await page.screenshot({ path: `${OUT}/${name}.jpg`, quality: 72, scale: 'css' });
   spikes[name] = m.why; const pn = m.pn, links = m.links; delete m.why; delete m.pn; delete m.links; rows.push({ name, ...m });
