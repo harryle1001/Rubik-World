@@ -1,0 +1,1782 @@
+{
+ "id": "tin",
+ "topics": [
+  "Máy tính & phần cứng",
+  "Thuật toán & tư duy",
+  "Lập trình cơ bản",
+  "Internet & mạng",
+  "An toàn trên mạng",
+  "Trí tuệ nhân tạo"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Máy tính là gì?",
+   "vi": "Máy tính là thiết bị nhận thông tin, xử lý thông tin theo lệnh rồi đưa ra kết quả. Nó làm theo đúng những gì chương trình bảo. Máy tính không tự nghĩ như con người.",
+   "ex": "Nhớ 3 bước: nhận vào – xử lý – đưa ra.",
+   "en": [
+    "computer",
+    "input",
+    "output"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Thiết bị vào",
+   "vi": "Thiết bị vào giúp đưa thông tin vào máy tính. Bàn phím để gõ chữ, chuột để chọn và nhấp. Micrô thu âm thanh, máy quét đưa hình ảnh trên giấy vào máy.",
+   "ex": "Bàn phím và chuột là hai thiết bị vào quen thuộc nhất.",
+   "en": [
+    "input device",
+    "keyboard",
+    "mouse"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Thiết bị ra",
+   "vi": "Thiết bị ra đưa kết quả từ máy tính đến người dùng. Màn hình hiện chữ và hình. Loa phát âm thanh. Máy in in kết quả ra giấy.",
+   "ex": "Màn hình cho em xem, loa cho em nghe.",
+   "en": [
+    "output device",
+    "monitor",
+    "printer"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Bộ não CPU",
+   "vi": "CPU là bộ xử lý trung tâm, thường được gọi là bộ não của máy tính. CPU đọc từng lệnh và thực hiện phép tính rất nhanh. Mỗi giây CPU có thể làm hàng tỉ phép tính đơn giản.",
+   "ex": "CPU là viết tắt của Central Processing Unit.",
+   "en": [
+    "CPU",
+    "processor"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Bộ nhớ RAM",
+   "vi": "RAM là bộ nhớ tạm, chứa những gì máy đang dùng ngay lúc đó. RAM rất nhanh nhưng khi tắt máy thì dữ liệu trong RAM bị mất. Vì vậy em cần lưu bài trước khi tắt máy.",
+   "ex": "RAM giống mặt bàn học: rộng thì bày được nhiều sách cùng lúc.",
+   "en": [
+    "RAM",
+    "memory"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Bộ nhớ lưu trữ",
+   "vi": "Ổ cứng và ổ SSD giữ dữ liệu lâu dài, kể cả khi tắt máy. Ảnh, bài làm và phần mềm đều được cất ở đây. Ổ SSD không có bộ phận quay nên thường nhanh hơn ổ cứng cũ.",
+   "ex": "Lưu trữ giống tủ sách: cất lâu, khi cần thì lấy ra.",
+   "en": [
+    "storage",
+    "hard drive",
+    "SSD"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Bit và byte",
+   "vi": "Máy tính lưu mọi thứ bằng các bit. Mỗi bit chỉ có một trong hai giá trị là 0 hoặc 1. Tám bit ghép lại thành một byte. Một chữ cái đơn giản thường cần khoảng một byte.",
+   "ex": "1 byte = 8 bit.",
+   "en": [
+    "bit",
+    "byte"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Hệ nhị phân",
+   "vi": "Hệ nhị phân chỉ dùng hai chữ số 0 và 1. Máy tính dùng nó vì mạch điện dễ phân biệt hai trạng thái: có điện và không có điện. Ví dụ, số 5 viết trong hệ nhị phân là 101.",
+   "ex": "101 = 4 + 0 + 1 = 5.",
+   "en": [
+    "binary",
+    "base two"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Phần cứng và phần mềm",
+   "vi": "Phần cứng là những bộ phận cầm nắm được như màn hình, bàn phím, CPU. Phần mềm là các chương trình chạy trên máy, không cầm được. Hai thứ phải phối hợp với nhau thì máy tính mới làm việc được.",
+   "ex": "Cây đàn là phần cứng, bản nhạc là phần mềm.",
+   "en": [
+    "hardware",
+    "software"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Hệ điều hành",
+   "vi": "Hệ điều hành là phần mềm quan trọng nhất, chạy đầu tiên khi bật máy. Nó quản lý CPU, bộ nhớ, tệp tin và các thiết bị. Nó cũng giúp các phần mềm khác chạy được trên máy.",
+   "ex": "Hệ điều hành giống người quản lý trường học, sắp xếp mọi việc.",
+   "en": [
+    "operating system"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Đơn vị đo dữ liệu",
+   "vi": "Dữ liệu được đo bằng byte. Một kilôbai (KB) khoảng một nghìn byte. Một mêgabai (MB) khoảng một triệu byte. Một gigabai (GB) khoảng một tỉ byte. Một bức ảnh chụp bằng điện thoại thường nặng vài MB.",
+   "ex": "Thứ tự tăng dần: byte, KB, MB, GB, TB.",
+   "en": [
+    "kilobyte",
+    "megabyte",
+    "gigabyte"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Thuật toán là gì?",
+   "vi": "Thuật toán là một dãy các bước rõ ràng, làm theo thứ tự để giải quyết một việc. Mỗi bước phải cụ thể, ai làm theo cũng ra cùng kết quả. Công thức nấu ăn cũng là một kiểu thuật toán.",
+   "ex": "Đánh răng: lấy bàn chải, bóp kem, chải, súc miệng.",
+   "en": [
+    "algorithm",
+    "steps"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Làm theo thứ tự",
+   "vi": "Trong thuật toán, thứ tự các bước rất quan trọng. Nếu đổi chỗ các bước, kết quả có thể sai. Ví dụ, phải đi tất trước rồi mới đi giày.",
+   "ex": "Sai thứ tự là sai cả bài.",
+   "en": [
+    "sequence",
+    "order"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Chia nhỏ vấn đề",
+   "vi": "Việc lớn thường khó làm một lần. Ta chia nó thành nhiều việc nhỏ, dễ hơn. Làm xong từng việc nhỏ thì việc lớn cũng xong. Cách này gọi là phân rã vấn đề.",
+   "ex": "Dọn phòng: xếp sách, gấp quần áo, quét nhà.",
+   "en": [
+    "decomposition"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Lặp lại",
+   "vi": "Có những bước cần làm đi làm lại nhiều lần. Thay vì viết lại nhiều lần, ta dùng vòng lặp: lặp lại bước đó một số lần nhất định. Ví dụ: bước lên một bậc thang, lặp lại 10 lần.",
+   "ex": "Vòng lặp giúp viết ngắn mà làm được nhiều.",
+   "en": [
+    "loop",
+    "repeat"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Rẽ nhánh nếu – thì",
+   "vi": "Đôi khi thuật toán phải chọn việc làm tùy tình huống. Ta dùng cấu trúc nếu – thì – nếu không thì. Ví dụ: nếu trời mưa thì mang ô, nếu không thì đội mũ.",
+   "ex": "Điều kiện đúng thì làm việc này, sai thì làm việc kia.",
+   "en": [
+    "condition",
+    "if else"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Sơ đồ khối",
+   "vi": "Sơ đồ khối là hình vẽ mô tả các bước của thuật toán. Hình bầu dục để bắt đầu và kết thúc. Hình chữ nhật là một bước xử lý. Hình thoi là câu hỏi có hai nhánh đúng hoặc sai.",
+   "ex": "Hình thoi luôn có hai lối ra: Đúng và Sai.",
+   "en": [
+    "flowchart"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Nhận ra quy luật",
+   "vi": "Tư duy máy tính có một kỹ năng là nhận ra quy luật lặp lại. Khi thấy các bài toán giống nhau, ta dùng lại cách giải cũ. Ví dụ, dãy 2, 4, 6, 8 có quy luật cộng thêm 2.",
+   "ex": "Thấy quy luật là tiết kiệm được công sức.",
+   "en": [
+    "pattern recognition"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Trừu tượng hóa",
+   "vi": "Trừu tượng hóa là giữ lại điều quan trọng và bỏ qua chi tiết không cần. Bản đồ xe buýt chỉ vẽ các trạm và đường đi, không vẽ từng cái cây. Nhờ vậy bản đồ dễ đọc hơn.",
+   "ex": "Chỉ giữ thứ cần thiết cho việc đang làm.",
+   "en": [
+    "abstraction"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Tìm kiếm tuần tự",
+   "vi": "Tìm kiếm tuần tự là xem lần lượt từng phần tử, từ đầu đến cuối, cho tới khi thấy thứ cần tìm. Cách này dễ hiểu và dùng được cho danh sách chưa sắp xếp. Nhưng danh sách dài thì có thể mất nhiều thời gian.",
+   "ex": "Tìm bạn trong hàng bằng cách hỏi từng người.",
+   "en": [
+    "linear search"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Tìm kiếm nhị phân",
+   "vi": "Tìm kiếm nhị phân chỉ dùng cho danh sách đã sắp xếp. Mỗi lần ta xem phần tử ở giữa rồi bỏ đi một nửa không chứa thứ cần tìm. Với 1000 phần tử, chỉ cần khoảng 10 lần so sánh.",
+   "ex": "Trò đoán số từ 1 đến 100: luôn đoán số ở giữa.",
+   "en": [
+    "binary search"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Sắp xếp dữ liệu",
+   "vi": "Sắp xếp là đặt dữ liệu theo thứ tự, ví dụ từ nhỏ đến lớn. Có nhiều thuật toán sắp xếp. Sắp xếp nổi bọt so sánh từng cặp đứng cạnh nhau và đổi chỗ nếu sai thứ tự, lặp lại tới khi xong.",
+   "ex": "Xếp hàng theo chiều cao là một bài toán sắp xếp.",
+   "en": [
+    "sorting",
+    "bubble sort"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Chương trình là gì?",
+   "vi": "Chương trình là một tập hợp lệnh viết cho máy tính làm theo. Người viết chương trình gọi là lập trình viên. Trò chơi, ứng dụng vẽ hay máy tính bỏ túi trên điện thoại đều là chương trình.",
+   "ex": "Lập trình là dạy máy tính làm việc từng bước.",
+   "en": [
+    "program",
+    "programmer"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Ngôn ngữ lập trình",
+   "vi": "Máy tính không hiểu tiếng Việt thông thường. Ta viết lệnh bằng ngôn ngữ lập trình, có quy tắc rất chặt. Có loại ngôn ngữ kéo thả các khối lệnh cho bạn nhỏ, có loại gõ chữ như Python.",
+   "ex": "Python được đặt tên theo một chương trình hài, không phải con trăn.",
+   "en": [
+    "programming language",
+    "Python"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Lỗi trong chương trình",
+   "vi": "Lỗi trong chương trình gọi là bug. Tìm và sửa lỗi gọi là gỡ lỗi. Ai lập trình cũng gặp lỗi, kể cả người giỏi. Điều quan trọng là bình tĩnh kiểm tra từng bước.",
+   "ex": "Gặp lỗi là cơ hội học thêm.",
+   "en": [
+    "bug",
+    "debugging"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Lập trình kéo thả",
+   "vi": "Lập trình kéo thả dùng các khối lệnh có màu, ghép lại như xếp hình. Em có thể làm nhân vật di chuyển, nói chuyện hay phát nhạc. Cách này giúp học tư duy lập trình mà không lo gõ sai chính tả.",
+   "ex": "Mỗi khối là một lệnh, ghép khối là viết chương trình.",
+   "en": [
+    "block coding"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Biến",
+   "vi": "Biến giống một chiếc hộp có tên, dùng để cất một giá trị. Ví dụ biến diem có thể cất số 10. Giá trị trong biến có thể thay đổi khi chương trình chạy, như điểm số tăng lên trong trò chơi.",
+   "ex": "diem = diem + 1 nghĩa là tăng điểm thêm 1.",
+   "en": [
+    "variable",
+    "value"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Câu lệnh điều kiện",
+   "vi": "Câu lệnh if giúp chương trình ra quyết định. Nếu điều kiện đúng, chương trình làm một việc. Nếu sai, nó có thể làm việc khác với else. Ví dụ: nếu điểm lớn hơn 100 thì báo thắng.",
+   "ex": "if = nếu, else = nếu không thì.",
+   "en": [
+    "if statement",
+    "else"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Vòng lặp for và while",
+   "vi": "Vòng lặp for thường lặp một số lần đã biết trước, ví dụ 5 lần. Vòng lặp while lặp lại chừng nào điều kiện còn đúng. Nếu điều kiện không bao giờ sai, vòng lặp chạy mãi và máy bị treo.",
+   "ex": "Luôn kiểm tra vòng lặp có điểm dừng.",
+   "en": [
+    "for loop",
+    "while loop"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Nhập và xuất",
+   "vi": "Nhiều chương trình nhận dữ liệu từ người dùng, gọi là nhập. Sau khi xử lý, chương trình hiện kết quả ra màn hình, gọi là xuất. Ví dụ: nhập tên em, chương trình in ra lời chào kèm tên.",
+   "ex": "Trong Python: input() để nhập, print() để in.",
+   "en": [
+    "input",
+    "output",
+    "print"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Hàm",
+   "vi": "Hàm là một nhóm lệnh được đặt tên để dùng lại nhiều lần. Muốn làm việc đó, ta chỉ cần gọi tên hàm. Hàm giúp chương trình gọn, dễ đọc và dễ sửa hơn. Hàm có thể nhận dữ liệu vào gọi là tham số.",
+   "ex": "Viết một lần, gọi bao nhiêu lần cũng được.",
+   "en": [
+    "function",
+    "parameter"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Kiểu dữ liệu",
+   "vi": "Dữ liệu có nhiều kiểu. Số nguyên như 7, số thực như 3.5, chuỗi ký tự như \"xin chào\". Kiểu logic chỉ có hai giá trị Đúng và Sai. Máy tính xử lý mỗi kiểu theo cách khác nhau.",
+   "ex": "\"5\" là chữ, còn 5 là số.",
+   "en": [
+    "data type",
+    "string",
+    "boolean"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Danh sách",
+   "vi": "Danh sách cất nhiều giá trị trong một biến, theo thứ tự. Ví dụ danh sách tên các bạn trong tổ. Trong nhiều ngôn ngữ như Python, phần tử đầu tiên có vị trí số 0 chứ không phải số 1.",
+   "ex": "ds[0] là phần tử đầu tiên.",
+   "en": [
+    "list",
+    "index"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Internet là gì?",
+   "vi": "Internet là mạng lưới nối rất nhiều máy tính trên khắp thế giới với nhau. Nhờ Internet, ta gửi thư, xem video, học trực tuyến và trò chuyện với người ở xa. Dữ liệu đi qua dây cáp, sóng vô tuyến và cả cáp dưới đáy biển.",
+   "ex": "Internet là mạng của các mạng.",
+   "en": [
+    "Internet",
+    "network"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Trang web và trình duyệt",
+   "vi": "Trang web là một trang thông tin trên Internet, có chữ, hình và đường liên kết. Trình duyệt là phần mềm dùng để mở và xem trang web. Nhiều trang web liên kết với nhau tạo thành World Wide Web.",
+   "ex": "Trình duyệt là cửa sổ nhìn ra Internet.",
+   "en": [
+    "website",
+    "web browser"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Wi-Fi",
+   "vi": "Wi-Fi giúp thiết bị kết nối mạng bằng sóng vô tuyến, không cần dây. Bộ phát Wi-Fi chỉ phủ sóng trong một khoảng nhất định. Đứng càng xa hoặc cách nhiều bức tường thì sóng càng yếu.",
+   "ex": "Sóng yếu thì lại gần bộ phát hơn.",
+   "en": [
+    "Wi-Fi",
+    "wireless"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Máy tìm kiếm",
+   "vi": "Máy tìm kiếm giúp tìm trang web theo từ khóa em gõ vào. Nó trả về một danh sách kết quả. Không phải kết quả nào cũng đúng, nên em cần chọn nguồn đáng tin và so sánh nhiều nơi.",
+   "ex": "Gõ từ khóa ngắn, rõ ý để tìm nhanh hơn.",
+   "en": [
+    "search engine",
+    "keyword"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Mạng LAN và mạng WAN",
+   "vi": "Mạng LAN nối các máy trong phạm vi nhỏ như một phòng học hay một tòa nhà. Mạng WAN nối các máy ở rất xa nhau, như giữa các thành phố. Internet là mạng diện rộng lớn nhất.",
+   "ex": "LAN là mạng cục bộ, WAN là mạng diện rộng.",
+   "en": [
+    "LAN",
+    "WAN"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Địa chỉ IP",
+   "vi": "Mỗi thiết bị khi vào Internet có một địa chỉ IP, giống như số nhà. Nhờ địa chỉ này, dữ liệu biết phải đi đến đâu. Một địa chỉ IPv4 có dạng bốn số cách nhau bởi dấu chấm, ví dụ 192.168.1.1.",
+   "ex": "IP giống địa chỉ ghi trên phong bì thư.",
+   "en": [
+    "IP address"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Địa chỉ trang web",
+   "vi": "Mỗi trang web có một địa chỉ gọi là URL. URL thường bắt đầu bằng https://, sau đó là tên miền. Tên miền dễ nhớ hơn nhiều so với một dãy số địa chỉ IP.",
+   "ex": "Tên miền thường có đuôi như .vn, .com, .org.",
+   "en": [
+    "URL",
+    "domain name"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Bộ định tuyến",
+   "vi": "Bộ định tuyến, còn gọi là router, chọn đường đi cho dữ liệu giữa các mạng. Ở nhà, router nối các thiết bị trong nhà với Internet. Nhiều router ở nhà cũng phát luôn sóng Wi-Fi.",
+   "ex": "Router giống chú cảnh sát giao thông chỉ đường.",
+   "en": [
+    "router"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Gói tin",
+   "vi": "Khi gửi dữ liệu qua Internet, nó được chia thành nhiều phần nhỏ gọi là gói tin. Mỗi gói ghi địa chỉ nơi đến và số thứ tự. Các gói có thể đi theo nhiều đường khác nhau, đến nơi rồi được ghép lại đúng thứ tự.",
+   "ex": "Giống gửi một bức tranh ghép thành nhiều bưu kiện nhỏ.",
+   "en": [
+    "packet"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Hệ thống tên miền DNS",
+   "vi": "Máy tính tìm nhau bằng địa chỉ IP, còn con người nhớ tên miền. DNS là hệ thống đổi tên miền thành địa chỉ IP. Nó giống như một cuốn danh bạ khổng lồ của Internet.",
+   "ex": "Gõ tên miền, DNS tìm ra số IP.",
+   "en": [
+    "DNS"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "HTTP và HTTPS",
+   "vi": "HTTP là quy tắc để trình duyệt và máy chủ trao đổi trang web. HTTPS là phiên bản an toàn hơn, dữ liệu được mã hóa trên đường đi. Người khác khó đọc trộm được thông tin em gửi qua HTTPS.",
+   "ex": "Chữ S là viết tắt của Secure, nghĩa là an toàn.",
+   "en": [
+    "HTTPS",
+    "encryption"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Giữ kín thông tin cá nhân",
+   "vi": "Thông tin cá nhân gồm họ tên đầy đủ, địa chỉ nhà, số điện thoại, tên trường. Em không chia sẻ những thông tin này với người lạ trên mạng. Nếu có ai hỏi, hãy báo cho bố mẹ hoặc thầy cô.",
+   "ex": "Không rõ người đó là ai thì không kể gì về mình.",
+   "en": [
+    "personal information",
+    "privacy"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Mật khẩu",
+   "vi": "Mật khẩu là chìa khóa bảo vệ tài khoản. Em không cho bạn bè biết mật khẩu, chỉ bố mẹ được biết. Không dùng mật khẩu dễ đoán như ngày sinh hay 123456.",
+   "ex": "Mật khẩu giống bàn chải đánh răng: không cho ai mượn.",
+   "en": [
+    "password"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Người lạ trên mạng",
+   "vi": "Người trên mạng có thể không giống như họ nói. Một người tự nhận là bạn cùng tuổi nhưng thật ra có thể là người lớn. Em không bao giờ hẹn gặp người chỉ quen qua mạng nếu không có bố mẹ.",
+   "ex": "Gặp chuyện lạ, kể ngay với người lớn tin cậy.",
+   "en": [
+    "online stranger"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Thời gian dùng màn hình",
+   "vi": "Ngồi trước màn hình quá lâu làm mỏi mắt và ít vận động. Em nên nghỉ giải lao sau mỗi khoảng thời gian dùng máy. Quy tắc 20-20-20: cứ 20 phút, nhìn xa khoảng 6 mét trong 20 giây.",
+   "ex": "Ra ngoài chơi cũng là một cách nghỉ mắt.",
+   "en": [
+    "screen time"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Mật khẩu mạnh",
+   "vi": "Mật khẩu mạnh nên dài, ít nhất khoảng 12 ký tự. Nên trộn chữ hoa, chữ thường, chữ số và ký hiệu. Mỗi tài khoản nên có một mật khẩu riêng, để lộ một cái thì cái khác vẫn an toàn.",
+   "ex": "Ghép vài từ ngẫu nhiên thành một câu dài, dễ nhớ mà khó đoán.",
+   "en": [
+    "strong password"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Lừa đảo qua mạng",
+   "vi": "Kẻ lừa đảo có thể gửi tin nhắn giả, báo em trúng thưởng hay đòi đăng nhập lại. Mục đích là lấy mật khẩu hoặc tiền. Kiểu lừa này gọi là phishing. Em không bấm vào đường liên kết lạ và hỏi người lớn trước.",
+   "ex": "Quà miễn phí quá hấp dẫn thường là bẫy.",
+   "en": [
+    "phishing",
+    "scam"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Bắt nạt trên mạng",
+   "vi": "Bắt nạt trên mạng là dùng tin nhắn hay bình luận để chế giễu, đe dọa người khác. Nếu bị bắt nạt, em đừng đáp trả. Hãy chụp lại màn hình làm bằng chứng, chặn người đó và kể với người lớn.",
+   "ex": "Lời nói trên mạng cũng có thể làm bạn buồn thật.",
+   "en": [
+    "cyberbullying"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Dấu chân số",
+   "vi": "Mọi thứ em đăng lên mạng tạo thành dấu chân số. Ảnh và bình luận có thể bị người khác lưu lại, kể cả khi em đã xóa. Vì vậy hãy nghĩ kỹ trước khi đăng.",
+   "ex": "Trước khi đăng, hỏi: mình có muốn thầy cô thấy không?",
+   "en": [
+    "digital footprint"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Phần mềm độc hại",
+   "vi": "Phần mềm độc hại là chương trình được làm ra để phá hoại hoặc lấy trộm dữ liệu. Virus máy tính là một loại, có thể tự lây sang tệp khác. Chỉ tải phần mềm từ nơi đáng tin và cập nhật máy thường xuyên.",
+   "ex": "Tệp lạ từ người lạ: không mở.",
+   "en": [
+    "malware",
+    "virus"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Xác thực hai lớp",
+   "vi": "Xác thực hai lớp yêu cầu thêm một bước ngoài mật khẩu, ví dụ mã gửi về điện thoại. Kẻ gian có biết mật khẩu cũng khó vào được tài khoản. Đây là cách bảo vệ tài khoản rất hiệu quả.",
+   "ex": "Hai ổ khóa an toàn hơn một ổ khóa.",
+   "en": [
+    "two-factor authentication"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Kiểm tra tin thật – giả",
+   "vi": "Trên mạng có nhiều tin sai sự thật. Trước khi tin và chia sẻ, hãy xem ai viết, đăng khi nào và có nguồn nào khác xác nhận không. Ảnh và video cũng có thể bị chỉnh sửa hoặc tạo ra bằng máy.",
+   "ex": "Chưa chắc đúng thì chưa chia sẻ.",
+   "en": [
+    "fake news",
+    "fact-checking"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Robot là gì?",
+   "vi": "Robot là máy có thể tự làm một số việc theo chương trình. Robot có cảm biến để nhận biết xung quanh, có bộ điều khiển để quyết định và có động cơ để chuyển động. Robot hút bụi trong nhà là một ví dụ.",
+   "ex": "Cảm nhận – suy tính – hành động.",
+   "en": [
+    "robot"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Cảm biến",
+   "vi": "Cảm biến giúp máy biết chuyện gì đang xảy ra quanh nó. Có cảm biến ánh sáng, cảm biến nhiệt độ, cảm biến khoảng cách. Cảm biến của robot giống như mắt, tai và da của con người.",
+   "ex": "Cửa tự động mở nhờ cảm biến nhận ra có người.",
+   "en": [
+    "sensor"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Trí tuệ nhân tạo là gì?",
+   "vi": "Trí tuệ nhân tạo, viết tắt là AI, là cách làm cho máy tính làm được những việc cần trí thông minh. Ví dụ nhận ra khuôn mặt, hiểu giọng nói, dịch ngôn ngữ. AI vẫn là chương trình do con người tạo ra.",
+   "ex": "AI = Artificial Intelligence.",
+   "en": [
+    "artificial intelligence",
+    "AI"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "AI quanh em",
+   "vi": "AI có mặt trong nhiều thứ hằng ngày. Ứng dụng bản đồ tìm đường đi nhanh. Điện thoại nhận ra giọng nói khi em ra lệnh. Máy ảnh tự nhận ra khuôn mặt để lấy nét.",
+   "ex": "Thử để ý: hôm nay em đã gặp AI ở đâu?",
+   "en": [
+    "voice assistant",
+    "face recognition"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Học máy",
+   "vi": "Học máy là cách để máy tính tự tìm ra quy luật từ rất nhiều ví dụ, thay vì được dạy từng quy tắc. Ví dụ, cho máy xem hàng nghìn ảnh mèo có ghi chữ mèo, máy dần nhận ra được mèo trong ảnh mới.",
+   "ex": "Càng nhiều ví dụ tốt, máy học càng giỏi.",
+   "en": [
+    "machine learning",
+    "training data"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Dữ liệu là thức ăn của AI",
+   "vi": "AI học từ dữ liệu. Nếu dữ liệu sai hoặc thiếu, AI cũng sẽ học sai. Ví dụ, nếu chỉ cho máy xem ảnh chó lông vàng, nó có thể không nhận ra chó lông đen.",
+   "ex": "Dữ liệu kém thì kết quả kém.",
+   "en": [
+    "data",
+    "bias"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "AI cũng có thể sai",
+   "vi": "AI không phải lúc nào cũng đúng. Chatbot có thể trả lời rất tự tin nhưng lại sai sự thật. Vì vậy em cần kiểm tra lại thông tin quan trọng bằng sách, thầy cô hoặc nguồn đáng tin.",
+   "ex": "Dùng AI như một người bạn gợi ý, không phải thầy giáo luôn đúng.",
+   "en": [
+    "chatbot",
+    "accuracy"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Nguồn gốc chữ robot",
+   "vi": "Chữ robot xuất hiện trong một vở kịch năm 1920 của nhà văn Séc Karel Čapek. Từ này gợi từ tiếng Séc robota, nghĩa là công việc nặng nhọc. Người nghĩ ra chữ này là anh trai ông, họa sĩ Josef Čapek.",
+   "ex": "Robot ra đời trên sân khấu trước khi có ngoài đời.",
+   "en": [
+    "robot",
+    "Karel Capek"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Mạng nơ-ron nhân tạo",
+   "vi": "Mạng nơ-ron nhân tạo là một kiểu chương trình lấy ý tưởng từ các tế bào thần kinh trong não. Nó gồm nhiều lớp nút nối với nhau. Khi học, các mối nối được điều chỉnh mạnh yếu dần để cho ra kết quả đúng hơn.",
+   "ex": "Học sâu là mạng nơ-ron có rất nhiều lớp.",
+   "en": [
+    "neural network",
+    "deep learning"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Phép thử Turing",
+   "vi": "Năm 1950, nhà toán học Alan Turing đề xuất một phép thử. Một người trò chuyện bằng chữ với máy và với người thật mà không nhìn thấy họ. Nếu không phân biệt được đâu là máy, máy được xem là vượt qua phép thử.",
+   "ex": "Turing được coi là một trong những cha đẻ của khoa học máy tính.",
+   "en": [
+    "Turing test",
+    "Alan Turing"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Dùng AI có trách nhiệm",
+   "vi": "Khi dùng AI, em cần trung thực: không nộp bài AI làm như bài của mình. Không đưa thông tin cá nhân vào AI. Không dùng AI để tạo ảnh hay lời nói giả về người khác. AI là công cụ, người dùng chịu trách nhiệm.",
+   "ex": "Công cụ tốt hay xấu tùy người dùng.",
+   "en": [
+    "AI ethics",
+    "responsibility"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Thiết bị nào dùng để gõ chữ vào máy tính?",
+   "a": [
+    "Loa",
+    "Máy in",
+    "Bàn phím",
+    "Màn hình"
+   ],
+   "c": 2,
+   "why": "Bàn phím là thiết bị vào, dùng để gõ chữ và số.",
+   "en": "keyboard"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Thiết bị nào là thiết bị ra?",
+   "a": [
+    "Loa",
+    "Chuột",
+    "Bàn phím",
+    "Micrô"
+   ],
+   "c": 0,
+   "why": "Loa đưa âm thanh từ máy tính ra cho người nghe, nên là thiết bị ra.",
+   "en": "output device"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Bộ phận nào thường được gọi là bộ não của máy tính?",
+   "a": [
+    "CPU",
+    "Chuột",
+    "Loa",
+    "Quạt tản nhiệt"
+   ],
+   "c": 0,
+   "why": "CPU đọc và thực hiện các lệnh, nên được gọi là bộ não của máy tính.",
+   "en": "CPU"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Máy tính làm việc theo ba bước nào?",
+   "a": [
+    "Ngủ – ăn – chơi",
+    "Nhận vào – xử lý – đưa ra",
+    "Vẽ – tô – cắt",
+    "Nghe – hát – múa"
+   ],
+   "c": 1,
+   "why": "Máy tính nhận thông tin vào, xử lý rồi đưa kết quả ra.",
+   "en": "input process output"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Khi tắt máy đột ngột, dữ liệu ở đâu bị mất?",
+   "a": [
+    "Trong ổ SSD",
+    "Trong RAM",
+    "Trong ổ cứng",
+    "Trong thẻ nhớ"
+   ],
+   "c": 1,
+   "why": "RAM là bộ nhớ tạm, mất dữ liệu khi mất điện. Ổ cứng, SSD, thẻ nhớ giữ dữ liệu lâu dài.",
+   "en": "RAM"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Một byte gồm bao nhiêu bit?",
+   "a": [
+    "8 bit",
+    "2 bit",
+    "10 bit",
+    "100 bit"
+   ],
+   "c": 0,
+   "why": "Theo quy ước, 1 byte bằng 8 bit.",
+   "en": "byte"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Số 5 viết trong hệ nhị phân là gì?",
+   "a": [
+    "111",
+    "110",
+    "101",
+    "100"
+   ],
+   "c": 2,
+   "why": "101 = 1×4 + 0×2 + 1×1 = 5.",
+   "en": "binary"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Mỗi bit có thể nhận những giá trị nào?",
+   "a": [
+    "0 hoặc 1",
+    "Từ 0 đến 9",
+    "Chữ A đến Z",
+    "Bất kỳ số nào"
+   ],
+   "c": 0,
+   "why": "Bit là đơn vị nhỏ nhất, chỉ có hai giá trị 0 và 1.",
+   "en": "bit"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Thứ nào sau đây là phần mềm?",
+   "a": [
+    "Bàn phím",
+    "Màn hình",
+    "Hệ điều hành",
+    "Ổ cứng"
+   ],
+   "c": 2,
+   "why": "Hệ điều hành là chương trình, không cầm nắm được, nên là phần mềm.",
+   "en": "software"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Đơn vị nào lớn nhất?",
+   "a": [
+    "Kilôbai (KB)",
+    "Gigabai (GB)",
+    "Mêgabai (MB)",
+    "Byte"
+   ],
+   "c": 1,
+   "why": "Thứ tự tăng dần là byte, KB, MB, GB.",
+   "en": "gigabyte"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Số 1010 trong hệ nhị phân bằng số nào trong hệ thập phân?",
+   "a": [
+    "10",
+    "8",
+    "12",
+    "5"
+   ],
+   "c": 0,
+   "why": "1010 = 8 + 0 + 2 + 0 = 10.",
+   "en": "binary number"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Thuật toán là gì?",
+   "a": [
+    "Dãy các bước rõ ràng để giải quyết việc",
+    "Một loại máy tính",
+    "Một bức tranh đẹp",
+    "Một con robot"
+   ],
+   "c": 0,
+   "why": "Thuật toán là các bước cụ thể, làm theo thứ tự để giải quyết vấn đề.",
+   "en": "algorithm"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Khi đi giày, bước nào phải làm trước?",
+   "a": [
+    "Buộc dây giày",
+    "Đi tất",
+    "Chạy đi chơi",
+    "Cởi giày ra"
+   ],
+   "c": 1,
+   "why": "Phải đi tất trước rồi mới đi giày và buộc dây. Thứ tự rất quan trọng.",
+   "en": "sequence"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Lặp lại một việc nhiều lần trong thuật toán gọi là gì?",
+   "a": [
+    "Vòng lặp",
+    "Xóa bỏ",
+    "Tắt máy",
+    "Đổi màu"
+   ],
+   "c": 0,
+   "why": "Vòng lặp giúp thực hiện một bước nhiều lần mà không phải viết lại.",
+   "en": "loop"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Chia một việc lớn thành nhiều việc nhỏ gọi là gì?",
+   "a": [
+    "Bỏ cuộc",
+    "Tô màu",
+    "Nhảy dây",
+    "Phân rã vấn đề"
+   ],
+   "c": 3,
+   "why": "Phân rã vấn đề giúp việc lớn trở nên dễ làm hơn.",
+   "en": "decomposition"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Trong sơ đồ khối, hình thoi dùng để làm gì?",
+   "a": [
+    "Đặt câu hỏi, rẽ nhánh Đúng/Sai",
+    "Bắt đầu chương trình",
+    "Vẽ trang trí",
+    "Kết thúc chương trình"
+   ],
+   "c": 0,
+   "why": "Hình thoi là bước kiểm tra điều kiện, có hai nhánh Đúng và Sai.",
+   "en": "flowchart"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Câu nào là cấu trúc rẽ nhánh?",
+   "a": [
+    "Đi thẳng 10 bước",
+    "Lặp lại 5 lần vỗ tay",
+    "Ăn sáng xong đi học",
+    "Nếu trời mưa thì mang ô"
+   ],
+   "c": 3,
+   "why": "Rẽ nhánh chọn việc làm tùy theo điều kiện đúng hay sai.",
+   "en": "condition"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Dãy 3, 6, 9, 12 có quy luật gì?",
+   "a": [
+    "Cộng thêm 2",
+    "Cộng thêm 3",
+    "Nhân đôi",
+    "Trừ đi 3"
+   ],
+   "c": 1,
+   "why": "Mỗi số sau lớn hơn số trước 3 đơn vị.",
+   "en": "pattern"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Bản đồ xe buýt chỉ vẽ trạm và tuyến đường là ví dụ của kỹ năng gì?",
+   "a": [
+    "Trừu tượng hóa",
+    "Sắp xếp",
+    "Gỡ lỗi",
+    "Mã hóa"
+   ],
+   "c": 0,
+   "why": "Trừu tượng hóa là giữ lại thứ quan trọng, bỏ chi tiết không cần.",
+   "en": "abstraction"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Tìm kiếm nhị phân chỉ dùng được khi nào?",
+   "a": [
+    "Danh sách đã được sắp xếp",
+    "Danh sách có số lẻ",
+    "Danh sách rỗng",
+    "Danh sách chỉ có chữ"
+   ],
+   "c": 0,
+   "why": "Tìm kiếm nhị phân bỏ đi một nửa mỗi lần, nên cần danh sách đã có thứ tự.",
+   "en": "binary search"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Tìm kiếm nhị phân trong 1000 phần tử cần khoảng bao nhiêu lần so sánh?",
+   "a": [
+    "Khoảng 10 lần",
+    "Khoảng 500 lần",
+    "Khoảng 1000 lần",
+    "Khoảng 2 lần"
+   ],
+   "c": 0,
+   "why": "Mỗi lần bỏ một nửa: 1000, 500, 250… chỉ khoảng 10 lần là xong.",
+   "en": "binary search"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Sắp xếp nổi bọt làm gì ở mỗi bước?",
+   "a": [
+    "Xóa phần tử lớn nhất",
+    "So sánh hai phần tử cạnh nhau, đổi chỗ nếu sai",
+    "Chọn ngẫu nhiên một phần tử",
+    "Chia danh sách làm ba"
+   ],
+   "c": 1,
+   "why": "Sắp xếp nổi bọt so sánh từng cặp đứng cạnh nhau và đổi chỗ nếu sai thứ tự.",
+   "en": "bubble sort"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Lỗi trong chương trình máy tính gọi là gì?",
+   "a": [
+    "Byte",
+    "Bug",
+    "Wi-Fi",
+    "Pixel"
+   ],
+   "c": 1,
+   "why": "Lỗi chương trình gọi là bug, sửa lỗi gọi là gỡ lỗi (debugging).",
+   "en": "bug"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Người viết chương trình máy tính được gọi là gì?",
+   "a": [
+    "Thợ may",
+    "Phi công",
+    "Đầu bếp",
+    "Lập trình viên"
+   ],
+   "c": 3,
+   "why": "Lập trình viên là người viết lệnh cho máy tính làm theo.",
+   "en": "programmer"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Chương trình máy tính là gì?",
+   "a": [
+    "Một cái màn hình",
+    "Một sợi dây điện",
+    "Tập hợp lệnh cho máy tính làm theo",
+    "Một tờ giấy trắng"
+   ],
+   "c": 2,
+   "why": "Chương trình là các lệnh được viết ra để máy tính thực hiện.",
+   "en": "program"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Ngôn ngữ Python được đặt tên theo gì?",
+   "a": [
+    "Một con trăn thật",
+    "Một ngọn núi",
+    "Một chương trình hài",
+    "Một loài chim"
+   ],
+   "c": 2,
+   "why": "Người tạo ra Python đặt tên theo một chương trình hài trên truyền hình Anh.",
+   "en": "Python"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Biến trong lập trình giống với thứ gì nhất?",
+   "a": [
+    "Cái bánh xe",
+    "Bóng đèn",
+    "Chiếc hộp có tên để cất giá trị",
+    "Đôi giày"
+   ],
+   "c": 2,
+   "why": "Biến có tên và chứa một giá trị có thể thay đổi.",
+   "en": "variable"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Nếu diem = 5, sau lệnh diem = diem + 2 thì diem bằng bao nhiêu?",
+   "a": [
+    "5",
+    "7",
+    "2",
+    "52"
+   ],
+   "c": 1,
+   "why": "Lấy giá trị cũ là 5 cộng thêm 2 được 7, rồi cất lại vào biến.",
+   "en": "variable"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Vòng lặp while dừng khi nào?",
+   "a": [
+    "Khi điều kiện đúng",
+    "Không bao giờ dừng",
+    "Sau đúng 1 lần",
+    "Khi điều kiện trở thành sai"
+   ],
+   "c": 3,
+   "why": "While lặp chừng nào điều kiện còn đúng, nên điều kiện sai thì dừng.",
+   "en": "while loop"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Trong Python, lệnh nào in chữ ra màn hình?",
+   "a": [
+    "input()",
+    "delete()",
+    "sleep()",
+    "print()"
+   ],
+   "c": 3,
+   "why": "print() dùng để in kết quả ra màn hình, input() dùng để nhập.",
+   "en": "print"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Trong Python, phần tử đầu tiên của danh sách có vị trí số mấy?",
+   "a": [
+    "1",
+    "0",
+    "-1",
+    "10"
+   ],
+   "c": 1,
+   "why": "Python đánh số từ 0, nên phần tử đầu tiên là ds[0].",
+   "en": "index"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Kiểu dữ liệu logic (boolean) có những giá trị nào?",
+   "a": [
+    "Đúng và Sai",
+    "Chỉ các số chẵn",
+    "Mọi chữ cái",
+    "Từ 1 đến 100"
+   ],
+   "c": 0,
+   "why": "Boolean chỉ có hai giá trị: True (Đúng) và False (Sai).",
+   "en": "boolean"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Vì sao lập trình viên dùng hàm?",
+   "a": [
+    "Để máy chạy chậm hơn",
+    "Để xóa chương trình",
+    "Để đổi màu màn hình",
+    "Để dùng lại một nhóm lệnh nhiều lần"
+   ],
+   "c": 3,
+   "why": "Hàm gom nhóm lệnh có tên, gọi lại nhiều lần, giúp chương trình gọn.",
+   "en": "function"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Internet là gì?",
+   "a": [
+    "Một chiếc máy tính lớn",
+    "Một trò chơi",
+    "Một loại pin",
+    "Mạng nối máy tính khắp thế giới"
+   ],
+   "c": 3,
+   "why": "Internet là mạng lưới toàn cầu nối rất nhiều máy tính và mạng nhỏ.",
+   "en": "Internet"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Phần mềm dùng để xem trang web gọi là gì?",
+   "a": [
+    "Máy in",
+    "Bàn phím",
+    "Trình duyệt",
+    "Ổ cứng"
+   ],
+   "c": 2,
+   "why": "Trình duyệt mở và hiển thị trang web.",
+   "en": "web browser"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Wi-Fi giúp thiết bị kết nối mạng bằng gì?",
+   "a": [
+    "Dây thừng",
+    "Sóng vô tuyến",
+    "Ánh nến",
+    "Nước"
+   ],
+   "c": 1,
+   "why": "Wi-Fi truyền dữ liệu bằng sóng vô tuyến, không cần dây.",
+   "en": "Wi-Fi"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Để tìm thông tin trên mạng theo từ khóa, em dùng gì?",
+   "a": [
+    "Máy giặt",
+    "Máy tính bỏ túi",
+    "Máy tìm kiếm",
+    "Máy quạt"
+   ],
+   "c": 2,
+   "why": "Máy tìm kiếm trả về danh sách trang web phù hợp với từ khóa.",
+   "en": "search engine"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Mạng nối các máy tính trong một phòng học gọi là gì?",
+   "a": [
+    "Mạng WAN",
+    "Vệ tinh",
+    "Mạng LAN",
+    "Cáp biển"
+   ],
+   "c": 2,
+   "why": "LAN là mạng cục bộ, phạm vi nhỏ như phòng học hay tòa nhà.",
+   "en": "LAN"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Địa chỉ IP giống với thứ gì ngoài đời?",
+   "a": [
+    "Màu sơn nhà",
+    "Tên con mèo",
+    "Giờ đi ngủ",
+    "Số nhà ghi trên phong bì"
+   ],
+   "c": 3,
+   "why": "Địa chỉ IP cho biết dữ liệu phải gửi đến thiết bị nào, như số nhà.",
+   "en": "IP address"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Thiết bị nào chọn đường đi cho dữ liệu giữa các mạng?",
+   "a": [
+    "Loa",
+    "Máy quét",
+    "Bộ định tuyến (router)",
+    "Chuột"
+   ],
+   "c": 2,
+   "why": "Router định tuyến dữ liệu giữa mạng trong nhà và Internet.",
+   "en": "router"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Trong địa chỉ trang web, phần như truong.edu.vn gọi là gì?",
+   "a": [
+    "Mật khẩu",
+    "Địa chỉ nhà",
+    "Số điện thoại",
+    "Tên miền"
+   ],
+   "c": 3,
+   "why": "Tên miền là tên dễ nhớ của trang web.",
+   "en": "domain name"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "DNS làm nhiệm vụ gì?",
+   "a": [
+    "Đổi tên miền thành địa chỉ IP",
+    "Sạc pin điện thoại",
+    "Diệt virus",
+    "Vẽ trang web"
+   ],
+   "c": 0,
+   "why": "DNS như danh bạ: tra tên miền để ra địa chỉ IP.",
+   "en": "DNS"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Khi gửi qua Internet, dữ liệu được chia thành gì?",
+   "a": [
+    "Các tờ giấy",
+    "Các tia lửa",
+    "Các gói tin nhỏ",
+    "Các giọt nước"
+   ],
+   "c": 2,
+   "why": "Dữ liệu được chia thành gói tin, đến nơi thì ghép lại theo thứ tự.",
+   "en": "packet"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Chữ S trong HTTPS cho biết điều gì?",
+   "a": [
+    "Trang web chạy chậm",
+    "Kết nối được mã hóa, an toàn hơn",
+    "Trang web chỉ có chữ",
+    "Trang web miễn phí"
+   ],
+   "c": 1,
+   "why": "S là Secure: dữ liệu được mã hóa trên đường truyền.",
+   "en": "HTTPS"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Thông tin nào KHÔNG nên kể cho người lạ trên mạng?",
+   "a": [
+    "Màu em thích",
+    "Môn thể thao em thích",
+    "Con vật em thích",
+    "Địa chỉ nhà em"
+   ],
+   "c": 3,
+   "why": "Địa chỉ nhà là thông tin cá nhân, có thể khiến em gặp nguy hiểm.",
+   "en": "personal information"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Ai có thể được biết mật khẩu của em?",
+   "a": [
+    "Bạn mới quen trên mạng",
+    "Mọi người trong nhóm chat",
+    "Người lạ hỏi xin",
+    "Bố mẹ"
+   ],
+   "c": 3,
+   "why": "Chỉ bố mẹ hoặc người giám hộ được biết mật khẩu để giúp em an toàn.",
+   "en": "password"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Người quen qua mạng rủ em đi gặp riêng, em làm gì?",
+   "a": [
+    "Đi gặp một mình",
+    "Giữ bí mật",
+    "Gửi địa chỉ nhà",
+    "Từ chối và kể với bố mẹ"
+   ],
+   "c": 3,
+   "why": "Không gặp người chỉ quen qua mạng nếu không có bố mẹ; hãy báo người lớn.",
+   "en": "online safety"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Theo quy tắc 20-20-20, cứ 20 phút dùng màn hình em nên làm gì?",
+   "a": [
+    "Nhìn xa khoảng 20 giây",
+    "Ăn 20 cái kẹo",
+    "Chạy 20 vòng",
+    "Tắt máy 20 ngày"
+   ],
+   "c": 0,
+   "why": "Nhìn xa khoảng 6 mét trong 20 giây giúp mắt bớt mỏi.",
+   "en": "screen time"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Mật khẩu nào mạnh nhất?",
+   "a": [
+    "123456",
+    "matkhau",
+    "Meo!Xanh7NhayCao#Sao",
+    "Ngày sinh của em"
+   ],
+   "c": 2,
+   "why": "Mật khẩu dài, trộn chữ hoa, thường, số và ký hiệu thì khó đoán nhất.",
+   "en": "strong password"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Tin nhắn báo em trúng thưởng, bảo bấm vào link để nhận quà. Em làm gì?",
+   "a": [
+    "Bấm ngay để nhận",
+    "Gửi mật khẩu để nhận",
+    "Chia sẻ cho cả lớp",
+    "Không bấm, hỏi người lớn"
+   ],
+   "c": 3,
+   "why": "Đây thường là lừa đảo (phishing) để lấy thông tin hoặc tiền.",
+   "en": "phishing"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Nếu bị bắt nạt trên mạng, em nên làm gì?",
+   "a": [
+    "Chửi lại thật to",
+    "Chụp màn hình, chặn và báo người lớn",
+    "Im lặng chịu đựng mãi",
+    "Đăng thông tin của người kia"
+   ],
+   "c": 1,
+   "why": "Không đáp trả; lưu bằng chứng, chặn và kể với người lớn tin cậy.",
+   "en": "cyberbullying"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Dấu chân số là gì?",
+   "a": [
+    "Dấu giày trên sàn",
+    "Hình vẽ bàn chân",
+    "Dấu vết em để lại khi dùng mạng",
+    "Số đo cỡ giày"
+   ],
+   "c": 2,
+   "why": "Bài đăng, bình luận, ảnh của em trên mạng tạo thành dấu chân số.",
+   "en": "digital footprint"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Xác thực hai lớp bảo vệ tài khoản thế nào?",
+   "a": [
+    "Bỏ hẳn mật khẩu",
+    "Cần thêm một bước ngoài mật khẩu",
+    "Cho mọi người cùng đăng nhập",
+    "Đổi màu giao diện"
+   ],
+   "c": 1,
+   "why": "Ngoài mật khẩu còn cần mã hoặc bước xác nhận thứ hai.",
+   "en": "two-factor authentication"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Cách nào giúp tránh phần mềm độc hại?",
+   "a": [
+    "Chỉ tải phần mềm từ nơi đáng tin",
+    "Mở mọi tệp người lạ gửi",
+    "Tắt hết cập nhật",
+    "Bấm mọi quảng cáo"
+   ],
+   "c": 0,
+   "why": "Nguồn tải đáng tin và cập nhật máy giúp giảm nguy cơ nhiễm mã độc.",
+   "en": "malware"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Trước khi chia sẻ một tin gây sốc, em nên làm gì?",
+   "a": [
+    "Chia sẻ ngay cho nhanh",
+    "Kiểm tra nguồn và so với nơi khác",
+    "Thêm chi tiết cho hấp dẫn",
+    "Tin ngay vì có ảnh"
+   ],
+   "c": 1,
+   "why": "Tin giả rất phổ biến; ảnh cũng có thể bị chỉnh sửa. Cần kiểm tra trước.",
+   "en": "fact-checking"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Bộ phận nào giúp robot nhận biết xung quanh?",
+   "a": [
+    "Sơn màu",
+    "Cảm biến",
+    "Ốc vít",
+    "Tem dán"
+   ],
+   "c": 1,
+   "why": "Cảm biến giống giác quan của robot: đo ánh sáng, khoảng cách, nhiệt độ…",
+   "en": "sensor"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "AI là viết tắt của cụm từ nào?",
+   "a": [
+    "Animal Island",
+    "Ant Ice",
+    "Air Internet",
+    "Artificial Intelligence"
+   ],
+   "c": 3,
+   "why": "AI là Artificial Intelligence, nghĩa là trí tuệ nhân tạo.",
+   "en": "artificial intelligence"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Việc nào là ví dụ của AI?",
+   "a": [
+    "Cái thước kẻ đo độ dài",
+    "Bóng đèn bật sáng bằng công tắc",
+    "Điện thoại hiểu giọng nói",
+    "Cái kéo cắt giấy"
+   ],
+   "c": 2,
+   "why": "Hiểu giọng nói là việc cần trí thông minh mà AI làm được.",
+   "en": "speech recognition"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Robot hoạt động nhờ đâu?",
+   "a": [
+    "Phép thuật",
+    "Tự mọc ra",
+    "Chương trình do con người viết",
+    "Ăn cơm"
+   ],
+   "c": 2,
+   "why": "Robot làm việc theo chương trình và điều khiển do con người tạo ra.",
+   "en": "robot"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Học máy là gì?",
+   "a": [
+    "Máy tự tìm quy luật từ nhiều ví dụ",
+    "Máy đi học ở trường",
+    "Máy học thuộc lòng bài thơ",
+    "Máy tự sửa ốc vít"
+   ],
+   "c": 0,
+   "why": "Học máy cho máy xem nhiều dữ liệu để nó tự rút ra quy luật.",
+   "en": "machine learning"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Nếu dữ liệu dạy AI bị sai, chuyện gì dễ xảy ra?",
+   "a": [
+    "AI cũng học sai",
+    "AI tự sửa đúng hết",
+    "AI chạy nhanh hơn",
+    "Không ảnh hưởng gì"
+   ],
+   "c": 0,
+   "why": "AI học từ dữ liệu, dữ liệu sai thì kết quả dễ sai.",
+   "en": "training data"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Chatbot trả lời rất tự tin. Em nên làm gì với thông tin quan trọng?",
+   "a": [
+    "Tin ngay tuyệt đối",
+    "Chép nguyên vào bài thi",
+    "Không bao giờ đọc sách nữa",
+    "Kiểm tra lại ở nguồn đáng tin"
+   ],
+   "c": 3,
+   "why": "AI có thể sai, nên thông tin quan trọng cần kiểm chứng.",
+   "en": "chatbot"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Chữ robot xuất hiện lần đầu trong tác phẩm nào?",
+   "a": [
+    "Một bộ phim hoạt hình",
+    "Một vở kịch của nhà văn Séc",
+    "Một bài hát dân gian",
+    "Một cuốn từ điển toán"
+   ],
+   "c": 1,
+   "why": "Chữ robot xuất hiện trong vở kịch năm 1920 của nhà văn Séc Karel Čapek.",
+   "en": "robot"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Ai đề xuất phép thử để xem máy có trò chuyện giống người không?",
+   "a": [
+    "Isaac Newton",
+    "Charles Darwin",
+    "Alan Turing",
+    "Marie Curie"
+   ],
+   "c": 2,
+   "why": "Năm 1950, Alan Turing đề xuất phép thử nay gọi là phép thử Turing.",
+   "en": "Turing test"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Mạng nơ-ron nhân tạo lấy ý tưởng từ đâu?",
+   "a": [
+    "Mạng nhện",
+    "Lưới đánh cá",
+    "Rễ cây",
+    "Tế bào thần kinh trong não"
+   ],
+   "c": 3,
+   "why": "Mạng nơ-ron nhân tạo mô phỏng đơn giản cách các nơ-ron nối với nhau.",
+   "en": "neural network"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Việc nào là dùng AI có trách nhiệm?",
+   "a": [
+    "Nộp bài AI viết như bài mình",
+    "Kiểm tra lại và ghi rõ có dùng AI",
+    "Tạo ảnh giả về bạn cùng lớp",
+    "Đưa địa chỉ nhà vào chatbot"
+   ],
+   "c": 1,
+   "why": "Trung thực, bảo vệ thông tin và không làm hại người khác là dùng AI có trách nhiệm.",
+   "en": "AI ethics"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Con bướm đêm trong máy tính",
+   "vi": "Năm 1947, các kỹ sư làm việc với một máy tính rất lớn tên là Mark II ở Mỹ. Một hôm máy chạy sai, họ đi kiểm tra từng bộ phận. Thì ra có một con bướm đêm mắc kẹt bên trong! Họ gỡ nó ra và dán vào sổ ghi chép. Nhà khoa học Grace Hopper hay kể lại chuyện này. Từ đó, chuyện \"bắt bọ\" (bug) trong máy tính càng nổi tiếng.",
+   "en": [
+    "bug",
+    "Grace Hopper"
+   ]
+  },
+  {
+   "t": "Ada Lovelace – người lập trình đầu tiên",
+   "vi": "Ada Lovelace sống ở Anh vào thế kỷ 19 và rất giỏi toán. Bà nghiên cứu cỗ Máy Phân Tích do Charles Babbage thiết kế. Năm 1843, bà viết ra các bước để máy tính một dãy số đặc biệt. Nhiều người coi đó là chương trình máy tính đầu tiên. Bà còn đoán rằng một ngày máy có thể làm cả âm nhạc.",
+   "en": [
+    "Ada Lovelace",
+    "Analytical Engine"
+   ]
+  },
+  {
+   "t": "Khung dệt dùng thẻ đục lỗ",
+   "vi": "Đầu thế kỷ 19, ở Pháp, Joseph Marie Jacquard làm ra một khung dệt đặc biệt. Khung dệt đọc các tấm thẻ có đục lỗ. Mỗi hàng lỗ cho máy biết phải dệt sợi nào lên, sợi nào xuống. Thay thẻ là thay hoa văn trên vải. Ý tưởng điều khiển máy bằng thẻ đục lỗ sau này được dùng cho các máy tính đầu tiên.",
+   "en": [
+    "Jacquard loom",
+    "punched card"
+   ]
+  },
+  {
+   "t": "Máy tính to bằng cả căn phòng",
+   "vi": "Năm 1946, ở Mỹ, người ta giới thiệu máy tính điện tử ENIAC. Nó nặng khoảng 27 tấn và chiếm cả một căn phòng lớn. Máy dùng hàng chục nghìn bóng đèn điện tử. Ngày nay, một chiếc điện thoại nhỏ trong túi em còn mạnh hơn ENIAC rất nhiều lần.",
+   "en": [
+    "ENIAC",
+    "vacuum tube"
+   ]
+  },
+  {
+   "t": "Tin nhắn đầu tiên chỉ có hai chữ",
+   "vi": "Năm 1969, mạng ARPANET, tổ tiên của Internet, gửi tin nhắn đầu tiên giữa hai nơi nghiên cứu ở Mỹ. Người ta định gõ chữ LOGIN. Nhưng mới gửi được hai chữ L và O thì hệ thống bị lỗi và dừng lại. Vậy là tin nhắn đầu tiên của mạng chỉ là LO. Ít lâu sau, họ sửa lỗi và gửi được trọn vẹn.",
+   "en": [
+    "ARPANET",
+    "Internet history"
+   ]
+  },
+  {
+   "t": "Từ thuật toán đến từ một cái tên",
+   "vi": "Khoảng 1200 năm trước, có một nhà toán học tên là al-Khwarizmi sống ở thành Baghdad. Ông viết sách hướng dẫn cách tính toán từng bước. Sách của ông được dịch ra tiếng La-tinh và đọc khắp châu Âu. Tên ông được đọc chệch đi và trở thành chữ algorithm, nghĩa là thuật toán.",
+   "en": [
+    "algorithm",
+    "al-Khwarizmi"
+   ]
+  },
+  {
+   "t": "Nhà toán học và chiếc máy tưởng tượng",
+   "vi": "Năm 1936, nhà toán học người Anh Alan Turing nghĩ ra một chiếc máy tưởng tượng. Máy đọc và ghi các ký hiệu trên một băng giấy dài theo những quy tắc đơn giản. Ông chỉ ra rằng chiếc máy như vậy có thể làm theo mọi thuật toán. Ý tưởng này là nền móng cho máy tính ngày nay.",
+   "en": [
+    "Turing machine",
+    "Alan Turing"
+   ]
+  },
+  {
+   "t": "Số nhị phân từ thế kỷ 17",
+   "vi": "Nhà toán học người Đức Gottfried Leibniz rất thích hệ nhị phân chỉ có số 0 và 1. Ông viết về cách tính toán với hệ này từ khoảng hơn 300 năm trước. Khi đó chưa có máy tính điện tử nào cả. Hàng trăm năm sau, các kỹ sư dùng đúng ý tưởng ấy để làm mạch điện cho máy tính.",
+   "en": [
+    "binary",
+    "Leibniz"
+   ]
+  },
+  {
+   "t": "Robot ra đời trên sân khấu",
+   "vi": "Năm 1920, nhà văn người Séc Karel Čapek viết một vở kịch về những người máy làm việc trong nhà máy. Ông hỏi anh trai mình là họa sĩ Josef Čapek nên gọi chúng là gì. Josef gợi ý chữ robot, từ tiếng Séc robota nghĩa là việc nặng nhọc. Vở kịch nổi tiếng và chữ robot lan ra khắp thế giới.",
+   "en": [
+    "robot",
+    "Karel Capek"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: Ba bước của máy tính",
+   "vi": "Mọi máy tính đều làm việc theo ba bước: nhận vào, xử lý, đưa ra. Bàn phím, chuột đưa thông tin vào. CPU xử lý thông tin. Màn hình, loa đưa kết quả ra.",
+   "try": "Nhìn quanh nhà, tìm 3 thiết bị vào và 3 thiết bị ra (của máy tính, điện thoại hay tivi)."
+  },
+  {
+   "t": "Bài học hôm nay: Đếm bằng 0 và 1",
+   "vi": "Hệ nhị phân chỉ có hai chữ số 0 và 1. Mỗi vị trí từ phải sang trái có giá trị 1, 2, 4, 8. Cộng các vị trí có số 1 lại là ra số thường. Ví dụ 110 là 4 + 2 = 6.",
+   "try": "Dùng 4 đồng xu: mặt ngửa là 1, mặt sấp là 0. Xếp thử để tạo các số từ 0 đến 15."
+  },
+  {
+   "t": "Bài học hôm nay: Viết thuật toán cho bạn",
+   "vi": "Thuật toán phải rõ ràng đến mức ai làm theo cũng ra cùng kết quả. Một bước mơ hồ có thể làm người làm theo bị sai. Hãy viết từng bước ngắn, đúng thứ tự.",
+   "try": "Viết các bước làm một chiếc bánh mì kẹp, rồi nhờ bố mẹ làm đúng từng chữ em viết xem có thiếu bước nào không."
+  },
+  {
+   "t": "Bài học hôm nay: Trò đoán số thông minh",
+   "vi": "Tìm kiếm nhị phân luôn chọn ở giữa và bỏ đi một nửa. Nhờ vậy em tìm rất nhanh. Với số từ 1 đến 100, chỉ cần tối đa 7 lần đoán.",
+   "try": "Chơi với bạn hoặc bố mẹ: người kia nghĩ một số từ 1 đến 100, em đoán và chỉ được nghe đáp \"lớn hơn\" hay \"nhỏ hơn\"."
+  },
+  {
+   "t": "Bài học hôm nay: Vòng lặp trong đời sống",
+   "vi": "Vòng lặp là làm lại một việc nhiều lần. Trong lập trình, ta viết lệnh một lần và bảo máy lặp lại. Nhưng vòng lặp luôn cần điểm dừng, nếu không sẽ chạy mãi.",
+   "try": "Tìm 3 việc lặp lại hằng ngày (như đánh răng) và viết lại dưới dạng: lặp lại … lần, dừng khi …"
+  },
+  {
+   "t": "Bài học hôm nay: Gỡ lỗi như thám tử",
+   "vi": "Khi chương trình chạy sai, đừng vội nản. Hãy kiểm tra từng bước để tìm chỗ sai. Thay đổi một chỗ mỗi lần rồi thử lại. Đó là cách các lập trình viên gỡ lỗi.",
+   "try": "Nhờ bố mẹ viết một dãy chỉ đường có một bước sai, em đi theo và tìm ra bước sai đó."
+  },
+  {
+   "t": "Bài học hôm nay: Gói tin đi đường nào?",
+   "vi": "Dữ liệu trên Internet được chia nhỏ thành gói tin. Mỗi gói có số thứ tự và địa chỉ nơi đến. Đến nơi, các gói được ghép lại đúng thứ tự.",
+   "try": "Viết một câu lên giấy, cắt thành từng chữ, đánh số rồi xáo trộn. Nhờ người nhà ghép lại theo số thứ tự."
+  },
+  {
+   "t": "Bài học hôm nay: Mật khẩu mạnh, khó đoán",
+   "vi": "Mật khẩu mạnh nên dài và trộn chữ hoa, chữ thường, số, ký hiệu. Mỗi tài khoản một mật khẩu riêng. Không bao giờ cho bạn bè biết mật khẩu.",
+   "try": "Cùng bố mẹ tạo một câu mật khẩu dài gồm 4 từ ngẫu nhiên kèm số và ký hiệu (chỉ để luyện tập, không dùng thật)."
+  },
+  {
+   "t": "Bài học hôm nay: Dừng lại – nghĩ – hỏi",
+   "vi": "Gặp tin nhắn lạ, đường liên kết lạ hay lời mời lạ trên mạng, em hãy dừng lại. Nghĩ xem nó có đáng tin không. Rồi hỏi bố mẹ hoặc thầy cô trước khi làm gì.",
+   "try": "Cùng bố mẹ lập một danh sách 3 người lớn em tin cậy để hỏi khi gặp chuyện lạ trên mạng."
+  },
+  {
+   "t": "Bài học hôm nay: Máy học từ ví dụ",
+   "vi": "Học máy giúp máy tính tìm quy luật từ rất nhiều ví dụ. Ví dụ càng nhiều và càng đa dạng thì máy càng ít nhầm. Ví dụ thiếu hay lệch thì máy dễ đoán sai.",
+   "try": "Cắt hình các loại lá cây từ báo cũ, chia hai nhóm theo một quy luật bí mật, rồi đố người nhà đoán ra quy luật."
+  },
+  {
+   "t": "Bài học hôm nay: Robot cảm nhận thế giới",
+   "vi": "Robot dùng cảm biến để biết xung quanh, dùng chương trình để quyết định và dùng động cơ để chuyển động. Ba phần này phối hợp như giác quan, bộ não và cơ bắp của em.",
+   "try": "Chơi trò \"người máy\": bịt mắt một bạn, em đọc lệnh \"tiến 2 bước, rẽ phải\" để dẫn bạn đi tới một món đồ (chơi nơi rộng, không vật cản)."
+  }
+ ]
+}

@@ -1,0 +1,1766 @@
+{
+ "id": "nghe",
+ "topics": [
+  "Màu sắc & hội hoạ",
+  "Bố cục & tỷ lệ vàng",
+  "Nhạc lý cơ bản",
+  "Nhạc cụ",
+  "Danh nhân nghệ thuật",
+  "Nghệ thuật Việt Nam"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Ba màu cơ bản",
+   "vi": "Trong hội hoạ, đỏ, vàng và lam là ba màu cơ bản. Từ ba màu này, em pha ra được rất nhiều màu khác. Còn ba màu cơ bản thì không pha từ màu khác mà ra được.",
+   "ex": "Đỏ, vàng, lam là ba người bạn gốc của mọi màu.",
+   "en": [
+    "primary colors"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Màu pha từ hai màu",
+   "vi": "Pha hai màu cơ bản với nhau sẽ ra màu thứ cấp. Đỏ pha vàng ra cam. Vàng pha lam ra lục. Đỏ pha lam ra tím. Thay đổi lượng mỗi màu, em sẽ được nhiều sắc khác nhau.",
+   "ex": "Cam, lục, tím là ba màu 'con' của màu cơ bản.",
+   "en": [
+    "secondary colors",
+    "mixing"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Màu nóng và màu lạnh",
+   "vi": "Đỏ, cam, vàng gọi là màu nóng vì gợi nắng và lửa ấm. Lam, lục, chàm gọi là màu lạnh vì gợi nước và bầu trời. Hoạ sĩ dùng màu nóng để tranh vui, rực rỡ, màu lạnh để tranh dịu mát.",
+   "ex": "Mặt trời màu nóng, biển xanh màu lạnh.",
+   "en": [
+    "warm colors",
+    "cool colors"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Bảy màu cầu vồng",
+   "vi": "Cầu vồng thường được kể có bảy màu: đỏ, cam, vàng, lục, lam, chàm, tím. Cầu vồng xuất hiện khi ánh nắng chiếu qua các giọt nước mưa. Giọt nước tách ánh sáng trắng thành nhiều màu.",
+   "ex": "Nhớ thứ tự: Đỏ – Cam – Vàng – Lục – Lam – Chàm – Tím.",
+   "en": [
+    "rainbow"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Vòng tròn màu",
+   "vi": "Vòng tròn màu xếp các màu theo thứ tự như cầu vồng uốn thành vòng. Nhà khoa học Isaac Newton là một trong những người đầu tiên vẽ các màu thành vòng tròn. Nhìn vòng màu, hoạ sĩ dễ chọn màu hợp nhau.",
+   "ex": "Màu đứng gần nhau trên vòng thường hài hoà.",
+   "en": [
+    "color wheel"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Màu bổ túc",
+   "vi": "Hai màu nằm đối diện nhau trên vòng tròn màu gọi là cặp màu bổ túc. Ví dụ: đỏ và lục, cam và lam, vàng và tím. Đặt cạnh nhau, hai màu này làm nhau nổi bật hơn.",
+   "ex": "Quả cà chua đỏ trên lá xanh trông rất tươi.",
+   "en": [
+    "complementary colors"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Đậm nhạt của màu",
+   "vi": "Thêm màu trắng vào một màu thì màu đó sáng và nhạt hơn. Thêm màu đen thì màu tối và đậm hơn. Nhờ đậm nhạt, bức tranh có khối, có sáng tối như thật.",
+   "ex": "Lam pha trắng ra lam nhạt như trời buổi sáng.",
+   "en": [
+    "tint",
+    "shade"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Màu của ánh sáng",
+   "vi": "Màn hình ti vi, điện thoại tạo màu từ ba màu ánh sáng: đỏ, lục, lam. Trộn đủ ba màu ánh sáng này sẽ ra ánh sáng trắng. Cách trộn này khác với pha màu vẽ trên giấy.",
+   "ex": "Soi kính lúp sát màn hình sẽ thấy những chấm đỏ, lục, lam.",
+   "en": [
+    "RGB",
+    "light"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Màu mực in",
+   "vi": "Máy in màu dùng bốn mực: lục lam, hồng sẫm, vàng và đen. Mực in hút bớt một phần ánh sáng, nên pha nhiều mực thì màu tối dần. Vì vậy pha màu vẽ gọi là pha trừ, còn trộn ánh sáng gọi là pha cộng.",
+   "ex": "Mực in viết tắt là CMYK.",
+   "en": [
+    "CMYK",
+    "printing"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Luật xa gần",
+   "vi": "Vật ở xa trông nhỏ hơn, mờ hơn và hơi ngả xanh. Các đường song song như hai bên đường ray chạy xa dần sẽ gặp nhau ở một điểm gọi là điểm tụ. Hoạ sĩ thời Phục Hưng ở Ý dùng luật này để vẽ tranh có chiều sâu.",
+   "ex": "Hàng cây hai bên đường thu nhỏ dần về một điểm.",
+   "en": [
+    "perspective",
+    "vanishing point"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Trường phái Ấn tượng",
+   "vi": "Trường phái Ấn tượng ra đời ở Pháp cuối thế kỷ 19. Các hoạ sĩ thích vẽ ngoài trời, ghi lại ánh sáng thay đổi từng lúc bằng nét cọ nhanh. Tên trường phái lấy từ bức 'Ấn tượng, mặt trời mọc' của Claude Monet.",
+   "ex": "Monet vẽ một cảnh nhiều lần ở các giờ khác nhau.",
+   "en": [
+    "Impressionism"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Bố cục là gì?",
+   "vi": "Bố cục là cách sắp xếp hình ảnh, màu sắc và khoảng trống trên bức tranh. Bố cục tốt giúp người xem biết nhìn vào đâu trước. Cùng một đồ vật, sắp xếp khác nhau sẽ cho tranh khác nhau.",
+   "ex": "Bố cục giống như cách em xếp đồ chơi lên kệ cho đẹp.",
+   "en": [
+    "composition"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Trọng tâm của tranh",
+   "vi": "Trọng tâm là phần quan trọng nhất, thu hút mắt người xem nhất. Hoạ sĩ làm trọng tâm nổi bật bằng màu đậm, hình to hoặc đặt ở chỗ dễ thấy. Một bức tranh nên có một trọng tâm rõ ràng.",
+   "ex": "Trong tranh 'Bé và mèo', bé và mèo là trọng tâm.",
+   "en": [
+    "focal point"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Đối xứng",
+   "vi": "Hình đối xứng có hai nửa giống nhau như soi gương. Cánh bướm, chiếc lá, khuôn mặt người đều gần như đối xứng. Bố cục đối xứng tạo cảm giác ngay ngắn, trang nghiêm.",
+   "ex": "Gấp đôi tờ giấy, cắt một lần, mở ra được hình đối xứng.",
+   "en": [
+    "symmetry"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Đường chân trời",
+   "vi": "Đường chân trời là đường ngăn cách bầu trời với mặt đất hoặc mặt biển. Đặt đường chân trời thấp thì tranh có nhiều trời. Đặt cao thì tranh có nhiều cảnh đất, cảnh biển.",
+   "ex": "Muốn vẽ trời nhiều mây, hãy hạ thấp đường chân trời.",
+   "en": [
+    "horizon line"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Quy tắc một phần ba",
+   "vi": "Hãy chia khung tranh bằng hai đường dọc và hai đường ngang thành 9 ô bằng nhau. Đặt vật chính ở gần các giao điểm thường đẹp hơn đặt chính giữa. Người chụp ảnh cũng hay dùng quy tắc này.",
+   "ex": "Nhiều điện thoại có lưới 9 ô khi chụp ảnh.",
+   "en": [
+    "rule of thirds"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Tỷ lệ vàng",
+   "vi": "Tỷ lệ vàng là một con số đặc biệt, khoảng 1,618. Nó được kí hiệu bằng chữ Hy Lạp φ (đọc là 'phi'). Khi chia một đoạn thẳng theo tỷ lệ vàng, đoạn lớn dài gấp khoảng 1,618 lần đoạn nhỏ.",
+   "ex": "Nhớ: phi ≈ 1,618.",
+   "en": [
+    "golden ratio"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Dãy Fibonacci",
+   "vi": "Dãy Fibonacci bắt đầu 1, 1, 2, 3, 5, 8, 13, 21… Mỗi số bằng tổng hai số đứng trước. Chia một số cho số đứng trước nó, kết quả càng về sau càng gần 1,618, tức tỷ lệ vàng.",
+   "ex": "21 chia 13 được khoảng 1,615.",
+   "en": [
+    "Fibonacci sequence"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Hình chữ nhật vàng",
+   "vi": "Hình chữ nhật vàng có chiều dài gấp khoảng 1,618 lần chiều rộng. Cắt đi một hình vuông, phần còn lại lại là một hình chữ nhật vàng nhỏ hơn. Nối các cung tròn trong các hình vuông sẽ được đường xoắn ốc vàng.",
+   "ex": "Xoắn ốc vàng trông giống vỏ ốc cuộn tròn.",
+   "en": [
+    "golden rectangle",
+    "spiral"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Tỷ lệ vàng trong tự nhiên",
+   "vi": "Số đường xoắn hạt trên hoa hướng dương thường là số Fibonacci, như 34 và 55. Cách xếp này giúp hạt xếp khít, không lãng phí chỗ. Quả dứa, quả thông cũng có các hàng vảy xoắn theo số Fibonacci.",
+   "ex": "Lần tới ăn dứa, thử đếm các hàng mắt xoắn.",
+   "en": [
+    "sunflower",
+    "nature"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Người Vitruvius",
+   "vi": "Leonardo da Vinci vẽ 'Người Vitruvius' để nghiên cứu tỷ lệ cơ thể người. Hình vẽ một người dang tay chân nằm trong một hình tròn và một hình vuông. Ông cũng vẽ hình minh hoạ cho một cuốn sách về tỷ lệ của nhà toán học Luca Pacioli.",
+   "ex": "Sải tay của em gần bằng chiều cao của em.",
+   "en": [
+    "Vitruvian Man",
+    "proportion"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Cân bằng bất đối xứng",
+   "vi": "Tranh không cần đối xứng vẫn có thể cân bằng. Một vật to ở bên này có thể cân với vài vật nhỏ hoặc một mảng màu đậm ở bên kia. Cách này làm tranh sinh động hơn bố cục đối xứng.",
+   "ex": "Giống bập bênh: người nặng ngồi gần, người nhẹ ngồi xa.",
+   "en": [
+    "asymmetrical balance"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Bảy nốt nhạc",
+   "vi": "Âm nhạc có bảy nốt cơ bản: Đô, Rê, Mi, Fa, Son, La, Si. Hết Si lại quay về Đô nhưng cao hơn. Mọi bài hát đều được viết từ các nốt này.",
+   "ex": "Đô – Rê – Mi – Fa – Son – La – Si.",
+   "en": [
+    "musical notes"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Khuông nhạc",
+   "vi": "Khuông nhạc gồm 5 dòng kẻ song song và 4 khe ở giữa. Nốt nhạc được viết trên dòng hoặc trong khe. Nốt càng ở cao trên khuông thì âm thanh càng cao.",
+   "ex": "Khuông nhạc giống chiếc thang 5 bậc cho nốt nhạc leo.",
+   "en": [
+    "staff"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Khoá Son",
+   "vi": "Khoá Son là kí hiệu đặt ở đầu khuông nhạc. Nét xoắn của khoá Son cuốn quanh dòng kẻ thứ hai, nên nốt Son nằm trên dòng 2. Nhờ khoá, ta biết tên các nốt còn lại.",
+   "ex": "Đếm dòng kẻ từ dưới lên.",
+   "en": [
+    "treble clef"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Nhịp và phách",
+   "vi": "Phách là những tiếng đập đều đặn trong bản nhạc, như nhịp tim. Các phách được gom thành từng ô nhịp. Khi vỗ tay theo bài hát, em đang vỗ theo phách.",
+   "ex": "Vừa hát vừa vỗ tay đếm 1, 2, 1, 2.",
+   "en": [
+    "beat",
+    "rhythm"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Trường độ của nốt",
+   "vi": "Hình nốt cho biết âm kéo dài bao lâu. Một nốt tròn bằng 2 nốt trắng. Một nốt trắng bằng 2 nốt đen. Một nốt đen bằng 2 nốt móc đơn.",
+   "ex": "Tròn > trắng > đen > móc đơn, mỗi bậc ngắn đi một nửa.",
+   "en": [
+    "note values"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Tên nốt bằng chữ cái",
+   "vi": "Nhiều nước gọi nốt bằng chữ cái. C là Đô, D là Rê, E là Mi, F là Fa, G là Son, A là La, B là Si. Hợp âm ghi trên bài hát như C, G cũng dùng cách gọi này.",
+   "ex": "Khoá Son còn gọi là khoá G.",
+   "en": [
+    "letter names"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Dấu thăng, dấu giáng",
+   "vi": "Dấu thăng (♯) làm nốt cao lên nửa cung. Dấu giáng (♭) làm nốt thấp xuống nửa cung. Dấu bình (♮) bỏ tác dụng của thăng hay giáng. Trên đàn piano, nhiều nốt thăng, giáng là các phím đen.",
+   "ex": "Đô thăng nằm giữa Đô và Rê.",
+   "en": [
+    "sharp",
+    "flat"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Số chỉ nhịp",
+   "vi": "Số chỉ nhịp viết đầu bài như 2/4, 3/4, 4/4. Số trên cho biết mỗi ô nhịp có mấy phách. Nhịp 2/4 hợp với hành khúc, nhịp 3/4 hợp với điệu valse nhún nhảy.",
+   "ex": "Valse đếm: 1-2-3, 1-2-3.",
+   "en": [
+    "time signature"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Quãng tám và tần số",
+   "vi": "Âm thanh cao hay thấp là do tần số rung, đo bằng héc (Hz). Nốt La chuẩn dùng để lên dây đàn có tần số 440 Hz. Nốt La cao hơn một quãng tám rung nhanh gấp đôi, tức 880 Hz.",
+   "ex": "Lên một quãng tám là tần số gấp đôi.",
+   "en": [
+    "octave",
+    "frequency"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Cung và nửa cung",
+   "vi": "Một quãng tám được chia thành 12 nửa cung. Hai nửa cung bằng một cung. Trong bảy nốt tự nhiên, Mi – Fa và Si – Đô chỉ cách nhau nửa cung, các cặp còn lại cách nhau một cung.",
+   "ex": "Trên piano, giữa Mi và Fa không có phím đen.",
+   "en": [
+    "semitone",
+    "whole tone"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Hợp âm ba",
+   "vi": "Hợp âm là nhiều nốt vang lên cùng lúc. Hợp âm ba gồm ba nốt cách nhau một quãng ba, như Đô – Mi – Son là hợp âm Đô trưởng. Nhiều người nghe hợp âm trưởng thấy tươi sáng, hợp âm thứ thấy buồn hơn.",
+   "ex": "La – Đô – Mi là hợp âm La thứ.",
+   "en": [
+    "chord",
+    "major",
+    "minor"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Các họ nhạc cụ",
+   "vi": "Nhạc cụ thường chia thành các nhóm: nhạc cụ dây, nhạc cụ hơi, nhạc cụ gõ và nhạc cụ phím. Đàn guitar là nhạc cụ dây. Sáo là nhạc cụ hơi. Trống là nhạc cụ gõ.",
+   "ex": "Gảy, kéo là dây; thổi là hơi; đánh, gõ là gõ.",
+   "en": [
+    "musical instruments"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Đàn piano",
+   "vi": "Đàn piano tiêu chuẩn có 88 phím, gồm 52 phím trắng và 36 phím đen. Khi bấm phím, một chiếc búa nhỏ bọc nỉ gõ vào dây đàn bên trong. Vì vậy piano vừa có dây vừa có búa gõ.",
+   "ex": "88 phím = 52 trắng + 36 đen.",
+   "en": [
+    "piano"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Trống giữ nhịp",
+   "vi": "Trống là nhạc cụ gõ. Mặt trống làm bằng da hoặc nhựa căng trên một khung rỗng. Trong ban nhạc, tiếng trống giúp mọi người chơi đều nhịp với nhau.",
+   "ex": "Trống trường cũng là một loại trống.",
+   "en": [
+    "drum",
+    "percussion"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Sáo trúc",
+   "vi": "Sáo trúc làm từ ống trúc hoặc nứa, có khoét các lỗ bấm. Người chơi thổi hơi vào lỗ thổi để không khí trong ống rung lên. Bịt hay mở các lỗ sẽ đổi cao độ của nốt.",
+   "ex": "Bịt nhiều lỗ, ống dài ra, tiếng trầm hơn.",
+   "en": [
+    "bamboo flute"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Âm thanh từ rung động",
+   "vi": "Mọi âm thanh đều do vật rung động tạo ra. Dây đàn rung, mặt trống rung, cột không khí trong ống sáo rung. Rung càng nhanh thì âm càng cao, rung càng mạnh thì âm càng to.",
+   "ex": "Chạm nhẹ vào cổ khi hát, em thấy cổ rung.",
+   "en": [
+    "vibration",
+    "sound"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Đàn guitar",
+   "vi": "Đàn guitar thông dụng có 6 dây. Người chơi gảy dây bằng ngón tay hoặc miếng gảy. Tay kia bấm dây trên cần đàn để đổi nốt. Thân đàn rỗng giúp tiếng đàn vang to hơn.",
+   "ex": "Bấm dây sát thân đàn hơn, tiếng cao hơn.",
+   "en": [
+    "guitar"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Họ đàn violin",
+   "vi": "Họ violin gồm violin, viola, cello và contrabass, mỗi đàn có 4 dây. Người chơi dùng cây vĩ kéo qua dây để dây rung. Đàn càng to thì tiếng càng trầm, contrabass to và trầm nhất.",
+   "ex": "Violin kẹp ở cằm, cello đặt dưới đất.",
+   "en": [
+    "violin",
+    "cello"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Bộ kèn đồng",
+   "vi": "Kèn trumpet, trombone, horn và tuba thuộc bộ kèn đồng. Người chơi mím môi và thổi cho môi rung vào ống ngậm. Ống kèn càng dài và to thì tiếng càng trầm, tuba trầm nhất.",
+   "ex": "Trombone đổi nốt bằng cách kéo ống trượt.",
+   "en": [
+    "brass",
+    "trumpet"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Dàn nhạc giao hưởng",
+   "vi": "Dàn nhạc giao hưởng có bốn bộ chính: bộ dây, bộ gỗ, bộ đồng và bộ gõ. Một dàn nhạc lớn có thể có khoảng 100 nhạc công. Nhạc trưởng đứng trước dàn nhạc, dùng tay và đũa chỉ huy để giữ nhịp và sắc thái.",
+   "ex": "Bộ dây thường ngồi gần nhạc trưởng nhất.",
+   "en": [
+    "orchestra",
+    "conductor"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Ai phát minh ra piano?",
+   "vi": "Đàn piano do ông Bartolomeo Cristofori ở Ý chế tạo vào khoảng năm 1700. Tên đầy đủ là 'pianoforte', nghĩa là 'nhẹ – mạnh'. Khác với đàn trước đó, piano chơi được tiếng to hay nhỏ tuỳ lực bấm phím.",
+   "ex": "Piano = nhẹ, forte = mạnh.",
+   "en": [
+    "piano",
+    "invention"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Dây đàn và cao độ",
+   "vi": "Cao độ của dây đàn phụ thuộc vào độ dài, độ căng và độ nặng của dây. Dây ngắn hơn, căng hơn hoặc mảnh hơn sẽ rung nhanh hơn và cho âm cao hơn. Lên dây đàn chính là chỉnh độ căng của dây.",
+   "ex": "Bấm dây guitar ở giữa, âm cao lên một quãng tám.",
+   "en": [
+    "pitch",
+    "string"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Mozart – thần đồng",
+   "vi": "Wolfgang Amadeus Mozart (1756–1791) là nhạc sĩ người Áo. Từ khoảng 5 tuổi, cậu đã sáng tác những bản nhạc nhỏ. Mozart viết hơn 600 tác phẩm, trong đó có nhiều bản giao hưởng và nhạc kịch.",
+   "ex": "Mozart còn nhỏ đã đi biểu diễn khắp châu Âu.",
+   "en": [
+    "Mozart"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Beethoven vượt khó",
+   "vi": "Ludwig van Beethoven (1770–1827) là nhạc sĩ người Đức. Khi lớn tuổi, ông bị điếc dần nhưng vẫn không ngừng sáng tác. Bản Giao hưởng số 9 nổi tiếng được ông viết khi gần như không còn nghe được.",
+   "ex": "Khó khăn không cản được người đam mê.",
+   "en": [
+    "Beethoven"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Leonardo da Vinci",
+   "vi": "Leonardo da Vinci (1452–1519) là danh hoạ người Ý thời Phục Hưng. Ông vẽ bức 'Mona Lisa' với nụ cười bí ẩn. Ông còn là nhà phát minh, vẽ phác thảo cả máy bay và nghiên cứu cơ thể người.",
+   "ex": "Leonardo vừa là hoạ sĩ vừa là nhà khoa học.",
+   "en": [
+    "Leonardo da Vinci",
+    "Mona Lisa"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Vincent van Gogh",
+   "vi": "Vincent van Gogh (1853–1890) là hoạ sĩ người Hà Lan. Ông nổi tiếng với bức 'Đêm đầy sao' và loạt tranh 'Hoa hướng dương'. Tranh của ông có màu rực rỡ và nét cọ xoáy rất mạnh.",
+   "ex": "Đêm đầy sao có bầu trời cuộn xoáy như sóng.",
+   "en": [
+    "Van Gogh",
+    "The Starry Night"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Johann Sebastian Bach",
+   "vi": "Johann Sebastian Bach (1685–1750) là nhạc sĩ người Đức thời kỳ Baroque. Ông chơi đàn organ rất giỏi và viết rất nhiều bản nhạc cho nhà thờ. Nhiều nhạc sĩ đời sau học sáng tác từ nhạc của Bach.",
+   "ex": "Bach có một gia đình đông con, nhiều người cũng làm nhạc.",
+   "en": [
+    "Bach",
+    "Baroque"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Chopin – thi sĩ piano",
+   "vi": "Frédéric Chopin (1810–1849) là nhạc sĩ người Ba Lan. Gần như mọi tác phẩm của ông đều viết cho đàn piano. Người ta gọi ông là 'thi sĩ của đàn piano' vì nhạc của ông rất bay bổng.",
+   "ex": "Chopin sống nhiều năm ở Pháp nhưng luôn nhớ quê Ba Lan.",
+   "en": [
+    "Chopin",
+    "piano"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Michelangelo",
+   "vi": "Michelangelo (1475–1564) là nhà điêu khắc và hoạ sĩ người Ý. Ông tạc tượng 'David' bằng đá cẩm thạch, cao hơn 5 mét. Ông cũng vẽ trần nhà nguyện Sistine ở Vatican trong khoảng 4 năm.",
+   "ex": "Michelangelo vẽ trần nhà khi đứng trên giàn giáo cao.",
+   "en": [
+    "Michelangelo",
+    "sculpture"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Picasso và tranh lập thể",
+   "vi": "Pablo Picasso (1881–1973) là hoạ sĩ người Tây Ban Nha. Ông cùng hoạ sĩ Georges Braque tạo ra trường phái Lập thể. Tranh lập thể vẽ đồ vật bằng các mảng hình khối, nhìn từ nhiều phía cùng một lúc.",
+   "ex": "Khuôn mặt lập thể có thể thấy cả mặt trước lẫn mặt nghiêng.",
+   "en": [
+    "Picasso",
+    "Cubism"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Tchaikovsky và vũ kịch",
+   "vi": "Pyotr Ilyich Tchaikovsky (1840–1893) là nhạc sĩ người Nga. Ông viết nhạc cho các vở vũ kịch ballet nổi tiếng như 'Hồ thiên nga' và 'Kẹp hạt dẻ'. 'Kẹp hạt dẻ' thường được biểu diễn vào dịp Giáng sinh.",
+   "ex": "Ballet là múa kể chuyện theo nhạc, không có lời thoại.",
+   "en": [
+    "Tchaikovsky",
+    "ballet"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Vivaldi và Bốn mùa",
+   "vi": "Antonio Vivaldi (1678–1741) là nhạc sĩ và nghệ sĩ violin người Ý. Tác phẩm nổi tiếng nhất của ông là 'Bốn mùa', gồm bốn bản concerto cho violin. Mỗi bản tả một mùa: xuân, hạ, thu, đông.",
+   "ex": "Nghe 'Mùa xuân', em có thể thấy tiếng chim hót bằng violin.",
+   "en": [
+    "Vivaldi",
+    "The Four Seasons"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Hokusai và con sóng",
+   "vi": "Katsushika Hokusai (1760–1849) là hoạ sĩ người Nhật Bản. Bức tranh khắc gỗ 'Sóng lừng ngoài khơi Kanagawa' của ông vẽ một con sóng khổng lồ với núi Phú Sĩ ở xa. Bức tranh được làm vào khoảng năm 1831 và nổi tiếng khắp thế giới.",
+   "ex": "Núi Phú Sĩ trông thật nhỏ bên con sóng lớn.",
+   "en": [
+    "Hokusai",
+    "The Great Wave"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Tranh Đông Hồ",
+   "vi": "Tranh Đông Hồ là tranh dân gian của làng Đông Hồ, tỉnh Bắc Ninh. Tranh in bằng ván khắc gỗ trên giấy dó quét điệp lấp lánh. Màu lấy từ thiên nhiên như than lá tre, sỏi son, hoa hoè. Tranh nổi tiếng có 'Đám cưới chuột', 'Lợn ăn cây ráy'.",
+   "ex": "Điệp là bột vỏ sò, làm giấy óng ánh.",
+   "en": [
+    "Dong Ho painting",
+    "folk art"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Đàn bầu một dây",
+   "vi": "Đàn bầu là nhạc cụ dân tộc Việt Nam chỉ có một dây. Người chơi gảy dây và uốn cần đàn để làm âm thanh trầm bổng. Tiếng đàn bầu ngân nga, rất giống giọng người hát.",
+   "ex": "Một dây mà chơi được cả bài hát.",
+   "en": [
+    "monochord"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Múa rối nước",
+   "vi": "Múa rối nước là nghệ thuật dân gian độc đáo của vùng đồng bằng Bắc Bộ. Con rối được điều khiển trên mặt nước, nghệ nhân đứng sau mành tre trong thuỷ đình. Chú Tễu là nhân vật vui tính hay dẫn chuyện.",
+   "ex": "Mặt nước là sân khấu của rối nước.",
+   "en": [
+    "water puppetry"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Trống đồng Đông Sơn",
+   "vi": "Trống đồng Đông Sơn là cổ vật làm bằng đồng của người Việt cổ, có từ khoảng hơn 2000 năm trước. Giữa mặt trống là hình ngôi sao nhiều cánh, thường được hiểu là mặt trời. Xung quanh có hình chim Lạc, người và nhà sàn.",
+   "ex": "Trống đồng Ngọc Lũ là một chiếc trống rất nổi tiếng.",
+   "en": [
+    "bronze drum",
+    "Dong Son"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Dân ca Quan họ",
+   "vi": "Quan họ là lối hát đối đáp giữa liền anh và liền chị ở vùng Kinh Bắc, nay thuộc tỉnh Bắc Ninh. Người hát mặc áo tứ thân, đội nón quai thao. Năm 2009, Quan họ Bắc Ninh được UNESCO ghi danh là di sản văn hoá phi vật thể của nhân loại.",
+   "ex": "'Người ơi người ở đừng về' là một câu Quan họ quen thuộc.",
+   "en": [
+    "Quan ho",
+    "folk song"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Nhã nhạc cung đình Huế",
+   "vi": "Nhã nhạc là âm nhạc trang trọng dùng trong cung đình thời nhà Nguyễn ở Huế. Nhã nhạc được biểu diễn trong các lễ lớn của triều đình. Năm 2003, Nhã nhạc được UNESCO công nhận là kiệt tác di sản của nhân loại.",
+   "ex": "Nhã nhạc là di sản âm nhạc đầu tiên của Việt Nam được UNESCO ghi nhận.",
+   "en": [
+    "royal court music",
+    "Hue"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Tranh Hàng Trống",
+   "vi": "Tranh Hàng Trống là dòng tranh dân gian ở phố Hàng Trống, Hà Nội. Thợ in nét đen bằng ván khắc, rồi tô màu bằng tay với nhiều lớp màu đậm nhạt. Tranh thường vẽ đề tài cá chép, tứ bình, hay các tích truyện.",
+   "ex": "Đông Hồ in cả màu, Hàng Trống in nét rồi tô tay.",
+   "en": [
+    "Hang Trong painting"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Ca trù",
+   "vi": "Ca trù là lối hát cổ của người Việt ở miền Bắc. Đào nương vừa hát vừa gõ phách, kép đàn chơi đàn đáy, quan viên đánh trống chầu khen chê. Năm 2009, ca trù được UNESCO ghi danh vào danh sách di sản cần được bảo vệ khẩn cấp.",
+   "ex": "Ca trù có ba vai: đào nương, kép đàn, người cầm chầu.",
+   "en": [
+    "ca tru"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Tranh sơn mài",
+   "vi": "Sơn mài dùng sơn ta, là nhựa lấy từ cây sơn. Nghệ nhân phủ nhiều lớp sơn, gắn vỏ trứng, vàng bạc, rồi mài đi mài lại cho hình hiện lên. Hoạ sĩ Nguyễn Gia Trí đã đưa sơn mài thành chất liệu hội hoạ nổi tiếng.",
+   "ex": "Mài càng kỹ, tranh càng bóng và sâu.",
+   "en": [
+    "lacquer painting"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Đàn tranh và đàn nguyệt",
+   "vi": "Đàn tranh là đàn gảy, thường có 16 dây, nên còn gọi là đàn thập lục. Đàn nguyệt có hộp đàn tròn như mặt trăng và có 2 dây. Cả hai đều có trong dàn nhạc dân tộc và nhạc tài tử Nam Bộ.",
+   "ex": "Thập lục nghĩa là mười sáu.",
+   "en": [
+    "zither",
+    "moon lute"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Cồng chiêng Tây Nguyên",
+   "vi": "Cồng chiêng là nhạc cụ bằng đồng của nhiều dân tộc ở Tây Nguyên. Mỗi người trong đội thường giữ một chiếc, cùng đánh tạo thành bản nhạc. Năm 2005, Không gian văn hoá Cồng chiêng Tây Nguyên được UNESCO công nhận là kiệt tác di sản của nhân loại.",
+   "ex": "Cồng có núm ở giữa, chiêng thường không có núm.",
+   "en": [
+    "gong culture",
+    "Central Highlands"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Pha màu đỏ với màu vàng được màu gì?",
+   "a": [
+    "Cam",
+    "Tím",
+    "Lục",
+    "Nâu đen"
+   ],
+   "c": 0,
+   "why": "Đỏ pha vàng ra cam, một màu thứ cấp.",
+   "en": "color mixing"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Màu nào là màu nóng?",
+   "a": [
+    "Xanh lam",
+    "Xanh lục",
+    "Xanh chàm",
+    "Đỏ"
+   ],
+   "c": 3,
+   "why": "Đỏ gợi lửa và nắng nên là màu nóng; các màu xanh là màu lạnh.",
+   "en": "warm colors"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Cầu vồng thường được kể có mấy màu?",
+   "a": [
+    "3 màu",
+    "5 màu",
+    "7 màu",
+    "10 màu"
+   ],
+   "c": 2,
+   "why": "Đỏ, cam, vàng, lục, lam, chàm, tím là bảy màu cầu vồng.",
+   "en": "rainbow"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Pha màu vàng với màu lam được màu gì?",
+   "a": [
+    "Cam",
+    "Lục",
+    "Tím",
+    "Hồng"
+   ],
+   "c": 1,
+   "why": "Vàng pha lam ra màu lục (xanh lá).",
+   "en": "color mixing"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Màu bổ túc (đối diện trên vòng màu) của màu đỏ là?",
+   "a": [
+    "Cam",
+    "Lục",
+    "Vàng",
+    "Hồng"
+   ],
+   "c": 1,
+   "why": "Đỏ và lục nằm đối diện trên vòng tròn màu.",
+   "en": "complementary colors"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Thêm màu trắng vào một màu thì màu đó sẽ?",
+   "a": [
+    "Sáng và nhạt hơn",
+    "Tối và đậm hơn",
+    "Biến thành màu đen",
+    "Không thay đổi gì"
+   ],
+   "c": 0,
+   "why": "Màu trắng làm màu sáng và nhạt đi.",
+   "en": "tint"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Màn hình điện thoại tạo màu từ ba màu ánh sáng nào?",
+   "a": [
+    "Đen, trắng, xám",
+    "Cam, tím, nâu",
+    "Vàng, hồng, nâu",
+    "Đỏ, lục, lam"
+   ],
+   "c": 3,
+   "why": "Màn hình trộn ba màu ánh sáng đỏ, lục, lam (RGB).",
+   "en": "RGB"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Ai dùng lăng kính tách ánh sáng trắng thành dải màu?",
+   "a": [
+    "Mozart",
+    "Picasso",
+    "Isaac Newton",
+    "Van Gogh"
+   ],
+   "c": 2,
+   "why": "Newton dùng lăng kính chứng minh ánh sáng trắng gồm nhiều màu.",
+   "en": "prism"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Trộn đủ ba màu ánh sáng đỏ, lục, lam sẽ được?",
+   "a": [
+    "Màu đen",
+    "Màu nâu",
+    "Ánh sáng trắng",
+    "Màu tím"
+   ],
+   "c": 2,
+   "why": "Trộn ánh sáng là pha cộng, đủ ba màu cho ánh sáng trắng.",
+   "en": "additive color"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Bức 'Ấn tượng, mặt trời mọc' là của hoạ sĩ nào?",
+   "a": [
+    "Michelangelo",
+    "Claude Monet",
+    "Hokusai",
+    "Leonardo da Vinci"
+   ],
+   "c": 1,
+   "why": "Tên trường phái Ấn tượng lấy từ bức tranh này của Monet.",
+   "en": "Impressionism"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Trong luật xa gần, các đường song song chạy xa sẽ gặp nhau ở đâu?",
+   "a": [
+    "Điểm tụ",
+    "Trọng tâm",
+    "Khung tranh",
+    "Đường viền"
+   ],
+   "c": 0,
+   "why": "Các đường song song chụm lại ở điểm tụ trên đường chân trời.",
+   "en": "vanishing point"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Bố cục của bức tranh là gì?",
+   "a": [
+    "Tên của bức tranh",
+    "Giá tiền của bức tranh",
+    "Loại giấy để vẽ",
+    "Cách sắp xếp các phần trên tranh"
+   ],
+   "c": 3,
+   "why": "Bố cục là cách sắp xếp hình, màu, khoảng trống trên tranh.",
+   "en": "composition"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Hai nửa cánh bướm giống nhau như soi gương gọi là?",
+   "a": [
+    "Lệch lạc",
+    "Xa gần",
+    "Tương phản",
+    "Đối xứng"
+   ],
+   "c": 3,
+   "why": "Hình có hai nửa giống nhau qua một đường là hình đối xứng.",
+   "en": "symmetry"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Đường ngăn cách bầu trời và mặt biển trong tranh gọi là?",
+   "a": [
+    "Đường viền",
+    "Đường chéo",
+    "Đường chân trời",
+    "Đường xoắn ốc"
+   ],
+   "c": 2,
+   "why": "Đường chân trời phân chia trời với đất hoặc biển.",
+   "en": "horizon line"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Phần thu hút mắt người xem nhất trong tranh gọi là?",
+   "a": [
+    "Khung tranh",
+    "Trọng tâm",
+    "Mặt sau",
+    "Chữ ký"
+   ],
+   "c": 1,
+   "why": "Trọng tâm là phần chính, nổi bật nhất của bức tranh.",
+   "en": "focal point"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Tỷ lệ vàng có giá trị khoảng bao nhiêu?",
+   "a": [
+    "1,618",
+    "3,14",
+    "2,5",
+    "0,5"
+   ],
+   "c": 0,
+   "why": "Tỷ lệ vàng φ xấp xỉ 1,618; còn 3,14 là số pi.",
+   "en": "golden ratio"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Quy tắc một phần ba chia khung hình thành mấy ô?",
+   "a": [
+    "9 ô",
+    "3 ô",
+    "4 ô",
+    "6 ô"
+   ],
+   "c": 0,
+   "why": "Hai đường dọc và hai đường ngang chia khung thành 9 ô.",
+   "en": "rule of thirds"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Số tiếp theo của dãy 1, 1, 2, 3, 5, 8 là?",
+   "a": [
+    "11",
+    "10",
+    "16",
+    "13"
+   ],
+   "c": 3,
+   "why": "Mỗi số bằng tổng hai số trước: 5 + 8 = 13.",
+   "en": "Fibonacci sequence"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Tỷ lệ vàng được kí hiệu bằng chữ Hy Lạp nào?",
+   "a": [
+    "π (pi)",
+    "α (alpha)",
+    "φ (phi)",
+    "Ω (omega)"
+   ],
+   "c": 2,
+   "why": "Tỷ lệ vàng kí hiệu là φ; π là kí hiệu số pi.",
+   "en": "phi"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Chia một số Fibonacci cho số trước nó, kết quả càng về sau càng gần?",
+   "a": [
+    "2",
+    "1,618",
+    "1",
+    "0"
+   ],
+   "c": 1,
+   "why": "Tỉ số hai số Fibonacci liên tiếp tiến gần tỷ lệ vàng 1,618.",
+   "en": "Fibonacci ratio"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Ai vẽ hình 'Người Vitruvius' về tỷ lệ cơ thể người?",
+   "a": [
+    "Van Gogh",
+    "Leonardo da Vinci",
+    "Picasso",
+    "Claude Monet"
+   ],
+   "c": 1,
+   "why": "Leonardo da Vinci vẽ Người Vitruvius để nghiên cứu tỷ lệ cơ thể.",
+   "en": "Vitruvian Man"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Một vật to bên này cân với vài vật nhỏ bên kia gọi là cân bằng gì?",
+   "a": [
+    "Cân bằng bất đối xứng",
+    "Cân bằng đối xứng",
+    "Mất cân bằng",
+    "Cân bằng xoay tròn"
+   ],
+   "c": 0,
+   "why": "Hai bên không giống nhau nhưng vẫn cân là cân bằng bất đối xứng.",
+   "en": "asymmetrical balance"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Âm nhạc có mấy nốt nhạc cơ bản?",
+   "a": [
+    "5 nốt",
+    "8 nốt",
+    "12 nốt",
+    "7 nốt"
+   ],
+   "c": 3,
+   "why": "Bảy nốt là Đô, Rê, Mi, Fa, Son, La, Si.",
+   "en": "musical notes"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Khuông nhạc có mấy dòng kẻ?",
+   "a": [
+    "3 dòng",
+    "4 dòng",
+    "5 dòng",
+    "7 dòng"
+   ],
+   "c": 2,
+   "why": "Khuông nhạc gồm 5 dòng kẻ và 4 khe.",
+   "en": "staff"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Nốt nhạc đứng ngay sau nốt Mi là?",
+   "a": [
+    "Rê",
+    "Son",
+    "Fa",
+    "Si"
+   ],
+   "c": 2,
+   "why": "Thứ tự là Đô, Rê, Mi, Fa, Son, La, Si.",
+   "en": "notes"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Nốt nhạc đứng ngay trước nốt La là?",
+   "a": [
+    "Si",
+    "Son",
+    "Fa",
+    "Đô"
+   ],
+   "c": 1,
+   "why": "Trong dãy Đô Rê Mi Fa Son La Si, Son đứng trước La.",
+   "en": "notes"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Một nốt trắng dài bằng mấy nốt đen?",
+   "a": [
+    "2 nốt đen",
+    "1 nốt đen",
+    "3 nốt đen",
+    "4 nốt đen"
+   ],
+   "c": 0,
+   "why": "Nốt trắng dài gấp đôi nốt đen.",
+   "en": "note values"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Trong cách gọi bằng chữ cái, G là nốt nào?",
+   "a": [
+    "Đô",
+    "Rê",
+    "La",
+    "Son"
+   ],
+   "c": 3,
+   "why": "C là Đô, D là Rê, E Mi, F Fa, G Son, A La, B Si.",
+   "en": "letter names"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Dấu thăng (♯) làm nốt nhạc thế nào?",
+   "a": [
+    "Thấp xuống nửa cung",
+    "Dài gấp đôi",
+    "Im lặng",
+    "Cao lên nửa cung"
+   ],
+   "c": 3,
+   "why": "Dấu thăng nâng nốt lên nửa cung, dấu giáng hạ xuống nửa cung.",
+   "en": "sharp"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Nhịp 3/4 thì mỗi ô nhịp có mấy phách?",
+   "a": [
+    "2 phách",
+    "4 phách",
+    "3 phách",
+    "6 phách"
+   ],
+   "c": 2,
+   "why": "Số trên của số chỉ nhịp cho biết số phách trong ô nhịp.",
+   "en": "time signature"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Nốt La 440 Hz, nốt La cao hơn một quãng tám có tần số?",
+   "a": [
+    "220 Hz",
+    "880 Hz",
+    "450 Hz",
+    "1000 Hz"
+   ],
+   "c": 1,
+   "why": "Lên một quãng tám thì tần số gấp đôi: 440 × 2 = 880.",
+   "en": "octave"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Một quãng tám có bao nhiêu nửa cung?",
+   "a": [
+    "12 nửa cung",
+    "7 nửa cung",
+    "8 nửa cung",
+    "10 nửa cung"
+   ],
+   "c": 0,
+   "why": "Quãng tám chia thành 12 nửa cung, như 12 phím trắng và đen liền nhau.",
+   "en": "semitone"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Hợp âm Đô trưởng gồm những nốt nào?",
+   "a": [
+    "Đô – Mi – Son",
+    "Đô – Rê – Mi",
+    "Rê – Fa – Si",
+    "Fa – La – Si"
+   ],
+   "c": 0,
+   "why": "Hợp âm ba Đô trưởng xếp Đô, Mi, Son cách nhau quãng ba.",
+   "en": "C major chord"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Đàn piano tiêu chuẩn có bao nhiêu phím?",
+   "a": [
+    "52 phím",
+    "64 phím",
+    "100 phím",
+    "88 phím"
+   ],
+   "c": 3,
+   "why": "Piano chuẩn có 88 phím: 52 trắng và 36 đen.",
+   "en": "piano"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Cái trống thuộc nhóm nhạc cụ nào?",
+   "a": [
+    "Nhạc cụ dây",
+    "Nhạc cụ hơi",
+    "Nhạc cụ gõ",
+    "Nhạc cụ phím"
+   ],
+   "c": 2,
+   "why": "Trống phát âm khi được gõ, nên là nhạc cụ gõ.",
+   "en": "percussion"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Sáo trúc được chơi bằng cách nào?",
+   "a": [
+    "Gảy dây",
+    "Thổi hơi",
+    "Kéo vĩ",
+    "Gõ dùi"
+   ],
+   "c": 1,
+   "why": "Sáo là nhạc cụ hơi, người chơi thổi cho không khí trong ống rung.",
+   "en": "flute"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Đàn guitar thông dụng có mấy dây?",
+   "a": [
+    "1 dây",
+    "6 dây",
+    "3 dây",
+    "16 dây"
+   ],
+   "c": 1,
+   "why": "Guitar phổ biến có 6 dây.",
+   "en": "guitar"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Đàn violin có mấy dây?",
+   "a": [
+    "4 dây",
+    "2 dây",
+    "6 dây",
+    "12 dây"
+   ],
+   "c": 0,
+   "why": "Violin và cả họ violin đều có 4 dây.",
+   "en": "violin"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Trong họ violin, đàn nào to và trầm nhất?",
+   "a": [
+    "Violin",
+    "Viola",
+    "Cello",
+    "Contrabass"
+   ],
+   "c": 3,
+   "why": "Contrabass lớn nhất nên có tiếng trầm nhất.",
+   "en": "double bass"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Âm thanh được tạo ra là do đâu?",
+   "a": [
+    "Ánh sáng chiếu vào",
+    "Vật đứng yên",
+    "Vật rung động",
+    "Màu sắc của vật"
+   ],
+   "c": 2,
+   "why": "Mọi âm thanh đều do vật rung động tạo ra.",
+   "en": "vibration"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Kèn trumpet thuộc bộ nhạc cụ nào?",
+   "a": [
+    "Bộ dây",
+    "Bộ gõ",
+    "Bộ kèn đồng",
+    "Bộ phím"
+   ],
+   "c": 2,
+   "why": "Trumpet thổi bằng rung môi, thuộc bộ kèn đồng.",
+   "en": "brass"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Dây đàn càng ngắn và càng căng thì âm thanh?",
+   "a": [
+    "Càng trầm",
+    "Càng cao",
+    "Càng nhỏ",
+    "Không đổi"
+   ],
+   "c": 1,
+   "why": "Dây ngắn, căng rung nhanh hơn nên tần số và cao độ tăng.",
+   "en": "pitch"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Ai chế tạo ra đàn piano vào khoảng năm 1700?",
+   "a": [
+    "Bartolomeo Cristofori",
+    "Isaac Newton",
+    "Mozart",
+    "Picasso"
+   ],
+   "c": 0,
+   "why": "Cristofori ở Ý chế tạo piano vào khoảng năm 1700.",
+   "en": "piano invention"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Người đứng chỉ huy cả dàn nhạc giao hưởng gọi là?",
+   "a": [
+    "Ca sĩ chính",
+    "Người soát vé",
+    "Người lên dây đàn",
+    "Nhạc trưởng"
+   ],
+   "c": 3,
+   "why": "Nhạc trưởng chỉ huy nhịp và sắc thái cho cả dàn nhạc.",
+   "en": "conductor"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Ai vẽ bức tranh 'Mona Lisa'?",
+   "a": [
+    "Van Gogh",
+    "Picasso",
+    "Hokusai",
+    "Leonardo da Vinci"
+   ],
+   "c": 3,
+   "why": "Mona Lisa là tác phẩm của Leonardo da Vinci thời Phục Hưng.",
+   "en": "Mona Lisa"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Bức 'Đêm đầy sao' là của hoạ sĩ nào?",
+   "a": [
+    "Michelangelo",
+    "Claude Monet",
+    "Vincent van Gogh",
+    "Leonardo da Vinci"
+   ],
+   "c": 2,
+   "why": "Van Gogh vẽ 'Đêm đầy sao' năm 1889.",
+   "en": "The Starry Night"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Thần đồng âm nhạc người Áo sáng tác từ khoảng 5 tuổi là ai?",
+   "a": [
+    "Beethoven",
+    "Mozart",
+    "Chopin",
+    "Tchaikovsky"
+   ],
+   "c": 1,
+   "why": "Mozart người Áo sáng tác từ rất nhỏ.",
+   "en": "Mozart"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Nhạc sĩ nào bị điếc dần nhưng vẫn viết Giao hưởng số 9?",
+   "a": [
+    "Beethoven",
+    "Vivaldi",
+    "Bach",
+    "Chopin"
+   ],
+   "c": 0,
+   "why": "Beethoven viết Giao hưởng số 9 khi gần như không còn nghe được.",
+   "en": "Beethoven"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Nhạc sĩ Chopin là người nước nào?",
+   "a": [
+    "Ba Lan",
+    "Nga",
+    "Nhật Bản",
+    "Tây Ban Nha"
+   ],
+   "c": 0,
+   "why": "Chopin sinh ra ở Ba Lan.",
+   "en": "Chopin"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Ai vẽ trần nhà nguyện Sistine?",
+   "a": [
+    "Van Gogh",
+    "Hokusai",
+    "Picasso",
+    "Michelangelo"
+   ],
+   "c": 3,
+   "why": "Michelangelo vẽ trần nhà nguyện Sistine trong khoảng 4 năm.",
+   "en": "Sistine Chapel"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Picasso cùng Braque tạo ra trường phái nào?",
+   "a": [
+    "Ấn tượng",
+    "Baroque",
+    "Lập thể",
+    "Phục Hưng"
+   ],
+   "c": 2,
+   "why": "Picasso và Braque là người khởi xướng trường phái Lập thể.",
+   "en": "Cubism"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Nhạc sĩ Bach thuộc thời kỳ âm nhạc nào?",
+   "a": [
+    "Lập thể",
+    "Baroque",
+    "Ấn tượng",
+    "Nhạc rock"
+   ],
+   "c": 1,
+   "why": "Bach (1685–1750) là nhạc sĩ tiêu biểu của thời Baroque.",
+   "en": "Baroque"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Tác phẩm 'Bốn mùa' cho violin là của ai?",
+   "a": [
+    "Beethoven",
+    "Vivaldi",
+    "Tchaikovsky",
+    "Chopin"
+   ],
+   "c": 1,
+   "why": "Vivaldi viết 'Bốn mùa' gồm bốn bản concerto cho violin.",
+   "en": "The Four Seasons"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Ai viết nhạc cho vũ kịch 'Hồ thiên nga'?",
+   "a": [
+    "Tchaikovsky",
+    "Mozart",
+    "Bach",
+    "Vivaldi"
+   ],
+   "c": 0,
+   "why": "Tchaikovsky viết 'Hồ thiên nga' và 'Kẹp hạt dẻ'.",
+   "en": "Swan Lake"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Bức 'Sóng lừng ngoài khơi Kanagawa' là của hoạ sĩ nước nào?",
+   "a": [
+    "Ý",
+    "Hà Lan",
+    "Pháp",
+    "Nhật Bản"
+   ],
+   "c": 3,
+   "why": "Đây là tranh khắc gỗ của hoạ sĩ Nhật Bản Hokusai.",
+   "en": "The Great Wave"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Làng tranh Đông Hồ thuộc tỉnh nào?",
+   "a": [
+    "Cà Mau",
+    "Lâm Đồng",
+    "Bắc Ninh",
+    "Điện Biên"
+   ],
+   "c": 2,
+   "why": "Làng tranh Đông Hồ nằm ở tỉnh Bắc Ninh.",
+   "en": "Dong Ho painting"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Đàn bầu có mấy dây?",
+   "a": [
+    "2 dây",
+    "6 dây",
+    "1 dây",
+    "16 dây"
+   ],
+   "c": 2,
+   "why": "Đàn bầu là nhạc cụ một dây độc đáo của Việt Nam.",
+   "en": "monochord"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Nhân vật vui tính hay dẫn chuyện trong múa rối nước là ai?",
+   "a": [
+    "Thánh Gióng",
+    "Chú Tễu",
+    "Cô Tấm",
+    "Sơn Tinh"
+   ],
+   "c": 1,
+   "why": "Chú Tễu là nhân vật quen thuộc mở màn và dẫn chuyện rối nước.",
+   "en": "water puppetry"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Giữa mặt trống đồng Đông Sơn là hình gì?",
+   "a": [
+    "Ngôi sao nhiều cánh",
+    "Con rồng",
+    "Bông sen",
+    "Chiếc thuyền buồm"
+   ],
+   "c": 0,
+   "why": "Giữa mặt trống là ngôi sao nhiều cánh, thường hiểu là mặt trời.",
+   "en": "bronze drum"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Dân ca Quan họ nổi tiếng gắn với tỉnh nào?",
+   "a": [
+    "Cà Mau",
+    "Khánh Hoà",
+    "Lâm Đồng",
+    "Bắc Ninh"
+   ],
+   "c": 3,
+   "why": "Quan họ Bắc Ninh là lối hát đối đáp của vùng Kinh Bắc.",
+   "en": "Quan ho"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Nhã nhạc cung đình gắn với kinh đô nào?",
+   "a": [
+    "Cần Thơ",
+    "Đà Lạt",
+    "Vũng Tàu",
+    "Huế"
+   ],
+   "c": 3,
+   "why": "Nhã nhạc là âm nhạc cung đình nhà Nguyễn ở Huế.",
+   "en": "royal court music"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Tranh Đông Hồ được in trên loại giấy nào?",
+   "a": [
+    "Giấy bạc",
+    "Giấy nhựa",
+    "Giấy dó",
+    "Giấy than"
+   ],
+   "c": 2,
+   "why": "Tranh Đông Hồ in trên giấy dó quét điệp.",
+   "en": "do paper"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Nhạc cụ do kép đàn chơi trong ca trù là?",
+   "a": [
+    "Đàn piano",
+    "Đàn đáy",
+    "Kèn trumpet",
+    "Đàn guitar điện"
+   ],
+   "c": 1,
+   "why": "Trong ca trù, kép đàn chơi đàn đáy.",
+   "en": "ca tru"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Sơn ta dùng trong tranh sơn mài lấy từ đâu?",
+   "a": [
+    "Nhựa cây sơn",
+    "Dầu mỏ",
+    "Nước biển",
+    "Bột đá vôi"
+   ],
+   "c": 0,
+   "why": "Sơn ta là nhựa lấy từ cây sơn.",
+   "en": "lacquer"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Không gian văn hoá Cồng chiêng thuộc vùng nào?",
+   "a": [
+    "Tây Nguyên",
+    "Đồng bằng sông Hồng",
+    "Đảo Phú Quốc",
+    "Vịnh Hạ Long"
+   ],
+   "c": 0,
+   "why": "Cồng chiêng là nhạc cụ của nhiều dân tộc ở Tây Nguyên.",
+   "en": "gong culture"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Quan họ Bắc Ninh được UNESCO ghi danh vào năm nào?",
+   "a": [
+    "1975",
+    "1990",
+    "2020",
+    "2009"
+   ],
+   "c": 3,
+   "why": "Năm 2009, UNESCO ghi danh Quan họ là di sản phi vật thể của nhân loại.",
+   "en": "UNESCO"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Newton và chiếc lăng kính",
+   "vi": "Hơn 350 năm trước, Isaac Newton ngồi trong một căn phòng tối. Ông để một tia nắng nhỏ lọt qua khe cửa và chiếu vào một lăng kính thuỷ tinh. Trên tường hiện ra một dải màu như cầu vồng! Ông lại dùng lăng kính thứ hai gom các màu lại, và chúng trở về ánh sáng trắng. Từ đó, người ta hiểu ánh sáng trắng chứa đủ các màu.",
+   "en": [
+    "prism",
+    "Newton"
+   ]
+  },
+  {
+   "t": "Beethoven nghe bằng... cảm nhận",
+   "vi": "Beethoven bị điếc dần khi còn trẻ. Ông vẫn tiếp tục sáng tác, nghe nhạc trong đầu và tưởng tượng từng nốt. Trong buổi ra mắt Giao hưởng số 9 năm 1824, khi bản nhạc kết thúc, ông không nghe thấy tiếng vỗ tay. Một ca sĩ đã nhẹ nhàng xoay ông lại. Ông thấy cả khán phòng đứng lên vỗ tay, vẫy mũ chúc mừng.",
+   "en": [
+    "Beethoven",
+    "Ninth Symphony"
+   ]
+  },
+  {
+   "t": "Cậu bé Mozart đi biểu diễn",
+   "vi": "Khi Mozart mới khoảng 6 tuổi, bố đưa cậu và chị gái đi biểu diễn ở nhiều thành phố châu Âu. Cậu chơi đàn rất giỏi, có khi chơi cả khi phím đàn bị phủ khăn. Cậu còn nghe một bản nhạc rồi chơi lại được. Dù nổi tiếng từ bé, Mozart vẫn luyện tập và học hỏi suốt đời.",
+   "en": [
+    "Mozart",
+    "child prodigy"
+   ]
+  },
+  {
+   "t": "Michelangelo trên giàn giáo",
+   "vi": "Năm 1508, Michelangelo nhận vẽ trần nhà nguyện Sistine, dù ông thích tạc tượng hơn. Ông dựng giàn giáo cao và vẽ trên trần suốt khoảng 4 năm. Ông phải ngửa cổ, giơ tay lên rất lâu, sơn còn nhỏ cả vào mặt. Kết quả là hàng trăm nhân vật sống động trên trần nhà, đến nay ai cũng trầm trồ.",
+   "en": [
+    "Michelangelo",
+    "Sistine Chapel"
+   ]
+  },
+  {
+   "t": "Cái tên bị chê thành nổi tiếng",
+   "vi": "Năm 1874, Claude Monet và các bạn hoạ sĩ tổ chức một cuộc triển lãm. Một nhà phê bình xem bức 'Ấn tượng, mặt trời mọc' và chê rằng tranh chỉ như một 'ấn tượng', chưa vẽ xong. Các hoạ sĩ không buồn, mà lấy luôn chữ đó làm tên nhóm. Thế là trường phái Ấn tượng ra đời và trở nên nổi tiếng khắp thế giới.",
+   "en": [
+    "Impressionism",
+    "Monet"
+   ]
+  },
+  {
+   "t": "Hokusai và hơn 30 cái tên",
+   "vi": "Hoạ sĩ Nhật Bản Hokusai vẽ tranh suốt cả cuộc đời rất dài. Ông đổi tên nghệ danh hơn 30 lần, mỗi lần như bắt đầu một chặng mới. Bức 'Sóng lừng ngoài khơi Kanagawa' được ông làm khi đã ngoài 70 tuổi. Ông từng nói rằng mình vẫn muốn vẽ đẹp hơn mỗi năm. Hokusai cho thấy học vẽ không bao giờ là quá muộn.",
+   "en": [
+    "Hokusai",
+    "The Great Wave"
+   ]
+  },
+  {
+   "t": "Sân khấu trên mặt ao",
+   "vi": "Ngày xưa, ở đồng bằng sông Hồng có rất nhiều ao hồ. Sau mùa gặt, người nông dân dùng mặt ao làm sân khấu cho những con rối gỗ. Nghệ nhân đứng sau mành tre, ngâm mình dưới nước để điều khiển rối bằng sào và dây. Một tấm bia năm 1121 ở chùa Đọi đã nhắc đến trò rối nước. Vậy là nghệ thuật này đã có từ gần 1000 năm trước!",
+   "en": [
+    "water puppetry"
+   ]
+  },
+  {
+   "t": "Cây đàn biết nói nhỏ nói to",
+   "vi": "Ngày xưa, đàn harpsichord chỉ chơi được một độ to, dù bấm mạnh hay nhẹ. Khoảng năm 1700, ông Bartolomeo Cristofori ở Ý nghĩ ra cách dùng búa nhỏ gõ vào dây. Bấm nhẹ thì búa gõ nhẹ, tiếng nhỏ. Bấm mạnh thì tiếng to. Ông gọi cây đàn là 'nhẹ – mạnh', tiếng Ý là pianoforte, sau gọi tắt là piano.",
+   "en": [
+    "piano",
+    "Cristofori"
+   ]
+  },
+  {
+   "t": "Hạt hướng dương biết đếm",
+   "vi": "Nếu nhìn kỹ một bông hướng dương, em sẽ thấy hạt xếp thành những đường xoắn theo hai chiều. Các nhà khoa học đếm và thấy số đường xoắn thường là số Fibonacci như 34 và 55. Cách xếp này giúp bông hoa chứa được nhiều hạt nhất mà không chừa chỗ trống. Thiên nhiên đúng là một hoạ sĩ giỏi toán!",
+   "en": [
+    "sunflower",
+    "Fibonacci"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: Ba màu cơ bản",
+   "vi": "Đỏ, vàng, lam là ba màu cơ bản. Pha hai màu với nhau sẽ ra cam, lục, tím. Pha nhiều màu quá thì màu dễ bị xỉn, ngả nâu. Hãy pha từng chút một để thấy màu thay đổi.",
+   "try": "Dùng màu nước hoặc sáp màu, pha đỏ với vàng, vàng với lam, đỏ với lam trên giấy nháp và đặt tên màu mới."
+  },
+  {
+   "t": "Bài học hôm nay: Màu nóng, màu lạnh",
+   "vi": "Màu nóng như đỏ, cam, vàng làm tranh ấm áp, sôi động. Màu lạnh như lam, lục, chàm làm tranh mát mẻ, yên bình. Chọn màu đúng giúp tranh nói lên cảm xúc.",
+   "try": "Vẽ hai bức nhỏ cùng một ngôi nhà: một bức chỉ dùng màu nóng, một bức chỉ dùng màu lạnh, rồi so sánh."
+  },
+  {
+   "t": "Bài học hôm nay: Quy tắc một phần ba",
+   "vi": "Chia khung hình thành 9 ô bằng nhau. Đặt vật chính gần giao điểm của các đường chia. Bức ảnh hay bức tranh sẽ trông tự nhiên và cuốn hút hơn.",
+   "try": "Nhờ bố mẹ cho mượn điện thoại, bật lưới 9 ô và chụp một món đồ chơi ở giữa, rồi chụp lại ở giao điểm để so sánh."
+  },
+  {
+   "t": "Bài học hôm nay: Tìm tỷ lệ vàng",
+   "vi": "Tỷ lệ vàng khoảng 1,618. Dãy Fibonacci 1, 1, 2, 3, 5, 8, 13 có tỉ số tiến dần về con số này. Em có thể tìm thấy nó trong hoa lá và các hình vẽ.",
+   "try": "Viết dãy Fibonacci đến số 89, rồi dùng máy tính bỏ túi chia mỗi số cho số đứng trước xem kết quả gần 1,618 thế nào."
+  },
+  {
+   "t": "Bài học hôm nay: Đọc bảy nốt nhạc",
+   "vi": "Bảy nốt nhạc là Đô, Rê, Mi, Fa, Son, La, Si. Nốt viết trên khuông nhạc 5 dòng kẻ. Nốt càng ở cao trên khuông thì âm càng cao.",
+   "try": "Kẻ một khuông nhạc 5 dòng trên giấy, đặt hạt đậu lên dòng và khe, rồi đọc tên nốt theo khoá Son."
+  },
+  {
+   "t": "Bài học hôm nay: Cảm nhận nhịp",
+   "vi": "Phách là những tiếng đập đều trong bản nhạc. Nhịp 2/4 đếm 1-2, nhịp 3/4 đếm 1-2-3. Phách đầu mỗi ô nhịp thường được nhấn mạnh hơn.",
+   "try": "Bật một bài hát thiếu nhi, vỗ tay theo phách và thử đoán bài đó là nhịp 2 hay nhịp 3."
+  },
+  {
+   "t": "Bài học hôm nay: Âm thanh là rung động",
+   "vi": "Mọi âm thanh đều do vật rung động. Rung nhanh thì âm cao, rung chậm thì âm trầm. Vật rung mạnh thì âm to hơn.",
+   "try": "Căng một sợi dây chun quanh hộp bút rỗng, gảy nhẹ, rồi kéo căng hơn để nghe âm cao lên."
+  },
+  {
+   "t": "Bài học hôm nay: Đàn nước tự làm",
+   "vi": "Cột không khí hoặc nước trong cốc rung lên khi ta gõ. Lượng nước khác nhau cho các âm cao thấp khác nhau. Đó cũng là nguyên lý của nhiều nhạc cụ.",
+   "try": "Xếp 5 chiếc cốc thuỷ tinh hoặc chai với lượng nước khác nhau, gõ nhẹ bằng thìa gỗ và sắp xếp từ trầm đến cao. Nhờ bố mẹ giúp cho an toàn."
+  },
+  {
+   "t": "Bài học hôm nay: Làm quen nghệ thuật dân gian",
+   "vi": "Tranh Đông Hồ dùng màu từ thiên nhiên và hình ảnh gần gũi như gà, lợn, chuột. Mỗi bức tranh mang một lời chúc tốt đẹp. Nghệ thuật dân gian giúp ta hiểu cuộc sống của ông bà xưa.",
+   "try": "Vẽ một bức tranh nhỏ theo kiểu Đông Hồ về con vật em yêu, với nét viền đen và vài mảng màu tươi."
+  },
+  {
+   "t": "Bài học hôm nay: Nghe nhạc của danh nhân",
+   "vi": "Mỗi nhạc sĩ có một phong cách riêng. Nhạc Vivaldi tươi vui, nhạc Chopin bay bổng, nhạc Beethoven mạnh mẽ. Nghe nhiều giúp tai em tinh hơn.",
+   "try": "Nhờ bố mẹ mở bản 'Mùa xuân' của Vivaldi, vừa nghe vừa vẽ những gì em tưởng tượng ra."
+  },
+  {
+   "t": "Bài học hôm nay: Đối xứng kỳ diệu",
+   "vi": "Hình đối xứng có hai nửa giống nhau như soi gương. Thiên nhiên có rất nhiều hình đối xứng như cánh bướm, chiếc lá. Đối xứng làm hình trông cân đối, hài hoà.",
+   "try": "Gấp đôi một tờ giấy, chấm vài giọt màu nước ở một nửa, gấp lại ấn nhẹ rồi mở ra xem bức tranh đối xứng."
+  }
+ ]
+}

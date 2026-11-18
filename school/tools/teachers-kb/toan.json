@@ -1,0 +1,1940 @@
+{
+ "id": "toan",
+ "topics": [
+  "Số học & số tự nhiên",
+  "Phân số & thập phân",
+  "Hình học",
+  "Đo lường & đơn vị",
+  "Đại số & phương trình",
+  "Toán vui & tỷ lệ vàng"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Số chẵn và số lẻ",
+   "vi": "Số chẵn có chữ số tận cùng là 0, 2, 4, 6 hoặc 8. Số lẻ có chữ số tận cùng là 1, 3, 5, 7 hoặc 9. Chẵn cộng chẵn ra chẵn, lẻ cộng lẻ cũng ra chẵn. Còn chẵn cộng lẻ thì ra số lẻ.",
+   "ex": "Ví dụ: 3 + 5 = 8 là số chẵn.",
+   "en": [
+    "even number",
+    "odd number"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Giá trị theo hàng",
+   "vi": "Trong số 352, chữ số 3 ở hàng trăm nên có giá trị 300. Chữ số 5 ở hàng chục có giá trị 50, chữ số 2 ở hàng đơn vị có giá trị 2. Cùng một chữ số nhưng đứng ở hàng khác nhau thì giá trị khác nhau.",
+   "ex": "Mẹo: đọc từ phải sang trái: đơn vị, chục, trăm, nghìn.",
+   "en": [
+    "place value",
+    "digit"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Phép nhân là cộng lặp lại",
+   "vi": "4 × 3 nghĩa là lấy 4 cộng 3 lần: 4 + 4 + 4 = 12. Đổi chỗ các thừa số thì tích không đổi, nên 4 × 3 = 3 × 4. Số nào nhân với 1 cũng bằng chính nó, nhân với 0 thì bằng 0.",
+   "ex": "Thuộc bảng cửu chương giúp em tính nhanh như chớp.",
+   "en": [
+    "multiplication",
+    "times table"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Số 0 kỳ diệu",
+   "vi": "Nhờ có số 0, ta viết được các số lớn như 10, 100, 1000 rất gọn. Người Ấn Độ cổ là những người đầu tiên coi 0 là một con số thật sự. Nhà toán học Brahmagupta đã viết quy tắc tính với số 0 vào thế kỷ 7. Nhớ nhé: không được chia cho 0.",
+   "ex": "Số nào cộng với 0 cũng giữ nguyên.",
+   "en": [
+    "zero"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Số nguyên tố",
+   "vi": "Số nguyên tố là số tự nhiên lớn hơn 1, chỉ có đúng hai ước là 1 và chính nó. Ví dụ: 2, 3, 5, 7, 11, 13. Số 1 không phải là số nguyên tố. Số 2 là số nguyên tố chẵn duy nhất.",
+   "ex": "Số 9 không phải số nguyên tố vì 9 = 3 × 3.",
+   "en": [
+    "prime number"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Dấu hiệu chia hết",
+   "vi": "Số chia hết cho 2 khi tận cùng là chữ số chẵn. Chia hết cho 5 khi tận cùng là 0 hoặc 5. Chia hết cho 3 khi tổng các chữ số chia hết cho 3. Chia hết cho 9 khi tổng các chữ số chia hết cho 9.",
+   "ex": "2025 có tổng chữ số 2 + 0 + 2 + 5 = 9 nên chia hết cho 9.",
+   "en": [
+    "divisibility rule"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Thứ tự thực hiện phép tính",
+   "vi": "Làm trong ngoặc trước, rồi đến lũy thừa. Sau đó làm nhân, chia từ trái sang phải. Cuối cùng mới làm cộng, trừ từ trái sang phải. Làm sai thứ tự là ra kết quả sai ngay.",
+   "ex": "2 + 3 × 4 = 14, không phải 20.",
+   "en": [
+    "order of operations"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "ƯCLN và BCNN",
+   "vi": "Ước chung lớn nhất (ƯCLN) của 12 và 18 là 6. Bội chung nhỏ nhất (BCNN) của 4 và 6 là 12. ƯCLN giúp rút gọn phân số. BCNN giúp quy đồng mẫu số khi cộng phân số.",
+   "ex": "Ước là số chia hết được, bội là số nhân ra được.",
+   "en": [
+    "greatest common divisor",
+    "least common multiple"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Có vô số số nguyên tố",
+   "vi": "Khoảng 300 năm trước Công nguyên, nhà toán học Hy Lạp Euclid chứng minh rằng số nguyên tố là vô hạn. Ý tưởng: nhân tất cả số nguyên tố trong một danh sách rồi cộng thêm 1. Số mới chia cho số nào trong danh sách cũng dư 1, nên nó phải có một ước nguyên tố mới.",
+   "ex": "Danh sách số nguyên tố không bao giờ kết thúc.",
+   "en": [
+    "infinite",
+    "prime number",
+    "proof"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Phân tích ra thừa số nguyên tố",
+   "vi": "Mỗi số tự nhiên lớn hơn 1 đều viết được thành tích các số nguyên tố. Nếu không kể thứ tự thì cách viết đó là duy nhất. Đây gọi là định lý cơ bản của số học, giống như mỗi số có một mã riêng.",
+   "ex": "60 = 2² × 3 × 5.",
+   "en": [
+    "prime factorization"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Hệ nhị phân",
+   "vi": "Máy tính dùng hệ cơ số 2, chỉ có hai chữ số 0 và 1. Mỗi hàng có giá trị gấp đôi hàng bên phải: 1, 2, 4, 8, 16… Số 5 viết trong hệ nhị phân là 101 vì 5 = 4 + 0 + 1.",
+   "ex": "Số 1101 trong hệ nhị phân bằng 8 + 4 + 1 = 13.",
+   "en": [
+    "binary",
+    "base two"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Sàng Eratosthenes",
+   "vi": "Viết các số từ 2 đến 100. Giữ lại số 2 và gạch bỏ các bội khác của 2. Làm tiếp như vậy với 3, 5 và 7. Các số còn lại đều là số nguyên tố. Từ 1 đến 100 có tất cả 25 số nguyên tố.",
+   "ex": "Cách này được đặt theo tên nhà toán học Hy Lạp Eratosthenes.",
+   "en": [
+    "sieve of Eratosthenes"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Phân số là gì?",
+   "vi": "Phân số cho biết ta chia một vật thành bao nhiêu phần bằng nhau và lấy mấy phần. Trong phân số 3/4, số 4 là mẫu số: chia thành 4 phần bằng nhau. Số 3 là tử số: lấy 3 phần trong đó.",
+   "ex": "Mẫu số ở dưới, tử số ở trên.",
+   "en": [
+    "fraction",
+    "numerator",
+    "denominator"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Một nửa và một phần tư",
+   "vi": "Cắt cái bánh thành 2 phần bằng nhau, mỗi phần là 1/2 cái bánh. Cắt thành 4 phần bằng nhau, mỗi phần là 1/4. Mẫu số càng lớn thì mỗi phần càng nhỏ, nên 1/4 nhỏ hơn 1/2.",
+   "ex": "Chia bánh cho càng nhiều bạn thì phần mỗi bạn càng bé.",
+   "en": [
+    "half",
+    "quarter"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "So sánh phân số cùng mẫu",
+   "vi": "Hai phân số có cùng mẫu số thì phân số nào có tử số lớn hơn sẽ lớn hơn. Ví dụ 5/8 lớn hơn 3/8. Phân số có tử số bằng mẫu số thì bằng 1, như 4/4 = 1.",
+   "ex": "Cùng cắt 8 miếng, ai lấy 5 miếng được nhiều hơn người lấy 3.",
+   "en": [
+    "compare fractions"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Số thập phân",
+   "vi": "Số thập phân có dấu phẩy ngăn cách phần nguyên và phần thập phân. Trong số 3,5 thì phần nguyên là 3, phần thập phân là 5 phần mười. Số 0,5 bằng 1/2, còn 0,25 bằng 1/4.",
+   "ex": "Ở Việt Nam ta viết 3,5; nhiều nước viết 3.5.",
+   "en": [
+    "decimal"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Phân số bằng nhau",
+   "vi": "Nhân hoặc chia cả tử số và mẫu số với cùng một số khác 0, ta được phân số bằng phân số cũ. Ví dụ 1/2 = 2/4 = 3/6. Muốn rút gọn, ta chia cả tử và mẫu cho ước chung lớn nhất.",
+   "ex": "6/9 rút gọn thành 2/3 khi chia cả hai cho 3.",
+   "en": [
+    "equivalent fraction",
+    "simplify"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Cộng phân số khác mẫu",
+   "vi": "Muốn cộng hai phân số khác mẫu, ta quy đồng mẫu số trước rồi cộng các tử số. Ví dụ 1/2 + 1/3 = 3/6 + 2/6 = 5/6. Không được cộng tử với tử và mẫu với mẫu.",
+   "ex": "1/2 + 1/2 = 1, chứ không phải 2/4.",
+   "en": [
+    "add fractions",
+    "common denominator"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Nhân và chia phân số",
+   "vi": "Nhân hai phân số: lấy tử nhân tử, mẫu nhân mẫu. Ví dụ 2/3 × 3/4 = 6/12 = 1/2. Chia cho một phân số chính là nhân với phân số đảo ngược của nó.",
+   "ex": "1/2 : 1/4 = 1/2 × 4/1 = 2.",
+   "en": [
+    "multiply fractions",
+    "reciprocal"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Tỉ số phần trăm",
+   "vi": "Phần trăm nghĩa là “trên 100”. 25% bằng 25/100, tức là 1/4. Muốn tìm 20% của 50, ta lấy 50 × 20 : 100 = 10. Phần trăm được dùng nhiều khi giảm giá hoặc tính điểm.",
+   "ex": "50% chính là một nửa.",
+   "en": [
+    "percent"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Số thập phân vô hạn tuần hoàn",
+   "vi": "1/3 = 0,333… với chữ số 3 lặp lại mãi. Một phân số tối giản có mẫu chỉ chứa thừa số nguyên tố 2 và 5 thì viết được thành số thập phân hữu hạn. Các phân số tối giản khác sẽ thành số thập phân vô hạn tuần hoàn.",
+   "ex": "3/8 = 0,375 là hữu hạn vì 8 = 2 × 2 × 2.",
+   "en": [
+    "repeating decimal"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "0,999… bằng 1",
+   "vi": "Ta biết 1/3 = 0,333… Nhân cả hai vế với 3, ta được 3/3 = 0,999…, tức là 1 = 0,999… Đây chỉ là hai cách viết khác nhau của cùng một số. Nghe lạ nhưng hoàn toàn đúng trong toán học.",
+   "ex": "Giữa 0,999… và 1 không có số nào chen vào được.",
+   "en": [
+    "repeating decimal",
+    "equality"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Số vô tỉ",
+   "vi": "Số vô tỉ là số không viết được thành phân số. Phần thập phân của nó kéo dài mãi mà không lặp lại theo chu kỳ. Ví dụ √2 ≈ 1,414 và số π ≈ 3,14159. Người Hy Lạp cổ đã phát hiện √2 là số vô tỉ.",
+   "ex": "Số hữu tỉ và số vô tỉ hợp lại thành số thực.",
+   "en": [
+    "irrational number",
+    "square root"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Tăng rồi giảm phần trăm",
+   "vi": "Tăng 10% rồi giảm 10% không đưa ta về số cũ. 100 tăng 10% thành 110. Giảm 10% của 110 là bớt 11, còn 99. Lý do là lần giảm được tính trên số đã lớn hơn.",
+   "ex": "Luôn hỏi: phần trăm này tính trên số nào?",
+   "en": [
+    "percentage change"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Hình vuông và hình chữ nhật",
+   "vi": "Hình vuông có 4 cạnh bằng nhau và 4 góc vuông. Hình chữ nhật có 4 góc vuông và hai cặp cạnh đối diện bằng nhau. Vì vậy mọi hình vuông đều là một hình chữ nhật đặc biệt.",
+   "ex": "Mặt khối Rubik là một hình vuông.",
+   "en": [
+    "square",
+    "rectangle"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Chu vi",
+   "vi": "Chu vi là độ dài đường bao quanh một hình. Chu vi hình chữ nhật bằng (chiều dài + chiều rộng) × 2. Chu vi hình vuông bằng cạnh × 4. Đi một vòng quanh sân là em đã đi hết chu vi sân.",
+   "ex": "Hình vuông cạnh 5 cm có chu vi 20 cm.",
+   "en": [
+    "perimeter"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Diện tích",
+   "vi": "Diện tích là phần mặt phẳng mà hình chiếm chỗ. Diện tích hình chữ nhật bằng chiều dài × chiều rộng. Diện tích hình vuông bằng cạnh × cạnh. Đơn vị đo thường là cm² hoặc m².",
+   "ex": "Sàn 4 m × 3 m có diện tích 12 m².",
+   "en": [
+    "area"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Hình tròn",
+   "vi": "Mọi điểm trên đường tròn đều cách tâm một khoảng bằng nhau. Khoảng cách đó gọi là bán kính. Đường kính là đoạn thẳng đi qua tâm, nối hai điểm trên đường tròn, và dài gấp đôi bán kính.",
+   "ex": "Dùng com-pa để vẽ hình tròn thật tròn.",
+   "en": [
+    "circle",
+    "radius",
+    "diameter"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Tổng các góc của tam giác",
+   "vi": "Ba góc trong một tam giác cộng lại luôn bằng 180 độ. Bốn góc của một tứ giác cộng lại bằng 360 độ. Trong tam giác đều, ba góc bằng nhau nên mỗi góc là 60 độ.",
+   "ex": "Xé ba góc tam giác giấy ghép lại sẽ thành một đường thẳng.",
+   "en": [
+    "triangle",
+    "angle sum"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Các loại góc",
+   "vi": "Góc nhọn nhỏ hơn 90 độ. Góc vuông bằng đúng 90 độ, như góc của trang vở. Góc tù lớn hơn 90 độ nhưng nhỏ hơn 180 độ. Góc bẹt bằng 180 độ, trông như một đường thẳng.",
+   "ex": "Kim đồng hồ lúc 3 giờ tạo thành góc vuông.",
+   "en": [
+    "acute angle",
+    "right angle",
+    "obtuse angle"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Số π và hình tròn",
+   "vi": "Chu vi hình tròn bằng đường kính × π, với π ≈ 3,14. Diện tích hình tròn bằng bán kính × bán kính × π. Dù hình tròn to hay nhỏ, chu vi chia đường kính luôn ra cùng một số π.",
+   "ex": "Đường kính 10 cm thì chu vi khoảng 31,4 cm.",
+   "en": [
+    "pi",
+    "circumference"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Diện tích tam giác",
+   "vi": "Diện tích tam giác bằng đáy × chiều cao : 2. Lý do là hai tam giác giống hệt nhau ghép lại sẽ thành một hình bình hành. Hình bình hành có diện tích bằng đáy × chiều cao.",
+   "ex": "Đáy 6 cm, cao 4 cm thì diện tích là 12 cm².",
+   "en": [
+    "triangle area",
+    "height"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Định lý Pythagoras",
+   "vi": "Trong tam giác vuông, bình phương cạnh huyền bằng tổng bình phương hai cạnh góc vuông: a² + b² = c². Cạnh huyền là cạnh đối diện góc vuông và là cạnh dài nhất. Định lý mang tên nhà toán học Hy Lạp cổ Pythagoras.",
+   "ex": "Bộ ba 3, 4, 5: 9 + 16 = 25.",
+   "en": [
+    "Pythagorean theorem",
+    "hypotenuse"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Thể tích hình hộp",
+   "vi": "Thể tích hình hộp chữ nhật bằng dài × rộng × cao. Hình lập phương cạnh a có thể tích a × a × a = a³. Chia mỗi cạnh của một khối lập phương làm 3 phần bằng nhau thì được 3 × 3 × 3 = 27 khối nhỏ.",
+   "ex": "Lập phương cạnh 2 cm có thể tích 8 cm³.",
+   "en": [
+    "volume",
+    "cube"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Trục đối xứng",
+   "vi": "Một hình có trục đối xứng nếu gập theo trục đó thì hai nửa trùng khít nhau. Hình vuông có 4 trục đối xứng, hình chữ nhật thường có 2 trục. Hình tròn có vô số trục đối xứng.",
+   "ex": "Chữ A in hoa có 1 trục đối xứng thẳng đứng.",
+   "en": [
+    "symmetry",
+    "axis"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Năm khối đa diện đều",
+   "vi": "Chỉ có đúng 5 khối đa diện đều: tứ diện đều (4 mặt), lập phương (6 mặt), bát diện đều (8 mặt), khối 12 mặt và khối 20 mặt. Chúng còn gọi là các khối Platon. Với các khối này, số đỉnh − số cạnh + số mặt = 2.",
+   "ex": "Lập phương: 8 − 12 + 6 = 2.",
+   "en": [
+    "Platonic solid",
+    "polyhedron"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Mét, xăng-ti-mét, ki-lô-mét",
+   "vi": "Mét (m) là đơn vị đo độ dài chính. 1 m = 100 cm, 1 cm = 10 mm. Đường dài thì đo bằng ki-lô-mét: 1 km = 1000 m. Đo bút chì thì dùng cm, đo đường đi thì dùng km.",
+   "ex": "Một sải tay người lớn dài khoảng 1,5 đến 1,8 m.",
+   "en": [
+    "meter",
+    "centimeter",
+    "kilometer"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Ki-lô-gam và gam",
+   "vi": "Ki-lô-gam (kg) và gam (g) dùng để đo khối lượng. 1 kg = 1000 g. Vật nhẹ như cục tẩy thì đo bằng gam. Bao gạo nặng thì đo bằng ki-lô-gam.",
+   "ex": "Nửa ki-lô-gam là 500 g.",
+   "en": [
+    "kilogram",
+    "gram"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Xem giờ",
+   "vi": "Một ngày có 24 giờ. 1 giờ = 60 phút, 1 phút = 60 giây. Trên đồng hồ kim, kim ngắn chỉ giờ, kim dài chỉ phút. Kim dài đi hết một vòng là đúng 1 giờ.",
+   "ex": "Nửa giờ là 30 phút, một phần tư giờ là 15 phút.",
+   "en": [
+    "clock",
+    "hour",
+    "minute"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Lít đo chất lỏng",
+   "vi": "Lít (l) dùng để đo nước, sữa và các chất lỏng khác. 1 lít = 1000 mi-li-lít (ml). Một chai nhỏ 500 ml chứa đúng nửa lít. Hai chai như thế đổ chung được 1 lít.",
+   "ex": "Thìa cà phê chứa khoảng 5 ml.",
+   "en": [
+    "liter",
+    "milliliter"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Yến, tạ, tấn",
+   "vi": "Khi cân vật rất nặng, ta dùng yến, tạ, tấn. 1 yến = 10 kg, 1 tạ = 100 kg, 1 tấn = 1000 kg. Mỗi đơn vị gấp 10 lần đơn vị liền sau nó trong bảng đơn vị khối lượng.",
+   "ex": "Bảng: tấn, tạ, yến, kg, hg, dag, g.",
+   "en": [
+    "ton",
+    "mass unit"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Đơn vị diện tích",
+   "vi": "1 m² = 100 dm² = 10 000 cm². Đo ruộng, vườn thì dùng héc-ta (ha): 1 ha = 10 000 m². Đo cả thành phố thì dùng km²: 1 km² = 100 ha. Đơn vị diện tích liền nhau gấp nhau 100 lần.",
+   "ex": "Sân bóng đá lớn có diện tích khoảng 0,7 ha.",
+   "en": [
+    "square meter",
+    "hectare"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Vận tốc, quãng đường, thời gian",
+   "vi": "Quãng đường bằng vận tốc nhân thời gian: s = v × t. Một xe đi 40 km mỗi giờ, đi trong 2 giờ thì được 80 km. Muốn tìm thời gian, ta lấy quãng đường chia vận tốc: t = s : v.",
+   "ex": "Nhớ: “sờ bằng vờ nhân tờ”.",
+   "en": [
+    "speed",
+    "distance",
+    "time"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Năm nhuận",
+   "vi": "Năm thường có 365 ngày, năm nhuận có 366 ngày nhờ thêm ngày 29 tháng 2. Năm chia hết cho 4 thường là năm nhuận. Riêng năm tròn trăm thì phải chia hết cho 400 mới là năm nhuận.",
+   "ex": "Năm 2000 là năm nhuận, năm 1900 thì không.",
+   "en": [
+    "leap year"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Thể tích và lít",
+   "vi": "1 lít bằng đúng 1 dm³, tức là 1000 cm³. 1 m³ chứa được 1000 lít. Một bể nước dài 2 m, rộng 1 m, cao 1 m có thể tích 2 m³, chứa được 2000 lít nước.",
+   "ex": "Khối lập phương cạnh 10 cm chứa vừa 1 lít.",
+   "en": [
+    "cubic meter",
+    "volume"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Nguồn gốc của mét",
+   "vi": "Cuối thế kỷ 18, các nhà khoa học Pháp định nghĩa 1 mét bằng một phần mười triệu khoảng cách từ Bắc Cực đến xích đạo. Nhờ vậy cả thế giới có chung một thước đo. Ngày nay, mét được định nghĩa chính xác hơn bằng tốc độ ánh sáng.",
+   "ex": "Hệ mét giúp đổi đơn vị chỉ bằng cách nhân, chia cho 10.",
+   "en": [
+    "metric system",
+    "meter"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Hệ đơn vị SI",
+   "vi": "Hệ đơn vị quốc tế SI có 7 đơn vị cơ bản: mét, ki-lô-gam, giây, ampe, kelvin, mol và candela. Các tiền tố giúp viết gọn: kilo nghĩa là 1000 lần, mili nghĩa là một phần nghìn. Nhờ SI, các nhà khoa học khắp nơi hiểu nhau.",
+   "ex": "1 km = 1000 m, 1 mm = 1/1000 m.",
+   "en": [
+    "SI unit",
+    "prefix"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Đổi km/h sang m/s",
+   "vi": "1 km/h nghĩa là 1000 m trong 3600 giây. Vì 3600 : 1000 = 3,6 nên muốn đổi km/h sang m/s ta chia cho 3,6. Ngược lại, đổi m/s sang km/h thì nhân với 3,6.",
+   "ex": "36 km/h = 10 m/s.",
+   "en": [
+    "unit conversion",
+    "speed"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Tìm số còn thiếu",
+   "vi": "Nếu □ + 5 = 12 thì □ = 12 − 5 = 7. Phép trừ là phép tính ngược của phép cộng. Tương tự, phép chia là phép tính ngược của phép nhân: □ × 4 = 20 thì □ = 20 : 4 = 5.",
+   "ex": "Thử lại bằng cách thay số vào ô trống.",
+   "en": [
+    "missing number",
+    "inverse operation"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Đổi chỗ có sao không?",
+   "vi": "Với phép cộng và phép nhân, đổi chỗ các số thì kết quả không đổi: 3 + 7 = 7 + 3 và 2 × 9 = 9 × 2. Đây là tính chất giao hoán. Nhưng phép trừ và phép chia thì không đổi chỗ được: 5 − 3 khác 3 − 5.",
+   "ex": "Cộng nhẩm số lớn trước cho nhanh: 2 + 98 = 98 + 2.",
+   "en": [
+    "commutative property"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Tìm quy luật",
+   "vi": "Dãy 2, 4, 6, 8 có quy luật: mỗi số hơn số trước 2 đơn vị. Dãy 1, 2, 4, 8 có quy luật: mỗi số gấp đôi số trước. Tìm được quy luật thì em đoán được số tiếp theo, đó là bước đầu của đại số.",
+   "ex": "Số tiếp theo của 1, 2, 4, 8 là 16.",
+   "en": [
+    "pattern",
+    "sequence"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Chữ thay cho số",
+   "vi": "Trong toán học, ta có thể dùng chữ cái như x để chỉ một số chưa biết. Câu x + 3 = 10 hỏi: số nào cộng 3 thì bằng 10? Đáp án là x = 7. Dùng chữ giúp ta viết bài toán ngắn gọn hơn.",
+   "ex": "x giống như ô trống □ nhưng đẹp hơn.",
+   "en": [
+    "variable",
+    "unknown"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Số âm",
+   "vi": "Số âm là số nhỏ hơn 0, ví dụ −3. Nhiệt độ −5 °C lạnh hơn 0 °C. Trên trục số, số càng nằm về bên trái thì càng nhỏ. Khi nhân, âm nhân âm ra dương, âm nhân dương ra âm.",
+   "ex": "(−3) × (−4) = 12.",
+   "en": [
+    "negative number",
+    "number line"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Giải phương trình bậc nhất",
+   "vi": "Để giải 2x + 3 = 11, ta trừ 3 ở cả hai vế được 2x = 8. Sau đó chia cả hai vế cho 2 được x = 4. Quy tắc vàng: làm gì với một vế thì làm y như vậy với vế kia, như giữ cân thăng bằng.",
+   "ex": "Thử lại: 2 × 4 + 3 = 11. Đúng!",
+   "en": [
+    "linear equation",
+    "solve"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Tính chất phân phối",
+   "vi": "a × (b + c) = a × b + a × c. Tính chất này giúp ta tính nhẩm rất nhanh. Ví dụ 7 × 12 = 7 × 10 + 7 × 2 = 70 + 14 = 84. Ta tách số khó thành các số tròn dễ nhân.",
+   "ex": "25 × 12 = 25 × 10 + 25 × 2 = 300.",
+   "en": [
+    "distributive property"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Tỉ lệ thuận",
+   "vi": "Hai đại lượng tỉ lệ thuận khi đại lượng này gấp lên bao nhiêu lần thì đại lượng kia cũng gấp lên bấy nhiêu lần. Một cây bút giá 5 nghìn đồng thì 3 cây giá 15 nghìn đồng. Số bút gấp 3, số tiền cũng gấp 3.",
+   "ex": "Tìm giá 1 cái trước, rồi nhân lên.",
+   "en": [
+    "direct proportion",
+    "ratio"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Hằng đẳng thức đáng nhớ",
+   "vi": "(a + b)² = a² + 2ab + b². (a − b)² = a² − 2ab + b². a² − b² = (a − b)(a + b). Các công thức này giúp khai triển biểu thức và tính nhẩm nhanh.",
+   "ex": "21² = 400 + 40 + 1 = 441.",
+   "en": [
+    "algebraic identity",
+    "square"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Mặt phẳng tọa độ",
+   "vi": "Nhà toán học Pháp René Descartes nghĩ ra cách dùng hai trục số vuông góc để chỉ vị trí một điểm bằng cặp số (x; y). Nhờ đó ta vẽ được đồ thị của hàm số. Hàm số y = ax + b có đồ thị là một đường thẳng.",
+   "ex": "Điểm (0; 0) gọi là gốc tọa độ.",
+   "en": [
+    "coordinate plane",
+    "graph"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Phương trình bậc hai",
+   "vi": "Phương trình bậc hai có dạng ax² + bx + c = 0 với a ≠ 0. Tính Δ = b² − 4ac. Nếu Δ > 0 thì có hai nghiệm phân biệt, Δ = 0 thì có nghiệm kép, Δ < 0 thì vô nghiệm trong tập số thực.",
+   "ex": "x² − 5x + 6 = 0 có hai nghiệm là 2 và 3.",
+   "en": [
+    "quadratic equation",
+    "discriminant"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Al-Khwarizmi và chữ “đại số”",
+   "vi": "Vào thế kỷ 9, nhà toán học Al-Khwarizmi làm việc ở Baghdad đã viết sách về cách giải phương trình. Từ “algebra” (đại số) bắt nguồn từ chữ “al-jabr” trong tên cuốn sách. Từ “algorithm” (thuật toán) bắt nguồn từ tên ông.",
+   "ex": "“Al-jabr” có nghĩa là “khôi phục”, “bù vào”.",
+   "en": [
+    "algebra",
+    "algorithm"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Dãy Fibonacci",
+   "vi": "Dãy Fibonacci là 1, 1, 2, 3, 5, 8, 13, 21… Mỗi số bằng tổng của hai số đứng ngay trước nó. Dãy được đặt theo tên nhà toán học Ý Fibonacci. Nhiều loài hoa có số cánh là số Fibonacci, như 3, 5 hoặc 8 cánh.",
+   "ex": "8 + 13 = 21, rồi 13 + 21 = 34.",
+   "en": [
+    "Fibonacci sequence"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Khối Rubik 3×3",
+   "vi": "Khối Rubik 3×3 có 6 mặt, mỗi mặt có 9 ô vuông nhỏ, nên tổng cộng có 54 ô màu. Mỗi mặt mang một màu khi đã giải xong. Đồ chơi này được phát minh ở Hung-ga-ri vào năm 1974.",
+   "ex": "6 × 9 = 54.",
+   "en": [
+    "Rubik's Cube",
+    "puzzle"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Tung đồng xu",
+   "vi": "Tung một đồng xu có hai khả năng: sấp hoặc ngửa. Mỗi khả năng có xác suất bằng nhau là 1/2. Tung rất nhiều lần thì số lần ra ngửa sẽ gần bằng một nửa số lần tung. Đó là ý tưởng đầu tiên về xác suất.",
+   "ex": "Xác suất nằm trong khoảng từ 0 đến 1.",
+   "en": [
+    "probability",
+    "coin"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Ma phương 3×3",
+   "vi": "Ma phương 3×3 là bảng xếp các số từ 1 đến 9 sao cho mỗi hàng, mỗi cột và hai đường chéo đều có tổng bằng 15. Trong ma phương này, số 5 luôn nằm ở ô chính giữa. Em thử tự xếp xem nhé!",
+   "ex": "Một hàng có thể là 2, 7, 6.",
+   "en": [
+    "magic square"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Tỷ lệ vàng φ",
+   "vi": "Tỷ lệ vàng, ký hiệu φ (đọc là “phi”), xấp xỉ 1,618. Chia một đoạn thẳng thành hai phần sao cho cả đoạn chia phần dài bằng phần dài chia phần ngắn, thì tỉ số đó chính là φ. Đây là con số Cô Phi Lam yêu nhất!",
+   "ex": "φ = (1 + √5) : 2.",
+   "en": [
+    "golden ratio",
+    "phi"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Fibonacci gặp tỷ lệ vàng",
+   "vi": "Lấy một số Fibonacci chia cho số đứng ngay trước nó, kết quả càng lúc càng gần φ ≈ 1,618. Ví dụ 8 : 5 = 1,6; 13 : 8 = 1,625; 21 : 13 ≈ 1,615. Hai ý tưởng tưởng như xa lạ lại gắn bó với nhau.",
+   "ex": "Càng đi xa trong dãy, tỉ số càng sát 1,618.",
+   "en": [
+    "Fibonacci",
+    "golden ratio"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Xác suất với xúc xắc",
+   "vi": "Xúc xắc thường có 6 mặt, ghi từ 1 đến 6. Xác suất ra mặt 6 là 1/6. Xác suất ra số chẵn là 3/6 = 1/2 vì có ba mặt chẵn là 2, 4, 6. Trên xúc xắc chuẩn, hai mặt đối diện luôn có tổng bằng 7.",
+   "ex": "Mặt 1 đối diện mặt 6.",
+   "en": [
+    "dice",
+    "probability"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Mẹo cộng của Gauss",
+   "vi": "Kể rằng khi còn nhỏ, Gauss tính 1 + 2 + … + 100 rất nhanh. Cậu ghép 1 với 100, 2 với 99, 3 với 98… được 50 cặp, mỗi cặp có tổng 101. Vậy tổng là 50 × 101 = 5050.",
+   "ex": "Tổng 1 đến n bằng n × (n + 1) : 2.",
+   "en": [
+    "Gauss",
+    "sum"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Số trạng thái của Rubik",
+   "vi": "Khối Rubik 3×3 có khoảng 43 tỷ tỷ trạng thái khác nhau, tức khoảng 4,3 × 10^19. Năm 2010, nhờ máy tính chạy rất lâu, các nhà toán học chứng minh mọi trạng thái đều giải được trong tối đa 20 bước xoay. Con số 20 được gọi vui là “God's number”.",
+   "ex": "Mỗi bước xoay một mặt tính là 1 bước.",
+   "en": [
+    "Rubik's Cube",
+    "combinatorics"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Nghịch lý ngày sinh",
+   "vi": "Chỉ cần 23 người trong phòng, xác suất có ít nhất hai người trùng ngày sinh đã hơn 50%. Nghe khó tin vì ta hay chỉ nghĩ tới ngày sinh của mình. Nhưng 23 người tạo ra tới 253 cặp để so sánh, nên khả năng trùng khá cao.",
+   "ex": "23 × 22 : 2 = 253 cặp.",
+   "en": [
+    "birthday paradox",
+    "probability"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Tam giác Pascal",
+   "vi": "Trong tam giác Pascal, mỗi số bằng tổng hai số ngay phía trên nó. Các hàng là 1; 1 1; 1 2 1; 1 3 3 1; 1 4 6 4 1… Tổng các số ở hàng thứ n (đếm từ hàng 0) bằng 2^n. Blaise Pascal nghiên cứu nó vào thế kỷ 17, dù các nhà toán học châu Á đã biết từ trước.",
+   "ex": "Hàng 1 4 6 4 1 có tổng 16 = 2^4.",
+   "en": [
+    "Pascal's triangle"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Hình chữ nhật vàng",
+   "vi": "Hình chữ nhật vàng có chiều dài chia chiều rộng xấp xỉ 1,618. Cắt bỏ một hình vuông khỏi nó, phần còn lại lại là một hình chữ nhật vàng nhỏ hơn. Vẽ các cung tròn trong những hình vuông đó, ta được xoắn ốc vàng rất đẹp.",
+   "ex": "Tính chất lạ: φ × φ = φ + 1 ≈ 2,618.",
+   "en": [
+    "golden rectangle",
+    "spiral"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Số nào dưới đây là số chẵn?",
+   "a": [
+    "48",
+    "37",
+    "51",
+    "99"
+   ],
+   "c": 0,
+   "why": "48 có chữ số tận cùng là 8 nên là số chẵn.",
+   "en": "even number"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "7 × 8 bằng bao nhiêu?",
+   "a": [
+    "54",
+    "48",
+    "64",
+    "56"
+   ],
+   "c": 3,
+   "why": "Theo bảng cửu chương, 7 × 8 = 56.",
+   "en": "multiplication"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Trong số 4725, chữ số 7 có giá trị là bao nhiêu?",
+   "a": [
+    "70",
+    "7",
+    "700",
+    "7000"
+   ],
+   "c": 2,
+   "why": "Chữ số 7 đứng ở hàng trăm nên có giá trị 700.",
+   "en": "place value"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Một số bất kỳ nhân với 0 thì bằng bao nhiêu?",
+   "a": [
+    "1",
+    "0",
+    "Chính số đó",
+    "10"
+   ],
+   "c": 1,
+   "why": "Số nào nhân với 0 cũng bằng 0.",
+   "en": "zero"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Số nào dưới đây là số nguyên tố?",
+   "a": [
+    "15",
+    "13",
+    "21",
+    "27"
+   ],
+   "c": 1,
+   "why": "13 chỉ có hai ước là 1 và 13. Các số kia đều chia hết cho 3 hoặc 5.",
+   "en": "prime number"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "2 + 3 × 4 bằng bao nhiêu?",
+   "a": [
+    "14",
+    "20",
+    "24",
+    "9"
+   ],
+   "c": 0,
+   "why": "Nhân trước cộng sau: 3 × 4 = 12, rồi 2 + 12 = 14.",
+   "en": "order of operations"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Số nào dưới đây chia hết cho 9?",
+   "a": [
+    "728",
+    "731",
+    "740",
+    "729"
+   ],
+   "c": 3,
+   "why": "729 có tổng chữ số 7 + 2 + 9 = 18, chia hết cho 9.",
+   "en": "divisibility"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Ước chung lớn nhất của 12 và 18 là?",
+   "a": [
+    "3",
+    "2",
+    "6",
+    "36"
+   ],
+   "c": 2,
+   "why": "6 là số lớn nhất mà cả 12 và 18 đều chia hết. 36 là bội chung nhỏ nhất.",
+   "en": "greatest common divisor"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Phân tích 60 ra thừa số nguyên tố được kết quả nào?",
+   "a": [
+    "2 × 3 × 10",
+    "4 × 15",
+    "2² × 3 × 5",
+    "2 × 5²"
+   ],
+   "c": 2,
+   "why": "60 = 4 × 3 × 5 = 2² × 3 × 5, và 2, 3, 5 đều là số nguyên tố.",
+   "en": "prime factorization"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Số 1101 trong hệ nhị phân bằng số nào trong hệ thập phân?",
+   "a": [
+    "11",
+    "13",
+    "1101",
+    "9"
+   ],
+   "c": 1,
+   "why": "1101 = 8 + 4 + 0 + 1 = 13.",
+   "en": "binary"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Từ 1 đến 100 có bao nhiêu số nguyên tố?",
+   "a": [
+    "25",
+    "10",
+    "50",
+    "33"
+   ],
+   "c": 0,
+   "why": "Dùng sàng Eratosthenes, ta đếm được 25 số nguyên tố từ 1 đến 100.",
+   "en": "prime number"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Ai đã chứng minh có vô số số nguyên tố từ thời Hy Lạp cổ?",
+   "a": [
+    "Isaac Newton",
+    "Albert Einstein",
+    "Leonardo da Vinci",
+    "Euclid"
+   ],
+   "c": 3,
+   "why": "Euclid chứng minh điều này khoảng 300 năm trước Công nguyên.",
+   "en": "Euclid"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Trong phân số 3/4, số 4 được gọi là gì?",
+   "a": [
+    "Tử số",
+    "Thương",
+    "Tích",
+    "Mẫu số"
+   ],
+   "c": 3,
+   "why": "Số nằm dưới gạch phân số là mẫu số, cho biết chia thành mấy phần bằng nhau.",
+   "en": "denominator"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Phân số nào lớn nhất?",
+   "a": [
+    "3/8",
+    "1/8",
+    "5/8",
+    "2/8"
+   ],
+   "c": 2,
+   "why": "Cùng mẫu số 8, phân số nào có tử số lớn hơn thì lớn hơn.",
+   "en": "compare fractions"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Số 0,5 bằng phân số nào?",
+   "a": [
+    "1/5",
+    "1/2",
+    "5/1",
+    "1/50"
+   ],
+   "c": 1,
+   "why": "0,5 là 5 phần mười, tức 5/10 = 1/2.",
+   "en": "decimal"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Cắt bánh thành 4 phần bằng nhau, em ăn 1 phần. Em đã ăn bao nhiêu cái bánh?",
+   "a": [
+    "1/4 cái bánh",
+    "1/3 cái bánh",
+    "3/4 cái bánh",
+    "4 cái bánh"
+   ],
+   "c": 0,
+   "why": "Lấy 1 phần trong 4 phần bằng nhau là 1/4.",
+   "en": "quarter"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "1/2 + 1/3 bằng bao nhiêu?",
+   "a": [
+    "5/6",
+    "2/5",
+    "2/6",
+    "1/6"
+   ],
+   "c": 0,
+   "why": "Quy đồng: 3/6 + 2/6 = 5/6.",
+   "en": "add fractions"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Rút gọn phân số 6/9 được phân số nào?",
+   "a": [
+    "3/2",
+    "1/3",
+    "6/3",
+    "2/3"
+   ],
+   "c": 3,
+   "why": "Chia cả tử và mẫu cho 3: 6/9 = 2/3.",
+   "en": "simplify"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "20% của 50 là bao nhiêu?",
+   "a": [
+    "20",
+    "5",
+    "10",
+    "25"
+   ],
+   "c": 2,
+   "why": "50 × 20 : 100 = 10.",
+   "en": "percent"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "2/3 × 3/4 bằng bao nhiêu?",
+   "a": [
+    "5/7",
+    "1/2",
+    "6/7",
+    "2/3"
+   ],
+   "c": 1,
+   "why": "Tử nhân tử, mẫu nhân mẫu: 6/12 = 1/2.",
+   "en": "multiply fractions"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Phân số nào viết được thành số thập phân hữu hạn?",
+   "a": [
+    "1/3",
+    "3/8",
+    "2/7",
+    "5/6"
+   ],
+   "c": 1,
+   "why": "Mẫu 8 = 2 × 2 × 2 chỉ có thừa số 2, nên 3/8 = 0,375.",
+   "en": "terminating decimal"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Số nào dưới đây là số vô tỉ?",
+   "a": [
+    "√2",
+    "0,5",
+    "1/3",
+    "4"
+   ],
+   "c": 0,
+   "why": "√2 không viết được thành phân số. Các số còn lại đều là số hữu tỉ.",
+   "en": "irrational number"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Giá 100 nghìn tăng 10% rồi giảm 10%. Giá mới là bao nhiêu?",
+   "a": [
+    "100 nghìn",
+    "101 nghìn",
+    "90 nghìn",
+    "99 nghìn"
+   ],
+   "c": 3,
+   "why": "Tăng thành 110 nghìn, giảm 10% của 110 là 11, còn 99 nghìn.",
+   "en": "percentage change"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "1/2 : 1/4 bằng bao nhiêu?",
+   "a": [
+    "1/8",
+    "1/2",
+    "2",
+    "4"
+   ],
+   "c": 2,
+   "why": "Chia cho 1/4 là nhân với 4: 1/2 × 4 = 2.",
+   "en": "divide fractions"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Hình vuông có mấy cạnh bằng nhau?",
+   "a": [
+    "2 cạnh",
+    "3 cạnh",
+    "4 cạnh",
+    "6 cạnh"
+   ],
+   "c": 2,
+   "why": "Hình vuông có 4 cạnh và cả 4 cạnh đều bằng nhau.",
+   "en": "square"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Hình chữ nhật dài 5 cm, rộng 3 cm có chu vi bao nhiêu?",
+   "a": [
+    "15 cm",
+    "16 cm",
+    "8 cm",
+    "30 cm"
+   ],
+   "c": 1,
+   "why": "Chu vi = (5 + 3) × 2 = 16 cm.",
+   "en": "perimeter"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Hình vuông cạnh 4 cm có diện tích bao nhiêu?",
+   "a": [
+    "16 cm²",
+    "8 cm²",
+    "12 cm²",
+    "4 cm²"
+   ],
+   "c": 0,
+   "why": "Diện tích = cạnh × cạnh = 4 × 4 = 16 cm².",
+   "en": "area"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Đường kính hình tròn dài gấp mấy lần bán kính?",
+   "a": [
+    "3 lần",
+    "4 lần",
+    "Bằng nhau",
+    "2 lần"
+   ],
+   "c": 3,
+   "why": "Đường kính gồm hai bán kính nối nhau qua tâm.",
+   "en": "diameter"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Tổng ba góc trong một tam giác bằng bao nhiêu?",
+   "a": [
+    "90°",
+    "360°",
+    "270°",
+    "180°"
+   ],
+   "c": 3,
+   "why": "Mọi tam giác đều có tổng ba góc bằng 180 độ.",
+   "en": "angle sum"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Góc 120° là loại góc gì?",
+   "a": [
+    "Góc nhọn",
+    "Góc vuông",
+    "Góc tù",
+    "Góc bẹt"
+   ],
+   "c": 2,
+   "why": "120° lớn hơn 90° và nhỏ hơn 180° nên là góc tù.",
+   "en": "obtuse angle"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Tam giác có đáy 6 cm, chiều cao 4 cm. Diện tích là bao nhiêu?",
+   "a": [
+    "24 cm²",
+    "12 cm²",
+    "10 cm²",
+    "20 cm²"
+   ],
+   "c": 1,
+   "why": "Diện tích = 6 × 4 : 2 = 12 cm².",
+   "en": "triangle area"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Hình tròn có đường kính 10 cm. Chu vi khoảng bao nhiêu?",
+   "a": [
+    "31,4 cm",
+    "314 cm",
+    "15,7 cm",
+    "78,5 cm"
+   ],
+   "c": 0,
+   "why": "Chu vi = đường kính × π ≈ 10 × 3,14 = 31,4 cm.",
+   "en": "circumference"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Tam giác vuông có hai cạnh góc vuông dài 6 và 8. Cạnh huyền dài bao nhiêu?",
+   "a": [
+    "10",
+    "14",
+    "12",
+    "48"
+   ],
+   "c": 0,
+   "why": "6² + 8² = 36 + 64 = 100, nên cạnh huyền là √100 = 10.",
+   "en": "Pythagorean theorem"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Có tất cả bao nhiêu loại khối đa diện đều?",
+   "a": [
+    "4 loại",
+    "6 loại",
+    "Vô số loại",
+    "5 loại"
+   ],
+   "c": 3,
+   "why": "Chỉ có 5 khối Platon: 4, 6, 8, 12 và 20 mặt.",
+   "en": "Platonic solid"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Hình lập phương cạnh 3 cm có thể tích bao nhiêu?",
+   "a": [
+    "9 cm³",
+    "18 cm³",
+    "27 cm³",
+    "54 cm³"
+   ],
+   "c": 2,
+   "why": "Thể tích = 3 × 3 × 3 = 27 cm³.",
+   "en": "volume"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Hình vuông có bao nhiêu trục đối xứng?",
+   "a": [
+    "2 trục",
+    "4 trục",
+    "1 trục",
+    "8 trục"
+   ],
+   "c": 1,
+   "why": "Hình vuông có 2 trục qua trung điểm các cạnh và 2 trục là đường chéo.",
+   "en": "symmetry"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "1 m bằng bao nhiêu xăng-ti-mét?",
+   "a": [
+    "10 cm",
+    "100 cm",
+    "1000 cm",
+    "60 cm"
+   ],
+   "c": 1,
+   "why": "1 m = 100 cm.",
+   "en": "meter"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "1 giờ bằng bao nhiêu phút?",
+   "a": [
+    "60 phút",
+    "100 phút",
+    "30 phút",
+    "24 phút"
+   ],
+   "c": 0,
+   "why": "1 giờ = 60 phút.",
+   "en": "hour"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "1 kg bằng bao nhiêu gam?",
+   "a": [
+    "100 g",
+    "10 g",
+    "500 g",
+    "1000 g"
+   ],
+   "c": 3,
+   "why": "Kilo nghĩa là nghìn, nên 1 kg = 1000 g.",
+   "en": "kilogram"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Một ngày có bao nhiêu giờ?",
+   "a": [
+    "12 giờ",
+    "60 giờ",
+    "24 giờ",
+    "36 giờ"
+   ],
+   "c": 2,
+   "why": "Một ngày đêm có 24 giờ.",
+   "en": "day"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "1 tấn bằng bao nhiêu ki-lô-gam?",
+   "a": [
+    "100 kg",
+    "10 kg",
+    "1000 kg",
+    "10 000 kg"
+   ],
+   "c": 2,
+   "why": "1 tấn = 10 tạ = 1000 kg.",
+   "en": "ton"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Xe đi 40 km mỗi giờ, đi trong 3 giờ thì được bao xa?",
+   "a": [
+    "43 km",
+    "120 km",
+    "80 km",
+    "160 km"
+   ],
+   "c": 1,
+   "why": "Quãng đường = 40 × 3 = 120 km.",
+   "en": "distance"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Năm nào dưới đây là năm nhuận?",
+   "a": [
+    "2024",
+    "2023",
+    "1900",
+    "2100"
+   ],
+   "c": 0,
+   "why": "2024 chia hết cho 4. Năm 1900 và 2100 tròn trăm nhưng không chia hết cho 400.",
+   "en": "leap year"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "1 héc-ta bằng bao nhiêu mét vuông?",
+   "a": [
+    "1000 m²",
+    "100 m²",
+    "100 000 m²",
+    "10 000 m²"
+   ],
+   "c": 3,
+   "why": "1 ha = 10 000 m², bằng một hình vuông cạnh 100 m.",
+   "en": "hectare"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "1 m³ chứa được bao nhiêu lít?",
+   "a": [
+    "100 lít",
+    "10 lít",
+    "10 000 lít",
+    "1000 lít"
+   ],
+   "c": 3,
+   "why": "1 m³ = 1000 dm³ và 1 dm³ = 1 lít.",
+   "en": "cubic meter"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "36 km/h bằng bao nhiêu m/s?",
+   "a": [
+    "36 m/s",
+    "3,6 m/s",
+    "10 m/s",
+    "100 m/s"
+   ],
+   "c": 2,
+   "why": "Đổi km/h sang m/s thì chia cho 3,6: 36 : 3,6 = 10.",
+   "en": "unit conversion"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Hệ đơn vị quốc tế SI có bao nhiêu đơn vị cơ bản?",
+   "a": [
+    "5",
+    "7",
+    "10",
+    "3"
+   ],
+   "c": 1,
+   "why": "Gồm mét, ki-lô-gam, giây, ampe, kelvin, mol và candela.",
+   "en": "SI unit"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Tiền tố “mili” có nghĩa là gì?",
+   "a": [
+    "Một phần nghìn",
+    "Một nghìn lần",
+    "Một phần trăm",
+    "Một triệu lần"
+   ],
+   "c": 0,
+   "why": "Mili là 1/1000, ví dụ 1 mm = 1/1000 m.",
+   "en": "prefix"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "□ + 5 = 12. Số trong ô vuông là bao nhiêu?",
+   "a": [
+    "7",
+    "17",
+    "5",
+    "6"
+   ],
+   "c": 0,
+   "why": "□ = 12 − 5 = 7.",
+   "en": "missing number"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "x + 3 = 10. Vậy x bằng bao nhiêu?",
+   "a": [
+    "13",
+    "3",
+    "10",
+    "7"
+   ],
+   "c": 3,
+   "why": "x = 10 − 3 = 7. Thử lại: 7 + 3 = 10.",
+   "en": "variable"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Số tiếp theo của dãy 2, 4, 6, 8 là số nào?",
+   "a": [
+    "9",
+    "12",
+    "10",
+    "16"
+   ],
+   "c": 2,
+   "why": "Mỗi số hơn số trước 2 đơn vị, nên sau 8 là 10.",
+   "en": "pattern"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "□ × 4 = 20. Số trong ô vuông là bao nhiêu?",
+   "a": [
+    "16",
+    "5",
+    "24",
+    "80"
+   ],
+   "c": 1,
+   "why": "□ = 20 : 4 = 5.",
+   "en": "inverse operation"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Giải phương trình 2x + 3 = 11. x bằng bao nhiêu?",
+   "a": [
+    "7",
+    "4",
+    "5",
+    "8"
+   ],
+   "c": 1,
+   "why": "2x = 11 − 3 = 8, nên x = 8 : 2 = 4.",
+   "en": "linear equation"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Số nào nhỏ nhất?",
+   "a": [
+    "−5",
+    "−1",
+    "0",
+    "3"
+   ],
+   "c": 0,
+   "why": "Trên trục số, −5 nằm xa nhất về bên trái nên nhỏ nhất.",
+   "en": "negative number"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "(−3) × (−4) bằng bao nhiêu?",
+   "a": [
+    "−12",
+    "−7",
+    "7",
+    "12"
+   ],
+   "c": 3,
+   "why": "Âm nhân âm ra dương: 3 × 4 = 12.",
+   "en": "negative number"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "3 quyển vở giá 24 nghìn đồng. 5 quyển cùng loại giá bao nhiêu?",
+   "a": [
+    "30 nghìn đồng",
+    "120 nghìn đồng",
+    "40 nghìn đồng",
+    "45 nghìn đồng"
+   ],
+   "c": 2,
+   "why": "1 quyển giá 24 : 3 = 8 nghìn, 5 quyển giá 8 × 5 = 40 nghìn.",
+   "en": "direct proportion"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "(a + b)² bằng biểu thức nào?",
+   "a": [
+    "a² + b²",
+    "2a + 2b",
+    "a² + 2ab + b²",
+    "a² + ab + b²"
+   ],
+   "c": 2,
+   "why": "Đây là hằng đẳng thức bình phương của một tổng.",
+   "en": "algebraic identity"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Phương trình x² − 5x + 6 = 0 có nghiệm là gì?",
+   "a": [
+    "x = 1 và x = 6",
+    "x = 2 và x = 3",
+    "x = −2 và x = −3",
+    "Vô nghiệm"
+   ],
+   "c": 1,
+   "why": "x² − 5x + 6 = (x − 2)(x − 3), nên nghiệm là 2 và 3.",
+   "en": "quadratic equation"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Đồ thị của hàm số y = 2x + 1 có dạng gì?",
+   "a": [
+    "Một đường thẳng",
+    "Một đường tròn",
+    "Một parabol",
+    "Một hình vuông"
+   ],
+   "c": 0,
+   "why": "Hàm số dạng y = ax + b luôn có đồ thị là đường thẳng.",
+   "en": "linear function"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Từ “algorithm” (thuật toán) bắt nguồn từ tên nhà toán học nào?",
+   "a": [
+    "Euclid",
+    "Pythagoras",
+    "Archimedes",
+    "Al-Khwarizmi"
+   ],
+   "c": 3,
+   "why": "Tên Al-Khwarizmi khi viết theo kiểu La-tinh đã thành từ “algorithm”.",
+   "en": "algorithm"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Số tiếp theo trong dãy 1, 1, 2, 3, 5, 8 là số nào?",
+   "a": [
+    "11",
+    "10",
+    "16",
+    "13"
+   ],
+   "c": 3,
+   "why": "Mỗi số bằng tổng hai số trước: 5 + 8 = 13.",
+   "en": "Fibonacci sequence"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Khối Rubik 3×3 có tất cả bao nhiêu ô màu nhỏ trên bề mặt?",
+   "a": [
+    "27",
+    "36",
+    "54",
+    "9"
+   ],
+   "c": 2,
+   "why": "6 mặt, mỗi mặt 9 ô: 6 × 9 = 54.",
+   "en": "Rubik's Cube"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Tung đồng xu một lần, xác suất ra mặt ngửa là bao nhiêu?",
+   "a": [
+    "1/3",
+    "1/2",
+    "1/4",
+    "1"
+   ],
+   "c": 1,
+   "why": "Có 2 khả năng bằng nhau là sấp và ngửa.",
+   "en": "probability"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Ma phương 3×3 dùng các số từ 1 đến 9 có tổng mỗi hàng bằng bao nhiêu?",
+   "a": [
+    "15",
+    "9",
+    "18",
+    "45"
+   ],
+   "c": 0,
+   "why": "Tổng 1 đến 9 là 45, chia đều cho 3 hàng được 15.",
+   "en": "magic square"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Tỷ lệ vàng φ xấp xỉ bằng bao nhiêu?",
+   "a": [
+    "1,618",
+    "3,14",
+    "2,718",
+    "1,414"
+   ],
+   "c": 0,
+   "why": "φ = (1 + √5) : 2 ≈ 1,618. Số 3,14 là π, 1,414 là √2.",
+   "en": "golden ratio"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Gieo một xúc xắc 6 mặt, xác suất ra số chẵn là bao nhiêu?",
+   "a": [
+    "1/6",
+    "1/3",
+    "2/3",
+    "1/2"
+   ],
+   "c": 3,
+   "why": "Có 3 mặt chẵn (2, 4, 6) trong 6 mặt: 3/6 = 1/2.",
+   "en": "dice"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "1 + 2 + 3 + … + 100 bằng bao nhiêu?",
+   "a": [
+    "5000",
+    "10 100",
+    "5050",
+    "4950"
+   ],
+   "c": 2,
+   "why": "Có 50 cặp, mỗi cặp tổng 101: 50 × 101 = 5050.",
+   "en": "sum"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "13 : 8 = 1,625. Kết quả này gần với số đặc biệt nào?",
+   "a": [
+    "Số π",
+    "Tỷ lệ vàng φ",
+    "Số 0",
+    "Số 10"
+   ],
+   "c": 1,
+   "why": "Tỉ số hai số Fibonacci liên tiếp tiến gần φ ≈ 1,618.",
+   "en": "golden ratio"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Mọi trạng thái của Rubik 3×3 đều giải được trong tối đa bao nhiêu bước xoay?",
+   "a": [
+    "10 bước",
+    "20 bước",
+    "50 bước",
+    "100 bước"
+   ],
+   "c": 1,
+   "why": "Năm 2010, người ta chứng minh con số này là 20.",
+   "en": "God's number"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Cần ít nhất bao nhiêu người để xác suất có hai người trùng ngày sinh vượt 50%?",
+   "a": [
+    "23 người",
+    "183 người",
+    "366 người",
+    "100 người"
+   ],
+   "c": 0,
+   "why": "Với 23 người, xác suất này đã khoảng 50,7%.",
+   "en": "birthday paradox"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Hàng 1, 4, 6, 4, 1 của tam giác Pascal có tổng bằng bao nhiêu?",
+   "a": [
+    "15",
+    "10",
+    "32",
+    "16"
+   ],
+   "c": 3,
+   "why": "1 + 4 + 6 + 4 + 1 = 16 = 2^4.",
+   "en": "Pascal's triangle"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Tỷ lệ vàng φ có tính chất đặc biệt nào?",
+   "a": [
+    "φ × φ = 2φ",
+    "φ = π : 2",
+    "φ × φ = φ + 1",
+    "φ × φ = 1"
+   ],
+   "c": 2,
+   "why": "φ² ≈ 2,618 = 1,618 + 1.",
+   "en": "golden ratio"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Cậu bé Gauss cộng siêu nhanh",
+   "vi": "Chuyện kể rằng, ở Đức thế kỷ 18, thầy giáo bảo cả lớp cộng các số từ 1 đến 100. Thầy nghĩ sẽ được nghỉ một lúc lâu. Nhưng chỉ ít phút sau, cậu bé Carl Friedrich Gauss đã có đáp án 5050. Cậu nhận ra 1 + 100, 2 + 99, 3 + 98… đều bằng 101, và có 50 cặp như thế. Lớn lên, Gauss trở thành một trong những nhà toán học vĩ đại nhất.",
+   "en": [
+    "Gauss",
+    "sum"
+   ]
+  },
+  {
+   "t": "Eratosthenes đo Trái Đất bằng cái bóng",
+   "vi": "Khoảng năm 240 trước Công nguyên, Eratosthenes sống ở Alexandria, Ai Cập. Ông nghe nói ở thành Syene, vào trưa ngày hè, ánh nắng chiếu thẳng xuống đáy giếng. Cùng lúc đó ở Alexandria, cây cột vẫn có bóng, lệch khoảng 7 độ, tức khoảng 1/50 vòng tròn. Ông lấy khoảng cách giữa hai thành nhân với 50 để ra chu vi Trái Đất. Kết quả của ông khá gần với con số thật khoảng 40 000 km!",
+   "en": [
+    "Eratosthenes",
+    "circumference"
+   ]
+  },
+  {
+   "t": "Archimedes săn số π",
+   "vi": "Nhà bác học Hy Lạp Archimedes muốn biết số π chính xác hơn. Ông vẽ các đa giác đều bên trong và bên ngoài một hình tròn. Ông tăng dần số cạnh lên tới 96 cạnh. Nhờ vậy ông chứng minh π nằm giữa 3 10/71 và 3 1/7, tức khoảng giữa 3,1408 và 3,1429. Hơn 2000 năm trước mà đã chính xác như thế!",
+   "en": [
+    "Archimedes",
+    "pi"
+   ]
+  },
+  {
+   "t": "Fibonacci và đàn thỏ",
+   "vi": "Năm 1202, nhà toán học Ý Fibonacci viết cuốn sách Liber Abaci. Trong sách có bài toán vui: một cặp thỏ mỗi tháng đẻ ra một cặp mới, và cặp mới sau hai tháng cũng bắt đầu đẻ. Số cặp thỏ qua các tháng là 1, 1, 2, 3, 5, 8… Đó chính là dãy Fibonacci. Cuốn sách này cũng giúp châu Âu làm quen với các chữ số 0 đến 9 mà ta dùng ngày nay.",
+   "en": [
+    "Fibonacci",
+    "rabbit problem"
+   ]
+  },
+  {
+   "t": "Hành trình của số 0",
+   "vi": "Ngày xưa, nhiều dân tộc chưa có chữ số 0. Người Ấn Độ cổ đã dùng 0 như một con số thật sự. Năm 628, nhà toán học Brahmagupta viết ra quy tắc cộng, trừ, nhân với số 0. Sau đó các nhà toán học vùng Trung Đông như Al-Khwarizmi tiếp tục truyền bá cách viết số này. Dần dần cả thế giới dùng hệ thập phân có số 0 như bây giờ.",
+   "en": [
+    "zero",
+    "history"
+   ]
+  },
+  {
+   "t": "Trạng Lường Lương Thế Vinh cân voi",
+   "vi": "Lương Thế Vinh là trạng nguyên thời Lê, thế kỷ 15, nổi tiếng giỏi toán nên được gọi là Trạng Lường. Ông được cho là tác giả cuốn sách toán Đại thành toán pháp. Chuyện dân gian kể rằng ông cân được con voi rất to. Ông dắt voi xuống thuyền, đánh dấu mực nước ngập ở mạn thuyền. Rồi ông cho voi lên bờ, chất đá xuống thuyền đến đúng vạch đó, và cân từng phần đá là biết voi nặng bao nhiêu.",
+   "en": [
+    "Luong The Vinh",
+    "weighing"
+   ]
+  },
+  {
+   "t": "Khối Rubik và con số 20",
+   "vi": "Khối Rubik được phát minh ở Hung-ga-ri năm 1974, ban đầu như một mô hình giúp học về chuyển động trong không gian. Nhiều năm liền, người ta tự hỏi: cần nhiều nhất bao nhiêu bước để giải mọi trạng thái? Vì có khoảng 43 tỷ tỷ trạng thái, không ai thử tay hết được. Năm 2010, một nhóm nhà toán học dùng máy tính chạy rất lâu và chứng minh câu trả lời là 20 bước. Con số ấy được gọi vui là “God's number”.",
+   "en": [
+    "Rubik's Cube",
+    "God's number"
+   ]
+  },
+  {
+   "t": "Pythagoras và tiếng đàn",
+   "vi": "Tương truyền, nhà toán học Hy Lạp Pythagoras và học trò rất mê âm nhạc. Họ để ý rằng khi dây đàn ngắn đi còn một nửa, âm thanh cao lên đúng một quãng tám. Tỉ lệ đơn giản như 2:1 hay 3:2 tạo ra những âm nghe rất hài hòa. Từ đó, họ tin rằng các con số ẩn chứa trong mọi thứ, kể cả âm nhạc.",
+   "en": [
+    "Pythagoras",
+    "music",
+    "ratio"
+   ]
+  },
+  {
+   "t": "Con số 1729 của Ramanujan",
+   "vi": "Srinivasa Ramanujan là thiên tài toán học người Ấn Độ đầu thế kỷ 20. Một lần, nhà toán học Hardy đến thăm ông bằng chiếc taxi số 1729 và chê đó là con số chán. Ramanujan lập tức nói: “Không đâu, đó là số nhỏ nhất viết được thành tổng hai lập phương theo hai cách khác nhau!”. Thật vậy, 1729 = 1³ + 12³ = 9³ + 10³. Từ đó 1729 được gọi là số Hardy–Ramanujan.",
+   "en": [
+    "Ramanujan",
+    "cube number"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: Sai là để học",
+   "vi": "Nhà toán học nào cũng từng làm sai rất nhiều lần. Mỗi lỗi sai chỉ cho em chỗ cần hiểu thêm. Đừng xóa bài sai đi, hãy tìm xem sai ở bước nào. Hiểu được lỗi là em đã tiến bộ.",
+   "try": "Lấy một bài toán em từng làm sai, làm lại từ đầu và khoanh tròn đúng bước bị sai."
+  },
+  {
+   "t": "Bài học hôm nay: Ước lượng trước khi tính",
+   "vi": "Trước khi tính chính xác, hãy đoán xem kết quả khoảng bao nhiêu. Ước lượng giúp em phát hiện đáp số vô lý. Ví dụ 49 × 21 phải gần 50 × 20 = 1000. Nếu ra 10 000 là chắc chắn sai rồi.",
+   "try": "Đoán số bước chân từ phòng em đến bếp, rồi đi đếm thật xem em đoán gần đến đâu."
+  },
+  {
+   "t": "Bài học hôm nay: Săn tỷ lệ vàng",
+   "vi": "Tỷ lệ vàng φ ≈ 1,618 là con số Cô Phi Lam yêu nhất. Có người cho rằng nó xuất hiện trong nhiều đồ vật và tranh vẽ đẹp. Em hãy tự đo để kiểm tra, đừng chỉ tin lời đồn. Toán học là phải tự mình kiểm chứng.",
+   "try": "Dùng thước đo chiều dài và chiều rộng của một cuốn sách, một tấm thẻ, rồi chia dài cho rộng xem có gần 1,6 không."
+  },
+  {
+   "t": "Bài học hôm nay: Gấp giấy hiểu phân số",
+   "vi": "Phân số dễ hiểu hơn khi em nhìn thấy nó. Gấp đôi tờ giấy, mỗi phần là 1/2. Gấp đôi lần nữa, mỗi phần là 1/4. Em sẽ thấy 2/4 đúng bằng 1/2.",
+   "try": "Gấp một tờ giấy làm đôi ba lần liên tiếp, mở ra đếm số ô và tô màu 3/8 tờ giấy."
+  },
+  {
+   "t": "Bài học hôm nay: Xác suất từ đồng xu",
+   "vi": "Xác suất cho biết một việc có dễ xảy ra hay không. Tung đồng xu ít lần thì kết quả có thể lệch. Tung càng nhiều lần, tỉ lệ ngửa càng gần 1/2. Đó gọi là quy luật số lớn.",
+   "try": "Tung một đồng xu 20 lần, ghi lại số lần sấp và ngửa, rồi so với con số 10."
+  },
+  {
+   "t": "Bài học hôm nay: Tách số để tính nhẩm",
+   "vi": "Số khó có thể tách thành số dễ. 25 × 12 = 25 × 10 + 25 × 2 = 250 + 50 = 300. Mẹo này dùng tính chất phân phối. Tính nhẩm giỏi giúp em tự tin hơn mỗi ngày.",
+   "try": "Tính nhẩm 15 × 12 và 9 × 13 bằng cách tách số, rồi kiểm tra lại bằng phép tính viết."
+  },
+  {
+   "t": "Bài học hôm nay: Cơ thể là cây thước",
+   "vi": "Ngày xưa, người ta đo bằng gang tay, sải tay, bước chân. Mỗi người đo một khác nên cần đơn vị chung là mét. Biết số đo cơ thể giúp em ước lượng nhanh khi không có thước.",
+   "try": "Dùng thước đo gang tay và sải tay của em, rồi dùng gang tay để ước lượng chiều dài cái bàn."
+  },
+  {
+   "t": "Bài học hôm nay: Hình học quanh nhà",
+   "vi": "Hình học có ở khắp nơi trong nhà em. Đĩa ăn là hình tròn, cửa sổ là hình chữ nhật, hộp sữa là hình hộp. Nhìn ra hình khối giúp em hiểu không gian tốt hơn.",
+   "try": "Đi quanh nhà và liệt kê 3 đồ vật hình tròn, 3 đồ vật hình chữ nhật và 3 đồ vật hình hộp."
+  },
+  {
+   "t": "Bài học hôm nay: Đọc kỹ đề bài",
+   "vi": "Nhiều bạn làm sai không phải vì không biết, mà vì đọc vội. Hãy đọc đề hai lần. Gạch chân những con số và câu hỏi chính. Rồi tự hỏi: đề cho gì, đề hỏi gì?",
+   "try": "Chọn một bài toán có lời văn, gạch chân dữ kiện bằng bút màu và viết lại câu hỏi bằng lời của em."
+  },
+  {
+   "t": "Bài học hôm nay: Kiên nhẫn như giải Rubik",
+   "vi": "Không ai giải Rubik nhanh ngay từ lần đầu. Người giỏi học từng bước nhỏ, như xếp một mặt trước, rồi đến từng tầng. Toán học cũng vậy: chia bài khó thành nhiều bước dễ. Kiên nhẫn sẽ giúp em đi rất xa.",
+   "try": "Lấy một khối Rubik hoặc một bộ xếp hình, thử hoàn thành một mặt hoặc một phần nhỏ và ghi lại thời gian."
+  },
+  {
+   "t": "Bài học hôm nay: Luôn thử lại đáp số",
+   "vi": "Giải xong phương trình, hãy thay đáp số vào đề để kiểm tra. Nếu hai vế bằng nhau là đúng. Thử lại chỉ mất một chút thời gian nhưng giúp em tránh mất điểm oan.",
+   "try": "Giải phương trình 3x + 2 = 17 rồi thay đáp số vào để kiểm tra hai vế có bằng nhau không."
+  },
+  {
+   "t": "Bài học hôm nay: Toán ở chợ",
+   "vi": "Đi chợ là lúc toán học được dùng nhiều nhất. Em cần cộng tiền, tính tiền thừa và so sánh giá. Biết tính nhanh giúp em giúp đỡ bố mẹ được nhiều việc.",
+   "try": "Nhờ bố mẹ cho em tính tổng tiền khi mua vài món đồ và tính số tiền thừa được trả lại."
+  }
+ ]
+}

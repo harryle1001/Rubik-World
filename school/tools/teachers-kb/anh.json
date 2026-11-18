@@ -1,0 +1,1843 @@
+{
+ "id": "anh",
+ "topics": [
+  "Từ vựng chủ đề",
+  "Ngữ pháp cơ bản",
+  "Thì động từ",
+  "Phát âm",
+  "Giao tiếp hằng ngày",
+  "Thành ngữ & văn hoá"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Màu sắc quanh em",
+   "vi": "Màu sắc là nhóm từ học đầu tiên. Đỏ là \"red\", xanh dương là \"blue\", xanh lá là \"green\", vàng là \"yellow\". Trong tiếng Anh, tính từ chỉ màu đứng trước danh từ: \"a red apple\" là một quả táo đỏ.",
+   "ex": "Mẹo: nhìn đồ vật trong phòng và gọi tên màu bằng tiếng Anh.",
+   "en": [
+    "red",
+    "blue",
+    "green"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Con vật thân quen",
+   "vi": "Chó là \"dog\", mèo là \"cat\", chim là \"bird\", cá là \"fish\". Số nhiều thường thêm \"s\": \"dogs\", \"cats\". Riêng \"fish\" khi nói nhiều con cá thường vẫn giữ nguyên là \"fish\".",
+   "ex": "Ví dụ: I have two cats and a dog.",
+   "en": [
+    "dog",
+    "cat",
+    "fish"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Gia đình của em",
+   "vi": "Bố là \"father\" (hay gọi thân mật \"dad\"), mẹ là \"mother\" (\"mum\" hoặc \"mom\"). Anh trai hay em trai đều là \"brother\", chị gái hay em gái đều là \"sister\". Ông bà gọi chung là \"grandparents\".",
+   "ex": "Ví dụ: This is my sister. She is ten.",
+   "en": [
+    "family",
+    "brother",
+    "sister"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Số đếm: -teen và -ty",
+   "vi": "Số 13 đến 19 có đuôi \"-teen\": \"thirteen\", \"fourteen\". Số tròn chục có đuôi \"-ty\": \"thirty\" là 30, \"forty\" là 40. Chú ý: \"forty\" không có chữ \"u\", dù \"four\" có chữ \"u\".",
+   "ex": "Mẹo: thirteen là 13, thirty là 30 — nghe kỹ âm cuối nhé.",
+   "en": [
+    "thirteen",
+    "thirty",
+    "forty"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Thứ và tháng viết hoa",
+   "vi": "Trong tiếng Anh, tên các thứ và tên các tháng luôn viết hoa chữ cái đầu. Ví dụ: \"Monday\" là thứ Hai, \"Sunday\" là Chủ nhật, \"January\" là tháng Một. Đây là điểm khác với tiếng Việt.",
+   "ex": "Ví dụ: My birthday is in June.",
+   "en": [
+    "Monday",
+    "January",
+    "capital letter"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Đồ dùng học tập",
+   "vi": "Bút chì là \"pencil\", thước kẻ là \"ruler\", cặp sách là \"schoolbag\". Cục tẩy người Mỹ gọi là \"eraser\", còn người Anh thường gọi là \"rubber\". Cả hai cách đều đúng, tuỳ nơi dùng.",
+   "ex": "Ví dụ: Can I borrow your ruler, please?",
+   "en": [
+    "pencil",
+    "ruler",
+    "eraser"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Nghề nghiệp với -er, -or",
+   "vi": "Nhiều từ chỉ nghề được tạo bằng cách thêm \"-er\" hoặc \"-or\" vào động từ. \"Teach\" là dạy, nên \"teacher\" là giáo viên. \"Act\" là diễn, nên \"actor\" là diễn viên. \"Farm\" thêm \"-er\" thành \"farmer\" là nông dân.",
+   "ex": "Mẹo: sing → singer, write → writer.",
+   "en": [
+    "teacher",
+    "actor",
+    "farmer"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Thời tiết với đuôi -y",
+   "vi": "Nhiều tính từ thời tiết là danh từ thêm \"-y\". \"Sun\" là mặt trời, \"sunny\" là có nắng. \"Rain\" là mưa, \"rainy\" là có mưa. \"Cloud\" thành \"cloudy\" là nhiều mây, \"wind\" thành \"windy\" là nhiều gió.",
+   "ex": "Ví dụ: It is sunny today.",
+   "en": [
+    "sunny",
+    "rainy",
+    "windy"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Tiền tố un-, re-, dis-",
+   "vi": "Tiền tố đứng đầu từ để đổi nghĩa. \"Un-\" và \"dis-\" thường mang nghĩa ngược lại: \"happy\" thành \"unhappy\" là không vui, \"like\" thành \"dislike\" là không thích. \"Re-\" nghĩa là làm lại: \"redo\" là làm lại.",
+   "ex": "Mẹo: biết tiền tố, em đoán được nghĩa của nhiều từ mới.",
+   "en": [
+    "prefix",
+    "unhappy",
+    "redo"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Đồng nghĩa và trái nghĩa",
+   "vi": "Từ đồng nghĩa (synonym) có nghĩa gần giống nhau, như \"big\" và \"large\" đều là to. Từ trái nghĩa (antonym) có nghĩa ngược nhau, như \"hot\" và \"cold\". Học từ theo cặp giúp em nhớ lâu hơn và viết câu phong phú hơn.",
+   "ex": "Ví dụ: fast ↔ slow, begin = start.",
+   "en": [
+    "synonym",
+    "antonym"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Tiếng Anh-Anh và Anh-Mỹ",
+   "vi": "Một số đồ vật có tên khác nhau ở Anh và Mỹ. Thang máy: người Anh nói \"lift\", người Mỹ nói \"elevator\". Căn hộ: \"flat\" và \"apartment\". Mùa thu: \"autumn\" và \"fall\". Chính tả cũng khác: \"colour\" (Anh) và \"color\" (Mỹ).",
+   "ex": "Mẹo: cả hai kiểu đều đúng, miễn là em dùng thống nhất.",
+   "en": [
+    "British English",
+    "American English"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Dùng a hay an?",
+   "vi": "Dùng \"an\" trước từ bắt đầu bằng một nguyên âm khi đọc, dùng \"a\" trước phụ âm khi đọc. Ví dụ: \"an apple\", \"an egg\", \"a book\". Quy tắc dựa vào âm, không dựa vào chữ: \"an hour\" vì chữ h câm, còn \"a university\" vì đọc như \"yu\".",
+   "ex": "Mẹo: nghe âm đầu, đừng chỉ nhìn chữ đầu.",
+   "en": [
+    "article",
+    "an apple",
+    "a book"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Số nhiều -s và -es",
+   "vi": "Đa số danh từ thêm \"-s\" khi số nhiều: \"book\" thành \"books\". Từ tận cùng bằng s, x, ch, sh thường thêm \"-es\": \"box\" thành \"boxes\", \"bus\" thành \"buses\". Từ tận cùng phụ âm + y thì đổi y thành i rồi thêm \"-es\": \"baby\" thành \"babies\".",
+   "ex": "Ví dụ: one watch, two watches.",
+   "en": [
+    "plural",
+    "boxes",
+    "babies"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Số nhiều bất quy tắc",
+   "vi": "Có những danh từ không thêm \"s\" mà đổi hẳn dạng. \"Child\" thành \"children\", \"man\" thành \"men\", \"woman\" thành \"women\". \"Tooth\" thành \"teeth\", \"foot\" thành \"feet\", \"mouse\" thành \"mice\". Những từ này em cần học thuộc.",
+   "ex": "Mẹo: một bàn chân foot, hai bàn chân feet.",
+   "en": [
+    "children",
+    "teeth",
+    "mice"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Động từ to be: am, is, are",
+   "vi": "\"To be\" nghĩa là \"thì, là, ở\". Dùng \"am\" với \"I\", dùng \"is\" với \"he, she, it\" và một người hay vật, dùng \"are\" với \"you, we, they\" và số nhiều. Ví dụ: \"I am Nam\", \"She is happy\", \"They are students\".",
+   "ex": "Mẹo: I am — he/she/it is — you/we/they are.",
+   "en": [
+    "be",
+    "am",
+    "are"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Tính từ đứng trước danh từ",
+   "vi": "Trong tiếng Việt ta nói \"chiếc xe đỏ\", tính từ đứng sau. Trong tiếng Anh, tính từ thường đứng trước danh từ: \"a red car\". Tính từ cũng không thêm \"s\" khi danh từ số nhiều: \"two red cars\", không viết \"reds cars\".",
+   "ex": "Ví dụ: a big house, small dogs.",
+   "en": [
+    "adjective",
+    "noun"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "In, on, at chỉ thời gian",
+   "vi": "Dùng \"at\" với giờ cụ thể: \"at 7 o'clock\". Dùng \"on\" với ngày và thứ: \"on Monday\", \"on 2nd May\". Dùng \"in\" với tháng, năm, mùa và buổi: \"in May\", \"in 2025\", \"in the morning\". Riêng ban đêm nói \"at night\".",
+   "ex": "Mẹo: at giờ, on ngày, in tháng-năm.",
+   "en": [
+    "preposition",
+    "at",
+    "on"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Tính từ sở hữu",
+   "vi": "Tính từ sở hữu cho biết vật thuộc về ai: \"my\" của tôi, \"your\" của bạn, \"his\" của anh ấy, \"her\" của cô ấy, \"our\" của chúng tôi, \"their\" của họ. Với tên người, ta thêm \"'s\": \"Lan's bag\" là cặp của Lan.",
+   "ex": "Ví dụ: This is my book. That is Minh's pen.",
+   "en": [
+    "possessive",
+    "my",
+    "their"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "There is và There are",
+   "vi": "\"There is\" và \"there are\" nghĩa là \"có\" để nói cái gì đó tồn tại ở đâu. Dùng \"there is\" với một vật hoặc danh từ không đếm được, \"there are\" với nhiều vật. Ví dụ: \"There is a cat on the sofa\", \"There are three books on the desk\".",
+   "ex": "Mẹo: is đi với một, are đi với nhiều.",
+   "en": [
+    "there is",
+    "there are"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "So sánh hơn và nhất",
+   "vi": "Tính từ ngắn thêm \"-er\" để so sánh hơn và \"-est\" để so sánh nhất: \"tall, taller, the tallest\". Tính từ dài dùng \"more\" và \"the most\": \"more beautiful\". Có dạng bất quy tắc: \"good, better, best\" và \"bad, worse, worst\".",
+   "ex": "Ví dụ: An is taller than Binh.",
+   "en": [
+    "comparative",
+    "superlative",
+    "better"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Đếm được và không đếm được",
+   "vi": "Danh từ đếm được có số nhiều, như \"apples\". Danh từ không đếm được thường không thêm \"s\", như \"water\", \"rice\", \"milk\". Dùng \"many\" với danh từ đếm được số nhiều và \"much\" với danh từ không đếm được: \"many apples\", \"much water\".",
+   "ex": "Mẹo: How many books? How much milk?",
+   "en": [
+    "countable",
+    "uncountable",
+    "much"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Câu hỏi với từ Wh-",
+   "vi": "Các từ hỏi giúp em hỏi thông tin: \"What\" cái gì, \"Where\" ở đâu, \"When\" khi nào, \"Who\" ai, \"Why\" tại sao. \"How\" hỏi như thế nào, dù không bắt đầu bằng \"wh\". Ví dụ: \"Where do you live?\" là bạn sống ở đâu.",
+   "ex": "Ví dụ: Why are you late?",
+   "en": [
+    "question word",
+    "where",
+    "why"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Hiện tại đơn: thói quen",
+   "vi": "Thì hiện tại đơn dùng cho thói quen và sự thật hiển nhiên. Với \"he, she, it\", động từ thêm \"-s\" hoặc \"-es\": \"I play\" nhưng \"he plays\", \"she watches\". Ví dụ sự thật: \"The sun rises in the east\" là mặt trời mọc ở hướng đông.",
+   "ex": "Mẹo: he/she/it nhớ thêm s.",
+   "en": [
+    "present simple",
+    "habit"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Hiện tại tiếp diễn",
+   "vi": "Thì hiện tại tiếp diễn nói việc đang xảy ra lúc này. Công thức: am/is/are + động từ thêm \"-ing\". Ví dụ: \"I am reading\" là tôi đang đọc, \"They are playing football\" là họ đang chơi bóng đá. Hay đi với \"now\" và \"at the moment\".",
+   "ex": "Ví dụ: Look! It is raining.",
+   "en": [
+    "present continuous",
+    "now"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Phủ định với don't, doesn't",
+   "vi": "Để phủ định thì hiện tại đơn, dùng \"don't\" với I, you, we, they và \"doesn't\" với he, she, it. Sau \"doesn't\", động từ trở về dạng gốc, không thêm \"s\". Ví dụ: \"She doesn't like milk\", không viết \"She doesn't likes milk\".",
+   "ex": "Mẹo: doesn't đã \"giữ\" chữ s rồi.",
+   "en": [
+    "negative",
+    "don't",
+    "doesn't"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Trạng từ chỉ tần suất",
+   "vi": "Các từ \"always\" luôn luôn, \"usually\" thường xuyên, \"sometimes\" thỉnh thoảng, \"never\" không bao giờ cho biết em làm việc gì thường hay không. Chúng thường đứng trước động từ thường và sau động từ \"to be\": \"I always walk to school\", \"He is never late\".",
+   "ex": "Ví dụ: I sometimes eat noodles.",
+   "en": [
+    "always",
+    "sometimes",
+    "never"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Quá khứ đơn có quy tắc",
+   "vi": "Thì quá khứ đơn kể việc đã xong trong quá khứ. Động từ có quy tắc thêm \"-ed\": \"play\" thành \"played\", \"watch\" thành \"watched\". Từ tận cùng bằng \"e\" chỉ thêm \"d\": \"like\" thành \"liked\". Dấu hiệu: \"yesterday\", \"last week\", \"two days ago\".",
+   "ex": "Ví dụ: I visited my grandma yesterday.",
+   "en": [
+    "past simple",
+    "yesterday"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Động từ bất quy tắc",
+   "vi": "Nhiều động từ thông dụng có dạng quá khứ riêng, không thêm \"-ed\". Ví dụ: \"go\" thành \"went\", \"eat\" thành \"ate\", \"see\" thành \"saw\", \"have\" thành \"had\", \"buy\" thành \"bought\". Em nên học dần bảng động từ bất quy tắc mỗi ngày vài từ.",
+   "ex": "Ví dụ: We went to the zoo last Sunday.",
+   "en": [
+    "irregular verb",
+    "went",
+    "ate"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Tương lai với will",
+   "vi": "\"Will\" + động từ nguyên mẫu dùng để nói việc sẽ xảy ra, dự đoán, hoặc quyết định ngay lúc nói. Ví dụ: \"It will rain tomorrow\" là mai trời sẽ mưa. Dạng phủ định là \"will not\", viết tắt \"won't\".",
+   "ex": "Ví dụ: I'm thirsty. I will get some water.",
+   "en": [
+    "future",
+    "will",
+    "won't"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Be going to: dự định",
+   "vi": "\"Be going to\" + động từ nguyên mẫu dùng cho kế hoạch đã có từ trước. Ví dụ: \"I am going to visit Hue next summer\" là hè tới tôi định đi Huế. Cũng dùng khi có dấu hiệu rõ ràng: \"Look at the clouds! It is going to rain\".",
+   "ex": "Mẹo: đã lên kế hoạch thì dùng going to.",
+   "en": [
+    "be going to",
+    "plan"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Hiện tại hoàn thành",
+   "vi": "Thì hiện tại hoàn thành: have/has + quá khứ phân từ. Nó nối quá khứ với hiện tại, như kinh nghiệm hay việc vừa xong. Ví dụ: \"I have finished my homework\", \"Have you ever seen snow?\". Dùng \"for\" với khoảng thời gian, \"since\" với mốc thời gian.",
+   "ex": "Ví dụ: I have lived here for five years.",
+   "en": [
+    "present perfect",
+    "since",
+    "for"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Quá khứ tiếp diễn",
+   "vi": "Thì quá khứ tiếp diễn: was/were + V-ing, nói việc đang diễn ra tại một lúc trong quá khứ. Hay dùng với \"when\" khi có việc khác xen vào: \"I was sleeping when the phone rang\" là tôi đang ngủ thì điện thoại reo.",
+   "ex": "Mẹo: việc dài dùng tiếp diễn, việc chen ngang dùng quá khứ đơn.",
+   "en": [
+    "past continuous",
+    "was",
+    "while"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Động từ chỉ trạng thái",
+   "vi": "Một số động từ chỉ trạng thái như \"like\", \"love\", \"know\", \"want\", \"need\" thường không dùng ở dạng tiếp diễn. Ta nói \"I know the answer\", không nói \"I am knowing the answer\". Chúng mô tả cảm xúc hay suy nghĩ chứ không phải hành động đang làm.",
+   "ex": "Ví dụ: I want a glass of water.",
+   "en": [
+    "stative verb",
+    "know",
+    "want"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Bảng chữ cái 26 chữ",
+   "vi": "Bảng chữ cái tiếng Anh có 26 chữ cái, từ A đến Z. Trong đó có 5 chữ nguyên âm là A, E, I, O, U, các chữ còn lại là phụ âm. Tiếng Anh có những chữ mà tiếng Việt không dùng như F, J, W, Z.",
+   "ex": "Mẹo: hát bài \"ABC song\" để nhớ thứ tự.",
+   "en": [
+    "alphabet",
+    "vowel",
+    "consonant"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Chữ câm",
+   "vi": "Có những chữ viết ra nhưng không đọc, gọi là chữ câm. Chữ \"k\" trong \"knife\" và \"know\" không đọc. Chữ \"w\" trong \"write\" không đọc. Chữ \"b\" trong \"climb\" cũng câm. Vì vậy khi học từ mới, em nên nghe cả cách đọc.",
+   "ex": "Ví dụ: knee đọc gần như \"ni\".",
+   "en": [
+    "silent letter",
+    "knife",
+    "write"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Âm th: lưỡi giữa răng",
+   "vi": "Cụm \"th\" có hai âm, đều đặt đầu lưỡi giữa hai hàm răng rồi đẩy hơi. Âm không rung như trong \"think\", \"three\". Âm có rung cổ họng như trong \"this\", \"mother\". Đừng đọc \"think\" thành \"tink\" hay \"sink\" nhé.",
+   "ex": "Mẹo: soi gương để thấy đầu lưỡi thò ra một chút.",
+   "en": [
+    "think",
+    "this",
+    "th sound"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Đừng nuốt âm cuối",
+   "vi": "Người học tiếng Anh hay bỏ âm cuối, nhưng âm cuối giúp phân biệt nghĩa. \"Cat\" là con mèo, \"cats\" là nhiều con mèo. \"Five\" phải có âm /v/ ở cuối. Đọc rõ âm cuối giúp người nghe hiểu đúng ý em.",
+   "ex": "Ví dụ: rice và right khác nhau ở âm cuối.",
+   "en": [
+    "final sound",
+    "cats"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Đọc đuôi -s, -es",
+   "vi": "Đuôi \"-s\" có ba cách đọc. Đọc /s/ sau âm vô thanh như /p/, /t/, /k/, /f/: \"books\", \"cats\". Đọc /ɪz/ sau âm /s/, /z/, /ʃ/, /tʃ/, /dʒ/: \"buses\", \"watches\". Các trường hợp còn lại đọc /z/: \"dogs\", \"pens\".",
+   "ex": "Ví dụ: maps /s/, bags /z/, boxes /ɪz/.",
+   "en": [
+    "plural ending",
+    "books",
+    "dogs"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Đọc đuôi -ed",
+   "vi": "Đuôi \"-ed\" có ba cách đọc. Đọc /ɪd/ sau âm /t/ và /d/: \"wanted\", \"needed\". Đọc /t/ sau âm vô thanh như /p/, /k/, /s/, /ʃ/, /tʃ/: \"walked\", \"washed\". Các trường hợp còn lại đọc /d/: \"played\", \"cleaned\".",
+   "ex": "Mẹo: chỉ sau t và d mới đọc thêm một âm tiết.",
+   "en": [
+    "ed ending",
+    "wanted",
+    "played"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Trọng âm của từ",
+   "vi": "Từ có từ hai âm tiết trở lên luôn có một âm tiết được nhấn mạnh hơn, gọi là trọng âm. Ví dụ: \"TEAcher\", \"HAppy\", \"baNAna\". Đọc sai trọng âm có thể làm người nghe khó hiểu, nên khi tra từ điển hãy xem dấu trọng âm.",
+   "ex": "Mẹo: dấu ˈ trong phiên âm đứng trước âm tiết được nhấn.",
+   "en": [
+    "stress",
+    "syllable"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Một từ, hai trọng âm",
+   "vi": "Một số từ hai âm tiết vừa là danh từ vừa là động từ. Danh từ thường nhấn âm đầu, động từ thường nhấn âm sau. \"REcord\" là bản ghi, \"reCORD\" là ghi lại. \"PREsent\" là món quà, \"preSENT\" là trình bày.",
+   "ex": "Ví dụ: a PREsent / to preSENT.",
+   "en": [
+    "record",
+    "present"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Phiên âm IPA",
+   "vi": "IPA là bảng ký hiệu phiên âm quốc tế, giúp biết cách đọc mà không cần nghe. Mỗi ký hiệu ứng với một âm. Ví dụ: \"cat\" phiên âm là /kæt/, \"see\" là /siː/. Dấu hai chấm ː cho biết nguyên âm được kéo dài.",
+   "ex": "Mẹo: từ điển nào cũng ghi IPA trong dấu gạch chéo.",
+   "en": [
+    "IPA",
+    "phonetic"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Âm dài /iː/ và âm ngắn /ɪ/",
+   "vi": "Hai âm này rất dễ nhầm. \"Sheep\" /ʃiːp/ là con cừu, kéo dài và căng môi như đang cười. \"Ship\" /ʃɪp/ là con tàu, đọc ngắn và thả lỏng. Tương tự: \"seat\" chỗ ngồi và \"sit\" ngồi.",
+   "ex": "Ví dụ: leave /iː/ và live /ɪ/.",
+   "en": [
+    "sheep",
+    "ship",
+    "vowel"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Ngữ điệu lên và xuống",
+   "vi": "Câu hỏi Yes/No như \"Are you ready?\" thường lên giọng ở cuối. Câu hỏi có từ để hỏi như \"Where do you live?\" và câu kể thường xuống giọng ở cuối. Ngữ điệu giúp người nghe biết em đang hỏi hay đang kể.",
+   "ex": "Mẹo: Yes/No lên ↗, Wh- xuống ↘.",
+   "en": [
+    "intonation",
+    "rising",
+    "falling"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Nối âm khi nói",
+   "vi": "Người bản xứ hay nối phụ âm cuối của từ trước với nguyên âm đầu của từ sau. \"Turn off\" nghe như \"tur-noff\", \"pick it up\" nghe như \"pi-ki-tup\". Biết nối âm giúp em nghe tốt hơn và nói tự nhiên hơn.",
+   "ex": "Ví dụ: an apple nghe như \"a-napple\".",
+   "en": [
+    "linking",
+    "connected speech"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Lời chào theo buổi",
+   "vi": "\"Hello\" và \"Hi\" dùng được mọi lúc, \"Hi\" thân mật hơn. \"Good morning\" là chào buổi sáng, \"Good afternoon\" buổi chiều, \"Good evening\" buổi tối. Còn \"Good night\" là chúc ngủ ngon hoặc chào tạm biệt buổi tối, không dùng để chào khi gặp.",
+   "ex": "Ví dụ: Good morning, teacher!",
+   "en": [
+    "hello",
+    "good morning",
+    "good night"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Giới thiệu bản thân",
+   "vi": "Để giới thiệu, em nói \"My name is ...\" hoặc \"I'm ...\". Nói tuổi: \"I'm ten years old\". Nói nơi sống: \"I live in Da Nang\". Khi gặp lần đầu, có thể nói \"Nice to meet you\" là rất vui được gặp bạn.",
+   "ex": "Ví dụ: Hi, I'm Mai. Nice to meet you!",
+   "en": [
+    "introduce",
+    "my name is"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Cảm ơn và đáp lại",
+   "vi": "Khi được giúp, nói \"Thank you\" hoặc \"Thanks\". Muốn cảm ơn nhiều hơn: \"Thank you very much\". Khi người khác cảm ơn em, đáp lại bằng \"You're welcome\" hoặc \"No problem\". Lời cảm ơn làm ai cũng vui.",
+   "ex": "Ví dụ: — Thank you! — You're welcome.",
+   "en": [
+    "thank you",
+    "you're welcome"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Sorry và Excuse me",
+   "vi": "\"Sorry\" dùng khi em xin lỗi vì đã làm sai, ví dụ lỡ va vào ai. \"Excuse me\" dùng để gây chú ý một cách lịch sự trước khi hỏi, hoặc xin đi qua. Ví dụ: \"Excuse me, where is the library?\".",
+   "ex": "Mẹo: làm sai thì sorry, muốn hỏi thì excuse me.",
+   "en": [
+    "sorry",
+    "excuse me"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Hỏi thăm sức khoẻ",
+   "vi": "\"How are you?\" là câu hỏi thăm rất phổ biến. Em có thể đáp \"I'm fine, thank you. And you?\" hoặc \"I'm great!\". Nếu không khoẻ, nói \"Not very well\". Thật ra đây thường là lời chào, nên câu trả lời ngắn gọn là được.",
+   "ex": "Ví dụ: — How are you? — Pretty good, thanks!",
+   "en": [
+    "how are you",
+    "fine"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Hỏi và chỉ đường",
+   "vi": "Hỏi đường: \"Excuse me, where is the post office?\". Chỉ đường: \"Go straight\" đi thẳng, \"Turn left\" rẽ trái, \"Turn right\" rẽ phải. \"It's next to the bank\" là nó ở cạnh ngân hàng, \"opposite\" là đối diện.",
+   "ex": "Ví dụ: Go straight and turn left at the corner.",
+   "en": [
+    "direction",
+    "turn left",
+    "go straight"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Hỏi giá khi mua đồ",
+   "vi": "Muốn hỏi giá một món, nói \"How much is it?\". Nhiều món thì hỏi \"How much are they?\". Muốn mua, nói \"I'd like this one, please\". Người bán có thể hỏi \"Can I help you?\" nghĩa là tôi có thể giúp gì cho bạn.",
+   "ex": "Ví dụ: How much is this T-shirt?",
+   "en": [
+    "how much",
+    "shopping"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Hỏi và nói giờ",
+   "vi": "Hỏi giờ: \"What time is it?\". Giờ chẵn: \"It's seven o'clock\". \"Half past seven\" là bảy giờ rưỡi, \"a quarter past seven\" là bảy giờ mười lăm. \"A quarter to eight\" là tám giờ kém mười lăm.",
+   "ex": "Mẹo: past là \"hơn\", to là \"kém\".",
+   "en": [
+    "time",
+    "o'clock",
+    "half past"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Mời và từ chối lịch sự",
+   "vi": "Lời mời lịch sự: \"Would you like to come to my party?\". Đồng ý: \"I'd love to!\" hoặc \"Yes, please\". Từ chối khéo: \"I'd love to, but I'm busy\" hoặc \"Sorry, I can't\". Từ chối nhẹ nhàng và nêu lý do giúp bạn bè không buồn.",
+   "ex": "Ví dụ: Would you like some cake? — Yes, please!",
+   "en": [
+    "invitation",
+    "would you like"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Nhờ giúp lịch sự",
+   "vi": "\"Can you help me?\" dùng được với bạn bè. \"Could you help me, please?\" lịch sự hơn, hợp khi nói với người lớn. Xin phép làm gì, dùng \"Can I ...?\" hoặc trang trọng hơn \"May I ...?\": \"May I come in?\" là em vào được không ạ.",
+   "ex": "Mẹo: thêm please để lời nhờ mềm hơn.",
+   "en": [
+    "could you",
+    "may I",
+    "please"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Nói chuyện điện thoại",
+   "vi": "Khi gọi điện, người nói giới thiệu bằng \"This is Lan\" hoặc \"It's Lan\", không nói \"I am Lan\". Hỏi muốn gặp ai: \"Can I speak to Minh, please?\". Nhờ chờ máy: \"Hold on, please\". Hẹn gọi lại: \"I'll call you back\".",
+   "ex": "Ví dụ: Hello, this is Nam. Can I speak to Hoa?",
+   "en": [
+    "phone call",
+    "hold on"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Thành ngữ là gì?",
+   "vi": "Thành ngữ (idiom) là cụm từ có nghĩa khác với nghĩa từng chữ. \"It's raining cats and dogs\" không phải trời mưa ra chó mèo, mà nghĩa là trời mưa rất to. Tiếng Việt cũng có thành ngữ, như \"mưa như trút nước\".",
+   "ex": "Ví dụ: Take an umbrella. It's raining cats and dogs!",
+   "en": [
+    "idiom",
+    "raining cats and dogs"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Piece of cake: dễ ợt",
+   "vi": "\"A piece of cake\" nghĩa đen là một miếng bánh, nhưng nghĩa bóng là việc gì đó rất dễ. Khi bạn hỏi bài kiểm tra thế nào, em có thể đáp \"It was a piece of cake!\" nghĩa là dễ ợt.",
+   "ex": "Mẹo: ăn miếng bánh thì dễ, nên việc dễ là piece of cake.",
+   "en": [
+    "piece of cake",
+    "easy"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Từ \"thần kỳ\": please, thank you",
+   "vi": "Người nói tiếng Anh rất coi trọng \"please\" (làm ơn) và \"thank you\" (cảm ơn). Trẻ em ở Anh, Mỹ thường được dạy gọi đây là \"magic words\" là những từ thần kỳ. Nói \"Water, please\" lịch sự hơn nhiều so với chỉ nói \"Water\".",
+   "ex": "Ví dụ: Can I have a pencil, please?",
+   "en": [
+    "please",
+    "magic words"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Hai ngày lễ quen thuộc",
+   "vi": "Christmas là lễ Giáng sinh, ngày 25 tháng 12. Halloween là ngày 31 tháng 10, trẻ em hoá trang và đi xin kẹo, nói câu \"Trick or treat!\". Ở các nước nói tiếng Anh, đây là hai dịp vui được trẻ em mong chờ.",
+   "ex": "Ví dụ: Merry Christmas! Happy Halloween!",
+   "en": [
+    "Christmas",
+    "Halloween"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Break a leg: chúc may mắn",
+   "vi": "\"Break a leg\" nghĩa đen là gãy chân, nhưng thật ra là lời chúc may mắn, nhất là trước khi ai đó biểu diễn trên sân khấu. Đây là ví dụ vì sao không nên dịch thành ngữ từng chữ một.",
+   "ex": "Ví dụ: Your show is tonight? Break a leg!",
+   "en": [
+    "break a leg",
+    "good luck"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Under the weather: hơi mệt",
+   "vi": "\"Under the weather\" nghĩa là hơi ốm, không được khoẻ, chứ không liên quan đến thời tiết. Ví dụ: \"I'm feeling a bit under the weather today\" là hôm nay tôi thấy hơi mệt trong người.",
+   "ex": "Mẹo: thấy \"weather\" đừng vội nghĩ đến mưa nắng.",
+   "en": [
+    "under the weather",
+    "sick"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Thứ tự họ và tên",
+   "vi": "Người Việt nói họ trước, tên sau, như Nguyễn Văn An. Người nói tiếng Anh thường nói tên trước, họ sau, như \"John Smith\" thì John là tên, Smith là họ. Tên gọi là \"first name\", họ là \"last name\" hoặc \"family name\".",
+   "ex": "Ví dụ: My first name is An. My family name is Nguyen.",
+   "en": [
+    "first name",
+    "last name"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Viết ngày kiểu Anh và Mỹ",
+   "vi": "Người Anh viết ngày trước rồi tháng, giống Việt Nam: 4/7 là ngày 4 tháng 7. Người Mỹ thường viết tháng trước rồi ngày: 7/4 là ngày 4 tháng 7. Vì vậy khi đọc ngày viết bằng số, em nên để ý xem đó là kiểu nào.",
+   "ex": "Mẹo: viết tên tháng bằng chữ để khỏi nhầm, ví dụ 4 July.",
+   "en": [
+    "date",
+    "month"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Once in a blue moon",
+   "vi": "\"Once in a blue moon\" nghĩa là rất hiếm khi. \"Blue moon\" thường chỉ lần trăng tròn thứ hai trong cùng một tháng dương lịch, chuyện chỉ xảy ra khoảng hai ba năm một lần. Ví dụ: \"He eats sweets once in a blue moon\".",
+   "ex": "Ví dụ: I go to the cinema once in a blue moon.",
+   "en": [
+    "once in a blue moon",
+    "rarely"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Spill the beans: lộ bí mật",
+   "vi": "\"Spill the beans\" nghĩa đen là làm đổ hạt đậu, nghĩa bóng là để lộ bí mật. Ví dụ, cả lớp chuẩn bị tiệc bất ngờ cho cô giáo, ai đó lỡ kể ra trước thì người ấy đã \"spilled the beans\".",
+   "ex": "Ví dụ: Don't spill the beans about the surprise!",
+   "en": [
+    "spill the beans",
+    "secret"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Small talk: chuyện phiếm",
+   "vi": "\"Small talk\" là những câu chuyện ngắn, nhẹ nhàng khi mới gặp, như nói về thời tiết hay cuối tuần. Ở Anh, thời tiết là đề tài small talk rất phổ biến. Câu hỏi riêng tư như tuổi, cân nặng hay thu nhập thường được tránh khi mới quen.",
+   "ex": "Ví dụ: Lovely weather today, isn't it?",
+   "en": [
+    "small talk",
+    "weather"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "\"Yellow\" là màu gì?",
+   "a": [
+    "Màu vàng",
+    "Màu đỏ",
+    "Màu xanh lá",
+    "Màu tím"
+   ],
+   "c": 0,
+   "why": "\"Yellow\" là màu vàng; đỏ là \"red\", xanh lá là \"green\", tím là \"purple\".",
+   "en": "yellow"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "\"Sister\" nghĩa là gì?",
+   "a": [
+    "Anh trai",
+    "Chị gái hoặc em gái",
+    "Bà",
+    "Chú"
+   ],
+   "c": 1,
+   "why": "\"Sister\" dùng cho cả chị gái và em gái; anh, em trai là \"brother\".",
+   "en": "sister"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Số 40 viết bằng tiếng Anh là gì?",
+   "a": [
+    "fourty",
+    "fourteen",
+    "forty",
+    "four"
+   ],
+   "c": 2,
+   "why": "Số 40 là \"forty\", không có chữ \"u\". \"Fourteen\" là 14.",
+   "en": "forty"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Con mèo trong tiếng Anh là gì?",
+   "a": [
+    "dog",
+    "bird",
+    "cow",
+    "cat"
+   ],
+   "c": 3,
+   "why": "\"Cat\" là con mèo; \"dog\" là chó, \"bird\" là chim, \"cow\" là bò.",
+   "en": "cat"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Tên tháng trong tiếng Anh viết thế nào?",
+   "a": [
+    "Luôn viết hoa chữ cái đầu",
+    "Luôn viết thường",
+    "Viết hoa toàn bộ",
+    "Chỉ viết hoa chữ cuối"
+   ],
+   "c": 0,
+   "why": "Tên tháng trong tiếng Anh luôn viết hoa chữ cái đầu, ví dụ \"July\".",
+   "en": "July"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Người dạy học gọi là gì?",
+   "a": [
+    "teaching",
+    "teacher",
+    "teach",
+    "taught"
+   ],
+   "c": 1,
+   "why": "Thêm \"-er\" vào \"teach\" được \"teacher\" là giáo viên.",
+   "en": "teacher"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "\"It is rainy\" nghĩa là gì?",
+   "a": [
+    "Trời có nắng",
+    "Trời nhiều gió",
+    "Trời có mưa",
+    "Trời có tuyết"
+   ],
+   "c": 2,
+   "why": "\"Rainy\" là có mưa; nắng là \"sunny\", gió là \"windy\", tuyết là \"snowy\".",
+   "en": "rainy"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Người Mỹ gọi cục tẩy là gì?",
+   "a": [
+    "ruler",
+    "pencil case",
+    "notebook",
+    "eraser"
+   ],
+   "c": 3,
+   "why": "Người Mỹ gọi cục tẩy là \"eraser\", người Anh hay gọi là \"rubber\".",
+   "en": "eraser"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "\"Unhappy\" có nghĩa là gì?",
+   "a": [
+    "Không vui",
+    "Rất vui",
+    "Vui lại",
+    "Vui nhất"
+   ],
+   "c": 0,
+   "why": "Tiền tố \"un-\" mang nghĩa ngược lại, nên \"unhappy\" là không vui.",
+   "en": "unhappy"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Từ nào trái nghĩa với \"hot\"?",
+   "a": [
+    "warm",
+    "cold",
+    "big",
+    "fast"
+   ],
+   "c": 1,
+   "why": "\"Hot\" là nóng, trái nghĩa là \"cold\" lạnh.",
+   "en": "antonym"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Người Mỹ gọi thang máy là gì?",
+   "a": [
+    "lift",
+    "stairs",
+    "elevator",
+    "escalator"
+   ],
+   "c": 2,
+   "why": "Người Mỹ nói \"elevator\", người Anh nói \"lift\". \"Escalator\" là thang cuốn.",
+   "en": "elevator"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Điền từ đúng: ___ apple",
+   "a": [
+    "a",
+    "the two",
+    "many",
+    "an"
+   ],
+   "c": 3,
+   "why": "\"Apple\" bắt đầu bằng nguyên âm nên dùng \"an apple\".",
+   "en": "article"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Số nhiều của \"box\" là gì?",
+   "a": [
+    "boxes",
+    "boxs",
+    "boxies",
+    "box"
+   ],
+   "c": 0,
+   "why": "Danh từ tận cùng bằng \"x\" thêm \"-es\": \"boxes\".",
+   "en": "plural"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Số nhiều của \"child\" là gì?",
+   "a": [
+    "childs",
+    "children",
+    "childes",
+    "childrens"
+   ],
+   "c": 1,
+   "why": "\"Child\" là danh từ bất quy tắc, số nhiều là \"children\".",
+   "en": "children"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Điền từ đúng: They ___ students.",
+   "a": [
+    "is",
+    "am",
+    "are",
+    "be"
+   ],
+   "c": 2,
+   "why": "Với \"they\", động từ to be là \"are\".",
+   "en": "are"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Câu nào đúng?",
+   "a": [
+    "I have a car red.",
+    "I have red a car.",
+    "I have a reds car.",
+    "I have a red car."
+   ],
+   "c": 3,
+   "why": "Tính từ đứng trước danh từ và không thêm \"s\": \"a red car\".",
+   "en": "adjective"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Điền giới từ: I get up ___ 6 o'clock.",
+   "a": [
+    "at",
+    "in",
+    "on",
+    "to"
+   ],
+   "c": 0,
+   "why": "Dùng \"at\" với giờ cụ thể: \"at 6 o'clock\".",
+   "en": "at"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Điền từ: This is Lan. ___ bag is pink.",
+   "a": [
+    "His",
+    "Her",
+    "She",
+    "Their"
+   ],
+   "c": 1,
+   "why": "Lan là con gái, nên dùng tính từ sở hữu \"her\".",
+   "en": "her"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Điền từ: There ___ three books on the desk.",
+   "a": [
+    "is",
+    "am",
+    "are",
+    "be"
+   ],
+   "c": 2,
+   "why": "\"Three books\" là số nhiều nên dùng \"there are\".",
+   "en": "there are"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "So sánh hơn của \"good\" là gì?",
+   "a": [
+    "gooder",
+    "more good",
+    "best",
+    "better"
+   ],
+   "c": 3,
+   "why": "\"Good\" bất quy tắc: good, better, best. \"Best\" là so sánh nhất.",
+   "en": "better"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Điền từ: How ___ water do you drink?",
+   "a": [
+    "much",
+    "many",
+    "a few",
+    "several"
+   ],
+   "c": 0,
+   "why": "\"Water\" không đếm được nên dùng \"how much\".",
+   "en": "much"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Muốn hỏi \"ở đâu\", dùng từ nào?",
+   "a": [
+    "When",
+    "Where",
+    "Who",
+    "Why"
+   ],
+   "c": 1,
+   "why": "\"Where\" hỏi nơi chốn; \"when\" khi nào, \"who\" ai, \"why\" tại sao.",
+   "en": "where"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Điền từ đúng: She ___ football every day.",
+   "a": [
+    "play",
+    "playing",
+    "plays",
+    "is play"
+   ],
+   "c": 2,
+   "why": "Hiện tại đơn với \"she\" thêm \"s\": \"she plays\".",
+   "en": "present simple"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Câu nào nói việc đang xảy ra bây giờ?",
+   "a": [
+    "I read every day.",
+    "I read yesterday.",
+    "I will read.",
+    "I am reading now."
+   ],
+   "c": 3,
+   "why": "Hiện tại tiếp diễn \"am reading\" + \"now\" chỉ việc đang xảy ra.",
+   "en": "present continuous"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Câu phủ định nào đúng?",
+   "a": [
+    "He doesn't like milk.",
+    "He don't like milk.",
+    "He doesn't likes milk.",
+    "He not like milk."
+   ],
+   "c": 0,
+   "why": "Với \"he\" dùng \"doesn't\" và động từ giữ dạng gốc \"like\".",
+   "en": "doesn't"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "\"Never\" nghĩa là gì?",
+   "a": [
+    "Luôn luôn",
+    "Không bao giờ",
+    "Thỉnh thoảng",
+    "Thường xuyên"
+   ],
+   "c": 1,
+   "why": "\"Never\" là không bao giờ; luôn luôn là \"always\".",
+   "en": "never"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Quá khứ của \"play\" là gì?",
+   "a": [
+    "plaied",
+    "plays",
+    "played",
+    "playing"
+   ],
+   "c": 2,
+   "why": "\"Play\" là động từ có quy tắc, thêm \"-ed\": \"played\".",
+   "en": "past simple"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Quá khứ của \"go\" là gì?",
+   "a": [
+    "goed",
+    "gone",
+    "goes",
+    "went"
+   ],
+   "c": 3,
+   "why": "\"Go\" bất quy tắc, quá khứ đơn là \"went\". \"Gone\" là quá khứ phân từ.",
+   "en": "went"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "\"Won't\" là viết tắt của gì?",
+   "a": [
+    "will not",
+    "want not",
+    "was not",
+    "would not"
+   ],
+   "c": 0,
+   "why": "\"Won't\" là dạng viết tắt của \"will not\".",
+   "en": "won't"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Câu nào nói về kế hoạch đã định trước?",
+   "a": [
+    "I visited Hue last summer.",
+    "I am going to visit Hue next summer.",
+    "I visit Hue now.",
+    "I was visiting Hue."
+   ],
+   "c": 1,
+   "why": "\"Be going to\" dùng cho dự định đã lên kế hoạch.",
+   "en": "be going to"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Điền từ: I have lived here ___ 2020.",
+   "a": [
+    "for",
+    "ago",
+    "since",
+    "at"
+   ],
+   "c": 2,
+   "why": "\"Since\" đi với mốc thời gian như năm 2020; \"for\" đi với khoảng thời gian.",
+   "en": "since"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Điền: I ___ sleeping when the phone rang.",
+   "a": [
+    "were",
+    "am",
+    "did",
+    "was"
+   ],
+   "c": 3,
+   "why": "Quá khứ tiếp diễn với \"I\" dùng \"was\" + V-ing.",
+   "en": "past continuous"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Câu nào dùng động từ \"know\" đúng?",
+   "a": [
+    "I know the answer.",
+    "I am knowing the answer.",
+    "I knowing the answer.",
+    "I knows the answer."
+   ],
+   "c": 0,
+   "why": "\"Know\" là động từ trạng thái, thường không dùng dạng tiếp diễn.",
+   "en": "stative verb"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Bảng chữ cái tiếng Anh có bao nhiêu chữ cái?",
+   "a": [
+    "24",
+    "26",
+    "29",
+    "30"
+   ],
+   "c": 1,
+   "why": "Bảng chữ cái tiếng Anh có 26 chữ, từ A đến Z.",
+   "en": "alphabet"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Chữ nào câm trong từ \"knife\"?",
+   "a": [
+    "n",
+    "i",
+    "k",
+    "f"
+   ],
+   "c": 2,
+   "why": "Chữ \"k\" đứng trước \"n\" ở đầu từ \"knife\" không được đọc.",
+   "en": "silent letter"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Khi đọc âm \"th\" trong \"think\", lưỡi đặt ở đâu?",
+   "a": [
+    "Cuộn vào trong",
+    "Chạm vòm họng sau",
+    "Dưới hàm dưới",
+    "Giữa hai hàm răng"
+   ],
+   "c": 3,
+   "why": "Âm \"th\" được tạo khi đặt đầu lưỡi giữa hai hàm răng và đẩy hơi.",
+   "en": "th sound"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Chữ nào là nguyên âm?",
+   "a": [
+    "E",
+    "B",
+    "K",
+    "T"
+   ],
+   "c": 0,
+   "why": "Năm chữ nguyên âm là A, E, I, O, U.",
+   "en": "vowel"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Đuôi -s trong \"books\" đọc là gì?",
+   "a": [
+    "/z/",
+    "/s/",
+    "/ɪz/",
+    "Không đọc"
+   ],
+   "c": 1,
+   "why": "Sau âm vô thanh /k/, đuôi -s đọc là /s/.",
+   "en": "plural ending"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Đuôi -ed trong \"wanted\" đọc là gì?",
+   "a": [
+    "/t/",
+    "/d/",
+    "/ɪd/",
+    "Không đọc"
+   ],
+   "c": 2,
+   "why": "Sau âm /t/ và /d/, đuôi -ed đọc là /ɪd/.",
+   "en": "ed ending"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "\"Teacher\" nhấn trọng âm ở đâu?",
+   "a": [
+    "Âm tiết sau: CHER",
+    "Cả hai bằng nhau",
+    "Không có trọng âm",
+    "Âm tiết đầu: TEA"
+   ],
+   "c": 3,
+   "why": "\"Teacher\" đọc là /ˈtiːtʃə/, nhấn vào âm tiết đầu.",
+   "en": "stress"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Động từ \"record\" (ghi lại) nhấn ở đâu?",
+   "a": [
+    "Âm tiết sau: reCORD",
+    "Âm tiết đầu: REcord",
+    "Cả hai bằng nhau",
+    "Không có trọng âm"
+   ],
+   "c": 0,
+   "why": "Động từ \"record\" nhấn âm sau; danh từ \"record\" nhấn âm đầu.",
+   "en": "record"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Dấu ː trong /siː/ cho biết điều gì?",
+   "a": [
+    "Âm được đọc nhỏ",
+    "Nguyên âm được kéo dài",
+    "Chữ đó câm",
+    "Từ đó là số nhiều"
+   ],
+   "c": 1,
+   "why": "Trong IPA, dấu ː chỉ âm được kéo dài.",
+   "en": "IPA"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Từ nào có âm dài /iː/?",
+   "a": [
+    "ship",
+    "sit",
+    "sheep",
+    "big"
+   ],
+   "c": 2,
+   "why": "\"Sheep\" /ʃiːp/ có âm dài; \"ship\", \"sit\", \"big\" có âm ngắn /ɪ/.",
+   "en": "long vowel"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Câu \"Are you ready?\" thường đọc thế nào ở cuối câu?",
+   "a": [
+    "Xuống giọng",
+    "Giữ ngang, không đổi",
+    "Thì thầm",
+    "Lên giọng"
+   ],
+   "c": 3,
+   "why": "Câu hỏi Yes/No thường lên giọng ở cuối.",
+   "en": "intonation"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Gặp cô giáo lúc 7 giờ sáng, em chào thế nào?",
+   "a": [
+    "Good morning!",
+    "Good night!",
+    "Good evening!",
+    "Goodbye!"
+   ],
+   "c": 0,
+   "why": "Buổi sáng chào \"Good morning\"; \"Good night\" là chúc ngủ ngon.",
+   "en": "good morning"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Bạn nói \"Thank you!\", em đáp lại thế nào?",
+   "a": [
+    "I'm sorry.",
+    "You're welcome.",
+    "Good night.",
+    "How old are you?"
+   ],
+   "c": 1,
+   "why": "\"You're welcome\" là câu đáp lịch sự khi được cảm ơn.",
+   "en": "you're welcome"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Câu nào dùng để giới thiệu tên mình?",
+   "a": [
+    "How are you?",
+    "Where is Mai?",
+    "My name is Mai.",
+    "See you later."
+   ],
+   "c": 2,
+   "why": "\"My name is ...\" là cách giới thiệu tên.",
+   "en": "my name is"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Muốn hỏi đường người lạ, em mở lời thế nào?",
+   "a": [
+    "Good night, ...",
+    "You're welcome, ...",
+    "Happy birthday, ...",
+    "Excuse me, ..."
+   ],
+   "c": 3,
+   "why": "\"Excuse me\" dùng để gây chú ý lịch sự trước khi hỏi.",
+   "en": "excuse me"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Câu trả lời phù hợp cho \"How are you?\" là gì?",
+   "a": [
+    "I'm fine, thanks.",
+    "I'm ten years old.",
+    "I'm from Hanoi.",
+    "It's seven o'clock."
+   ],
+   "c": 0,
+   "why": "\"How are you?\" hỏi thăm sức khoẻ, đáp \"I'm fine, thanks\".",
+   "en": "how are you"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "\"Turn left\" nghĩa là gì?",
+   "a": [
+    "Rẽ phải",
+    "Rẽ trái",
+    "Đi thẳng",
+    "Quay lại"
+   ],
+   "c": 1,
+   "why": "\"Turn left\" là rẽ trái; rẽ phải là \"turn right\".",
+   "en": "turn left"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Muốn hỏi giá một món đồ, em nói gì?",
+   "a": [
+    "How old is it?",
+    "What time is it?",
+    "How much is it?",
+    "Where is it?"
+   ],
+   "c": 2,
+   "why": "\"How much is it?\" dùng để hỏi giá tiền.",
+   "en": "how much"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "\"Half past seven\" là mấy giờ?",
+   "a": [
+    "7 giờ 15",
+    "6 giờ 30",
+    "7 giờ 45",
+    "7 giờ 30"
+   ],
+   "c": 3,
+   "why": "\"Half past seven\" là bảy giờ rưỡi, tức 7 giờ 30.",
+   "en": "half past"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Câu nào là lời mời lịch sự?",
+   "a": [
+    "Would you like some tea?",
+    "Give me tea.",
+    "You drink tea.",
+    "Tea is hot."
+   ],
+   "c": 0,
+   "why": "\"Would you like ...?\" là cách mời lịch sự.",
+   "en": "would you like"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Câu nào lịch sự nhất khi nhờ thầy cô?",
+   "a": [
+    "Help me!",
+    "Could you help me, please?",
+    "You help me.",
+    "Help me now."
+   ],
+   "c": 1,
+   "why": "\"Could you ..., please?\" là cách nhờ lịch sự, hợp với người lớn.",
+   "en": "could you"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Gọi điện, em giới thiệu mình thế nào cho đúng?",
+   "a": [
+    "Hello, I is Nam.",
+    "Hello, Nam this.",
+    "Hello, this is Nam.",
+    "Hello, my Nam."
+   ],
+   "c": 2,
+   "why": "Khi gọi điện, người nói tự giới thiệu bằng \"This is ...\".",
+   "en": "phone call"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "\"It's raining cats and dogs\" nghĩa là gì?",
+   "a": [
+    "Chó mèo đang chạy",
+    "Trời nắng đẹp",
+    "Có nhiều thú cưng",
+    "Trời mưa rất to"
+   ],
+   "c": 3,
+   "why": "Đây là thành ngữ, nghĩa là trời mưa rất to.",
+   "en": "idiom"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "\"A piece of cake\" nghĩa bóng là gì?",
+   "a": [
+    "Việc rất dễ",
+    "Việc rất khó",
+    "Một bữa tiệc",
+    "Một món quà"
+   ],
+   "c": 0,
+   "why": "Thành ngữ \"a piece of cake\" chỉ việc rất dễ.",
+   "en": "piece of cake"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Lễ Giáng sinh (Christmas) vào ngày nào?",
+   "a": [
+    "31 tháng 10",
+    "25 tháng 12",
+    "1 tháng 1",
+    "14 tháng 2"
+   ],
+   "c": 1,
+   "why": "Christmas là ngày 25 tháng 12; Halloween là 31 tháng 10.",
+   "en": "Christmas"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Từ nào thường được gọi là \"magic word\"?",
+   "a": [
+    "no",
+    "now",
+    "please",
+    "give"
+   ],
+   "c": 2,
+   "why": "Trẻ em được dạy \"please\" là magic word vì làm lời nói lịch sự hơn.",
+   "en": "please"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Trước buổi biểu diễn, \"Break a leg!\" nghĩa là gì?",
+   "a": [
+    "Coi chừng ngã",
+    "Gãy chân rồi",
+    "Về nhà đi",
+    "Chúc may mắn"
+   ],
+   "c": 3,
+   "why": "\"Break a leg\" là lời chúc may mắn, nhất là trước khi lên sân khấu.",
+   "en": "break a leg"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "\"I'm under the weather\" nghĩa là gì?",
+   "a": [
+    "Tôi hơi mệt, không khoẻ",
+    "Tôi đang đứng dưới mưa",
+    "Tôi thích thời tiết",
+    "Tôi đang rất vui"
+   ],
+   "c": 0,
+   "why": "\"Under the weather\" nghĩa là hơi ốm, không khoẻ.",
+   "en": "under the weather"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Trong tên \"John Smith\", họ (last name) là gì?",
+   "a": [
+    "John",
+    "Smith",
+    "John Smith",
+    "Không có họ"
+   ],
+   "c": 1,
+   "why": "Người nói tiếng Anh thường nói tên trước, họ sau, nên họ là Smith.",
+   "en": "last name"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Người Mỹ thường viết 7/4 với nghĩa nào?",
+   "a": [
+    "Ngày 7 tháng 4",
+    "Ngày 7 tháng 7",
+    "Ngày 4 tháng 7",
+    "Ngày 4 tháng 4"
+   ],
+   "c": 2,
+   "why": "Người Mỹ thường viết tháng trước, ngày sau, nên 7/4 là ngày 4 tháng 7.",
+   "en": "date"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "\"Once in a blue moon\" nghĩa là gì?",
+   "a": [
+    "Mỗi đêm",
+    "Mỗi tháng một lần",
+    "Lúc trăng tròn",
+    "Rất hiếm khi"
+   ],
+   "c": 3,
+   "why": "Thành ngữ \"once in a blue moon\" nghĩa là rất hiếm khi.",
+   "en": "once in a blue moon"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "\"Spill the beans\" nghĩa là gì?",
+   "a": [
+    "Để lộ bí mật",
+    "Nấu đậu",
+    "Làm vỡ cốc",
+    "Giữ bí mật"
+   ],
+   "c": 0,
+   "why": "\"Spill the beans\" nghĩa bóng là để lộ bí mật.",
+   "en": "spill the beans"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Khi mới quen người Anh, đề tài small talk nào phổ biến?",
+   "a": [
+    "Cân nặng",
+    "Thời tiết",
+    "Thu nhập",
+    "Tuổi tác"
+   ],
+   "c": 1,
+   "why": "Thời tiết là đề tài small talk phổ biến; câu hỏi riêng tư thường được tránh.",
+   "en": "small talk"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Câu có đủ 26 chữ cái",
+   "vi": "Có một câu tiếng Anh rất đặc biệt: \"The quick brown fox jumps over the lazy dog\". Câu này chứa đủ tất cả 26 chữ cái từ A đến Z. Những câu như vậy gọi là \"pangram\". Ngày xưa, người ta hay dùng nó để thử máy đánh chữ xem có phím nào hỏng không. Ngày nay, nó vẫn được dùng để xem thử các kiểu chữ trên máy tính. Em thử đếm xem có thiếu chữ nào không nhé!",
+   "en": [
+    "pangram",
+    "alphabet"
+   ]
+  },
+  {
+   "t": "Cuốn từ điển của Samuel Johnson",
+   "vi": "Năm 1755, ông Samuel Johnson ở Anh cho ra đời cuốn \"A Dictionary of the English Language\". Ông cùng vài người phụ giúp làm việc khoảng chín năm. Cuốn từ điển giải nghĩa hàng chục nghìn từ và kèm nhiều câu trích dẫn làm ví dụ. Nó trở thành một trong những từ điển tiếng Anh quan trọng nhất suốt nhiều năm sau.",
+   "en": [
+    "dictionary",
+    "Samuel Johnson"
+   ]
+  },
+  {
+   "t": "Vì sao color và colour khác nhau?",
+   "vi": "Ông Noah Webster là người Mỹ, rất muốn tiếng Anh ở Mỹ có chính tả đơn giản hơn. Năm 1828, ông xuất bản một cuốn từ điển lớn. Trong đó, ông ưu tiên các cách viết như \"color\" thay cho \"colour\", \"center\" thay cho \"centre\". Vì thế ngày nay người Mỹ và người Anh viết một số từ khác nhau. Cả hai cách viết đều đúng ở nơi của nó.",
+   "en": [
+    "Noah Webster",
+    "spelling"
+   ]
+  },
+  {
+   "t": "Tiếng Anh thích đi \"mượn\" từ",
+   "vi": "Tiếng Anh mượn rất nhiều từ của các ngôn ngữ khác. \"Piano\" đến từ tiếng Ý, \"ballet\" đến từ tiếng Pháp, \"kindergarten\" là mẫu giáo đến từ tiếng Đức. Từ \"tsunami\" và \"karaoke\" đến từ tiếng Nhật. Nhờ vậy, vốn từ tiếng Anh ngày càng phong phú. Tiếng Việt cũng mượn từ như vậy, ví dụ \"cà phê\" đến từ tiếng Pháp.",
+   "en": [
+    "loanword",
+    "borrow"
+   ]
+  },
+  {
+   "t": "Chữ k câm từng được đọc",
+   "vi": "Em có biết chữ \"k\" trong \"knight\" và \"knee\" ngày xưa từng được đọc lên không? Cách đây nhiều thế kỷ, người Anh phát âm cả âm \"k\" ở đầu những từ này. Dần dần, cách nói thay đổi và âm \"k\" biến mất. Nhưng chữ viết thì vẫn giữ nguyên như cũ. Vì vậy ngày nay ta có những chữ câm khó nhớ.",
+   "en": [
+    "silent letter",
+    "knight"
+   ]
+  },
+  {
+   "t": "Lời chào hello và chiếc điện thoại",
+   "vi": "Ngày nay ai cũng nói \"hello\" khi nhấc máy. Theo nhiều tài liệu, nhà phát minh Thomas Edison đã đề nghị dùng \"hello\" để chào khi nghe điện thoại. Còn Alexander Graham Bell, người gắn với phát minh điện thoại, lại thích câu \"ahoy\" của người đi biển. Cuối cùng \"hello\" thắng và trở thành lời chào quen thuộc khắp thế giới.",
+   "en": [
+    "hello",
+    "telephone"
+   ]
+  },
+  {
+   "t": "Từ của năm: selfie",
+   "vi": "Mỗi năm, các nhà làm từ điển Oxford chọn ra một \"Word of the Year\" là từ của năm. Năm 2013, từ được chọn là \"selfie\", nghĩa là ảnh tự chụp chính mình. Từ này được dùng nhiều hơn hẳn nhờ điện thoại có camera trước. Chuyện này cho thấy tiếng Anh luôn thay đổi và có thêm từ mới theo cuộc sống.",
+   "en": [
+    "selfie",
+    "word of the year"
+   ]
+  },
+  {
+   "t": "Ngày Tiếng Anh của Liên Hợp Quốc",
+   "vi": "Liên Hợp Quốc có sáu ngôn ngữ chính thức, trong đó có tiếng Anh. Để tôn vinh từng ngôn ngữ, Liên Hợp Quốc chọn cho mỗi thứ tiếng một ngày riêng. Ngày Tiếng Anh là 23 tháng 4. Ngày này thường được gắn với nhà viết kịch nổi tiếng William Shakespeare, người viết vở \"Romeo và Juliet\".",
+   "en": [
+    "English Language Day",
+    "United Nations"
+   ]
+  },
+  {
+   "t": "Từ dài nghe vui tai",
+   "vi": "Trong phim \"Mary Poppins\", có một bài hát với từ rất dài: \"supercalifragilisticexpialidocious\". Từ này được đặt ra cho vui, nghĩa là cực kỳ tuyệt vời. Nó có tới 34 chữ cái! Trẻ em nhiều nơi thích thử đọc thật nhanh từ này. Em thử đọc chậm từng phần: su-per-ca-li-fra-gi-lis-tic-ex-pi-a-li-do-cious xem nào.",
+   "en": [
+    "long word",
+    "fun"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: mỗi ngày năm từ mới",
+   "vi": "Học từ vựng giống như gieo hạt, mỗi ngày một ít là cây sẽ lớn. Năm từ mỗi ngày, một năm em có cả nghìn từ. Hãy học từ theo chủ đề và đặt câu với từ đó. Ôn lại sau một ngày và sau một tuần để nhớ lâu.",
+   "try": "Chọn năm đồ vật trong bếp, viết tên tiếng Anh lên giấy nhớ và dán lên chúng."
+  },
+  {
+   "t": "Bài học hôm nay: đừng sợ nói sai",
+   "vi": "Ai học ngoại ngữ cũng từng nói sai, kể cả người giỏi nhất. Sai là một phần của việc học. Khi được sửa, em hãy nhắc lại câu đúng một lần. Càng nói nhiều, em càng tự tin.",
+   "try": "Tự giới thiệu bản thân bằng tiếng Anh trước gương trong một phút."
+  },
+  {
+   "t": "Bài học hôm nay: nghe trước, nói sau",
+   "vi": "Em bé học nói bằng cách nghe rất nhiều trước. Học tiếng Anh cũng vậy. Nghe bài hát, truyện hay phim hoạt hình tiếng Anh giúp tai em quen với âm thanh. Dần dần, miệng em sẽ nói theo tự nhiên.",
+   "try": "Nghe một bài hát tiếng Anh thiếu nhi và chép lại ba từ em nghe được."
+  },
+  {
+   "t": "Bài học hôm nay: học cả câu",
+   "vi": "Học một từ riêng lẻ thì dễ quên. Học cả câu có từ đó giúp em biết cách dùng. Ví dụ thay vì chỉ học \"umbrella\", hãy học \"I need an umbrella\". Câu hoàn chỉnh dễ nhớ và dễ dùng hơn.",
+   "try": "Viết ba câu tiếng Anh ngắn về những gì em làm hôm nay."
+  },
+  {
+   "t": "Bài học hôm nay: tra từ điển thông minh",
+   "vi": "Từ điển cho em nghĩa, phiên âm, trọng âm và câu ví dụ. Đừng chỉ nhìn nghĩa đầu tiên. Hãy đọc cả ví dụ để hiểu từ dùng thế nào. Nghe phát âm mẫu nếu từ điển có loa.",
+   "try": "Nhờ bố mẹ giúp tra một từ mới trong từ điển và đọc to phiên âm của nó."
+  },
+  {
+   "t": "Bài học hôm nay: lịch sự là chìa khoá",
+   "vi": "Trong tiếng Anh, please, thank you và sorry rất quan trọng. Một câu ngắn có please nghe lễ phép hơn nhiều. Lịch sự giúp người nghe vui lòng và muốn giúp em. Hãy tập thành thói quen.",
+   "try": "Cả ngày hôm nay, mỗi khi nhờ ai, hãy thử nói thêm \"please\" và cảm ơn bằng \"thank you\"."
+  },
+  {
+   "t": "Bài học hôm nay: đọc to thành tiếng",
+   "vi": "Đọc to giúp miệng em quen với âm tiếng Anh. Em sẽ phát hiện những từ mình chưa biết đọc. Hãy chú ý âm cuối và trọng âm. Đọc chậm mà đúng tốt hơn đọc nhanh mà sai.",
+   "try": "Đọc to một đoạn ngắn trong sách tiếng Anh, nhờ bố mẹ ghi âm lại rồi nghe thử."
+  },
+  {
+   "t": "Bài học hôm nay: thành ngữ không dịch từng chữ",
+   "vi": "Thành ngữ có nghĩa riêng, không phải ghép nghĩa từng từ. Nếu dịch từng chữ, em có thể hiểu lầm hoàn toàn. Khi gặp cụm từ lạ, hãy tra cả cụm. Tiếng Việt cũng có nhiều thành ngữ như vậy.",
+   "try": "Vẽ tranh vui minh hoạ nghĩa đen và nghĩa bóng của \"It's raining cats and dogs\"."
+  },
+  {
+   "t": "Bài học hôm nay: nhật ký tiếng Anh",
+   "vi": "Viết mỗi ngày vài dòng giúp em dùng từ và ngữ pháp đã học. Không cần dài, chỉ cần đều đặn. Em có thể viết về thời tiết, món ăn hay trò chơi. Đọc lại sau một tháng, em sẽ thấy mình tiến bộ.",
+   "try": "Viết ba câu nhật ký: hôm nay thời tiết thế nào, em ăn gì, em thích gì."
+  },
+  {
+   "t": "Bài học hôm nay: học cùng bạn",
+   "vi": "Học cùng bạn vui hơn và nhớ lâu hơn. Hai bạn có thể đố từ, đóng vai mua bán hay hỏi đường. Khi giải thích cho bạn, em cũng hiểu bài sâu hơn. Hãy khen bạn khi bạn nói đúng nhé.",
+   "try": "Cùng anh chị em hoặc bạn bè đóng vai người bán và người mua, dùng câu \"How much is it?\"."
+  },
+  {
+   "t": "Bài học hôm nay: tiếng Anh quanh ta",
+   "vi": "Tiếng Anh có mặt ở khắp nơi: trên bao bì, biển báo, trò chơi. Mỗi lần thấy một từ tiếng Anh, hãy đoán nghĩa. Biến cuộc sống thành lớp học, em sẽ học mà không thấy mệt. Học như chơi là cách học lâu bền nhất.",
+   "try": "Đi một vòng quanh nhà, tìm năm từ tiếng Anh in trên đồ vật và đoán nghĩa của chúng."
+  }
+ ]
+}

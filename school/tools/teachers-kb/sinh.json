@@ -1,0 +1,1925 @@
+{
+ "id": "sinh",
+ "topics": [
+  "Tế bào",
+  "Thực vật",
+  "Động vật",
+  "Cơ thể & sức khoẻ",
+  "Sinh thái & môi trường",
+  "Nông nghiệp & thuỷ sản"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Tế bào là gì?",
+   "vi": "Tế bào là đơn vị nhỏ nhất cấu tạo nên cơ thể sống. Mọi sinh vật, từ vi khuẩn đến cây lúa và con người, đều được tạo nên từ tế bào. Phần lớn tế bào rất nhỏ, phải dùng kính hiển vi mới thấy.",
+   "ex": "Tế bào giống như viên gạch xây nên ngôi nhà cơ thể.",
+   "en": [
+    "cell"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Kính hiển vi",
+   "vi": "Kính hiển vi giúp ta nhìn thấy những vật quá nhỏ mà mắt thường không thấy. Nhờ kính hiển vi, các nhà khoa học đã phát hiện ra tế bào và vi khuẩn. Kính hiển vi quang học dùng ánh sáng và thấu kính để phóng to vật.",
+   "ex": "Không có kính hiển vi, ta không biết thế giới tí hon tồn tại.",
+   "en": [
+    "microscope"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Sinh vật đơn bào",
+   "vi": "Có những sinh vật chỉ gồm một tế bào, gọi là sinh vật đơn bào. Ví dụ: vi khuẩn, trùng roi, trùng giày. Chỉ một tế bào đó tự làm hết mọi việc: lấy thức ăn, lớn lên và sinh sản.",
+   "ex": "Một tế bào mà làm được tất cả, giỏi chưa!",
+   "en": [
+    "unicellular organism"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Sinh vật đa bào",
+   "vi": "Cây xanh, con mèo và con người là sinh vật đa bào, gồm rất nhiều tế bào. Cơ thể người có hàng chục nghìn tỉ tế bào. Mỗi loại tế bào làm một nhiệm vụ riêng, như tế bào cơ, tế bào máu, tế bào thần kinh.",
+   "ex": "Đa bào = nhiều tế bào cùng làm việc như một đội.",
+   "en": [
+    "multicellular organism"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Ba phần chính của tế bào",
+   "vi": "Tế bào thường có ba phần chính: màng tế bào, chất tế bào và nhân (hoặc vùng nhân). Màng tế bào bao bọc và kiểm soát các chất đi vào, đi ra. Chất tế bào là nơi diễn ra nhiều hoạt động sống. Nhân điều khiển mọi hoạt động của tế bào.",
+   "ex": "Màng như hàng rào, chất tế bào như sân, nhân như phòng chỉ huy.",
+   "en": [
+    "cell membrane",
+    "cytoplasm",
+    "nucleus"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Tế bào thực vật có gì riêng?",
+   "vi": "Tế bào thực vật có thành tế bào cứng nằm ngoài màng, giúp cây đứng vững. Nhiều tế bào ở lá có lục lạp chứa diệp lục màu xanh để quang hợp. Tế bào động vật không có thành tế bào và không có lục lạp.",
+   "ex": "Thành tế bào giống bức tường gạch bao quanh căn nhà.",
+   "en": [
+    "cell wall",
+    "chloroplast"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Tế bào nhân sơ và nhân thực",
+   "vi": "Tế bào nhân sơ chưa có nhân hoàn chỉnh, chất di truyền nằm ở vùng nhân, ví dụ tế bào vi khuẩn. Tế bào nhân thực có nhân được bao bởi màng nhân, ví dụ tế bào của nấm, thực vật và động vật. Tế bào nhân sơ thường nhỏ hơn tế bào nhân thực rất nhiều.",
+   "ex": "Nhân sơ = nhân sơ sài; nhân thực = nhân thật sự có màng.",
+   "en": [
+    "prokaryote",
+    "eukaryote"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Tế bào lớn lên và sinh sản",
+   "vi": "Tế bào lấy chất dinh dưỡng để lớn lên. Khi đủ lớn, một tế bào có thể phân chia thành hai tế bào con. Nhờ tế bào lớn lên và phân chia mà cơ thể ta cao lớn và vết thương liền lại.",
+   "ex": "1 thành 2, 2 thành 4, 4 thành 8…",
+   "en": [
+    "cell division"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Ti thể – nhà máy năng lượng",
+   "vi": "Ti thể là bào quan thực hiện hô hấp tế bào. Nó phân giải chất hữu cơ như đường glucose để tạo ra năng lượng cho tế bào sử dụng. Tế bào cơ hoạt động nhiều nên có rất nhiều ti thể.",
+   "ex": "Ăn cơm xong, ti thể biến đường thành năng lượng để em chạy nhảy.",
+   "en": [
+    "mitochondria",
+    "cellular respiration"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "DNA – sách hướng dẫn sự sống",
+   "vi": "DNA (ADN) là phân tử mang thông tin di truyền, ở tế bào nhân thực nó nằm chủ yếu trong nhân. DNA có cấu trúc xoắn kép, gồm hai mạch xoắn quanh nhau. Thông tin trên DNA quy định nhiều đặc điểm của cơ thể như màu mắt, nhóm máu.",
+   "ex": "DNA giống cuốn sách công thức để xây nên cơ thể.",
+   "en": [
+    "DNA",
+    "double helix"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Nguyên phân",
+   "vi": "Nguyên phân là cách phân chia giúp một tế bào tạo ra hai tế bào con có bộ nhiễm sắc thể giống hệt tế bào mẹ. Trước khi chia, tế bào nhân đôi DNA của mình. Nhờ nguyên phân, cơ thể lớn lên và thay thế các tế bào già, bị hỏng.",
+   "ex": "Nguyên phân: 1 tế bào mẹ → 2 tế bào con giống hệt.",
+   "en": [
+    "mitosis",
+    "chromosome"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Học thuyết tế bào",
+   "vi": "Học thuyết tế bào nói rằng: mọi sinh vật đều được cấu tạo từ tế bào, tế bào là đơn vị cơ bản của sự sống, và tế bào mới chỉ sinh ra từ tế bào có trước. Học thuyết này được các nhà khoa học như Schleiden, Schwann và Virchow xây dựng vào thế kỷ 19.",
+   "ex": "Tế bào sinh ra từ tế bào – không tự nhiên mọc ra.",
+   "en": [
+    "cell theory"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Cây cần gì để sống?",
+   "vi": "Cây xanh cần ánh sáng, nước, không khí và chất khoáng trong đất. Thiếu ánh sáng, cây yếu ớt và lá vàng đi. Thiếu nước, cây héo rũ và có thể chết.",
+   "ex": "Nhớ 4 thứ: nắng, nước, khí, khoáng.",
+   "en": [
+    "plant needs"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Các bộ phận của cây",
+   "vi": "Cây có hoa thường có rễ, thân, lá, hoa, quả và hạt. Rễ hút nước và muối khoáng. Thân nâng đỡ cây và vận chuyển các chất. Lá làm nhiệm vụ quang hợp để tạo thức ăn cho cây.",
+   "ex": "Rễ uống nước, thân đưa đường, lá nấu ăn.",
+   "en": [
+    "root",
+    "stem",
+    "leaf"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Hạt nảy mầm",
+   "vi": "Hạt nảy mầm khi có đủ nước, không khí và nhiệt độ phù hợp. Trong hạt có phôi là cây con tí hon cùng chất dinh dưỡng dự trữ. Thường rễ mầm mọc ra trước, sau đó mới đến chồi mầm.",
+   "ex": "Hạt đậu ngâm nước vài ngày sẽ nhú mầm.",
+   "en": [
+    "seed",
+    "germination"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Vì sao lá có màu xanh?",
+   "vi": "Lá cây có màu xanh vì chứa nhiều chất diệp lục. Diệp lục hấp thụ mạnh ánh sáng đỏ và xanh tím, còn ánh sáng xanh lục bị phản xạ lại vào mắt ta. Nhờ diệp lục, lá dùng được năng lượng ánh sáng để làm ra thức ăn.",
+   "ex": "Mùa thu, diệp lục giảm nên nhiều lá chuyển vàng, đỏ.",
+   "en": [
+    "chlorophyll"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Quang hợp",
+   "vi": "Quang hợp là quá trình lá cây dùng năng lượng ánh sáng để biến nước và khí carbon dioxide thành đường glucose và khí oxygen. Quá trình này diễn ra chủ yếu ở lục lạp. Nhờ quang hợp, cây tự tạo thức ăn và thải oxygen cho muôn loài hô hấp.",
+   "ex": "Nước + carbon dioxide → (ánh sáng, diệp lục) → glucose + oxygen.",
+   "en": [
+    "photosynthesis"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Cây cũng hô hấp",
+   "vi": "Cây hô hấp suốt ngày đêm: lấy oxygen, phân giải chất hữu cơ để có năng lượng và thải carbon dioxide. Ban ngày, quang hợp thường mạnh hơn hô hấp nên cây thải ra nhiều oxygen hơn lượng lấy vào. Ban đêm cây không quang hợp, chỉ hô hấp.",
+   "ex": "Cây cũng 'thở' giống em, chỉ là không có mũi.",
+   "en": [
+    "plant respiration"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Thoát hơi nước",
+   "vi": "Nước được rễ hút lên, đi qua thân rồi phần lớn bay hơi ra ngoài qua lỗ khí ở lá. Hiện tượng này gọi là thoát hơi nước. Nó giúp kéo nước từ rễ lên cao và làm mát lá khi trời nắng.",
+   "ex": "Lá 'đổ mồ hôi' để không bị nóng quá.",
+   "en": [
+    "transpiration",
+    "stoma"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Hoa và sự thụ phấn",
+   "vi": "Hoa là cơ quan sinh sản của cây có hoa. Thụ phấn là khi hạt phấn từ nhị rơi lên đầu nhuỵ. Côn trùng, gió hoặc con người có thể giúp hoa thụ phấn. Sau khi thụ tinh, bầu nhuỵ phát triển thành quả, noãn phát triển thành hạt.",
+   "ex": "Ong hút mật cũng là ong đi 'đưa thư' phấn hoa.",
+   "en": [
+    "pollination",
+    "flower"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Mạch gỗ và mạch rây",
+   "vi": "Trong thân cây có hai loại mạch dẫn. Mạch gỗ vận chuyển nước và muối khoáng từ rễ lên lá. Mạch rây vận chuyển chất hữu cơ do lá tạo ra đến các bộ phận khác như rễ, quả, củ.",
+   "ex": "Mạch gỗ đi lên mang nước; mạch rây mang 'đồ ăn' đi khắp cây.",
+   "en": [
+    "xylem",
+    "phloem"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Các nhóm thực vật",
+   "vi": "Rêu chưa có mạch dẫn và chưa có rễ thật. Dương xỉ có mạch dẫn, sinh sản bằng bào tử. Hạt trần như cây thông có hạt nằm lộ trên lá noãn. Hạt kín có hoa, hạt được bảo vệ bên trong quả.",
+   "ex": "Rêu → Dương xỉ → Hạt trần → Hạt kín.",
+   "en": [
+    "moss",
+    "fern",
+    "flowering plant"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Cây một lá mầm, hai lá mầm",
+   "vi": "Cây hạt kín được chia thành cây một lá mầm và cây hai lá mầm. Cây một lá mầm như lúa, ngô thường có rễ chùm và lá gân song song hoặc hình cung. Cây hai lá mầm như đậu, cam thường có rễ cọc và lá gân hình mạng.",
+   "ex": "Nhổ cây lúa lên sẽ thấy một búi rễ chùm.",
+   "en": [
+    "monocot",
+    "dicot"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Sinh sản sinh dưỡng",
+   "vi": "Nhiều cây có thể mọc thành cây mới từ rễ, thân hoặc lá mà không cần hạt. Đó là sinh sản sinh dưỡng. Ví dụ: khoai lang mọc từ củ hoặc đoạn thân, cây bỏng mọc ra từ mép lá. Người ta còn giâm cành, chiết cành, ghép cây để nhân giống nhanh.",
+   "ex": "Cắm một đoạn rau muống vào đất ẩm, nó sẽ ra rễ.",
+   "en": [
+    "vegetative reproduction",
+    "cutting"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Động vật có xương sống",
+   "vi": "Động vật có xương sống có bộ xương trong, với cột sống chạy dọc lưng. Có năm nhóm chính: cá, lưỡng cư, bò sát, chim và thú. Con người cũng thuộc nhóm thú.",
+   "ex": "Sờ dọc lưng em sẽ thấy các đốt sống.",
+   "en": [
+    "vertebrate"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Động vật không xương sống",
+   "vi": "Phần lớn các loài động vật trên Trái Đất là động vật không xương sống. Chúng không có cột sống, ví dụ: giun, ốc, mực, tôm, cua và côn trùng. Nhiều loài có vỏ cứng hoặc bộ xương ngoài để bảo vệ cơ thể.",
+   "ex": "Con ốc mang 'ngôi nhà' vỏ cứng trên lưng.",
+   "en": [
+    "invertebrate"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Thú nuôi con bằng sữa",
+   "vi": "Thú (động vật có vú) thường có lông mao bao phủ cơ thể và nuôi con bằng sữa mẹ. Hầu hết các loài thú đẻ con. Cá voi và cá heo sống dưới nước nhưng vẫn là thú vì chúng thở bằng phổi và nuôi con bằng sữa.",
+   "ex": "Cá voi tên có chữ 'cá' nhưng thật ra là thú.",
+   "en": [
+    "mammal"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Chim có lông vũ",
+   "vi": "Chim là nhóm động vật duy nhất có lông vũ. Chim đẻ trứng có vỏ cứng và thường ấp trứng. Không phải loài chim nào cũng bay được, ví dụ đà điểu và chim cánh cụt.",
+   "ex": "Chim cánh cụt không bay nhưng bơi rất giỏi.",
+   "en": [
+    "bird",
+    "feather"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Côn trùng có sáu chân",
+   "vi": "Côn trùng có cơ thể chia ba phần: đầu, ngực và bụng. Chúng có sáu chân, thường có một đôi râu và nhiều loài có cánh. Nhện có tám chân nên không phải côn trùng.",
+   "ex": "Đếm chân: 6 là côn trùng, 8 là nhện.",
+   "en": [
+    "insect"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Từ nòng nọc thành ếch",
+   "vi": "Ếch là lưỡng cư. Ếch đẻ trứng dưới nước, trứng nở ra nòng nọc có đuôi, thở bằng mang. Nòng nọc lớn dần, mọc chân, mất đuôi rồi thành ếch con sống được trên cạn, thở bằng phổi và da.",
+   "ex": "Sự thay đổi lớn như vậy gọi là biến thái.",
+   "en": [
+    "metamorphosis",
+    "tadpole"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Bò sát",
+   "vi": "Bò sát như rắn, thằn lằn, rùa, cá sấu có da khô phủ vảy sừng. Chúng thở bằng phổi và phần lớn đẻ trứng có vỏ. Bò sát là động vật biến nhiệt nên hay phơi nắng để sưởi ấm cơ thể.",
+   "ex": "Thằn lằn nằm phơi nắng là đang 'sạc pin' nhiệt.",
+   "en": [
+    "reptile"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Biến nhiệt và hằng nhiệt",
+   "vi": "Chim và thú là động vật hằng nhiệt: thân nhiệt gần như ổn định dù trời nóng hay lạnh. Cá, lưỡng cư, bò sát là động vật biến nhiệt: thân nhiệt thay đổi theo môi trường. Vì vậy mùa đông lạnh, nhiều loài bò sát ít hoạt động hoặc ngủ đông.",
+   "ex": "Thân nhiệt người luôn khoảng 37 độ C.",
+   "en": [
+    "warm-blooded",
+    "cold-blooded"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Cá thở bằng mang",
+   "vi": "Cá hớp nước vào miệng rồi đẩy nước qua mang. Mang có rất nhiều mạch máu nhỏ, lấy oxygen hoà tan trong nước và thải carbon dioxide ra. Khi bị đưa lên cạn lâu, mang cá bị khô và cá không thở được.",
+   "ex": "Mang cá giống phổi dành riêng cho nước.",
+   "en": [
+    "gill"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Động vật di cư",
+   "vi": "Nhiều loài động vật di chuyển rất xa theo mùa để tìm thức ăn, nơi ấm áp hoặc nơi sinh sản. Đó là di cư. Nhiều loài chim bay về phương nam tránh rét. Cá hồi bơi ngược dòng về nơi chúng sinh ra để đẻ trứng.",
+   "ex": "Chim én bay về báo hiệu mùa xuân.",
+   "en": [
+    "migration"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Phân loại sinh vật",
+   "vi": "Các nhà khoa học xếp sinh vật theo các bậc từ lớn đến nhỏ: giới, ngành, lớp, bộ, họ, chi, loài. Mỗi loài có tên khoa học gồm hai phần theo cách đặt của Carl Linnaeus. Ví dụ, tên khoa học của loài người là Homo sapiens.",
+   "ex": "Tên khoa học = tên chi + tên loài.",
+   "en": [
+    "taxonomy",
+    "species"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Ngụy trang và tự vệ",
+   "vi": "Nhiều loài động vật có cách tự vệ đặc biệt. Tắc kè hoa đổi màu da, bọ que trông giống hệt cành cây. Mực phun mực để trốn kẻ thù. Một số loài ếch có màu sặc sỡ để cảnh báo rằng chúng có độc.",
+   "ex": "Màu sặc sỡ ở động vật đôi khi có nghĩa là 'đừng ăn tôi'.",
+   "en": [
+    "camouflage"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Năm giác quan",
+   "vi": "Con người có năm giác quan: thị giác (mắt), thính giác (tai), khứu giác (mũi), vị giác (lưỡi) và xúc giác (da). Các giác quan giúp ta nhận biết thế giới xung quanh. Hãy bảo vệ mắt bằng cách đọc sách đủ ánh sáng và không nhìn màn hình quá lâu.",
+   "ex": "Mắt nhìn, tai nghe, mũi ngửi, lưỡi nếm, da cảm nhận.",
+   "en": [
+    "five senses"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Rửa tay đúng cách",
+   "vi": "Tay chạm vào nhiều đồ vật nên dễ dính vi khuẩn và virus. Rửa tay bằng xà phòng và nước sạch, chà xát ít nhất khoảng 20 giây, giúp phòng nhiều bệnh. Nhớ rửa tay trước khi ăn và sau khi đi vệ sinh.",
+   "ex": "Hát hai lần bài 'Chúc mừng sinh nhật' là khoảng 20 giây.",
+   "en": [
+    "hand washing"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Ăn uống cân đối",
+   "vi": "Cơ thể cần nhiều nhóm chất: chất bột đường, chất đạm, chất béo, vitamin và chất khoáng. Không có món ăn nào chứa đủ tất cả. Vì vậy cần ăn đa dạng, nhiều rau quả, uống đủ nước và hạn chế đồ ngọt, đồ chiên rán.",
+   "ex": "Đĩa ăn càng nhiều màu rau quả càng tốt.",
+   "en": [
+    "balanced diet"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Giữ răng khoẻ",
+   "vi": "Trẻ em có khoảng 20 răng sữa, sau đó thay dần bằng răng vĩnh viễn. Người lớn thường có 32 răng vĩnh viễn, có người ít hơn vì răng khôn không mọc. Đánh răng ít nhất hai lần mỗi ngày và hạn chế đồ ngọt giúp tránh sâu răng.",
+   "ex": "Răng vĩnh viễn mất đi sẽ không mọc lại nữa.",
+   "en": [
+    "teeth",
+    "tooth decay"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Tim và vòng tuần hoàn",
+   "vi": "Tim là một khối cơ, co bóp liên tục để đẩy máu đi khắp cơ thể. Tim người có bốn ngăn: hai tâm nhĩ và hai tâm thất. Máu mang oxygen và chất dinh dưỡng đến các tế bào, rồi mang chất thải đi.",
+   "ex": "Tim to cỡ nắm tay của chính em.",
+   "en": [
+    "heart",
+    "circulation"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Hệ hô hấp",
+   "vi": "Khi hít vào, không khí đi qua mũi, khí quản, phế quản rồi vào phổi. Ở các phế nang trong phổi, oxygen đi vào máu còn carbon dioxide từ máu đi ra ngoài. Thở bằng mũi tốt hơn vì mũi giúp lọc bụi, làm ấm và làm ẩm không khí.",
+   "ex": "Hít vào lấy oxygen, thở ra thải carbon dioxide.",
+   "en": [
+    "lungs",
+    "respiration"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Hệ tiêu hoá",
+   "vi": "Thức ăn đi qua miệng, thực quản, dạ dày, ruột non rồi ruột già. Ruột non là nơi tiêu hoá và hấp thụ chất dinh dưỡng chủ yếu. Gan tiết ra mật giúp tiêu hoá chất béo. Nhai kỹ giúp dạ dày làm việc nhẹ nhàng hơn.",
+   "ex": "Nhai kỹ no lâu.",
+   "en": [
+    "digestive system"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Bộ xương",
+   "vi": "Bộ xương người trưởng thành có khoảng 206 chiếc xương. Xương nâng đỡ cơ thể, bảo vệ các cơ quan như não, tim, phổi, và cùng với cơ giúp ta vận động. Ăn thực phẩm giàu canxi và vận động thường xuyên giúp xương chắc khoẻ.",
+   "ex": "Hộp sọ bảo vệ não, lồng ngực bảo vệ tim và phổi.",
+   "en": [
+    "skeleton",
+    "bone"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Miễn dịch và vắc xin",
+   "vi": "Hệ miễn dịch bảo vệ cơ thể khỏi vi khuẩn, virus gây bệnh. Bạch cầu tìm và tiêu diệt mầm bệnh. Vắc xin giúp cơ thể làm quen trước với mầm bệnh đã được làm yếu hoặc bất hoạt, nên khi gặp mầm bệnh thật, cơ thể chống lại nhanh hơn.",
+   "ex": "Vắc xin giống buổi tập trận trước khi ra trận thật.",
+   "en": [
+    "immune system",
+    "vaccine"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Thành phần của máu",
+   "vi": "Máu gồm huyết tương và các tế bào máu. Hồng cầu chứa hemoglobin, vận chuyển oxygen đi khắp cơ thể. Bạch cầu chống lại mầm bệnh. Tiểu cầu giúp máu đông lại khi bị đứt tay.",
+   "ex": "Máu đỏ là nhờ hemoglobin trong hồng cầu.",
+   "en": [
+    "red blood cell",
+    "platelet"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Não và hệ thần kinh",
+   "vi": "Hệ thần kinh gồm não, tuỷ sống và các dây thần kinh. Não nhận thông tin từ giác quan, suy nghĩ và ra lệnh cho cơ thể. Tế bào thần kinh gọi là nơron, truyền tín hiệu rất nhanh. Ngủ đủ giấc giúp não ghi nhớ bài học tốt hơn.",
+   "ex": "Chạm vào vật nóng, tay rụt lại ngay là nhờ phản xạ.",
+   "en": [
+    "brain",
+    "neuron"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Thận lọc máu",
+   "vi": "Cơ thể có hai quả thận. Thận lọc máu, giữ lại chất cần thiết và loại bỏ chất thải cùng nước thừa thành nước tiểu. Uống đủ nước và không nhịn tiểu lâu giúp thận làm việc tốt.",
+   "ex": "Thận giống hai chiếc máy lọc nước của cơ thể.",
+   "en": [
+    "kidney"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Môi trường sống",
+   "vi": "Mỗi sinh vật sống ở một nơi phù hợp gọi là môi trường sống. Cá sống dưới nước, giun sống trong đất, chim làm tổ trên cây. Nếu môi trường sống bị phá huỷ, nhiều loài sẽ mất nhà.",
+   "ex": "Bảo vệ rừng là giữ nhà cho muôn loài.",
+   "en": [
+    "habitat"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Chuỗi thức ăn",
+   "vi": "Chuỗi thức ăn cho biết loài nào ăn loài nào trong tự nhiên. Ví dụ: cỏ → châu chấu → ếch → rắn. Mỗi mắt xích ăn mắt xích đứng trước nó. Chuỗi thức ăn thường bắt đầu từ cây xanh.",
+   "ex": "Mũi tên chỉ về phía con ăn.",
+   "en": [
+    "food chain"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Phân loại rác",
+   "vi": "Rác có thể chia thành rác hữu cơ (vỏ rau, thức ăn thừa), rác tái chế (giấy, chai nhựa, lon kim loại) và rác còn lại. Phân loại rác giúp tái chế được nhiều hơn và giảm ô nhiễm. Túi nilon có thể tồn tại trong tự nhiên hàng trăm năm.",
+   "ex": "Vỏ rau có thể ủ thành phân bón cho cây.",
+   "en": [
+    "recycling",
+    "waste sorting"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Tiết kiệm nước",
+   "vi": "Nước sạch rất quý và không phải vô tận. Hãy khoá vòi khi đánh răng, dùng nước vo gạo để tưới cây và báo người lớn khi thấy vòi nước rò rỉ. Mỗi việc nhỏ đều giúp bảo vệ nguồn nước.",
+   "ex": "Một vòi nước nhỏ giọt cả ngày phí rất nhiều nước.",
+   "en": [
+    "water saving"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Sản xuất, tiêu thụ, phân giải",
+   "vi": "Trong hệ sinh thái, cây xanh là sinh vật sản xuất vì tự tạo thức ăn nhờ quang hợp. Động vật là sinh vật tiêu thụ. Vi khuẩn và nấm là sinh vật phân giải, phân huỷ xác sinh vật thành chất khoáng trả lại cho đất.",
+   "ex": "Không có sinh vật phân giải, lá rụng sẽ chất thành núi.",
+   "en": [
+    "producer",
+    "consumer",
+    "decomposer"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Lưới thức ăn",
+   "vi": "Trong tự nhiên, một loài thường ăn nhiều loài khác và cũng là mồi của nhiều loài. Nhiều chuỗi thức ăn có chung mắt xích nối với nhau tạo thành lưới thức ăn. Nếu một loài biến mất, cả lưới thức ăn có thể bị ảnh hưởng.",
+   "ex": "Lưới thức ăn giống tấm lưới nhện, đứt một sợi cả lưới rung.",
+   "en": [
+    "food web"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Hệ sinh thái",
+   "vi": "Hệ sinh thái gồm các sinh vật và môi trường sống của chúng, luôn tác động qua lại với nhau. Ví dụ: một khu rừng, một cái ao, một rạn san hô. Việt Nam có nhiều hệ sinh thái như rừng nhiệt đới, rừng ngập mặn và rạn san hô.",
+   "ex": "Cái ao nhỏ sau nhà cũng là một hệ sinh thái.",
+   "en": [
+    "ecosystem"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Rừng ngập mặn",
+   "vi": "Rừng ngập mặn mọc ở vùng ven biển ngập nước lợ, với các cây như đước, mắm, bần. Rễ cây chằng chịt giúp giữ đất, chắn sóng và là nơi sinh sản của nhiều loài tôm, cá, cua. Cà Mau và Cần Giờ có những khu rừng ngập mặn nổi tiếng.",
+   "ex": "Rừng ngập mặn là 'bức tường xanh' chắn sóng biển.",
+   "en": [
+    "mangrove"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Hiệu ứng nhà kính",
+   "vi": "Khí carbon dioxide, methane và một số khí khác giữ lại một phần nhiệt của Trái Đất, giống lớp kính của nhà kính. Nhờ đó Trái Đất đủ ấm cho sự sống. Nhưng khi con người đốt quá nhiều than, dầu, lượng khí này tăng lên khiến Trái Đất nóng dần.",
+   "ex": "Ô tô đóng kín cửa ngoài nắng nóng lên cũng theo cách tương tự.",
+   "en": [
+    "greenhouse effect",
+    "climate change"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Đa dạng sinh học",
+   "vi": "Đa dạng sinh học là sự phong phú của các loài, các gen và các hệ sinh thái. Hệ sinh thái càng đa dạng thì càng bền vững trước thay đổi. Săn bắt trái phép, phá rừng và ô nhiễm làm suy giảm đa dạng sinh học.",
+   "ex": "Càng nhiều loài, thiên nhiên càng khoẻ mạnh.",
+   "en": [
+    "biodiversity"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Tháp năng lượng",
+   "vi": "Năng lượng đi qua chuỗi thức ăn bị mất dần ở mỗi bậc, phần lớn do hô hấp và toả nhiệt. Thường chỉ khoảng 10% năng lượng được chuyển lên bậc tiếp theo. Vì vậy chuỗi thức ăn thường chỉ có ít mắt xích và số động vật ăn thịt lớn ít hơn con mồi.",
+   "ex": "Một con hổ cần cả một khu rừng rộng để sống.",
+   "en": [
+    "energy pyramid",
+    "trophic level"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Vòng tuần hoàn carbon",
+   "vi": "Carbon luôn di chuyển giữa không khí, sinh vật, đất và đại dương. Cây lấy carbon dioxide khi quang hợp. Sinh vật thải carbon dioxide khi hô hấp, xác sinh vật phân huỷ cũng trả carbon lại. Đốt nhiên liệu hoá thạch làm lượng carbon dioxide trong không khí tăng lên.",
+   "ex": "Trồng cây là giúp hút bớt carbon dioxide.",
+   "en": [
+    "carbon cycle"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Cây lúa nước",
+   "vi": "Lúa là cây lương thực chính của người Việt Nam. Lúa nước được trồng trên ruộng có nước, hạt lúa xay xát thành gạo. Việt Nam là một trong những nước xuất khẩu gạo hàng đầu thế giới.",
+   "ex": "Hạt gạo là 'hạt ngọc' của nhà nông.",
+   "en": [
+    "rice"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Vật nuôi trong nhà",
+   "vi": "Gà, vịt, lợn, bò, trâu là những vật nuôi quen thuộc. Chúng cho ta thịt, trứng, sữa, và ngày xưa trâu bò còn giúp kéo cày. Vật nuôi cần chuồng sạch, đủ thức ăn, nước uống và được tiêm phòng.",
+   "ex": "'Con trâu là đầu cơ nghiệp' – câu tục ngữ của nhà nông.",
+   "en": [
+    "livestock"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Giun đất – bạn nhà nông",
+   "vi": "Giun đất đào hang làm đất tơi xốp, giúp không khí và nước thấm xuống rễ cây. Phân giun còn làm đất màu mỡ hơn. Vì vậy nhà nông gọi giun đất là người bạn của mình.",
+   "ex": "Đất có nhiều giun thường là đất tốt.",
+   "en": [
+    "earthworm",
+    "soil"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Nuôi cá trong ao",
+   "vi": "Nhiều gia đình nuôi cá như cá rô phi, cá trắm, cá chép trong ao. Nước ao cần sạch và đủ oxygen. Không nên cho cá ăn quá nhiều vì thức ăn thừa làm nước bẩn, cá dễ bị bệnh.",
+   "ex": "Cá nổi đầu đớp không khí buổi sáng là dấu hiệu ao thiếu oxygen.",
+   "en": [
+    "fish farming"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Phân bón",
+   "vi": "Cây cần các chất khoáng, quan trọng nhất là đạm (nitrogen), lân (phosphorus) và kali (potassium). Phân hữu cơ như phân chuồng, phân xanh giúp đất tơi xốp lâu dài. Bón quá nhiều phân hoá học có thể gây ô nhiễm đất và nước.",
+   "ex": "Ba chữ N, P, K là ba chất dinh dưỡng chính của cây.",
+   "en": [
+    "fertilizer"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Luân canh và xen canh",
+   "vi": "Luân canh là thay đổi loại cây trồng trên cùng một mảnh đất theo từng vụ. Xen canh là trồng hai loại cây xen nhau trên cùng một mảnh đất. Trồng cây họ đậu giúp đất có thêm đạm vì rễ có vi khuẩn cố định đạm.",
+   "ex": "Trên rễ cây đậu có những nốt sần nhỏ chứa vi khuẩn.",
+   "en": [
+    "crop rotation",
+    "intercropping"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Nuôi tôm",
+   "vi": "Tôm thẻ chân trắng và tôm sú là hai loài tôm được nuôi phổ biến ở Việt Nam, nhiều nhất ở đồng bằng sông Cửu Long. Tôm cần nước sạch, độ mặn và nhiệt độ phù hợp. Người nuôi dùng máy quạt nước để tăng oxygen trong ao.",
+   "ex": "Ao tôm có máy quạt nước quay lách cách suốt đêm.",
+   "en": [
+    "shrimp farming"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Tôm lột xác",
+   "vi": "Tôm có bộ vỏ cứng chứa kitin, vỏ này không lớn theo cơ thể. Vì thế tôm phải lột bỏ vỏ cũ nhiều lần để lớn lên. Lúc mới lột, vỏ mới còn mềm nên tôm rất yếu và dễ bị tấn công.",
+   "ex": "Cua, ve sầu cũng lột xác để lớn.",
+   "en": [
+    "molting",
+    "exoskeleton"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Thuỷ canh",
+   "vi": "Thuỷ canh là trồng cây không cần đất, rễ cây nhúng trong dung dịch nước có pha chất dinh dưỡng. Cách này tiết kiệm đất, dễ kiểm soát dinh dưỡng và hay dùng để trồng rau sạch. Rễ vẫn cần oxygen nên dung dịch phải được sục khí hoặc để một phần rễ tiếp xúc không khí.",
+   "ex": "Rau xà lách thuỷ canh có thể trồng ngay trên sân thượng.",
+   "en": [
+    "hydroponics"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Mô hình VAC",
+   "vi": "VAC là mô hình kết hợp Vườn, Ao, Chuồng. Phân chuồng bón cho vườn, rau thừa làm thức ăn cho cá, nước ao tưới cây. Cách làm này tận dụng chất thải, giảm chi phí và bảo vệ môi trường.",
+   "ex": "V – Vườn, A – Ao, C – Chuồng.",
+   "en": [
+    "integrated farming"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Thiên địch và IPM",
+   "vi": "Thiên địch là những sinh vật ăn hoặc kí sinh sâu hại, như bọ rùa ăn rệp, ong mắt đỏ kí sinh trứng sâu. Quản lý dịch hại tổng hợp (IPM) dùng thiên địch, giống tốt và chăm sóc hợp lý, chỉ dùng thuốc khi thật cần. Cách này giảm thuốc hoá học, bảo vệ môi trường và sức khoẻ.",
+   "ex": "Bảo vệ bọ rùa là có thêm 'lính gác' cho vườn rau.",
+   "en": [
+    "natural enemy",
+    "integrated pest management"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Nuôi cấy mô",
+   "vi": "Nuôi cấy mô là lấy một mẩu nhỏ của cây, nuôi trong ống nghiệm có môi trường dinh dưỡng vô trùng. Từ đó tạo ra rất nhiều cây con giống hệt cây mẹ trong thời gian ngắn. Cách này được dùng để nhân giống chuối, hoa lan và nhiều cây khác.",
+   "ex": "Từ một mẩu lá nhỏ có thể ra hàng nghìn cây con.",
+   "en": [
+    "tissue culture"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Đơn vị nhỏ nhất cấu tạo nên cơ thể sống là gì?",
+   "a": [
+    "Tế bào",
+    "Hòn đá",
+    "Giọt nước",
+    "Hạt cát"
+   ],
+   "c": 0,
+   "why": "Mọi sinh vật đều được cấu tạo từ tế bào.",
+   "en": "cell"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Dụng cụ nào giúp ta nhìn thấy tế bào?",
+   "a": [
+    "Kính râm",
+    "Kính hiển vi",
+    "Ống nhòm",
+    "Gương soi"
+   ],
+   "c": 1,
+   "why": "Tế bào rất nhỏ, kính hiển vi phóng to để ta thấy được.",
+   "en": "microscope"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Sinh vật nào chỉ gồm một tế bào?",
+   "a": [
+    "Con mèo",
+    "Cây lúa",
+    "Vi khuẩn",
+    "Con cá chép"
+   ],
+   "c": 2,
+   "why": "Vi khuẩn là sinh vật đơn bào; mèo, lúa, cá chép là sinh vật đa bào.",
+   "en": "bacteria"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Cơ thể người có khoảng bao nhiêu tế bào?",
+   "a": [
+    "Khoảng 10",
+    "Khoảng 1000",
+    "Khoảng 1 triệu",
+    "Hàng chục nghìn tỉ"
+   ],
+   "c": 3,
+   "why": "Cơ thể người có hàng chục nghìn tỉ tế bào.",
+   "en": "cell"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Bộ phận nào điều khiển mọi hoạt động của tế bào?",
+   "a": [
+    "Nhân tế bào",
+    "Màng tế bào",
+    "Thành tế bào",
+    "Không bào"
+   ],
+   "c": 0,
+   "why": "Nhân chứa chất di truyền và điều khiển hoạt động của tế bào.",
+   "en": "nucleus"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Bào quan nào giúp tế bào lá cây quang hợp?",
+   "a": [
+    "Nhân",
+    "Lục lạp",
+    "Màng tế bào",
+    "Thành tế bào"
+   ],
+   "c": 1,
+   "why": "Lục lạp chứa diệp lục, nơi diễn ra quang hợp.",
+   "en": "chloroplast"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Tế bào động vật KHÔNG có bộ phận nào?",
+   "a": [
+    "Màng tế bào",
+    "Chất tế bào",
+    "Thành tế bào",
+    "Nhân"
+   ],
+   "c": 2,
+   "why": "Thành tế bào chỉ có ở tế bào thực vật (và nấm, vi khuẩn), không có ở tế bào động vật.",
+   "en": "cell wall"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Vi khuẩn được cấu tạo từ loại tế bào nào?",
+   "a": [
+    "Tế bào nhân thực",
+    "Tế bào thần kinh",
+    "Tế bào thực vật",
+    "Tế bào nhân sơ"
+   ],
+   "c": 3,
+   "why": "Vi khuẩn chưa có nhân hoàn chỉnh nên là tế bào nhân sơ.",
+   "en": "prokaryote"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Bào quan nào được gọi là 'nhà máy năng lượng' của tế bào?",
+   "a": [
+    "Ti thể",
+    "Nhân",
+    "Màng tế bào",
+    "Thành tế bào"
+   ],
+   "c": 0,
+   "why": "Ti thể thực hiện hô hấp tế bào, tạo năng lượng cho tế bào.",
+   "en": "mitochondria"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Phân tử DNA có cấu trúc như thế nào?",
+   "a": [
+    "Hình lập phương",
+    "Xoắn kép",
+    "Hình kim tự tháp",
+    "Hình ngôi sao"
+   ],
+   "c": 1,
+   "why": "DNA gồm hai mạch xoắn quanh nhau, gọi là xoắn kép.",
+   "en": "DNA"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Qua nguyên phân, một tế bào mẹ tạo ra bao nhiêu tế bào con?",
+   "a": [
+    "1",
+    "4",
+    "2",
+    "8"
+   ],
+   "c": 2,
+   "why": "Nguyên phân tạo ra 2 tế bào con giống hệt tế bào mẹ.",
+   "en": "mitosis"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Ai đặt ra từ 'cell' (tế bào) khi quan sát lát bần?",
+   "a": [
+    "Isaac Newton",
+    "Charles Darwin",
+    "Albert Einstein",
+    "Robert Hooke"
+   ],
+   "c": 3,
+   "why": "Năm 1665, Robert Hooke thấy các ô nhỏ trong lát bần và gọi là 'cell'.",
+   "en": "Robert Hooke"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Bộ phận nào của cây hút nước từ đất?",
+   "a": [
+    "Rễ",
+    "Hoa",
+    "Lá",
+    "Quả"
+   ],
+   "c": 0,
+   "why": "Rễ hút nước và muối khoáng từ đất.",
+   "en": "root"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Lá cây có màu xanh là nhờ chất gì?",
+   "a": [
+    "Muối ăn",
+    "Diệp lục",
+    "Đường",
+    "Nước"
+   ],
+   "c": 1,
+   "why": "Diệp lục phản xạ ánh sáng xanh lục nên lá có màu xanh.",
+   "en": "chlorophyll"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Hạt cần những gì để nảy mầm?",
+   "a": [
+    "Chỉ cần muối",
+    "Chỉ cần đá sỏi",
+    "Nước, không khí, nhiệt độ hợp",
+    "Chỉ cần đồ ngọt"
+   ],
+   "c": 2,
+   "why": "Hạt nảy mầm khi có đủ nước, không khí và nhiệt độ phù hợp.",
+   "en": "germination"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Để cây trong tối lâu ngày, lá cây sẽ thế nào?",
+   "a": [
+    "Xanh đậm hơn",
+    "Ra nhiều hoa hơn",
+    "Không thay đổi gì",
+    "Vàng úa, yếu ớt"
+   ],
+   "c": 3,
+   "why": "Thiếu ánh sáng, cây không quang hợp được nên yếu và lá vàng.",
+   "en": "light"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Khi quang hợp, cây thải ra khí gì?",
+   "a": [
+    "Oxygen",
+    "Carbon dioxide",
+    "Nitrogen",
+    "Hydrogen"
+   ],
+   "c": 0,
+   "why": "Quang hợp lấy carbon dioxide và thải ra oxygen.",
+   "en": "photosynthesis"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Nước thoát ra khỏi lá chủ yếu qua đâu?",
+   "a": [
+    "Cuống hoa",
+    "Lỗ khí",
+    "Rễ cây",
+    "Vỏ hạt"
+   ],
+   "c": 1,
+   "why": "Phần lớn hơi nước thoát ra qua các lỗ khí ở lá.",
+   "en": "stoma"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Thụ phấn là gì?",
+   "a": [
+    "Rễ hút nước",
+    "Lá rụng xuống đất",
+    "Hạt phấn rơi lên đầu nhuỵ",
+    "Hạt nảy mầm"
+   ],
+   "c": 2,
+   "why": "Thụ phấn là hạt phấn từ nhị chuyển đến đầu nhuỵ.",
+   "en": "pollination"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Ban đêm, cây xanh thực hiện quá trình nào?",
+   "a": [
+    "Chỉ quang hợp",
+    "Quang hợp mạnh nhất",
+    "Không làm gì cả",
+    "Chỉ hô hấp"
+   ],
+   "c": 3,
+   "why": "Không có ánh sáng nên cây không quang hợp, chỉ hô hấp.",
+   "en": "respiration"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Mạch gỗ vận chuyển chất gì?",
+   "a": [
+    "Nước và muối khoáng",
+    "Máu",
+    "Không khí",
+    "Chất hữu cơ từ lá"
+   ],
+   "c": 0,
+   "why": "Mạch gỗ đưa nước và muối khoáng từ rễ lên; chất hữu cơ do mạch rây vận chuyển.",
+   "en": "xylem"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Cây nào sinh sản bằng bào tử?",
+   "a": [
+    "Cây cam",
+    "Dương xỉ",
+    "Cây lúa",
+    "Cây xoài"
+   ],
+   "c": 1,
+   "why": "Dương xỉ sinh sản bằng bào tử; cam, lúa, xoài sinh sản bằng hạt.",
+   "en": "fern"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Lúa, ngô là cây một lá mầm. Rễ của chúng thường là gì?",
+   "a": [
+    "Rễ cọc",
+    "Rễ móc",
+    "Rễ chùm",
+    "Không có rễ"
+   ],
+   "c": 2,
+   "why": "Cây một lá mầm thường có rễ chùm.",
+   "en": "monocot"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Trồng khoai lang bằng đoạn thân là hình thức nào?",
+   "a": [
+    "Sinh sản bằng hạt",
+    "Sinh sản bằng bào tử",
+    "Đẻ trứng",
+    "Sinh sản sinh dưỡng"
+   ],
+   "c": 3,
+   "why": "Cây mới mọc từ thân, rễ hoặc lá là sinh sản sinh dưỡng.",
+   "en": "vegetative reproduction"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Con vật nào sau đây là thú?",
+   "a": [
+    "Cá heo",
+    "Cá chép",
+    "Con gà",
+    "Con ếch"
+   ],
+   "c": 0,
+   "why": "Cá heo thở bằng phổi và nuôi con bằng sữa nên là thú.",
+   "en": "mammal"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Động vật nào có lông vũ?",
+   "a": [
+    "Con mèo",
+    "Chim sẻ",
+    "Con rắn",
+    "Con cá"
+   ],
+   "c": 1,
+   "why": "Chỉ chim mới có lông vũ.",
+   "en": "feather"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Con vật nào là động vật không xương sống?",
+   "a": [
+    "Con chó",
+    "Con cá chép",
+    "Con ốc sên",
+    "Con chim sẻ"
+   ],
+   "c": 2,
+   "why": "Ốc sên không có cột sống; chó, cá chép, chim sẻ đều có xương sống.",
+   "en": "invertebrate"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Loài chim nào không bay được?",
+   "a": [
+    "Chim sẻ",
+    "Chim én",
+    "Chim bồ câu",
+    "Đà điểu"
+   ],
+   "c": 3,
+   "why": "Đà điểu có cánh nhỏ, thân nặng nên không bay, nhưng chạy rất nhanh.",
+   "en": "ostrich"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Côn trùng có bao nhiêu chân?",
+   "a": [
+    "6",
+    "4",
+    "8",
+    "10"
+   ],
+   "c": 0,
+   "why": "Côn trùng có 6 chân và cơ thể chia 3 phần.",
+   "en": "insect"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Nòng nọc lớn lên sẽ thành con gì?",
+   "a": [
+    "Cá",
+    "Ếch",
+    "Rắn",
+    "Chuồn chuồn"
+   ],
+   "c": 1,
+   "why": "Nòng nọc mọc chân, mất đuôi và biến thành ếch.",
+   "en": "tadpole"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Nhóm nào là động vật hằng nhiệt?",
+   "a": [
+    "Cá và ếch",
+    "Rắn và thằn lằn",
+    "Chim và thú",
+    "Cá và rắn"
+   ],
+   "c": 2,
+   "why": "Chim và thú giữ được thân nhiệt ổn định.",
+   "en": "warm-blooded"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Nhện có bao nhiêu chân?",
+   "a": [
+    "6",
+    "4",
+    "10",
+    "8"
+   ],
+   "c": 3,
+   "why": "Nhện có 8 chân nên không phải côn trùng.",
+   "en": "spider"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Cá lấy oxygen trong nước bằng cơ quan nào?",
+   "a": [
+    "Mang",
+    "Vây",
+    "Vảy",
+    "Đuôi"
+   ],
+   "c": 0,
+   "why": "Mang lấy oxygen hoà tan trong nước cho cá.",
+   "en": "gill"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Tên khoa học của loài người là gì?",
+   "a": [
+    "Canis lupus",
+    "Homo sapiens",
+    "Felis catus",
+    "Panthera leo"
+   ],
+   "c": 1,
+   "why": "Homo sapiens là loài người; các tên kia là sói, mèo nhà, sư tử.",
+   "en": "Homo sapiens"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Vì sao cá voi là thú chứ không phải cá?",
+   "a": [
+    "Vì sống dưới nước",
+    "Vì có vây và đuôi",
+    "Thở bằng phổi, nuôi con bằng sữa",
+    "Vì bơi rất giỏi"
+   ],
+   "c": 2,
+   "why": "Thở bằng phổi và nuôi con bằng sữa là đặc điểm của thú.",
+   "en": "whale"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Bọ que trông giống cành cây để làm gì?",
+   "a": [
+    "Để hút nước",
+    "Để quang hợp",
+    "Để làm tổ cho chim",
+    "Ngụy trang, tránh kẻ thù"
+   ],
+   "c": 3,
+   "why": "Trông giống cành cây giúp bọ que khó bị kẻ thù phát hiện.",
+   "en": "camouflage"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Cơ quan nào giúp ta ngửi mùi?",
+   "a": [
+    "Mũi",
+    "Tai",
+    "Mắt",
+    "Lưỡi"
+   ],
+   "c": 0,
+   "why": "Mũi là cơ quan khứu giác.",
+   "en": "smell"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Nên chà tay với xà phòng ít nhất khoảng bao lâu?",
+   "a": [
+    "Khoảng 1 giây",
+    "Khoảng 20 giây",
+    "Khoảng 3 giây",
+    "Khoảng 1 tiếng"
+   ],
+   "c": 1,
+   "why": "Chà xát khoảng 20 giây giúp xà phòng loại bỏ mầm bệnh.",
+   "en": "hand washing"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Mỗi ngày nên đánh răng ít nhất mấy lần?",
+   "a": [
+    "Không cần đánh",
+    "1 lần mỗi tuần",
+    "2 lần",
+    "1 lần mỗi tháng"
+   ],
+   "c": 2,
+   "why": "Đánh răng ít nhất 2 lần mỗi ngày giúp phòng sâu răng.",
+   "en": "brushing teeth"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Trẻ em có khoảng bao nhiêu răng sữa?",
+   "a": [
+    "5",
+    "32",
+    "100",
+    "20"
+   ],
+   "c": 3,
+   "why": "Trẻ em có khoảng 20 răng sữa; 32 là số răng vĩnh viễn của người lớn.",
+   "en": "baby teeth"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Tim người có mấy ngăn?",
+   "a": [
+    "4",
+    "2",
+    "3",
+    "6"
+   ],
+   "c": 0,
+   "why": "Tim người có 2 tâm nhĩ và 2 tâm thất.",
+   "en": "heart"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Trao đổi khí trong phổi diễn ra ở đâu?",
+   "a": [
+    "Thực quản",
+    "Phế nang",
+    "Dạ dày",
+    "Ruột già"
+   ],
+   "c": 1,
+   "why": "Ở phế nang, oxygen vào máu và carbon dioxide đi ra.",
+   "en": "alveoli"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Chất dinh dưỡng được hấp thụ chủ yếu ở đâu?",
+   "a": [
+    "Thực quản",
+    "Miệng",
+    "Ruột non",
+    "Răng"
+   ],
+   "c": 2,
+   "why": "Ruột non là nơi hấp thụ chất dinh dưỡng chủ yếu.",
+   "en": "small intestine"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Bộ xương người trưởng thành có khoảng bao nhiêu xương?",
+   "a": [
+    "Khoảng 20",
+    "Khoảng 50",
+    "Khoảng 2000",
+    "Khoảng 206"
+   ],
+   "c": 3,
+   "why": "Người trưởng thành có khoảng 206 chiếc xương.",
+   "en": "skeleton"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Tế bào máu nào vận chuyển oxygen?",
+   "a": [
+    "Hồng cầu",
+    "Bạch cầu",
+    "Tiểu cầu",
+    "Tế bào thần kinh"
+   ],
+   "c": 0,
+   "why": "Hồng cầu chứa hemoglobin gắn với oxygen.",
+   "en": "red blood cell"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Vắc xin giúp cơ thể như thế nào?",
+   "a": [
+    "Làm cơ thể cao nhanh",
+    "Làm quen trước để chống bệnh",
+    "Thay thế bữa ăn",
+    "Làm răng trắng hơn"
+   ],
+   "c": 1,
+   "why": "Vắc xin giúp hệ miễn dịch nhận biết mầm bệnh trước, nên chống lại nhanh hơn.",
+   "en": "vaccine"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Tế bào thần kinh còn được gọi là gì?",
+   "a": [
+    "Hồng cầu",
+    "Tiểu cầu",
+    "Nơron",
+    "Lục lạp"
+   ],
+   "c": 2,
+   "why": "Nơron là tế bào thần kinh, truyền tín hiệu trong cơ thể.",
+   "en": "neuron"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Cơ quan nào lọc máu và tạo ra nước tiểu?",
+   "a": [
+    "Tim",
+    "Phổi",
+    "Dạ dày",
+    "Thận"
+   ],
+   "c": 3,
+   "why": "Thận lọc chất thải trong máu thành nước tiểu.",
+   "en": "kidney"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Trong chuỗi 'cỏ → châu chấu → ếch → rắn', ếch ăn gì?",
+   "a": [
+    "Châu chấu",
+    "Cỏ",
+    "Rắn",
+    "Đá"
+   ],
+   "c": 0,
+   "why": "Ếch ăn mắt xích đứng ngay trước nó là châu chấu.",
+   "en": "food chain"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Chai nhựa đã dùng nên bỏ vào đâu?",
+   "a": [
+    "Thùng rác hữu cơ",
+    "Thùng rác tái chế",
+    "Vứt xuống ao",
+    "Vứt ra đường"
+   ],
+   "c": 1,
+   "why": "Chai nhựa có thể tái chế nên bỏ vào thùng rác tái chế.",
+   "en": "recycling"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Việc nào giúp tiết kiệm nước?",
+   "a": [
+    "Để vòi chảy suốt",
+    "Xả nước chơi cả buổi",
+    "Khoá vòi khi đánh răng",
+    "Mở vòi to khi không dùng"
+   ],
+   "c": 2,
+   "why": "Khoá vòi khi không dùng giúp không phí nước.",
+   "en": "water saving"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Giun đất sống ở đâu?",
+   "a": [
+    "Trên mây",
+    "Trong biển sâu",
+    "Trên ngọn cây",
+    "Trong đất"
+   ],
+   "c": 3,
+   "why": "Giun đất đào hang và sống trong đất ẩm.",
+   "en": "habitat"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Trong hệ sinh thái, cây xanh là sinh vật gì?",
+   "a": [
+    "Sinh vật sản xuất",
+    "Sinh vật tiêu thụ",
+    "Sinh vật phân giải",
+    "Sinh vật ăn thịt"
+   ],
+   "c": 0,
+   "why": "Cây xanh tự tạo thức ăn nhờ quang hợp nên là sinh vật sản xuất.",
+   "en": "producer"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Nhóm nào là sinh vật phân giải?",
+   "a": [
+    "Hổ và sư tử",
+    "Nấm và vi khuẩn",
+    "Cây lúa",
+    "Chim sẻ"
+   ],
+   "c": 1,
+   "why": "Nấm và vi khuẩn phân huỷ xác sinh vật thành chất khoáng.",
+   "en": "decomposer"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Cây nào thường mọc ở rừng ngập mặn?",
+   "a": [
+    "Cây xương rồng",
+    "Cây thông",
+    "Cây đước",
+    "Cây hoa hồng"
+   ],
+   "c": 2,
+   "why": "Đước là cây tiêu biểu của rừng ngập mặn ven biển.",
+   "en": "mangrove"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Nhiều chuỗi thức ăn có mắt xích chung tạo thành gì?",
+   "a": [
+    "Mạng điện",
+    "Hệ tuần hoàn",
+    "Bản đồ",
+    "Lưới thức ăn"
+   ],
+   "c": 3,
+   "why": "Các chuỗi thức ăn nối nhau tạo thành lưới thức ăn.",
+   "en": "food web"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Khí nhà kính nào tăng nhiều khi con người đốt than, dầu?",
+   "a": [
+    "Carbon dioxide",
+    "Oxygen",
+    "Nitrogen",
+    "Helium"
+   ],
+   "c": 0,
+   "why": "Đốt nhiên liệu hoá thạch thải ra nhiều carbon dioxide.",
+   "en": "greenhouse gas"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Thường khoảng bao nhiêu % năng lượng được chuyển lên bậc kế tiếp?",
+   "a": [
+    "Khoảng 100%",
+    "Khoảng 10%",
+    "Khoảng 90%",
+    "Khoảng 75%"
+   ],
+   "c": 1,
+   "why": "Phần lớn năng lượng mất qua hô hấp và nhiệt, chỉ khoảng 10% được chuyển lên.",
+   "en": "energy pyramid"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Đa dạng sinh học là gì?",
+   "a": [
+    "Số toà nhà trong thành phố",
+    "Số con đường",
+    "Sự phong phú của loài, gen, hệ sinh thái",
+    "Chỉ có một loài cây"
+   ],
+   "c": 2,
+   "why": "Đa dạng sinh học là sự phong phú của loài, gen và hệ sinh thái.",
+   "en": "biodiversity"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Hoạt động nào làm tăng carbon dioxide trong không khí?",
+   "a": [
+    "Trồng thêm cây xanh",
+    "Bảo vệ rừng",
+    "Đi xe đạp thay xe máy",
+    "Đốt nhiên liệu hoá thạch"
+   ],
+   "c": 3,
+   "why": "Đốt than, dầu, khí đốt thải carbon dioxide vào không khí.",
+   "en": "carbon cycle"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Hạt lúa sau khi xay xát gọi là gì?",
+   "a": [
+    "Gạo",
+    "Ngô",
+    "Bột mì",
+    "Đậu"
+   ],
+   "c": 0,
+   "why": "Xay xát bỏ vỏ trấu, hạt lúa thành hạt gạo.",
+   "en": "rice"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Vì sao giun đất được gọi là bạn nhà nông?",
+   "a": [
+    "Ăn hết lá cây",
+    "Làm đất tơi xốp, màu mỡ",
+    "Làm khô ruộng",
+    "Phá rễ cây"
+   ],
+   "c": 1,
+   "why": "Giun đất làm đất tơi xốp và phân giun làm đất màu mỡ.",
+   "en": "earthworm"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Vật nuôi nào cho ta trứng?",
+   "a": [
+    "Con trâu",
+    "Con lợn",
+    "Con gà",
+    "Con bò"
+   ],
+   "c": 2,
+   "why": "Gà đẻ trứng; trâu, lợn, bò là thú, đẻ con.",
+   "en": "hen"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Cho cá ăn quá nhiều sẽ gây hại gì?",
+   "a": [
+    "Cá biết bay",
+    "Ao có thêm oxygen",
+    "Nước trong hơn",
+    "Thức ăn thừa làm bẩn nước"
+   ],
+   "c": 3,
+   "why": "Thức ăn thừa phân huỷ làm nước bẩn, thiếu oxygen, cá dễ bệnh.",
+   "en": "fish farming"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Ba chất dinh dưỡng chính trong phân bón là gì?",
+   "a": [
+    "Đạm, lân, kali",
+    "Sắt, vàng, bạc",
+    "Muối, đường, dầu",
+    "Cát, sỏi, đá"
+   ],
+   "c": 0,
+   "why": "Đạm (N), lân (P), kali (K) là ba chất khoáng cây cần nhiều.",
+   "en": "fertilizer"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Vì sao trồng cây họ đậu làm đất tốt hơn?",
+   "a": [
+    "Lá rụng làm đất mặn",
+    "Rễ có vi khuẩn cố định đạm",
+    "Rễ hút hết nước",
+    "Thân tiết ra muối"
+   ],
+   "c": 1,
+   "why": "Vi khuẩn ở nốt sần rễ cây đậu cố định đạm từ không khí vào đất.",
+   "en": "nitrogen fixation"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Máy quạt nước trong ao tôm dùng để làm gì?",
+   "a": [
+    "Làm nước nóng lên",
+    "Đuổi chim",
+    "Tăng oxygen trong nước",
+    "Tạo ra thức ăn cho tôm"
+   ],
+   "c": 2,
+   "why": "Quạt nước khuấy mặt nước giúp oxygen hoà tan nhiều hơn.",
+   "en": "aerator"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Vì sao tôm phải lột xác?",
+   "a": [
+    "Để đổi màu cho đẹp",
+    "Vì vỏ bị nước làm tan",
+    "Để bơi nhanh hơn",
+    "Vỏ cứng không lớn theo cơ thể"
+   ],
+   "c": 3,
+   "why": "Vỏ kitin cứng không lớn được nên tôm lột vỏ cũ để lớn lên.",
+   "en": "molting"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Thuỷ canh là trồng cây bằng cách nào?",
+   "a": [
+    "Trong dung dịch dinh dưỡng",
+    "Trên cát sa mạc khô",
+    "Trong bóng tối hoàn toàn",
+    "Tưới bằng nước biển"
+   ],
+   "c": 0,
+   "why": "Thuỷ canh trồng cây không cần đất, rễ nằm trong dung dịch dinh dưỡng.",
+   "en": "hydroponics"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Trong mô hình VAC, chữ 'A' là gì?",
+   "a": [
+    "Ánh sáng",
+    "Ao",
+    "An toàn",
+    "Ăn uống"
+   ],
+   "c": 1,
+   "why": "VAC là Vườn – Ao – Chuồng.",
+   "en": "integrated farming"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Bọ rùa ăn rệp hại cây được gọi là gì?",
+   "a": [
+    "Sâu hại",
+    "Cỏ dại",
+    "Thiên địch",
+    "Phân bón"
+   ],
+   "c": 2,
+   "why": "Thiên địch là sinh vật tiêu diệt sâu hại, giúp bảo vệ mùa màng.",
+   "en": "natural enemy"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Cây con tạo ra bằng nuôi cấy mô như thế nào?",
+   "a": [
+    "Khác hoàn toàn cây mẹ",
+    "Luôn là cây dại",
+    "Không bao giờ ra hoa",
+    "Giống hệt cây mẹ"
+   ],
+   "c": 3,
+   "why": "Nuôi cấy mô nhân giống từ tế bào cây mẹ nên cây con giống hệt cây mẹ.",
+   "en": "tissue culture"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Robert Hooke và lát bần",
+   "vi": "Năm 1665, nhà khoa học người Anh Robert Hooke cắt một lát bần thật mỏng. Ông đặt nó dưới chiếc kính hiển vi tự chế. Ông thấy vô số ô nhỏ xếp cạnh nhau như những căn phòng. Hooke gọi chúng là 'cell', nghĩa là căn phòng nhỏ. Thật ra đó là thành của những tế bào đã chết. Từ đó, khoa học có từ 'tế bào'.",
+   "en": [
+    "cell",
+    "cork",
+    "microscope"
+   ]
+  },
+  {
+   "t": "Leeuwenhoek và những 'con vật tí hon'",
+   "vi": "Antonie van Leeuwenhoek là người Hà Lan, rất khéo tay mài thấu kính. Ông tự làm những chiếc kính hiển vi nhỏ xíu nhưng phóng to rất tốt. Khoảng những năm 1670, ông soi một giọt nước và thấy những sinh vật li ti bơi lội. Ông gọi chúng là 'những con vật tí hon'. Ông là một trong những người đầu tiên nhìn thấy vi sinh vật.",
+   "en": [
+    "microorganism",
+    "microscope"
+   ]
+  },
+  {
+   "t": "Fleming và chiếc đĩa bị mốc",
+   "vi": "Năm 1928, nhà khoa học Alexander Fleming nuôi vi khuẩn trong những chiếc đĩa nhỏ. Một hôm, ông thấy một đĩa bị nấm mốc xanh mọc lên. Lạ thay, quanh vết mốc, vi khuẩn không mọc được. Fleming phát hiện nấm mốc tiết ra một chất diệt vi khuẩn, đặt tên là penicillin. Đây là kháng sinh đầu tiên, đã cứu sống rất nhiều người. Một sự cố nhỏ, nhờ quan sát kỹ, thành phát minh lớn.",
+   "en": [
+    "penicillin",
+    "antibiotic"
+   ]
+  },
+  {
+   "t": "Mendel và những cây đậu Hà Lan",
+   "vi": "Vào thế kỷ 19, tu sĩ Gregor Mendel trồng rất nhiều cây đậu Hà Lan trong vườn tu viện. Ông cho các cây hoa tím, hoa trắng, hạt vàng, hạt xanh lai với nhau. Ông kiên nhẫn đếm và ghi chép hàng nghìn cây con trong nhiều năm. Ông tìm ra quy luật các đặc điểm được truyền từ bố mẹ sang con. Ngày nay Mendel được gọi là cha đẻ của di truyền học.",
+   "en": [
+    "genetics",
+    "heredity"
+   ]
+  },
+  {
+   "t": "Darwin và những chú chim sẻ",
+   "vi": "Charles Darwin từng đi vòng quanh thế giới trên con tàu Beagle. Ở quần đảo Galápagos, ông thấy nhiều loài chim sẻ có mỏ khác nhau. Loài mỏ to khoẻ thì ăn hạt cứng, loài mỏ nhỏ nhọn thì bắt sâu bọ. Darwin suy nghĩ rất lâu về điều đó. Năm 1859, ông xuất bản cuốn sách 'Nguồn gốc các loài', giải thích sinh vật biến đổi qua chọn lọc tự nhiên.",
+   "en": [
+    "evolution",
+    "natural selection"
+   ]
+  },
+  {
+   "t": "Jenner và bệnh đậu mùa",
+   "vi": "Ngày xưa, bệnh đậu mùa rất nguy hiểm. Bác sĩ người Anh Edward Jenner để ý rằng những cô vắt sữa bò từng bị bệnh đậu bò nhẹ thì ít khi mắc đậu mùa. Năm 1796, ông thử nghiệm và tìm ra cách phòng bệnh mà sau này gọi là tiêm chủng. Nhờ vắc xin, bệnh đậu mùa đã được xoá sổ trên toàn thế giới vào năm 1980. Từ 'vaccine' bắt nguồn từ tiếng Latin 'vacca', nghĩa là con bò.",
+   "en": [
+    "vaccine",
+    "smallpox"
+   ]
+  },
+  {
+   "t": "Pasteur và chiếc bình cổ cong",
+   "vi": "Ngày xưa, nhiều người tin rằng vi sinh vật tự nhiên sinh ra trong nước thịt. Nhà khoa học người Pháp Louis Pasteur làm thí nghiệm với chiếc bình có cổ cong như cổ thiên nga. Bụi và vi sinh vật trong không khí bị giữ lại ở chỗ cong, nên nước thịt đã đun sôi trong bình không bị hỏng. Ông chứng minh vi sinh vật đến từ môi trường, không tự sinh ra. Pasteur còn tìm ra cách đun nóng nhẹ để bảo quản sữa và nghiên cứu vắc xin phòng bệnh dại.",
+   "en": [
+    "microbe",
+    "pasteurization"
+   ]
+  },
+  {
+   "t": "Ông bố chim cánh cụt hoàng đế",
+   "vi": "Ở Nam Cực, chim cánh cụt hoàng đế mẹ đẻ một quả trứng rồi ra biển kiếm ăn. Chim bố giữ quả trứng trên mu bàn chân, phủ một lớp da ấm lên trên. Suốt khoảng hai tháng mùa đông giá rét, chim bố gần như không ăn gì. Các chú chim bố đứng sát nhau thành đàn để giữ ấm. Khi chim mẹ trở về, chim con đã nở và được cả bố mẹ chăm sóc.",
+   "en": [
+    "emperor penguin",
+    "Antarctica"
+   ]
+  },
+  {
+   "t": "Nhà nông học Lương Định Của",
+   "vi": "Lương Định Của là nhà nông học nổi tiếng của Việt Nam. Ông từng học và làm việc ở Nhật Bản rồi trở về quê hương. Ông dành cả đời lai tạo những giống lúa và cây trồng mới. Ông thường lội ruộng cùng bà con nông dân để theo dõi từng khóm lúa. Nhờ những người như ông, ruộng đồng Việt Nam ngày càng cho nhiều thóc gạo hơn.",
+   "en": [
+    "agronomist",
+    "rice breeding"
+   ]
+  },
+  {
+   "t": "Cá hồi tìm đường về nhà",
+   "vi": "Cá hồi nở ra ở những con suối nước ngọt trên núi. Lớn lên một chút, chúng bơi ra biển sống nhiều năm. Đến mùa sinh sản, cá hồi bơi ngược dòng sông, vượt cả thác nước, để trở về đúng con suối nơi chúng sinh ra. Các nhà khoa học cho rằng cá hồi nhớ mùi nước của quê nhà để tìm đường. Hành trình ấy là một trong những cuộc di cư kỳ diệu nhất.",
+   "en": [
+    "salmon",
+    "migration"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: Hạt nảy mầm",
+   "vi": "Hạt cần nước, không khí và nhiệt độ phù hợp để nảy mầm. Rễ mầm thường mọc ra trước để bám và hút nước. Sau đó chồi mầm vươn lên tìm ánh sáng.",
+   "try": "Đặt vài hạt đậu xanh lên bông ẩm trong nắp hộp, giữ bông luôn ẩm và ghi lại mỗi ngày hạt thay đổi thế nào."
+  },
+  {
+   "t": "Bài học hôm nay: Lá cây thoát hơi nước",
+   "vi": "Cây hút nước từ rễ và thải hơi nước qua lỗ khí ở lá. Nhờ vậy nước được kéo lên cao và lá được làm mát. Ta có thể nhìn thấy hơi nước đó nếu hứng lại.",
+   "try": "Nhờ bố mẹ giúp trùm một túi nilon trong suốt lên một cành lá cây ngoài nắng, buộc nhẹ miệng túi; vài giờ sau xem các giọt nước đọng trong túi. Không trùm túi nilon lên đầu."
+  },
+  {
+   "t": "Bài học hôm nay: Cây cần ánh sáng",
+   "vi": "Lá cây cần ánh sáng để quang hợp và tạo diệp lục. Thiếu ánh sáng, lá sẽ nhợt nhạt và vàng dần. Vì vậy cây trồng trong nhà nên để gần cửa sổ.",
+   "try": "Úp một chiếc hộp giấy lên một khoảng cỏ nhỏ trong 4–5 ngày, rồi mở ra so sánh màu cỏ trong hộp và ngoài hộp."
+  },
+  {
+   "t": "Bài học hôm nay: Mô hình tế bào",
+   "vi": "Tế bào có màng tế bào, chất tế bào và nhân. Màng bao bọc bên ngoài, chất tế bào lấp đầy bên trong, nhân nằm trong chất tế bào. Làm mô hình giúp em nhớ các phần này.",
+   "try": "Đổ nước vào một túi nhựa có khoá kéo (màng tế bào), thả vào một quả nho (nhân) và vài hạt đậu (bào quan), rồi kể tên từng phần cho bố mẹ nghe."
+  },
+  {
+   "t": "Bài học hôm nay: Rửa tay đánh bay vi khuẩn",
+   "vi": "Vi khuẩn và virus quá nhỏ nên mắt ta không thấy. Xà phòng giúp gỡ chúng ra khỏi da và nước cuốn trôi đi. Chà tay ít nhất khoảng 20 giây mới đủ sạch.",
+   "try": "Lần rửa tay tới, vừa chà tay vừa hát hai lần bài 'Chúc mừng sinh nhật', nhớ chà cả kẽ ngón tay và mu bàn tay."
+  },
+  {
+   "t": "Bài học hôm nay: Nghe nhịp tim",
+   "vi": "Mỗi lần tim co bóp đẩy máu đi, ta cảm nhận được nhịp mạch ở cổ tay. Khi vận động, cơ cần nhiều oxygen hơn nên tim đập nhanh hơn. Nghỉ một lúc, nhịp tim chậm lại.",
+   "try": "Đặt hai ngón tay lên cổ tay, đếm nhịp đập trong 15 giây rồi nhân 4; sau đó nhảy tại chỗ 1 phút và đếm lại để so sánh."
+  },
+  {
+   "t": "Bài học hôm nay: Phân loại rác tại nhà",
+   "vi": "Rác hữu cơ, rác tái chế và rác còn lại nên để riêng. Phân loại giúp tái chế được nhiều hơn và ít rác chôn lấp hơn. Mỗi gia đình làm một chút là môi trường sạch hơn nhiều.",
+   "try": "Cùng bố mẹ dán nhãn ba hộp hoặc ba túi: 'Hữu cơ', 'Tái chế', 'Còn lại', và thử phân loại rác trong một tuần."
+  },
+  {
+   "t": "Bài học hôm nay: Chuỗi thức ăn quanh em",
+   "vi": "Chuỗi thức ăn thường bắt đầu từ cây xanh. Sâu ăn lá, chim ăn sâu, mỗi loài là một mắt xích. Ngay trong khu vườn nhỏ cũng có nhiều chuỗi thức ăn.",
+   "try": "Quan sát vườn hoặc chậu cây nhà em, tìm các con vật nhỏ rồi vẽ một chuỗi thức ăn có ít nhất ba mắt xích."
+  },
+  {
+   "t": "Bài học hôm nay: Trồng lại gốc hành",
+   "vi": "Nhiều cây có thể mọc lại từ một phần thân hoặc rễ, gọi là sinh sản sinh dưỡng. Gốc hành lá còn rễ có thể mọc lá mới. Đây là cách nhân giống không cần hạt.",
+   "try": "Giữ lại gốc hành lá còn rễ, cắm vào cốc nước ngập rễ, đặt gần cửa sổ và thay nước mỗi ngày; đo xem lá mới dài thêm bao nhiêu."
+  },
+  {
+   "t": "Bài học hôm nay: Bữa ăn cầu vồng",
+   "vi": "Rau quả có nhiều màu khác nhau chứa nhiều loại vitamin và chất khoáng khác nhau. Ăn đa dạng giúp cơ thể đủ chất. Uống đủ nước cũng quan trọng không kém.",
+   "try": "Đếm xem bữa tối nay có bao nhiêu màu rau quả, và thử đề nghị bố mẹ thêm một màu mới vào bữa ăn ngày mai."
+  },
+  {
+   "t": "Bài học hôm nay: Ngủ đủ giấc",
+   "vi": "Khi ngủ, cơ thể nghỉ ngơi và não sắp xếp lại những điều đã học. Học sinh tiểu học cần ngủ khoảng 9–12 tiếng, tuổi thiếu niên khoảng 8–10 tiếng mỗi đêm. Tắt màn hình trước khi ngủ giúp dễ ngủ hơn.",
+   "try": "Ghi lại giờ đi ngủ và giờ thức dậy trong một tuần, rồi tính xem mỗi đêm em ngủ được bao nhiêu tiếng."
+  },
+  {
+   "t": "Bài học hôm nay: Giun đất làm việc",
+   "vi": "Giun đất đào hang giúp đất tơi xốp và thoáng khí. Phân giun làm đất màu mỡ. Giun thích đất ẩm và tối, sợ nắng gắt.",
+   "try": "Sau cơn mưa, quan sát giun đất trong vườn bằng mắt, không làm hại; nếu thấy giun bò trên sân xi măng, nhẹ nhàng dùng chiếc lá đưa nó về chỗ đất ẩm rồi rửa tay."
+  }
+ ]
+}

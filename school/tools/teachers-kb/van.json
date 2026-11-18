@@ -1,0 +1,1784 @@
+{
+ "id": "van",
+ "topics": [
+  "Chữ và dấu tiếng Việt",
+  "Từ loại và câu",
+  "Biện pháp tu từ",
+  "Thơ, ca dao, tục ngữ",
+  "Truyện cổ & tác phẩm",
+  "Cách viết văn hay"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Bảng chữ cái có 29 chữ",
+   "vi": "Bảng chữ cái tiếng Việt có 29 chữ cái. Trong đó có những chữ mang dấu phụ như ă, â, ê, ô, ơ, ư và đ. Các chữ f, j, w, z không nằm trong bảng chữ cái tiếng Việt.",
+   "ex": "Mẹo: đếm từ a, ă, â đến y là đủ 29 chữ.",
+   "en": [
+    "alphabet",
+    "letter"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Sáu thanh điệu",
+   "vi": "Tiếng Việt có 6 thanh: ngang, huyền, sắc, hỏi, ngã, nặng. Thanh ngang không có dấu, nên khi viết ta chỉ dùng 5 dấu thanh. Đổi thanh là đổi nghĩa: ma, mà, má, mả, mã, mạ là sáu tiếng khác nhau.",
+   "ex": "Ma – mà – má – mả – mã – mạ: một vần, sáu nghĩa.",
+   "en": [
+    "tone",
+    "tone mark"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Dấu thanh đặt ở đâu?",
+   "vi": "Dấu thanh luôn đặt trên hoặc dưới chữ cái nguyên âm, không đặt trên phụ âm. Dấu nặng nằm dưới nguyên âm, các dấu khác nằm trên. Ví dụ: hoa, hòa, trường, quả.",
+   "ex": "Dấu nặng thích ngồi dưới, các dấu khác thích đứng trên.",
+   "en": [
+    "vowel",
+    "tone mark"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Viết hoa đúng chỗ",
+   "vi": "Ta viết hoa chữ cái đầu câu và chữ cái đầu tên riêng. Với tên người Việt, ta viết hoa chữ cái đầu của mỗi tiếng, như Nguyễn Văn An. Tên địa danh như Hà Nội, Đà Nẵng cũng viết hoa từng tiếng.",
+   "ex": "Sau dấu chấm là phải viết hoa.",
+   "en": [
+    "capital letter",
+    "proper noun"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Quy tắc c, k, q",
+   "vi": "Âm \"cờ\" viết bằng k khi đứng trước i, e, ê, như kí, kẻ, kê. Đứng trước các nguyên âm khác thì viết c, như ca, cô, cũ. Khi đi với vần bắt đầu bằng u (đọc là \"w\"), ta viết qu, như quà, quê.",
+   "ex": "K đi với i, e, ê – ba bạn thân không rời.",
+   "en": [
+    "spelling rule",
+    "consonant"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Quy tắc g – gh, ng – ngh",
+   "vi": "Trước i, e, ê ta viết gh và ngh, như ghi, ghế, nghe, nghỉ. Trước các nguyên âm còn lại ta viết g và ng, như ga, gỗ, ngủ, ngô. Nhớ quy tắc này sẽ tránh lỗi như \"ngỉ\" hay \"gế\".",
+   "ex": "Có i, e, ê thì thêm h.",
+   "en": [
+    "spelling rule",
+    "digraph"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Phụ âm ghép",
+   "vi": "Phụ âm ghép là phụ âm viết bằng hai hoặc ba chữ cái. Tiếng Việt có ch, gh, gi, kh, ng, nh, ph, th, tr, qu và ngh. Riêng ngh là phụ âm ghép ba chữ cái duy nhất.",
+   "ex": "Ngh là \"anh cả\" vì có tới ba chữ.",
+   "en": [
+    "digraph",
+    "consonant"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Dấu câu giúp câu rõ nghĩa",
+   "vi": "Dấu chấm kết thúc câu kể. Dấu chấm hỏi dùng cho câu hỏi, dấu chấm than cho câu cảm hoặc câu khiến. Dấu phẩy ngăn cách các bộ phận trong câu. Đặt sai dấu câu có thể làm câu đổi nghĩa.",
+   "ex": "Đọc to câu văn, chỗ nào ngừng hơi là chỗ cần dấu.",
+   "en": [
+    "punctuation",
+    "comma"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Chữ Quốc ngữ ra đời",
+   "vi": "Chữ Quốc ngữ dùng chữ cái La-tinh để ghi tiếng Việt. Nó được các giáo sĩ phương Tây cùng người Việt xây dựng từ khoảng thế kỷ 17. Năm 1651, cuốn từ điển Việt – Bồ – La của Alexandre de Rhodes được in, là mốc quan trọng của chữ Quốc ngữ.",
+   "ex": "Chữ Quốc ngữ dễ học vì đọc sao viết vậy khá nhiều.",
+   "en": [
+    "Latin script",
+    "writing system"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Chữ Hán và chữ Nôm",
+   "vi": "Trước khi có chữ Quốc ngữ, ông cha ta dùng chữ Hán để viết sách và văn bản. Người Việt còn sáng tạo ra chữ Nôm dựa trên chữ Hán để ghi tiếng Việt. Truyện Kiều của Nguyễn Du được viết bằng chữ Nôm.",
+   "ex": "Chữ Nôm là chữ do người Việt tự sáng tạo.",
+   "en": [
+    "Chinese characters",
+    "Nom script"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Tiếng là đơn vị cấu tạo từ",
+   "vi": "Trong tiếng Việt, mỗi tiếng thường gồm âm đầu, vần và thanh. Ví dụ tiếng \"bàn\" có âm đầu b, vần an và thanh huyền. Có tiếng không có âm đầu, như \"ăn\", nhưng tiếng nào cũng phải có vần và thanh.",
+   "ex": "Tiếng nào cũng có vần và thanh, âm đầu thì có thể vắng.",
+   "en": [
+    "syllable",
+    "rhyme"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Danh từ là gì?",
+   "vi": "Danh từ là từ chỉ người, con vật, đồ vật, cây cối hay hiện tượng. Ví dụ: bạn, mèo, bàn, cây bàng, mưa. Danh từ riêng là tên riêng của người hay nơi chốn, nên phải viết hoa.",
+   "ex": "Hỏi \"cái gì, con gì, ai?\" là tìm ra danh từ.",
+   "en": [
+    "noun"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Động từ là gì?",
+   "vi": "Động từ là từ chỉ hoạt động hoặc trạng thái. Ví dụ: chạy, viết, ăn, ngủ, vui chơi. Trong câu, động từ thường cho biết người hay vật đang làm gì.",
+   "ex": "Hỏi \"làm gì?\" là tìm ra động từ.",
+   "en": [
+    "verb"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Tính từ là gì?",
+   "vi": "Tính từ là từ chỉ đặc điểm, tính chất của sự vật. Nó có thể chỉ màu sắc, hình dáng, kích thước hay phẩm chất. Ví dụ: đỏ, tròn, cao, chăm chỉ, hiền lành.",
+   "ex": "Hỏi \"thế nào?\" là tìm ra tính từ.",
+   "en": [
+    "adjective"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Câu kể, câu hỏi, câu cảm, câu khiến",
+   "vi": "Câu kể dùng để kể, tả hay nêu ý kiến, cuối câu có dấu chấm. Câu hỏi dùng để hỏi, có dấu chấm hỏi. Câu cảm bộc lộ cảm xúc, câu khiến dùng để nhờ, yêu cầu, thường có dấu chấm than.",
+   "ex": "\"Ôi, đẹp quá!\" là câu cảm; \"Em mở cửa giúp mẹ nhé!\" là câu khiến.",
+   "en": [
+    "sentence type",
+    "question"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Từ đơn và từ phức",
+   "vi": "Từ đơn chỉ gồm một tiếng, như nhà, cây, ăn. Từ phức gồm hai tiếng trở lên, như học sinh, xe đạp, lung linh. Từ phức lại chia thành từ ghép và từ láy.",
+   "ex": "Đếm số tiếng là biết từ đơn hay từ phức.",
+   "en": [
+    "simple word",
+    "compound word"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Từ ghép và từ láy",
+   "vi": "Từ ghép gồm các tiếng ghép lại và các tiếng đều có nghĩa, như bàn ghế, xe đạp. Từ láy gồm các tiếng giống nhau về âm hoặc vần, như lấp lánh, xinh xắn, ào ào. Từ láy thường làm câu văn sinh động hơn.",
+   "ex": "Lấp lánh láy âm đầu \"l\", lom khom láy vần.",
+   "en": [
+    "reduplicative word",
+    "compound word"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Chủ ngữ và vị ngữ",
+   "vi": "Câu thường có hai bộ phận chính là chủ ngữ và vị ngữ. Chủ ngữ trả lời câu hỏi \"Ai? Cái gì? Con gì?\". Vị ngữ trả lời câu hỏi \"Làm gì? Thế nào? Là gì?\". Ví dụ: Chú mèo / đang ngủ.",
+   "ex": "Chủ ngữ là \"ai\", vị ngữ là \"làm gì\".",
+   "en": [
+    "subject",
+    "predicate"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Từ đồng nghĩa, trái nghĩa",
+   "vi": "Từ đồng nghĩa là những từ có nghĩa giống hoặc gần giống nhau, như siêng năng – chăm chỉ. Từ trái nghĩa có nghĩa ngược nhau, như cao – thấp, vui – buồn. Dùng khéo hai loại từ này giúp câu văn hay và không lặp từ.",
+   "ex": "Đồng là giống, trái là ngược.",
+   "en": [
+    "synonym",
+    "antonym"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Từ đồng âm, từ nhiều nghĩa",
+   "vi": "Từ đồng âm là những từ đọc giống nhau nhưng nghĩa khác hẳn nhau, như \"đường\" để ăn và \"đường\" để đi. Từ nhiều nghĩa có một nghĩa gốc và các nghĩa chuyển liên quan với nhau. Ví dụ: \"chân\" người, \"chân\" bàn, \"chân\" núi.",
+   "ex": "Đồng âm thì nghĩa không liên quan, nhiều nghĩa thì có liên quan.",
+   "en": [
+    "homonym",
+    "polysemy"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Câu đơn và câu ghép",
+   "vi": "Câu đơn có một cụm chủ ngữ – vị ngữ. Câu ghép có từ hai cụm chủ ngữ – vị ngữ trở lên. Các vế câu ghép thường nối bằng quan hệ từ như \"vì... nên\", \"tuy... nhưng\", \"nếu... thì\".",
+   "ex": "Vì trời mưa / nên đường trơn: hai vế, là câu ghép.",
+   "en": [
+    "compound sentence",
+    "clause"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Từ Hán Việt",
+   "vi": "Từ Hán Việt là từ gốc Hán được đọc theo cách của người Việt. Ví dụ: giang sơn, phụ mẫu, học sinh, quốc gia. Nhiều từ Hán Việt mang sắc thái trang trọng, nên cần dùng đúng hoàn cảnh.",
+   "ex": "\"Phụ mẫu\" là bố mẹ, nghe trang trọng hơn.",
+   "en": [
+    "Sino-Vietnamese",
+    "loanword"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "So sánh",
+   "vi": "So sánh là đối chiếu sự vật này với sự vật khác có nét giống nhau. Cách này giúp hình ảnh rõ và gợi cảm hơn. Từ so sánh hay gặp là: như, giống như, tựa, là, bao nhiêu... bấy nhiêu.",
+   "ex": "\"Trẻ em như búp trên cành\" là một phép so sánh.",
+   "en": [
+    "simile",
+    "comparison"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Nhân hóa",
+   "vi": "Nhân hóa là gọi hoặc tả con vật, cây cối, đồ vật bằng từ ngữ vốn dùng cho người. Nhờ vậy, sự vật trở nên gần gũi như con người. Ví dụ: \"Ông mặt trời thức dậy\", \"Chị gió hát vui\".",
+   "ex": "Gọi \"ông\", \"chị\", cho đồ vật biết cười, biết hát là nhân hóa.",
+   "en": [
+    "personification"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Điệp từ, điệp ngữ",
+   "vi": "Điệp từ, điệp ngữ là lặp lại một từ hay một cụm từ có chủ ý. Biện pháp này nhấn mạnh ý và tạo nhịp điệu cho câu văn, câu thơ. Lặp lại vô tình thì là lỗi, còn lặp có chủ ý là nghệ thuật.",
+   "ex": "Lặp để nhấn mạnh thì hay, lặp vì quên thì dở.",
+   "en": [
+    "repetition"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Nói quá",
+   "vi": "Nói quá là phóng đại mức độ, quy mô của sự vật để nhấn mạnh hoặc gây cười. Ví dụ: \"Mồ hôi thánh thót như mưa ruộng cày\". Nói quá khác với nói dối, vì người nghe đều hiểu đó là cách nói.",
+   "ex": "\"Đói đến mức ăn hết cả một con voi\" là nói quá.",
+   "en": [
+    "hyperbole",
+    "exaggeration"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Ẩn dụ",
+   "vi": "Ẩn dụ là gọi sự vật này bằng tên sự vật khác có nét tương đồng. Khác với so sánh, ẩn dụ không có từ so sánh. Ví dụ: \"Thuyền về có nhớ bến chăng\", thuyền và bến được dùng để nói về con người.",
+   "ex": "So sánh có chữ \"như\", ẩn dụ giấu chữ \"như\" đi.",
+   "en": [
+    "metaphor"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Hoán dụ",
+   "vi": "Hoán dụ là gọi sự vật bằng tên sự vật khác có quan hệ gần gũi với nó. Ví dụ dùng bộ phận để chỉ toàn thể: \"Bàn tay ta làm nên tất cả\". Hay dùng dấu hiệu để chỉ người: \"áo nâu\" chỉ người nông dân.",
+   "ex": "Ẩn dụ dựa vào giống nhau, hoán dụ dựa vào gần nhau.",
+   "en": [
+    "metonymy"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Liệt kê",
+   "vi": "Liệt kê là sắp xếp nối tiếp nhiều từ hoặc cụm từ cùng loại. Biện pháp này giúp diễn tả đầy đủ, phong phú các mặt của sự việc. Ví dụ: \"Vườn nhà em có cam, quýt, bưởi, nhãn\".",
+   "ex": "Một chuỗi dấu phẩy nối nhiều sự vật thường là liệt kê.",
+   "en": [
+    "enumeration",
+    "listing"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Nói giảm nói tránh",
+   "vi": "Nói giảm nói tránh là cách nói nhẹ nhàng, tế nhị để tránh gây buồn hay thô lỗ. Ví dụ: nói \"bà đã đi xa\" thay cho một từ nghe đau buồn. Cách nói này thể hiện sự lịch sự và tình cảm.",
+   "ex": "\"Bài làm chưa tốt lắm\" nghe dễ chịu hơn \"bài làm kém\".",
+   "en": [
+    "euphemism"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Câu hỏi tu từ",
+   "vi": "Câu hỏi tu từ là câu hỏi không cần câu trả lời. Người viết dùng nó để khẳng định, bộc lộ cảm xúc hoặc gợi suy nghĩ. Ví dụ: \"Ai mà chẳng yêu quê hương mình?\" thực chất là khẳng định ai cũng yêu quê hương.",
+   "ex": "Hỏi mà không chờ đáp là câu hỏi tu từ.",
+   "en": [
+    "rhetorical question"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Đảo ngữ",
+   "vi": "Đảo ngữ là thay đổi trật tự thông thường của các thành phần trong câu để nhấn mạnh. Thường vị ngữ được đưa lên trước chủ ngữ. Ví dụ trong thơ Bà Huyện Thanh Quan: \"Lom khom dưới núi tiều vài chú\".",
+   "ex": "Đưa từ cần nhấn mạnh lên đầu câu.",
+   "en": [
+    "inversion"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Chơi chữ",
+   "vi": "Chơi chữ là lợi dụng âm và nghĩa của từ để tạo sự dí dỏm, hài hước. Có thể dùng từ đồng âm, từ gần âm hoặc nói lái. Ca dao, câu đố và truyện cười Việt Nam dùng chơi chữ rất nhiều.",
+   "ex": "\"Lợi thì có lợi nhưng răng không còn\": \"lợi\" vừa là lợi ích, vừa là lợi (nướu) răng.",
+   "en": [
+    "wordplay",
+    "pun"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Ca dao là gì?",
+   "vi": "Ca dao là những bài thơ dân gian do nhân dân sáng tác và truyền miệng qua nhiều đời. Ca dao thường viết theo thể lục bát, nói về tình cảm gia đình, quê hương, lao động. Ví dụ: \"Công cha như núi Thái Sơn / Nghĩa mẹ như nước trong nguồn chảy ra\".",
+   "ex": "Ca dao là \"bài hát ru\" của ông bà ta.",
+   "en": [
+    "folk poem",
+    "folk song"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Tục ngữ là gì?",
+   "vi": "Tục ngữ là câu nói ngắn gọn, có vần, có nhịp, đúc kết kinh nghiệm của nhân dân. Tục ngữ nói về thiên nhiên, lao động và cách làm người. Ví dụ: \"Có công mài sắt, có ngày nên kim\".",
+   "ex": "Tục ngữ ngắn như một câu, mà chứa cả bài học.",
+   "en": [
+    "proverb"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Uống nước nhớ nguồn",
+   "vi": "Câu tục ngữ \"Uống nước nhớ nguồn\" nhắc ta biết ơn người đã giúp mình có cuộc sống tốt đẹp. Câu \"Ăn quả nhớ kẻ trồng cây\" cũng mang ý nghĩa tương tự. Đó là lòng biết ơn ông bà, cha mẹ, thầy cô.",
+   "ex": "Hai câu tục ngữ, cùng một bài học biết ơn.",
+   "en": [
+    "gratitude",
+    "proverb"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Vần trong thơ",
+   "vi": "Vần là sự lặp lại phần vần giữa các tiếng trong thơ. Vần làm câu thơ dễ đọc, dễ nhớ và nghe êm tai. Ví dụ: \"Trâu ơi ta bảo trâu này / Trâu ra ngoài ruộng trâu cày với ta\", hai tiếng \"này\" và \"cày\" vần với nhau.",
+   "ex": "Đọc to bài thơ, nghe tiếng nào \"ngân\" giống nhau là vần.",
+   "en": [
+    "rhyme",
+    "poetry"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Thể thơ lục bát",
+   "vi": "Lục bát gồm cặp câu sáu chữ và tám chữ xen kẽ nhau. Tiếng thứ sáu câu sáu vần với tiếng thứ sáu câu tám. Đây là thể thơ truyền thống tiêu biểu của dân tộc, rất hay gặp trong ca dao.",
+   "ex": "Lục là sáu, bát là tám.",
+   "en": [
+    "six-eight verse",
+    "verse form"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Thơ thất ngôn tứ tuyệt",
+   "vi": "Thất ngôn tứ tuyệt là thể thơ có bốn câu, mỗi câu bảy chữ. Thể thơ này có từ thơ Đường của Trung Quốc và được các nhà thơ Việt Nam dùng nhiều. Bài \"Bánh trôi nước\" của Hồ Xuân Hương viết theo thể này.",
+   "ex": "Thất là bảy, tứ là bốn.",
+   "en": [
+    "quatrain",
+    "Tang poetry"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Thành ngữ khác tục ngữ",
+   "vi": "Thành ngữ là một cụm từ cố định, chưa thành câu trọn ý, như \"chân lấm tay bùn\", \"nhanh như chớp\". Tục ngữ là một câu trọn vẹn, nêu một nhận xét hay kinh nghiệm. Ví dụ \"Tốt gỗ hơn tốt nước sơn\" là tục ngữ.",
+   "ex": "Thành ngữ là cụm từ, tục ngữ là câu.",
+   "en": [
+    "idiom",
+    "proverb"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Tục ngữ về thời tiết",
+   "vi": "Ông cha ta quan sát thiên nhiên và đúc kết thành tục ngữ. Ví dụ: \"Chuồn chuồn bay thấp thì mưa, bay cao thì nắng, bay vừa thì râm\". Hay \"Ráng mỡ gà, có nhà thì giữ\" báo hiệu sắp có gió bão.",
+   "ex": "Tục ngữ là \"bản tin thời tiết\" của người xưa.",
+   "en": [
+    "weather lore",
+    "proverb"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Thơ thất ngôn bát cú",
+   "vi": "Thất ngôn bát cú là thể thơ có tám câu, mỗi câu bảy chữ, có luật bằng trắc chặt chẽ. Bốn cặp câu thường gọi là đề, thực, luận, kết. Bài \"Qua Đèo Ngang\" của Bà Huyện Thanh Quan là bài thơ nổi tiếng theo thể này.",
+   "ex": "Bát là tám: tám câu, mỗi câu bảy chữ.",
+   "en": [
+    "octave",
+    "regulated verse"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Song thất lục bát",
+   "vi": "Song thất lục bát gồm hai câu bảy chữ rồi đến một cặp lục bát, cứ thế lặp lại. Đây là thể thơ do người Việt sáng tạo. Tác phẩm \"Chinh phụ ngâm\" bản dịch nổi tiếng được viết theo thể này.",
+   "ex": "Song thất là hai câu bảy, rồi lục bát sáu – tám.",
+   "en": [
+    "verse form",
+    "poetry"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Nhịp thơ",
+   "vi": "Nhịp thơ là cách ngắt câu thơ thành từng đoạn khi đọc. Thơ lục bát thường ngắt nhịp chẵn như 2/2/2. Thơ bảy chữ thường ngắt nhịp 4/3. Đọc đúng nhịp giúp cảm nhận được nhạc điệu và cảm xúc của bài thơ.",
+   "ex": "\"Bước tới Đèo Ngang / bóng xế tà\" là nhịp 4/3.",
+   "en": [
+    "rhythm",
+    "meter"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Con Rồng cháu Tiên",
+   "vi": "Truyện kể về Lạc Long Quân và Âu Cơ sinh ra một bọc trăm trứng, nở thành trăm người con. Năm mươi con theo cha xuống biển, năm mươi con theo mẹ lên núi. Truyện giải thích nguồn gốc chung của người Việt, vì thế người Việt gọi nhau là \"đồng bào\".",
+   "ex": "Đồng bào nghĩa là cùng một bọc.",
+   "en": [
+    "legend",
+    "origin"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Thánh Gióng",
+   "vi": "Gióng là cậu bé lên ba vẫn chưa biết nói, biết cười. Khi giặc Ân đến, Gióng bỗng cất tiếng xin đi đánh giặc rồi lớn nhanh như thổi. Thắng giặc xong, Gióng cưỡi ngựa sắt bay về trời. Truyện ca ngợi lòng yêu nước.",
+   "ex": "Gióng lớn nhờ cơm cà của cả làng góp lại.",
+   "en": [
+    "legend",
+    "hero"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Bánh chưng, bánh giầy",
+   "vi": "Vua Hùng muốn chọn người nối ngôi nên bảo các con tìm lễ vật dâng cúng. Lang Liêu nghèo, được thần mách bảo, đã làm bánh chưng vuông và bánh giầy tròn từ gạo. Lang Liêu được vua chọn nối ngôi. Từ đó có tục làm bánh chưng ngày Tết.",
+   "ex": "Bánh chưng vuông tượng trưng cho đất, bánh giầy tròn tượng trưng cho trời.",
+   "en": [
+    "folk tale",
+    "Tet"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Cây khế",
+   "vi": "Người em hiền lành chỉ có cây khế, được chim lạ trả ơn bằng vàng. Người anh tham lam đổi lấy cây khế và mong được nhiều vàng hơn. Vì quá tham, người anh gặp kết cục xấu. Truyện khuyên ta sống hiền lành, không tham lam.",
+   "ex": "\"Ăn một quả, trả cục vàng, may túi ba gang, mang đi mà đựng.\"",
+   "en": [
+    "fairy tale",
+    "greed"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Sơn Tinh, Thủy Tinh",
+   "vi": "Sơn Tinh và Thủy Tinh cùng đến cầu hôn Mị Nương, con gái vua Hùng. Sơn Tinh mang lễ vật đến trước nên lấy được Mị Nương. Thủy Tinh tức giận, hằng năm dâng nước đánh Sơn Tinh. Truyện giải thích hiện tượng lũ lụt và ý chí chống lũ của người xưa.",
+   "ex": "Sơn là núi, Thủy là nước.",
+   "en": [
+    "legend",
+    "flood"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Sự tích Hồ Gươm",
+   "vi": "Lê Lợi được thần cho mượn gươm thần để đánh giặc Minh. Sau khi thắng giặc, vua đi thuyền trên hồ, Rùa Vàng nổi lên đòi lại gươm. Từ đó hồ được gọi là hồ Hoàn Kiếm, nghĩa là trả gươm, nay ở giữa Hà Nội.",
+   "ex": "Hoàn Kiếm = trả gươm.",
+   "en": [
+    "legend",
+    "Hoan Kiem Lake"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Các thể loại truyện dân gian",
+   "vi": "Truyện dân gian có nhiều thể loại. Truyền thuyết gắn với nhân vật, sự kiện lịch sử, như Thánh Gióng. Cổ tích kể về số phận con người, như Tấm Cám. Ngụ ngôn mượn con vật để khuyên răn, còn truyện cười để mua vui và phê phán thói xấu.",
+   "ex": "Ếch ngồi đáy giếng là ngụ ngôn.",
+   "en": [
+    "folklore",
+    "genre"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Ếch ngồi đáy giếng",
+   "vi": "Con ếch sống lâu trong giếng, tưởng bầu trời chỉ to bằng cái vung. Khi ra ngoài, nó vẫn nghênh ngang nên bị trâu giẫm phải. Truyện ngụ ngôn khuyên ta đừng chủ quan, kiêu ngạo, phải mở rộng hiểu biết.",
+   "ex": "Thế giới rộng hơn cái giếng của mình rất nhiều.",
+   "en": [
+    "fable",
+    "arrogance"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Truyện Kiều – Nguyễn Du",
+   "vi": "Truyện Kiều của Nguyễn Du là kiệt tác của văn học Việt Nam. Tác phẩm viết bằng chữ Nôm, theo thể lục bát, dài 3254 câu. Truyện kể về cuộc đời nhiều gian truân của Thúy Kiều, người con gái tài sắc.",
+   "ex": "\"Trăm năm trong cõi người ta\" là câu mở đầu Truyện Kiều.",
+   "en": [
+    "The Tale of Kieu",
+    "epic poem"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Dế Mèn phiêu lưu ký",
+   "vi": "\"Dế Mèn phiêu lưu ký\" là truyện của nhà văn Tô Hoài, ra đời năm 1941. Dế Mèn lúc đầu kiêu căng, gây ra cái chết của Dế Choắt nên ân hận suốt đời. Sau đó Mèn đi phiêu lưu và trưởng thành hơn. Truyện đã được dịch ra nhiều thứ tiếng.",
+   "ex": "Bài học đầu đời của Dế Mèn: đừng hung hăng, kiêu ngạo.",
+   "en": [
+    "adventure",
+    "children's book"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Nam quốc sơn hà",
+   "vi": "Bài thơ \"Nam quốc sơn hà\" viết bằng chữ Hán, theo thể thất ngôn tứ tuyệt. Bài thơ khẳng định nước Nam là của người Nam và thường được gắn với Lý Thường Kiệt. Nhiều người coi đây là bản tuyên ngôn độc lập đầu tiên của nước ta.",
+   "ex": "Sông núi nước Nam vua Nam ở.",
+   "en": [
+    "independence",
+    "poem"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Bố cục ba phần",
+   "vi": "Một bài văn thường có ba phần: mở bài, thân bài, kết bài. Mở bài giới thiệu điều mình sẽ viết. Thân bài kể hoặc tả chi tiết. Kết bài nêu cảm nghĩ hoặc khép lại câu chuyện.",
+   "ex": "Mở – Thân – Kết như đầu, mình và chân.",
+   "en": [
+    "essay structure",
+    "introduction"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Tả bằng năm giác quan",
+   "vi": "Khi viết văn miêu tả, hãy dùng cả năm giác quan: nhìn, nghe, ngửi, nếm, sờ. Ví dụ tả cơn mưa: thấy hạt mưa trắng xóa, nghe tiếng lộp độp, ngửi mùi đất ẩm. Nhờ vậy người đọc thấy như mình đang ở đó.",
+   "ex": "Đừng chỉ viết \"đẹp\", hãy nói đẹp như thế nào.",
+   "en": [
+    "description",
+    "senses"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Lập dàn ý trước khi viết",
+   "vi": "Dàn ý là bản ghi ngắn các ý chính theo thứ tự trước khi viết. Có dàn ý, bài văn sẽ không bị lộn xộn hay thiếu ý. Chỉ cần vài gạch đầu dòng cho mở bài, thân bài và kết bài là đủ.",
+   "ex": "Dàn ý là tấm bản đồ của bài văn.",
+   "en": [
+    "outline",
+    "plan"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Đọc lại và sửa bài",
+   "vi": "Viết xong, hãy đọc lại bài ít nhất một lần. Kiểm tra lỗi chính tả, dấu câu và chữ viết hoa. Xem có câu nào quá dài, lặp từ hay thiếu ý không, rồi sửa cho gọn gàng.",
+   "ex": "Người viết giỏi luôn là người sửa bài chăm chỉ.",
+   "en": [
+    "proofreading",
+    "editing"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Câu chủ đề của đoạn văn",
+   "vi": "Mỗi đoạn văn nên nói về một ý chính. Câu nêu ý chính đó gọi là câu chủ đề. Câu chủ đề đứng đầu đoạn gọi là cách viết diễn dịch, đứng cuối đoạn gọi là cách viết quy nạp.",
+   "ex": "Một đoạn – một ý chính.",
+   "en": [
+    "topic sentence",
+    "paragraph"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Ngôi kể",
+   "vi": "Ngôi thứ nhất là khi người kể xưng \"tôi\" hoặc \"em\" và kể điều mình trải qua. Ngôi thứ ba là khi người kể giấu mình, gọi nhân vật bằng tên. Chọn ngôi kể phù hợp giúp câu chuyện gần gũi hoặc khách quan hơn.",
+   "ex": "Xưng \"tôi\" là ngôi thứ nhất.",
+   "en": [
+    "point of view",
+    "narrator"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Mở bài trực tiếp và gián tiếp",
+   "vi": "Mở bài trực tiếp là giới thiệu ngay điều mình định viết. Mở bài gián tiếp là nói về một chuyện có liên quan rồi mới dẫn vào đề. Mở bài gián tiếp thường hấp dẫn hơn, còn mở bài trực tiếp thì ngắn gọn, rõ ràng.",
+   "ex": "Trực tiếp: đi thẳng vào đề. Gián tiếp: đi đường vòng.",
+   "en": [
+    "introduction",
+    "opening"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Tránh lặp từ",
+   "vi": "Dùng một từ quá nhiều lần làm câu văn nhàm chán. Ta có thể thay bằng từ đồng nghĩa hoặc đại từ như \"nó\", \"bạn ấy\". Ví dụ thay vì nhắc \"con mèo\" mãi, có thể viết \"chú mèo\", \"nó\", \"cậu chàng\".",
+   "ex": "Đọc to bài văn sẽ dễ phát hiện từ bị lặp.",
+   "en": [
+    "repetition",
+    "synonym"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Văn nghị luận",
+   "vi": "Văn nghị luận dùng lí lẽ và dẫn chứng để thuyết phục người đọc về một ý kiến. Bài nghị luận cần có luận điểm rõ ràng. Mỗi luận điểm cần lí lẽ giải thích và dẫn chứng cụ thể, đáng tin.",
+   "ex": "Luận điểm là \"điều em muốn nói\", dẫn chứng là \"bằng chứng\".",
+   "en": [
+    "argumentative essay",
+    "evidence"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Văn thuyết minh",
+   "vi": "Văn thuyết minh cung cấp kiến thức chính xác, khách quan về một sự vật, hiện tượng. Người viết có thể dùng cách định nghĩa, nêu ví dụ, dùng số liệu, so sánh hay phân loại. Văn thuyết minh không cần bộc lộ cảm xúc nhiều như văn biểu cảm.",
+   "ex": "Giới thiệu chiếc bút bi là bài văn thuyết minh.",
+   "en": [
+    "expository writing"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Văn biểu cảm",
+   "vi": "Văn biểu cảm thể hiện tình cảm, cảm xúc của người viết về sự vật, con người. Cảm xúc cần chân thật, gắn với kỉ niệm cụ thể. Tình cảm tốt đẹp, trong sáng sẽ khiến bài văn chạm tới trái tim người đọc.",
+   "ex": "Viết điều mình thật sự nghĩ, đừng chép văn mẫu.",
+   "en": [
+    "expressive writing",
+    "emotion"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Bảng chữ cái tiếng Việt có bao nhiêu chữ cái?",
+   "a": [
+    "29 chữ cái",
+    "26 chữ cái",
+    "24 chữ cái",
+    "33 chữ cái"
+   ],
+   "c": 0,
+   "why": "Bảng chữ cái tiếng Việt có 29 chữ, từ a đến y.",
+   "en": "alphabet"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Tiếng Việt có mấy thanh điệu?",
+   "a": [
+    "5 thanh",
+    "6 thanh",
+    "4 thanh",
+    "8 thanh"
+   ],
+   "c": 1,
+   "why": "Có 6 thanh: ngang, huyền, sắc, hỏi, ngã, nặng.",
+   "en": "tone"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Chữ nào KHÔNG có trong bảng chữ cái tiếng Việt?",
+   "a": [
+    "đ",
+    "ơ",
+    "f",
+    "ư"
+   ],
+   "c": 2,
+   "why": "Các chữ f, j, w, z không có trong bảng chữ cái tiếng Việt.",
+   "en": "letter"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Thanh nào không có dấu khi viết?",
+   "a": [
+    "Thanh huyền",
+    "Thanh nặng",
+    "Thanh hỏi",
+    "Thanh ngang"
+   ],
+   "c": 3,
+   "why": "Thanh ngang không có dấu, nên chỉ có 5 dấu thanh.",
+   "en": "tone mark"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Từ nào viết ĐÚNG chính tả?",
+   "a": [
+    "nghỉ ngơi",
+    "ngỉ ngơi",
+    "nghỉ nghơi",
+    "ngỉ nghơi"
+   ],
+   "c": 0,
+   "why": "Trước i viết ngh (nghỉ), trước ơ viết ng (ngơi).",
+   "en": "spelling"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Chữ nào điền vào chỗ trống: \"cái ...ẻ\" (dụng cụ kẻ dòng)?",
+   "a": [
+    "c",
+    "k",
+    "q",
+    "g"
+   ],
+   "c": 1,
+   "why": "Trước e, i, ê ta viết k, nên là \"cái kẻ\".",
+   "en": "spelling rule"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Phụ âm ghép nào có ba chữ cái?",
+   "a": [
+    "nh",
+    "kh",
+    "ngh",
+    "th"
+   ],
+   "c": 2,
+   "why": "Ngh là phụ âm ghép duy nhất gồm ba chữ cái.",
+   "en": "digraph"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Cuối câu hỏi ta đặt dấu gì?",
+   "a": [
+    "Dấu chấm",
+    "Dấu phẩy",
+    "Dấu hai chấm",
+    "Dấu chấm hỏi"
+   ],
+   "c": 3,
+   "why": "Câu hỏi kết thúc bằng dấu chấm hỏi.",
+   "en": "punctuation"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Chữ Quốc ngữ dùng loại chữ cái nào?",
+   "a": [
+    "Chữ cái La-tinh",
+    "Chữ Hán",
+    "Chữ Nôm",
+    "Chữ Ả Rập"
+   ],
+   "c": 0,
+   "why": "Chữ Quốc ngữ ghi tiếng Việt bằng chữ cái La-tinh.",
+   "en": "Latin script"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Từ điển Việt – Bồ – La của Alexandre de Rhodes được in năm nào?",
+   "a": [
+    "Năm 1945",
+    "Năm 1651",
+    "Năm 1010",
+    "Năm 1802"
+   ],
+   "c": 1,
+   "why": "Cuốn từ điển được in năm 1651, là mốc quan trọng của chữ Quốc ngữ.",
+   "en": "dictionary"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Tiếng \"bàn\" có vần là gì?",
+   "a": [
+    "b",
+    "àn",
+    "an",
+    "ba"
+   ],
+   "c": 2,
+   "why": "Tiếng \"bàn\" gồm âm đầu b, vần an và thanh huyền.",
+   "en": "syllable"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Từ nào là danh từ?",
+   "a": [
+    "Chạy",
+    "Xinh đẹp",
+    "Rất",
+    "Cái bàn"
+   ],
+   "c": 3,
+   "why": "\"Cái bàn\" chỉ đồ vật nên là danh từ.",
+   "en": "noun"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Từ nào là động từ?",
+   "a": [
+    "Nhảy",
+    "Quyển vở",
+    "Đỏ tươi",
+    "Cao"
+   ],
+   "c": 0,
+   "why": "\"Nhảy\" chỉ hoạt động nên là động từ.",
+   "en": "verb"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Từ nào là tính từ?",
+   "a": [
+    "Học sinh",
+    "Chăm chỉ",
+    "Đọc",
+    "Con mèo"
+   ],
+   "c": 1,
+   "why": "\"Chăm chỉ\" chỉ phẩm chất của người nên là tính từ.",
+   "en": "adjective"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "\"Ôi, bông hoa đẹp quá!\" là kiểu câu gì?",
+   "a": [
+    "Câu hỏi",
+    "Câu kể",
+    "Câu cảm",
+    "Câu khiến"
+   ],
+   "c": 2,
+   "why": "Câu bộc lộ cảm xúc ngạc nhiên, vui thích nên là câu cảm.",
+   "en": "exclamation"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Từ nào là từ láy?",
+   "a": [
+    "Bàn ghế",
+    "Xe đạp",
+    "Học tập",
+    "Lấp lánh"
+   ],
+   "c": 3,
+   "why": "\"Lấp lánh\" có hai tiếng lặp âm đầu \"l\" nên là từ láy.",
+   "en": "reduplicative word"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Trong câu \"Chú mèo đang ngủ\", chủ ngữ là gì?",
+   "a": [
+    "Chú mèo",
+    "Đang ngủ",
+    "Ngủ",
+    "Đang"
+   ],
+   "c": 0,
+   "why": "\"Chú mèo\" trả lời câu hỏi \"Con gì?\" nên là chủ ngữ.",
+   "en": "subject"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Từ nào đồng nghĩa với \"siêng năng\"?",
+   "a": [
+    "Lười biếng",
+    "Chăm chỉ",
+    "Nhanh nhẹn",
+    "Thông minh"
+   ],
+   "c": 1,
+   "why": "Siêng năng và chăm chỉ đều chỉ sự chịu khó làm việc.",
+   "en": "synonym"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Từ nào trái nghĩa với \"cao\"?",
+   "a": [
+    "To",
+    "Dài",
+    "Thấp",
+    "Rộng"
+   ],
+   "c": 2,
+   "why": "Cao và thấp có nghĩa ngược nhau.",
+   "en": "antonym"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Câu nào là câu ghép?",
+   "a": [
+    "Em đi học.",
+    "Bông hoa rất đẹp.",
+    "Sáng nay, mẹ đi chợ.",
+    "Vì trời mưa nên đường trơn."
+   ],
+   "c": 3,
+   "why": "Câu có hai cụm chủ ngữ – vị ngữ (trời mưa / đường trơn) nên là câu ghép.",
+   "en": "compound sentence"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "\"Đường\" trong \"đường phèn\" và \"đường làng\" là từ gì?",
+   "a": [
+    "Từ đồng âm",
+    "Từ trái nghĩa",
+    "Từ láy",
+    "Từ đồng nghĩa"
+   ],
+   "c": 0,
+   "why": "Hai từ đọc giống nhau nhưng nghĩa khác hẳn nhau nên là từ đồng âm.",
+   "en": "homonym"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "\"Phụ mẫu\" là từ Hán Việt có nghĩa là gì?",
+   "a": [
+    "Ông bà",
+    "Bố mẹ",
+    "Anh chị",
+    "Thầy cô"
+   ],
+   "c": 1,
+   "why": "Phụ là cha, mẫu là mẹ, nên \"phụ mẫu\" là bố mẹ.",
+   "en": "Sino-Vietnamese"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "\"Trẻ em như búp trên cành\" dùng biện pháp tu từ nào?",
+   "a": [
+    "Nhân hóa",
+    "Nói quá",
+    "So sánh",
+    "Liệt kê"
+   ],
+   "c": 2,
+   "why": "Câu có từ \"như\" để so sánh trẻ em với búp non.",
+   "en": "simile"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "\"Ông mặt trời thức dậy\" dùng biện pháp nào?",
+   "a": [
+    "So sánh",
+    "Liệt kê",
+    "Nói giảm",
+    "Nhân hóa"
+   ],
+   "c": 3,
+   "why": "Gọi mặt trời là \"ông\" và cho biết \"thức dậy\" như người là nhân hóa.",
+   "en": "personification"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Từ nào thường dùng trong phép so sánh?",
+   "a": [
+    "Như",
+    "Và",
+    "Nhưng",
+    "Thì"
+   ],
+   "c": 0,
+   "why": "\"Như\" là từ so sánh quen thuộc nhất.",
+   "en": "comparison"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "\"Mồ hôi thánh thót như mưa ruộng cày\" có dùng biện pháp nào?",
+   "a": [
+    "Nói giảm nói tránh",
+    "Nói quá",
+    "Hoán dụ",
+    "Câu hỏi tu từ"
+   ],
+   "c": 1,
+   "why": "Câu phóng đại lượng mồ hôi để nhấn mạnh sự vất vả, đó là nói quá.",
+   "en": "hyperbole"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Ẩn dụ khác so sánh ở điểm nào?",
+   "a": [
+    "Ẩn dụ luôn có từ \"như\"",
+    "Ẩn dụ chỉ dùng cho con vật",
+    "Ẩn dụ không có từ so sánh",
+    "Ẩn dụ là lặp lại một từ"
+   ],
+   "c": 2,
+   "why": "Ẩn dụ gọi tên sự vật bằng sự vật khác mà không dùng từ so sánh.",
+   "en": "metaphor"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "\"Áo nâu\" chỉ người nông dân là biện pháp gì?",
+   "a": [
+    "Nhân hóa",
+    "Điệp ngữ",
+    "Nói quá",
+    "Hoán dụ"
+   ],
+   "c": 3,
+   "why": "Dùng dấu hiệu bên ngoài (áo nâu) để chỉ người là hoán dụ.",
+   "en": "metonymy"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "\"Vườn có cam, quýt, bưởi, nhãn\" dùng biện pháp nào?",
+   "a": [
+    "Liệt kê",
+    "Ẩn dụ",
+    "Nhân hóa",
+    "Chơi chữ"
+   ],
+   "c": 0,
+   "why": "Nhiều sự vật cùng loại được kể nối tiếp nhau là liệt kê.",
+   "en": "enumeration"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Nói \"bà đã đi xa\" thay cho từ buồn đau là biện pháp gì?",
+   "a": [
+    "Nói quá",
+    "Nói giảm nói tránh",
+    "So sánh",
+    "Liệt kê"
+   ],
+   "c": 1,
+   "why": "Cách nói nhẹ nhàng để bớt đau buồn là nói giảm nói tránh.",
+   "en": "euphemism"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "\"Ai mà chẳng yêu quê hương mình?\" là loại câu gì?",
+   "a": [
+    "Câu hỏi cần trả lời",
+    "Câu khiến",
+    "Câu hỏi tu từ",
+    "Câu kể"
+   ],
+   "c": 2,
+   "why": "Câu hỏi này không chờ trả lời mà để khẳng định, nên là câu hỏi tu từ.",
+   "en": "rhetorical question"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "\"Lom khom dưới núi tiều vài chú\" dùng biện pháp nào?",
+   "a": [
+    "Liệt kê",
+    "Nói giảm",
+    "Hoán dụ",
+    "Đảo ngữ"
+   ],
+   "c": 3,
+   "why": "Từ \"lom khom\" được đưa lên đầu câu để nhấn mạnh, đó là đảo ngữ.",
+   "en": "inversion"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "\"Lợi thì có lợi nhưng răng không còn\" dùng biện pháp gì?",
+   "a": [
+    "Chơi chữ",
+    "So sánh",
+    "Liệt kê",
+    "Đảo ngữ"
+   ],
+   "c": 0,
+   "why": "Từ \"lợi\" vừa nghĩa là lợi ích vừa là lợi răng, đó là chơi chữ đồng âm.",
+   "en": "pun"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "\"Có công mài sắt, có ngày nên kim\" khuyên ta điều gì?",
+   "a": [
+    "Nên đi mua kim",
+    "Kiên trì thì sẽ thành công",
+    "Sắt cứng hơn kim",
+    "Không cần cố gắng"
+   ],
+   "c": 1,
+   "why": "Câu tục ngữ dạy rằng chịu khó, kiên trì thì việc khó cũng làm được.",
+   "en": "perseverance"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Câu \"Uống nước nhớ nguồn\" nói về điều gì?",
+   "a": [
+    "Cách uống nước sạch",
+    "Tìm nguồn nước",
+    "Lòng biết ơn",
+    "Tiết kiệm nước"
+   ],
+   "c": 2,
+   "why": "Câu tục ngữ nhắc ta biết ơn những người đã giúp mình.",
+   "en": "gratitude"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Ca dao thường được viết theo thể thơ nào?",
+   "a": [
+    "Thất ngôn bát cú",
+    "Thơ tự do",
+    "Thơ bốn chữ",
+    "Lục bát"
+   ],
+   "c": 3,
+   "why": "Phần lớn ca dao Việt Nam viết theo thể lục bát.",
+   "en": "folk poem"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "\"Công cha như núi Thái Sơn\" – câu tiếp theo là gì?",
+   "a": [
+    "Nghĩa mẹ như nước trong nguồn chảy ra",
+    "Ăn quả nhớ kẻ trồng cây",
+    "Một lòng thờ mẹ kính cha",
+    "Ba cây chụm lại nên hòn núi cao"
+   ],
+   "c": 0,
+   "why": "Câu đầy đủ: \"Công cha như núi Thái Sơn / Nghĩa mẹ như nước trong nguồn chảy ra\".",
+   "en": "family"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Thể thơ lục bát gồm các câu mấy chữ?",
+   "a": [
+    "Câu 7 chữ và câu 7 chữ",
+    "Câu 6 chữ và câu 8 chữ",
+    "Câu 5 chữ và câu 5 chữ",
+    "Câu 4 chữ và câu 6 chữ"
+   ],
+   "c": 1,
+   "why": "Lục là sáu, bát là tám: câu 6 chữ và câu 8 chữ xen kẽ.",
+   "en": "six-eight verse"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Thất ngôn tứ tuyệt có bao nhiêu câu?",
+   "a": [
+    "8 câu",
+    "6 câu",
+    "4 câu",
+    "2 câu"
+   ],
+   "c": 2,
+   "why": "Tứ tuyệt là bốn câu, mỗi câu bảy chữ.",
+   "en": "quatrain"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Đâu là một thành ngữ (chưa thành câu trọn ý)?",
+   "a": [
+    "Tốt gỗ hơn tốt nước sơn",
+    "Uống nước nhớ nguồn",
+    "Có chí thì nên",
+    "Chân lấm tay bùn"
+   ],
+   "c": 3,
+   "why": "\"Chân lấm tay bùn\" chỉ là một cụm từ cố định nên là thành ngữ.",
+   "en": "idiom"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "\"Chuồn chuồn bay thấp thì...\" gì?",
+   "a": [
+    "Mưa",
+    "Nắng",
+    "Râm",
+    "Gió mùa"
+   ],
+   "c": 0,
+   "why": "Tục ngữ: \"Chuồn chuồn bay thấp thì mưa, bay cao thì nắng, bay vừa thì râm\".",
+   "en": "weather lore"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Thất ngôn bát cú có bao nhiêu câu, mỗi câu mấy chữ?",
+   "a": [
+    "4 câu, mỗi câu 7 chữ",
+    "8 câu, mỗi câu 7 chữ",
+    "8 câu, mỗi câu 8 chữ",
+    "7 câu, mỗi câu 8 chữ"
+   ],
+   "c": 1,
+   "why": "Thất ngôn là bảy chữ, bát cú là tám câu.",
+   "en": "regulated verse"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Bài \"Qua Đèo Ngang\" là của nhà thơ nào?",
+   "a": [
+    "Hồ Xuân Hương",
+    "Nguyễn Du",
+    "Bà Huyện Thanh Quan",
+    "Nguyễn Trãi"
+   ],
+   "c": 2,
+   "why": "\"Qua Đèo Ngang\" là bài thơ nổi tiếng của Bà Huyện Thanh Quan.",
+   "en": "poem"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Thơ bảy chữ thường ngắt nhịp thế nào?",
+   "a": [
+    "2/2/2",
+    "3/5",
+    "1/6",
+    "4/3"
+   ],
+   "c": 3,
+   "why": "Thơ bảy chữ thường ngắt nhịp 4/3, như \"Bước tới Đèo Ngang / bóng xế tà\".",
+   "en": "rhythm"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Theo truyền thuyết, Âu Cơ sinh ra bọc bao nhiêu trứng?",
+   "a": [
+    "Một trăm trứng",
+    "Mười trứng",
+    "Năm mươi trứng",
+    "Một nghìn trứng"
+   ],
+   "c": 0,
+   "why": "Âu Cơ sinh bọc trăm trứng, nở thành trăm người con.",
+   "en": "legend"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Ai là người làm ra bánh chưng, bánh giầy?",
+   "a": [
+    "Thánh Gióng",
+    "Lang Liêu",
+    "Sơn Tinh",
+    "Thạch Sanh"
+   ],
+   "c": 1,
+   "why": "Lang Liêu làm bánh chưng, bánh giầy dâng vua Hùng và được nối ngôi.",
+   "en": "folk tale"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Thánh Gióng cưỡi gì đi đánh giặc?",
+   "a": [
+    "Voi trắng",
+    "Rùa vàng",
+    "Ngựa sắt",
+    "Chim đại bàng"
+   ],
+   "c": 2,
+   "why": "Gióng cưỡi ngựa sắt, mặc áo giáp sắt đi đánh giặc Ân.",
+   "en": "hero"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Truyện \"Cây khế\" khuyên ta điều gì?",
+   "a": [
+    "Nên trồng nhiều khế",
+    "Chim rất đáng sợ",
+    "Phải đi xa kiếm vàng",
+    "Không nên tham lam"
+   ],
+   "c": 3,
+   "why": "Người anh tham lam gặp kết cục xấu, người em hiền lành được đền đáp.",
+   "en": "greed"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Truyện \"Sơn Tinh, Thủy Tinh\" giải thích hiện tượng gì?",
+   "a": [
+    "Lũ lụt hằng năm",
+    "Nhật thực",
+    "Động đất",
+    "Cầu vồng"
+   ],
+   "c": 0,
+   "why": "Thủy Tinh dâng nước đánh Sơn Tinh mỗi năm, giải thích chuyện lũ lụt.",
+   "en": "flood"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Tên hồ Hoàn Kiếm có nghĩa là gì?",
+   "a": [
+    "Hồ xanh",
+    "Trả gươm",
+    "Rùa vàng",
+    "Mặt gương"
+   ],
+   "c": 1,
+   "why": "Hoàn là trả, kiếm là gươm: Lê Lợi trả gươm thần cho Rùa Vàng.",
+   "en": "Hoan Kiem Lake"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "\"Ếch ngồi đáy giếng\" thuộc thể loại truyện nào?",
+   "a": [
+    "Truyền thuyết",
+    "Truyện cười",
+    "Truyện ngụ ngôn",
+    "Thần thoại"
+   ],
+   "c": 2,
+   "why": "Truyện mượn chuyện con ếch để khuyên người, đó là ngụ ngôn.",
+   "en": "fable"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Mị Nương trong truyện là con gái của ai?",
+   "a": [
+    "Lạc Long Quân",
+    "Lê Lợi",
+    "Thủy Tinh",
+    "Vua Hùng"
+   ],
+   "c": 3,
+   "why": "Mị Nương là con gái vua Hùng, được Sơn Tinh cưới làm vợ.",
+   "en": "princess"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Truyện Kiều của Nguyễn Du được viết theo thể thơ nào?",
+   "a": [
+    "Lục bát",
+    "Thất ngôn bát cú",
+    "Song thất lục bát",
+    "Thơ tự do"
+   ],
+   "c": 0,
+   "why": "Truyện Kiều gồm 3254 câu thơ lục bát.",
+   "en": "The Tale of Kieu"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Tác phẩm \"Dế Mèn phiêu lưu ký\" là của nhà văn nào?",
+   "a": [
+    "Nam Cao",
+    "Tô Hoài",
+    "Nguyễn Du",
+    "Kim Lân"
+   ],
+   "c": 1,
+   "why": "\"Dế Mèn phiêu lưu ký\" do nhà văn Tô Hoài viết, ra đời năm 1941.",
+   "en": "children's book"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Bài thơ nào thường được coi là bản tuyên ngôn độc lập đầu tiên của nước ta?",
+   "a": [
+    "Qua Đèo Ngang",
+    "Bánh trôi nước",
+    "Nam quốc sơn hà",
+    "Bạn đến chơi nhà"
+   ],
+   "c": 2,
+   "why": "\"Nam quốc sơn hà\" khẳng định chủ quyền của nước Nam.",
+   "en": "independence"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Một bài văn thường có mấy phần?",
+   "a": [
+    "Hai phần",
+    "Năm phần",
+    "Một phần",
+    "Ba phần"
+   ],
+   "c": 3,
+   "why": "Bài văn có mở bài, thân bài và kết bài.",
+   "en": "essay structure"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Phần nào giới thiệu điều em sẽ viết?",
+   "a": [
+    "Mở bài",
+    "Thân bài",
+    "Kết bài",
+    "Tên bài"
+   ],
+   "c": 0,
+   "why": "Mở bài dùng để giới thiệu đối tượng hay câu chuyện sẽ viết.",
+   "en": "introduction"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Khi tả cơn mưa, \"tiếng lộp độp\" là cảm nhận bằng giác quan nào?",
+   "a": [
+    "Thị giác (nhìn)",
+    "Thính giác (nghe)",
+    "Khứu giác (ngửi)",
+    "Vị giác (nếm)"
+   ],
+   "c": 1,
+   "why": "Tiếng lộp độp là âm thanh, ta cảm nhận bằng tai.",
+   "en": "senses"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Việc nên làm ngay sau khi viết xong bài là gì?",
+   "a": [
+    "Xé bỏ bài viết",
+    "Viết thêm thật dài",
+    "Đọc lại và sửa lỗi",
+    "Không cần đọc lại"
+   ],
+   "c": 2,
+   "why": "Đọc lại giúp phát hiện lỗi chính tả, dấu câu và lặp từ.",
+   "en": "proofreading"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Câu nêu ý chính của đoạn văn gọi là gì?",
+   "a": [
+    "Câu cảm",
+    "Câu hỏi",
+    "Câu kết bài",
+    "Câu chủ đề"
+   ],
+   "c": 3,
+   "why": "Câu chủ đề nêu ý chính mà cả đoạn văn hướng tới.",
+   "en": "topic sentence"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Người kể xưng \"tôi\" là kể theo ngôi thứ mấy?",
+   "a": [
+    "Ngôi thứ nhất",
+    "Ngôi thứ hai",
+    "Ngôi thứ ba",
+    "Không có ngôi"
+   ],
+   "c": 0,
+   "why": "Người kể xưng \"tôi\" hay \"em\" là ngôi thứ nhất.",
+   "en": "point of view"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Câu chủ đề đứng ĐẦU đoạn là cách viết đoạn nào?",
+   "a": [
+    "Quy nạp",
+    "Diễn dịch",
+    "Liệt kê",
+    "Đảo ngữ"
+   ],
+   "c": 1,
+   "why": "Đoạn diễn dịch nêu ý chính trước rồi mới giải thích, chứng minh.",
+   "en": "deductive paragraph"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Cách nào giúp tránh lặp từ \"con mèo\" quá nhiều?",
+   "a": [
+    "Viết \"con mèo\" thêm nữa",
+    "Bỏ hết câu có con mèo",
+    "Thay bằng \"chú mèo\", \"nó\"",
+    "Viết hoa chữ \"mèo\""
+   ],
+   "c": 2,
+   "why": "Dùng từ thay thế hoặc đại từ giúp câu văn không nhàm chán.",
+   "en": "repetition"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Văn nghị luận cần có những yếu tố chính nào?",
+   "a": [
+    "Vần và nhịp",
+    "Chỉ cần cảm xúc",
+    "Lời thoại nhân vật",
+    "Luận điểm, lí lẽ, dẫn chứng"
+   ],
+   "c": 3,
+   "why": "Nghị luận thuyết phục người đọc bằng luận điểm, lí lẽ và dẫn chứng.",
+   "en": "argumentative essay"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Bài \"Giới thiệu chiếc bút bi\" thuộc kiểu văn bản nào?",
+   "a": [
+    "Thuyết minh",
+    "Biểu cảm",
+    "Tự sự",
+    "Nghị luận"
+   ],
+   "c": 0,
+   "why": "Bài cung cấp kiến thức khách quan về một đồ vật nên là văn thuyết minh.",
+   "en": "expository writing"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Điều quan trọng nhất của văn biểu cảm là gì?",
+   "a": [
+    "Nhiều số liệu",
+    "Cảm xúc chân thật",
+    "Chép đúng văn mẫu",
+    "Dùng thật nhiều từ khó"
+   ],
+   "c": 1,
+   "why": "Văn biểu cảm hay khi cảm xúc chân thật, gắn với kỉ niệm riêng.",
+   "en": "expressive writing"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Cuốn từ điển năm 1651",
+   "vi": "Ngày xưa, người Việt chủ yếu viết bằng chữ Hán và chữ Nôm, khá khó học. Các giáo sĩ phương Tây cùng nhiều người Việt đã thử ghi tiếng Việt bằng chữ cái La-tinh. Năm 1651, cuốn từ điển Việt – Bồ – La của Alexandre de Rhodes được in ở Rô-ma. Cuốn sách ghi lại rất nhiều từ tiếng Việt bằng chữ mới. Từ đó, chữ Quốc ngữ dần được hoàn thiện, và hôm nay em đang đọc chính thứ chữ ấy!",
+   "en": [
+    "Latin script",
+    "dictionary"
+   ]
+  },
+  {
+   "t": "Tờ báo chữ Quốc ngữ đầu tiên",
+   "vi": "Năm 1865, ở Sài Gòn ra đời Gia Định báo. Đây được coi là tờ báo đầu tiên in bằng chữ Quốc ngữ. Nhờ báo chí và sách vở, ngày càng nhiều người biết đọc biết viết chữ Quốc ngữ. Về sau, chữ Quốc ngữ trở thành chữ viết chính thức của nước ta.",
+   "en": [
+    "newspaper",
+    "history"
+   ]
+  },
+  {
+   "t": "Truyện Kiều đi vào đời sống",
+   "vi": "Nhà thơ Nguyễn Du đã viết Truyện Kiều bằng chữ Nôm, dài 3254 câu thơ lục bát. Câu thơ hay đến mức nhiều người dân thuộc lòng cả đoạn dài. Người ta còn \"lẩy Kiều\", tức là lấy câu Kiều để nói chuyện cho duyên dáng. Ngày nay, Truyện Kiều đã được dịch ra nhiều thứ tiếng trên thế giới.",
+   "en": [
+    "The Tale of Kieu",
+    "poetry"
+   ]
+  },
+  {
+   "t": "Chú dế của nhà văn trẻ",
+   "vi": "Năm 1941, nhà văn Tô Hoài mới khoảng hai mươi mốt tuổi. Ông viết câu chuyện về một chú dế tên là Dế Mèn. Ông quan sát kĩ những con vật nhỏ quanh mình nên tả chúng rất sống động. Dế Mèn phiêu lưu ký trở thành cuốn truyện thiếu nhi nổi tiếng và được dịch ra nhiều thứ tiếng.",
+   "en": [
+    "children's book",
+    "observation"
+   ]
+  },
+  {
+   "t": "Bà chúa thơ Nôm",
+   "vi": "Hồ Xuân Hương là nữ sĩ nổi tiếng sống khoảng cuối thế kỷ 18, đầu thế kỷ 19. Bà viết thơ Nôm rất tài, câu chữ vừa dí dỏm vừa sâu sắc. Bài \"Bánh trôi nước\" mượn chiếc bánh nhỏ để nói về người phụ nữ. Vì tài thơ ấy, bà được người sau gọi là \"Bà chúa thơ Nôm\".",
+   "en": [
+    "poet",
+    "Nom poetry"
+   ]
+  },
+  {
+   "t": "Áng văn mừng chiến thắng",
+   "vi": "Năm 1428, sau khi nghĩa quân Lam Sơn thắng giặc Minh, Nguyễn Trãi viết \"Bình Ngô đại cáo\". Bài cáo tuyên bố với thiên hạ rằng đất nước đã sạch bóng quân thù. Lời văn hào hùng, khẳng định Đại Việt là một nước có văn hiến lâu đời. Người sau gọi đây là \"thiên cổ hùng văn\", nghĩa là áng văn hùng tráng muôn đời.",
+   "en": [
+    "proclamation",
+    "history"
+   ]
+  },
+  {
+   "t": "Nhà thơ không nhìn thấy",
+   "vi": "Nguyễn Đình Chiểu là nhà thơ lớn ở Nam Bộ thế kỷ 19. Khi còn trẻ, ông bị bệnh nặng và mù cả hai mắt. Dù vậy, ông không bỏ cuộc mà mở trường dạy học, chữa bệnh và làm thơ. Tác phẩm \"Lục Vân Tiên\" của ông ca ngợi lòng nhân nghĩa và được người dân Nam Bộ rất yêu thích.",
+   "en": [
+    "poet",
+    "perseverance"
+   ]
+  },
+  {
+   "t": "Nhà bác học mê đọc sách",
+   "vi": "Lê Quý Đôn là nhà bác học nổi tiếng của nước ta ở thế kỷ 18. Từ nhỏ, ông đã nổi tiếng thông minh và rất ham đọc sách. Ông ghi chép cẩn thận những điều đọc được và những điều mắt thấy tai nghe. Nhờ vậy, ông để lại nhiều bộ sách về lịch sử, địa lý và văn học.",
+   "en": [
+    "scholar",
+    "reading"
+   ]
+  },
+  {
+   "t": "Ca dao không có tác giả",
+   "vi": "Không ai biết chính xác ai đã sáng tác ra những bài ca dao. Chúng được ông bà, cha mẹ hát ru và truyền miệng qua rất nhiều đời. Mỗi người nghe lại có thể thêm bớt vài chữ cho hợp với vùng quê mình. Vì vậy, cùng một bài ca dao có thể có nhiều bản khác nhau một chút.",
+   "en": [
+    "folk song",
+    "oral tradition"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: Dấu thanh rất quan trọng",
+   "vi": "Chỉ cần đổi một dấu thanh, nghĩa của tiếng đã khác hẳn. \"Ma\", \"má\" và \"mạ\" là ba tiếng khác nhau. Vì thế khi viết, em đừng quên đánh dấu. Viết đủ dấu giúp người đọc hiểu đúng ý em.",
+   "try": "Viết tiếng \"ma\" với đủ sáu thanh rồi đặt một câu cho mỗi tiếng."
+  },
+  {
+   "t": "Bài học hôm nay: Viết hoa cho đúng",
+   "vi": "Chữ đầu câu luôn viết hoa. Tên người và tên địa danh viết hoa chữ cái đầu mỗi tiếng. Viết hoa đúng làm bài văn trông gọn gàng và lịch sự.",
+   "try": "Viết họ tên của mọi người trong nhà, nhớ viết hoa từng tiếng."
+  },
+  {
+   "t": "Bài học hôm nay: Đi tìm từ loại",
+   "vi": "Danh từ trả lời \"cái gì, con gì\". Động từ trả lời \"làm gì\". Tính từ trả lời \"thế nào\". Khi biết hỏi đúng câu, em sẽ tìm ra từ loại rất nhanh.",
+   "try": "Nhìn quanh phòng, ghi 5 danh từ, 5 động từ và 5 tính từ em thấy."
+  },
+  {
+   "t": "Bài học hôm nay: Từ láy làm câu văn sinh động",
+   "vi": "Từ láy như lấp lánh, róc rách, líu lo giúp câu văn có âm thanh và hình ảnh. Nhiều từ láy mô phỏng tiếng động thật ngoài đời. Dùng vừa phải, bài văn sẽ hay hơn hẳn.",
+   "try": "Nghe các âm thanh trong nhà rồi tìm một từ láy để tả mỗi âm thanh."
+  },
+  {
+   "t": "Bài học hôm nay: Biến đồ vật thành bạn",
+   "vi": "Nhân hóa giúp đồ vật biết nói, biết cười như người. Khi tả, em có thể gọi chiếc đồng hồ là \"bác\" và cho nó \"thức suốt đêm\". Cách viết này làm bài văn gần gũi và ấm áp.",
+   "try": "Viết 3 câu nhân hóa về một đồ vật trong nhà em."
+  },
+  {
+   "t": "Bài học hôm nay: So sánh cho hình ảnh rõ hơn",
+   "vi": "So sánh giúp người đọc hình dung sự vật dễ hơn. Thay vì viết \"trăng tròn\", em viết \"trăng tròn như chiếc đĩa bạc\". Hãy chọn hình ảnh so sánh gần gũi và đúng.",
+   "try": "Tìm 3 sự vật ngoài cửa sổ và so sánh mỗi thứ với một vật khác."
+  },
+  {
+   "t": "Bài học hôm nay: Tục ngữ là kho kinh nghiệm",
+   "vi": "Tục ngữ ngắn nhưng chứa bài học của nhiều thế hệ. Có câu nói về thời tiết, có câu nói về cách sống. Hiểu tục ngữ là hiểu thêm cách nghĩ của ông bà ta.",
+   "try": "Hỏi ông bà hoặc bố mẹ một câu tục ngữ và nhờ giải thích nghĩa."
+  },
+  {
+   "t": "Bài học hôm nay: Đọc thơ thật diễn cảm",
+   "vi": "Đọc thơ cần ngắt đúng nhịp và nhấn vào những từ quan trọng. Thơ lục bát đọc nhẹ nhàng, ngân nga. Đọc diễn cảm giúp em cảm nhận được cái hay của bài thơ.",
+   "try": "Chọn một bài ca dao, đọc to cho người thân nghe hai lần với hai giọng khác nhau."
+  },
+  {
+   "t": "Bài học hôm nay: Truyện cổ dạy ta điều gì?",
+   "vi": "Mỗi truyện cổ đều gửi gắm một bài học. Cây khế khuyên đừng tham lam, Ếch ngồi đáy giếng khuyên đừng kiêu ngạo. Khi đọc xong một truyện, em hãy tự hỏi: truyện muốn nói với mình điều gì?",
+   "try": "Kể lại một truyện cổ em thích cho người thân nghe và nói bài học của truyện."
+  },
+  {
+   "t": "Bài học hôm nay: Lập dàn ý trong năm phút",
+   "vi": "Trước khi viết, hãy dành vài phút ghi các ý chính. Mở bài một ý, thân bài vài ý, kết bài một ý. Có dàn ý, em sẽ viết nhanh hơn và không lạc đề.",
+   "try": "Lập dàn ý ngắn cho đề \"Tả con vật em yêu thích\"."
+  },
+  {
+   "t": "Bài học hôm nay: Viết nhật kí mỗi ngày",
+   "vi": "Viết đều đặn là cách tốt nhất để viết văn hay. Nhật kí không cần dài, chỉ vài câu về điều em thấy, em nghĩ. Lâu dần, câu văn của em sẽ tự nhiên và giàu cảm xúc hơn.",
+   "try": "Viết 3 câu nhật kí về điều vui nhất hôm nay của em."
+  }
+ ]
+}
