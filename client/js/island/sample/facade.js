@@ -7,12 +7,17 @@
 import * as THREE from 'three';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { PHI } from '../layout.js';
+import { PAL, shade } from './palette.js';
 
+// màu lấy từ bảng chuẩn sample/palette.js (docs/style-guide.md §1) — không pha màu mới ở đây
+const hx = c => '#' + c.getHexString(), P_ = n => PAL[n].hex;
 export const FC = {
-  wall: '#f2d8a0', frieze: '#f7e6bf', trim: '#fff6e2', stone: '#c9b796', stone2: '#ab9a7c',
-  shutter: '#3f8d6b', louver: '#2e6f53', glass: '#83b4cc', glassDk: '#5d8fa9', door: '#7e5232',
-  roof: '#cf5a33', roof2: '#bf4f2c', ridge: '#9a3b23', vine: '#4e8c3e', vine2: '#6aa84f', vine3: '#3f7a35',
-  gold: '#e3b54a', bell: '#c9963a', dark: '#3a3040',
+  wall: P_('stoneCream'), frieze: hx(shade('stoneCream', 1.236)), trim: P_('stoneCreamL'), stone: P_('stoneWarm'), stone2: P_('stoneWarmD'), recess: P_('stoneCreamD'),
+  shutter: P_('shutter'), louver: P_('shutterD'), glass: P_('glass'), glassDk: hx(shade('glass', 1 / PHI)), door: P_('wood'),
+  roof: P_('roof'), roof2: P_('roofL'), ridge: P_('roofD'), vine: P_('leaf'), vine2: P_('grassD'), vine3: P_('leafD'),
+  gold: P_('brass'), bell: hx(shade('brass', 1 / PHI ** 0.5)), dark: P_('ink'), face: P_('stoneCreamL'), box: P_('wood'),
+  flowers: ['flowerPink', 'flowerYellow', 'flowerWhite', 'flowerRed', 'flowerPink'].map(P_),
+  rubik: ['rubikR', 'rubikW', 'rubikB', 'rubikY', 'rubikR', 'rubikG', 'rubikO', 'rubikB', 'rubikW'].map(P_), core: hx(shade('ink', 0.618)),
 };
 const _o = new THREE.Object3D(), _m = new THREE.Matrix4(), _p = new THREE.Vector3(), _q = new THREE.Vector3();
 
@@ -75,8 +80,8 @@ export function archWindow(b, g, d, u, y0, z, w, h, flowers = 0) {
     for (let i = 1; i < 6; i++) d.plane(sw * 0.8, 0.035, x, y0 + i * sh / 6, z + 0.035, FC.louver);
   }
   if (flowers) {                                                                      // bồn hoa dưới bậu
-    d.box(w + 0.3, 0.22, 0.26, u, y0 - 0.42, z + 0.14, '#b9824f');
-    for (let k = -2; k <= 2; k++) d.ball(0.12, u + k * w / 4.4, y0 - 0.16, z + 0.16, ['#e85d8a', '#f5c518', '#ffffff', '#e8453c', '#f28fb5'][(k + 2 + flowers) % 5]);
+    d.box(w + 0.3, 0.22, 0.26, u, y0 - 0.42, z + 0.14, FC.box);
+    for (let k = -2; k <= 2; k++) d.ball(0.12, u + k * w / 4.4, y0 - 0.16, z + 0.16, FC.flowers[(k + 2 + flowers) % 5]);
     for (const s of [-1, 1]) d.ball(0.14, u + s * (w / 2 + 0.05), y0 - 0.38, z + 0.25, FC.vine2, 0.8, 1.6, 0.8);
   }
 }
@@ -95,7 +100,7 @@ export function wallBody(b, len, H, HV, T, wall = FC.wall) {
 
 // cửa vòm mù (tường rào sân chơi): ô lõm vòm + gờ
 export function blindArch(b, g, u, z, w, h, y0 = 0.7) {
-  g.push(archGeo(w, h, w / 2), '#e9cd92', u, y0, z + 0.015);
+  g.push(archGeo(w, h, w / 2), FC.recess, u, y0, z + 0.015);
   g.push(ringGeo(w, h, w / 2, 0.09), FC.trim, u, y0, z + 0.02);
 }
 
@@ -112,7 +117,7 @@ export function vine(d, x, z, h, s = 1, nx = 0, nz = 1, y0 = 0) {
   for (let i = 0; i < n; i++) {
     const t = i / (n - 1), w = Math.sin(i * 0.9 + s * 5) * 0.2 * (0.6 + t), r = (0.11 + 0.04 * Math.sin(i * 1.7 + s)) * (1 - t * 0.4);
     d.ball(r, x + nz * w + nx * 0.04, y0 + 0.2 + t * h, z - nx * w + nz * 0.04, [FC.vine, FC.vine2, FC.vine3][(i + s) % 3], 1 + Math.abs(nz) * 0.5, 0.9, 1 + Math.abs(nx) * 0.5);
-    if (i % 4 === 2) d.ball(0.05, x + nz * (w + 0.1) + nx * 0.1, y0 + 0.24 + t * h, z - nx * (w + 0.1) + nz * 0.1, ['#f28fb5', '#ffffff', '#e8453c'][(i + s) % 3]);   // hoa giấy
+    if (i % 4 === 2) d.ball(0.05, x + nz * (w + 0.1) + nx * 0.1, y0 + 0.24 + t * h, z - nx * (w + 0.1) + nz * 0.1, FC.flowers[(i + s) % 3]);   // hoa giấy
   }
 }
 
@@ -183,8 +188,8 @@ export function fanlight(b, g, d, y, z, rx, rise) {
 // phù điêu Rubik 3×3 (mặt khối Rubik nổi trên tấm đá có khung)
 export function rubikRelief(b, x, y, z, s) {
   cbox(b, s + 0.24, s + 0.24, 0.12, x, y - (s + 0.24) / 2, z, FC.trim, 0.04);
-  b.box(s, s, 0.08, x, y - s / 2, z + 0.06, '#1f1b26');
-  const q = s / 3, C = ['#e8392f', '#ffffff', '#2b63d9', '#f5c518', '#e8392f', '#2f9e44', '#ff8a1f', '#2b63d9', '#ffffff'];
+  b.box(s, s, 0.08, x, y - s / 2, z + 0.06, FC.core);
+  const q = s / 3, C = FC.rubik;
   for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) cbox(b, q * 0.84, q * 0.84, 0.06, x + (i - 1) * q, y + (j - 1) * q - q * 0.42, z + 0.1, C[i * 3 + j], 0.02);
 }
 
@@ -264,7 +269,7 @@ export function bellTower(b, x, yb, z, a, ry, clock = true) {
     cbox(b, a + 0.26, 0.14, a + 0.26, 0, h1, 0, FC.trim, 0.04);
     if (clock) {                                                                      // mặt đồng hồ hướng +z (cổng trường)
       pushSmooth(b, new THREE.CylinderGeometry(0.42, 0.42, 0.08, 16), FC.trim, 0, h1 * 0.5, a / 2 + 0.03, 0, Math.PI / 2, 0);
-      b.push(new THREE.CircleGeometry(0.34, 16), '#fffaf0', 0, h1 * 0.5, a / 2 + 0.075);
+      b.push(new THREE.CircleGeometry(0.34, 16), FC.face, 0, h1 * 0.5, a / 2 + 0.075);
       b.box(0.05, 0.26, 0.02, 0, h1 * 0.5 - 0.02, a / 2 + 0.085, FC.dark); b.box(0.2, 0.05, 0.02, 0.08, h1 * 0.5 - 0.02, a / 2 + 0.085, FC.dark, 0, 0, 0.5);
     }
     b.box(a - 0.06, h2, a - 0.06, 0, y2, 0, FC.frieze);                               // tầng chuông
