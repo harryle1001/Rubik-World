@@ -26,7 +26,7 @@ async function openPage() {
   const fr = page.frames().find(f => f.url().includes('/school/'));
   if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count().catch(() => 0)) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
   await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
-  await page.waitForFunction(() => __island.warmed, null, { timeout: 30000 }).catch(() => {});
+  await page.waitForFunction(() => __island.warmed === true || __island.warmed >= 3, null, { timeout: 90000 }).catch(() => {});
   await page.waitForTimeout(3000);
 
   // ---------- đo trong trang: bọc update của từng phần + post.render ----------

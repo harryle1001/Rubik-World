@@ -118,6 +118,8 @@ document.getElementById('bMenu').onclick = () => school.menu();
 
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
 const clock = new THREE.Clock(), stepDt = createDt();
+const WARM_AT = [1.618, 8, 21]; let warmI = 0;
+function warm() { const rt = renderer.getRenderTarget(); renderer.setRenderTarget(post.composer.readBuffer); renderer.compileAsync(scene, camera).catch(() => {}); renderer.setRenderTarget(rt); }
 const perf = ctx.perf = createPerf(ctx); // cắt vật nhỏ ở xa, viền, người/thú ngoài khung hình (perf.js)
 window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
@@ -149,7 +151,10 @@ renderer.setAnimationLoop(() => {
   // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong
   // → không khựng lần đầu khi quay camera/đi tới khu mới (three chỉ biên dịch lúc vật thể lần đầu vào khung hình)
   // chờ người chơi đóng bảng đăng nhập 2D (biên dịch chặn luồng chính → bảng đăng nhập bật lại, khoá nhân vật)
-  if (!ctx.warmed && school.ready && !player.frozen && !document.body.classList.contains('rs-modal') && (ctx.warmT = (ctx.warmT || 0) + dt) > 1.618) { ctx.warmed = true; renderer.compileAsync(scene, camera).catch(() => {}); }
+  // biên dịch VỚI render target của hậu kỳ (khoá shader gồm không gian màu + tone mapping của đích vẽ: biên dịch cho canvas
+  // thì lúc vẽ thật vào render target vẫn phải biên dịch lại → khựng khi bay/đi xe thấy vật mới). Lặp lại ở 8 s, 21 s (Fibonacci)
+  // cho model/thú nạp muộn; vật đã biên dịch thì lần sau chỉ tra bộ nhớ đệm.
+  if (warmI < WARM_AT.length && school.ready && !player.frozen && !document.body.classList.contains('rs-modal') && (ctx.warmT = (ctx.warmT || 0) + dt) > WARM_AT[warmI]) { ctx.warmed = ++warmI; warm(); }
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
   worldMap.update();
   quality(dt);
