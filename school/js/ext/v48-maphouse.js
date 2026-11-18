@@ -98,7 +98,7 @@ function v48mDraw(){
     if(a[0] < -80 || a[0] > Wc + 80 || a[1] < -40 || a[1] > Hc + 40) return;
     const showName = sel || wpx > 74 || z > .09; g.font = '16px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; g.fillText((V48M.LOCK[id] ? '🔒' : '') + ic, a[0], a[1] - (showName ? 11 : 0));
     if(!showName) return; g.font = "700 14px 'Be Vietnam Pro', Nunito, sans-serif"; const tw = g.measureText(nm).width + 10;
-    g.fillStyle = sel ? '#ffd23f' : 'rgba(10,15,34,.82)'; g.fillRect(a[0] - tw/2, a[1] + 1, tw, 20); g.fillStyle = sel ? '#1a1206' : '#fff'; g.fillText(nm, a[0], a[1] + 11); });
+    const lx = Math.max(tw/2 + 4, Math.min(Wc - tw/2 - 4, a[0])); g.fillStyle = sel ? '#ffd23f' : 'rgba(10,15,34,.82)'; g.fillRect(lx - tw/2, a[1] + 1, tw, 20); g.fillStyle = sel ? '#1a1206' : '#fff'; g.fillText(nm, lx, a[1] + 11); });
   g.textAlign = 'left'; g.textBaseline = 'alphabetic';
 }
 function v48mUi(){
@@ -300,8 +300,10 @@ function v48mNightK(i){ return v25Ramp(clock, 1082 + (i*7) % 40, 330 - (i*5) % 2
 // vẽ một căn nhà tại chân nhà (gx, gy), lật gương khi flip
 function v48mDrawHouse(g, st, a, col, shop, gx, gy, flip, lit){
   const s = v48mSprite(st, a, col, shop, season === 'dong'), F = s.F, x = Math.round(gx - F.cx), y = Math.round(gy - F.gy);
-  if(flip){ g.save(); g.translate(x + F.W, y); g.scale(-1, 1); g.drawImage(s.day, 0, 0); if(lit > 0){ g.globalAlpha = lit; g.drawImage(s.nite, 0, 0); } g.restore(); return F; }
-  g.drawImage(s.day, x, y); if(lit > 0){ const ga = g.globalAlpha; g.globalAlpha = lit; g.drawImage(s.nite, x, y); g.globalAlpha = ga; }
+  if(lit >= .99 && !s.full){ const c = document.createElement('canvas'); c.width = F.W; c.height = F.H; const q = c.getContext('2d'); q.drawImage(s.day, 0, 0); q.drawImage(s.nite, 0, 0); s.full = c; }   // đèn bật hẳn: 1 lần vẽ
+  const one = lit >= .99 ? s.full : s.day, two = lit > 0 && lit < .99;
+  if(flip){ g.save(); g.translate(x + F.W, y); g.scale(-1, 1); g.drawImage(one, 0, 0); if(two){ g.globalAlpha = lit; g.drawImage(s.nite, 0, 0); } g.restore(); return F; }
+  g.drawImage(one, x, y); if(two){ const ga = g.globalAlpha; g.globalAlpha = lit; g.drawImage(s.nite, x, y); g.globalAlpha = ga; }
   return F;
 }
 
@@ -309,7 +311,7 @@ function v48mDrawHouse(g, st, a, col, shop, gx, gy, flip, lit){
 function v48mInit(){
   // nút mở chế độ sắp xếp trong thanh trên của bản đồ lớn
   const top = document.querySelector('#v32Map .v32mtop'), cl = $('#v32MapClose');
-  if(top && !$('#v48mBtn')){ const b = document.createElement('button'); b.type = 'button'; b.id = 'v48mBtn'; b.textContent = '🧩 Sắp xếp'; b.setAttribute('aria-label', 'Sắp xếp bản đồ đảo'); b.onclick = v48mOpen; top.insertBefore(b, cl); }
+  if(top && !$('#v48mBtn')){ const b = document.createElement('button'); b.type = 'button'; b.id = 'v48mBtn'; b.innerHTML = '🧩<span> Sắp xếp</span>'; b.setAttribute('aria-label', 'Sắp xếp bản đồ đảo'); b.onclick = v48mOpen; top.insertBefore(b, cl); }
   // phố nhà người chơi: 8 lô dùng mẫu nhà tỷ lệ vàng, 5 kiểu luân phiên
   streetSprites = function(sp){
     const r = R.pstreet; if(VB.x1 < r.x || VB.x0 > r.x + r.w || VB.y0 > r.y + r.h || VB.y1 < r.y) return;
@@ -331,8 +333,8 @@ function v48mInit(){
       try { v48mDrawHouse(g, v48mPlotStyle(i), 156, s.col || '#90caf9', s.kind === 'shop' || s.kind === 'pshop', P.x + P.w/2 + z.d[0], P.y + P.h - 6 + z.d[1], i % 2 === 1, tiny ? 0 : v48mNightK(i)); } catch(e){} });
   };
   // quầng đèn ấm trước mỗi nhà khi tối
-  const vc0 = v25Collect; v25Collect = function(dk){ vc0(dk); if(typeof PLOTS === 'undefined' || !STREET.length) return;
-    PLOTS.forEach((P, i) => { const on = v48mNightK(i); if(on > 0) v25Push(P.x + P.w/2, P.y + P.h - 50, 92, on, 4); }); };
+  const vc0 = v25Collect; v25Collect = function(dk){ vc0(dk); if(V48M.noLights || typeof PLOTS === 'undefined' || !STREET.length) return;
+    PLOTS.forEach((P, i) => { const on = v48mNightK(i); if(on > 0) v25Push(P.x + P.w/2, P.y + P.h - 54, V25.low ? 44 : 58, on, 4); }); };
   V46T.ov = null;   // ảnh toàn cảnh vẽ lại với mẫu nhà mới
   if(location.hostname === 'localhost' || location.hostname === '127.0.0.1') window.__v48m = {V48M, v48mOpen, v48mRebuild, v48mFrame, v48mSprite};
 }

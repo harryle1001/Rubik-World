@@ -1091,4 +1091,4 @@ body.v44fs #mChess .cboardwrap{width:min(calc(100vw*.618), calc(100dvh - 80px));
 #v48mEd .v48m-bar button[aria-pressed="true"]{border-color:var(--cube-y);color:var(--cube-y)}
 #v48mZo,#v48mZi{min-width:46px;padding:0 !important;font-size:20px !important}
 #v48mOut{position:absolute;left:12px;right:12px;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 120px);height:30%;font:14px/1.4 monospace;background:#0a0f22;color:#fff;border:2px solid var(--cube-y);border-radius:12px;padding:8px}
-@media (max-width:460px){#v48mEd .v48m-bar button{padding:0 11px;font-size:15px}}
+@media (max-width:460px){#v48mEd .v48m-bar button{padding:0 11px;font-size:15px}#v48mBtn span{display:none}#v48mBtn{min-width:46px}}
