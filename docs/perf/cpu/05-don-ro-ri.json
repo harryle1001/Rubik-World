@@ -1,0 +1,125 @@
+{
+ "res": {
+  "frames": 149,
+  "avgMs": 423.7,
+  "p95Ms": 550,
+  "maxMs": 733,
+  "over50": 149,
+  "over100": 149,
+  "gcMinor": 8,
+  "gcMajor": 6,
+  "gcTraceMs": 80,
+  "gcProfMs": 33,
+  "jsFrame": {
+   "p95": 74.7,
+   "max": 151,
+   "over50": 35,
+   "over100": 2
+  },
+  "jsMs": 35,
+  "matrixMs": 5.72,
+  "heapMB": [
+   149.7,
+   149.7
+  ],
+  "msPerFrame": {
+   "frameJs": 43.46,
+   "render": 31.11,
+   "school": 3.25,
+   "perf": 2.27,
+   "ambience": 1.72,
+   "player": 1.23,
+   "aircraft": 0.63,
+   "weather": 0.43,
+   "net": 0.26,
+   "audio": 0.2,
+   "sky": 0.2,
+   "eggs": 0.2,
+   "treasure": 0.19,
+   "living": 0.19,
+   "vehicles": 0.11,
+   "animals": 0.1,
+   "physics": 0.1,
+   "terrain": 0.09,
+   "worldMap": 0.09,
+   "dive": 0.08,
+   "sealife": 0.07,
+   "skyshow": 0.06,
+   "zen": 0.02,
+   "mg": 0.01,
+   "brightness": 0
+  },
+  "spikes": [
+   {
+    "ms": 151,
+    "prog": 190,
+    "tex": 28,
+    "geo": 189,
+    "aircraft": 44,
+    "weather": 20,
+    "ambience": 19,
+    "perf": 5,
+    "render": 51
+   },
+   {
+    "ms": 122,
+    "prog": 192,
+    "tex": 29,
+    "geo": 192,
+    "render": 113
+   }
+  ]
+ },
+ "top": [
+  {
+   "fn": "updateMatrixWorld http://localhost:3000/lib/three/build/three.module.js:7772",
+   "ms": 642,
+   "pct": 1
+  },
+  {
+   "fn": "V https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 405,
+   "pct": 0.7
+  },
+  {
+   "fn": "projectObject http://localhost:3000/lib/three/build/three.module.js:30038",
+   "ms": 294,
+   "pct": 0.5
+  },
+  {
+   "fn": "renderObject http://localhost:3000/lib/three/build/three.module.js:22551",
+   "ms": 221,
+   "pct": 0.4
+  },
+  {
+   "fn": "Z https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 161,
+   "pct": 0.3
+  },
+  {
+   "fn": "o.update :3",
+   "ms": 156,
+   "pct": 0.3
+  },
+  {
+   "fn": "still island/perf.js:55",
+   "ms": 150,
+   "pct": 0.2
+  },
+  {
+   "fn": "setProgram http://localhost:3000/lib/three/build/three.module.js:30501",
+   "ms": 150,
+   "pct": 0.2
+  },
+  {
+   "fn": "multiplyMatrices http://localhost:3000/lib/three/build/three.module.js:6262",
+   "ms": 146,
+   "pct": 0.2
+  },
+  {
+   "fn": "bindVertexArray :0",
+   "ms": 143,
+   "pct": 0.2
+  }
+ ]
+}
