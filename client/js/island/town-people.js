@@ -8,6 +8,7 @@ import { loadHero, driveHero, emote, setOutline, lookAtTarget } from './characte
 import { CFG } from './config.js';
 import { toon } from './style.js';
 import { T, damp, dampAngle } from './motion.js';
+import { PHI } from './layout.js';
 
 const V = 'abcdef', SEAT_Y = 0.56; // mặt ghế đá (town-buildings.js: chân 0.42 + mặt 0.14)
 const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', sun: 'Khách du lịch', bike: 'Người đạp xe', camp: 'Bạn cắm trại', picnic: 'Gia đình dã ngoại', fishing: 'Bác câu cá', walk: 'Người đi dạo', kite: 'Bạn thả diều' };
@@ -84,12 +85,21 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
     imp.count = i + 4;
   }
 
-  return function updatePeople(dt, RS) {
+  const SEL_DT = 1 / PHI ** 3; let selT = 0;
+  function updatePeople(dt, RS) {
     const t0 = performance.now(), p = ctx.player.pos;
-    const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
+    // chọn POOL người gần nhất: thưa 1/φ³ s (≈ 4 lần/s) thay vì mỗi khung — mỗi lần đổi toạ độ 2D→3D cho cả trăm người
+    // (to3 duyệt mọi nhà) và tạo vài mảng tạm → trước đây tốn CPU + rác cho GC mỗi khung
+    if ((selT -= dt) <= 0) { selT = SEL_DT; select(RS, p); }
+    else for (const e of pool) if (e.a && !e.a._npc && (!e.a.visible || e.a.inSub)) release(e);   // vào nhà / biến mất: ẩn ngay, không chờ lần chọn sau
+    perfMs += performance.now() - t0; frame(dt, p);
+  };
+  function release(e) { e.a = null; e.hero.model.visible = false; if (e.seat) { e.seat.by = null; e.seat = null; } }
+  function select(RS, p) {
+    const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) { n._npc = true; list.push(n); }
     const near = list.filter(a => a.y > Y_MIN && a.y < Y_MAX).map(a => { const [x, z] = P(a.x, a.y); return [a, Math.hypot(x - p.x, z - p.z)]; }).filter(q => q[1] < 70).sort((a, b) => a[1] - b[1]).slice(0, POOL).map(q => q[0]);
     const want = new Set(near);
-    for (const e of pool) if (e.a && !want.has(e.a)) { e.a = null; e.hero.model.visible = false; if (e.seat) { e.seat.by = null; e.seat = null; } }
+    for (const e of pool) if (e.a && !want.has(e.a)) release(e);
     for (const a of near) {
       if (pool.some(e => e.a === a)) continue;
       const L = a._look3d || (a._look3d = lookOf(a));
@@ -104,6 +114,9 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       }
       if (e) { e.a = a; [e.px, e.pz] = P(a.x, a.y); e.kx.v = e.kz.v = e.ky.v = e.ox = e.oz = e.kox.v = e.koz.v = 0; e.yaw = a.dir < 0 ? -Math.PI / 2 : Math.PI / 2; e.hero.model.visible = true; }
     }
+  }
+  function frame(dt, p) {
+    const t0 = performance.now();
     let best = null, bd = 4.5; const now = performance.now(); talkT -= dt; imp.count = 0;
     const doTalk = talkT <= 0; if (doTalk) talkT = 0.6;
     // tránh nhau: người đang đi lách nhẹ khỏi người gần (≤ 1/φ m mỗi bên), độ lệch qua lò xo nên không giật
@@ -157,5 +170,6 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       tag.position.set(best.px, best.hero.model.position.y + best.a._look3d.h + 0.45, best.pz); tag.visible = true;
     } else { tag.visible = false; tagFor = null; }
     perfMs += performance.now() - t0; perfN++; if (perfN > 600) { perfMs /= 2; perfN /= 2; }
-  };
+  }
+  return updatePeople;
 }
