@@ -361,3 +361,8 @@ function v55sInit(){
   try { v55sArea(); } catch(e){}
   if(location.hostname === 'localhost' || location.hostname === '127.0.0.1') window.__v55s = {V55S, v55sWater, v55sDepth, v55sAudit, v55sArea, v55sLandAt};
 }
+// ---------- cầu nối cho góc nhìn hành tinh v56p: tên hàm v56p tìm (v55sIsWater, v55sOuter) ----------
+function v55sIsWater(x, y){ const X = V55S; if(x < X.X0 + 60 || y < X.Y0 + 60 || x > X.X1 - 60 || y > X.Y1 - 60) return true; return !v55sLandAt(x, y, true); }   // bỏ qua đảo nhỏ ngoài khơi: chỉ đo bờ đất liền
+function v55sOuter(a){ const X = V55S, c = Math.cos(a), s = Math.sin(a), L = V46L, t = [];
+  if(c > 1e-6) t.push((X.X1 - L.CX)/c); if(c < -1e-6) t.push((X.X0 - L.CX)/c); if(s > 1e-6) t.push((X.Y1 - L.CY)/s); if(s < -1e-6) t.push((X.Y0 - L.CY)/s);
+  return t.length ? Math.min(...t) : L.W/2; }
