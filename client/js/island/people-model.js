@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import { gradientMap } from './style.js';
 
-export const RIG = 'hero-rogue'; // chỉ lấy xương + animation, bỏ toàn bộ mesh
+export const RIG = 'hero-rogue-rig'; // chỉ xương + animation (rút từ hero-rogue.glb bằng tools/strip-rig.mjs: 2 MB → 0,5 MB, qua mạng 0,9 → 0,12 MB)
 const DEFORM = ['hips', 'spine', 'chest', 'head', 'upperarml', 'lowerarml', 'wristl', 'handl', 'upperarmr', 'lowerarmr', 'wristr', 'handr', 'upperlegl', 'lowerlegl', 'footl', 'toesl', 'upperlegr', 'lowerlegr', 'footr', 'toesr'];
 const BI = Object.fromEntries(DEFORM.map((n, i) => [n, i]));
 const LEG = 0.374, ARM_DOWN = 0.6, ARM_CLIPS = /^(Idle|Walking_A|Running_A|Jump_|Sit_Floor|Hit_A|Dodge)/;                               // đùi + cẳng chân (theo trục đứng) của KayKit
