@@ -7,8 +7,9 @@ import { startTelescope } from './telescope.js';
 export function register(ctx) {
   const G = ctx.miniGames = ctx.miniGames || {};
   // cửa Phòng nhạc / Vẽ tranh của trường 2D mở xưởng 3D (trước đây khoá 'art-music' không khớp cửa nào)
-  G['art-music'] = { name: '🎨 Xưởng Mỹ thuật & Âm nhạc', group: 'arts', doors: [/^Phòng nhạc|Chị Mai · Phòng nhạc/, /Vẽ tranh/], start: (c, o) => startArtMusic(c || ctx, o) };
-  G['library'] = { name: '📚 Thư viện Hoàng gia', group: 'arts', start: (c, o) => startLibrary(c || ctx, o) };
+  G['art-music'] = { name: '🎨 Xưởng Mỹ thuật & Âm nhạc', group: 'arts', radius: 16, doors: [/^Phòng nhạc|Chị Mai · Phòng nhạc/, /Vẽ tranh/], start: (c, o) => startArtMusic(c || ctx, o) };
+  G['library'] = { name: '📚 Thư viện Hoàng gia', group: 'arts', radius: 14, start: (c, o) => startLibrary(c || ctx, o) };
+  G.music = G.art = G['art-music'];   // khoá cửa trong DOOR_KEYS (host.js): Phòng nhạc → music, Vẽ tranh → art
   G['reader-books'] = G['royal-library'] = G['library'];   // cửa đọc sách / thư viện hoàng gia dùng chung thư viện 3D
   G['telescope'] = { name: '🔭 Đài thiên văn', group: 'arts', radius: 8, start: startTelescope };   // cửa "Kính viễn vọng"
   return G;

@@ -94,7 +94,7 @@ function prop(kind) {
 }
 
 export function startLibrary(ctx, opts = {}) {
-  const S = createStage(ctx, { title: '📚 Thư viện Hoàng gia', bg: '#2a1f2e', fov: 58, fog: ['#3a2a30', 18, 46], onExit: opts.onExit });
+  const S = createStage(ctx, { title: '📚 Thư viện Hoàng gia', bg: '#2a1f2e', fov: 58, fog: ['#3a2a30', 18, 46], onExit: opts.onExit, api: opts.api });
   const { scene, camera } = S; S.hemi.intensity = 1.1; S.sun.position.set(0, 21, 0);
   const lamp = new THREE.PointLight('#ffd9a0', 30, 30, 1.6); lamp.position.set(0, 8, 0); scene.add(lamp);
   const prog = store.get('library', { found: [], read: {}, pos: {} }), save = () => store.set('library', prog);
@@ -222,7 +222,7 @@ export function startLibrary(ctx, opts = {}) {
     if (moved > 13) { if (RD.q && Math.abs(e.clientX - downX) > 55) turn(e.clientX < downX ? 1 : -1); return; }
     if (RD.q) { const h = S.pick([pageL, pageR], e); if (h) turn(h.object === pageR ? 1 : -1); return; }
     if (!realM) return; const hb = S.pick([realM], e); if (hb && hb.instanceId != null && (near >= 0 || hb.distance < 9)) { tapBook(hb.instanceId); return; }
-    const hs = S.pick([boards, posts, deco, realM], e); if (hs) { const p = hs.point, a = Math.atan2(p.z, p.x), s = ((Math.floor((a < 0 ? a + Math.PI * 2 : a) / (Math.PI * 2) * SECT)) % SECT + SECT) % SECT; walkTo(s); }
+    const hs = S.pick([boards, posts, deco, realM], e); if (hs) { const p = S.local(hs.point.clone()), a = Math.atan2(p.z, p.x), s = ((Math.floor((a < 0 ? a + Math.PI * 2 : a) / (Math.PI * 2) * SECT)) % SECT + SECT) % SECT; walkTo(s); }
   };
   S.onKey = e => { if (RD.q && (e.code === 'ArrowRight' || e.code === 'KeyD')) turn(1); if (RD.q && (e.code === 'ArrowLeft' || e.code === 'KeyA')) turn(-1); };
 

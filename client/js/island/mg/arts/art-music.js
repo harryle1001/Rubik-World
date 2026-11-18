@@ -49,7 +49,7 @@ const DRUM_SONG = [[0, 1], [1, 0.5], [1, 0.5], [0, 1], [1, 1], [0, 0.5], [0, 0.5
 const BAU = [60, 62, 64, 67, 69, 72];   // đàn bầu: 6 điểm bồi âm trên dây
 
 export function startArtMusic(ctx, opts = {}) {
-  const S = createStage(ctx, { title: '🎨 Xưởng Mỹ thuật & Âm nhạc', bg: '#f3e2c4', fog: ['#f3e2c4', 30, 70], onExit: opts.onExit });
+  const S = createStage(ctx, { title: '🎨 Xưởng Mỹ thuật & Âm nhạc', bg: '#f3e2c4', fog: ['#f3e2c4', 30, 70], onExit: opts.onExit, api: opts.api });
   const { scene } = S, prog = store.get('artmusic', { stars: 0, mission: 0, songs: {}, notes: 0 });
   const save = () => store.set('artmusic', prog);
   const starTxt = () => S.setScore(`⭐ ${prog.stars}`); starTxt();
@@ -74,9 +74,9 @@ export function startArtMusic(ctx, opts = {}) {
   const ped = mesh(new THREE.CylinderGeometry(3.4, 3.7, 0.8, 8), '#b9a58c'); ped.position.y = 0.4; paint.add(ped);
   const parts = {};
   const addPart = (key, geo, x, y, z, ry = 0, quad = true) => {
-    geo = geo.toNonIndexed(); const n = geo.attributes.position.count, col = new Float32Array(n * 3); const bl = lin(BASE); for (let i = 0; i < n; i++) col.set(bl, i * 3);
+    if (geo.index) geo = geo.toNonIndexed(); const n = geo.attributes.position.count, col = new Float32Array(n * 3); const bl = lin(BASE); for (let i = 0; i < n; i++) col.set(bl, i * 3);
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    const m = new THREE.Mesh(geo, T('#ffffff', { vertexColors: true, flatShading: true })); smoothOutline(m); m.position.set(x, y, z); m.rotation.y = ry; m.userData.part = key; m.userData.quad = quad; paint.add(m); parts[key] = m; return m;
+    const m = new THREE.Mesh(geo, T('#ffffff', { vertexColors: true })); smoothOutline(m); m.position.set(x, y, z); m.rotation.y = ry; m.userData.part = key; m.userData.quad = quad; paint.add(m); parts[key] = m; return m;
   };
   addPart('wall', new THREE.BoxGeometry(2.6, 1.6, 1.6, 3, 2, 2), -0.6, 1.6, 0);
   addPart('roof', new THREE.ConeGeometry(2.2, 1.3, 4, 1), -0.6, 3.05, 0, Math.PI / 4, false);
@@ -94,7 +94,7 @@ export function startArtMusic(ctx, opts = {}) {
     const g = new THREE.Group(); g.position.set(-1.6 + i * 0.75, 1.1, 3.9); const jar = mesh(new THREE.CylinderGeometry(0.24, 0.2, 0.4, 8), '#e9e4da'); jar.position.y = 0.2; const top = mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.05, 8), c, { outline: false }); top.position.y = 0.41;
     g.add(jar, top); g.userData.pot = k; g.userData.name = n; paint.add(g); pots.push(g);
   });
-  const bowl = mesh(new THREE.SphereGeometry(0.42, 10, 6, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), '#e9e4da'); bowl.position.set(1.55, 1.52, 3.9); bowl.material = T('#e9e4da', { side: THREE.DoubleSide, flatShading: true }); paint.add(bowl);
+  const bowl = mesh(new THREE.SphereGeometry(0.42, 10, 6, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), '#e9e4da'); bowl.position.set(1.55, 1.52, 3.9); bowl.material = T('#e9e4da', { side: THREE.DoubleSide }); paint.add(bowl);
   const paintTop = new THREE.Mesh(new THREE.CircleGeometry(0.38, 12).rotateX(-Math.PI / 2), new THREE.MeshToonMaterial({ color: '#ffffff' })); paintTop.material.userData.own = true; paintTop.position.set(1.55, 1.32, 3.9); paintTop.visible = false; paint.add(paintTop); bowl.userData.bowl = true;
   const mix = { r: 0, y: 0, b: 0, w: 0 }; let cur = null, curName = null, tool = 'brush';
 
@@ -103,7 +103,7 @@ export function startArtMusic(ctx, opts = {}) {
   const wheel = mesh(new THREE.CylinderGeometry(1.6, 1.8, 0.9, 13), '#8a5a34'); wheel.position.y = 0.45; clayG.add(wheel);
   const plate = mesh(new THREE.CylinderGeometry(1.3, 1.3, 0.1, 21), '#cfc6b8', { outline: false }); plate.position.y = 0.95; clayG.add(plate);
   let clayGeo = mergeVertices(new THREE.IcosahedronGeometry(1, 3).deleteAttribute('normal').deleteAttribute('uv')); clayGeo.computeVertexNormals();
-  const clay = new THREE.Mesh(clayGeo, T('#c8794e', { flatShading: true, unique: true })); clay.material.userData.own = true; clay.position.y = 2.0; clay.scale.set(1, PHI / 1.3, 1); clayG.add(clay);
+  const clay = new THREE.Mesh(clayGeo, T('#c8794e', { unique: true })); clay.material.userData.own = true; clay.position.y = 2.0; clay.scale.set(1, PHI / 1.3, 1); clayG.add(clay);
   let clayTool = 'pull', claySpin = 0.3, normT = 0;
   const _v = new THREE.Vector3(), _n = new THREE.Vector3(), _l = new THREE.Vector3();
   function sculpt(hit, k) {
@@ -126,7 +126,7 @@ export function startArtMusic(ctx, opts = {}) {
   // nốt nhạc "♪" nhảy lên từ phím
   const flyPool = Array.from({ length: 8 }, () => { const sp = labelSprite('♪', { size: 0.5, bg: 'rgba(0,0,0,0)', fg: '#7a3ad6' }); sp.visible = false; scene.add(sp); return { sp, t: 0 }; });
   let flyI = 0; const _w = new THREE.Vector3();
-  function fly(pad) { const f = flyPool[flyI++ % flyPool.length]; pad.obj.getWorldPosition(_w); f.sp.position.copy(_w).add(new THREE.Vector3(0, 0.4, 0)); f.sp.visible = true; f.t = 1; f.vx = (Math.random() - 0.5) * 0.8; }
+  function fly(pad) { const f = flyPool[flyI++ % flyPool.length]; S.local(pad.obj.getWorldPosition(_w)); f.sp.position.copy(_w).add(new THREE.Vector3(0, 0.4, 0)); f.sp.visible = true; f.t = 1; f.vx = (Math.random() - 0.5) * 0.8; }
   // piano
   const piano = new THREE.Group(); mus.add(piano);
   const body = mesh(new THREE.BoxGeometry(5.2, 0.9, 2.6), '#2a2230'); body.position.set(0, 0.95, -0.3); piano.add(body);
@@ -180,7 +180,7 @@ export function startArtMusic(ctx, opts = {}) {
       if (n.done) continue; const lt = n.at - rhythm.t;
       if (lt < -0.25) { n.done = true; continue; }
       if (lt > TRAVEL) continue;
-      const sp = nPool[pi++ % nPool.length]; sp.visible = true; n.pad.obj.getWorldPosition(_w); const toward = new THREE.Vector3(0, 0, -1).applyQuaternion(mus.quaternion);
+      const sp = nPool[pi++ % nPool.length]; sp.visible = true; S.local(n.pad.obj.getWorldPosition(_w)); const toward = new THREE.Vector3(0, 0, -1).applyQuaternion(mus.quaternion);
       sp.position.copy(_w).addScaledVector(toward, Math.max(0, lt) / TRAVEL * 5).setY(_w.y + 0.5 + Math.max(0, lt) * 1.2);
       // tự phát mẫu khi chưa ai chạm? không — để bé tự chơi
     }
@@ -206,7 +206,7 @@ export function startArtMusic(ctx, opts = {}) {
   // ---------- Camera & chuyển trạm ----------
   const cam = orbit(S, P0.clone().setY(2.4), { r: 10, yaw: ang(ST.paint) + Math.PI / 2 + Math.PI, pitch: 0.38, rMin: 4, rMax: 16 });
   let station = -1, first = true; const camGoal = { target: new THREE.Vector3(), r: 10, yaw: 0, pitch: 0.4 };
-  function placeHero() { if (!hero) return; const p = stPos(station < 0 ? 0 : station), a = ang(station < 0 ? 0 : station), side = new THREE.Vector3(-Math.sin(a), 0, Math.cos(a)); hero.model.position.copy(p).addScaledVector(side, 4.2).addScaledVector(p.clone().normalize(), 1.2); hero.model.lookAt(0, 0, 0); }
+  function placeHero() { if (!hero) return; const p = stPos(station < 0 ? 0 : station), a = ang(station < 0 ? 0 : station), side = new THREE.Vector3(-Math.sin(a), 0, Math.cos(a)); hero.model.position.copy(p).addScaledVector(side, 4.2).addScaledVector(p.clone().normalize(), 1.2); hero.model.lookAt(S.scene.localToWorld(new THREE.Vector3())); }
   function go(k) {
     station = k; const p = stPos(k), a = ang(k); S.closeCard(); rhythm.on = false; nPool.forEach(s => s.visible = false); learn.on = false; drawStaff(null);
     camGoal.target.copy(p).setY(k === ST.music ? 1.9 : k === ST.clay ? 1.4 : 1.6); camGoal.r = k === ST.music ? 8.5 : k === ST.clay ? 6.5 : 10.5; camGoal.pitch = k === ST.music ? 0.52 : 0.36;

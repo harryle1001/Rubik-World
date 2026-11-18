@@ -27,8 +27,8 @@ const LEG = 34, FINISH = LEG * 4, POOL = 50;
 
 function start(ctx, opts = {}) {
   const quit = () => (opts.onExit || opts.exit || opts.close || (() => self.dispose()))();
-  const A = arena(ctx, { sky: ['#6fb7ff', '#e6f3ff'], fog: [89, 340], shadow: 55 }), { scene, cam } = A;
-  const H = hud('🏅 Thế vận hội Rubik', quit), inp = tapper(document.body), S = sfx(ctx), unlock = lockWorld(ctx);
+  const A = arena(ctx, { sky: ['#6fb7ff', '#e6f3ff'], fog: [89, 340], shadow: 55, api: opts.api, center: [40, 12] }), { scene, cam } = A, W = !!A.inWorld;   // W: sân đặt trong thế giới mở
+  const H = hud('🏅 Thế vận hội Rubik', quit, opts.api), inp = tapper(document.body), S = sfx(ctx), unlock = lockWorld(ctx);
   const T = new THREE.Vector3(), camP = new THREE.Vector3(0, 4, 12), camL = new THREE.Vector3();
   let ev = null, evKey = null, t = 0, clockT = 0;
 
@@ -37,10 +37,10 @@ function start(ctx, opts = {}) {
   {
     const b = batch();
     // cỏ: lưới có màu loang nhẹ
-    const g = new THREE.PlaneGeometry(420, 260, 42, 26).rotateX(-Math.PI / 2), p = g.attributes.position, c = new Float32Array(p.count * 3), col = new THREE.Color();
+    const g = W ? new THREE.PlaneGeometry(290, 63, 29, 6).rotateX(-Math.PI / 2) : new THREE.PlaneGeometry(420, 260, 42, 26).rotateX(-Math.PI / 2), p = g.attributes.position, c = new Float32Array(p.count * 3), col = new THREE.Color();
     for (let i = 0; i < p.count; i++) { col.set(((Math.floor(p.getX(i) / 10) + Math.floor(p.getZ(i) / 10)) & 1) ? '#7cc062' : '#72b758').offsetHSL(0, 0, rnd(-0.02, 0.02)); c.set([col.r, col.g, col.b], i * 3); }
     g.setAttribute('color', new THREE.BufferAttribute(c, 3)); g.deleteAttribute('uv');
-    const grass = new THREE.Mesh(g, vmat); grass.receiveShadow = true; grass.position.set(20, 0, 10); scene.add(grass);
+    const grass = new THREE.Mesh(g, vmat); grass.receiveShadow = true; grass.position.set(W ? 40 : 20, W ? 0.02 : 0, W ? 12 : 10); scene.add(grass);
     // đường chạy: 4 làn, vạch trắng, vùng trao gậy vàng, vạch đích ca-rô
     const [rx, rz] = V.relay;
     b.box(FINISH + 34, 0.04, 8, rx + FINISH / 2, 0, rz, '#c0533a');
@@ -69,7 +69,7 @@ function start(ctx, opts = {}) {
     const ring = new THREE.TorusGeometry(0.8, 0.12, 6, 24);
     ['#3d8fd9', '#222222', '#e8453c', '#f2c14e', '#3fa36b'].forEach((cc, i) => b.add(ring, cc, rx + 60 + i * 1.8, i % 2 ? 6.9 : 7.6, rz - 9.6));
     // cây quanh sân
-    for (let i = 0; i < 34; i++) { const a = i / 34 * TAU, x = 20 + Math.cos(a) * 160 + rnd(-6, 6), z = 10 + Math.sin(a) * 75 + rnd(-6, 6); b.add(new THREE.CylinderGeometry(0.25, 0.35, 2.2, 5), '#7a5232', x, 1.1, z); b.add(new THREE.IcosahedronGeometry(1.9, 0), pick(['#4f9a45', '#5aa84f', '#3f8a3e']), x, 3.4, z); }
+    if (!W) for (let i = 0; i < 34; i++) { const a = i / 34 * TAU, x = 20 + Math.cos(a) * 160 + rnd(-6, 6), z = 10 + Math.sin(a) * 75 + rnd(-6, 6); b.add(new THREE.CylinderGeometry(0.25, 0.35, 2.2, 5), '#7a5232', x, 1.1, z); b.add(new THREE.IcosahedronGeometry(1.9, 0), pick(['#4f9a45', '#5aa84f', '#3f8a3e']), x, 3.4, z); }
     const m = b.mesh(); scene.add(m);
     // mặt nước hồ bơi
     const water = new THREE.Mesh(new THREE.PlaneGeometry(POOL, 10).rotateX(-Math.PI / 2), new THREE.MeshToonMaterial({ color: '#3fb6e0', transparent: true, opacity: 0.86 }));
@@ -352,5 +352,5 @@ function start(ctx, opts = {}) {
 }
 
 export const olympics = {
-  olympics: { name: 'Thế vận hội Rubik', start: (ctx, o = {}) => { const g = start(ctx, o); if (o.event) setTimeout(() => g._dbg.go(o.event), 50); return g; } },
+  olympics: { name: '🏅 Thế vận hội Rubik', radius: 34, start: (ctx, o = {}) => { const g = start(ctx, o); if (o.event) setTimeout(() => g._dbg.go(o.event), 50); return g; } },
 };

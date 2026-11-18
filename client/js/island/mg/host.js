@@ -94,7 +94,7 @@ const CSS = `
 #mgHud .mg-x{border:0;border-radius:13px;padding:var(--g) var(--G);background:#e0564a;color:#fff;font:800 13px system-ui;cursor:pointer}
 #mgHud .mg-msg{position:absolute;left:50%;top:calc(max(var(--g),env(safe-area-inset-top)) + 55px);transform:translateX(-50%);max-width:min(92vw,520px);text-align:center;
   padding:var(--g) var(--G);border-radius:13px;background:#fff6dfee;color:#3b2a1e;font:600 15px/1.45 system-ui;box-shadow:0 5px 21px #0004;opacity:0;transition:opacity .3s;pointer-events:none}
-#mgHud .mg-bar{position:absolute;left:50%;bottom:max(13px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;gap:var(--g);max-width:calc(100vw - 16px)}
+#mgHud .mg-bar{position:absolute;left:8px;right:8px;bottom:max(13px,env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;justify-content:safe center;gap:var(--g);pointer-events:none}#mgHud .mg-bar>*{pointer-events:auto}
 #mgHud .mg-bar button,#mgHud .mg-card button{min-width:44px;min-height:44px;padding:var(--g) var(--G);border-radius:13px;border:2px solid #fff8;background:#1b1626d0;color:#fff;font:800 15px system-ui;cursor:pointer;touch-action:manipulation}
 #mgHud .mg-bar button.on,#mgHud .mg-card button.pri{background:#f0a23a;color:#2a1a0a;border-color:#fff}
 #mgHud .mg-bar button.sm{min-width:40px;padding:6px 8px;font-size:14px}
@@ -102,6 +102,7 @@ const CSS = `
   border:4px solid #7a5a2e;text-align:center;box-shadow:0 8px 34px #0008}
 #mgHud .mg-card h3{margin:0 0 8px;font:900 21px system-ui}#mgHud .mg-card .big{font:900 34px system-ui;color:#c0662a;margin:8px 0}
 #mgHud .mg-card p{margin:8px 0 13px;font:600 15px/1.5 system-ui}#mgHud .mg-card button{background:#efe3cc;color:#3b2a1e;border-color:#7a5a2e;margin:0 4px}
+@media (max-height:500px){#mgHud .mg-bar{flex-wrap:nowrap;overflow-x:auto;bottom:max(8px,env(safe-area-inset-bottom));gap:5px}#mgHud .mg-bar button{min-height:40px;padding:5px 8px;font-size:13px;flex:none}#mgHud .mg-bar button.sm{min-width:36px;padding:5px}}
 body.mg-on #hud,body.mg-on #info,body.mg-on #school,body.mg-on #bMap,body.mg-on #brightBox{display:none!important}`;
 
 export function createMiniGameHost(ctx) {
@@ -109,7 +110,7 @@ export function createMiniGameHost(ctx) {
   const { scene, camera, renderer } = ctx, el = renderer.domElement;
   { const s = document.createElement('style'); s.textContent = CSS; document.head.appendChild(s); }
   const hudEl = document.createElement('div'); hudEl.id = 'mgHud'; hudEl.hidden = true;
-  hudEl.innerHTML = '<div class="mg-top"><span class="mg-name"></span><span class="mg-chip mg-score" hidden>⭐ <b>0</b></span><span class="mg-chip mg-time" hidden>⏱ <b>0:00</b></span><span class="mg-chip mg-best" hidden></span><button class="mg-x">✕ Thoát</button></div><div class="mg-msg"></div><div class="mg-bar"></div><div class="mg-card" hidden></div>';
+  hudEl.innerHTML = '<div class="mg-top"><span class="mg-name"></span><span class="mg-chip mg-score" hidden>⭐ <b>0</b></span><span class="mg-chip mg-info" hidden></span><span class="mg-chip mg-time" hidden>⏱ <b>0:00</b></span><span class="mg-chip mg-best" hidden></span><button class="mg-x">✕ Thoát</button></div><div class="mg-msg"></div><div class="mg-bar"></div><div class="mg-card" hidden></div>';
   document.body.appendChild(hudEl);
   const $ = s => hudEl.querySelector(s);
   $('.mg-x').onclick = () => host.exit();
@@ -184,7 +185,7 @@ export function createMiniGameHost(ctx) {
   }
 
   // ---------- Bộ công cụ cho game ----------
-  function makeApi(key, door, anchor) {
+  function makeApi(key, door, anchor, inPlace) {
     const root = new THREE.Group(); root.position.set(anchor[0], anchor[3], anchor[1]); root.rotation.y = anchor[2]; scene.add(root);
     const api = { key, door, root, anchor, orbit: false, cam: { x: 0, y: 0, z: 0, yaw: 0, pitch: 0.75, dist: 21, ...(S && S.lastCam || {}) }, mat, actors: [], listeners: [] };
     api.groundY = () => anchor[3];
@@ -204,7 +205,12 @@ export function createMiniGameHost(ctx) {
       msg: (html, ms = 3000) => { const m = $('.mg-msg'); m.innerHTML = html; m.style.opacity = html ? 1 : 0; clearTimeout(msgT); if (html && ms > 0) msgT = setTimeout(() => m.style.opacity = 0, ms); },
       button: (label, fn, cls = '') => { const b = document.createElement('button'); b.type = 'button'; b.innerHTML = label; if (cls) b.className = cls; b.onclick = e => { e.stopPropagation(); ctx.audio && ctx.audio.start && ctx.audio.start(); fn(b); }; $('.mg-bar').appendChild(b); return b; },
       clearBar: () => { $('.mg-bar').innerHTML = ''; },
+      title: t => { $('.mg-name').textContent = t; },   // đổi tên trên thanh host (vd môn đang thi)
+      info: html => { const c = $('.mg-info'); c.hidden = !html; c.innerHTML = html || ''; },   // chip tự do (điểm dạng chữ của game có HUD riêng)
     };
+    // game tự đặt camera (sân khấu riêng: stage.js, kit.js): cam là PerspectiveCamera KHÔNG gắn cha, toạ độ hiểu là cục bộ của frame (mặc định root)
+    api.useCamera = (cam, frame = root) => { api.camSrc = cam; api.camFrame = frame; };
+    api.hidePlayer = () => { ctx.player.root.visible = false; };   // game có nhân vật riêng → ẩn nhân vật của host
     // kỷ lục
     const BK = 'mg.best.' + key;
     api.best = () => { try { const v = localStorage.getItem(BK); return v == null ? null : +v; } catch (e) { return null; } };
@@ -223,8 +229,8 @@ export function createMiniGameHost(ctx) {
     api.restart = () => host.restart(); api.exit = () => host.exit();
     // nhân vật
     const pr = ctx.player.root;
-    S.prRoot = { parent: pr.parent, pos: pr.position.clone(), rot: pr.rotation.y };
-    root.add(pr);
+    S.prRoot = inPlace ? null : { parent: pr.parent, pos: pr.position.clone(), rot: pr.rotation.y };
+    if (!inPlace) root.add(pr);
     api.me = makeActor(pr, () => ctx.player.hero, true); api.actors.push(api.me);
     api.actor = async (kind, o = {}) => {
       const h = await loadHero(kind, o.height || 1.25, o.look || null); if (!h || S.api !== api) return null;
@@ -238,25 +244,31 @@ export function createMiniGameHost(ctx) {
     const G = ctx.miniGames[key]; if (!G) return false;
     if (host.active) host.exit(true);
     const P = ctx.player, R = G.radius || 13, dx = door ? door.x : P.pos.x, dz = door ? door.z : P.pos.z;
-    let sp = spotCache.get(key + ':' + Math.round(dx) + ':' + Math.round(dz));
+    let sp = G.inPlace ? [P.pos.x, P.pos.z, 0] : spotCache.get(key + ':' + Math.round(dx) + ':' + Math.round(dz));   // inPlace: game tự dùng thế giới quanh nhân vật (câu cá)
     if (!sp) { sp = (G.spot && G.spot(ctx, door)) || null; if (!sp) { const [x, z] = findSpot(dx, dz, R); sp = [x, z, Math.atan2(dx - x, dz - z)]; } spotCache.set(key + ':' + Math.round(dx) + ':' + Math.round(dz), sp); }
-    const anchor = [sp[0], sp[1], sp[2] || 0, groundAt(sp[0], sp[1])];
-    S = S && S.restarting ? S : { saved: { pos: P.pos.clone(), yaw: P.cam.yaw, pitch: P.cam.pitch, far: camera.far }, cam0: { p: camera.position.clone(), q: camera.quaternion.clone() }, blend: 0 };
+    const anchor = [sp[0], sp[1], sp[2] || 0, G.inPlace ? P.pos.y : groundAt(sp[0], sp[1])];
+    S = S && S.restarting ? S : { saved: { pos: P.pos.clone(), yaw: P.cam.yaw, pitch: P.cam.pitch, far: camera.far, fov: camera.fov, rot: P.rot }, cam0: { p: camera.position.clone(), q: camera.quaternion.clone() }, blend: 0 };
     S.restarting = false; S.key = key; S.door = door; S.anchorR = R;
-    const api = S.api = makeApi(key, door, anchor);
-    api.hud.clearBar(); $('.mg-card').hidden = true; api.hud.msg(''); api.hud.score(null); api.hud.time(null); api.showBest(G.lowerBetter);
+    const api = S.api = makeApi(key, door, anchor, !!G.inPlace); api.camFree = !!G.inPlace;   // camFree: game tự điều khiển camera thế giới
+    api.hud.clearBar(); $('.mg-card').hidden = true; api.hud.msg(''); api.hud.info(''); api.hud.score(null); api.hud.time(null); api.showBest(G.lowerBetter);
     $('.mg-name').textContent = G.name || key;
     host.active = true; host.key = key; ctx.mgActive = key;
-    ctx.freeCam = true; P.frozen = true; P.pos.set(anchor[0], anchor[3], anchor[1]);   // thế giới (cỏ, cây, người) nạp quanh khu chơi
+    ctx.freeCam = !G.inPlace; P.frozen = true; if (!G.inPlace) P.pos.set(anchor[0], anchor[3], anchor[1]);   // inPlace: player.update vẫn chạy (đứng yên), game đặt camera sau đó   // thế giới (cỏ, cây, người) nạp quanh khu chơi
     document.body.classList.add('mg-on', 'rs-modal'); hudEl.hidden = false; camera.far = Math.min(S.saved.far, 233);
     if (ctx.school && ctx.school.labels) for (const l of ctx.school.labels) l.visible = false;
     // vật nhỏ của thế giới lọt vào khu chơi (cột đèn, khung thành, ghế…): ẩn tạm, thoát thì hiện lại
-    for (const o of S.hidden || []) o.visible = true; S.hidden = []; { const sp = new THREE.Sphere(), c = new THREE.Vector3(anchor[0], anchor[3], anchor[1]), RR = R * 1.15;
+    for (const o of S.hidden || []) o.visible = true; S.hidden = []; for (const [o, list] of S.hiddenInst || []) { for (const [i, m] of list) o.setMatrixAt(i, m); o.instanceMatrix.needsUpdate = true; } S.hiddenInst = [];
+    if (!G.inPlace) { const sp = new THREE.Sphere(), c = new THREE.Vector3(anchor[0], anchor[3], anchor[1]), RR = R * 1.15;
       scene.traverse(o => { if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || !o.visible || !o.geometry) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
         if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
-        if (sp.radius < 5 && Math.hypot(sp.center.x - c.x, sp.center.z - c.z) < RR + sp.radius * 0.5 && sp.center.y < c.y + 8 && sp.center.y > c.y - 3) { o.visible = false; S.hidden.push(o); } }); }
-    api.me.place(0, R * 0.5, Math.PI);
-    try { S.game = G.start(ctx, { key, door, api, onExit: () => host.exit(), ...opts }) || {}; }   // onExit: game có sân khấu riêng (stage.js, kit.js) bấm Thoát → host cũng thoát
+        if (sp.radius < 5 && Math.hypot(sp.center.x - c.x, sp.center.z - c.z) < RR + sp.radius * 0.5 && sp.center.y < c.y + 8 && sp.center.y > c.y - 3) { o.visible = false; S.hidden.push(o); } });
+      // cây, tre, bụi trồng bằng instancing trong khu chơi: thu nhỏ về 0 tạm thời, thoát thì trả lại ma trận cũ
+      S.hiddenInst = []; const m4 = new THREE.Matrix4(), v3 = new THREE.Vector3(), Z = new THREE.Matrix4().makeScale(0, 0, 0);
+      scene.traverse(o => { if (!o.isInstancedMesh || !o.visible) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
+        const saved = []; for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); v3.setFromMatrixPosition(m4).applyMatrix4(o.matrixWorld); if (Math.hypot(v3.x - c.x, v3.z - c.z) < RR + 1 && v3.y < c.y + 8 && v3.y > c.y - 3) { saved.push([i, m4.clone()]); o.setMatrixAt(i, Z); } }
+        if (saved.length) { o.instanceMatrix.needsUpdate = true; S.hiddenInst.push([o, saved]); } }); }
+    if (!G.inPlace) api.me.place(0, R * 0.5, Math.PI);
+    try { const ex = () => host.exit(); S.game = G.start(ctx, { ...opts, key, door, api, onExit: ex, exit: ex }) || {}; }   // mọi nút Thoát của game (stage.js, kit.js) gọi về host.exit
     catch (e) { console.error('[mg] lỗi khởi động', key, e); S.game = {}; host.exit(); return false; }
     S.camNow = null; return true;
   }
@@ -265,7 +277,7 @@ export function createMiniGameHost(ctx) {
     const api = S.api;
     try { S.game && S.game.dispose && S.game.dispose(); } catch (e) { console.warn(e); }
     for (const [t, type, fn, o] of api.listeners) t.removeEventListener(type, fn, o);
-    const pr = ctx.player.root; (S.prRoot.parent || scene).add(pr); pr.position.copy(S.prRoot.pos); pr.rotation.y = S.prRoot.rot;
+    const pr = ctx.player.root; pr.visible = true; if (S.prRoot) { (S.prRoot.parent || scene).add(pr); pr.position.copy(S.prRoot.pos); pr.rotation.y = S.prRoot.rot; }
     scene.remove(api.root);
     api.root.traverse(o => {
       if (o.isSkinnedMesh) return;   // nhân vật dùng chung geometry/vật liệu (cache) → không dispose
@@ -283,8 +295,10 @@ export function createMiniGameHost(ctx) {
     if (!S || !S.api) return;
     teardown();
     for (const o of S.hidden || []) o.visible = true;
+    for (const [o, list] of S.hiddenInst || []) { for (const [i, m] of list) o.setMatrixAt(i, m); o.instanceMatrix.needsUpdate = true; }
     const P = ctx.player; P.pos.copy(S.saved.pos); P.cam.yaw = S.saved.yaw; P.cam.pitch = S.saved.pitch; P.frozen = false; ctx.freeCam = false;
-    camera.far = S.saved.far; camera.updateProjectionMatrix();
+    if (S.saved.rot != null && P.setRot) P.setRot(S.saved.rot);
+    camera.far = S.saved.far; camera.fov = S.saved.fov; camera.updateProjectionMatrix();
     hudEl.hidden = true; document.body.classList.remove('mg-on', 'rs-modal'); $('.mg-msg').style.opacity = 0;
     host.active = null; host.key = null; ctx.mgActive = null; S = null;
     if (!silent) ctx.toast && ctx.toast('👋 Đã rời khu chơi');
@@ -321,7 +335,18 @@ export function createMiniGameHost(ctx) {
 
   // ---------- Camera: bay mượt từ góc nhìn cũ vào khu chơi (≈ φ giây), sau đó bám mục tiêu bằng lò xo ----------
   const _t = new THREE.Vector3(), _p = new THREE.Vector3(), _q = new THREE.Quaternion(), _m = new THREE.Matrix4(), _up = new THREE.Vector3(0, 1, 0);
+  const _s = new THREE.Vector3();
   function camUpdate(dt) {
+    if (S.api.camFree) return;
+    if (S.api.camSrc) {   // camera riêng của game (cục bộ theo camFrame) → đổi sang toạ độ thế giới
+      const src = S.api.camSrc; src.updateMatrix(); S.api.camFrame.updateMatrixWorld(); _m.multiplyMatrices(S.api.camFrame.matrixWorld, src.matrix); _m.decompose(_p, _q, _s);
+      if (camera.fov !== src.fov) { camera.fov = src.fov; camera.updateProjectionMatrix(); }
+    } else camPose(dt);
+    if (S.blend < 1) { S.blend = Math.min(1, S.blend + dt / PHI); const e = S.blend * S.blend * (3 - 2 * S.blend); camera.position.lerpVectors(S.cam0.p, _p, e); camera.quaternion.slerpQuaternions(S.cam0.q, _q, e); }
+    else { camera.position.copy(_p); camera.quaternion.copy(_q); }
+    camera.updateMatrixWorld();
+  }
+  function camPose(dt) {
     const c = S.api.cam, k = 1 - Math.exp(-dt * PHI ** 3);
     if (!S.camNow) S.camNow = { ...c };
     const n = S.camNow; for (const f of ['x', 'y', 'z', 'pitch', 'dist']) n[f] += (c[f] - n[f]) * k;
@@ -330,9 +355,6 @@ export function createMiniGameHost(ctx) {
     _t.set(n.x, n.y, n.z); S.api.root.localToWorld(_t);
     _p.set(_t.x + Math.sin(ry) * cp * n.dist, _t.y + Math.sin(n.pitch) * n.dist, _t.z + Math.cos(ry) * cp * n.dist);
     _m.lookAt(_p, _t, _up); _q.setFromRotationMatrix(_m);
-    if (S.blend < 1) { S.blend = Math.min(1, S.blend + dt / PHI); const e = S.blend * S.blend * (3 - 2 * S.blend); camera.position.lerpVectors(S.cam0.p, _p, e); camera.quaternion.slerpQuaternions(S.cam0.q, _q, e); }
-    else { camera.position.copy(_p); camera.quaternion.copy(_q); }
-    camera.updateMatrixWorld();
   }
 
   host.update = (dt, t) => {

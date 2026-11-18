@@ -117,6 +117,9 @@ export function startRubik(ctx, { api, door }) {
   const panel = document.createElement('div');
   panel.style.cssText = 'position:absolute;right:max(8px,env(safe-area-inset-right));top:calc(max(8px,env(safe-area-inset-top)) + 55px);width:min(42vw,233px);max-height:55vh;overflow:auto;padding:8px;border-radius:13px;background:#1b1626d8;color:#fff;font:600 13px/1.4 system-ui;pointer-events:auto';
   panel.hidden = true; hud.bar.parentElement.appendChild(panel);
+  // bảng công thức (bên phải) đang mở → dòng hướng dẫn dời sang phần màn hình còn lại, không bị che
+  const msgEl = hud.bar.parentElement.querySelector('.mg-msg'), PW = 'min(42vw,233px)';
+  const showPanel = v => { panel.hidden = !v; msgEl.style.left = v ? `calc((100vw - ${PW} - 8px) / 2)` : ''; msgEl.style.maxWidth = v ? `calc(100vw - ${PW} - 32px)` : ''; };
   function renderF() {
     if (!F) return;
     panel.innerHTML = `<b style="color:#ffd36e">${F.name}</b><div style="margin:5px 0;opacity:.85">${F.desc}</div><div>${F.expect.map((n, k) => `<span style="display:inline-block;margin:2px;padding:2px 6px;border-radius:8px;background:${k < F.pos ? '#3fae4a' : k === F.pos ? '#f0a23a' : '#ffffff22'};color:${k === F.pos ? '#2a1a0a' : '#fff'};font-weight:800">${n}</span>`).join('')}</div>`
@@ -128,7 +131,7 @@ export function startRubik(ctx, { api, door }) {
     queue.length = 0; anim = null; reset();
     for (const n of ex.slice().reverse()) { const m = toMove(n); bake({ ...m, q: -m.q }); } draw();   // dựng sẵn tình huống: làm đúng công thức là khối hoàn chỉnh
     F = { name, desc, expect: ex, pos: 0, stars: F ? F.stars : 0, half: false };
-    renderF(); panel.hidden = false;
+    renderF(); showPanel(true);
     hud.msg(`Công thức <b>${name}</b>: ${ex.join(' ')} — bước đầu: <b>${ex[0]}</b> (${explain(ex[0])})`, 0);
     coach && coach.say(i ? 'Làm theo từng bước nhé!' : 'Học ký hiệu trước nha!');
   }
@@ -137,7 +140,7 @@ export function startRubik(ctx, { api, door }) {
     for (let i = 0; i < 21; i++) { let f; do f = faces[(Math.random() * 6) | 0]; while (BASE[f][0] === (BASE[last] || [])[0]); last = f; const m = toMove(f + (Math.random() < 0.5 ? "'" : '')); doMove(m, { dur: 0.07 }); }
   }
   function setMode(md) {
-    mode = md; done = false; timing = false; tRun = 0; hints = 0; setMoves(0); panel.hidden = true; F = md === 'formula' ? F : null;
+    mode = md; done = false; timing = false; tRun = 0; hints = 0; setMoves(0); showPanel(false); F = md === 'formula' ? F : null;
     modeBtns.forEach(b => b.classList.toggle('on', b.dataset.m === md));
     hud.time(md === 'race' ? 0 : null);
     if (md === 'race') { scramble(); hud.msg('Đang xáo khối… Đồng hồ chạy khi bạn xoay lớp đầu tiên. Vuốt trên khối để xoay lớp, vuốt ra ngoài để xoay camera.', 5000); coach && coach.say('Cố lên nhé!'); api.showBest(true); }
@@ -190,7 +193,7 @@ export function startRubik(ctx, { api, door }) {
       }
       cube.rotation.y = Math.sin(performance.now() / 4000) * 0.04;   // khẽ lắc lư cho sống động
     },
-    dispose() { panel.remove(); },
+    dispose() { panel.remove(); showPanel(false); },
   };
   // ---------- Người chơi & bạn bè ----------
   me.place(0, 3.4, Math.PI); me.face(0, 0);
@@ -198,7 +201,7 @@ export function startRubik(ctx, { api, door }) {
   api.actor('student-male-e', { name: 'Bạn Minh' }).then(a => { if (!a) return; coach = a; a.place(-3.6, 1.6, 0); a.face(0, 0); a.say('Chào bạn! Thử giải khối nào!', 3000); });
   api.actor('student-female-a', { name: 'Cô Lan', look: { role: 'teacher', aodai: true, shirt: '#e88aa8' }, height: 1.62 }).then(a => { if (!a) return; fans.push(a); a.place(3.8, 1.2, 0); a.face(0, 0); });
   api.actor('student-female-c', {}).then(a => { if (!a) return; fans.push(a); a.place(2.6, -3.4, 0); a.face(0, 0); });
-  api.cam.x = 0; api.cam.y = CUBE_Y - 0.4; api.cam.z = 0; api.cam.yaw = 0.42; api.cam.pitch = 0.5; api.cam.dist = 8; api.orbit = true;
+  api.cam.x = 0; api.cam.y = CUBE_Y - 0.4; api.cam.z = 0; api.cam.yaw = 0.42; api.cam.pitch = 0.5; api.cam.dist = innerHeight < 500 ? 10 : 8; api.orbit = true;   // màn ngang thấp: lùi camera để khối không bị thanh nút che
   reset();
   setMode(/Công thức|Cô Lan/.test(door && door.d ? door.d.n : '') ? 'formula' : 'race');
   return game;

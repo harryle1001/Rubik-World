@@ -64,7 +64,7 @@ export function labelSprite(text, { size = 0.5, bg = 'rgba(27,22,38,.78)', fg = 
 // viền cho lưới mặt phẳng (non-indexed): gộp đỉnh trùng → pháp tuyến mượt → viền liền, không thủng/lòi mép
 export function smoothOutline(m) { const g = m.geometry.clone(); for (const k of Object.keys(g.attributes)) if (k !== 'position') g.deleteAttribute(k); const mg = mergeVertices(g); mg.computeVertexNormals(); const e = new THREE.Mesh(mg, outlineMat); e.userData.outline = true; e.raycast = () => {}; m.add(e); return e; }
 // lưới toon có viền (giống nhân vật)
-export function mesh(geo, color, { outline = true, flat = true } = {}) { const m = new THREE.Mesh(geo, T(color, flat ? { flatShading: true } : {})); if (outline) addOutline(m); return m; }
+export function mesh(geo, color, { outline = true } = {}) { const m = new THREE.Mesh(geo, T(color)); if (outline) addOutline(m); return m; }   // MeshToonMaterial không có flatShading
 
 // ---------- CSS HUD (chèn 1 lần) ----------
 let cssDone = false;
@@ -84,30 +84,35 @@ function css() {
 .mga .card h3{margin:0 0 8px;font-size:21px}.mga .card .opts{display:grid;gap:8px;margin-top:13px}
 .mga .sw{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #7a5a2e;padding:0;min-height:0}.mga .sw.on{box-shadow:0 0 0 4px #e0564a}
 body.mga-open>*:not(.mga):not(canvas):not(iframe):not(style):not(script){visibility:hidden!important}
-@media (max-width:600px){.mga button{padding:6px 10px}.mga .ttl{display:none}.mga .tip{top:calc(max(8px,env(safe-area-inset-top)) + 96px)}}`;
+.mga.inw{z-index:29}.mga.inw .ttl,.mga.inw .x,.mga.inw .top .sc{display:none}
+.mga.inw .top{top:calc(max(8px,env(safe-area-inset-top)) + 55px)}.mga.inw .tip{top:calc(max(8px,env(safe-area-inset-top)) + 107px)}
+@media (max-width:600px){.mga button{padding:6px 10px}.mga .ttl{display:none}.mga:not(.inw) .tip{top:calc(max(8px,env(safe-area-inset-top)) + 96px)}}`;
   document.head.appendChild(s);
 }
 
 // ---------- Sân khấu ----------
-export function createStage(ctx, { title = 'Mini game', bg = '#bfe3f5', fov = 50, near = 0.1, far = 300, fog = null, onExit } = {}) {
+// api (mg/host.js): có host → chơi NGAY TRONG thế giới: cảnh = api.root, camera riêng (cục bộ) được host đổi sang camera thế giới,
+// đèn/sương/nền của thế giới, HUD host là thanh duy nhất (tên, điểm, ✕ Thoát, Esc). Không host → sân khấu riêng như cũ.
+export function createStage(ctx, { title = 'Mini game', bg = '#bfe3f5', fov = 50, near = 0.1, far = 300, fog = null, onExit, api = null } = {}) {
   css();
-  const renderer = ctx.renderer, scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(fov, innerWidth / innerHeight, near, far);
-  scene.background = new THREE.Color(bg); if (fog) scene.fog = new THREE.Fog(fog[0], fog[1], fog[2]);
-  const hemi = new THREE.HemisphereLight('#fff8e8', '#8a7a9a', 1.4), sun = new THREE.DirectionalLight('#fff2dc', 2.2); sun.position.set(5, 13, 8); scene.add(hemi, sun);
+  const inw = !!api, renderer = ctx.renderer, scene = inw ? api.root : new THREE.Scene(), camera = new THREE.PerspectiveCamera(fov, innerWidth / innerHeight, near, far);
+  if (!inw) { scene.background = new THREE.Color(bg); if (fog) scene.fog = new THREE.Fog(fog[0], fog[1], fog[2]); }
+  const hemi = new THREE.HemisphereLight('#fff8e8', '#8a7a9a', 1.4), sun = new THREE.DirectionalLight('#fff2dc', 2.2); sun.position.set(5, 13, 8); if (!inw) scene.add(hemi, sun);
+  if (inw) { api.useCamera(camera); api.hidePlayer(); api.hud.title(title); }
   const st = { ticks: [], disposed: false, hostT: 0, last: performance.now(), score: 0 };
 
   // HUD
   const root = document.createElement('div'); root.className = 'mga';
   root.innerHTML = `<div class="top"><div class="ttl"></div><div class="sc" hidden></div><div class="tabs" style="display:flex;gap:6px;flex-wrap:wrap"></div><div class="sp"></div><button class="x">✖ Thoát</button></div><div class="tip" style="opacity:0"></div><div class="bar"></div>`;
-  document.body.appendChild(root); document.body.classList.add('mga-open');
+  if (inw) root.classList.add('inw'); document.body.appendChild(root); if (!inw) document.body.classList.add('mga-open');
   const $ = s => root.querySelector(s), tabs = $('.tabs'), ttl = $('.ttl'), sc = $('.sc'), tipEl = $('.tip'), bar = $('.bar');
   ttl.textContent = title;
   let tipT = 0;
   const S = {
     ctx, scene, camera, renderer, root, bar, tabs, hemi, sun, THREE,
     fit: () => Math.max(1, 0.9 / camera.aspect),   // màn hình dọc (điện thoại) → lùi camera cho vừa khung
-    setTitle: t => { ttl.textContent = t; },
-    setScore: t => { sc.hidden = t == null; sc.textContent = t; },
+    setTitle: t => { ttl.textContent = t; if (inw) api.hud.title(t); },
+    setScore: t => { sc.hidden = t == null; sc.textContent = t; if (inw) api.hud.info(t == null ? '' : t); },
     tip(t, ms = 3400) { tipEl.innerHTML = t; tipEl.style.opacity = 1; tipT = ms / 1000; },
     // nút ở thanh dưới; trả về element
     button(label, fn, parent = bar) { const b = document.createElement('button'); b.innerHTML = label; b.onclick = e => { e.stopPropagation(); ac(); play('pop', 660, 0.1, 0.25); fn(b); }; parent.appendChild(b); return b; },
@@ -121,11 +126,13 @@ export function createStage(ctx, { title = 'Mini game', bg = '#bfe3f5', fov = 50
     },
     closeCard() { if (S.cardEl) { S.cardEl.remove(); S.cardEl = null; } },
     onTick(fn) { st.ticks.push(fn); },
-    pick(list, e) { const r = renderer.domElement.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), camera); return ray.intersectObjects(list, true)[0] || null; },
-    rayFrom(e) { const r = renderer.domElement.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), camera); return ray.ray; },
+    // trong thế giới: chiếu tia từ camera thế giới (đang hiện) → điểm chạm là toạ độ thế giới; S.local(v) đổi về toạ độ cảnh game
+    pick(list, e) { const r = renderer.domElement.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), inw ? ctx.camera : camera); return ray.intersectObjects(list, true)[0] || null; },
+    rayFrom(e) { const r = renderer.domElement.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), inw ? ctx.camera : camera); if (inw) { scene.updateMatrixWorld(); ray.ray.applyMatrix4(_inv.copy(scene.matrixWorld).invert()); } return ray.ray; },
+    local: v => scene.worldToLocal(v),
     exit() { if (st.disposed) return; S.dispose(); onExit && onExit(); },
   };
-  const ray = new THREE.Raycaster();
+  const ray = new THREE.Raycaster(), _inv = new THREE.Matrix4();
   $('.x').onclick = e => { e.stopPropagation(); S.exit(); };
 
   // chạm / kéo: S.onDown(e, hit?) S.onDrag(dx, dy, e) S.onUp(e) S.onPinch(k) S.onWheel(dy)
@@ -140,12 +147,14 @@ export function createStage(ctx, { title = 'Mini game', bg = '#bfe3f5', fov = 50
   root.addEventListener('pointerup', up); root.addEventListener('pointercancel', up);
   root.addEventListener('wheel', e => { e.preventDefault(); S.onWheel && S.onWheel(e.deltaY); }, { passive: false });
   // phím: chặn phím của đảo (M bản đồ, E, WASD…) khi đang chơi; Esc thoát
-  const onKey = e => { if (st.disposed) return; e.stopImmediatePropagation(); if (e.type === 'keydown') { if (e.code === 'Escape') { if (S.cardEl) S.closeCard(); else S.exit(); return; } S.onKey && S.onKey(e); } };
+  // Esc: đóng thẻ nếu đang mở; không có thẻ → trong thế giới để host thoát (không chặn), sân khấu riêng thì tự thoát
+  const onKey = e => { if (st.disposed) return; if (e.code === 'Escape') { if (e.type !== 'keydown') return; if (S.cardEl) { e.stopImmediatePropagation(); S.closeCard(); } else if (!inw) { e.stopImmediatePropagation(); S.exit(); } return; }
+    e.stopImmediatePropagation(); if (e.type === 'keydown') S.onKey && S.onKey(e); };
   addEventListener('keydown', onKey, true); addEventListener('keyup', onKey, true);
 
   // vẽ cảnh game thay cho đảo
-  const post = ctx.post, prevRender = post && post.render, frozen0 = ctx.player && ctx.player.frozen;
-  if (ctx.player) ctx.player.frozen = true;
+  const post = inw ? null : ctx.post, prevRender = post && post.render, frozen0 = ctx.player && ctx.player.frozen;
+  if (ctx.player && !inw) ctx.player.frozen = true;
   const resize = () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); };
   addEventListener('resize', resize);
   const tick = dt => { if (tipT > 0 && (tipT -= dt) <= 0) tipEl.style.opacity = 0; for (const f of st.ticks) f(dt); };
@@ -159,10 +168,11 @@ export function createStage(ctx, { title = 'Mini game', bg = '#bfe3f5', fov = 50
   S.dispose = () => {
     if (st.disposed) return; st.disposed = true; S.disposed = true;
     if (post && post.render === draw) post.render = prevRender;
-    if (ctx.player) ctx.player.frozen = !!frozen0;
+    if (ctx.player && !inw) ctx.player.frozen = !!frozen0;
     removeEventListener('keydown', onKey, true); removeEventListener('keyup', onKey, true); removeEventListener('resize', resize);
     root.remove(); if (!document.querySelector('.mga')) document.body.classList.remove('mga-open');
-    scene.traverse(o => { if (o.geometry && !o.userData.shared) o.geometry.dispose(); const ms = o.material ? [].concat(o.material) : []; for (const m of ms) { if (m.map) m.map.dispose(); if (m.userData && m.userData.own) m.dispose(); } });
+    if (inw) scene.traverse(o => { for (const m of o.material ? [].concat(o.material) : []) if (!(m.userData && m.userData.own)) m.userData.shared = true; });   // vật liệu toon dùng chung (style.js) → host không dispose
+    else scene.traverse(o => { if (o.geometry && !o.userData.shared) o.geometry.dispose(); const ms = o.material ? [].concat(o.material) : []; for (const m of ms) { if (m.map) m.map.dispose(); if (m.userData && m.userData.own) m.dispose(); } });
   };
   return S;
 }
