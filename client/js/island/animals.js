@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { loadAnimated, animator } from './models.js';
 import { addOutline, outlineMat } from './style.js';
+import { actorLod, stepAnim } from './characters.js';
 import { createFauna } from './fauna.js';
 import { T, damp, dampAngle } from './motion.js';
 import { TEMPLE_C, ISLAND_R, blocked } from './layout.js';
@@ -26,16 +27,16 @@ export function createAnimals(ctx) {
   // TẢI LƯỜI: thú sống ở rừng đền/bãi biển, xa chỗ vào game → chỉ nạp (~1,2 MB model) sau khi trường đã sẵn sàng
   // (hoặc sau 13 s) để băng thông lúc mở game dành cho phần nhìn thấy ngay
   let loadT = 0, loading = false;
-  const loadAll = () => { loading = true; for (const S of SPECIES) loadAnimated(S.id).then(g0 => {
+  const loadAll = () => { loading = true; for (const S of SPECIES) loadAnimated(S.id, true).then(g0 => {
     if (!g0) return;
-    for (let i = 0; i < S.n; i++) (i === 0 ? Promise.resolve(g0) : loadAnimated(S.id)).then(g => {
+    for (let i = 0; i < S.n; i++) (i === 0 ? Promise.resolve(g0) : loadAnimated(S.id, true)).then(g => {
       const root = new THREE.Group(), model = g.scene; root.add(model);
       model.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(model); const h = box.max.y - box.min.y || 1; model.scale.setScalar(S.size / h); model.position.y = -box.min.y * S.size / h;
       model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.userData.animal = S; } });
       addOutline(model); const outlines = []; model.traverse(o => { if (o.userData.outline && o.material === outlineMat) outlines.push(o); });
       const [x, z] = land(S.beach); root.position.set(x, terrain.heightAt(x, z), z); scene.add(root);
       const anim = animator(model, g.animations, clean);
-      const A = { S, root, anim, target: null, tgt: new THREE.Vector3(), wait: Math.random() * 4, rot: Math.random() * 6.28, fleeing: false, outlines, outlineOn: true, far: 0, tick: i, sp: 0, kr: { v: 0 }, ks: { v: 0 }, idle: S.idle[0] };
+      const A = { S, root, anim, target: null, tgt: new THREE.Vector3(), wait: Math.random() * 4, rot: Math.random() * 6.28, fleeing: false, outlines, outlineOn: true, an: { tick: i }, sp: 0, kr: { v: 0 }, ks: { v: 0 }, idle: S.idle[0] };
       anim.play(S.idle[0], 0); list.push(A);
     });
   }); };
@@ -61,7 +62,7 @@ export function createAnimals(ctx) {
     for (const A of list) {
       const d = A.root.position.distanceTo(p);
       if (d > 70) { A.root.visible = false; continue; } A.root.visible = true; // ở xa: không cập nhật (LOD)
-      const on = d < 18; if (A.outlineOn !== on) { A.outlineOn = on; for (const o of A.outlines) o.visible = on; } // viền chỉ cho thú gần
+      actorLod(A, A.root, d); // viền, bóng đổ chỉ cho thú gần (LOD chung với người: characters.js)
       // để ý người chơi: đứng lại, quay nhìn khi người chơi tới gần (trước khi bỏ chạy)
       if (!A.target && !A.fleeing && d < (A.S.shy || 4) * 1.8) A.rot = dampAngle(A.rot, Math.atan2(p.x - A.root.position.x, p.z - A.root.position.z), A.kr, T.slow, dt, 3);
       if (A.S.shy && d < A.S.shy && !A.fleeing) { // chạy ra xa người chơi
@@ -90,7 +91,7 @@ export function createAnimals(ctx) {
         }
       }
       A.root.position.y = terrain.heightAt(A.root.position.x, A.root.position.z); A.root.rotation.y = A.rot;
-      if (d < 35) { A.anim.update(dt + A.far); A.far = 0; } else { A.far += dt; if (++A.tick % 3 === 0) { A.anim.update(A.far); A.far = 0; } } // xa: 1/3 khung hình
+      stepAnim(A.anim, A.an, d, dt); // gần: mỗi khung · vừa: 1/2 · xa: 1/4 khung hình
     }
     perfMs += performance.now() - t0; perfN++; if (perfN > 600) { perfMs /= 2; perfN /= 2; }
   }

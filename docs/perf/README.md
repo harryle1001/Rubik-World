@@ -40,3 +40,30 @@ Mạng yếu (`--net=3g`, 1,6 Mbps · 150 ms):
 > Ghi chú đo: giả lập mạng của Chromium không áp cho service worker, và file SW phục vụ từ bộ nhớ đệm tính 0 KB →
 > cột dung lượng các bước 01–07 thiếu phần SW tải ngầm (~2,1 MB) và thời gian các bước đó còn lạc quan; từ bước 08 SW
 > không tải gì trước lúc vào chơi nên số đo phản ánh đúng băng thông thật.
+
+## Nhân vật (`node tools/perf-actors.mjs --out=thu-muc [--only=...] [--prof=điểm]`, điện thoại mức 1)
+
+Người chơi, học sinh/thầy cô/NPC, thú, người chơi khác, sân chơi dân gian. Đếm: draw call cả khung, SkinnedMesh vẽ ở lượt chính
+và lượt bóng, số `AnimationMixer.update`/khung và ms, ms JS/khung của các phần nhân vật. 2 cảnh **cố định** để so chính xác
+(cảnh thật dao động ±10 call do người đi lại): 21 người đứng yên trước camera 3 → 34 m (mô phỏng trường tạm dừng) · 14 thú trước camera 3 → 30 m.
+Số "trước" của cảnh cố định đo trên code gốc (f970041) bằng cùng công cụ (`before-co-dinh/`).
+
+| Cảnh | Draw call | Skinned vẽ / bóng | Mixer ms/khung | JS nhân vật ms/khung |
+|---|---|---|---|---|
+| Đám đông cố định (8 người vẽ đầy đủ) | 200 → **188** | 25,7 / 11,6 → **14,7 / 10,9** | 0,54 → **0,25** | 1,49 → 1,42 |
+| Thú cố định (14 con) | 332 → **173** | 117 / 74 → **23 / 9** | 0,26 → 0,23 | 0,96 → 0,89 |
+| Quảng trường (thật) | 235 → 223 | 30,4 → 21,4 | 0,75 → 0,36 | 1,78 → 1,39 |
+| Sân trường giờ ra chơi (thật) | 247 → 241 | 33,4 → 21,3 | 0,62 → 0,28 | 1,62 → 1,19 |
+| Rừng có thú (thật, thú ở ngẫu nhiên) | 173 → 156 | 4 → 7,1 | 0,25 → 0,18 | 0,96 → 0,85 |
+| Biển rạn san hô (cá/chim đã instancing sẵn) | 117 → 114 | 7 → 3 | 0,06 → 0,04 | 0,73 → 0,67 |
+
+Các bước (mỗi bước 1 commit, ảnh trong `docs/perf/actors/<bước>`):
+1. `01-gop-chi-tiet` — người: thân + mắt/miệng/khuy gộp 1 SkinnedMesh (viền vẫn theo hình thân): 2 → 1 lần vẽ/người.
+2. `02-lod-nhan-vat` — LOD chung (characters.js `actorLod`, `stepAnim`): viền < 13 m, bóng < 21 m, animation mỗi khung < 13 m,
+   1/2 khung < 21 m, 1/4 xa hơn; tối đa 13 người vẽ đầy đủ (còn lại hình khối 1 draw call chung); chọn người gần 0,25 s/lần.
+   Áp cho người thị trấn, thú, người chơi khác (net.js), sân chơi dân gian.
+3. `03-cat-track` — clip người 123 → 24 track (bỏ track hằng + xương không biến dạng), dáng giống hệt; màu hình khối LOD tính 1 lần.
+4. `04-gop-thu` — thú Quaternius: 4–7 SkinnedMesh/con (mỗi vật liệu 1 lưới) gộp 1 lưới màu đỉnh (models.js `mergeSkinned`).
+
+CPU profile (`--prof`) cho thấy JS nhân vật chỉ ~1 ms/khung trên máy đo; phần lớn khung là GPU (draw call + đỉnh skinning),
+nên lợi chính là bớt lần vẽ SkinnedMesh (mỗi lần vẽ skinned trên điện thoại tốn hơn mesh thường). Draw call còn lại chủ yếu là cảnh vật.

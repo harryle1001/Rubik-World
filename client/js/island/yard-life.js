@@ -4,7 +4,7 @@
 // chỉ cập nhật animation khi người chơi ở gần (≤ 55 m). Nhịp quay dây & khoảng cách theo φ.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { loadHero, STUDENTS, setOutline } from './characters.js';
+import { loadHero, STUDENTS, setOutline, stepAnim } from './characters.js';
 import { PHI, SPAWN, roadDist, houseAt } from './layout.js';
 
 const NEAR = 55, KID_H = 1.45;
@@ -57,7 +57,7 @@ export function createYardLife(ctx, fact) {
     if (want !== vis) { vis = want; root.visible = want; }
     if (!vis) return;
     const animate = d < NEAR;
-    for (const k of kids) { if (animate) k.anim.update(dt); if (k.backT > 0 && (k.backT -= dt) <= 0) k.anim.play(k.back || k.set.idle, 0.25); }
+    for (const k of kids) { if (animate) stepAnim(k.anim, k.an || (k.an = {}), Math.hypot(k.model.position.x - p.x, k.model.position.z - p.z), dt); if (k.backT > 0 && (k.backT -= dt) <= 0) k.anim.play(k.back || k.set.idle, 0.25); }
 
     // dây: góc th; dây chạm đất khi th = π → bạn ở giữa đang ở đỉnh cú nhảy
     if (rope.rest > 0) rope.rest -= dt;

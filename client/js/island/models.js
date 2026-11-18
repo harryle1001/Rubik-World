@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { toonify, gradientMap } from './style.js';
 
 const draco = new DRACOLoader().setDecoderPath('/lib/three/examples/jsm/libs/draco/gltf/');
@@ -69,10 +70,33 @@ function bakeParts(name, parts) {
   const out = [mesh]; baked.set(name, out); return out;
 }
 
+// Gộp các SkinnedMesh cùng bộ xương, cùng biến đổi, không texture (thú Quaternius: mỗi vật liệu 1 lưới, 4–7 lưới/con)
+// thành 1 lưới màu theo đỉnh (màu vật liệu × màu đỉnh gốc) → 1 lần vẽ + 1 viền + 1 bóng mỗi con thay vì 4–7 mỗi loại.
+function mergeSkinned(root) {
+  const groups = new Map();
+  root.traverse(o => { if (o.isSkinnedMesh && !o.material.map && !Object.keys(o.geometry.morphAttributes).length) { const k = o.parent.uuid + o.skeleton.bones.map(b => b.uuid).join(); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(o); } });
+  const conv = (a, T) => { const n = a.count * a.itemSize, arr = new T(n); for (let i = 0; i < a.count; i++) for (let j = 0; j < a.itemSize; j++) arr[i * a.itemSize + j] = a.getComponent(i, j); return new THREE.BufferAttribute(arr, a.itemSize); };
+  for (const list of groups.values()) {
+    const m0 = list[0]; if (list.length < 2 || list.some(m => !m.bindMatrix.equals(m0.bindMatrix) || !m.matrix.equals(m0.matrix) || m.material.side !== m0.material.side)) continue;
+    const geos = list.map(m => {
+      const g = m.geometry, A = g.attributes, n = A.position.count, c = new Float32Array(n * 3), mc = m.material.color, ca = A.color, out = new THREE.BufferGeometry();
+      for (let i = 0; i < n; i++) { c[i * 3] = mc.r * (ca ? ca.getX(i) : 1); c[i * 3 + 1] = mc.g * (ca ? ca.getY(i) : 1); c[i * 3 + 2] = mc.b * (ca ? ca.getZ(i) : 1); }
+      out.setAttribute('position', conv(A.position, Float32Array)); out.setAttribute('normal', conv(A.normal, Float32Array)); out.setAttribute('color', new THREE.BufferAttribute(c, 3));
+      out.setAttribute('skinIndex', conv(A.skinIndex, Uint16Array)); out.setAttribute('skinWeight', conv(A.skinWeight, Float32Array));
+      out.setIndex(g.index ? Array.from(g.index.array) : [...Array(n).keys()]); return out;
+    });
+    const geo = mergeGeometries(geos); if (!geo) continue; geo.computeBoundingSphere();
+    const sm = new THREE.SkinnedMesh(geo, new THREE.MeshToonMaterial({ name: 'merged-' + m0.name, vertexColors: true, gradientMap, side: m0.material.side }));
+    sm.name = m0.name; sm.position.copy(m0.position); sm.quaternion.copy(m0.quaternion); sm.scale.copy(m0.scale); sm.bind(m0.skeleton, m0.bindMatrix);
+    sm.castShadow = m0.castShadow; sm.receiveShadow = m0.receiveShadow; m0.parent.add(sm); for (const m of list) m.parent.remove(m);
+  }
+}
+
 // Nạp model có xương + animation (nhân vật, thú). Mỗi lần gọi trả về 1 bản sao riêng và danh sách animation.
+// merge: gộp các lưới có xương thành 1 (mergeSkinned) — chỉ cho model không cần ẩn/hiện từng phần (thú).
 const animCache = new Map();
-export function loadAnimated(name) {
-  if (!animCache.has(name)) animCache.set(name, new Promise(res => loader.load(`/assets/models/${name}.glb`, g => { toonify(g.scene); res(g); }, undefined, e => { console.warn('Thiếu model', name, e?.message); res(null); })));
+export function loadAnimated(name, merge = false) {
+  if (!animCache.has(name)) animCache.set(name, new Promise(res => loader.load(`/assets/models/${name}.glb`, g => { toonify(g.scene); if (merge) mergeSkinned(g.scene); res(g); }, undefined, e => { console.warn('Thiếu model', name, e?.message); res(null); })));
   return animCache.get(name).then(g => {
     if (!g) return null;
     const scene = cloneSkinned(g.scene); scene.traverse(o => { if (o.isMesh) o.frustumCulled = false; });

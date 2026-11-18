@@ -4,7 +4,7 @@
 //   - Người dân, khách du lịch (NPC): đồ thường theo màu shirt/pants của NPC, vật dụng theo việc (cần câu, mũ cói…).
 // Pool tối đa POOL người gần nhất; ai gần mới cập nhật animation mỗi khung hình. Đứng gần: quay mặt, gật/vẫy, hiện tên.
 import * as THREE from 'three';
-import { loadHero, driveHero, emote, setOutline, lookAtTarget } from './characters.js';
+import { loadHero, driveHero, emote, setOutline, lookAtTarget, LOD, actorLod, stepAnim } from './characters.js';
 import { CFG } from './config.js';
 import { toon } from './style.js';
 import { T, damp, dampAngle } from './motion.js';
@@ -42,7 +42,9 @@ const nameOf = a => a.kind ? (NPC_NAME[a.kind] || 'Người dân') : a.student !
 export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) { // eslint-disable-line
   POOL = Math.min(POOL, CFG.isMobile ? 20 : 24);   // điện thoại: tối đa 20 người cùng lúc
   const scene = ctx.scene, pool = [], loading = new Set(); ctx.townPeople = pool; // gỡ lỗi: __island.townPeople
-  const NEAR_ANIM = 35, OUTLINE = 18;              // animation đầy đủ trong 35 m; viền chỉ trong 18 m
+  const NEAR_ANIM = 35;                            // trong 35 m: nói chuyện, gật đầu (animation/viền/bóng: LOD trong characters.js)
+  const MAX_FULL = CFG.isMobile ? 13 : 21;         // tối đa số người vẽ đầy đủ (gần nhất); còn lại dùng hình khối LOD (1 draw call chung)
+  const rank = [], byD = (a, b) => a.d - b.d; let near = [], selT = 0;
   // Ghế đá trong sân trường (cùng toạ độ 2D với town-buildings.js): người đứng chờ gần ghế sẽ ngồi xuống
   const seats = []; for (const [x2, y2] of [[200, 435], [500, 435], [1100, 435], [870, 700], [1180, 735], [1640, 700]]) { const [x, z] = P(x2, y2); for (const k of [-0.45, 0.45]) seats.push({ x: x + k, z, by: null }); }
   // Bong bóng chào / nói chuyện: vài sprite dùng chung
@@ -72,15 +74,17 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
   // tất cả gộp vào 1 InstancedMesh → mọi người ở xa chỉ tốn 1 draw call (trước: 1–3 call mỗi người). Người ngồi vẫn dùng model đầy đủ.
   const LOD_D = CFG.isMobile ? 21 : 34, imp = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.5, 0.5, 1, 8).translate(0, 0.5, 0), toon('#ffffff'), POOL * 4);
   imp.count = 0; imp.visible = false; imp.frustumCulled = false; imp.name = 'person-lod'; imp.castShadow = false; imp.receiveShadow = true; scene.add(imp);
-  const _io = new THREE.Object3D(), _ic = new THREE.Color(), SKIN = '#f2c9a0', HAIR = '#2a1d17';
-  const impPart = (i, x, y, z, yaw, y0, hh, w, d, col) => { _io.position.set(x, y + y0, z); _io.rotation.set(0, yaw, 0); _io.scale.set(w, hh, d); _io.updateMatrix(); imp.setMatrixAt(i, _io.matrix); imp.setColorAt(i, _ic.set(col)); };
+  const _io = new THREE.Object3D(), SKIN = '#f2c9a0', HAIR = '#2a1d17';
+  const impPart = (i, x, y, z, yaw, y0, hh, w, d, col) => { _io.position.set(x, y + y0, z); _io.rotation.set(0, yaw, 0); _io.scale.set(w, hh, d); _io.updateMatrix(); imp.setMatrixAt(i, _io.matrix); imp.setColorAt(i, col); };
   function impPut(e, x, y, z, yaw, bob) {
-    const L = e.a._look3d, h = L.h || 1.6, lk = L.look, stu = lk.role === 'student', i = imp.count; if (i + 4 > POOL * 4) return;
-    const shirt = stu ? '#f4f4f0' : lk.aodai ? (lk.shirt || '#f4f4f0') : (lk.shirt || '#7fa7d9'), pants = stu ? '#2b3a67' : lk.aodai ? shirt : (lk.pants || '#3a3f55');
-    impPart(i, x, y, z, yaw, 0, h * 0.47 + bob, h * 0.17, h * 0.12, pants);
-    impPart(i + 1, x, y, z, yaw, h * 0.45 + bob, h * 0.33, h * 0.26, h * 0.16, shirt);
-    impPart(i + 2, x, y, z, yaw, h * 0.78 + bob, h * 0.15, h * 0.15, h * 0.15, SKIN);
-    impPart(i + 3, x, y, z, yaw, h * 0.9 + bob, h * 0.07, h * 0.17, h * 0.17, lk.cap || HAIR);
+    const L = e.a._look3d, h = L.h || 1.6, lk = L.look, i = imp.count; if (i + 4 > POOL * 4) return;
+    const C = L.ic || (L.ic = (() => {   // màu quần · áo · da · tóc/mũ: tính 1 lần mỗi người (không phân tích chuỗi màu mỗi khung)
+      const stu = lk.role === 'student', shirt = stu ? '#f4f4f0' : lk.aodai ? (lk.shirt || '#f4f4f0') : (lk.shirt || '#7fa7d9'), pants = stu ? '#2b3a67' : lk.aodai ? shirt : (lk.pants || '#3a3f55');
+      return [pants, shirt, SKIN, lk.cap || HAIR].map(c => new THREE.Color(c)); })());
+    impPart(i, x, y, z, yaw, 0, h * 0.47 + bob, h * 0.17, h * 0.12, C[0]);
+    impPart(i + 1, x, y, z, yaw, h * 0.45 + bob, h * 0.33, h * 0.26, h * 0.16, C[1]);
+    impPart(i + 2, x, y, z, yaw, h * 0.78 + bob, h * 0.15, h * 0.15, h * 0.15, C[2]);
+    impPart(i + 3, x, y, z, yaw, h * 0.9 + bob, h * 0.07, h * 0.17, h * 0.17, C[3]);
     imp.count = i + 4;
   }
 
@@ -89,25 +93,29 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
   const dropHero = h => { scene.remove(h.model); const sk = new Set(); h.model.traverse(o => { if (o.isSkinnedMesh) sk.add(o.skeleton); }); for (const k of sk) k.dispose(); const mx = h.anim && h.anim.mixer; if (mx) { mx.stopAllAction(); mx.uncacheRoot(h.model); } };
   return function updatePeople(dt, RS) {
     const t0 = performance.now(), p = ctx.player.pos;
-    const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
-    const near = list.filter(a => a.y > Y_MIN && a.y < Y_MAX).map(a => { const [x, z] = P(a.x, a.y); return [a, Math.hypot(x - p.x, z - p.z)]; }).filter(q => q[1] < 70).sort((a, b) => a[1] - b[1]).slice(0, POOL).map(q => q[0]);
-    const want = new Set(near);
-    for (const e of pool) if (e.a && !want.has(e.a)) { e.a = null; e.hero.model.visible = false; if (e.seat) { e.seat.by = null; e.seat = null; } }
-    for (const a of near) {
-      if (pool.some(e => e.a === a)) continue;
-      const L = a._look3d || (a._look3d = lookOf(a));
-      let e = pool.find(e => !e.a && e.key === L.key);
-      // dựng LẦN LƯỢT từng người (tối đa 1 người đang dựng): tới khu đông người không còn ~24 người dựng xong cùng 1 khung (giật 40–80 ms)
-      if (!e && loading.size) continue;
-      if (!e && pool.length + loading.size >= POOL) { // pool đầy: bỏ 1 model rảnh khác kiểu để nạp kiểu mới
-        const i = pool.findIndex(e => !e.a); if (i >= 0) { dropHero(pool[i].hero); pool.splice(i, 1); }
+    if ((selT -= dt) <= 0) {   // chọn POOL người gần nhất: tính thưa 0,25 s/lần (người đi chậm, không cần mỗi khung)
+      selT = 0.25;
+      const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
+      near = list.filter(a => a.y > Y_MIN && a.y < Y_MAX).map(a => { const [x, z] = P(a.x, a.y); return [a, Math.hypot(x - p.x, z - p.z)]; }).filter(q => q[1] < 70).sort((a, b) => a[1] - b[1]).slice(0, POOL).map(q => q[0]);
+      const want = new Set(near);
+      for (const e of pool) if (e.a && !want.has(e.a)) { e.a = null; e.hero.model.visible = false; if (e.seat) { e.seat.by = null; e.seat = null; } }
+      for (const a of near) {
+        if (pool.some(e => e.a === a)) continue;
+        const L = a._look3d || (a._look3d = lookOf(a));
+        let e = pool.find(e => !e.a && e.key === L.key);
+        // dựng LẦN LƯỢT từng người (tối đa 1 người đang dựng): tới khu đông người không còn ~24 người dựng xong cùng 1 khung (giật 40–80 ms)
+        if (!e && loading.size) continue;
+        if (!e && pool.length + loading.size >= POOL) { // pool đầy: bỏ 1 model rảnh khác kiểu để nạp kiểu mới
+          const i = pool.findIndex(e => !e.a); if (i >= 0) { dropHero(pool[i].hero); pool.splice(i, 1); }
+        }
+        if (!e && pool.length + loading.size < POOL) {
+          const id = Symbol(); loading.add(id);
+          loadHero(L.kind, L.h, L.look).then(h => { loading.delete(id); if (!h) return; h.npc = true; h.model.visible = false; scene.add(h.model); pool.push({ hero: h, key: L.key, a: null, st: {}, an: {}, d: 99, full: false, px: 0, pz: 0, yaw: 0, greet: 0, tick: 0, spd: 0, kx: { v: 0 }, kz: { v: 0 }, ky: { v: 0 }, ox: 0, oz: 0, kox: { v: 0 }, koz: { v: 0 } }); });
+          continue;
+        }
+        if (e) { e.a = a; [e.px, e.pz] = P(a.x, a.y); e.d = Math.hypot(e.px - p.x, e.pz - p.z); e.kx.v = e.kz.v = e.ky.v = e.ox = e.oz = e.kox.v = e.koz.v = 0; e.yaw = a.dir < 0 ? -Math.PI / 2 : Math.PI / 2; e.hero.model.visible = true; }
       }
-      if (!e && pool.length + loading.size < POOL) {
-        const id = Symbol(); loading.add(id);
-        loadHero(L.kind, L.h, L.look).then(h => { loading.delete(id); if (!h) return; h.npc = true; h.model.visible = false; scene.add(h.model); pool.push({ hero: h, key: L.key, a: null, st: {}, px: 0, pz: 0, yaw: 0, far: 0, greet: 0, tick: 0, spd: 0, kx: { v: 0 }, kz: { v: 0 }, ky: { v: 0 }, ox: 0, oz: 0, kox: { v: 0 }, koz: { v: 0 } }); });
-        continue;
-      }
-      if (e) { e.a = a; [e.px, e.pz] = P(a.x, a.y); e.kx.v = e.kz.v = e.ky.v = e.ox = e.oz = e.kox.v = e.koz.v = 0; e.yaw = a.dir < 0 ? -Math.PI / 2 : Math.PI / 2; e.hero.model.visible = true; }
+      rank.length = 0; for (const e of pool) if (e.a) rank.push(e); rank.sort(byD); for (let i = 0; i < rank.length; i++) rank[i].full = i < MAX_FULL;
     }
     let best = null, bd = 4.5; const now = performance.now(); talkT -= dt; imp.count = 0;
     const doTalk = talkT <= 0; if (doTalk) talkT = 0.6;
@@ -123,7 +131,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       if (Math.hypot(x - e.px, z - e.pz) > 4) { e.kx.v = e.kz.v = 0; } else { x = damp(e.px, x, e.kx, T.soft, dt); z = damp(e.pz, z, e.kz, T.soft, dt); }
       const dx = e.kx.v, dz = e.kz.v; e.spd = Math.min(9, Math.hypot(dx, dz));
       e.ox = damp(e.ox, Math.max(-0.618, Math.min(0.618, e.sx)), e.kox, T.slow, dt); e.oz = damp(e.oz, Math.max(-0.618, Math.min(0.618, e.sz)), e.koz, T.slow, dt);
-      const dist = Math.hypot(x - p.x, z - p.z), moving = a.moving && e.spd > 0.2;
+      const dist = e.d = Math.hypot(x - p.x, z - p.z), moving = a.moving && e.spd > 0.2;
       let sit = a.cycling || a.boat || a.kind === 'bike' ? 'drive' : /sun|picnic|camp|fishing/.test(a.kind || '') ? 'floor' : false; // floor: ngồi bệt trên cát/cỏ
       // ghế đá: đứng yên gần ghế trống → ngồi; đi tiếp → đứng dậy
       if (moving || sit) { if (e.seat) { e.seat.by = null; e.seat = null; } }
@@ -143,15 +151,14 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       }
       // người chơi lại gần (≤3 m) → gật đầu / vẫy tay + bong bóng chào, 25 giây 1 lần
       if (dist < 3 && !moving && !sit && now > e.greet) { const role = a._look3d.look.role; e.greet = now + 25000; emote(e.hero, e.st, 'cheer'); const g = GREET[role] || GREET.adult; say(e, g[(Math.random() * g.length) | 0]); }
-      if (dist > LOD_D && !sit && !e.seat && m.visible) {   // xa: hình khối LOD, bỏ qua animation (dồn thời gian cho lúc lại gần)
-        m.visible = false; impPut(e, gx, gy, gz, e.yaw, moving ? Math.abs(Math.sin(now * 0.012 + e.tick)) * 0.05 : 0); e.far = Math.min(1, (e.far || 0) + dt);
+      if ((dist > LOD_D || !e.full) && !sit && !e.seat && m.visible) {   // xa / quá số người vẽ đầy đủ: hình khối LOD, bỏ qua animation (dồn thời gian cho lúc lại gần)
+        m.visible = false; impPut(e, gx, gy, gz, e.yaw, moving ? Math.abs(Math.sin(now * 0.012 + e.tick)) * 0.05 : 0); e.an.acc = Math.min(1, (e.an.acc || 0) + dt);
         setOutline(e.hero, false); continue;
       }
       driveHero(e.hero, { speed: moving ? e.spd : 0, grounded: true, walk: 5.5, sitting: sit, oneShot: e.st.oneShot });
-      // LOD: < 35 m cập nhật animation mỗi khung hình (+ quay đầu nhìn người chơi khi < 6 m); xa hơn: 1/3 khung hình; viền chỉ < 18 m
-      if (dist < NEAR_ANIM) { e.hero.anim.update(dt + (e.far || 0)); e.far = 0; let lt = null; if (dist < 6 && !e.seat) lt = p; else if (e.partner && dist < 15) { lt = e.lp || (e.lp = { x: 0, z: 0 }); lt.x = e.partner.px; lt.z = e.partner.pz; } lookAtTarget(e.hero, lt, e.st, dt); }
-      else { e.far = (e.far || 0) + dt; if (++e.tick % 3 === 0 || !e.tick) { e.hero.anim.update(e.far); e.far = 0; } }
-      setOutline(e.hero, dist < OUTLINE);
+      // LOD (characters.js): animation mỗi khung < 13 m (điện thoại), 1/2 khung < 21 m, xa hơn 1/4; viền & bóng đổ chỉ cho người gần
+      if (stepAnim(e.hero.anim, e.an, dist, dt) && dist < LOD.a1) { let lt = null; if (dist < 6 && !e.seat) lt = p; else if (e.partner && dist < 15) { lt = e.lp || (e.lp = { x: 0, z: 0 }); lt.x = e.partner.px; lt.z = e.partner.pz; } lookAtTarget(e.hero, lt, e.st, dt); }
+      actorLod(e.hero, m, dist);
       if (dist < bd) { bd = dist; best = e; }
     }
     imp.visible = imp.count > 0; if (imp.count) { imp.instanceMatrix.needsUpdate = true; imp.instanceColor.needsUpdate = true; }
