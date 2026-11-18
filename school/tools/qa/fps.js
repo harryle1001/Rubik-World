@@ -4,7 +4,7 @@
 // Kết quả: tools/qa/out/fps-<nhãn>/<vp>.json  (khung hình, FPS, 10 chỗ khựng nặng nhất kèm hàm gây ra)
 const fs = require('fs'), path = require('path');
 const {chromium} = require('playwright');
-const ROOT = path.resolve(__dirname, '..', '..');
+const ROOT = process.env.FPS_ROOT || path.resolve(__dirname, '..', '..');
 const VPS = {phone:{w:390, h:844, touch:true}, land:{w:844, h:390, touch:true}, desk:{w:1440, h:900}};
 const tag = process.argv[2] || 'before', pick = (process.argv[3] || 'phone,land,desk').split(','), RATE = +process.argv[4] || 4;
 const MIME = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.png':'image/png', '.jpg':'image/jpeg', '.json':'application/json', '.svg':'image/svg+xml', '.mp3':'audio/mpeg', '.ogg':'audio/ogg', '.wav':'audio/wav', '.woff2':'font/woff2', '.webp':'image/webp'};
@@ -100,7 +100,7 @@ function analyze(frames, prof, off, lm){
       const seen = new Set(); while(id){ const n = node.get(id); const kk = name(n); if(!seen.has(kk) && n.callFrame.url){ seen.add(kk); incl.set(kk, (incl.get(kk) || 0) + dt); } id = par.get(id); }
     }
     const top = m => [...m].sort((x, y) => y[1] - x[1]).slice(0, 5).map(([k, v]) => `${k} ${v.toFixed(0)}ms`);
-    return {self:top(self), incl:top(incl).filter(s => !/^frame @core\/loop|^\(root\)/.test(s)).slice(0, 4)};
+    const dur = f[1]*.8; return {self:top(self), incl:[...incl].filter(([k, v]) => v < dur).sort((x, y) => y[1] - x[1]).slice(0, 6).map(([k, v]) => `${k} ${v.toFixed(0)}ms`)};
   };
   const worst = [...long].sort((x, y) => y[1] - x[1]).slice(0, 10).map(f => ({ms:Math.round(f[1]), tag:f[2], ...attr(f)}));
   // gom theo bước
@@ -109,10 +109,11 @@ function analyze(frames, prof, off, lm){
   const agg = new Map(); long.forEach(f => attr(f).incl.forEach(s => { const m = s.match(/^(.*) (\d+)ms$/); agg.set(m[1], (agg.get(m[1]) || 0) + +m[2]); }));
   return {frames:frames.length, secs:Math.round(tot/1000), avg:+avg.toFixed(1), min:+minF.toFixed(1), long50:long.length, long100:frames.filter(f => f[1] > 100).length,
     p99:+[...durs].sort((a, b) => a - b)[Math.floor(durs.length*.99)].toFixed(1), worst, byTag, hot:[...agg].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, v]) => `${k} ${v}ms`),
-    hist:frames.map(f => Math.round(f[1]))};
+    hist:frames.map(f => Math.round(f[1])), median:[...durs].sort((a, b) => a - b)[durs.length >> 1]};
 }
 
-(async () => {
+module.exports = {open, plan, analyze, lineMap, MARK, REC};
+if(require.main === module) (async () => {
   const b = await chromium.launch(); const lm = lineMap(); const dir = path.join(__dirname, 'out', 'fps-' + tag); fs.mkdirSync(dir, {recursive:true});
   for(const k of pick){
     const vp = VPS[k]; const {ctx, p, logs} = await open(b, vp); const cdp = await ctx.newCDPSession(p);
