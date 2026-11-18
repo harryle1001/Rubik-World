@@ -6,6 +6,7 @@ import { toon, addOutline } from './style.js';
 import { loadHero, drivePlayer, emote, lookAtTarget } from './characters.js';
 import { PHI } from './layout.js';
 import { T, damp, dampAngle, dampV3, ease, wrapAngle } from './motion.js';
+import { createCamOcclude } from './cam-occlude.js';
 
 const P = CFG.player, C = CFG.camera;
 // Camera thứ 3 theo φ (khu mẫu cổng trường): cách 13 m (Fibonacci), góc ngẩng atan(1/φ³) ≈ 13,3°, nhìn vào điểm cao φ² m trên chân
@@ -92,6 +93,7 @@ export function createPlayer(ctx) {
   let yawF = 0;
   let camDist = CAM.dist, colDist = CAM.dist, camLift = 0, lean = 0, tilt = 0, dip = 0, dipV = 0, ext = 0, snapCam = true, idleT = 0, lookT = 0, prevSpeed = 0, prevY = pos.y, prevDy = 0, stepY = 0, wasGrounded = true;
   const hs = {}, lookSt = {}, lookPt = { x: 0, z: 0, on: false };
+  const occ = ctx.camOcc = ctx.camOcc || createCamOcclude(ctx), camTo = new THREE.Vector3();
   // Phương tiện (vehicles.js gán): self.vehicle = { speed, turn, accel, water, fly, lift, anim, seat, camAdd, maxAlt } hoặc null
   self.vehicle = null; self.vel = vel; self.setRot = r => { rot = r; rotSt.v = 0; };
   Object.defineProperty(self, 'hero', { get: () => hero });
@@ -240,7 +242,9 @@ export function createPlayer(ctx) {
       if (!hit) for (const b of N.boxes) if (cx > b.x0 - 0.3 && cx < b.x1 + 0.3 && cz > b.z0 - 0.3 && cz < b.z1 + 0.3 && cy < b.top + 0.5) { hit = true; break; }
       if (!hit) { fit = f; break; }
     }
-    const wc = camDist * fit; colDist = snapCam ? wc : damp(colDist, wc, colSt, wc < colDist ? T.fast : T.slow, dt); if (colDist > camDist) colDist = camDist;
+    // dò tia điểm nhìn → camera (tường, mái hiên, vòm cổng, thân cây…): kéo camera vào trước vật cản, chừa đệm 1/φ² m
+    camTo.set(pivot.x + dx * camDist * fit, pivot.y + dy * camDist * fit, pivot.z + dz * camDist * fit);
+    const wc = fly ? camDist * fit : Math.max(Math.min(camDist * fit, occ.clear(pivot, camTo, h.root) - 1 / PHI ** 2), 1); colDist = snapCam ? wc : damp(colDist, wc, colSt, wc < colDist ? T.fast : T.slow, dt); if (colDist > camDist) colDist = camDist;
     let cx = pivot.x + dx * colDist, cy = pivot.y + dy * colDist, cz = pivot.z + dz * colDist;
     const need = Math.max(terrain.heightAt(cx, cz) + 0.8, (ctx.groundExtra ? ctx.groundExtra(cx, cz, 99) : -99) + 0.8, D && D.diving ? -99 : CFG.island.waterLevel + 0.5);
     camLift = damp(camLift, Math.max(0, need - cy), liftSt, need - cy > camLift ? T.fast : T.soft, dt); cy = Math.max(cy + camLift, need - 0.3);
