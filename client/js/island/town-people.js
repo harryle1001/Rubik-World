@@ -126,13 +126,16 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
         const ex = A.px - B.px, ez = A.pz - B.pz, d2 = ex * ex + ez * ez; if (d2 > 0.81 || d2 < 1e-6) continue; const d = Math.sqrt(d2), k = (0.9 - d) * 0.5 / d;
         A.sx += ex * k; A.sz += ez * k; B.sx -= ex * k; B.sz -= ez * k; } }
     for (const e of pool) {
-      if (!e.a) continue; const a = e.a; let [x, z] = P(a.x, a.y);
+      if (!e.a) continue; const a = e.a;
+      // toạ độ 3D đệm theo vị trí 2D (người đứng yên/ngồi không đổi → không gọi to3, không tạo mảng mới mỗi khung)
+      if (a._px !== a.x || a._py !== a.y) { a._p3 = P(a.x, a.y); a._px = a.x; a._py = a.y; } let x = a._p3[0], z = a._p3[1];
       // vị trí hiển thị: lò xo giảm chấn bám theo mô phỏng 2D (đi theo đường cong mượt, tăng/giảm tốc mềm); lệch xa > 4 m thì đặt lại
       if (Math.hypot(x - e.px, z - e.pz) > 4) { e.kx.v = e.kz.v = 0; } else { x = damp(e.px, x, e.kx, T.soft, dt); z = damp(e.pz, z, e.kz, T.soft, dt); }
       const dx = e.kx.v, dz = e.kz.v; e.spd = Math.min(9, Math.hypot(dx, dz));
       e.ox = damp(e.ox, Math.max(-0.618, Math.min(0.618, e.sx)), e.kox, T.slow, dt); e.oz = damp(e.oz, Math.max(-0.618, Math.min(0.618, e.sz)), e.koz, T.slow, dt);
       const dist = e.d = Math.hypot(x - p.x, z - p.z), moving = a.moving && e.spd > 0.2;
-      let sit = a.cycling || a.boat || a.kind === 'bike' ? 'drive' : /sun|picnic|camp|fishing/.test(a.kind || '') ? 'floor' : false; // floor: ngồi bệt trên cát/cỏ
+      if (a._kc !== a.kind) { a._kc = a.kind; a._floor = /sun|picnic|camp|fishing/.test(a.kind || ''); }
+      let sit = a.cycling || a.boat || a.kind === 'bike' ? 'drive' : a._floor ? 'floor' : false; // floor: ngồi bệt trên cát/cỏ
       // ghế đá: đứng yên gần ghế trống → ngồi; đi tiếp → đứng dậy
       if (moving || sit) { if (e.seat) { e.seat.by = null; e.seat = null; } }
       else if (!e.seat && doTalk && !a.kind) { const st = seats.find(q => !q.by && Math.hypot(q.x - x, q.z - z) < 2.2); if (st) { st.by = e; e.seat = st; } }
@@ -155,7 +158,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
         m.visible = false; impPut(e, gx, gy, gz, e.yaw, moving ? Math.abs(Math.sin(now * 0.012 + e.tick)) * 0.05 : 0); e.an.acc = Math.min(1, (e.an.acc || 0) + dt);
         setOutline(e.hero, false); continue;
       }
-      driveHero(e.hero, { speed: moving ? e.spd : 0, grounded: true, walk: 5.5, sitting: sit, oneShot: e.st.oneShot });
+      const dv = e.dv || (e.dv = { speed: 0, grounded: true, walk: 5.5, sitting: false, oneShot: null }); dv.speed = moving ? e.spd : 0; dv.sitting = sit; dv.oneShot = e.st.oneShot; driveHero(e.hero, dv);   // dùng lại 1 đối tượng
       // LOD (characters.js): animation mỗi khung < 13 m (điện thoại), 1/2 khung < 21 m, xa hơn 1/4; viền & bóng đổ chỉ cho người gần
       if (stepAnim(e.hero.anim, e.an, dist, dt) && dist < LOD.a1) { let lt = null; if (dist < 6 && !e.seat) lt = p; else if (e.partner && dist < 15) { lt = e.lp || (e.lp = { x: 0, z: 0 }); lt.x = e.partner.px; lt.z = e.partner.pz; } lookAtTarget(e.hero, lt, e.st, dt); }
       actorLod(e.hero, m, dist);

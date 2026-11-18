@@ -5,7 +5,7 @@
 // Animation theo trạng thái: driveHero(). Hành động một lần (vẫy tay, nhặt đồ…): emote().
 import * as THREE from 'three';
 import { loadAnimated, animator } from './models.js';
-import { addOutline, outlineMat } from './style.js';
+import { addOutline, isOutlineMat } from './style.js';
 import { CFG } from './config.js';
 import { RIG, BUILD, stretchRig, rigClips, buildPerson, jointsOf, skinTo } from './people-model.js';
 
@@ -51,7 +51,7 @@ export async function loadHero(kind, height = 1.65, look = null) {
   const G = geoCache.get(key);
   const parts = skinTo(model, G); model.scale.setScalar(height / G.top);
   parts.body.geometry = G.body; addOutline(model); parts.body.geometry = G.all;   // viền theo hình thân (không viền mắt, miệng)
-  const outlines = []; model.traverse(o => { if (o.userData.outline && o.material === outlineMat) outlines.push(o); });
+  const outlines = []; model.traverse(o => { if (o.userData.outline && isOutlineMat(o.material)) outlines.push(o); });
   const clips = rigClips(g.animations, B, model); for (const [n, k, v] of clips.pose) { const o = model.getObjectByName(n); if (o) o[k].fromArray(v); }   // tư thế cố định (track hằng đã cắt)
   const anim = animator(model, clips);
   const N = NAMES.person; for (const [k, v] of Object.entries({ ...N, drive: N.sit })) if (!anim.actions[k] && anim.actions[v]) anim.actions[k] = anim.actions[v]; // tên cũ (vehicles: 'drive', 'sit', 'idle')
@@ -76,7 +76,7 @@ async function loadKayKit(kind, height) {
   model.traverse(o => { if (o.isMesh && !o.name.startsWith(kay)) o.visible = false; });
   model.updateMatrixWorld(true); const box = new THREE.Box3(); model.traverse(o => { if (o.isMesh && o.visible) box.expandByObject(o); });
   model.scale.multiplyScalar(height / (box.max.y - box.min.y || 1)); addOutline(model);
-  const outlines = []; model.traverse(o => { if (o.userData.outline && o.material === outlineMat) outlines.push(o); });
+  const outlines = []; model.traverse(o => { if (o.userData.outline && isOutlineMat(o.material)) outlines.push(o); });
   return { model, anim: animator(model, g.animations, n => n.split('|').pop()), set: NAMES.kaykit, height, outlines, head: model.getObjectByName('head'), outlineOn: true };
 }
 

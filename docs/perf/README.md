@@ -122,3 +122,19 @@ GPU giả lập chạy ~2 khung/s nên đo theo số khung (dt bị kẹp 1/20 s
 | 07 | bước biên dịch trước tải sẵn mọi texture lên GPU (`initTexture`) | xe đạp qua thị trấn: khung giật 1 → 0 (trước: +9 geo +1 tex, render 194 ms) |
 
 Còn lại: lặn — dive.js tạo geometry/texture lúc xuống nước lần đầu (1 khung ~130 ms giả lập); ngoài phạm vi phương tiện: thị trấn 3D cấp phát 40–90 KB/khung (GC); tải geometry lần đầu khi tới khu mới; skyshow thỉnh thoảng 7–17 ms/khung.
+
+## CPU / JS (`node tools/perf-cpu.mjs`, CPU chậm 4×, 30 s đi bộ + 30 s chạy quanh quảng trường, mức 1, 13h)
+GPU giả lập nên đo phần JS trên luồng chính (đảo 3D + three, self time từ profile CDP). Số trong `docs/perf/cpu/*.json`.
+
+| Chỉ số (ms/khung, CPU 4×) | gốc (daed9fa) | cuối |
+|---|---|---|
+| JS đảo 3D + three | 31,0 | **26,4** |
+| tính ma trận (updateMatrixWorld…) | 7,15 | 4,97 |
+| vẽ phía CPU (post.render) | 29,2 | 24,3 |
+| người thị trấn (school) | 3,15 | 2,13 |
+| khung JS > 50 ms / 60 s | 25 | 13 |
+| getProgram (đổi shader do vật liệu dùng chung) | 209 ms/60 s | 117 ms/60 s |
+| rò texture khi qua cửa trường | 1 / cửa | 0 |
+
+Còn lại ngoài phạm vi đảo 3D: iframe trường 2D (`client/school/`, chess.js) cấp phát ~46 MB / 60 s trên cùng heap
+→ phần lớn số lần GC của trang (minor 6–42, major 6–10 tuỳ số ván cờ NPC đang chơi) và ~2 s CPU / 60 s.

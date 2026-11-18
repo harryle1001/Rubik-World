@@ -53,7 +53,7 @@ const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
   // 2 đối tượng dùng luân phiên (không cấp phát mỗi khung: mỗi phần gọi offer mỗi khung)
   const act = document.getElementById('bAct'), slots = [{}, {}]; let best = null, cur = null, si = 0;
   ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) { best = best || slots[si]; best.label = label; best.fn = fn; best.pri = pri; } };
-  ctx.flushOffer = () => { cur = best; best = null; si ^= 1; act.hidden = !cur || ctx.player.frozen; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
+  ctx.flushOffer = () => { cur = best; best = null; si ^= 1; const h = !cur || ctx.player.frozen; if (act.hidden !== h) act.hidden = h; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
   act.onclick = () => cur && cur.fn();
   addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
 }

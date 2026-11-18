@@ -1,0 +1,124 @@
+{
+ "res": {
+  "frames": 161,
+  "avgMs": 395.8,
+  "p95Ms": 516.7,
+  "maxMs": 1033,
+  "over50": 161,
+  "over100": 161,
+  "gcMinor": 6,
+  "gcMajor": 8,
+  "gcTraceMs": 100,
+  "gcProfMs": 53,
+  "jsFrame": {
+   "p95": 60.7,
+   "max": 154,
+   "over50": 25,
+   "over100": 2
+  },
+  "jsMs": 31,
+  "matrixMs": 7.15,
+  "heapMB": [
+   159.3,
+   159.3
+  ],
+  "msPerFrame": {
+   "frameJs": 38.79,
+   "render": 29.17,
+   "school": 3.15,
+   "ambience": 1.38,
+   "player": 1.03,
+   "perf": 0.69,
+   "aircraft": 0.54,
+   "weather": 0.38,
+   "audio": 0.25,
+   "eggs": 0.18,
+   "sky": 0.17,
+   "net": 0.16,
+   "dive": 0.16,
+   "treasure": 0.14,
+   "living": 0.14,
+   "animals": 0.12,
+   "physics": 0.11,
+   "vehicles": 0.09,
+   "skyshow": 0.07,
+   "terrain": 0.05,
+   "worldMap": 0.04,
+   "sealife": 0.04,
+   "mg": 0.01,
+   "zen": 0.01,
+   "brightness": 0
+  },
+  "spikes": [
+   {
+    "ms": 148,
+    "prog": 193,
+    "tex": 28,
+    "geo": 183,
+    "aircraft": 40,
+    "weather": 14,
+    "ambience": 11,
+    "render": 77
+   },
+   {
+    "ms": 154,
+    "prog": 193,
+    "tex": 29,
+    "geo": 186,
+    "render": 145
+   }
+  ]
+ },
+ "top": [
+  {
+   "fn": "updateMatrixWorld http://localhost:3000/lib/three/build/three.module.js:7772",
+   "ms": 886,
+   "pct": 1.4
+  },
+  {
+   "fn": "V https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 458,
+   "pct": 0.7
+  },
+  {
+   "fn": "projectObject http://localhost:3000/lib/three/build/three.module.js:30038",
+   "ms": 291,
+   "pct": 0.5
+  },
+  {
+   "fn": "renderObject http://localhost:3000/lib/three/build/three.module.js:22551",
+   "ms": 206,
+   "pct": 0.3
+  },
+  {
+   "fn": "multiplyMatrices http://localhost:3000/lib/three/build/three.module.js:6262",
+   "ms": 167,
+   "pct": 0.3
+  },
+  {
+   "fn": "querySelector :0",
+   "ms": 152,
+   "pct": 0.2
+  },
+  {
+   "fn": "er https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 151,
+   "pct": 0.2
+  },
+  {
+   "fn": "texSubImage2D :0",
+   "ms": 141,
+   "pct": 0.2
+  },
+  {
+   "fn": "Z https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 140,
+   "pct": 0.2
+  },
+  {
+   "fn": "o.update :3",
+   "ms": 135,
+   "pct": 0.2
+  }
+ ]
+}

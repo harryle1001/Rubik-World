@@ -5,7 +5,7 @@
 //         cây, hoa, lá sen dùng InstancedMesh; chữ bảng tên gom vào 1 tấm atlas.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { toon, addOutline, outlineMat, gradientMap } from './style.js';
+import { toon, addOutline, outlineInstMat, gradientMap } from './style.js';
 import { BLOCKS, EXTRA, blockOf2D, SPAWN, WORLD, PHI, ISLAND_R, ZONES_N, zoneAngle, LOTS, LOTS_N, HOUSE_LOTS, GARDEN_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1, LOT_W, LOT_L, LOT_BACK,
   RING_ROAD_R, ROAD_W, RADIALS, LAGOON, MEADOWS, lotAt, landDist, pathDist, PATH_W, blocked, houseAt, roadDist, lagoonDist } from './layout.js';
 import { Batch, DetailGrid, createLife, detailMats, shadowCells } from './decor.js';
@@ -248,7 +248,7 @@ export function buildTownArchitecture(ctx, RS, env) {
     if (!list.length) return null; const im = new THREE.InstancedMesh(geo, material, list.length);
     list.forEach((q, i) => { const f = setM(q, _o); if (typeof f === 'function') f(q, _o); _o.updateMatrix(); im.setMatrixAt(i, _o.matrix); if (q.col) im.setColorAt(i, _c.set(q.col)); });
     im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere(); im.castShadow = shadow; im.receiveShadow = true; scene.add(im); out.push(im);
-    if (outline) { const ol = new THREE.InstancedMesh(geo, outlineMat, list.length); ol.instanceMatrix = im.instanceMatrix; ol.frustumCulled = false; ol.raycast = () => {}; scene.add(ol); out.push(ol); }
+    if (outline) { const ol = new THREE.InstancedMesh(geo, outlineInstMat, list.length); ol.instanceMatrix = im.instanceMatrix; ol.frustumCulled = false; ol.raycast = () => {}; scene.add(ol); out.push(ol); }
     return im;
   };
   const set = (x, y, z, s, ry = 0) => (q, o) => { o.position.set(x, y, z); o.rotation.set(0, ry, 0); o.scale.set(s, s, s); };

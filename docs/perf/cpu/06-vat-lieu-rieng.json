@@ -1,0 +1,124 @@
+{
+ "res": {
+  "frames": 168,
+  "avgMs": 375.3,
+  "p95Ms": 483.3,
+  "maxMs": 917,
+  "over50": 168,
+  "over100": 168,
+  "gcMinor": 8,
+  "gcMajor": 6,
+  "gcTraceMs": 70,
+  "gcProfMs": 33,
+  "jsFrame": {
+   "p95": 63.5,
+   "max": 147,
+   "over50": 18,
+   "over100": 2
+  },
+  "jsMs": 27.8,
+  "matrixMs": 4.3,
+  "heapMB": [
+   149.7,
+   149.7
+  ],
+  "msPerFrame": {
+   "frameJs": 34.46,
+   "render": 24.62,
+   "school": 2.51,
+   "perf": 1.82,
+   "ambience": 1.36,
+   "player": 1.1,
+   "aircraft": 0.58,
+   "weather": 0.25,
+   "net": 0.19,
+   "audio": 0.17,
+   "sky": 0.17,
+   "eggs": 0.13,
+   "living": 0.13,
+   "treasure": 0.12,
+   "animals": 0.09,
+   "vehicles": 0.09,
+   "physics": 0.09,
+   "skyshow": 0.09,
+   "terrain": 0.07,
+   "worldMap": 0.06,
+   "dive": 0.06,
+   "sealife": 0.04,
+   "mg": 0.01,
+   "brightness": 0.01,
+   "zen": 0.01
+  },
+  "spikes": [
+   {
+    "ms": 133,
+    "prog": 195,
+    "tex": 28,
+    "geo": 184,
+    "aircraft": 38,
+    "weather": 10,
+    "ambience": 18,
+    "render": 58
+   },
+   {
+    "ms": 147,
+    "prog": 195,
+    "tex": 29,
+    "geo": 187,
+    "render": 137
+   }
+  ]
+ },
+ "top": [
+  {
+   "fn": "updateMatrixWorld http://localhost:3000/lib/three/build/three.module.js:7772",
+   "ms": 539,
+   "pct": 0.9
+  },
+  {
+   "fn": "V https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 436,
+   "pct": 0.7
+  },
+  {
+   "fn": "projectObject http://localhost:3000/lib/three/build/three.module.js:30038",
+   "ms": 296,
+   "pct": 0.5
+  },
+  {
+   "fn": "renderObject http://localhost:3000/lib/three/build/three.module.js:22551",
+   "ms": 186,
+   "pct": 0.3
+  },
+  {
+   "fn": "Z https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 154,
+   "pct": 0.3
+  },
+  {
+   "fn": "er https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 151,
+   "pct": 0.2
+  },
+  {
+   "fn": "setProgram http://localhost:3000/lib/three/build/three.module.js:30501",
+   "ms": 137,
+   "pct": 0.2
+  },
+  {
+   "fn": "o.update :3",
+   "ms": 133,
+   "pct": 0.2
+  },
+  {
+   "fn": "texSubImage2D :0",
+   "ms": 130,
+   "pct": 0.2
+  },
+  {
+   "fn": "still island/perf.js:65",
+   "ms": 127,
+   "pct": 0.2
+  }
+ ]
+}

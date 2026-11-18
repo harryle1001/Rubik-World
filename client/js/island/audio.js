@@ -86,16 +86,18 @@ export function createAudio(ctx) {
   };
 
   let zoneT = 0;
+  const vol = (a, v) => { if (Math.abs(v - (a._v ?? -1)) > 1e-3) { a._v = v; a.setVolume(v); } };
   function update(dt, st) {
     if (!ready) return;
     const p = ctx.player.pos;
-    if (nightMusic.buffer) nightMusic.setVolume(0.22 * st.night);
+    // THREE.Audio.setVolume = 1 sự kiện setTargetAtTime mỗi lần gọi → chỉ gọi khi âm lượng đổi thật (trước: mỗi khung, hàng đợi tự động hoá AudioParam phình ra)
+    if (nightMusic.buffer) vol(nightMusic, 0.22 * st.night);
     // nhạc theo khu: khu nhỏ (gần nhất) thắng khu lớn; chuyển mượt
     let best = null, bs = Infinity; for (const m of musics) { const d = Math.hypot(m.x - p.x, m.z - p.z); if (d < m.r && m.r < bs) { bs = m.r; best = m; } }
     for (const m of musics) {
       const want = m === best ? m.vol * (1 - st.night * 0.85) : 0; m.w += (want - m.w) * Math.min(1, dt * 0.6);
       if (m.w > 0.01 && !m.a && !m.loading) { m.loading = true; load(m.file).then(b => { m.loading = false; if (!b) return; m.a = new THREE.Audio(listener); m.a.setBuffer(b); m.a.setLoop(true); m.a.setVolume(0); m.a.play(); }); }
-      if (m.a) { m.a.setVolume(m.w); if (m.w < 0.005 && m !== best) { m.a.stop(); m.a = null; } }
+      if (m.a) { vol(m.a, m.w); if (m.w < 0.005 && m !== best) { m.a.stop(); m.a = null; } }
     }
     // vùng âm thanh lặp: chỉ bật khi ở gần và đúng thời điểm (ngày/đêm/giờ học)
     if ((zoneT -= dt) <= 0) {
