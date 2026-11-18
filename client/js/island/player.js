@@ -89,7 +89,7 @@ export function createPlayer(ctx) {
   const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3(), pivot = new THREE.Vector3(), pivV = new THREE.Vector3(), ZERO = new THREE.Vector3();
   const visOff = new THREE.Vector3(), visV = new THREE.Vector3(), extPos = new THREE.Vector3(), extQ = new THREE.Quaternion(), orbQ = new THREE.Quaternion(), lastCam = new THREE.Vector3();
   const rotSt = { v: 0 }, distSt = { v: 0 }, colSt = { v: 0 }, liftSt = { v: 0 }, leanSt = { v: 0 }, tiltSt = { v: 0 }, extSt = { v: 0 }, pyS = { v: 0 }, yawFSt = { v: 0 }, stepSt = { v: 0 };
-  let yawF = 0;
+  let yawF = 0; const slide = new THREE.Vector3(), slideSt = { x: { v: 0 }, z: { v: 0 } };
   let camDist = CAM.dist, colDist = CAM.dist, camLift = 0, lean = 0, tilt = 0, dip = 0, dipV = 0, ext = 0, snapCam = true, idleT = 0, lookT = 0, prevSpeed = 0, prevY = pos.y, prevDy = 0, stepY = 0, wasGrounded = true;
   const hs = {}, lookSt = {}, lookPt = { x: 0, z: 0, on: false };
   // Phương tiện (vehicles.js gán): self.vehicle = { speed, turn, accel, water, fly, lift, anim, seat, camAdd, maxAlt } hoặc null
@@ -116,10 +116,14 @@ export function createPlayer(ctx) {
 
     // di chuyển + va chạm (phần vật lý — physics.js dựng lưới ctx.grid để tra nhanh vật cản gần)
     // chia nhỏ bước (≤ 0.25 m) để chạy nhanh/đi xe không xuyên tường mỏng; leo bậc ≤ STEP, vách cao hơn thì chặn
-    const fly = V && V.fly, STEP = 1.1, BSTEP = 0.6, R0 = 0.35;
+    const fly = V && V.fly, STEP = 1.1, BSTEP = 0.6, R0 = 0.35, SLOPE = Math.tan(48 * Math.PI / 180);
     const sup = (x, z, y) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, y) : -99);
     const near = (x, z) => ctx.grid ? ctx.grid.near(x, z) : { cols: ctx.colliders, boxes: ctx.boxes || [] };
-    const sx0 = pos.x, sz0 = pos.z, ddx = vel.x * dt, ddz = vel.z * dt, ns = Math.max(1, Math.ceil(Math.hypot(ddx, ddz) / 0.25));
+    // giới hạn độ dốc địa hình (SLOPE ≈ 48°): dốc hơn thì không leo được, đứng trên đó thì trượt xuống; bậc thềm/sàn (groundExtra, hộp) không tính
+    const hT = (x, z) => terrain.heightAt(x, z), onTerrain = (x, z, y) => !ctx.groundExtra || hT(x, z) >= ctx.groundExtra(x, z, y) - 0.01;
+    const steep = (ox, oz, nx, nz) => { if (!onTerrain(nx, nz, pos.y)) return false; const d = Math.hypot(nx - ox, nz - oz); return hT(nx, nz) - sup(ox, oz, pos.y) > SLOPE * d + 0.02; };
+    const swimNow = D && D.swimming, blocked = (ox, oz, nx, nz) => sup(nx, nz, pos.y) > pos.y + STEP || (grounded && !swimNow && steep(ox, oz, nx, nz));
+    const sx0 = pos.x, sz0 = pos.z, ddx = (vel.x + slide.x) * dt, ddz = (vel.z + slide.z) * dt, ns = Math.max(1, Math.ceil(Math.hypot(ddx, ddz) / 0.25));
     for (let s = 0; s < ns; s++) {
       const ox = pos.x, oz = pos.z; let nx = ox + ddx / ns, nz = oz + ddz / ns;
       if (!fly) {
@@ -142,7 +146,8 @@ export function createPlayer(ctx) {
           const w = ctx.physics.push(b, -ux, -uz, pen, vel); nx += ux * pen * (1 - w); nz += uz * pen * (1 - w);
         }
         // vách đất quá cao so với chân → trượt dọc theo vách thay vì leo thẳng lên
-        if (!(V && V.water)) { const lim = pos.y + STEP; if (sup(nx, nz, lim) > lim) { if (sup(nx, oz, lim) <= lim) nz = oz; else if (sup(ox, nz, lim) <= lim) nx = ox; else { nx = ox; nz = oz; } } }
+        // (sup tra với chân pos.y → sàn treo cao hơn chân > STEP được bỏ qua, đi bên dưới cầu được)
+        if (!(V && V.water) && blocked(ox, oz, nx, nz)) { if (!blocked(ox, oz, nx, oz)) nz = oz; else if (!blocked(ox, oz, ox, nz)) nx = ox; else { nx = ox; nz = oz; } }
       }
       if (V && V.water) { if (sup(nx, nz) > CFG.island.waterLevel - 0.3) { nx = ox; nz = oz; vel.multiplyScalar(0.3); } } // thuyền: chỉ đi trên nước
       else if (!fly && !D && sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = ox; nz = oz; vel.set(0, 0, 0); } // có dive.js thì được xuống nước bơi
@@ -167,15 +172,21 @@ export function createPlayer(ctx) {
     if (pos.y <= g) {
       if (!grounded) impact = -vy;
       if (!grounded && vy < -6) { puff(8, 2.5); ctx.sfx && ctx.sfx('land'); }
-      // bước lên bậc/dốc: nâng chân mượt thay vì giật (chỉ khi đang đứng đất và bậc thấp)
-      const up = g - pos.y; pos.y = grounded && up > 0.12 && up < BSTEP ? pos.y + up * Math.min(1, dt * 22) : g; vy = 0; grounded = true;
+      pos.y = g; vy = 0; grounded = true;   // lên bậc: đặt chân ngay trên mặt (không nội suy dưới đất → chân không chìm)
     } else if (pos.y > g + (grounded && vy <= 0 ? 0.45 : 0.3)) grounded = false;
     else if (grounded && vy <= 0) { pos.y = g; vy = 0; } // xuống dốc/bậc: bám mặt đất, không "bay" lơ lửng
     }
+    // trượt dốc: đứng trên địa hình dốc hơn SLOPE → trượt xuống theo hướng dốc (tốc độ tăng dần theo độ dốc, mượt)
+    { let tx = 0, tz = 0;
+      if (grounded && !fly && !(V && V.water) && !(D && D.swimming) && onTerrain(pos.x, pos.z, pos.y) && pos.y <= hT(pos.x, pos.z) + 0.05) {
+        const e = 0.3, gx = (hT(pos.x + e, pos.z) - hT(pos.x - e, pos.z)) / (2 * e), gz = (hT(pos.x, pos.z + e) - hT(pos.x, pos.z - e)) / (2 * e), gm = Math.hypot(gx, gz);
+        if (gm > SLOPE) { const sv = Math.min(PHI ** 4, (gm - SLOPE) * PHI ** 3 + PHI); tx = -gx / gm * sv; tz = -gz / gm * sv; }
+      }
+      slide.x = damp(slide.x, tx, slideSt.x, T.quick, dt); slide.z = damp(slide.z, tz, slideSt.z, T.quick, dt); }
     // animation KayKit + tiếng bước chân
     // bậc thang/lề đường: độ cao hiển thị trượt dần thay vì nhảy cóc (dốc thường không bị ảnh hưởng)
     // bậc = độ cao đổi đột ngột so với khung trước (dốc đổi đều nên không bị ảnh hưởng); xe đạp cũng được làm mượt
-    const dyS = pos.y - prevY; if ((!V || !(V.fly || V.water)) && grounded && wasGrounded && Math.abs(dyS - prevDy) > 0.07 && Math.abs(dyS) < 0.8) { stepY = clamp(stepY - dyS + prevDy, -0.6, 0.6); prevDy = 0; } else prevDy = grounded ? dyS : 0;
+    const dyS = pos.y - prevY; if ((!V || !(V.fly || V.water)) && grounded && wasGrounded && Math.abs(dyS - prevDy) > 0.07 && Math.abs(dyS) < 0.8) { stepY = clamp(stepY - dyS + prevDy, 0, 0.6); prevDy = 0; } // chỉ làm mượt khi xuống bậc (lệch dương = hơi lơ lửng); lên bậc không cho lệch âm (chân chìm) else prevDy = grounded ? dyS : 0;
     prevY = pos.y; wasGrounded = grounded;
     dampV3(visOff, ZERO, visV, T.soft, dt); stepY = damp(stepY, 0, stepSt, T.soft, dt);
     // nghiêng người vào khúc cua (theo lực hướng tâm v·ω/g), chúi nhẹ khi tăng tốc, nhún gối khi tiếp đất
