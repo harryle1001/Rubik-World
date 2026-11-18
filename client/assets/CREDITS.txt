@@ -93,3 +93,6 @@ models/kit/ đợt 3 (furn_*, school_*, chess_*, music_*, play_*, house_city_*, 
 Học viện Pha Lê (client/js/island/academy/): không thêm file tài nguyên mới. Lâu đài, thuyền, đũa phép, đèn lồng,
 vân đá + rêu (canvas 512 px) và hiệu ứng (sương, đom đóm, cú, cờ) đều dựng bằng code trong game.
 Cây thông/đá trên đảo dùng lại bộ kit CC0 đã ghi ở trên.
+
+Tàu Pha Lê (client/js/island/train/): không dùng tệp ngoài — đầu máy, toa, ga, cầu cạn, đảo Đồi Thông dựng bằng khối trong code;
+  âm thanh xình xịch / lạch cạch ray / còi hơi / xả hơi tổng hợp bằng Web Audio (train/sound.js); nhân vật dùng bộ người có sẵn (characters.js).
