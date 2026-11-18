@@ -6,12 +6,15 @@
 //  · Người/thú có xương (SkinnedMesh, trước luôn vẽ): cắt theo khung hình bằng hình cầu bao nới rộng φ lần.
 //  · Vật < 1 m không đổ bóng (bóng đổ của vật nhỏ gần như không thấy, nhưng tốn 1 draw call ở pass bóng);
 //    điện thoại: bán kính < 1/φ ≈ 0,62 m (cả InstancedMesh không ghi itemR: lấy cỡ 1 vật từ hình cầu bao lưới × tỉ lệ instance đầu).
+//  · Bay/khinh khí cầu cao (camera cách mặt đất/biển > 21 m, Fibonacci): vật nhỏ ẩn sớm hơn 1/φ lần; điện thoại: sương kéo gần
+//    dần còn 1/√φ (296 → 233 m; cây xa, công trình xa tự ẩn theo sương) — từ trên cao thấy nhiều cảnh hơn hẳn, xa hơn chỉ là vệt mờ trong sương.
 // Ẩn bằng layers (không đụng .visible mà file khác đang điều khiển). Quét cảnh tìm vật mới mỗi 3 s (chỉ gom, rẻ; lần đầu sau 1,5 s đăng ký hết ngay);
 // xét khoảng cách XOAY VÒNG: mỗi khung 1 phần danh sách (60 FPS: 1/12) → mỗi vật ~0,2 s xét 1 lần, không dồn cả danh sách vào 1 khung (hết giật định kỳ).
 import * as THREE from 'three';
 import { PHI } from './layout.js';
 import { CFG } from './config.js';
 
+const HIGH = 21, FOG_HIGH = 1 / Math.sqrt(PHI);   // độ cao coi là "trên cao" (m) · hệ số sương khi bay cao (điện thoại)
 const FAR_K = 89, FAR_MIN = 34, OUTLINE_D = 34, SMALL_R = 1.6;   // ngưỡng Fibonacci; SMALL_R ≈ φ m
 const NOSHADOW_R = CFG.isMobile ? 1 / PHI : 0.5;                  // vật nhỏ hơn: không đổ bóng
 const _m = new THREE.Matrix4(), _sc = new THREE.Vector3();
@@ -60,14 +63,24 @@ export function createPerf(ctx) {
     else { const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); _s.copy(g.boundingSphere); }
     _s.applyMatrix4(o.matrixWorld); return Math.max(0, _s.center.distanceTo(cam) - _s.radius);
   }
-  let tScan = 1.5, cur = 0, first = true;
+  let tScan = 1.5, cur = 0, first = true, tCheck = 0.2, fogK = 1;
+  function fogByAlt(dt) {   // sau weather/dive (ocean.js): weather đặt lại sương mỗi khung → nhân hệ số không bị cộng dồn
+    const F = scene.fog; if (!CFG.isMobile || !F || ctx.underwater || document.body.classList.contains('mg-on')) return;
+    fogK += ((ctx.high ? FOG_HIGH : 1) - fogK) * Math.min(1, dt * 0.618);   // đổi dần ~1,6 s, không thấy "bật" sương
+    if (fogK < 0.999) { F.near *= fogK; F.far *= fogK; }   // mặt cắt xa giữ nguyên: vòm trời (bán kính 400/φ ≈ 247 m) bám người chơi, cắt gần hơn sẽ thủng trời
+  }
   function update(dt) {
     if ((tScan += dt) > 3) { tScan = 0; scan(); }
     const t0 = performance.now(), budget = first ? 1e9 : 1.5; if (pending.length) first = false;   // lần quét đầu (đang vào game): đăng ký hết ngay
     while (pending.length && performance.now() - t0 < budget) { const o = pending.pop(); delete o.userData._pq; register(o); }   // ≤ 1,5 ms/khung
-    if (!list.length) return;
     camera.getWorldPosition(cam);
-    const k = (ctx.underwater ? 0.5 : 1) * (ctx.perfScale || 1);   // dưới nước nhìn gần hơn; chất lượng thấp: ẩn sớm hơn
+    if ((tCheck += dt) >= 0.2) {   // độ cao camera: 0,2 s/lần
+      tCheck = 0; const g = ctx.terrain ? Math.max(ctx.terrain.heightAt(cam.x, cam.z), CFG.island.waterLevel) : 0;
+      ctx.camAlt = cam.y - g; ctx.high = ctx.camAlt > HIGH && !ctx.underwater;   // terrain.js/vehicles: LOD theo độ cao
+    }
+    fogByAlt(dt);
+    if (!list.length) return;
+    const k = (ctx.underwater ? 0.5 : ctx.high ? 1 / PHI : 1) * (ctx.perfScale || 1);   // dưới nước nhìn gần hơn; bay cao/chất lượng thấp: ẩn sớm hơn
     let n = Math.ceil(list.length * Math.min(1, dt / 0.2));   // phần danh sách tỉ lệ thời gian: mỗi vật ~0,2 s xét 1 lần dù FPS cao/thấp
     while (n-- > 0 && list.length) {
       if (cur >= list.length) cur = 0;

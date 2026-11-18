@@ -91,3 +91,34 @@ Mức 1 điện thoại: **691 → 387 ms/khung (−44 %)**, ảnh gần như kh
 | Tự động, máy nặng 1,3× | 77 → 86 % | 19 → 0 |
 | ⚡ Mượt, máy nặng 1,7× | 53 → 92 % | 0 → 0 |
 | ⚡ Mượt, máy nặng 2,2× | 5 → 85 % (39 → 55 FPS TB) | 0 → 0 |
+
+## Phương tiện (`node tools/perf-vehicles.mjs`, điện thoại 390×844 · DPR 2 · mức 1 · 13h · 233 khung/kịch bản)
+
+Lái tự động: cất cánh · bay thấp 21 m qua thị trấn · bay cao 83 m · xe đạp qua thị trấn · thuyền ra biển · khinh khí cầu (lên 43–55 m) · lặn.
+GPU giả lập chạy ~2 khung/s nên đo theo số khung (dt bị kẹp 1/20 s); JS ms là của máy đo (điện thoại chậm hơn ~5 lần).
+"Shader lúc vẽ" = số lần `linkProgram` xảy ra bên trong `post.render` (mỗi lần khựng 50–200 ms trên điện thoại).
+
+| Kịch bản | Gốc: call / tam giác / shader lúc vẽ / khung giật | Cuối: call / tam giác / shader lúc vẽ / khung giật |
+|---|---|---|
+| Cất cánh | 94 / 192k / 5 / 0 | 95 / 191k / **0** / 0 |
+| Bay thấp | 159 / 511k / 5 / 0 | **149 / 487k / 0** / 0 |
+| Bay cao | 138 / 465k / 5 / 0 | **131 / 418k / 0** / 0 |
+| Xe đạp | 185 / 624k / 9 / 1 | 175 / 612k / **0 / 0** |
+| Thuyền | 180 / 526k / 2 / 0 | 176 / 526k / **0** / 0 |
+| Khinh khí cầu¹ | 188 / 663k / 2 / 0 | 182 / 647k / **0** / 0 |
+| Lặn | 52 / 70k / 9 / 1 | 52 / 70k / **0** / 1 (lúc xuống nước tạo 13 geometry + 1 texture) |
+
+¹ số gốc khinh khí cầu đo sau bước 02 (lượt gốc đầu chưa cất lên được).
+
+| Bước | Thay đổi | Trước → sau |
+|---|---|---|
+| 01 | `compileAsync` chạy với render target hậu kỳ (khoá shader gồm không gian màu + tone mapping của đích vẽ: trước biên dịch cho canvas → vô ích) + lặp ở 8 s, 21 s | shader lúc vẽ 2–9 → 0–1 mỗi kịch bản |
+| — | trải đều việc chia lại cây gần/xa nhiều khung | **bỏ**: chỉ tốn ≤ 0,9 ms/khung, không phải nguyên nhân giật |
+| 02 | > 21 m: ẩn cỏ, hoa, bụi, nấm, sỏi; vật nhỏ ẩn sớm hơn 1/φ | bay cao 140 → 132 call, 466k → 446k; bay thấp 155 → 150 |
+| 03 | điện thoại > 21 m: sương kéo gần dần còn 1/√φ (mặt cắt xa giữ 296 m: cắt gần hơn thủng vòm trời) | bay cao 132 → 130, 446k → 419k; bay thấp 504k → 489k; khinh khí cầu 188 → 182 |
+| 04 | perf.js quét cảnh 377 nút/khung thay vì cả cảnh 1 khung mỗi 2 s | perf max/khung bay thấp 5,1 → 0,6 ms |
+| 05 | phương tiện không cấp phát mỗi khung (offer, quỹ đạo AI, hàm lên xe/bờ, vệt nước, xương chân xe đạp tìm 1 lần) | trong nhiễu đo: tổng cấp phát ~250 KB/khung chủ yếu từ thị trấn (`school` 40–90 KB) + render |
+| 06 | âm thanh động cơ: bộ đệm lặp 1/3 s thay 1 s | aircraft max/khung khi âm thanh bật 13,3 → 5,4 ms |
+| 07 | bước biên dịch trước tải sẵn mọi texture lên GPU (`initTexture`) | xe đạp qua thị trấn: khung giật 1 → 0 (trước: +9 geo +1 tex, render 194 ms) |
+
+Còn lại: lặn — dive.js tạo geometry/texture lúc xuống nước lần đầu (1 khung ~130 ms giả lập); ngoài phạm vi phương tiện: thị trấn 3D cấp phát 40–90 KB/khung (GC); tải geometry lần đầu khi tới khu mới; skyshow thỉnh thoảng 7–17 ms/khung.

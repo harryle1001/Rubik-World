@@ -50,9 +50,10 @@ const terrain = createTerrain(scene);
 const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
 // Nút hành động dùng chung (E hoặc nút giữa màn hình): mỗi khung hình các phần gọi ctx.offer(nhãn, hàm, độ ưu tiên)
 {
-  const act = document.getElementById('bAct'); let best = null, cur = null;
-  ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) best = { label, fn, pri }; };
-  ctx.flushOffer = () => { cur = best; best = null; act.hidden = !cur || ctx.player.frozen; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
+  // 2 đối tượng dùng luân phiên (không cấp phát mỗi khung: mỗi phần gọi offer mỗi khung)
+  const act = document.getElementById('bAct'), slots = [{}, {}]; let best = null, cur = null, si = 0;
+  ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) { best = best || slots[si]; best.label = label; best.fn = fn; best.pri = pri; } };
+  ctx.flushOffer = () => { cur = best; best = null; si ^= 1; act.hidden = !cur || ctx.player.frozen; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
   act.onclick = () => cur && cur.fn();
   addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
 }
@@ -119,6 +120,12 @@ document.getElementById('bMenu').onclick = () => school.menu();
 
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
 const clock = new THREE.Clock(), stepDt = createDt();
+function warm() {
+  const rt = renderer.getRenderTarget(); renderer.setRenderTarget(post.composer.readBuffer); renderer.compileAsync(scene, camera).catch(() => {}); renderer.setRenderTarget(rt);
+  // biên dịch với render target hậu kỳ (đúng biến thể shader); tải sẵn texture lên GPU (biển chữ canvas, model): lần đầu vật vào khung hình không phải chờ tải ảnh
+  const T = new Set(); scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) for (const k in m) { const v = m[k]; if (v && v.isTexture && !v.isRenderTargetTexture) T.add(v); } });
+  for (const t of T) renderer.initTexture(t);
+}
 const perf = ctx.perf = createPerf(ctx); // cắt vật nhỏ ở xa, viền, người/thú ngoài khung hình (perf.js)
 window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
@@ -153,8 +160,8 @@ renderer.setAnimationLoop(() => {
   // biên dịch ĐÚNG biến thể: cảnh vẽ vào render target hậu kỳ (màu tuyến tính, không tone mapping) — biên dịch khi chưa đặt
   // render target ra biến thể "màn hình" (sRGB + ACES) không bao giờ dùng → phí công, lúc vẽ thật lại khựng biên dịch lần nữa.
   // Sau đó: mỗi 5 s, nếu cảnh có vật mới (khu/model nạp thêm, đèn đêm bật…) → biên dịch trước phần mới.
-  if (!ctx.warmed && school.ready && !player.frozen && !document.body.classList.contains('rs-modal') && (ctx.warmT = (ctx.warmT || 0) + dt) > 1.618) { ctx.warmed = true; warmShaders(); }
-  else if (ctx.warmed && (ctx.warmT += dt) > 5) { ctx.warmT = 0; const sig = scene.children.length + ':' + perf.list.length + ':' + (sky.state.night > 0.5); if (sig !== ctx.warmSig) { ctx.warmSig = sig; warmShaders(); } }
+  if (!ctx.warmed && school.ready && !player.frozen && !document.body.classList.contains('rs-modal') && (ctx.warmT = (ctx.warmT || 0) + dt) > 1.618) { ctx.warmed = true; warm(); }
+  else if (ctx.warmed && (ctx.warmT += dt) > 5) { ctx.warmT = 0; const sig = scene.children.length + ':' + perf.list.length + ':' + (sky.state.night > 0.5); if (sig !== ctx.warmSig) { ctx.warmSig = sig; warm(); } }
   // bóng đổ thưa (điện thoại): vẽ lại bản đồ bóng mỗi 2 khung (cây/nhà đứng yên; người/xe ở 30 Hz vẫn mượt) → pass bóng tốn ½
   if (CFG.isMobile) { renderer.shadowMap.autoUpdate = false; if ((ctx.shF = (ctx.shF || 0) + 1) % 2 === 1) renderer.shadowMap.needsUpdate = true; }
   if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
@@ -162,10 +169,6 @@ renderer.setAnimationLoop(() => {
   quality(dt);
 });
 
-function warmShaders() {
-  const prev = renderer.getRenderTarget(); renderer.setRenderTarget(post.composer.renderTarget1);   // compile() lấy biến thể theo render target hiện tại
-  try { renderer.compileAsync(scene, camera).catch(() => {}); } catch (e) {} finally { renderer.setRenderTarget(prev); }
-}
 // ---------- Lưới an toàn: nhân vật bị khoá (player.frozen) mà không còn bảng nào mở → mở khoá ----------
 // Cờ frozen dùng chung (bảng trường, bản đồ, câu đố đền, sổ bí mật, bảng φ & π); bên này đóng/mở chồng lên bên kia
 // (vd. mở bản đồ khi bảng trường đang mở → đóng bản đồ khôi phục frozen = true) làm nhân vật đứng yên mãi.

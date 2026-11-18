@@ -190,7 +190,8 @@ export function createTerrain(scene) {
     const fill = (m, idx) => { for (let j = 0; j < idx.length; j++) { const q = items[idx[j]]; m.setMatrixAt(j, q.m); m.setColorAt(j, q.c); } m.count = idx.length; m.visible = idx.length > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
     set.relayout = p => {
       set.last.copy(p); if (!set.near) return;
-      const dNear = def.dist === 'tree' ? state.treeDist : def.dist === 'grass' ? state.grassDist : def.dist === 'flower' ? state.grassDist * 0.75 : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = set._a || (set._a = []), b = set._b || (set._b = []), c = set._c || (set._c = []);
+      // bay cao (> 21 m): bụi, hoa, nấm, sỏi, gốc cây chỉ còn vài điểm ảnh → ẩn hết (cây, đá lớn giữ nguyên)
+      const dNear = def.dist === 'tree' ? state.treeDist : state.high ? 0 : def.dist === 'grass' ? state.grassDist : def.dist === 'flower' ? state.grassDist * 0.75 : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = set._a || (set._a = []), b = set._b || (set._b = []), c = set._c || (set._c = []);
       a.length = b.length = c.length = 0; const n2 = dNear * dNear, f2 = dFar * dFar, l2 = set.lod ? LOD_D * LOD_D : 1e12;   // dùng lại mảng, so bình phương khoảng cách (không tạo rác mỗi lần)
       // tắt bóng đổ (chất lượng 3) → gần/xa như nhau: gộp hết vào 1 mesh, đỡ 1 draw call mỗi loại
       const one = !state.shadows; for (let k = 0; k < items.length; k++) { const e = items[k].m.elements, dx = e[12] - p.x, dz = e[14] - p.z, d = dx * dx + dz * dz; if (d < n2) a.push(k); else if (set.far && d < f2) (d > l2 ? c : one ? a : b).push(k); }
@@ -233,13 +234,15 @@ export function createTerrain(scene) {
     m.computeBoundingSphere(); m.receiveShadow = true; scene.add(m); grass.push({ m, x: cx / list.length, z: cz / list.length });
   }
 
-  let lodT = 0; const lodQ = []; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55, shadows: true };
+  let lodT = 0; const lodQ = []; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55, shadows: true, high: false };
   function update(dt, t, player) {
     WIND.uTime.value = t; ocean.update();
     if (player) WIND.uPlayer.value.copy(player);
     if ((lodT += dt) > 0.4 && player) {
-      lodT = 0; for (const c of grass) c.m.visible = Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist;
-      for (const L of lodSets) if (!L.queued && L.at.distanceToSquared(player) > 9) { L.queued = true; lodQ.push(L); }
+      lodT = 0; const high = player.y - Math.max(heightAt(player.x, player.z), W) > 21;   // bay cao 21 m (Fibonacci): cỏ, hoa… không còn thấy
+      const flip = high !== state.high; state.high = high;
+      for (const c of grass) c.m.visible = !high && Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist;
+      for (const L of lodSets) if (!L.queued && (flip || L.at.distanceToSquared(player) > 9)) { L.queued = true; lodQ.push(L); }
     }
     // chia lại gần/xa: mỗi khung 1 loại (trước: cả 14 loại × hàng nghìn vật trong 1 khung → khựng khi đi bộ)
     if (lodQ.length && player) { const L = lodQ.shift(); L.queued = false; L.at.copy(player); L.relayout(player); }

@@ -217,7 +217,8 @@ export function createVehicles(ctx) {
     fragmentShader: 'varying float vL; void main(){ float d = length(gl_PointCoord-.5); gl_FragColor = vec4(1.,1.,1., smoothstep(.5,.3,d)*smoothstep(.15,.3,d)*vL*0.8); }' }));
   wake.frustumCulled = false; scene.add(wake); let wi = 0;
 
-  let scanT = 0, edge = null, landPt = null;
+  let scanT = 0, edge = null, landPt = null; const legs = { m: null, L: null, R: null };
+  const boardEdge = () => edge && boardBoatAt(edge), goLand = () => landPt && dismount(landPt);   // tạo 1 lần, không tạo hàm mới mỗi khung
   function update(dt) {
     clock += dt; if (!townDone) placeTown();
     bellT -= dt;
@@ -229,10 +230,10 @@ export function createVehicles(ctx) {
 
     if (!cur) {
       if (pl.frozen) return;
-      const b = nearest('bike', 2.6); if (b) ctx.offer('🚲 Lên xe', () => mount(b), 3);
+      const b = nearest('bike', 2.6); if (b) ctx.offer('🚲 Lên xe', b.mountFn || (b.mountFn = () => mount(b)), 3);
       const bl = nearest('balloon', 3.5); if (bl) ctx.offer('🎈 Lên khinh khí cầu', toggleBalloon, 3);
       if ((scanT -= dt) <= 0) { scanT = 0.25; edge = onLand() && p.y < W + 3.5 && pl.grounded ? findAround(isWater, 1.5, 4.5) : null; }
-      if (edge) { const e = edge; ctx.offer('⛵ Lên thuyền', () => boardBoatAt(e), 1); }
+      if (edge) ctx.offer('⛵ Lên thuyền', boardEdge, 1);
       return;
     }
     const g = cur.group, sp = pl.speed, wr = lastRot === null ? 0 : wrapAngle(pl.rot - lastRot) / Math.max(dt, 1e-3), acc = (sp - lastSp) / Math.max(dt, 1e-3); // tốc độ rẽ (rad/s), gia tốc
@@ -242,19 +243,20 @@ export function createVehicles(ctx) {
       // nghiêng khi rẽ: theo tốc độ quay của hướng đi
       lean = damp(lean, THREE.MathUtils.clamp(-wr * sp * 0.035, -0.4, 0.4), leanSt, T.quick, dt); pl.root.rotation.z = lean; // nghiêng vào cua (lò xo)
       pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.012, -0.06, 0.04), pitchSt, T.soft, dt); pl.root.rotation.x = pitch;     // phanh: chúi đầu xe nhẹ
-      const hero = pl.hero; if (hero) { const L = (hero.model.getObjectByName('leg-left') || hero.model.getObjectByName('upperlegl')), R = (hero.model.getObjectByName('leg-right') || hero.model.getObjectByName('upperlegr')), a = spin * 0.55; if (L && R) { L.rotateX(Math.sin(a) * 0.55 - 0.25); R.rotateX(-Math.sin(a) * 0.55 - 0.25); } }
+      const hero = pl.hero; if (hero) { if (legs.m !== hero.model) { const M = hero.model; legs.m = M; legs.L = M.getObjectByName('leg-left') || M.getObjectByName('upperlegl'); legs.R = M.getObjectByName('leg-right') || M.getObjectByName('upperlegr'); }   // tìm xương 1 lần (trước: duyệt cây xương 4 lần mỗi khung)
+        const L = legs.L, R = legs.R, a = spin * 0.55; if (L && R) { L.rotateX(Math.sin(a) * 0.55 - 0.25); R.rotateX(-Math.sin(a) * 0.55 - 0.25); } }
       ctx.offer('🚶 Xuống xe', dismount, 0.5);
       if (!onLand()) { /* xe không xuống nước: player.js đã chặn */ }
     } else if (cur.type === 'boat') {
       rowT += dt * (0.8 + Math.min(1, sp / 3) * 2.2) * (sp > 0.3 ? 1 : 0.25);
-      cur.oars.forEach((o, i) => { const s = i ? 1 : -1; o.rotation.y = s * Math.sin(rowT * 2) * 0.55; o.rotation.z = s * (Math.cos(rowT * 2) * 0.18 - 0.05); });
+      for (let i = 0; i < 2; i++) { const o = cur.oars[i], s = i ? 1 : -1; o.rotation.y = s * Math.sin(rowT * 2) * 0.55; o.rotation.z = s * (Math.cos(rowT * 2) * 0.18 - 0.05); }
       if (sp > 0.6 && Math.sin(rowT * 2) > 0.95 && (update.splashT ?? 0) < clock) { update.splashT = clock + 0.5; ctx.sfx('splash'); }
       // dập dềnh + nghiêng ra ngoài khi rẽ + ngóc mũi khi tăng tốc (lò xo, không giật)
       roll = damp(roll, THREE.MathUtils.clamp(wr * sp * 0.025, -0.12, 0.12), rollSt, T.soft, dt); pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.04, -0.08, 0.06), pitchSt, T.slow, dt);
       pl.root.rotation.z = Math.sin(clock * 1.3 + p.x) * 0.05 + roll; pl.root.rotation.x = Math.sin(clock * 1.7 + p.z) * 0.035 + pitch;
-      if (sp > 0.5 && (wakeT -= dt) <= 0) { wakeT = 0.07; const i = wi++ % NW, r = pl.rot; wp.set([p.x - Math.sin(r) * 1.6 + (Math.random() - 0.5) * 0.5, W + 0.05, p.z - Math.cos(r) * 1.6 + (Math.random() - 0.5) * 0.5], i * 3); wl[i] = 1; wg.attributes.position.needsUpdate = true; }
+      if (sp > 0.5 && (wakeT -= dt) <= 0) { wakeT = 0.07; const i = wi++ % NW, r = pl.rot; wp[i * 3] = p.x - Math.sin(r) * 1.6 + (Math.random() - 0.5) * 0.5; wp[i * 3 + 1] = W + 0.05; wp[i * 3 + 2] = p.z - Math.cos(r) * 1.6 + (Math.random() - 0.5) * 0.5; wl[i] = 1; wg.attributes.position.needsUpdate = true; }
       if ((scanT -= dt) <= 0) { scanT = 0.25; landPt = findAround(landOK, 1.2, 3.6); }
-      if (landPt) { const L = landPt; ctx.offer('🏝️ Lên bờ', () => dismount(L), 4); }
+      if (landPt) ctx.offer('🏝️ Lên bờ', goLand, 4);
     } else { // balloon
       const up = keys.has('Space') || held.up, down = keys.has('ShiftLeft') || keys.has('ShiftRight') || keys.has('KeyC') || held.down;
       takeoff -= dt; const want = takeoff > 0 ? 3.5 : up ? 4 : down ? -3.5 : 0; lift += (want - lift) * Math.min(1, dt * 3); V.lift = lift;

@@ -120,9 +120,10 @@ function makePlane(st, pilot = false) {
   return { group: g, prop, disc, style: st, seat: new THREE.Vector3(0, 0.95, -0.05) };
 }
 
-// Âm thanh động cơ piston (tự tổng hợp, lặp 1 giây không vấp)
+// Âm thanh động cơ piston (tự tổng hợp, lặp 1/3 giây không vấp: 18, 27, 54, 108, 162 Hz đều tròn chu kỳ trong 1/3 s;
+// trước 1 s → tổng hợp lâu gấp 3, khựng ~16 ms máy tính / ~80 ms điện thoại lúc âm thanh bật)
 function engineBuffer(ac) {
-  const sr = ac.sampleRate, n = sr, b = ac.createBuffer(1, n, sr), d = b.getChannelData(0); let lp = 0;
+  const sr = ac.sampleRate, n = Math.round(sr / 3), b = ac.createBuffer(1, n, sr), d = b.getChannelData(0); let lp = 0;
   for (let i = 0; i < n; i++) {
     const t = i / sr, beat = 0.55 + 0.45 * Math.max(0, Math.sin(2 * Math.PI * 18 * t));
     const s = 0.5 * Math.sin(2 * Math.PI * 54 * t) + 0.28 * Math.sin(2 * Math.PI * 108 * t) + 0.16 * Math.sign(Math.sin(2 * Math.PI * 27 * t)) + 0.12 * Math.sin(2 * Math.PI * 162 * t);
@@ -205,12 +206,12 @@ export function createAircraft(ctx) {
     pl.group.rotation.set(-0.1, 0, 0); scene.add(pl.group); pl.parked = true; pl.spin = 0; planes.push(pl);
   });
   // máy bay tự bay vòng quanh bầu trời (có phi công)
-  const routes = [
-    t => [CENTER[0] + Math.cos(t) * 190, 62 + Math.sin(t * 3) * 6, CENTER[1] + Math.sin(t) * 140],
-    t => [CENTER[0] + Math.sin(t) * 160, 48 + Math.sin(t * 2) * 8, CENTER[1] + Math.sin(t * 2) * 90],          // hình số 8
-    t => [CENTER[0] - 40 + Math.cos(-t) * 120, 78 + Math.cos(t * 2) * 5, CENTER[1] + 20 + Math.sin(-t) * 110],
-    t => [CENTER[0] + 60 + Math.cos(t) * 150, 38 + Math.sin(t * 4) * 4, CENTER[1] - 30 + Math.sin(t) * 75],
-    t => [CENTER[0] + Math.cos(-t) * 230, 92, CENTER[1] + Math.sin(-t) * 165],
+  const routes = [   // ghi vào mảng o có sẵn (không tạo mảng mới mỗi khung)
+    (t, o) => (o[0] = CENTER[0] + Math.cos(t) * 190, o[1] = 62 + Math.sin(t * 3) * 6, o[2] = CENTER[1] + Math.sin(t) * 140, o),
+    (t, o) => (o[0] = CENTER[0] + Math.sin(t) * 160, o[1] = 48 + Math.sin(t * 2) * 8, o[2] = CENTER[1] + Math.sin(t * 2) * 90, o),          // hình số 8
+    (t, o) => (o[0] = CENTER[0] - 40 + Math.cos(-t) * 120, o[1] = 78 + Math.cos(t * 2) * 5, o[2] = CENTER[1] + 20 + Math.sin(-t) * 110, o),
+    (t, o) => (o[0] = CENTER[0] + 60 + Math.cos(t) * 150, o[1] = 38 + Math.sin(t * 4) * 4, o[2] = CENTER[1] - 30 + Math.sin(t) * 75, o),
+    (t, o) => (o[0] = CENTER[0] + Math.cos(-t) * 230, o[1] = 92, o[2] = CENTER[1] + Math.sin(-t) * 165, o),
   ];
   const AI = ['nghe', 'hailau', 'tim', 'luc', 'hoanggia'].slice(0, mobile ? 4 : 5).map((k, i) => {
     const pl = makePlane(STYLES[k], true); pl.route = routes[i]; pl.t = i * 1.7; pl.speed = 20 + i * 2.5; pl.roll = 0; pl.spin = 0;
@@ -353,12 +354,12 @@ export function createAircraft(ctx) {
     if (phase === 'fly' && (factT -= dt) <= 0) { factT = 22; ctx.toast('💡 ' + FACTS[factI++ % FACTS.length], 6500); }
   }
 
-  let welcomed = false;
+  let welcomed = false; const RA = [0, 0, 0], RB = [0, 0, 0];
   function update(dt, t) {
     if (!eng) initSound();
     // máy bay AI bay theo quỹ đạo, nghiêng cánh khi rẽ
     for (const pl of AI) {
-      const a = pl.route(pl.t), b = pl.route(pl.t + 0.01), len = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]) / 0.01;
+      const a = pl.route(pl.t, RA), b = pl.route(pl.t + 0.01, RB), len = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]) / 0.01;
       pl.t += pl.speed * dt / Math.max(1, len);
       const hd = Math.atan2(b[0] - a[0], b[2] - a[2]), pt = Math.atan2(b[1] - a[1], Math.hypot(b[0] - a[0], b[2] - a[2]));
       let dh = hd - (pl.yaw ?? hd); dh = Math.atan2(Math.sin(dh), Math.cos(dh)); pl.yaw = hd;
@@ -376,7 +377,7 @@ export function createAircraft(ctx) {
     if (player.vehicle) return;
     let best = null, bd = 5.5;
     for (const pl of planes) if (pl.parked) { const d = Math.hypot(pl.group.position.x - pp.x, pl.group.position.z - pp.z); if (d < bd && Math.abs(pl.group.position.y - pp.y) < 4) { bd = d; best = pl; } }
-    if (best) ctx.offer('✈️ Lái máy bay ' + best.style.name, () => board(best), 7);
+    if (best) ctx.offer(best.label || (best.label = '✈️ Lái máy bay ' + best.style.name), best.boardFn || (best.boardFn = () => board(best)), 7);
   }
 
   return { update, planes, birds: NB, board: () => board(planes[0]), land, get flying() { return !!me; }, get phase() { return phase; } };
