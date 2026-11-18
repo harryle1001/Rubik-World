@@ -326,7 +326,7 @@ export function buildSchoolZone(a) {
     const green = mergeGeometries([blob(1.7, 0, 2.6, 0), blob(1.2, 1.3, 2.45, 0.4), blob(1.2, -1.3, 2.5, -0.3), blob(1.1, 0.2, 2.45, 1.3), blob(1.1, -0.2, 2.5, -1.3)].map(g0));
     const red = mergeGeometries([blob(1.4, 0.1, 3.05, 0, 0.4), blob(1.0, 1.25, 2.85, 0.5, 0.42), blob(1.0, -1.2, 2.9, -0.4, 0.42), blob(0.9, -0.3, 2.85, 1.25, 0.42), blob(0.9, 0.4, 2.9, -1.2, 0.42)].map(g0));
     for (const g of [green, red]) g.computeVertexNormals();
-    const REDS = [C.R, PH('roofL'), PH('rubikR')];
+    const REDS = [PH('flowerRed'), C.R, SH('flowerRed', 0.854)];
     const mk = (geo, material, colOf) => {
       const im = new THREE.InstancedMesh(geo, material, phuong.length);
       phuong.forEach(([x, z, s], i) => { _o.position.set(x, Y + 0.4, z); _o.rotation.set(0, (x * 7 + z) % 6.28, 0); _o.scale.setScalar(s); _o.updateMatrix(); im.setMatrixAt(i, _o.matrix); if (colOf) im.setColorAt(i, new THREE.Color(colOf(i))); });
