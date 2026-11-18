@@ -64,6 +64,9 @@ function makeBalloon() {
 export function createVehicles(ctx) {
   const { scene, terrain } = ctx, pl = ctx.player;
   const sup = (x, z, y = 9) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, y) : -99);
+  // nóc hộp (mái nhà, bậc cao) ngay dưới chân — sup() chỉ tính địa hình + sàn thị trấn
+  const boxTop = (x, z, y) => { let t = -99; for (const b of (ctx.grid ? ctx.grid.near(x, z).boxes : ctx.boxes || [])) if (b.top <= y + 0.6 && b.top > t && x > b.x0 - 0.15 && x < b.x1 + 0.15 && z > b.z0 - 0.15 && z < b.z1 + 0.15) t = b.top; return t; };
+  const supB = (x, z, y) => Math.max(sup(x, z, y + 1), boxTop(x, z, y));
   const isWater = (x, z) => sup(x, z) < W - 0.3 && sup(x + 0.9, z) < W - 0.2 && sup(x - 0.9, z) < W - 0.2 && sup(x, z + 0.9) < W - 0.2 && sup(x, z - 0.9) < W - 0.2;
   const waterY = (x, z, t = clock) => W - 0.02 + Math.sin(t * 1.6 + x * 0.35) * 0.06 + Math.sin(t * 1.1 + z * 0.42) * 0.05;
   let clock = 0;
@@ -104,10 +107,11 @@ export function createVehicles(ctx) {
   let cur = null, mine = { bike: null, boat: null, balloon: null }, lean = 0, rowT = 0, wakeT = 0, bellT = 0, lift = 0, takeoff = 0, burnT = 0;
   let myStyle = +(localStorage.getItem('island.bike') || 0);
   const ui = id => document.getElementById(id);
+  function dimUI() { for (const [id, k] of [['bBike', 'bike'], ['bBalloon', 'balloon']]) { const r = why(k), b = ui(id); b.classList.toggle('off', !!r); b.title = r ? r.replace(/^\S+ /, '') : k === 'bike' ? 'Xe đạp (B)' : 'Khinh khí cầu (F)'; } }
   function setUI() {
     const t = cur && cur.type, fly = cur && cur.mode.fly;
     ui('bBike').textContent = t === 'bike' ? '🚶' : '🚲'; ui('bBalloon').innerHTML = t === 'balloon' ? '🚶' : ICON.balloon;
-    ui('bBell').hidden = ui('bStyle').hidden = t !== 'bike'; ui('bUp').hidden = ui('bDown').hidden = !fly;
+    dimUI(); ui('bBell').hidden = ui('bStyle').hidden = t !== 'bike'; ui('bUp').hidden = ui('bDown').hidden = !fly;
     ui('bJump').hidden = !!t; ui('bRun').hidden = !!t && !cur.mode.boost; ui('bRun').textContent = t ? 'Nhanh' : 'Chạy';
   }
   const say = (v, txt, ms = 3500) => ctx.toast(txt, ms);
@@ -115,7 +119,7 @@ export function createVehicles(ctx) {
     if (cur || pl.frozen) return;
     cur = v; lastRot = null; lastSp = 0; lean = roll = pitch = 0; leanSt.v = rollSt.v = pitchSt.v = 0; const g = v.group, x = g.position.x, z = g.position.z, r = g.rotation.y;
     if (v.type === 'boat') pl.teleport(x, z, waterY(x, z));
-    else pl.teleport(x, z, v.mode.fly ? Math.max(g.position.y, sup(x, z, g.position.y + 1)) : sup(x, z, g.position.y + 1));
+    else pl.teleport(x, z, v.mode.fly ? Math.max(g.position.y, supB(x, z, g.position.y)) : supB(x, z, g.position.y));   // trên mái: không tụt vào nhà
     if (g.parent) g.parent.remove(g); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); pl.root.add(g);
     pl.vehicle = Object.assign({}, v.mode); pl.setRot(r); lift = 0; takeoff = v.takeoff || 0;
     v.onMount && v.onMount();
@@ -132,8 +136,8 @@ export function createVehicles(ctx) {
     const r = pl.rot, p = pl.pos;
     g.rotation.set(0, r, 0); scene.add(g);
     if (v.type === 'boat') { g.position.set(p.x, waterY(p.x, p.z), p.z); pl.teleport(land[0], land[1], sup(land[0], land[1], 9)); ctx.sfx('splash'); }
-    else if (v.type === 'bike') g.position.set(p.x + Math.cos(r) * 0.9, sup(p.x, p.z, p.y + 1), p.z - Math.sin(r) * 0.9);
-    else { g.position.set(p.x, p.y, p.z); const sx = p.x + Math.cos(r) * (v.side || 1.4), sz = p.z - Math.sin(r) * (v.side || 1.4); pl.teleport(sx, sz, sup(sx, sz, p.y + 1)); }
+    else if (v.type === 'bike') g.position.set(p.x + Math.cos(r) * 0.9, supB(p.x, p.z, p.y), p.z - Math.sin(r) * 0.9);
+    else { g.position.set(p.x, p.y, p.z); const sx = p.x + Math.cos(r) * (v.side || 1.4), sz = p.z - Math.sin(r) * (v.side || 1.4); pl.teleport(sx, sz, supB(sx, sz, p.y)); }
     v.onDismount && v.onDismount();
     setUI();
   }
@@ -142,9 +146,12 @@ export function createVehicles(ctx) {
   const nearest = (type, R) => { let best = null, bd = R; for (const v of all) if (v.type === type && v !== cur && v.group.parent === scene) { const d = Math.hypot(v.group.position.x - pl.pos.x, v.group.position.z - pl.pos.z); if (d < bd && Math.abs(v.group.position.y - pl.pos.y) < 3) { bd = d; best = v; } } return best; };
   const onLand = () => sup(pl.pos.x, pl.pos.z, pl.pos.y) > W - 0.3;
   const bring = v => { register(v); if (v.group.parent) v.group.parent.remove(v.group); v.group.position.copy(pl.pos); v.group.rotation.set(0, pl.rot, 0); scene.add(v.group); return v; };
+  // lý do không lên xe/khinh khí cầu được lúc này (null = được) → nút mờ + tooltip, bấm thì báo
+  const why = type => cur ? (cur.type === type ? null : '🚶 Xuống phương tiện đang đi trước đã') : pl.frozen ? '⏳ Đang bận' : (ctx.dive && ctx.dive.swimming) || !onLand() ? '🌊 Đang ở dưới nước — lên bờ rồi mới đi ' + (type === 'bike' ? 'xe đạp' : 'khinh khí cầu') : null;
+  const deny = type => { const r = why(type); if (r) ctx.toast(r, 2200); return !!r; };
   function toggleBike() {
     if (cur && cur.type === 'bike') return dismount();
-    if (cur || !onLand() || !pl.grounded) return;
+    if (deny('bike') || !pl.grounded) return;
     let v = nearest('bike', 4);
     if (!v) { if (!mine.bike || mine.bike.style !== myStyle) mine.bike = makeBike(myStyle); v = bring(mine.bike); }
     mount(v);
@@ -157,8 +164,8 @@ export function createVehicles(ctx) {
   }
   function toggleBalloon() {
     if (cur && cur.type === 'balloon') return dismount();
-    if (cur || !onLand() || !pl.grounded) return;
-    if ((ctx.boxes || []).some(b => pl.pos.x > b.x0 - 3 && pl.pos.x < b.x1 + 3 && pl.pos.z > b.z0 - 3 && pl.pos.z < b.z1 + 3 && b.top > pl.pos.y + 1)) { ctx.toast(`${ICON.balloon} Chỗ này chật quá, ra chỗ trống để thả khinh khí cầu!`, 2200); return; }
+    if (deny('balloon') || !pl.grounded) return;
+    if (pl.pos.y > 0.9 && Math.max(ctx.groundExtra ? ctx.groundExtra(pl.pos.x, pl.pos.z, pl.pos.y) : -99, boxTop(pl.pos.x, pl.pos.z, pl.pos.y)) > pl.pos.y - 0.3 && (ctx.boxes || []).some(b => pl.pos.x > b.x0 - 3 && pl.pos.x < b.x1 + 3 && pl.pos.z > b.z0 - 3 && pl.pos.z < b.z1 + 3 && b.top > pl.pos.y + 1)) { ctx.toast(`${ICON.balloon} Chỗ này chật quá, ra chỗ trống để thả khinh khí cầu!`, 2200); return; }
     const v = nearest('balloon', 6) || bring(mine.balloon || (mine.balloon = balloon()));
     mount(v);
   }
@@ -208,7 +215,7 @@ export function createVehicles(ctx) {
     if (!cur) {
       if (pl.frozen) return;
       const v = nearestAny(); if (v) { if (v.offer) v.offer(); else ctx.offer(v.label, () => v.type === 'balloon' ? toggleBalloon() : mount(v), 3); } // thú cưỡi tự quyết định nhãn (thuần phục / cưỡi)
-      if ((scanT -= dt) <= 0) { scanT = 0.25; edge = onLand() && p.y < W + 3.5 && pl.grounded ? findAround(isWater, 1.5, 4.5) : null; }
+      if ((scanT -= dt) <= 0) { dimUI(); scanT = 0.25; edge = onLand() && p.y < W + 3.5 && pl.grounded ? findAround(isWater, 1.5, 4.5) : null; }
       if (edge) ctx.offer('⛵ Lên thuyền', boardEdge, 1);
       return;
     }
@@ -233,6 +240,7 @@ export function createVehicles(ctx) {
       const hero = pl.hero; if (hero) { if (legs.m !== hero.model) { const M = hero.model; legs.m = M; legs.L = M.getObjectByName('leg-left') || M.getObjectByName('upperlegl'); legs.R = M.getObjectByName('leg-right') || M.getObjectByName('upperlegr'); }   // tìm xương 1 lần (trước: duyệt cây xương 4 lần mỗi khung)
         const L = legs.L, R = legs.R, a = cur.crank.rotation.x; if (L && R) { L.rotateX(Math.sin(a) * 0.55 - 0.25); R.rotateX(-Math.sin(a) * 0.55 - 0.25); } }
       ctx.offer('🚶 Xuống xe', dismount, 0.5);
+      if (pl.hitWater) { pl.hitWater = false; if (clock > (update.waterT ?? 0)) { update.waterT = clock + 3; ctx.toast('🌊 Xe không chạy dưới nước — đi thuyền ⛵ hoặc xuống xe bơi nhé!', 2600); } } // player.js chặn ở mép nước + bật lùi
     } else if (cur.type === 'boat') {
       rowT += dt * (0.8 + Math.min(1, sp / 3) * 2.2) * (sp > 0.3 ? 1 : 0.25);
       for (let i = 0; i < cur.oars.length; i++) { const o = cur.oars[i], s = i ? 1 : -1; o.rotation.y = s * Math.sin(rowT * 2) * 0.55; o.rotation.z = s * (Math.cos(rowT * 2) * 0.18 - 0.05); }

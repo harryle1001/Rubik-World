@@ -271,7 +271,8 @@ export function createDive(ctx) {
     // chỉnh màu hậu kỳ (dùng pass màu sẵn có): ngả lam-ngọc, giảm bão hoà, vignette đậm hơn khi sâu
     const G = ctx.post && ctx.post.grade;
     if (G) {
-      G.uGain.value.set(0.66, 0.93, 1.02).multiplyScalar(lerp(1.08, 0.78, k));   // nước hút đỏ trước G.uLift.value.set(0.0, 0.012, 0.025).multiplyScalar(1 - k);
+      G.uGain.value.set(0.66, 0.93, 1.02).multiplyScalar(lerp(1.08, 0.78, k));   // nước hút đỏ trước
+      G.uLift.value.set(0.0, 0.012, 0.025).multiplyScalar(1 - k);
       G.uSat.value = lerp(0.92, 0.75, k); G.uCon.value = 1.0; G.uAmt.value = lerp(0.3, 0.5, k); G.uRays.value = 0.5 * day * (1 - k);
     }
   };

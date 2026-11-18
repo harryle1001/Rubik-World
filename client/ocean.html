@@ -24,7 +24,7 @@ canvas{touch-action:none}
 [hidden]{display:none!important}
 .vbtns{position:fixed;right:max(12px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:26}
 .vbtns button{width:52px;height:52px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:24px;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer}
-body.rs-modal .vbtns{display:none}@media (pointer:fine){#info{bottom:max(12px,env(safe-area-inset-bottom))}}
+.vbtns button.off{opacity:.38;filter:grayscale(1)}body.rs-modal .vbtns{display:none}@media (pointer:fine){#info{bottom:max(12px,env(safe-area-inset-bottom))}}
 #bUp{background:#d8632acc}#bDown{background:#3d6fb0cc}
 #whistle{position:fixed;right:calc(max(12px,env(safe-area-inset-right)) + 63px);top:50%;transform:translateY(-50%);z-index:27;background:#1b1626e6;border:2px solid #fff6;border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:6px;max-height:55vh;overflow:auto;color:#fff;font:700 14px system-ui;min-width:190px}
 #whistle button{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:12px;border:0;background:#ffffff1c;color:#fff;font:700 15px system-ui;text-align:left;cursor:pointer}#whistle button:hover{background:#ffffff33}#whistle small{opacity:.7;font-weight:500}
