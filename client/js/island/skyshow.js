@@ -229,7 +229,7 @@ export function createSkyshow(ctx) {
 
   // ---------- Mỗi khung hình (gọi sau player/sky/weather) ----------
   let placeT = 0, spT = 3;
-  const tmp = new THREE.Vector3();
+  const tmp = new THREE.Vector3(), WHITE = new THREE.Color(1, 1, 1);
   function update(dt) {
     const t = (SU.uT.value += dt), S = sky.state, h = S.hour, W = ctx.weather ? ctx.weather.cur : { c: 0, r: 0, w: 0 }, q = ctx.qualityLevel || 0, cam = camera.position;
     if ((placeT -= dt) <= 0) { placeT = 0.5; placeStars(); }
@@ -255,7 +255,8 @@ export function createSkyshow(ctx) {
     const wa = ctx.living ? ctx.living.wind.ang : 0.38; CU.uOff.value.x += Math.cos(wa) * (2 + W.w * 6) * dt; CU.uOff.value.y += Math.sin(wa) * (2 + W.w * 6) * dt;
     cirrus.visible = q < 2; cirrus.position.set(cam.x, cam.y + 140, cam.z);
     CU.uA.value = (0.32 + W.c * 0.3) * (1 - W.r * 0.8) * (0.25 + 0.75 * (1 - S.night * 0.7));
-    CU.uCol.value.copy(S.cloudTint).lerp(tmp.set(1, 1, 1), 0.2 * (1 - S.low)).multiplyScalar(0.6 + 0.4 * (1 - S.night));
+    CU.uCol.value.copy(S.cloudTint).lerp(WHITE, 0.2 * (1 - S.low))   // Color.lerp cần Color (Vector3 → NaN → bloom đen màn hình)
+     .multiplyScalar(0.6 + 0.4 * (1 - S.night));
     if (S.low > 0.5 && W.c < 0.5) fact('cirrus', 6500);
 
     // ngắm trời: nằm ngửa, camera ngửa lên
