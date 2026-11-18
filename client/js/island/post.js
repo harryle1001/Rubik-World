@@ -1,10 +1,11 @@
-// post.js — Hậu kỳ: tone mapping ACES + MSAA 4x (máy yếu tự giảm 2x → tắt) + lọc dị hướng texture + bloom nhẹ + làm nét thích ứng + tia nắng + chỉnh màu theo giờ + vignette (không dùng SSAO cho nhẹ máy). Tắt bloom được khi máy yếu.
+// post.js — Hậu kỳ gộp 1 pass: làm nét thích ứng + tia nắng + chỉnh màu theo giờ + vignette + tone mapping ACES + sRGB (trước: 2 pass toàn màn hình,
+//   pass sau đọc lại cả ảnh half-float chỉ để tone map) · MSAA trong render target (máy yếu tự giảm 2x → tắt) · lọc dị hướng · bloom nhẹ
+//   (điện thoại: chỉ ở ✨ Đẹp, tính ở 1/4 độ phân giải). Không SSAO cho nhẹ máy.
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { CFG } from './config.js';
 
 export function createPost(renderer, scene, camera) {
@@ -16,22 +17,24 @@ export function createPost(renderer, scene, camera) {
   // NaN → điểm đen; bloom/làm nét lan NaN sang cả vùng → màn hình đen. Kiểm tra bằng bit (isnan bị fast-math của Metal/ANGLE bỏ qua).
   const FIN = `bool nfBad(float x){ return (floatBitsToUint(x) & 0x7f800000u) == 0x7f800000u; }
       vec3 fin(vec3 c){ return (nfBad(c.r) || nfBad(c.g) || nfBad(c.b)) ? vec3(0.) : min(c, vec3(64.)); }`;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = Q.exposure;   // OutputPass áp dụng
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = Q.exposure;   // pass cuối áp dụng (đọc mỗi khung: brightness.js đổi)
   // khử răng cưa MSAA ngay trong render target của hậu kỳ (sắc nét, không nhoè như FXAA)
   const pr = renderer.getPixelRatio(), rt = new THREE.WebGLRenderTarget(innerWidth * pr, innerHeight * pr, { type: THREE.HalfFloatType, samples: Q.msaa });
   const composer = new EffectComposer(renderer, rt);
   composer.addPass(new RenderPass(scene, camera));
-  // bloom tính ở nửa độ phân giải cho nhẹ
-  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), Q.bloomStrength, Q.bloomRadius, Q.bloomThreshold);
+  // bloom tính ở nửa độ phân giải (điện thoại 1/4: 5 tầng mờ × 2 lượt rất tốn băng thông)
+  const BD = CFG.isMobile ? 4 : 2;
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth / BD, innerHeight / BD), Q.bloomStrength, Q.bloomRadius, Q.bloomThreshold);
   composer.addPass(bloom);
   // bloom lấy điểm sáng → làm mờ rộng: 1 điểm NaN thành cả vùng đen → lọc NaN ngay ở bước lấy điểm sáng
   { const m = bloom.materialHighPassFilter; m.fragmentShader = m.fragmentShader.replace('void main() {', FIN + '\n void main() {').replace('vec4 texel = texture2D( tDiffuse, vUv );', 'vec4 texel = texture2D( tDiffuse, vUv ); texel.rgb = fin( texel.rgb );'); m.needsUpdate = true;
     if (!m.fragmentShader.includes('fin( texel.rgb )')) console.warn('post.js: không chèn được lọc NaN vào bloom'); }
-  // Hậu kỳ cuối: tia nắng xuyên khe (god rays, 12 mẫu về phía mặt trời) + chỉnh màu theo giờ + vignette — gộp 1 pass cho nhẹ
+  // Hậu kỳ cuối (vẽ thẳng ra màn hình): tia nắng xuyên khe (god rays, 12 mẫu) + chỉnh màu + vignette + tone mapping + sRGB — 1 pass
   const grade = {
     tDiffuse: { value: null }, uAmt: { value: Q.vignette },
     uLift: { value: new THREE.Vector3() }, uGain: { value: new THREE.Vector3(1, 1, 1) }, uSat: { value: 1 }, uCon: { value: 1 }, uWarm: { value: Q.warmth }, uSat0: { value: Q.saturation },
     uSunUV: { value: new THREE.Vector2(0.5, 0.5) }, uRays: { value: 0 }, uSharp: { value: 0.18 }, uTexel: { value: new THREE.Vector2(1 / 1280, 1 / 720) }, uRayCol: { value: new THREE.Color('#ffe2a8') }, uAsp: { value: 1 },
+    toneMappingExposure: { value: 1 },
   };
   const vignette = new ShaderPass({
     uniforms: grade,
@@ -55,10 +58,14 @@ export function createPost(renderer, scene, camera) {
         c.rgb = max(vec3(0.), (c.rgb - 0.18) * uCon + 0.18);                  // tương phản quanh xám giữa (không gian tuyến tính)
         c.rgb *= vec3(1. + uWarm, 1. + uWarm * 0.35, 1. - uWarm);            // ấm nhẹ (nền cozy)
         vec2 d = vUv - .5; c.rgb *= 1. - uAmt * smoothstep(0.25, 0.8, dot(d, d) * 2.);
-        gl_FragColor = vec4(fin(c.rgb), c.a); }`,
+        gl_FragColor = vec4(fin(c.rgb), 1.);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`,   // vẽ ra màn hình: three tự chèn ACES + sRGB (như OutputPass) → không cần pass riêng
   });
+  vignette.name = 'grade+tonemap';
+  { const r = vignette.render; vignette.render = function (rd, w, rb, dt, m) { this.uniforms.toneMappingExposure.value = rd.toneMappingExposure; return r.call(this, rd, w, rb, dt, m); }; }
   composer.addPass(vignette);
-  composer.addPass(new OutputPass());
   bloom.enabled = Q.bloom;
   vignette.uniforms.uTexel.value.set(1 / (innerWidth * pr), 1 / (innerHeight * pr));
   composer.setSize(innerWidth, innerHeight);   // đúng kích thước theo pixelRatio khi tự tạo render target
@@ -70,7 +77,7 @@ export function createPost(renderer, scene, camera) {
   return {
     composer, bloom, grade: vignette.uniforms,   // grade: ambience.js chỉnh theo giờ/thời tiết
     // composer giữ pixelRatio riêng (lấy lúc tạo) → phải đồng bộ, nếu không hạ chất lượng không giảm độ phân giải thật
-    setSize(w, h) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h); bloom.resolution.set(w / 2, h / 2); const pr = renderer.getPixelRatio(); vignette.uniforms.uTexel.value.set(1 / (w * pr), 1 / (h * pr)); },
+    setSize(w, h) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h); bloom.resolution.set(w / BD, h / BD); const pr = renderer.getPixelRatio(); vignette.uniforms.uTexel.value.set(1 / (w * pr), 1 / (h * pr)); },
     // đổi số mẫu MSAA (0 = tắt) khi máy yếu: cấp phát lại 2 render target ở lần vẽ sau
     // (độ phân giải đã hạ vì máy chậm → MSAA giảm còn 2x trước khi tắt hẳn)
     setMSAA(n) { if (n && renderer.getPixelRatio() < basePR) n = Math.min(n, 2); for (const t of [composer.renderTarget1, composer.renderTarget2]) if (t.samples !== n) { t.samples = n; t.dispose(); } },

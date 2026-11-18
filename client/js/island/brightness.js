@@ -25,11 +25,11 @@ body.rs-modal #brightBox{display:none}
   <div id="qMode" role="group" aria-label="Chất lượng hình"><button data-q="fast">⚡ Mượt</button><button data-q="auto">Tự động</button><button data-q="pretty">✨ Đẹp</button></div>`;
   document.body.appendChild(box);
   const range = box.querySelector('input'), label = box.querySelector('span');
-  // chế độ hình: Mượt (khoá mức 2: độ phân giải 1, không MSAA/bloom) · Tự động (theo FPS) · Đẹp (khoá mức 0)
+  // chế độ hình: Mượt (mức 2–3: không MSAA/bloom/tia nắng, độ phân giải động giữ ≥ 50 FPS) · Tự động (theo FPS) · Đẹp (khoá mức 0)
   const QK = 'island.qmode'; let qmode = 'auto'; try { qmode = localStorage.getItem(QK) || 'auto'; } catch (e) {}
   const setQ = (m, save = true) => {
     qmode = m; for (const b of box.querySelectorAll('#qMode button')) b.setAttribute('aria-pressed', b.dataset.q === m);
-    if (ctx.setQuality) { if (m === 'fast') ctx.setQuality(2, true); else if (m === 'pretty') ctx.setQuality(0, true); else ctx.setQuality(ctx.qualityLevel || 0, false); }
+    if (ctx.setQualityMode) ctx.setQualityMode(m);
     if (save) try { localStorage.setItem(QK, m); } catch (e) {}
   };
   box.querySelector('#qMode').addEventListener('click', e => { const m = e.target.dataset && e.target.dataset.q; if (m) setQ(m); });
