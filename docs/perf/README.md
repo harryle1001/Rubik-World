@@ -40,3 +40,27 @@ Mạng yếu (`--net=3g`, 1,6 Mbps · 150 ms):
 > Ghi chú đo: giả lập mạng của Chromium không áp cho service worker, và file SW phục vụ từ bộ nhớ đệm tính 0 KB →
 > cột dung lượng các bước 01–07 thiếu phần SW tải ngầm (~2,1 MB) và thời gian các bước đó còn lạc quan; từ bước 08 SW
 > không tải gì trước lúc vào chơi nên số đo phản ánh đúng băng thông thật.
+
+## Render: hậu kỳ, MSAA, mưa/trời, chất lượng tự động (`node tools/perf-passes.mjs [--quick]`)
+Điện thoại 390×844 DPR 2, cổng trường, ngày 13h nắng · đêm 22h mưa, chất lượng khoá. ms/khung chạy tự do trên GPU giả lập
+(SwiftShader ≈ 50–100× chậm hơn máy thật) → chỉ so sánh tương đối; nhiễu ±3 %.
+Chi phí gốc (bớt từng phần, mức 1): MSAA 2× **331 ms (~48 %)** · pass chỉnh màu ~100 · bóng đổ ~74 · trời/mây/mưa/sương < nhiễu.
+
+| Bước | Mức 1 ngày | Mức 1 đêm mưa | Mức 2 (⚡ cũ) ngày | Mức 2 đêm mưa | Ảnh |
+|---|---|---|---|---|---|
+| gốc | 691 | 689 | 304 | 309 | |
+| 01 gộp hậu kỳ 1 pass (chỉnh màu + ACES + sRGB) | 591 | 591 | 294 | 304 | `render/01-gop-pass/so-sanh.jpg` |
+| 02 mưa đúng số hạt theo mức + trời bỏ sao ban ngày | 612 | 606 | 305 | 307 | `render/02-mua-troi/so-sanh.jpg` (trong nhiễu) |
+| 04 điện thoại mức 1 không MSAA (khi GPU không có MSAA rẻ) | **387** | **413** | | | `render/04-msaa-dien-thoai/so-sanh.jpg` |
+
+Mức 1 điện thoại: **691 → 387 ms/khung (−44 %)**, ảnh gần như không đổi màu; mất MSAA → răng cưa nhẹ ở mép mảnh.
+
+03 Chất lượng tự động (`client/js/island/autoq.js`, mô phỏng `node tools/quality-sim.mjs` → `render/03-chat-luong-tu-dong/mo-phong.txt`):
+độ phân giải động φ^(−k/8) (1 → 1/φ), đo trung vị mỗi 0,5 s, vùng trễ 50–57 FPS, chờ tăng ×2 khi vừa tăng đã hụt.
+
+| Điện thoại tầm trung giả lập, 3 phút | % khung ≥ 50 FPS cũ → mới | Đổi mức (khựng) cũ → mới |
+|---|---|---|
+| Tự động, máy chuẩn | 73 → 89 % | 18 → 0 |
+| Tự động, máy nặng 1,3× | 77 → 86 % | 19 → 0 |
+| ⚡ Mượt, máy nặng 1,7× | 53 → 92 % | 0 → 0 |
+| ⚡ Mượt, máy nặng 2,2× | 5 → 85 % (39 → 55 FPS TB) | 0 → 0 |
