@@ -55,3 +55,9 @@ v52 (Cuộc sống: no bụng, bếp, căn tin, quầy ăn, flycam chủ game) �
   bong bóng "đói" đều là pixel art tự vẽ bằng code (canvas), vẽ một lần rồi cache thành sprite.
   Tiếng bụng kêu, tiếng xèo xèo, tiếng dao, tiếng cánh quạt flycam và tiếng màn trập tạo bằng Web Audio API.
   Tên flycam "Chuồn Chuồn RB-1" và mọi thiết kế là tự đặt, không dùng tên thương hiệu thật.
+
+v53c · Thành phố an toàn (Trạm cứu hỏa 114, Đồn cảnh sát 113, Tháp Rubik 81, sự cố máy bay)
+  Không dùng ảnh hay âm thanh bên ngoài. Toà nhà, xe cứu hỏa, xe cảnh sát, ngọn lửa, khói, tia nước, đèn LED
+  đều vẽ pixel bằng code (canvas) rồi cache thành sprite; còi xe, chuông báo sự cố, tiếng phun nước tạo bằng WebAudio
+  trong js/ext/v53c-*.js. "Tháp Rubik 81" là thiết kế gốc (kiểu bó tre, tỷ lệ vàng), không dùng tên, logo hay hình
+  của toà nhà thương mại nào.
