@@ -83,7 +83,7 @@ function buildChunk(s0, s1, ground) {
       // vòm bán nguyệt tới trụ kế tiếp: lát cắt dọc (10 lát), mỗi lát lấp từ cung vòm lên mặt cầu
       const sn = s + span, hn = sn < LEN ? at(sn).y - gAt(sn) : 0;
       if (sn < LEN && !inTunnel(sn) && hn > 1.2) {
-        const r = (span - pw) / 2, K = span === 21 ? 10 : 7, topN = deckTop(sn) - 1.2, spring = Math.min(top, topN) - r - 0.6;
+        const r = (span - pw) / 2, K = span === 21 ? 16 : 10, topN = deckTop(sn) - 1.2, spring = Math.min(top, topN) - r - 0.6;
         if (spring > Math.max(gAt(s), gAt(sn)) - 1) {
           for (let k = 0; k < K; k++) {
             const a0 = Math.PI * k / K, a1 = Math.PI * (k + 1) / K, xm = (Math.cos(a0) + Math.cos(a1)) / 2, ym = Math.min(Math.sin(a0), Math.sin(a1));
@@ -113,21 +113,27 @@ function buildChunk(s0, s1, ground) {
 }
 
 export function buildTrack(ctx, ground) {
-  const group = new THREE.Group(); group.name = 'train-track';
-  const chunks = [];
-  for (let s0 = 0; s0 < LEN; s0 += CHUNK) {
-    const { st, dt } = buildChunk(s0, Math.min(LEN, s0 + CHUNK), ground);
+  const group = new THREE.Group(); group.name = 'train-track'; ctx.scene.add(group);
+  // dựng dần: mỗi khung hình 1 việc (khúc gần camera trước) → không khựng lúc tải
+  const chunks = [], jobs = [], cam = new THREE.Vector3();
+  for (let s0 = 0; s0 < LEN; s0 += CHUNK) { const c = at(Math.min(LEN, s0 + CHUNK / 2)); jobs.push({ s0, c: new THREE.Vector3(c.x, c.y, c.z) }); }
+  jobs.push({ isle: true, c: new THREE.Vector3(ISLET.c[0], 0, ISLET.c[1]) });
+  function work() {
+    ctx.camera.getWorldPosition(cam); jobs.sort((a, b) => a.c.distanceToSquared(cam) - b.c.distanceToSquared(cam));
+    const j = jobs.shift();
+    if (j.isle) { const isle = new THREE.Mesh(isletGeo(), matV()); isle.receiveShadow = isle.castShadow = true; isle.matrixAutoUpdate = false; isle.name = 'islet'; group.add(isle); return; }
+    const { st, dt } = buildChunk(j.s0, Math.min(LEN, j.s0 + CHUNK), ground);
     const a = new THREE.Mesh(st, matV()); a.castShadow = a.receiveShadow = true;
     const b = new THREE.Mesh(dt, matV()); b.receiveShadow = true;
     for (const o of [a, b]) { o.matrixAutoUpdate = false; group.add(o); }
-    const c = at(Math.min(LEN, s0 + CHUNK / 2)); chunks.push({ st: a, dt: b, c: new THREE.Vector3(c.x, c.y, c.z), r: st.boundingSphere.radius });
+    chunks.push({ st: a, dt: b, c: j.c, r: st.boundingSphere.radius });
   }
-  const isle = new THREE.Mesh(isletGeo(), matV()); isle.receiveShadow = isle.castShadow = true; isle.matrixAutoUpdate = false; isle.name = 'islet';
-  group.add(isle); ctx.scene.add(group);
-  const cam = new THREE.Vector3();
   // LOD: tà vẹt chỉ vẽ khi khúc nằm trong 144 m quanh camera
-  function update() { ctx.camera.getWorldPosition(cam); for (const c of chunks) c.dt.visible = c.c.distanceTo(cam) - c.r < DETAIL_D; }
-  return { group, chunks, isle, update };
+  function update() {
+    if (jobs.length) work();
+    ctx.camera.getWorldPosition(cam); for (const c of chunks) c.dt.visible = c.c.distanceTo(cam) - c.r < DETAIL_D;
+  }
+  return { group, chunks, update, get ready() { return !jobs.length; } };
 }
 
 // cây thông + đá trên đảo Đồi Thông (instancing chung của terrain.js)

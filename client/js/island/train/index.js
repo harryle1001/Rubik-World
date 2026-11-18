@@ -23,9 +23,10 @@ export function createTrain(ctx) {
   const consist = createConsist(ctx);
   const ride = createRide(ctx, { consist });
   const pA = at(S_A), pB = at(S_B);
-  let relT = 0;
+  let relT = 0, lastPhase = '';
   function update(dt) {
-    ride.update(dt); track.update();
+    ride.update(dt); track.update(); stations.update(dt);
+    if (ride.state.phase !== lastPhase) { if (ride.state.phase === 'run') stations.cheer(); lastPhase = ride.state.phase; }   // học sinh trên sân ga vẫy chào
     if ((relT += dt) > 1) {   // tàu về ga gần người chơi (cả 2 ga đều ngoài tầm mắt: ga gần > 200 m, ga xa > 377 m)
       relT = 0; const p = player.pos, dA = Math.hypot(p.x - pA.x, p.z - pA.z), dB = Math.hypot(p.x - pB.x, p.z - pB.z);
       if (Math.min(dA, dB) > 200 && Math.max(dA, dB) > 377) ride.relocate(dA < dB ? 'A' : 'B');
