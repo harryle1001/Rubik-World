@@ -88,7 +88,7 @@ export function buildSchoolZone(a) {
     for (const s of [-1, 1]) for (const t of [-1, 1]) b.box(0.04, 0.6, 0.04, x + s * 0.18, y + 3.4, z + t * 0.18, C.iron);
     DG.follow(null).glow(() => DG.box(0.3, 0.52, 0.3, x, y + 3.42, z, C.lantern));
   };
-  const stoneBench = (b, x, z, ry) => b.group(x, Y, z, ry, () => { b.box(1.9, 0.12, 0.6, 0, 0.4, 0, C.stone); b.box(1.96, 0.04, 0.66, 0, 0.36, 0, C.stone2); for (const s of [-1, 1]) b.box(0.22, 0.38, 0.5, s * 0.68, 0, 0, C.stone2); });
+  const stoneBench = (b, x, z, ry) => b.group(x, Y, z, ry, () => { cbox(b, 1.9, 0.12, 0.6, 0, 0.38, 0, C.trim, 0.04); for (const s of [-1, 1]) { cbox(b, 0.24, 0.38, 0.5, s * 0.59, 0, 0, C.stone, 0.03); b.box(0.3, 0.04, 0.56, s * 0.59, 0, 0, C.stone2); } });   // ghế đá vát: dài 1,9 ≈ 0,6·π, chân cách 1,18 = 1,9/φ
 
   // ================= LỚP HỌC =================
   // TỶ LỆ VÀNG: mặt tiền cao HV = tường + diềm trán; mái cao HV/φ; vòm hành lang cao/rộng = φ, vòm cửa chính rộng = φ·nhịp thường;
@@ -220,17 +220,17 @@ export function buildSchoolZone(a) {
   if (D.FLAG) {
     const b = SB, x = X3(D.FLAG[0]), z = Z3(D.FLAG[1]);
     b.cyl(1.5, 1.6, 0.25, x, Y, z, C.stone2, 8); b.cyl(1.1, 1.2, 0.25, x, Y + 0.25, z, C.stone, 8); b.cyl(0.7, 0.75, 0.25, x, Y + 0.5, z, C.trim, 8);
-    b.cyl(0.05, 0.08, 8.3, x, Y + 0.75, z, '#eef0f2', 6); b.ball(0.15, x, Y + 9.1, z, C.gold);
-    DG.follow(null); for (let i = 0; i < 8; i++) { const a2 = i / 8 * 6.283; DG.ball(0.2, x + Math.cos(a2) * 1.35, Y + 0.32, z + Math.sin(a2) * 1.35, ['#e8453c', '#f5c518'][i % 2]); }
+    b.cyl(0.05, 0.08, 8.3, x, Y + 0.75, z, C.W, 6); b.ball(0.15, x, Y + 9.1, z, C.gold);
+    DG.follow(null); for (let i = 0; i < 8; i++) { const a2 = i / 8 * 6.283; DG.ball(0.2, x + Math.cos(a2) * 1.35, Y + 0.32, z + Math.sin(a2) * 1.35, [C.R, C.Yl][i % 2]); }
     flagAt = { x: x + 0.08, y: Y + 8.2, z, w: 1.9, h: 1.25 };
     col(x, z, 0.8, Y + 9);
   }
   if (R.attend) {   // sân xi măng: ô nhảy lò cò, ô ăn quan, vòng tròn
     const r = R.attend, x0 = X3(r.x), z0 = Z3(r.y), x1 = X3(r.x + r.w), z1 = Z3(r.y + r.h), cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, d = DG.follow(null), py = Y + 0.065, line = (w, dd, x, z, c = C.paint) => d.box(w, 0.01, dd, x, py, z, c);
     GR.box(x1 - x0, 0.05, z1 - z0, cx, Y, cz, C.cement); addFoot(x0, z0, x1, z1); for (const [w, dd, x, z] of [[x1 - x0, 0.2, cx, z0], [x1 - x0, 0.2, cx, z1], [0.2, z1 - z0, x0, cz], [0.2, z1 - z0, x1, cz]]) GR.box(w, 0.09, dd, x, Y, z, C.curb);
-    const hx = x0 + 3, hz = cz + 1, HC = ['#f28b82', '#fbd06b', '#8fd0a8', '#8fb8ee'];
+    const hx = x0 + 3, hz = cz + 1, HC = [C.R, C.Yl, C.G, C.B];
     [[0, 0], [1, 0], [2, -0.5], [2, 0.5], [3, 0], [4, -0.5], [4, 0.5], [5, 0]].forEach(([i, j], k) => { line(0.95, 0.95, hx + i * 1.0, hz + j * 1.0); d.box(0.8, 0.012, 0.8, hx + i * 1.0, py + 0.005, hz + j * 1.0, HC[k % 4]); });
-    d.push(new THREE.RingGeometry(1.0, 1.3, 7).rotateX(-Math.PI / 2), '#8fb8ee', hx + 6.4, py + 0.008, hz);
+    d.push(new THREE.RingGeometry(1.0, 1.3, 7).rotateX(-Math.PI / 2), C.B, hx + 6.4, py + 0.008, hz);
     const ox = cx + 3.5, oz = cz - 0.5; line(5.2, 0.08, ox, oz - 1.0); line(5.2, 0.08, ox, oz + 1.0); line(5.2, 0.08, ox, oz); for (let i = 0; i <= 5; i++) line(0.08, 2.0, ox - 2.6 + i * 1.04, oz);
     for (const s of [-1, 1]) d.push(new THREE.RingGeometry(0.95, 1.05, 10, 1, s < 0 ? Math.PI / 2 : -Math.PI / 2, Math.PI).rotateX(-Math.PI / 2), C.paint, ox + s * 2.6, py, oz);
     d.push(new THREE.RingGeometry(2.4, 2.55, 20).rotateX(-Math.PI / 2), C.paint, cx - 0.5, py, cz - 3.0);
@@ -240,7 +240,7 @@ export function buildSchoolZone(a) {
   for (const [x2, y2] of D.TREES || []) {
     const x = X3(x2), z = Z3(y2); if (nearDoor(x, z, 2.5)) continue;
     phuong.push([x, z, 1.05 + rnd() * 0.3]); addFoot(x - 1.4, z - 1.4, x + 1.4, z + 2.4);
-    SB.cyl(1.25, 1.35, 0.45, x, Y, z, C.stone, 8); GR.cyl(1.08, 1.08, 0.04, x, Y + 0.43, z, '#7a5a3a', 8);
+    SB.cyl(1.25, 1.35, 0.45, x, Y, z, C.stone, 8); GR.cyl(1.08, 1.08, 0.04, x, Y + 0.43, z, C.woodD, 8);
     if (x2 < 1600) stoneBench(SB, x, z + 1.95, 0);
   }
   for (const [x2, y2] of [[120, 380], [380, 400], [1130, 370], [1640, 330], [1640, 450]]) if (!nearDoor(X3(x2), Z3(y2), 2) && !inRoom(x2, y2, 10)) { const x = X3(x2), z = Z3(y2); phuong.push([x, z, 0.95]); SB.cyl(1.0, 1.1, 0.4, x, Y, z, C.stone, 8); }
@@ -256,34 +256,34 @@ export function buildSchoolZone(a) {
     }
     if (RS.GATE) {   // lối đi lát gạch chính: từ cổng tới hội trường
       const [x0, z] = P(RS.GATE[0] + 40, RS.GATE[1]), [x1] = P(1150, RS.GATE[1]);
-      GR.box(x1 - x0, 0.05, 3.2, (x0 + x1) / 2, Y, z, '#dcc49b'); for (const s of [-1, 1]) GR.box(x1 - x0, 0.09, 0.22, (x0 + x1) / 2, Y, z + s * 1.7, '#b98d63');
-      for (let x = x0 + 0.6, k = 0; x < x1; x += 1.2, k++) d.box(0.55, 0.012, 3.0, x, Y + 0.05, z, k % 2 ? '#d1b78c' : '#e5d0a9');
+      GR.box(x1 - x0, 0.05, 3.2, (x0 + x1) / 2, Y, z, SH('stoneWarmL', 0.94)); for (const s of [-1, 1]) GR.box(x1 - x0, 0.09, 0.22, (x0 + x1) / 2, Y, z + s * 1.7, C.curb);
+      for (let x = x0 + 0.6, k = 0; x < x1; x += 1.2, k++) d.box(0.55, 0.012, 3.0, x, Y + 0.05, z, k % 2 ? SH('stoneWarmL', 0.9) : C.walk);
     }
     const at = (x2, y2) => P(x2, y2);
-    { const [x, z] = at(700, 455); d.group(x, Y, z, 0, () => { for (const s of [-1, 1]) d.box(0.12, 2.2, 0.12, s * 1.3, 0, 0, '#8a5a34'); d.box(2.8, 1.4, 0.1, 0, 0.8, 0, '#b9824f'); d.box(2.5, 1.15, 0.04, 0, 0.92, 0.06, '#f4efe4'); ['#ffd23f', '#7fd0ff', '#ff8ac2', '#b6f09c', '#ffffff'].forEach((c, i) => d.box(0.42, 0.5, 0.02, -1.0 + i * 0.5, 1.15 + (i % 2) * 0.25, 0.09, c)); d.prism(3.0, 0.4, 0.5, 0, 2.2, 0, C.roof); }); signAt(d, atlas.sign('BẢNG TIN', '#2f5d3f', '#fff', C.gold), 1.6, 0.22, x, Y + 2.05, z + 0.12); }
+    { const [x, z] = at(700, 455); d.group(x, Y, z, 0, () => { for (const s of [-1, 1]) d.box(0.12, 2.2, 0.12, s * 1.3, 0, 0, C.woodD); d.box(2.8, 1.4, 0.1, 0, 0.8, 0, C.wood); d.box(2.5, 1.15, 0.04, 0, 0.92, 0.06, C.trim); [C.Yl, C.B, C.fl[1], C.G, C.W].forEach((c, i) => d.box(0.42, 0.5, 0.02, -1.0 + i * 0.5, 1.15 + (i % 2) * 0.25, 0.09, c)); d.prism(3.0, 0.4, 0.5, 0, 2.2, 0, C.roof); }); signAt(d, atlas.sign('BẢNG TIN', C.board, '#fff', C.gold), 1.6, 0.22, x, Y + 2.05, z + 0.12); }
     { const [x, z] = at(470, 760); d.group(x, Y, z, 0.3, () => {   // xe bán kem
-      d.box(2.2, 0.95, 1.1, 0, 0.4, 0, '#bfe6d6'); d.box(2.24, 0.2, 1.14, 0, 1.35, 0, '#fbf1de'); d.box(2.24, 0.12, 1.14, 0, 0.4, 0, '#f6c7c0');
-      for (const s of [-1, 1]) d.cyl(0.36, 0.36, 0.14, s * 0.7, 0.36, 0.6, '#3b3346', 8, 0, Math.PI / 2);
-      d.cyl(0.04, 0.04, 1.3, 0.7, 1.55, 0, '#8a5a34', 5); d.push(new THREE.ConeGeometry(1.4, 0.55, 8, 1, true), '#f6c7c0', 0.7, 3.0, 0); d.push(new THREE.ConeGeometry(1.42, 0.56, 8, 1, true).rotateY(Math.PI / 8).scale(1, 1, 1), '#fff8ea', 0.7, 3.0, 0, 0, 0, 0, 0.6, 1.0, 0.6);
-      d.cone(0.12, 0.3, -0.5, 1.55, 0.25, '#e8c391', 5); d.ball(0.16, -0.5, 1.95, 0.25, '#ff9ec4'); d.cone(0.12, 0.3, -0.1, 1.55, 0.25, '#e8c391', 5); d.ball(0.16, -0.1, 1.95, 0.25, '#fff3c4');
-      d.box(1.6, 0.3, 0.04, 0, 0.75, 0.57, '#f5c518'); });
+      d.box(2.2, 0.95, 1.1, 0, 0.4, 0, SH('shutter', 1.618)); d.box(2.24, 0.2, 1.14, 0, 1.35, 0, C.trim); d.box(2.24, 0.12, 1.14, 0, 0.4, 0, C.fl[1]);
+      for (const s of [-1, 1]) d.cyl(0.36, 0.36, 0.14, s * 0.7, 0.36, 0.6, C.iron, 8, 0, Math.PI / 2);
+      d.cyl(0.04, 0.04, 1.3, 0.7, 1.55, 0, C.woodD, 5); d.push(new THREE.ConeGeometry(1.4, 0.55, 8, 1, true), C.fl[1], 0.7, 3.0, 0); d.push(new THREE.ConeGeometry(1.42, 0.56, 8, 1, true).rotateY(Math.PI / 8).scale(1, 1, 1), C.trim, 0.7, 3.0, 0, 0, 0, 0, 0.6, 1.0, 0.6);
+      d.cone(0.12, 0.3, -0.5, 1.55, 0.25, SH('wood', 1.618), 5); d.ball(0.16, -0.5, 1.95, 0.25, C.fl[1]); d.cone(0.12, 0.3, -0.1, 1.55, 0.25, SH('wood', 1.618), 5); d.ball(0.16, -0.1, 1.95, 0.25, C.trim);
+      d.box(1.6, 0.3, 0.04, 0, 0.75, 0.57, C.Yl); });
     }
-    for (const [x2, y2] of [[200, 435], [500, 435], [1100, 435], [860, 760]]) { const [x, z] = at(x2 + 70, y2); d.cyl(0.25, 0.22, 0.75, x, Y, z, '#4f9a7a', 8); d.cyl(0.27, 0.27, 0.07, x, Y + 0.75, z, '#3f7a62', 8); }
+    for (const [x2, y2] of [[200, 435], [500, 435], [1100, 435], [860, 760]]) { const [x, z] = at(x2 + 70, y2); d.cyl(0.25, 0.22, 0.75, x, Y, z, C.shutter, 8); d.cyl(0.27, 0.27, 0.07, x, Y + 0.75, z, PH('shutterD'), 8); }
     // sân chơi: nền cao su, xích đu, cầu trượt, bập bênh
     { const [px, pz] = at(910, 830), b = SB;
-      GR.box(11, 0.05, 5.4, px, Y, pz, '#e8a27c'); addFoot(px - 5.6, pz - 2.8, px + 5.6, pz + 2.8); for (const s of [-1, 1]) GR.box(11.2, 0.12, 0.18, px, Y, pz + s * 2.75, C.curb);
+      GR.box(11, 0.05, 5.4, px, Y, pz, SH('roof', 1.382)); addFoot(px - 5.6, pz - 2.8, px + 5.6, pz + 2.8); for (const s of [-1, 1]) GR.box(11.2, 0.12, 0.18, px, Y, pz + s * 2.75, C.curb);
       b.group(px - 3.2, Y, pz, 0, () => {   // xích đu 2 ghế
-        for (const s of [-1, 1]) for (const t of [-1, 1]) b.box(0.12, 2.6, 0.12, s * 1.6, 0, t * 0.55, '#e8453c', 0, t * 0.2);
-        b.box(3.5, 0.12, 0.12, 0, 2.48, 0, '#f5c518');
-        for (const u of [-0.75, 0.75]) { for (const s of [-1, 1]) b.box(0.03, 1.8, 0.03, u + s * 0.25, 0.65, 0, '#9aa3ad'); b.box(0.6, 0.06, 0.3, u, 0.62, 0, '#3d7be0'); }
+        for (const s of [-1, 1]) for (const t of [-1, 1]) b.box(0.12, 2.6, 0.12, s * 1.6, 0, t * 0.55, C.R, 0, t * 0.2);
+        b.box(3.5, 0.12, 0.12, 0, 2.48, 0, C.Yl);
+        for (const u of [-0.75, 0.75]) { for (const s of [-1, 1]) b.box(0.03, 1.8, 0.03, u + s * 0.25, 0.65, 0, PH('ironL')); b.box(0.6, 0.06, 0.3, u, 0.62, 0, C.B); }
       });
       b.group(px + 2.2, Y, pz, 0, () => {   // cầu trượt
-        b.box(1.2, 1.6, 1.2, -0.6, 0, 0, '#f5c518'); b.box(1.3, 0.1, 1.3, -0.6, 1.6, 0, '#e8453c');
-        for (const s of [-1, 1]) b.box(0.06, 0.6, 1.2, -0.6 + s * 0.6, 1.7, 0, '#e8453c');
-        b.box(2.6, 0.08, 0.9, 1.0, 0.75, 0, '#3d7be0', 0, 0, -0.62); for (const s of [-1, 1]) b.box(2.6, 0.2, 0.06, 1.0, 0.82, s * 0.45, '#4caf50', 0, 0, -0.62);
-        for (let i = 0; i < 4; i++) b.box(0.9, 0.06, 0.25, -0.6, 0.35 + i * 0.4, -0.72 - i * 0.04, '#ffffff');
+        b.box(1.2, 1.6, 1.2, -0.6, 0, 0, C.Yl); b.box(1.3, 0.1, 1.3, -0.6, 1.6, 0, C.R);
+        for (const s of [-1, 1]) b.box(0.06, 0.6, 1.2, -0.6 + s * 0.6, 1.7, 0, C.R);
+        b.box(2.6, 0.08, 0.9, 1.0, 0.75, 0, C.B, 0, 0, -0.62); for (const s of [-1, 1]) b.box(2.6, 0.2, 0.06, 1.0, 0.82, s * 0.45, C.G, 0, 0, -0.62);
+        for (let i = 0; i < 4; i++) b.box(0.9, 0.06, 0.25, -0.6, 0.35 + i * 0.4, -0.72 - i * 0.04, C.W);
       });
-      b.group(px - 0.2, Y, pz + 1.8, 0, () => { b.box(0.3, 0.4, 0.3, 0, 0, 0, '#3b3346'); b.box(3.0, 0.08, 0.32, 0, 0.42, 0, '#4caf50', 0, 0, 0.12); for (const s of [-1, 1]) b.box(0.06, 0.3, 0.3, s * 1.3, 0.5 - s * 0.16, 0, '#e8453c'); });
+      b.group(px - 0.2, Y, pz + 1.8, 0, () => { b.box(0.3, 0.4, 0.3, 0, 0, 0, C.iron); b.box(3.0, 0.08, 0.32, 0, 0.42, 0, C.G, 0, 0, 0.12); for (const s of [-1, 1]) b.box(0.06, 0.3, 0.3, s * 1.3, 0.5 - s * 0.16, 0, C.R); });
       col(px + 1.6, pz, 0.7, Y + 1.7);
     }
   }
@@ -291,27 +291,31 @@ export function buildSchoolZone(a) {
   // ================= SÂN BÓNG ĐÁ =================
   if (R.field) {
     const f = R.field, b = GR, x0 = X3(f.x + 20), x1 = X3(f.x + f.w - 20), z0 = Z3(f.y + 20), z1 = Z3(f.y + f.h - 20), cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, L = x1 - x0, W = z1 - z0, ly = Y + 0.03;
-    b.box(L + 2.4, 0.04, W + 2.4, cx, Y - 0.01, cz, '#c97a5a'); addFoot(x0 - 1.2, z0 - 1.2, x1 + 1.2, z1 + 3.4);   // đường chạy quanh sân
-    for (let i = 0; i < 10; i++) b.plane(L / 10, W, x0 + (i + 0.5) * L / 10, Y + 0.035, cz, i % 2 ? '#7cc45a' : '#8fcf6a', 0, -Math.PI / 2);
-    const line = (w, d, x, z) => b.box(w, 0.02, d, x, ly + 0.01, z, '#ffffff');
+    b.box(L + 2.4, 0.04, W + 2.4, cx, Y - 0.01, cz, SH('roof', 1.236)); addFoot(x0 - 1.2, z0 - 1.2, x1 + 1.2, z1 + 3.4);   // đường chạy quanh sân
+    for (let i = 0; i < 10; i++) b.plane(L / 10, W, x0 + (i + 0.5) * L / 10, Y + 0.035, cz, i % 2 ? PH('grassD') : C.grass, 0, -Math.PI / 2);
+    const line = (w, d, x, z) => b.box(w, 0.02, d, x, ly + 0.01, z, C.W);
     line(L, 0.12, cx, z0); line(L, 0.12, cx, z1); line(0.12, W, x0, cz); line(0.12, W, x1, cz); line(0.12, W, cx, cz);
-    b.push(new THREE.RingGeometry(1.7, 1.82, 20).rotateX(-Math.PI / 2), '#ffffff', cx, ly + 0.03, cz);
+    b.push(new THREE.RingGeometry(1.7, 1.82, 20).rotateX(-Math.PI / 2), C.W, cx, ly + 0.03, cz);
     for (const s of [-1, 1]) {
       const gx = s < 0 ? x0 : x1, g = SB; line(0.12, 6, gx - s * 3, cz); line(3, 0.12, gx - s * 1.5, cz - 3); line(3, 0.12, gx - s * 1.5, cz + 3);
-      for (const v of [-1.8, 1.8]) { g.box(0.12, 1.75, 0.12, gx, Y, cz + v, '#ffffff'); g.box(0.06, 1.7, 0.06, gx + s * 1.0, Y, cz + v, '#e6e6e6'); g.box(1.0, 0.05, 0.05, gx + s * 0.5, Y + 1.7, cz + v, '#e6e6e6'); }
-      g.box(0.12, 0.12, 3.72, gx, Y + 1.68, cz, '#ffffff');
-      DG.follow(null).plane(3.6, 1.7, gx + s * 1.0, Y + 0.85, cz, '#f4f4f4', Math.PI / 2); DG.plane(1.0, 1.7, gx + s * 0.5, Y + 0.85, cz - 1.8, '#f4f4f4'); DG.plane(1.0, 1.7, gx + s * 0.5, Y + 0.85, cz + 1.8, '#f4f4f4', Math.PI);
+      for (const v of [-1.8, 1.8]) { g.box(0.12, 1.75, 0.12, gx, Y, cz + v, C.W); g.box(0.06, 1.7, 0.06, gx + s * 1.0, Y, cz + v, C.W); g.box(1.0, 0.05, 0.05, gx + s * 0.5, Y + 1.7, cz + v, C.W); }
+      g.box(0.12, 0.12, 3.72, gx, Y + 1.68, cz, C.W);
+      DG.follow(null).plane(3.6, 1.7, gx + s * 1.0, Y + 0.85, cz, C.trim, Math.PI / 2); DG.plane(1.0, 1.7, gx + s * 0.5, Y + 0.85, cz - 1.8, C.trim); DG.plane(1.0, 1.7, gx + s * 0.5, Y + 0.85, cz + 1.8, C.trim, Math.PI);
     }
-    for (let i = 0; i < 2; i++) SB.box(L * 0.5, 0.4 + i * 0.4, 0.8, cx, Y, z1 + 1.8 + i * 0.8, i ? '#3d7be0' : '#f5c518');   // khán đài 2 bậc
+    for (let i = 0; i < 3; i++) {   // khán đài 3 bậc (cao 0,382 m · sâu 0,618 m mỗi bậc), ghế nhựa màu Rubik
+      const zz = z1 + 1.6 + i * 0.618, n = Math.floor(L * 0.5 / 0.618);
+      cbox(SB, L * 0.5, 0.382 * (i + 1), 0.618, cx, Y, zz, i % 2 ? C.stone : C.plinth, 0.05);
+      for (let k = 0; k < n; k++) SB.box(0.42, 0.12, 0.38, cx - L * 0.25 + 0.309 + k * 0.618, Y + 0.382 * (i + 1), zz - 0.05, [C.R, C.Yl, C.B, C.G, C.O][(k + i * 2) % 5]);
+    }
   }
 
   // ================= XUẤT RA SCENE =================
-  const mat = toon('#ffffff', { vertexColors: true });
+  const mat = toon(C.W, { vertexColors: true });
   fakeAO(SB, Y); fakeAO(GB, Y);
   for (const [bt, shadow, ol] of [[SB, true, true], [GB, true, true], [GR, false, false]]) { const m = bt.mesh(mat, shadow); if (!m) continue; if (ol) outline(m); scene.add(m); meshes.push(m); }
   for (const r of roofs) {
     fakeAO(r.b, Y + H - 2);
-    r.mat = toon('#ffffff', { vertexColors: true, transparent: true, side: THREE.DoubleSide, unique: true });
+    r.mat = toon(C.W, { vertexColors: true, transparent: true, side: THREE.DoubleSide, unique: true });
     r.m = r.b.mesh(r.mat, true); r.m.name = 'school-' + r.b.name; scene.add(r.m); meshes.push(r.m); r.op = 1;
   }
   // cây phượng: thân + tán lá xanh + chùm hoa đỏ (InstancedMesh)
@@ -322,15 +326,15 @@ export function buildSchoolZone(a) {
     const green = mergeGeometries([blob(1.7, 0, 2.6, 0), blob(1.2, 1.3, 2.45, 0.4), blob(1.2, -1.3, 2.5, -0.3), blob(1.1, 0.2, 2.45, 1.3), blob(1.1, -0.2, 2.5, -1.3)].map(g0));
     const red = mergeGeometries([blob(1.4, 0.1, 3.05, 0, 0.4), blob(1.0, 1.25, 2.85, 0.5, 0.42), blob(1.0, -1.2, 2.9, -0.4, 0.42), blob(0.9, -0.3, 2.85, 1.25, 0.42), blob(0.9, 0.4, 2.9, -1.2, 0.42)].map(g0));
     for (const g of [green, red]) g.computeVertexNormals();
-    const REDS = ['#e8453c', '#ef5a35', '#e2382f'];
+    const REDS = [C.R, PH('roofL'), PH('rubikR')];
     const mk = (geo, material, colOf) => {
       const im = new THREE.InstancedMesh(geo, material, phuong.length);
       phuong.forEach(([x, z, s], i) => { _o.position.set(x, Y + 0.4, z); _o.rotation.set(0, (x * 7 + z) % 6.28, 0); _o.scale.setScalar(s); _o.updateMatrix(); im.setMatrixAt(i, _o.matrix); if (colOf) im.setColorAt(i, new THREE.Color(colOf(i))); });
       im.name = 'school-phuong'; im.castShadow = true; im.receiveShadow = true; im.computeBoundingSphere(); scene.add(im); meshes.push(im); return im;
     };
-    mk(trunk, toon('#8a6a52'));
-    mk(green, toon('#ffffff'), i => ['#5a9e4a', '#4f9a4a', '#62a852'][i % 3]);
-    const rim = mk(red, toon('#ffffff'), i => REDS[i % 3]);
+    mk(trunk, toon(C.woodD));
+    mk(green, toon(C.W), i => [C.leaf, C.leafD, PH('grassD')][i % 3]);
+    const rim = mk(red, toon(C.W), i => REDS[i % 3]);
     const ol = new THREE.InstancedMesh(red, softOutline, phuong.length); ol.instanceMatrix = rim.instanceMatrix; ol.frustumCulled = false; ol.raycast = () => {}; scene.add(ol); meshes.push(ol);
   }
   for (const [name, list] of Object.entries(kits)) placeKit(scene, name, list, { shadow: false }).then(l => l.forEach(m => { m.name = 'school-kit-' + name; }));
