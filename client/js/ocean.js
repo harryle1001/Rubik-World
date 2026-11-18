@@ -13,9 +13,11 @@ import { createNet } from './island/net.js';
 import { createAnimals } from './island/animals.js';
 import { createSchoolTown } from './island/school-town.js';
 import { createWorldMap } from './island/world-map.js';
+import { createTutorial } from './island/tutorial.js';
 import { SPAWN, landDist, blocked, ISLAND_R, TEMPLE_C } from './island/layout.js';
 import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
+import { createMounts } from './island/mounts.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
@@ -62,7 +64,7 @@ const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders, lo
   // 2 đối tượng dùng luân phiên (không cấp phát mỗi khung: mỗi phần gọi offer mỗi khung)
   const act = document.getElementById('bAct'), slots = [{}, {}]; let best = null, cur = null, si = 0;
   ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) { best = best || slots[si]; best.label = label; best.fn = fn; best.pri = pri; } };
-  ctx.flushOffer = () => { cur = best; best = null; si ^= 1; const h = !cur || ctx.player.frozen; if (act.hidden !== h) act.hidden = h; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
+  ctx.flushOffer = () => { cur = best; best = null; si ^= 1; const h = !cur || ctx.player.frozen; if (act.hidden !== h) act.hidden = h; if (cur && act._l !== cur.label) { act._l = cur.label; act.innerHTML = cur.label; } };   // nhãn có thể chứa biểu tượng SVG
   act.onclick = () => cur && cur.fn();
   addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
 }
@@ -102,6 +104,7 @@ const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik và
 const accountHud = createAccountHud(ctx);
 const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms, draw call, tam giác, bộ nhớ… // 👤 đăng nhập / khách / Lưu đăng nhập, xu & vật phẩm (data/account.js)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
+const tutorial = ctx.tutorial = createTutorial(ctx); // hướng dẫn chơi lần đầu: 3 bước, bỏ qua được (tutorial.js)
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 const sealife = ctx.sealife = createSealife(ctx); // thế giới biển: san hô, đàn cá, sứa, rùa, cá đuối, cá heo, Bách khoa biển
@@ -113,6 +116,7 @@ const teacherQuiz = createTeacherQuiz(ctx); // nói chuyện với 21 bạn & th
 const lessons = createLessons(ctx); // thời khoá biểu 3D + tiết học ngay trong lớp + chip giờ học góc HUD (lessons.js)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
+const mounts = createMounts(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -155,6 +159,7 @@ renderer.setAnimationLoop(() => {
   school.update(dt, clock.elapsedTime);
   vehicles.update(dt);
   aircraft.update(dt, clock.elapsedTime);
+  mounts.update(dt);
   sky.update(dt, camera, player.pos);
   weather.update(dt, clock.elapsedTime);
   eggs.update(dt, clock.elapsedTime);
@@ -170,6 +175,7 @@ renderer.setAnimationLoop(() => {
   quests.update(dt);
   ctx.flushOffer();
   brightness.update();
+  tutorial.update(dt);
   perf.update(dt);
   unfreezeGuard(dt);
   // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong

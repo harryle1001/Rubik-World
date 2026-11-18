@@ -44,6 +44,7 @@ export function createPlayer(ctx) {
   const keys = new Set(), input = { x: 0, z: 0, run: false, jump: false };
   addEventListener('keydown', e => { keys.add(e.code); if (e.code === 'Space') input.jump = true; });
   addEventListener('keyup', e => keys.delete(e.code));
+  addEventListener('blur', () => keys.clear()); // đổi cửa sổ: không bị kẹt phím
 
   // ---- Joystick (nửa trái) + xoay camera (nửa phải / chuột) ----
   const el = renderer.domElement, joy = document.getElementById('joy'), knob = document.getElementById('knob');

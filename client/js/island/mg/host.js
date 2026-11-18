@@ -1,7 +1,7 @@
 // mg/host.js — KHUNG CHUNG MINI GAME 3D (dùng cho cả 3 nhóm game).
 // Mỗi mini game là một "khu chơi" 3D đặt NGAY TRONG thế giới (sân/phòng cạnh toà nhà): camera bay mượt vào, nhân vật người chơi
 // xuất hiện và có hoạt ảnh, NPC học sinh/thầy cô làm đối thủ/cổ vũ, HUD gọn (điểm, thời gian, kỷ lục, nút Thoát), Esc để thoát,
-// thoát xong trả người chơi về đúng chỗ đứng trước cửa. Game chưa có bản 3D → vẫn mở bản 2D cũ trong iframe (school-town.js).
+// thoát xong trả người chơi về đúng chỗ đứng trước cửa. Không còn mini game 2D: cửa chưa có bản 3D chỉ báo "Sắp mở" (school-town.js).
 //
 // ===== CÁCH ĐĂNG KÝ (mỗi nhóm 1 file register) =====
 //   // mg/<nhom>/index.js
@@ -36,7 +36,7 @@
 //   (nếu api.orbit) và gửi tap(e) khi chạm nhẹ không kéo.
 //
 // ===== BẢNG ÁNH XẠ CỬA → KHOÁ GAME (door.n trong RS.doors() của trường 2D) =====
-// Khoá ổn định, KHÔNG đổi tên. Nhóm nào làm game nào thì đăng ký đúng khoá đó; chưa đăng ký → cửa mở bản 2D như cũ.
+// Khoá ổn định, KHÔNG đổi tên. Nhóm nào làm game nào thì đăng ký đúng khoá đó; chưa đăng ký → cửa báo "Sắp mở".
 //   Nhóm 1 (board, phiên này): chess, caro, go, rubik
 //   Nhóm 2 (thể thao/arcade/câu cá): olympics, football, basketball, skate, patin, ski, kart, animal-race, balloon, arcade, missile, fishing, fishing-boat
 //   Nhóm 3 (nghệ thuật/tri thức):    music, art, library, reader, academy, telescope, zen, garden
@@ -127,18 +127,21 @@ export function createMiniGameHost(ctx) {
     for (let k = 0; k < 13; k++) { const a = k * 2 * Math.PI / 13, y = groundAt(x + Math.cos(a) * R, z + Math.sin(a) * R); if (Math.abs(y - y0) > 0.45) return false; }
     for (const b of ctx.boxes || []) { if (b.top < y0 + 0.4) continue; const dx = Math.max(b.x0 - x, 0, x - b.x1), dz = Math.max(b.z0 - z, 0, z - b.z1); if (dx * dx + dz * dz < R * R) return false; }
     for (const c of ctx.colliders || []) { const dx = c.x - x, dz = c.z - z, r = R + (c.r || 0.5); if (dx * dx + dz * dz < r * r) return false; }
-    // mái nhà, cây, đồ trang trí (không có trong danh sách va chạm): chiếu tia từ trên xuống ở 13 điểm (xoắn ốc góc vàng)
+    // mái nhà, cây, đồ trang trí (không có trong danh sách va chạm): chiếu tia từ trên xuống ở 21 điểm (xoắn ốc góc vàng)
     if (!rayObjs) {   // chỉ lấy vật ở gần cửa (≤ 89 m) cho nhẹ
-      rayObjs = []; const sp = new THREE.Sphere();
-      scene.traverse(o => { if (!(o.isMesh || o.isInstancedMesh) || o.isSkinnedMesh || !o.visible || !o.geometry || (o.isInstancedMesh && o.count > 377)) return;   /* cỏ (rất nhiều bản sao, thấp): bỏ qua */ if (o.isInstancedMesh) { if (!o.boundingSphere) o.computeBoundingSphere(); sp.copy(o.boundingSphere); } else { if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere); } sp.applyMatrix4(o.matrixWorld); if (Math.hypot(sp.center.x - x, sp.center.z - z) < sp.radius + 89) rayObjs.push(o); });
+      rayObjs = []; tallInst = []; const sp = new THREE.Sphere(), m4 = new THREE.Matrix4(), v3 = new THREE.Vector3();
+      scene.traverse(o => { if (!(o.isMesh || o.isInstancedMesh) || o.isSkinnedMesh || !o.visible || !o.geometry) return;
+        if (o.isInstancedMesh && o.count > 377) {   /* nhiều bản sao: chỉ lấy bản cao (cây) làm vòng tròn chắn, bỏ cỏ thấp */ if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox; if (bb.max.y - bb.min.y < 1.2) return;
+          for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); m4.premultiply(o.matrixWorld); v3.setFromMatrixPosition(m4); if (Math.hypot(v3.x - x, v3.z - z) < 89 + R) tallInst.push([v3.x, v3.z, Math.max(bb.max.x - bb.min.x, bb.max.z - bb.min.z) * 0.5 * m4.getMaxScaleOnAxis()]); } return; }   /* cỏ (rất nhiều bản sao, thấp): bỏ qua */ if (o.isInstancedMesh) { if (!o.boundingSphere) o.computeBoundingSphere(); sp.copy(o.boundingSphere); } else { if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere); } sp.applyMatrix4(o.matrixWorld); if (Math.hypot(sp.center.x - x, sp.center.z - z) < sp.radius + 89) rayObjs.push(o); });
     }
-    for (let k = 0; k < 13; k++) {
-      const r = R * Math.sqrt((k + 0.5) / 13), a = k * 2 * Math.PI / (PHI * PHI); _o.set(x + Math.cos(a) * r, y0 + 21, z + Math.sin(a) * r); _rc.set(_o, _dn); _rc.far = 20.5;
-      const h = _rc.intersectObjects(rayObjs, false); if (h.length && h[0].point.y > y0 + 0.5) return false;
+    for (const c of tallInst) { const dx = c[0] - x, dz = c[1] - z, r = R + c[2]; if (dx * dx + dz * dz < r * r) return false; }   // cây trồng bằng instancing (cọ, thông…)
+    for (let k = 0; k < 21; k++) {   // 21 tia (Fibonacci) phủ tới 1,15 R: khu chơi vuông (bàn cờ) có góc vượt ra ngoài vòng tròn R
+      const r = R * 1.15 * Math.sqrt((k + 0.5) / 21), a = k * 2 * Math.PI / (PHI * PHI); _o.set(x + Math.cos(a) * r, y0 + 21, z + Math.sin(a) * r); _rc.set(_o, _dn); _rc.far = 20.5;
+      const h = _rc.intersectObjects(rayObjs, false); if (h.length && h[0].point.y > y0 + 0.35) return false;
     }
     return true;
   }
-  let rayObjs = null; const _rc = new THREE.Raycaster(), _o = new THREE.Vector3(), _dn = new THREE.Vector3(0, -1, 0);
+  let rayObjs = null, tallInst = []; const _rc = new THREE.Raycaster(), _o = new THREE.Vector3(), _dn = new THREE.Vector3(0, -1, 0);
   function findSpot(x0, z0, R) {
     rayObjs = null;
     const GA = 2 * Math.PI / (PHI * PHI);
@@ -247,8 +250,13 @@ export function createMiniGameHost(ctx) {
     ctx.freeCam = true; P.frozen = true; P.pos.set(anchor[0], anchor[3], anchor[1]);   // thế giới (cỏ, cây, người) nạp quanh khu chơi
     document.body.classList.add('mg-on', 'rs-modal'); hudEl.hidden = false; camera.far = Math.min(S.saved.far, 233);
     if (ctx.school && ctx.school.labels) for (const l of ctx.school.labels) l.visible = false;
+    // vật nhỏ của thế giới lọt vào khu chơi (cột đèn, khung thành, ghế…): ẩn tạm, thoát thì hiện lại
+    for (const o of S.hidden || []) o.visible = true; S.hidden = []; { const sp = new THREE.Sphere(), c = new THREE.Vector3(anchor[0], anchor[3], anchor[1]), RR = R * 1.15;
+      scene.traverse(o => { if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || !o.visible || !o.geometry) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
+        if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
+        if (sp.radius < 5 && Math.hypot(sp.center.x - c.x, sp.center.z - c.z) < RR + sp.radius * 0.5 && sp.center.y < c.y + 8 && sp.center.y > c.y - 3) { o.visible = false; S.hidden.push(o); } }); }
     api.me.place(0, R * 0.5, Math.PI);
-    try { S.game = G.start(ctx, { key, door, api, ...opts }) || {}; }
+    try { S.game = G.start(ctx, { key, door, api, onExit: () => host.exit(), ...opts }) || {}; }   // onExit: game có sân khấu riêng (stage.js, kit.js) bấm Thoát → host cũng thoát
     catch (e) { console.error('[mg] lỗi khởi động', key, e); S.game = {}; host.exit(); return false; }
     S.camNow = null; return true;
   }
@@ -266,11 +274,15 @@ export function createMiniGameHost(ctx) {
     });
     S.lastCam = { ...api.cam }; S.api = null; S.game = null;
   }
+  host.findSpot = findSpot;
+  host.doorOf = key => ctx.school && ctx.school.doors && ctx.school.doors.find(q => doorKey(ctx, q.d) === key) || null;   // cửa đầu tiên mở game này
+  Object.defineProperty(host, 'api', { get: () => S && S.api });   // (kiểm thử) bộ công cụ của phiên đang chơi   // game tự chọn chỗ (vd cờ vua cạnh công viên cờ)
   host.start = (key, door, opts) => begin(key, door, opts);
   host.restart = () => { if (!S || !S.api) return; const { key, door } = S; teardown(); S.restarting = true; begin(key, door); };
   host.exit = (silent) => {
     if (!S || !S.api) return;
     teardown();
+    for (const o of S.hidden || []) o.visible = true;
     const P = ctx.player; P.pos.copy(S.saved.pos); P.cam.yaw = S.saved.yaw; P.cam.pitch = S.saved.pitch; P.frozen = false; ctx.freeCam = false;
     camera.far = S.saved.far; camera.updateProjectionMatrix();
     hudEl.hidden = true; document.body.classList.remove('mg-on', 'rs-modal'); $('.mg-msg').style.opacity = 0;

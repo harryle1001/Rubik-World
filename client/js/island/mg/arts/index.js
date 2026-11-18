@@ -2,11 +2,14 @@
 // Khuôn chung (mg/host.js): ctx.miniGames[key] = { name, start(ctx, opts) → { update(dt), dispose() } }.
 import { startArtMusic } from './art-music.js';
 import { startLibrary } from './library.js';
+import { startTelescope } from './telescope.js';
 
 export function register(ctx) {
   const G = ctx.miniGames = ctx.miniGames || {};
-  G['art-music'] = { name: '🎨 Xưởng Mỹ thuật & Âm nhạc', group: 'arts', start: (c, o) => startArtMusic(c || ctx, o) };
+  // cửa Phòng nhạc / Vẽ tranh của trường 2D mở xưởng 3D (trước đây khoá 'art-music' không khớp cửa nào)
+  G['art-music'] = { name: '🎨 Xưởng Mỹ thuật & Âm nhạc', group: 'arts', doors: [/^Phòng nhạc|Chị Mai · Phòng nhạc/, /Vẽ tranh/], start: (c, o) => startArtMusic(c || ctx, o) };
   G['library'] = { name: '📚 Thư viện Hoàng gia', group: 'arts', start: (c, o) => startLibrary(c || ctx, o) };
   G['reader-books'] = G['royal-library'] = G['library'];   // cửa đọc sách / thư viện hoàng gia dùng chung thư viện 3D
+  G['telescope'] = { name: '🔭 Đài thiên văn', group: 'arts', radius: 8, start: startTelescope };   // cửa "Kính viễn vọng"
   return G;
 }

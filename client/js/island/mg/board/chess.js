@@ -167,7 +167,8 @@ export function startChess(ctx, { api }) {
   me.place(...standAt('e2', 'w'), Math.PI); me.face(0, 0);
   api.actor('student-male-c', { name: 'Ông Tư', height: 1.62, look: { role: 'adult', shirt: '#c9a46a', pants: '#4a3a2a', glasses: true } }).then(a => { if (!a) return; actors.b = a; a.place(...standAt('e7', 'b'), 0); a.face(0, 0); a.say('Chào cháu! Đấu một ván nhé?', 3000); });
   [['student-female-b', -4.6, 1], ['student-male-a', -4.6, -1], ['student-female-d', 4.6, 0]].forEach(([k, s, o], i) => api.actor(k, {}).then(a => { if (!a) return; fans.push(a); a.place(s * C + Math.sign(s) * 1.4, o * C * 1.6, 0); a.face(0, o * C * 1.6); if (i === 0) a.say('Cố lên!'); }));
-  api.cam.x = 0; api.cam.y = 0; api.cam.z = 1.5; api.cam.yaw = 0; api.cam.pitch = 0.95; api.cam.dist = 27; api.orbit = true;
+  const port = innerWidth < innerHeight;   // điện thoại dọc: lùi xa để thấy trọn bàn 21 m
+  api.cam.x = 0; api.cam.y = 0; api.cam.z = port ? -1 : 2; api.cam.yaw = 0; api.cam.pitch = port ? 1.2 : 0.95; api.cam.dist = port ? 42 : 34; api.orbit = true;
   hud.msg('Đang bày quân…', 0);
   getChess(ctx).then(Chess => {
     if (!Chess) { hud.msg('Không tải được luật cờ (chess.js).', 0); return; }
