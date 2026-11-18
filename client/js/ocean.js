@@ -120,7 +120,12 @@ document.getElementById('bMenu').onclick = () => school.menu();
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
 const clock = new THREE.Clock(), stepDt = createDt();
 const WARM_AT = [1.618, 8, 21]; let warmI = 0;
-function warm() { const rt = renderer.getRenderTarget(); renderer.setRenderTarget(post.composer.readBuffer); renderer.compileAsync(scene, camera).catch(() => {}); renderer.setRenderTarget(rt); }
+function warm() {
+  const rt = renderer.getRenderTarget(); renderer.setRenderTarget(post.composer.readBuffer); renderer.compileAsync(scene, camera).catch(() => {}); renderer.setRenderTarget(rt);
+  // tải sẵn texture lên GPU (biển chữ canvas, model): lần đầu vật vào khung hình không phải chờ tải ảnh
+  const T = new Set(); scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) for (const k in m) { const v = m[k]; if (v && v.isTexture && !v.isRenderTargetTexture) T.add(v); } });
+  for (const t of T) renderer.initTexture(t);
+}
 const perf = ctx.perf = createPerf(ctx); // cắt vật nhỏ ở xa, viền, người/thú ngoài khung hình (perf.js)
 window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
