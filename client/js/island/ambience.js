@@ -10,6 +10,7 @@ import { PHI, FIB, TOWN_Y, RING_ROAD_R, ROAD_W, TEMPLE_C, HOUSE_LOTS, HOUSE_W, L
 import { WIND } from './terrain.js';
 import { gradientMap } from './style.js';
 import { createYardLife } from './yard-life.js';
+import { CFG } from './config.js';
 
 const MOTES = [610, 377, 233, 0];            // số hạt theo mức chất lượng (Fibonacci)
 const BOX = 34;                              // hạt quấn quanh người chơi trong ô 34 m (Fibonacci)
@@ -358,10 +359,10 @@ export function createAmbience(ctx) {
     _c.setRGB(1, 1, 1).lerp(warm, golden * 0.22).lerp(cool, night * 0.25); G.uGain.value.set(_c.r, _c.g, _c.b).multiplyScalar(1 + golden * 0.04);
     _c.copy(night0).multiplyScalar(night * 0.6 + 0.08 * W.f); G.uLift.value.set(_c.r, _c.g, _c.b);
     G.uSat.value = q >= 2 ? 1 : 1.06 + golden * 0.1 - night * 0.22 - W.c * 0.08 - W.r * 0.1; G.uCon.value = q >= 2 ? 1 : 1.04 - W.f * 0.08;
-    // tia nắng: chỉ chất lượng cao nhất, mặt trời trên trời và gần khung hình
+    // tia nắng (12 mẫu/điểm ảnh): chỉ chất lượng cao nhất (điện thoại: chỉ ở ✨ Đẹp), mặt trời trên trời và gần khung hình
     sunNDC.copy(sky.U.uSun.value).multiplyScalar(300).add(camera.position).project(camera);
     const front = sunNDC.z < 1, onScr = Math.max(Math.abs(sunNDC.x), Math.abs(sunNDC.y));
-    const rays = q === 0 && front && sky.U.uSun.value.y > 0.02 ? (1 - smooth(1.0, 1.8, onScr)) * day * (1 - W.c * 0.8) * (1 - W.r) * (0.35 + golden * 0.5) : 0;
+    const rays = q === 0 && (!CFG.isMobile || ctx.qualityMode === 'pretty') && front && sky.U.uSun.value.y > 0.02 ? (1 - smooth(1.0, 1.8, onScr)) * day * (1 - W.c * 0.8) * (1 - W.r) * (0.35 + golden * 0.5) : 0;
     G.uRays.value += (rays - G.uRays.value) * 0.1; G.uSunUV.value.set(sunNDC.x * 0.5 + 0.5, sunNDC.y * 0.5 + 0.5); G.uAsp.value = camera.aspect;
     G.uRayCol.value.copy(sky.sun.color).lerp(_c.set('#ffffff'), 0.3);
     if (G.uRays.value > 0.25 && onScr < 0.6) fact('rays');

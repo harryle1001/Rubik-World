@@ -13,7 +13,7 @@ export const CFG = {
     vignette: 0.146,                    // 1/φ⁴: viền tối rất nhẹ, không làm mờ
     exposure: 0.86, saturation: 1.14, contrast: 1.1, warmth: 0.015,   // chỉnh màu hậu kỳ (ấm, tươi nhẹ)
     anisotropy: isMobile ? 8 : 16,      // lọc dị hướng cho texture (chữ biển, nền) nét khi nhìn xiên
-    lowFps: 40, highFps: 57,            // tự giảm / tăng chất lượng theo FPS
+    lowFps: 50, highFps: 57,            // tự giảm (độ phân giải động trước, rồi mới hạ mức) / tăng chất lượng theo FPS; giữa 2 ngưỡng: giữ nguyên
   },
   time: { dayLengthSec: 480, startHour: 10.5 },
   island: { radius: 70, size: 220, segments: isMobile ? 110 : 150, waterLevel: 0 },

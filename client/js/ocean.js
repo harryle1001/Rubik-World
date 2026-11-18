@@ -29,6 +29,7 @@ import { createLiving } from './island/living.js';
 import { createSkyshow } from './island/skyshow.js';
 import { createDive } from './island/dive.js';
 import { createPerf } from './island/perf.js';
+import { createAutoQ, SK } from './island/autoq.js';
 import { createMiniGameHost } from './island/mg/host.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { register as regBoard } from './island/mg/board/index.js';
@@ -165,33 +166,40 @@ function unfreezeGuard(dt) {
   if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden])')) player.frozen = false;
 }
 
-// ---------- Tự giảm/tăng chất lượng theo FPS ----------
-// mức 0: đầy đủ · 1: tắt bloom, giảm độ phân giải · 2: cỏ/cây chi tiết gần hơn, bóng nhỏ · 3: tắt bóng đổ
-let qLevel = 0, qT = performance.now(), qFrames = 0, qGood = 0;
-const base = { pr, grass: terrain.state.grassDist, tree: terrain.state.treeDist };
+// ---------- Chất lượng tự động: mức (0..3) + độ phân giải động (logic trong autoq.js) ----------
+// mức 0: đầy đủ · 1: tắt bloom, giảm độ phân giải · 2: không MSAA, cỏ/cây chi tiết gần hơn, bóng nhỏ · 3: tắt bóng đổ
+const AQ = createAutoQ({ low: CFG.quality.lowFps, high: CFG.quality.highFps, prl: [pr, Math.min(pr, 1.15), 1.0, 0.85] }), Q = AQ.q;
+let qLock = false, appliedL = -1;
+const base = { grass: terrain.state.grassDist, tree: terrain.state.treeDist };
 function applyQuality() {
-  const L = qLevel;
-  pr = [base.pr, Math.min(base.pr, 1.15), 1.0, 0.85][L]; renderer.setPixelRatio(pr); post.setSize(innerWidth, innerHeight);
-  post.bloom.enabled = CFG.quality.bloom && L === 0; post.setMSAA(L >= 2 ? 0 : CFG.quality.msaa);
+  const L = Q.level;
+  pr = AQ.pr(); renderer.setPixelRatio(pr); post.setSize(innerWidth, innerHeight); ctx.resScale = SK[Q.k];
+  post.bloom.enabled = L === 0 && (CFG.quality.bloom || (CFG.isMobile && Q.mode === 'pretty'));   // điện thoại: bloom 1/4 độ phân giải, chỉ ở ✨ Đẹp
+  if (L === appliedL) return; appliedL = L;   // dưới đây là phần nặng (dựng lại cỏ/cây, bóng, shader): chỉ khi đổi mức
+  post.setMSAA(L >= 2 ? 0 : CFG.quality.msaa);
   terrain.state.grassDist = base.grass * (L >= 2 ? 0.6 : 1); terrain.state.treeDist = base.tree * (L >= 2 ? 0.7 : 1); terrain.state.shadows = L < 3; terrain.state.relayoutAll(player.pos);
   const ss = L >= 2 ? 512 : CFG.quality.shadowSize; if (sky.sun.shadow.mapSize.x !== ss) { sky.sun.shadow.mapSize.set(ss, ss); sky.sun.shadow.map?.dispose(); sky.sun.shadow.map = null; }
   if (renderer.shadowMap.enabled !== (L < 3)) { renderer.shadowMap.enabled = L < 3; scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => m.needsUpdate = true); }); }
   ctx.qualityLevel = L; terrain.water.setQuality(L);   // máy yếu: ít lớp sóng hơn
   ctx.perfScale = [1, 1, 0.786, 0.618][L];   // perf.js: vật nhỏ ẩn sớm hơn ở mức thấp (1/√φ, 1/φ)
 }
+// mỗi 0,5 s: FPS = 1000 / trung vị thời gian khung (khung khựng lẻ không làm hạ chất lượng)
+let tq = 0, tPrev = 0; const dts = [];
 function quality(dt) {
-  if (qLock) return;
-  // điện thoại: xét mỗi 2 s (nhanh hơn máy tính 3 s); FPS rất thấp (< lowFps/φ ≈ 25) → hạ 2 mức một lần
-  qFrames++; const el = (performance.now() - qT) / 1000; if (el < (CFG.isMobile ? 2 : 3)) return;
-  const fps = qFrames / el; qFrames = 0; qT = performance.now(); ctx.fps = Math.round(fps);
-  if (fps < CFG.quality.lowFps && qLevel < 3) { qLevel = Math.min(3, qLevel + (fps < CFG.quality.lowFps / 1.618 ? 2 : 1)); qGood = 0; applyQuality(); }
-  // không quay lại từ mức 3: bật/tắt bóng đổ phải biên dịch lại mọi shader (khựng vài giây) → nếu dao động 2↔3 sẽ giật liên tục
-  else if (fps > CFG.quality.highFps && qLevel > 0 && qLevel < 3 && ++qGood >= 3) { qLevel--; qGood = 0; applyQuality(); }
+  const now = performance.now(); if (tPrev) dts.push(now - tPrev); tPrev = now;
+  if ((tq += dt) < 0.5) return; tq = 0;
+  dts.sort((a, b) => a - b); const fps = 1000 / (dts[dts.length >> 1] || 16.7); dts.length = 0; ctx.fps = Math.round(fps);
+  if (qLock || worldMap.open || document.hidden) return;
+  if (AQ.feed(fps, now / 1000)) applyQuality();
 }
-// gỡ lỗi/đo: __island.setQuality(L, khoá) — khoá = không tự đổi mức nữa
-let qLock = false; ctx.setQuality = (L, lock = true) => { qLevel = L; qLock = lock; applyQuality(); };
-if (new URLSearchParams(location.search).has('low')) { qLevel = 2; applyQuality(); } // ?low: bắt đầu ở chất lượng thấp
-else if (CFG.isMobile) { qLevel = 1; applyQuality(); } // điện thoại: bắt đầu ở mức 1 (không bloom, độ phân giải vừa) rồi tự lên/xuống theo FPS
+// gỡ lỗi/đo: __island.setQuality(L, khoá, k) — khoá = không tự đổi nữa
+ctx.setQuality = (L, lock = true, k = 0) => { Q.level = L; Q.k = k; qLock = lock; applyQuality(); };   // k: bậc độ phân giải động (0..8)
+// nút ☀️ (brightness.js): 'auto' · 'fast' ⚡ Mượt · 'pretty' ✨ Đẹp
+ctx.setQualityMode = m => { qLock = false; AQ.setMode(m, CFG.isMobile ? 1 : 0); ctx.qualityMode = m; applyQuality(); };
+ctx.qualityMode = 'auto';
+if (new URLSearchParams(location.search).has('low')) Q.level = 2; // ?low: bắt đầu ở chất lượng thấp
+else Q.level = CFG.isMobile ? 1 : 0; // điện thoại: bắt đầu ở mức 1 (không bloom, độ phân giải vừa) rồi tự lên/xuống theo FPS
+applyQuality();
 
 // ---------- Cache để mở nhanh/offline ----------
 // đăng ký SAU khi trường sẵn sàng + 5 s: lúc cài, service worker tải sẵn ~2 MB (trường 2D, thú, âm thanh) — không tranh băng thông lúc vào game
