@@ -14,7 +14,7 @@ function v47wPatch(z){
   src(groundCache, 0, 790, 0); src(northCache, NY, 0, NY);
   try {
     const se = S(), hx = s => [parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16)];
-    const G = [hx(se.grass), hx(se.grass2)], school = V46SCHOOL[z.id], o = z.o;
+    const G = [hx(se.grass), hx(se.grass2)], school = V46SCHOOL[z.id] && !!(R[z.id] && R[z.id].walls), o = z.o;   // v62f: khu không tường (điểm danh, sân bóng) không giữ dải gạch cũ ở lề
     const im = g.getImageData(0, 0, w, h), d = im.data, eq = (i, q) => d[i] === q[0] && d[i + 1] === q[1] && d[i + 2] === q[2];
     // outside the real rect (the cut margin) only old world shows (roads, fences) → gone, except at the school (yards, doors)
     const ix0 = o.x - e.x0 - 1, ix1 = o.x + o.w - e.x0, iy0 = o.y - e.y0 - 1, iy1 = o.y + o.h - e.y0;
@@ -23,7 +23,7 @@ function v47wPatch(z){
         if(eq(i, G[0]) || eq(i, G[1]) || (!school && !(inY && x > ix0 && x < ix1))){ d[i + 3] = 0; continue; }
         // school yards: keep the old paving only close to the building and fade it out softly (no hard cut edges)
         if(school){ const ox = x < ix0 ? ix0 - x : x > ix1 ? x - ix1 : 0, oy = y < iy0 ? iy0 - y : y > iy1 ? y - iy1 : 0, dd = Math.max(ox, oy);
-          if(dd > V47W_FEATHER) d[i + 3] = 0; else if(dd > V47W_FEATHER*.382) d[i + 3] = Math.round(d[i + 3]*(V47W_FEATHER - dd)/(V47W_FEATHER*.618)); } } }
+          if(dd > V47W_FEATHER) d[i + 3] = 0; else if(dd > 0) d[i + 3] = Math.round(d[i + 3]*(1 - dd/V47W_FEATHER)); } } }   // v62f: mờ dần ngay từ mép nhà (không còn dải gạch xám cứng)
     g.putImageData(im, 0, 0);
   } catch(err){}
   V47W.pc[z.id] = c; return c;
