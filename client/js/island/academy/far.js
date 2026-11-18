@@ -35,9 +35,10 @@ function shadeByNormal(g) {
 export function createFar(ctx) {
   const { scene, camera } = ctx;
   const mat = new THREE.MeshBasicMaterial({ vertexColors: true, fog: false });
-  const castle = new THREE.Mesh(shadeByNormal(castleFarGeo()), mat), mound = new THREE.Mesh(shadeByNormal(moundGeo()), mat);
-  const g = new THREE.Group(); g.add(castle, mound); g.rotation.y = ROT; g.name = 'academy-far';
-  for (const m of [castle, mound]) { m.frustumCulled = false; m.matrixAutoUpdate = false; m.updateMatrix(); }
+  const FG = castleFarGeo(), castle = new THREE.Mesh(shadeByNormal(FG.geo), mat), mound = new THREE.Mesh(shadeByNormal(moundGeo()), mat);
+  const winMat = new THREE.MeshBasicMaterial({ color: '#ffd98a', fog: false, transparent: true }), wins = new THREE.Mesh(FG.win, winMat);   // đốm cửa sổ ban đêm
+  const g = new THREE.Group(); g.add(castle, mound, wins); g.rotation.y = ROT; g.name = 'academy-far';
+  for (const m of [castle, mound, wins]) { m.frustumCulled = false; m.matrixAutoUpdate = false; m.updateMatrix(); }
   scene.add(g);
   const C3 = new THREE.Vector3(C[0], 0, C[1]), d3 = new THREE.Vector3(), sil = new THREE.Color(), slate = new THREE.Color('#3e4656');
   const self = { group: g, dist: 1e9, moundOn: true };
@@ -50,6 +51,7 @@ export function createFar(ctx) {
     // phối cảnh không khí: 296 m tan hẳn vào sương → 377 m rõ nhất → xa dần nhạt lại (tối đa 1/φ)
     const k = 1 - (1 - (0.38 + 0.24 * smooth(377, FAR, d))) * smooth(NEAR, 377, d);
     sil.copy(fog.color).multiplyScalar(0.56).lerp(slate, 0.38); mat.color.copy(sil).lerp(fog.color, k);
+    const n = ctx.sky && ctx.sky.state ? ctx.sky.state.night || 0 : 0; wins.visible = n > 0.15; winMat.opacity = Math.min(1, (n - 0.15) * 2) * (1 - k * 0.6);
   };
   return self;
 }

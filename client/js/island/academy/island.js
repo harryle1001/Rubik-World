@@ -9,7 +9,7 @@ import { ROT, C, ISLE, PLAT, QUAY, RUNWAY, heightLocal, toWorld, plateauDist, is
 
 const COL = {
   sand: new THREE.Color('#d9c8a6'), grass: new THREE.Color('#7fbf5e'), grassD: new THREE.Color('#5a9a48'),
-  rock: new THREE.Color('#8a857d'), rockD: new THREE.Color('#6f6a63'), top: new THREE.Color('#a39d92'), bed: new THREE.Color('#b8a98a'),
+  rock: new THREE.Color('#77736d'), rockD: new THREE.Color('#5a5752'), moss: new THREE.Color('#5f7352'), top: new THREE.Color('#a39d92'), bed: new THREE.Color('#b8a98a'),
 };
 
 function terrainGeo() {
@@ -27,7 +27,7 @@ function terrainGeo() {
     else if (h < 2.2) c.copy(COL.sand);
     else c.copy(COL.grass).lerp(COL.grassD, Math.min(1, (h - 2) / 21));
     if (plateauDist(u, v) < -2) c.copy(COL.top);
-    c.lerp(COL.rock, Math.min(1, Math.max(0, (sl - 0.7) * 1.6))); if (sl > 2) c.lerp(COL.rockD, 0.5);
+    c.lerp(COL.rock, Math.min(1, Math.max(0, (sl - 0.7) * 1.6))); if (sl > 2) { c.lerp(COL.rockD, 0.5); const m = Math.sin(u * 0.37 + v * 0.23) * Math.sin(h * 0.61); if (m > 0.3) c.lerp(COL.moss, 0.55); }   // vách phong hoá, mảng rêu
     col.set([c.r, c.g, c.b], (j * w + i) * 3);
   }
   const idx = [];

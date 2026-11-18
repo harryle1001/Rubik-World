@@ -13,6 +13,7 @@ import { createFar } from './far.js';
 import { createFerry } from './ferry.js';
 import { createMagic, WOODS, CORES } from './magic.js';
 import { createSpells } from './spells.js';
+import { createAtmos } from './atmos.js';
 import { L as CL } from './castle.js';
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
@@ -103,7 +104,7 @@ export function createAcademy(ctx) {
   function stream() {
     const p = ferry.riding || (ctx.aircraft && ctx.aircraft.flying) ? ctx.camera.position : player.pos;
     const [u, v] = toLocal(p.x, p.z), d = Math.max(0, isleDist(u, v));
-    if (!isle && d < LOAD) { isle = buildIsland(ctx); boxes.push(...isle.castle.boxes); spells.build(isle.group); if (!planted) { plantIsland(ctx); planted = true; } }
+    if (!isle && d < LOAD) { isle = buildIsland(ctx); isle.atmos = createAtmos(ctx, isle.group); boxes.push(...isle.castle.boxes); spells.build(isle.group); if (!planted) { plantIsland(ctx); planted = true; } }
     else if (isle && d > UNLOAD) { spells.unbuild(); for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
     far.moundOn = !isle;
     if (isle) isle.castle.group.visible = far.dist < 296 + 89;
@@ -112,7 +113,7 @@ export function createAcademy(ctx) {
   function update(dt) {
     ferry.update(dt);
     stream(); far.update();
-    if (isle) isle.castle.update(dt, performance.now() / 1000, player.pos);
+    if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); }
     magic.update(dt); spells.update(dt);
     if (ferry.riding || player.vehicle) return;
     const pp = player.pos;

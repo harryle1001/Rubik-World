@@ -33,5 +33,5 @@ export class Batch {
     g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.computeVertexNormals();
     return this.add(g, col);
   }
-  build() { const g = mergeGeometries(this.list); g.computeBoundingSphere(); this.list = []; return g; }
+  build() { if (!this.list.length) return new THREE.BufferGeometry(); const g = mergeGeometries(this.list); g.computeBoundingSphere(); this.list = []; return g; }
 }
