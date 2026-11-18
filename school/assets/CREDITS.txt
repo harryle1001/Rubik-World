@@ -36,3 +36,8 @@ v51a · Phố Cầu Vồng Phép Thuật (Rainbow Spell Lane)
   Tháp Đồng Hồ Cầu Vồng, ngân hàng heo đất, bưu cục cú, xe kem, xe bóng bay, đài phun, 7 thú cưng, 5 chổi, 5 đồ chơi Rubik.
   Âm thanh dùng lại bộ tạo âm WebAudio của v50. Hình đũa trong Tiệm Đũa dùng lại atlas CC0 "Simple Wands" (đã ghi ở trên).
   Tên phố, tên tiệm, nhân vật, vật phẩm đều tự đặt, không dùng tên/hình từ phim, truyện hay game nào.
+v51p · Máy bay & Sân bay Rubik (2D)
+  Không tải tài nguyên ngoài. Toàn bộ máy bay (Cánh Én, Hải Âu, Chuồn Chuồn, Băng Rôn, Sao Băng, Chong Chóng),
+  sân bay (đường băng, hangar, tháp điều khiển, ống gió, đèn đường băng), đảo nhỏ, mây, khói, vòng số, cột mốc,
+  bưu phẩm và tiếng động cơ đều vẽ / tạo bằng code (canvas pixel art + WebAudio), thiết kế gốc,
+  không dùng hình từ hãng máy bay, game hay phim. Giấy phép: cùng giấy phép với mã nguồn của game.
