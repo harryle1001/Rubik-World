@@ -168,7 +168,7 @@ let frzT = 0;
 function unfreezeGuard(dt) {
   if (!player.frozen) { frzT = 0; return; }
   if ((frzT += dt) < 1) return; frzT = 0;
-  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #questBoard:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden])')) player.frozen = false;
+  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden])')) player.frozen = false;
 }
 
 // ---------- Tự giảm/tăng chất lượng theo FPS ----------
