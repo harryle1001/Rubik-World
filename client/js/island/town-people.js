@@ -151,7 +151,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
     }
     imp.visible = imp.count > 0; if (imp.count) { imp.instanceMatrix.needsUpdate = true; imp.instanceColor.needsUpdate = true; }
     for (const b of bubbles) if (b.t > 0) { b.t -= dt; const e = b.e; if (!e || !e.a) { b.t = 0; } else { b.sp.position.set(e.hero.model.position.x, e.hero.model.position.y + e.a._look3d.h + 0.95 + (2.2 - b.t) * 0.12, e.hero.model.position.z); b.sp.material.opacity = Math.min(1, b.t * 2.5); } if (b.t <= 0) { b.sp.visible = false; b.e = null; } }
-    ctx.nearNpc = best && bd < 2.6 ? { name: nameOf(best.a), role: best.a._look3d.look.role, female: !!(best.a.long || best.a.skirt || best.a.aodai), e: best } : null;   // teacher-quiz.js: bấm E nói chuyện / hỏi đố
+    ctx.nearNpc = best && bd < 2.6 ? { d: bd, name: nameOf(best.a), role: best.a._look3d.look.role, female: !!(best.a.long || best.a.skirt || best.a.aodai), e: best } : null;   // teacher-quiz.js: bấm E nói chuyện / hỏi đố
     // tên trên đầu người gần nhất
     if (best) {
       if (tagFor !== best.a) { tagFor = best.a; const L = best.a._look3d; drawTag(nameOf(best.a), L.look.role === 'teacher' ? '#ffd23f' : L.look.role === 'student' ? '#ff5a5a' : '#7fd1ff'); }
