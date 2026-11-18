@@ -41,8 +41,8 @@ async function openPage() {
     const label = o => { let n = o.name, q = o.parent; while (!n && q) { n = q.name; q = q.parent; } return n || o.type; };
     const pSeen = new Set(), mProg = new WeakMap();
     const newMats = () => { const out = [], fresh = info.programs.filter(q => !pSeen.has(q)); fresh.forEach(q => pSeen.add(q));
-      c.scene.traverse(o => { if (!o.material) return; for (const m of [].concat(o.material)) { const cp = c.renderer.properties.get(m).currentProgram; if (cp && fresh.includes(cp)) { out.push(label(o) + ':' + (m.name || m.type) + (mProg.get(m) ? '(đổi)' : '')); fresh.splice(fresh.indexOf(cp), 1); } if (cp) mProg.set(m, cp); } });
-      for (const q of fresh) out.push('?' + q.cacheKey.slice(0, 40).replace(/\s+/g, ' '));
+      c.scene.traverse(o => { if (!o.material) return; for (const m of [].concat(o.material)) { const cp = c.renderer.properties.get(m).currentProgram; if (cp && !mProg.has(m)) { mProg.set(m, cp); out.push(label(o) + ':' + (m.name || m.type)); } } });
+      for (const q of fresh) out.push('#' + q.cacheKey.split(',')[0].slice(0, 24) + (q.cacheKey.includes('USE_SHADOWMAP') ? '' : ''));
       return out; };
     for (const q of info.programs) pSeen.add(q); c.scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) { const cp = c.renderer.properties.get(m).currentProgram; if (cp) mProg.set(m, cp); } });
     c.post.render = function () {
