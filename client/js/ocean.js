@@ -49,9 +49,10 @@ const terrain = createTerrain(scene);
 const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
 // Nút hành động dùng chung (E hoặc nút giữa màn hình): mỗi khung hình các phần gọi ctx.offer(nhãn, hàm, độ ưu tiên)
 {
-  const act = document.getElementById('bAct'); let best = null, cur = null;
-  ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) best = { label, fn, pri }; };
-  ctx.flushOffer = () => { cur = best; best = null; act.hidden = !cur || ctx.player.frozen; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
+  // 2 đối tượng dùng luân phiên (không cấp phát mỗi khung: mỗi phần gọi offer mỗi khung)
+  const act = document.getElementById('bAct'), slots = [{}, {}]; let best = null, cur = null, si = 0;
+  ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) { best = best || slots[si]; best.label = label; best.fn = fn; best.pri = pri; } };
+  ctx.flushOffer = () => { cur = best; best = null; si ^= 1; act.hidden = !cur || ctx.player.frozen; if (cur && act.textContent !== cur.label) act.textContent = cur.label; };
   act.onclick = () => cur && cur.fn();
   addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
 }
