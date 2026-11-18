@@ -18,3 +18,7 @@
 - `client/assets/` model .glb, âm thanh; nguồn ghi trong `client/assets/CREDITS.txt` (chỉ dùng tài nguyên CC0).
 - `.claude/skills/` skill dùng chung: `lowpoly-style`, `open-world-lowpoly` (giới hạn tam giác, instancing, fog, chunk).
 - `docs/` quy trình Blender → .glb, checklist App Store.
+
+## Tiết kiệm token (chủ dự án yêu cầu)
+- Ưu tiên lấy sẵn, miễn phí: model 3D CC0 (Quaternius, KayKit, Kenney, Poly Pizza lọc CC0), texture/HDRI CC0 (Poly Haven, ambientCG), shader/hiệu ứng mã nguồn mở giấy phép MIT/CC0 (three.js examples, thư viện npm) — ghi nguồn vào client/assets/CREDITS.txt.
+- Chỉ viết code mới khi không có sẵn; viết ngắn, sửa đúng chỗ, không viết lại cả file. Không dựng hình bằng code khi đã có model CC0 thay được.
