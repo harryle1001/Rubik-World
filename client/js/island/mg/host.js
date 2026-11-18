@@ -128,16 +128,19 @@ export function createMiniGameHost(ctx) {
     for (const c of ctx.colliders || []) { const dx = c.x - x, dz = c.z - z, r = R + (c.r || 0.5); if (dx * dx + dz * dz < r * r) return false; }
     // mái nhà, cây, đồ trang trí (không có trong danh sách va chạm): chiếu tia từ trên xuống ở 13 điểm (xoắn ốc góc vàng)
     if (!rayObjs) {   // chỉ lấy vật ở gần cửa (≤ 89 m) cho nhẹ
-      rayObjs = []; const sp = new THREE.Sphere();
-      scene.traverse(o => { if (!(o.isMesh || o.isInstancedMesh) || o.isSkinnedMesh || !o.visible || !o.geometry || (o.isInstancedMesh && o.count > 377)) return;   /* cỏ (rất nhiều bản sao, thấp): bỏ qua */ if (o.isInstancedMesh) { if (!o.boundingSphere) o.computeBoundingSphere(); sp.copy(o.boundingSphere); } else { if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere); } sp.applyMatrix4(o.matrixWorld); if (Math.hypot(sp.center.x - x, sp.center.z - z) < sp.radius + 89) rayObjs.push(o); });
+      rayObjs = []; tallInst = []; const sp = new THREE.Sphere(), m4 = new THREE.Matrix4(), v3 = new THREE.Vector3();
+      scene.traverse(o => { if (!(o.isMesh || o.isInstancedMesh) || o.isSkinnedMesh || !o.visible || !o.geometry) return;
+        if (o.isInstancedMesh && o.count > 377) {   /* nhiều bản sao: chỉ lấy bản cao (cây) làm vòng tròn chắn, bỏ cỏ thấp */ if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox; if (bb.max.y - bb.min.y < 1.2) return;
+          for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); m4.premultiply(o.matrixWorld); v3.setFromMatrixPosition(m4); if (Math.hypot(v3.x - x, v3.z - z) < 89 + R) tallInst.push([v3.x, v3.z, Math.max(bb.max.x - bb.min.x, bb.max.z - bb.min.z) * 0.5 * m4.getMaxScaleOnAxis()]); } return; }   /* cỏ (rất nhiều bản sao, thấp): bỏ qua */ if (o.isInstancedMesh) { if (!o.boundingSphere) o.computeBoundingSphere(); sp.copy(o.boundingSphere); } else { if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere); } sp.applyMatrix4(o.matrixWorld); if (Math.hypot(sp.center.x - x, sp.center.z - z) < sp.radius + 89) rayObjs.push(o); });
     }
+    for (const c of tallInst) { const dx = c[0] - x, dz = c[1] - z, r = R + c[2]; if (dx * dx + dz * dz < r * r) return false; }   // cây trồng bằng instancing (cọ, thông…)
     for (let k = 0; k < 13; k++) {
       const r = R * Math.sqrt((k + 0.5) / 13), a = k * 2 * Math.PI / (PHI * PHI); _o.set(x + Math.cos(a) * r, y0 + 21, z + Math.sin(a) * r); _rc.set(_o, _dn); _rc.far = 20.5;
       const h = _rc.intersectObjects(rayObjs, false); if (h.length && h[0].point.y > y0 + 0.5) return false;
     }
     return true;
   }
-  let rayObjs = null; const _rc = new THREE.Raycaster(), _o = new THREE.Vector3(), _dn = new THREE.Vector3(0, -1, 0);
+  let rayObjs = null, tallInst = []; const _rc = new THREE.Raycaster(), _o = new THREE.Vector3(), _dn = new THREE.Vector3(0, -1, 0);
   function findSpot(x0, z0, R) {
     rayObjs = null;
     const GA = 2 * Math.PI / (PHI * PHI);
@@ -265,6 +268,7 @@ export function createMiniGameHost(ctx) {
     S.lastCam = { ...api.cam }; S.api = null; S.game = null;
   }
   host.findSpot = findSpot;
+  host.doorOf = key => ctx.school && ctx.school.doors && ctx.school.doors.find(q => doorKey(ctx, q.d) === key) || null;   // cửa đầu tiên mở game này
   Object.defineProperty(host, 'api', { get: () => S && S.api });   // (kiểm thử) bộ công cụ của phiên đang chơi   // game tự chọn chỗ (vd cờ vua cạnh công viên cờ)
   host.start = (key, door, opts) => begin(key, door, opts);
   host.restart = () => { if (!S || !S.api) return; const { key, door } = S; teardown(); S.restarting = true; begin(key, door); };
