@@ -94,6 +94,8 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       if (pool.some(e => e.a === a)) continue;
       const L = a._look3d || (a._look3d = lookOf(a));
       let e = pool.find(e => !e.a && e.key === L.key);
+      // dựng LẦN LƯỢT từng người (tối đa 1 người đang dựng): tới khu đông người không còn ~24 người dựng xong cùng 1 khung (giật 40–80 ms)
+      if (!e && loading.size) continue;
       if (!e && pool.length + loading.size >= POOL) { // pool đầy: bỏ 1 model rảnh khác kiểu để nạp kiểu mới
         const i = pool.findIndex(e => !e.a); if (i >= 0) { scene.remove(pool[i].hero.model); pool.splice(i, 1); }
       }
