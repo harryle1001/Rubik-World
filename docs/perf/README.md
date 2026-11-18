@@ -30,4 +30,10 @@ Mạng yếu (`--net=3g`, 1,6 Mbps · 150 ms):
 | 06-rig-nhe (hero-rogue-rig.glb 911 → 119 KB qua mạng) | 1 019 KB | 11,6 s | 36,7 s |
 | 07-truong-2d-tai-luoi (sách 3,1 MB + piano 0,96 MB nạp khi mở) | 1 019 KB + iframe 750 KB (trước ~4 800) | 11,0 s | **15,4 s** |
 
-4G sau bước 07: khung 3D đầu tiên 7,2 s · trường sẵn sàng **9,7 s** (gốc 17,0 s).
+| 08-sw-hoan (service worker đăng ký sau khi trường sẵn sàng) | 1 628 KB + iframe 750 KB, SW 0 KB (trước: SW tải ngầm 2 167 KB / 126 file) | 10,6 s | **15,0 s** |
+
+4G sau bước 08: khung 3D đầu tiên 7,6 s · trường sẵn sàng **9,6 s** (gốc 17,0 s).
+
+> Ghi chú đo: giả lập mạng của Chromium không áp cho service worker, và file SW phục vụ từ bộ nhớ đệm tính 0 KB →
+> cột dung lượng các bước 01–07 thiếu phần SW tải ngầm (~2,1 MB) và thời gian các bước đó còn lạc quan; từ bước 08 SW
+> không tải gì trước lúc vào chơi nên số đo phản ánh đúng băng thông thật.

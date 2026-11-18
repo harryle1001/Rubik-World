@@ -194,4 +194,5 @@ if (new URLSearchParams(location.search).has('low')) { qLevel = 2; applyQuality(
 else if (CFG.isMobile) { qLevel = 1; applyQuality(); } // điện thoại: bắt đầu ở mức 1 (không bloom, độ phân giải vừa) rồi tự lên/xuống theo FPS
 
 // ---------- Cache để mở nhanh/offline ----------
-if ('serviceWorker' in navigator && !window.ISLAND_SERVER) navigator.serviceWorker.register('/sw.js').catch(() => {});
+// đăng ký SAU khi trường sẵn sàng + 5 s: lúc cài, service worker tải sẵn ~2 MB (trường 2D, thú, âm thanh) — không tranh băng thông lúc vào game
+if ('serviceWorker' in navigator && !window.ISLAND_SERVER) { const sw = setInterval(() => { if (!school.ready) return; clearInterval(sw); setTimeout(() => navigator.serviceWorker.register('/sw.js').catch(() => {}), 5000); }, 1000); }
