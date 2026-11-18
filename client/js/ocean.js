@@ -30,6 +30,7 @@ import { createSkyshow } from './island/skyshow.js';
 import { createDive } from './island/dive.js';
 import { createPerf } from './island/perf.js';
 import { createMiniGameHost } from './island/mg/host.js';
+import { createTeacherQuiz } from './island/teacher-quiz.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
@@ -95,6 +96,7 @@ const sealife = ctx.sealife = createSealife(ctx); // thế giới biển: san h�
 const treasure = ctx.treasure = createTreasure(ctx); // 13 rương kho báu dưới đáy biển + câu đố biển + mảnh bản đồ (HUD 🧰)
 const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao băng, mây ti, chế độ ngắm trời ⭐ (skyshow.js)
 const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
+const teacherQuiz = createTeacherQuiz(ctx); // thầy cô/NPC đố vui theo môn & lớp 1–9 khi bấm E (teacher-quiz.js, data/quiz-bank.json)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
@@ -142,6 +144,7 @@ renderer.setAnimationLoop(() => {
   mg.update(dt, clock.elapsedTime);
   sealife.update(dt);
   treasure.update(dt);
+  teacherQuiz.update();
   ctx.flushOffer();
   brightness.update();
   perf.update(dt);
@@ -162,7 +165,7 @@ let frzT = 0;
 function unfreezeGuard(dt) {
   if (!player.frozen) { frzT = 0; return; }
   if ((frzT += dt) < 1) return; frzT = 0;
-  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden])')) player.frozen = false;
+  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #tQuiz:not([hidden]), #questBoard:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden])')) player.frozen = false;
 }
 
 // ---------- Tự giảm/tăng chất lượng theo FPS ----------
