@@ -1,0 +1,121 @@
+{
+ "res": {
+  "frames": 168,
+  "avgMs": 375.7,
+  "p95Ms": 466.7,
+  "maxMs": 1100,
+  "over50": 168,
+  "over100": 168,
+  "gcMinor": 42,
+  "gcMajor": 7,
+  "gcTraceMs": 220,
+  "gcProfMs": 151,
+  "jsFrame": {
+   "p95": 59.8,
+   "max": 140,
+   "over50": 13,
+   "over100": 2
+  },
+  "jsMs": 26.4,
+  "matrixMs": 4.97,
+  "heapMB": [
+   141.1,
+   141.1
+  ],
+  "msPerFrame": {
+   "frameJs": 33.43,
+   "render": 24.34,
+   "school": 2.13,
+   "perf": 1.91,
+   "ambience": 1.28,
+   "player": 1,
+   "aircraft": 0.47,
+   "weather": 0.37,
+   "audio": 0.17,
+   "living": 0.17,
+   "net": 0.14,
+   "treasure": 0.13,
+   "eggs": 0.12,
+   "dive": 0.11,
+   "sky": 0.1,
+   "physics": 0.1,
+   "animals": 0.09,
+   "vehicles": 0.08,
+   "terrain": 0.06,
+   "skyshow": 0.06,
+   "worldMap": 0.05,
+   "sealife": 0.05,
+   "zen": 0.03,
+   "brightness": 0.01,
+   "mg": 0
+  },
+  "spikes": [
+   {
+    "ms": 140,
+    "prog": 193,
+    "tex": 26,
+    "geo": 191,
+    "render": 138
+   },
+   {
+    "ms": 117,
+    "prog": 193,
+    "tex": 26,
+    "geo": 191,
+    "render": 108
+   }
+  ]
+ },
+ "top": [
+  {
+   "fn": "updateMatrixWorld http://localhost:3000/lib/three/build/three.module.js:7772",
+   "ms": 644,
+   "pct": 1.1
+  },
+  {
+   "fn": "V https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 394,
+   "pct": 0.6
+  },
+  {
+   "fn": "projectObject http://localhost:3000/lib/three/build/three.module.js:30038",
+   "ms": 246,
+   "pct": 0.4
+  },
+  {
+   "fn": "renderObject http://localhost:3000/lib/three/build/three.module.js:22551",
+   "ms": 163,
+   "pct": 0.3
+  },
+  {
+   "fn": "Z https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 159,
+   "pct": 0.3
+  },
+  {
+   "fn": "still island/perf.js:65",
+   "ms": 159,
+   "pct": 0.3
+  },
+  {
+   "fn": "texSubImage2D :0",
+   "ms": 158,
+   "pct": 0.3
+  },
+  {
+   "fn": "er https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 154,
+   "pct": 0.3
+  },
+  {
+   "fn": "setProgram http://localhost:3000/lib/three/build/three.module.js:30501",
+   "ms": 148,
+   "pct": 0.2
+  },
+  {
+   "fn": "o.update :3",
+   "ms": 128,
+   "pct": 0.2
+  }
+ ]
+}

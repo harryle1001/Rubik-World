@@ -40,3 +40,19 @@ Mạng yếu (`--net=3g`, 1,6 Mbps · 150 ms):
 > Ghi chú đo: giả lập mạng của Chromium không áp cho service worker, và file SW phục vụ từ bộ nhớ đệm tính 0 KB →
 > cột dung lượng các bước 01–07 thiếu phần SW tải ngầm (~2,1 MB) và thời gian các bước đó còn lạc quan; từ bước 08 SW
 > không tải gì trước lúc vào chơi nên số đo phản ánh đúng băng thông thật.
+
+## CPU / JS (`node tools/perf-cpu.mjs`, CPU chậm 4×, 30 s đi bộ + 30 s chạy quanh quảng trường, mức 1, 13h)
+GPU giả lập nên đo phần JS trên luồng chính (đảo 3D + three, self time từ profile CDP). Số trong `docs/perf/cpu/*.json`.
+
+| Chỉ số (ms/khung, CPU 4×) | gốc (daed9fa) | cuối |
+|---|---|---|
+| JS đảo 3D + three | 31,0 | **26,4** |
+| tính ma trận (updateMatrixWorld…) | 7,15 | 4,97 |
+| vẽ phía CPU (post.render) | 29,2 | 24,3 |
+| người thị trấn (school) | 3,15 | 2,13 |
+| khung JS > 50 ms / 60 s | 25 | 13 |
+| getProgram (đổi shader do vật liệu dùng chung) | 209 ms/60 s | 117 ms/60 s |
+| rò texture khi qua cửa trường | 1 / cửa | 0 |
+
+Còn lại ngoài phạm vi đảo 3D: iframe trường 2D (`client/school/`, chess.js) cấp phát ~46 MB / 60 s trên cùng heap
+→ phần lớn số lần GC của trang (minor 6–42, major 6–10 tuỳ số ván cờ NPC đang chơi) và ~2 s CPU / 60 s.
