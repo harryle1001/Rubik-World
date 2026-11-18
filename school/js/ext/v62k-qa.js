@@ -50,7 +50,7 @@ async function v62kQaRun(ids){
   for(const t of T){
     if(!Q.on || !v62kOK()) break; Q.cur = t;
     V54Q.iss = []; V54Q.keys = new Map(); V54Q.nshot = 0; V54Q.fps = {min:999, sum:0, cnt:0}; V54Q.sf = {min:999, sum:0, cnt:0}; V54Q.fw = {t:0, n:0}; V54Q.vp = Q.vp;
-    V54Q.on = true; V54Q.t0 = Date.now(); V54Q.rob.ok = false; requestAnimationFrame(v54qFrame);
+    V54Q.on = true; V54Q.t0 = Date.now(); V54Q.rob.ok = false; if(!V54Q.raf){ V54Q.raf = true; requestAnimationFrame(v54qFrame); }
     const S = v62kQaSteps(t); V54Q.steps = S; const t0 = Date.now();
     for(V54Q.idx = 0; V54Q.idx < S.length && Q.on; V54Q.idx++){
       const s = S[V54Q.idx]; v54qSay(t.def.ic + ' ' + s.name);

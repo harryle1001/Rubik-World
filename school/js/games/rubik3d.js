@@ -1,7 +1,7 @@
 // ================= RUBIK 3D =================
 let R3 = null;
 const RMOVES = {U:['y',1,-1], D:['y',-1,1], L:['x',-1,1], R:['x',1,-1], F:['z',1,-1], B:['z',-1,1]};
-function openRubik(){ showModal('mRubik'); if(typeof THREE === 'undefined'){ $('#rstate').textContent = 'Không tải được thư viện 3D. Kiểm tra mạng rồi mở lại trang.'; return; } if(!R3) rubikInit(); R3.running = true; R3.last = performance.now(); requestAnimationFrame(rubikLoop); }
+function openRubik(){ showModal('mRubik'); if(typeof THREE === 'undefined'){ $('#rstate').textContent = 'Không tải được thư viện 3D. Kiểm tra mạng rồi mở lại trang.'; return; } if(!R3) rubikInit(); R3.running = true; R3._rk = null; R3.last = performance.now(); requestAnimationFrame(rubikLoop); }
 function rubikPause(){ if(R3) R3.running = false; }
 function rubikInit(){
   const cv = $('#rubikCv');
@@ -82,7 +82,10 @@ function rubikLoop(now){
   if(w && (cv.width !== Math.round(w*R3.renderer.getPixelRatio()) || cv.height !== Math.round(h*R3.renderer.getPixelRatio()))){ R3.renderer.setSize(w, h, false); R3.camera.aspect = w/h; R3.camera.updateProjectionMatrix(); }
   rubikStep(dt);
   if(R3.timing){ const s = (performance.now() - R3.t0)/1000; $('#rtimer').textContent = pad2(Math.floor(s/60)) + ':' + (s % 60).toFixed(1).padStart(4, '0'); }
-  R3.renderer.render(R3.scene, R3.camera);
+  // v63f: chỉ vẽ lại khi khối/camera/cỡ khung đổi (đứng yên thì không vẽ → FPS cao, đỡ nóng máy)
+  let k = cv.width * 7 + cv.height + R3.camera.position.x * 13 + R3.camera.position.y * 17 + R3.camera.position.z * 19;
+  for(const c of R3.cubies){ const p = c.position, q = c.quaternion; k += p.x * 3 + p.y * 5 + p.z * 11 + q.x * 23 + q.y * 29 + q.z * 31 + q.w * 37; }
+  if(R3.anim || R3.queue.length || k !== R3._rk){ R3._rk = k; R3.renderer.render(R3.scene, R3.camera); }
   requestAnimationFrame(rubikLoop);
 }
 $('#rscramble').onclick = () => {

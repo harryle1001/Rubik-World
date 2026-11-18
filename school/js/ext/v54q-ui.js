@@ -85,7 +85,7 @@ async function v54qStart(opt){
   if(typeof PLAYER === 'undefined' || !PLAYER || !PLAYER.visible){ toast('🤖 Đăng nhập và vào thế giới trước nhé!'); return false; }
   opt = opt || {}; V54Q.vp = innerWidth + '×' + innerHeight;
   V54Q.iss = []; V54Q.keys = new Map(); V54Q.nshot = 0; V54Q.fps = {min:999, sum:0, cnt:0}; V54Q.sf = {min:999, sum:0, cnt:0}; V54Q.fw = {t:0, n:0}; V54Q.done = false;
-  V54Q.on = true; V54Q.t0 = Date.now(); V54Q.rob.ok = false; requestAnimationFrame(v54qFrame);
+  V54Q.on = true; V54Q.t0 = Date.now(); V54Q.rob.ok = false; if(!V54Q.raf){ V54Q.raf = true; requestAnimationFrame(v54qFrame); }
   V54Q.errs.forEach(e => v54qErrIssue(e)); // lỗi đã có từ lúc khởi động game
   let S = v54qBuild(); if(opt.only) S = S.filter(s => opt.only.includes(s.k)); if(opt.max) S = S.slice(0, opt.max);
   V54Q.steps = S; const home = [PLAYER.x, PLAYER.y], hz = PLAYER._z;
