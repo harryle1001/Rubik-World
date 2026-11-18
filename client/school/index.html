@@ -700,7 +700,6 @@
 <script>
 // Game code lives in the js/ files below (in this order). They are joined and run as ONE program.
 // To add a feature: make a new file and put it in the list right BEFORE 'js/main.js'.
-// js/data/books-text.js, js/data/piano-samples.js: KHÔNG nạp ở đây — nạp khi cần bằng rsLazy() (js/ext/shared.js).
 (() => {
 const FILES = [
   'js/core/world.js',
@@ -715,6 +714,7 @@ const FILES = [
   'js/games/fishing.js',
   'js/core/start.js',
   'js/ext/shared.js',
+  'js/data/piano-samples.js',
   'js/ext/shared-2.js',
   'js/games/chess-tables.js',
   'js/world/farm-zones.js',
@@ -733,6 +733,7 @@ const FILES = [
   'js/shop-mall-market.js',
   'js/player/autowalk.js',
   'js/games/reader-books.js',
+  'js/data/books-text.js',
   'js/games/reader-books-2.js',
   'js/world/street-mentors.js',
   'js/games/rubik-formula.js',
