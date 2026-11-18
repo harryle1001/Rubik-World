@@ -70,6 +70,7 @@ export function createSky(scene) {
   scene.add(hemi);
   const sun = new THREE.DirectionalLight('#fff0d2', 1.7); sun.castShadow = true;
   const r = CFG.quality.shadowRange; Object.assign(sun.shadow.camera, { left: -r, right: r, top: r, bottom: -r, near: 1, far: 200 });
+  sun.shadow.camera.layers.enable(1);   // layer 1: mảnh 'chỉ đổ bóng' của khối gộp lớn (decor.js shadowCells)
   sun.shadow.mapSize.set(CFG.quality.shadowSize, CFG.quality.shadowSize); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05;
   scene.add(sun, sun.target);
   scene.fog = new THREE.Fog('#cfeefa', CFG.view.fogNear, CFG.view.far);

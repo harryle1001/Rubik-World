@@ -9,7 +9,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { toon } from './style.js';
 import { BLOCKS, PHI } from './layout.js';
-import { Batch } from './decor.js';
+import { Batch, shadowCells } from './decor.js';
 import { placeKit } from './kit.js';
 import { buildGate } from './sample/gate.js';
 import { buildPlaza } from './sample/plaza.js';
@@ -303,7 +303,7 @@ export function buildSchoolZone(a) {
   // ================= XUẤT RA SCENE =================
   const mat = toon('#ffffff', { vertexColors: true });
   fakeAO(SB, Y); fakeAO(GB, Y);
-  for (const [bt, shadow, ol] of [[SB, true, true], [GB, true, true], [GR, false, false]]) { const m = bt.mesh(mat, shadow); if (!m) continue; if (ol) outline(m); scene.add(m); meshes.push(m); }
+  for (const [bt, shadow, ol] of [[SB, true, true], [GB, true, true], [GR, false, false]]) { const m = bt.mesh(mat, shadow); if (!m) continue; if (ol) outline(m); shadowCells(m); scene.add(m); meshes.push(m); }
   for (const r of roofs) {
     fakeAO(r.b, Y + H - 2);
     r.mat = toon('#ffffff', { vertexColors: true, transparent: true, side: THREE.DoubleSide, unique: true });
