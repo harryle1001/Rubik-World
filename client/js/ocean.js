@@ -34,6 +34,8 @@ import { createMiniGameHost } from './island/mg/host.js';
 import { createAccountHud } from './island/account-hud.js';
 import { createLoader } from './island/loader.js';
 import { createStats } from './island/stats.js';
+import { createTeacherQuiz } from './island/teacher-quiz.js';
+import { createQuests } from './island/quests.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
@@ -105,6 +107,8 @@ const sealife = ctx.sealife = createSealife(ctx); // thế giới biển: san h�
 const treasure = ctx.treasure = createTreasure(ctx); // 13 rương kho báu dưới đáy biển + câu đố biển + mảnh bản đồ (HUD 🧰)
 const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao băng, mây ti, chế độ ngắm trời ⭐ (skyshow.js)
 const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
+const quests = ctx.questsMod = createQuests(ctx); // bảng nhiệm vụ hằng ngày 📋: 3 khu · 3 câu đố · 5 pha lê → thưởng (quests.js)
+const teacherQuiz = createTeacherQuiz(ctx); // thầy cô/NPC đố vui theo môn & lớp 1–9 khi bấm E (teacher-quiz.js, data/quiz-bank.json)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
@@ -159,6 +163,8 @@ renderer.setAnimationLoop(() => {
   mg.update(dt, clock.elapsedTime);
   sealife.update(dt);
   treasure.update(dt);
+  teacherQuiz.update();
+  quests.update(dt);
   ctx.flushOffer();
   brightness.update();
   perf.update(dt);

@@ -14,8 +14,6 @@ Agent đọc file này mỗi lần chạy, làm lần lượt các việc từ �
 0. Rà soát toàn bộ game và áp tỷ lệ vàng φ vào những chỗ chưa có: HUD/nút/cỡ chữ, camera, tỷ lệ cơ thể nhân vật (people-model.js), kích thước kiến trúc trường và các khu, máy bay/sân bay, đồ vật vật lý. Chia nhỏ nếu nhiều.
 2. Hiệu năng điện thoại: giảm draw call trước cổng trường xuống < 150 (gộp mesh, tắt bóng vật nhỏ, LOD người ở xa).
 3. Cập nhật Xưởng Nhân Vật (https://claude.ai/artifact/Gkr6gn9gZRPL6dtLym67Fr) sang nhân vật dáng Zelda mới (people-model.js).
-4. Nhiệm vụ học tập: bảng nhiệm vụ hằng ngày (đi tới 3 khu, trả lời 3 câu đố của thầy cô, thu thập 5 viên pha lê) có phần thưởng.
-5. Thầy cô và NPC hỏi đố theo môn (Toán, Tiếng Việt, Khoa học, Lịch sử – Địa lý) khi bấm E nói chuyện.
 6. Sự kiện theo giờ: chào cờ sáng thứ Hai, giờ ra chơi có học sinh chơi đá cầu, tối có đèn lồng.
 7. Âm thanh: tiếng mưa trên mái, tiếng động cơ máy bay thu thật (CC0), nhạc theo thời tiết.
 8. Thêm phương tiện: thuyền buồm đi giữa các đảo, xe buýt trường chạy theo đường vòng.
@@ -24,3 +22,4 @@ Agent đọc file này mỗi lần chạy, làm lần lượt các việc từ �
 
 ## Nhật ký
 - 2026-11-15: Tạo lộ trình. Bản hiện tại: sân bay + máy bay cổ điển, nhân vật dáng Zelda, vật lý, thời tiết, quy hoạch tỷ lệ vàng + π.
+- 2026-11-18: Xong việc 4 + 5. Thầy cô/NPC đố vui khi bấm E (teacher-quiz.js, data/quiz-bank.json: 204 câu lớp 1–9, 4 môn, có giải thích). Bảng nhiệm vụ 📋 hằng ngày (quests.js): 3 khu · 3 câu đố · 5/8 pha lê → 34 🪙 + 💠, chuỗi ngày 🔥, reset theo ngày; pha lê thêm 2 draw call (instancing). Ảnh: docs/shots/quests/.

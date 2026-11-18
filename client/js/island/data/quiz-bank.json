@@ -1,0 +1,305 @@
+{
+  "_doc": "Ngân hàng câu đố thầy cô theo lớp 1–9 (chương trình GDPT 2018). Mỗi câu: q câu hỏi, c 4 đáp án (đáp án ĐÚNG luôn ở vị trí a), e giải thích ngắn khi sai. Thứ tự đáp án được xáo khi hiện. Lớp 1–3: Khoa học & LS–ĐL lấy từ môn Tự nhiên và Xã hội; lớp 6–9: Ngữ văn, Khoa học tự nhiên, Lịch sử và Địa lí.",
+  "subjects": {
+    "toan": { "name": "Toán", "icon": "➗" },
+    "tv": { "name": "Tiếng Việt", "name69": "Ngữ văn", "icon": "📖" },
+    "kh": { "name": "Khoa học", "name13": "Tự nhiên & Xã hội", "name69": "KHTN", "icon": "🔬" },
+    "lsdl": { "name": "Lịch sử – Địa lý", "name13": "Tự nhiên & Xã hội", "icon": "🌏" }
+  },
+  "grades": {
+    "1": {
+      "toan": [
+        { "q": "7 + 2 = ?", "c": ["9", "8", "10", "5"], "a": 0, "e": "Đếm thêm 2 từ 7: 8, 9. Vậy 7 + 2 = 9." },
+        { "q": "10 − 4 = ?", "c": ["6", "5", "7", "14"], "a": 0, "e": "Có 10 bớt đi 4 còn 6." },
+        { "q": "Số nào lớn nhất: 35, 53, 50, 39?", "c": ["53", "50", "39", "35"], "a": 0, "e": "So sánh hàng chục trước: 5 chục lớn hơn 3 chục; 53 > 50." },
+        { "q": "Hình nào có 3 cạnh?", "c": ["Hình tam giác", "Hình vuông", "Hình tròn", "Hình chữ nhật"], "a": 0, "e": "Hình tam giác có 3 cạnh và 3 đỉnh." },
+        { "q": "Một tuần lễ có mấy ngày?", "c": ["7 ngày", "5 ngày", "10 ngày", "6 ngày"], "a": 0, "e": "Từ thứ Hai đến Chủ nhật là 7 ngày." },
+        { "q": "Số 46 gồm mấy chục và mấy đơn vị?", "c": ["4 chục và 6 đơn vị", "6 chục và 4 đơn vị", "46 chục", "4 đơn vị và 6 chục"], "a": 0, "e": "Chữ số bên trái chỉ chục, bên phải chỉ đơn vị: 46 = 40 + 6." }
+      ],
+      "tv": [
+        { "q": "Tiếng “mèo” có vần gì?", "c": ["eo", "e", "mè", "o"], "a": 0, "e": "“mèo” = âm m + vần eo + dấu huyền." },
+        { "q": "Chữ nào viết đúng?", "c": ["con gà", "con ghà", "con gàa", "kon gà"], "a": 0, "e": "Trước a viết “g”, chỉ viết “gh” trước e, ê, i." },
+        { "q": "Điền vào chỗ trống: “quả …ê” (quả ăn được, màu vàng)", "c": ["l", "n", "d", "h"], "a": 0, "e": "Quả lê viết với âm “l”." },
+        { "q": "Tiếng “bà” có dấu thanh gì?", "c": ["Dấu huyền", "Dấu sắc", "Dấu hỏi", "Dấu nặng"], "a": 0, "e": "Dấu huyền là nét xiên trái trên chữ a: bà." },
+        { "q": "Âm nào đứng trước “e, ê, i” phải viết là “k”?", "c": ["Âm /cờ/", "Âm /gờ/", "Âm /ngờ/", "Âm /tờ/"], "a": 0, "e": "Âm /cờ/ viết “k” trước e, ê, i (kẻ, kê, kì), viết “c” trước các vần khác." },
+        { "q": "Từ nào chỉ con vật?", "c": ["con cá", "cái bàn", "quả cam", "bông hoa"], "a": 0, "e": "Cá là con vật; bàn là đồ vật, cam là quả, hoa là cây." }
+      ],
+      "kh": [
+        { "q": "Em dùng bộ phận nào để ngửi mùi thơm của hoa?", "c": ["Mũi", "Tai", "Mắt", "Tay"], "a": 0, "e": "Mũi giúp ta ngửi; mắt để nhìn, tai để nghe." },
+        { "q": "Bộ phận nào giúp cây đứng vững và hút nước?", "c": ["Rễ", "Lá", "Hoa", "Quả"], "a": 0, "e": "Rễ bám chặt vào đất và hút nước nuôi cây." },
+        { "q": "Con vật nào sống dưới nước?", "c": ["Con cá", "Con gà", "Con mèo", "Con chim"], "a": 0, "e": "Cá sống dưới nước, bơi bằng vây." },
+        { "q": "Trước khi ăn, em nên làm gì?", "c": ["Rửa tay bằng xà phòng", "Chơi với cún", "Xem ti vi", "Chạy nhảy"], "a": 0, "e": "Rửa tay sạch giúp không đưa vi khuẩn vào miệng." },
+        { "q": "Trời nắng to, khi ra ngoài em nên…", "c": ["Đội mũ, nón", "Đi chân đất", "Mặc áo mưa", "Nhìn thẳng Mặt Trời"], "a": 0, "e": "Đội mũ nón che nắng; không bao giờ nhìn thẳng vào Mặt Trời." }
+      ],
+      "lsdl": [
+        { "q": "Gặp đèn đỏ khi đi đường, em phải…", "c": ["Dừng lại", "Đi thật nhanh", "Chạy qua", "Quay đầu"], "a": 0, "e": "Đèn đỏ: dừng lại; đèn xanh mới được đi." },
+        { "q": "Lá cờ Tổ quốc Việt Nam có màu gì?", "c": ["Nền đỏ, sao vàng", "Nền vàng, sao đỏ", "Nền xanh, sao trắng", "Nền trắng, sao đỏ"], "a": 0, "e": "Quốc kì Việt Nam: cờ đỏ sao vàng năm cánh." },
+        { "q": "Ai là người dạy em ở trường?", "c": ["Thầy cô giáo", "Bác sĩ", "Chú công an", "Bác nông dân"], "a": 0, "e": "Thầy cô giáo dạy học ở trường." },
+        { "q": "Khi được người khác giúp đỡ, em nói gì?", "c": ["Cảm ơn", "Xin lỗi", "Tạm biệt", "Không nói gì"], "a": 0, "e": "Nói “Cảm ơn” khi được giúp; nói “Xin lỗi” khi mắc lỗi." },
+        { "q": "Ông bà, bố mẹ và em sống cùng nhau gọi là gì?", "c": ["Gia đình", "Lớp học", "Khu phố", "Câu lạc bộ"], "a": 0, "e": "Những người thân sống cùng nhau là một gia đình." }
+      ]
+    },
+    "2": {
+      "toan": [
+        { "q": "38 + 25 = ?", "c": ["63", "53", "613", "73"], "a": 0, "e": "8 + 5 = 13, viết 3 nhớ 1; 3 + 2 + 1 = 6. Kết quả 63." },
+        { "q": "5 × 4 = ?", "c": ["20", "9", "25", "15"], "a": 0, "e": "5 được lấy 4 lần: 5 + 5 + 5 + 5 = 20." },
+        { "q": "1 giờ có bao nhiêu phút?", "c": ["60 phút", "100 phút", "30 phút", "24 phút"], "a": 0, "e": "1 giờ = 60 phút; 1 ngày = 24 giờ." },
+        { "q": "Số liền sau của 499 là số nào?", "c": ["500", "498", "490", "4100"], "a": 0, "e": "Liền sau = thêm 1: 499 + 1 = 500." },
+        { "q": "16 : 2 = ?", "c": ["8", "6", "14", "18"], "a": 0, "e": "Chia 16 thành 2 phần bằng nhau, mỗi phần 8." },
+        { "q": "Can có 5 l nước, rót thêm 3 l. Can có bao nhiêu lít?", "c": ["8 l", "2 l", "53 l", "15 l"], "a": 0, "e": "Thêm vào thì làm phép cộng: 5 + 3 = 8 (l)." }
+      ],
+      "tv": [
+        { "q": "Từ nào chỉ hoạt động?", "c": ["chạy", "bàn", "xanh", "đẹp"], "a": 0, "e": "Chạy là việc làm (hoạt động); xanh, đẹp chỉ đặc điểm; bàn chỉ sự vật." },
+        { "q": "Từ nào chỉ đặc điểm?", "c": ["cao", "học", "sách", "nhảy"], "a": 0, "e": "Cao nói về đặc điểm (người cao, cây cao)." },
+        { "q": "Câu hỏi thường kết thúc bằng dấu gì?", "c": ["Dấu chấm hỏi (?)", "Dấu chấm (.)", "Dấu phẩy (,)", "Dấu gạch ngang (–)"], "a": 0, "e": "Câu dùng để hỏi kết thúc bằng dấu chấm hỏi." },
+        { "q": "“Bạn Lan là học sinh lớp 2.” thuộc kiểu câu nào?", "c": ["Ai là gì?", "Ai làm gì?", "Ai thế nào?", "Câu hỏi"], "a": 0, "e": "Câu giới thiệu: Bạn Lan (Ai) – là học sinh lớp 2 (là gì)." },
+        { "q": "Chọn chữ đúng: “cái …ồng” (đồ để nấu cơm)", "c": ["nồi", "lồi", "nối", "lối"], "a": 0, "e": "Nồi cơm viết với “n”." },
+        { "q": "Từ nào trái nghĩa với “nóng”?", "c": ["lạnh", "ấm", "nắng", "nhanh"], "a": 0, "e": "Nóng – lạnh là hai từ có nghĩa trái ngược nhau." }
+      ],
+      "kh": [
+        { "q": "Cơ quan nào giúp ta thở?", "c": ["Mũi và phổi", "Dạ dày", "Tim", "Xương"], "a": 0, "e": "Không khí đi qua mũi, khí quản vào phổi: đó là cơ quan hô hấp." },
+        { "q": "Con vật nào được nuôi trong nhà để lấy trứng?", "c": ["Con gà", "Con hổ", "Con cá mập", "Con khỉ"], "a": 0, "e": "Gà là vật nuôi, cho trứng và thịt." },
+        { "q": "Để có xương chắc khỏe, em nên…", "c": ["Ăn uống đủ chất, vận động đều", "Ăn nhiều kẹo", "Ngồi xem ti vi cả ngày", "Mang cặp quá nặng"], "a": 0, "e": "Ăn đủ chất, uống sữa, vận động và ngồi đúng tư thế giúp xương phát triển tốt." },
+        { "q": "Cây xanh cần gì để sống?", "c": ["Nước, ánh sáng, không khí", "Chỉ cần bóng tối", "Đường và muối", "Không cần gì"], "a": 0, "e": "Cây cần nước, ánh sáng, không khí và chất khoáng trong đất." },
+        { "q": "Nơi sống của con lạc đà là…", "c": ["Sa mạc", "Biển sâu", "Bắc Cực", "Ao hồ"], "a": 0, "e": "Lạc đà sống ở sa mạc, chịu khát rất giỏi." }
+      ],
+      "lsdl": [
+        { "q": "Ngày Nhà giáo Việt Nam là ngày nào?", "c": ["20/11", "1/6", "2/9", "8/3"], "a": 0, "e": "20 tháng 11 hằng năm là ngày tri ân thầy cô." },
+        { "q": "Ngày Quốc tế Thiếu nhi là ngày nào?", "c": ["1/6", "20/11", "30/4", "1/1"], "a": 0, "e": "1 tháng 6 là ngày của thiếu nhi khắp thế giới." },
+        { "q": "Khi ngồi sau xe máy, em phải…", "c": ["Đội mũ bảo hiểm", "Đứng lên ngắm cảnh", "Buông tay", "Ngồi quay ngược"], "a": 0, "e": "Đội mũ bảo hiểm cài quai đúng cách để bảo vệ đầu." },
+        { "q": "Người làm ra lúa gạo là ai?", "c": ["Bác nông dân", "Thầy giáo", "Phi công", "Thợ may"], "a": 0, "e": "Bác nông dân cày cấy, chăm sóc lúa." },
+        { "q": "Mặt Trời mọc ở hướng nào?", "c": ["Hướng Đông", "Hướng Tây", "Hướng Bắc", "Hướng Nam"], "a": 0, "e": "Mặt Trời mọc ở hướng Đông và lặn ở hướng Tây." }
+      ]
+    },
+    "3": {
+      "toan": [
+        { "q": "7 × 8 = ?", "c": ["56", "54", "48", "63"], "a": 0, "e": "Bảng nhân 7: 7 × 8 = 56." },
+        { "q": "Hình chữ nhật dài 8 cm, rộng 5 cm. Chu vi là?", "c": ["26 cm", "40 cm", "13 cm", "21 cm"], "a": 0, "e": "Chu vi HCN = (dài + rộng) × 2 = (8 + 5) × 2 = 26 cm." },
+        { "q": "Hình vuông cạnh 6 cm có diện tích là?", "c": ["36 cm²", "24 cm²", "12 cm²", "30 cm²"], "a": 0, "e": "Diện tích hình vuông = cạnh × cạnh = 6 × 6 = 36 cm²." },
+        { "q": "Gấp 9 lên 4 lần được bao nhiêu?", "c": ["36", "13", "5", "94"], "a": 0, "e": "Gấp lên 4 lần là nhân với 4: 9 × 4 = 36." },
+        { "q": "Số La Mã XII là số mấy?", "c": ["12", "7", "21", "102"], "a": 0, "e": "X = 10, I = 1: X + I + I = 12." },
+        { "q": "1 kg bằng bao nhiêu gam?", "c": ["1000 g", "100 g", "10 g", "10 000 g"], "a": 0, "e": "1 ki-lô-gam = 1000 gam." }
+      ],
+      "tv": [
+        { "q": "Câu “Trăng tròn như quả bóng.” dùng biện pháp gì?", "c": ["So sánh", "Nhân hoá", "Điệp từ", "Đảo ngữ"], "a": 0, "e": "Có từ “như” nối trăng với quả bóng: đó là so sánh." },
+        { "q": "Câu “Ông Mặt Trời cười tươi.” dùng biện pháp gì?", "c": ["Nhân hoá", "So sánh", "Liệt kê", "Nói quá"], "a": 0, "e": "Gọi Mặt Trời là “ông”, cho biết “cười” như người: đó là nhân hoá." },
+        { "q": "Từ nào cùng nghĩa với “siêng năng”?", "c": ["chăm chỉ", "lười biếng", "nhút nhát", "vội vàng"], "a": 0, "e": "Siêng năng = chăm chỉ; lười biếng là trái nghĩa." },
+        { "q": "Câu cảm thường kết thúc bằng dấu gì?", "c": ["Dấu chấm than (!)", "Dấu chấm hỏi (?)", "Dấu hai chấm (:)", "Dấu phẩy (,)"], "a": 0, "e": "Câu bộc lộ cảm xúc (Ôi, đẹp quá!) dùng dấu chấm than." },
+        { "q": "Trong câu “Đàn cò bay lả bay la.”, từ chỉ hoạt động là?", "c": ["bay", "đàn", "cò", "lả"], "a": 0, "e": "“bay” là hoạt động của đàn cò." },
+        { "q": "Điền “s” hay “x”: “…inh nhật”", "c": ["s", "x", "ch", "tr"], "a": 0, "e": "Viết đúng là “sinh nhật”." }
+      ],
+      "kh": [
+        { "q": "Bộ phận nào của cây thường làm nhiệm vụ quang hợp (chế tạo chất dinh dưỡng)?", "c": ["Lá", "Rễ", "Thân", "Hoa"], "a": 0, "e": "Lá xanh hấp thu ánh sáng để chế tạo chất dinh dưỡng nuôi cây." },
+        { "q": "Cơ quan nào bơm máu đi khắp cơ thể?", "c": ["Tim", "Phổi", "Dạ dày", "Thận"], "a": 0, "e": "Tim co bóp liên tục, đẩy máu đi nuôi cơ thể." },
+        { "q": "Con vật nào thuộc nhóm có xương sống?", "c": ["Con cá", "Con giun", "Con ốc sên", "Con sứa"], "a": 0, "e": "Cá có xương sống; giun, ốc, sứa không có." },
+        { "q": "Cơ quan nào điều khiển mọi hoạt động của cơ thể?", "c": ["Bộ não", "Bàn tay", "Dạ dày", "Da"], "a": 0, "e": "Não (cơ quan thần kinh) điều khiển suy nghĩ và hoạt động." },
+        { "q": "Trái Đất có hình gì?", "c": ["Gần giống hình cầu", "Hình vuông", "Hình tam giác", "Phẳng như cái đĩa"], "a": 0, "e": "Trái Đất gần giống hình cầu, hơi dẹt ở hai cực." }
+      ],
+      "lsdl": [
+        { "q": "Thủ đô của Việt Nam là thành phố nào?", "c": ["Hà Nội", "Huế", "Đà Nẵng", "Cần Thơ"], "a": 0, "e": "Hà Nội là thủ đô của nước Cộng hoà xã hội chủ nghĩa Việt Nam." },
+        { "q": "Quả địa cầu là gì?", "c": ["Mô hình thu nhỏ của Trái Đất", "Một quả bóng đá", "Mô hình Mặt Trăng", "Một hành tinh khác"], "a": 0, "e": "Quả địa cầu thu nhỏ Trái Đất để ta xem các châu lục, đại dương." },
+        { "q": "Ngày Quốc khánh nước Việt Nam là ngày nào?", "c": ["2/9", "30/4", "1/5", "19/5"], "a": 0, "e": "Ngày 2/9/1945 Bác Hồ đọc Tuyên ngôn Độc lập khai sinh nước Việt Nam Dân chủ Cộng hoà." },
+        { "q": "Trên bản đồ, phía trên thường là hướng nào?", "c": ["Hướng Bắc", "Hướng Nam", "Hướng Đông", "Hướng Tây"], "a": 0, "e": "Quy ước: trên Bắc, dưới Nam, phải Đông, trái Tây." },
+        { "q": "Khi có cháy, em gọi số điện thoại nào?", "c": ["114", "113", "115", "111"], "a": 0, "e": "114 cứu hoả; 113 công an; 115 cấp cứu; 111 tổng đài bảo vệ trẻ em." }
+      ]
+    },
+    "4": {
+      "toan": [
+        { "q": "Phân số nào bằng 1/2?", "c": ["3/6", "2/3", "1/4", "2/5"], "a": 0, "e": "Nhân cả tử và mẫu của 1/2 với 3 được 3/6." },
+        { "q": "Trung bình cộng của 4, 6 và 8 là?", "c": ["6", "18", "9", "5"], "a": 0, "e": "(4 + 6 + 8) : 3 = 18 : 3 = 6." },
+        { "q": "1 tấn bằng bao nhiêu ki-lô-gam?", "c": ["1000 kg", "100 kg", "10 kg", "10 000 kg"], "a": 0, "e": "1 tấn = 10 tạ = 1000 kg." },
+        { "q": "Góc lớn hơn góc vuông nhưng bé hơn góc bẹt gọi là?", "c": ["Góc tù", "Góc nhọn", "Góc vuông", "Góc đỉnh"], "a": 0, "e": "Góc nhọn < góc vuông < góc tù < góc bẹt." },
+        { "q": "Rút gọn phân số 12/18 được?", "c": ["2/3", "3/4", "4/6", "6/8"], "a": 0, "e": "Chia cả tử và mẫu cho 6: 12/18 = 2/3." },
+        { "q": "Năm 2026 thuộc thế kỉ nào?", "c": ["Thế kỉ XXI", "Thế kỉ XX", "Thế kỉ XIX", "Thế kỉ XXII"], "a": 0, "e": "Từ năm 2001 đến 2100 là thế kỉ XXI (21)." }
+      ],
+      "tv": [
+        { "q": "Trong câu “Chú mèo lười nằm ngủ.”, từ nào là tính từ?", "c": ["lười", "mèo", "nằm", "ngủ"], "a": 0, "e": "“lười” chỉ đặc điểm, tính chất: tính từ." },
+        { "q": "Chủ ngữ của câu “Những bông hoa phượng nở đỏ rực.” là?", "c": ["Những bông hoa phượng", "nở", "đỏ rực", "nở đỏ rực"], "a": 0, "e": "Chủ ngữ trả lời câu hỏi Cái gì? → Những bông hoa phượng." },
+        { "q": "Trạng ngữ trong câu “Sáng nay, lớp em đi tham quan.” là?", "c": ["Sáng nay", "lớp em", "đi tham quan", "tham quan"], "a": 0, "e": "Trạng ngữ chỉ thời gian, thường đứng đầu câu và có dấu phẩy ngăn cách." },
+        { "q": "Từ nào là danh từ?", "c": ["dòng sông", "chạy nhảy", "xinh xắn", "suy nghĩ"], "a": 0, "e": "Danh từ chỉ sự vật: dòng sông." },
+        { "q": "Danh từ riêng phải viết thế nào?", "c": ["Viết hoa", "Viết thường", "Viết nghiêng", "Gạch chân"], "a": 0, "e": "Tên riêng người, địa danh phải viết hoa: Hà Nội, Nguyễn Trãi." },
+        { "q": "Từ nào là động từ?", "c": ["đọc", "quyển sách", "chăm chỉ", "xanh biếc"], "a": 0, "e": "Động từ chỉ hoạt động, trạng thái: đọc." }
+      ],
+      "kh": [
+        { "q": "Nước tồn tại ở những thể nào?", "c": ["Rắn, lỏng, khí", "Chỉ thể lỏng", "Chỉ thể rắn", "Lỏng và dẻo"], "a": 0, "e": "Nước đá (rắn), nước (lỏng), hơi nước (khí)." },
+        { "q": "Thành phần chính của không khí giúp duy trì sự cháy là?", "c": ["Khí ô-xi", "Khí ni-tơ", "Hơi nước", "Khói bụi"], "a": 0, "e": "Ô-xi duy trì sự cháy và sự sống; ni-tơ chiếm nhiều nhất nhưng không duy trì sự cháy." },
+        { "q": "Âm thanh do đâu mà có?", "c": ["Do các vật rung động", "Do ánh sáng", "Do nhiệt", "Do màu sắc"], "a": 0, "e": "Vật phát ra âm thanh khi rung động (dây đàn, mặt trống)." },
+        { "q": "Trong chuỗi “Cỏ → Thỏ → Cáo”, sinh vật nào tự làm ra thức ăn?", "c": ["Cỏ", "Thỏ", "Cáo", "Cả ba"], "a": 0, "e": "Thực vật tự tổng hợp chất dinh dưỡng; động vật phải ăn sinh vật khác." },
+        { "q": "Nấm men được dùng để làm gì?", "c": ["Làm bánh mì nở xốp", "Làm thủy tinh", "Làm sắt thép", "Làm nhựa"], "a": 0, "e": "Nấm men làm bột bánh mì lên men, nở xốp." },
+        { "q": "Vật nào cho ánh sáng truyền qua gần như hoàn toàn?", "c": ["Tấm kính trong", "Tấm gỗ", "Bức tường", "Tấm bìa"], "a": 0, "e": "Kính trong là vật trong suốt; gỗ, tường, bìa cản ánh sáng." }
+      ],
+      "lsdl": [
+        { "q": "Đền Hùng (Lễ hội Giỗ Tổ Hùng Vương) ở tỉnh nào?", "c": ["Phú Thọ", "Nghệ An", "Thanh Hóa", "Lạng Sơn"], "a": 0, "e": "Đền Hùng ở núi Nghĩa Lĩnh, Phú Thọ; Giỗ Tổ vào ngày 10/3 âm lịch." },
+        { "q": "Văn Miếu – Quốc Tử Giám ở đâu?", "c": ["Hà Nội", "Huế", "TP. Hồ Chí Minh", "Hội An"], "a": 0, "e": "Văn Miếu (1070) ở Hà Nội; Quốc Tử Giám được coi là trường đại học đầu tiên của nước ta." },
+        { "q": "Vùng Tây Nguyên nổi tiếng trồng cây gì?", "c": ["Cà phê", "Cói", "Lúa mì", "Táo tây"], "a": 0, "e": "Đất đỏ ba-dan Tây Nguyên rất hợp với cà phê, hồ tiêu, cao su." },
+        { "q": "Đồng bằng Bắc Bộ do phù sa sông nào bồi đắp chủ yếu?", "c": ["Sông Hồng và sông Thái Bình", "Sông Mê Công", "Sông Đồng Nai", "Sông Hương"], "a": 0, "e": "Đồng bằng Bắc Bộ do sông Hồng và sông Thái Bình bồi đắp." },
+        { "q": "Cố đô Huế từng là kinh đô của triều đại nào?", "c": ["Nhà Nguyễn", "Nhà Lý", "Nhà Trần", "Nhà Hồ"], "a": 0, "e": "Huế là kinh đô nhà Nguyễn (1802–1945)." }
+      ]
+    },
+    "5": {
+      "toan": [
+        { "q": "25% của 80 là bao nhiêu?", "c": ["20", "25", "32", "55"], "a": 0, "e": "80 × 25 : 100 = 20." },
+        { "q": "Số thập phân 3,45 đọc là?", "c": ["Ba phẩy bốn mươi lăm", "Ba trăm bốn mươi lăm", "Ba mươi bốn phẩy năm", "Ba phẩy bốn năm mươi"], "a": 0, "e": "Đọc phần nguyên “ba”, dấu “phẩy”, rồi phần thập phân “bốn mươi lăm”." },
+        { "q": "Hình tam giác đáy 10 cm, chiều cao 6 cm có diện tích là?", "c": ["30 cm²", "60 cm²", "16 cm²", "32 cm²"], "a": 0, "e": "S = đáy × chiều cao : 2 = 10 × 6 : 2 = 30 cm²." },
+        { "q": "Xe đi 120 km trong 3 giờ. Vận tốc của xe là?", "c": ["40 km/giờ", "360 km/giờ", "123 km/giờ", "30 km/giờ"], "a": 0, "e": "v = quãng đường : thời gian = 120 : 3 = 40 km/giờ." },
+        { "q": "Hình hộp chữ nhật dài 5 cm, rộng 4 cm, cao 3 cm có thể tích?", "c": ["60 cm³", "12 cm³", "47 cm³", "120 cm³"], "a": 0, "e": "V = dài × rộng × cao = 5 × 4 × 3 = 60 cm³." },
+        { "q": "Hình tròn bán kính 2 cm có diện tích (lấy π ≈ 3,14) là?", "c": ["12,56 cm²", "6,28 cm²", "3,14 cm²", "25,12 cm²"], "a": 0, "e": "S = r × r × 3,14 = 2 × 2 × 3,14 = 12,56 cm²." }
+      ],
+      "tv": [
+        { "q": "Từ nào đồng nghĩa với “Tổ quốc”?", "c": ["Đất nước", "Quê hương nhỏ", "Gia đình", "Làng xóm"], "a": 0, "e": "Tổ quốc, đất nước, non sông đều chỉ đất nước mình." },
+        { "q": "Cặp từ nào trái nghĩa?", "c": ["chìm – nổi", "to – lớn", "đẹp – xinh", "chăm – siêng"], "a": 0, "e": "Chìm – nổi có nghĩa trái ngược; các cặp còn lại gần nghĩa." },
+        { "q": "Trong câu “Mưa to nên đường trơn.”, từ nối hai vế là?", "c": ["nên", "mưa", "đường", "trơn"], "a": 0, "e": "“nên” là quan hệ từ chỉ kết quả, nối hai vế câu ghép." },
+        { "q": "Từ “tôi, bạn, nó” thuộc từ loại nào?", "c": ["Đại từ", "Danh từ", "Động từ", "Tính từ"], "a": 0, "e": "Đại từ dùng để xưng hô hoặc thay thế cho danh từ." },
+        { "q": "“Ăn quả nhớ kẻ trồng cây” khuyên ta điều gì?", "c": ["Biết ơn người đi trước", "Chăm trồng cây", "Ăn nhiều hoa quả", "Tiết kiệm"], "a": 0, "e": "Câu tục ngữ khuyên nhớ ơn người đã làm ra thành quả cho mình." },
+        { "q": "Câu ghép là câu…", "c": ["Có từ hai vế câu (cụm C–V) trở lên", "Chỉ có một từ", "Không có vị ngữ", "Luôn là câu hỏi"], "a": 0, "e": "Câu ghép gồm nhiều vế, mỗi vế có cấu tạo như một câu đơn." }
+      ],
+      "kh": [
+        { "q": "Hỗn hợp nào tách được bằng cách lọc?", "c": ["Nước lẫn cát", "Nước muối", "Nước đường", "Nước chanh đã hoà"], "a": 0, "e": "Cát không tan nên giữ lại trên giấy lọc; muối, đường tan hết trong nước." },
+        { "q": "Năng lượng nào là năng lượng sạch, tái tạo?", "c": ["Năng lượng mặt trời", "Than đá", "Dầu mỏ", "Xăng"], "a": 0, "e": "Năng lượng mặt trời, gió, nước không cạn kiệt và ít gây ô nhiễm." },
+        { "q": "Hạt đậu nảy mầm cần điều kiện gì?", "c": ["Độ ẩm, không khí, nhiệt độ thích hợp", "Để trong tủ đá", "Ngâm mãi trong dầu", "Không cần gì"], "a": 0, "e": "Hạt cần nước, không khí và nhiệt độ phù hợp để nảy mầm." },
+        { "q": "Dòng điện chạy được qua vật nào?", "c": ["Dây đồng", "Dây nhựa", "Thước gỗ", "Cục tẩy"], "a": 0, "e": "Kim loại như đồng dẫn điện tốt; nhựa, gỗ, cao su cách điện." },
+        { "q": "Tuổi dậy thì ở con gái thường bắt đầu khoảng?", "c": ["10 đến 15 tuổi", "3 đến 5 tuổi", "20 đến 25 tuổi", "Trên 40 tuổi"], "a": 0, "e": "Con gái thường dậy thì khoảng 10–15 tuổi, con trai khoảng 13–17 tuổi." }
+      ],
+      "lsdl": [
+        { "q": "Năm 938, Ngô Quyền đánh tan quân Nam Hán trên sông nào?", "c": ["Sông Bạch Đằng", "Sông Hồng", "Sông Như Nguyệt", "Sông Gianh"], "a": 0, "e": "Ngô Quyền cắm cọc gỗ trên sông Bạch Đằng, nhấn chìm thuyền giặc." },
+        { "q": "Chiến thắng Điện Biên Phủ diễn ra năm nào?", "c": ["1954", "1945", "1975", "1930"], "a": 0, "e": "Ngày 7/5/1954, chiến dịch Điện Biên Phủ toàn thắng." },
+        { "q": "Hai Bà Trưng khởi nghĩa chống quân xâm lược nào?", "c": ["Nhà Hán", "Nhà Minh", "Quân Mông – Nguyên", "Thực dân Pháp"], "a": 0, "e": "Năm 40, Hai Bà Trưng khởi nghĩa chống ách đô hộ nhà Hán." },
+        { "q": "Việt Nam nằm ở khu vực nào?", "c": ["Đông Nam Á", "Bắc Âu", "Nam Mỹ", "Trung Phi"], "a": 0, "e": "Việt Nam nằm trên bán đảo Đông Dương, khu vực Đông Nam Á." },
+        { "q": "Châu lục rộng lớn nhất thế giới là?", "c": ["Châu Á", "Châu Phi", "Châu Âu", "Châu Đại Dương"], "a": 0, "e": "Châu Á rộng nhất và đông dân nhất thế giới." }
+      ]
+    },
+    "6": {
+      "toan": [
+        { "q": "Số nào là số nguyên tố?", "c": ["13", "15", "21", "1"], "a": 0, "e": "13 chỉ có hai ước là 1 và 13. Số 1 không phải số nguyên tố." },
+        { "q": "ƯCLN(12, 18) = ?", "c": ["6", "3", "36", "2"], "a": 0, "e": "12 = 2²·3, 18 = 2·3² → ƯCLN = 2·3 = 6." },
+        { "q": "BCNN(4, 6) = ?", "c": ["12", "24", "2", "10"], "a": 0, "e": "Bội chung nhỏ nhất khác 0 của 4 và 6 là 12." },
+        { "q": "(−5) + 3 = ?", "c": ["−2", "2", "−8", "8"], "a": 0, "e": "Cộng hai số nguyên khác dấu: 5 − 3 = 2, lấy dấu của số có giá trị tuyệt đối lớn hơn → −2." },
+        { "q": "Số nào chia hết cho cả 2, 3 và 5?", "c": ["30", "25", "12", "45"], "a": 0, "e": "Tận cùng là 0 (chia hết cho 2 và 5) và tổng chữ số 3 chia hết cho 3." },
+        { "q": "Hình nào có tâm đối xứng?", "c": ["Hình bình hành", "Tam giác đều", "Hình thang cân", "Tam giác vuông"], "a": 0, "e": "Giao điểm hai đường chéo là tâm đối xứng của hình bình hành." }
+      ],
+      "tv": [
+        { "q": "“Sơn Tinh, Thủy Tinh” thuộc thể loại nào?", "c": ["Truyền thuyết", "Truyện cười", "Ngụ ngôn", "Thơ lục bát"], "a": 0, "e": "Truyền thuyết kể về sự kiện, nhân vật gắn với lịch sử, có yếu tố kì ảo." },
+        { "q": "Một cặp lục bát có số tiếng là?", "c": ["Dòng 6 tiếng và dòng 8 tiếng", "Hai dòng 7 tiếng", "Dòng 5 và dòng 7 tiếng", "Hai dòng 8 tiếng"], "a": 0, "e": "Lục = 6, bát = 8." },
+        { "q": "Từ “sách vở” thuộc loại từ nào?", "c": ["Từ ghép", "Từ đơn", "Từ láy", "Thành ngữ"], "a": 0, "e": "Ghép hai tiếng có nghĩa “sách” và “vở” → từ ghép." },
+        { "q": "Từ nào là từ láy?", "c": ["lấp lánh", "bàn ghế", "nhà cửa", "cây cối xanh"], "a": 0, "e": "“lấp lánh” lặp phụ âm đầu l: từ láy." },
+        { "q": "“Thuyền về có nhớ bến chăng” – “thuyền” và “bến” dùng biện pháp gì?", "c": ["Ẩn dụ", "Liệt kê", "Điệp ngữ", "Nói giảm"], "a": 0, "e": "Thuyền – bến ngầm chỉ người đi – người ở: ẩn dụ (dựa trên nét tương đồng)." },
+        { "q": "“Thánh Gióng” là truyện kể về…", "c": ["Người anh hùng đánh giặc Ân", "Sự tích bánh chưng", "Cuộc thi kén rể", "Chàng Sọ Dừa"], "a": 0, "e": "Thánh Gióng vươn vai thành tráng sĩ, đánh tan giặc Ân rồi bay về trời." }
+      ],
+      "kh": [
+        { "q": "Đơn vị cơ bản cấu tạo nên mọi cơ thể sống là?", "c": ["Tế bào", "Nguyên tử", "Mô", "Cơ quan"], "a": 0, "e": "Mọi sinh vật đều được cấu tạo từ tế bào." },
+        { "q": "Đơn vị đo khối lượng trong hệ đo lường chính thức là?", "c": ["Ki-lô-gam (kg)", "Mét (m)", "Giây (s)", "Lít (l)"], "a": 0, "e": "Khối lượng đo bằng kg; mét đo độ dài, giây đo thời gian." },
+        { "q": "Quá trình nước chuyển từ thể lỏng sang thể hơi gọi là?", "c": ["Sự bay hơi", "Sự đông đặc", "Sự nóng chảy", "Sự ngưng tụ"], "a": 0, "e": "Lỏng → hơi: bay hơi; hơi → lỏng: ngưng tụ." },
+        { "q": "Lực có thể gây ra tác dụng nào?", "c": ["Làm vật biến dạng hoặc thay đổi chuyển động", "Làm vật đổi màu", "Làm vật phát sáng", "Không có tác dụng gì"], "a": 0, "e": "Lực làm vật biến dạng, đổi hướng, nhanh lên hoặc chậm lại." },
+        { "q": "Trái Đất tự quay một vòng quanh trục hết khoảng bao lâu?", "c": ["24 giờ", "365 ngày", "1 tháng", "12 giờ"], "a": 0, "e": "Trái Đất tự quay ≈ 24 giờ (ngày đêm); quay quanh Mặt Trời ≈ 365 ngày." },
+        { "q": "Sinh vật nào thuộc giới Nấm?", "c": ["Nấm rơm", "Rêu", "Cây dương xỉ", "Con giun"], "a": 0, "e": "Nấm rơm, nấm men, nấm mốc thuộc giới Nấm; rêu, dương xỉ là thực vật." }
+      ],
+      "lsdl": [
+        { "q": "Kim tự tháp là công trình nổi tiếng của nền văn minh nào?", "c": ["Ai Cập cổ đại", "Hy Lạp cổ đại", "La Mã cổ đại", "Trung Hoa cổ đại"], "a": 0, "e": "Kim tự tháp là lăng mộ các pha-ra-ông Ai Cập." },
+        { "q": "Nhà nước đầu tiên của người Việt là?", "c": ["Văn Lang", "Đại Việt", "Đại Cồ Việt", "Âu Lạc"], "a": 0, "e": "Nhà nước Văn Lang do các vua Hùng đứng đầu; sau đó là Âu Lạc của An Dương Vương." },
+        { "q": "Kinh tuyến gốc (0°) đi qua đài thiên văn ở thành phố nào?", "c": ["Luân Đôn (Greenwich)", "Pa-ri", "Tô-ky-ô", "Hà Nội"], "a": 0, "e": "Kinh tuyến gốc đi qua đài thiên văn Greenwich ở Luân Đôn (Anh)." },
+        { "q": "Lớp ngoài cùng của Trái Đất, nơi con người sinh sống, là?", "c": ["Vỏ Trái Đất", "Lớp man-ti", "Nhân ngoài", "Nhân trong"], "a": 0, "e": "Cấu tạo Trái Đất: vỏ, man-ti, nhân; ta sống trên lớp vỏ." },
+        { "q": "Thành Cổ Loa gắn với vị vua nào?", "c": ["An Dương Vương", "Lý Thái Tổ", "Ngô Quyền", "Lê Lợi"], "a": 0, "e": "An Dương Vương xây thành Cổ Loa, kinh đô nước Âu Lạc." }
+      ]
+    },
+    "7": {
+      "toan": [
+        { "q": "Tổng ba góc trong một tam giác bằng?", "c": ["180°", "90°", "360°", "270°"], "a": 0, "e": "Định lí: tổng ba góc của tam giác luôn bằng 180°." },
+        { "q": "√49 = ?", "c": ["7", "−7", "24,5", "49"], "a": 0, "e": "Căn bậc hai số học của 49 là 7 vì 7² = 49 và 7 > 0." },
+        { "q": "Số nào là số vô tỉ?", "c": ["√2", "0,5", "−3", "1/3"], "a": 0, "e": "√2 = 1,4142… là số thập phân vô hạn không tuần hoàn." },
+        { "q": "Tìm x biết x/4 = 6/8.", "c": ["3", "2", "12", "6"], "a": 0, "e": "Tỉ lệ thức: x = 4 · 6 : 8 = 3." },
+        { "q": "Gieo một con xúc xắc cân đối. Xác suất ra mặt 6 chấm là?", "c": ["1/6", "1/2", "6", "1/3"], "a": 0, "e": "Có 6 mặt như nhau, chỉ 1 mặt 6 chấm → 1/6." },
+        { "q": "Bậc của đa thức 3x² − 5x + 1 là?", "c": ["2", "3", "1", "5"], "a": 0, "e": "Bậc của đa thức một biến là số mũ lớn nhất của biến: 2." }
+      ],
+      "tv": [
+        { "q": "“Gần mực thì đen, gần đèn thì sáng” thuộc thể loại nào?", "c": ["Tục ngữ", "Ca dao", "Truyện ngắn", "Thơ Đường luật"], "a": 0, "e": "Tục ngữ: câu nói ngắn gọn, đúc kết kinh nghiệm sống." },
+        { "q": "“Đẹp như tiên” sử dụng biện pháp tu từ gì?", "c": ["So sánh", "Nhân hoá", "Hoán dụ", "Điệp ngữ"], "a": 0, "e": "Có từ so sánh “như”." },
+        { "q": "“Bác đã đi rồi sao, Bác ơi!” – cách nói “đi rồi” là biện pháp gì?", "c": ["Nói giảm, nói tránh", "Nói quá", "So sánh", "Ẩn dụ"], "a": 0, "e": "Nói “đi” thay cho “mất” để giảm đau buồn: nói giảm, nói tránh." },
+        { "q": "“Lỗ mũi mười tám gánh lông” là biện pháp gì?", "c": ["Nói quá", "Nói giảm", "Liệt kê", "Hoán dụ"], "a": 0, "e": "Phóng đại mức độ để gây cười, nhấn mạnh: nói quá." },
+        { "q": "Trong câu “Ba con mèo đang ngủ.”, “ba” là?", "c": ["Số từ", "Phó từ", "Đại từ", "Danh từ"], "a": 0, "e": "Số từ chỉ số lượng hoặc thứ tự của sự vật." },
+        { "q": "Trong cụm “đang học bài”, từ “đang” là?", "c": ["Phó từ", "Danh từ", "Số từ", "Tính từ"], "a": 0, "e": "Phó từ đi kèm động từ, tính từ để bổ sung nghĩa (thời gian: đã, đang, sẽ)." }
+      ],
+      "kh": [
+        { "q": "Hạt nhân nguyên tử được tạo bởi những hạt nào?", "c": ["Proton và neutron", "Electron và proton", "Chỉ có electron", "Neutron và electron"], "a": 0, "e": "Hạt nhân gồm proton (+) và neutron; electron (−) chuyển động quanh hạt nhân." },
+        { "q": "Kí hiệu hoá học của nguyên tố oxygen là?", "c": ["O", "Ox", "C", "H"], "a": 0, "e": "Oxygen: O; carbon: C; hydrogen: H." },
+        { "q": "Đơn vị đo tần số âm là?", "c": ["Hertz (Hz)", "Mét (m)", "Niutơn (N)", "Độ (°C)"], "a": 0, "e": "Tần số là số dao động trong 1 giây, đo bằng Hz." },
+        { "q": "Khi ánh sáng phản xạ trên gương phẳng thì…", "c": ["Góc phản xạ bằng góc tới", "Góc phản xạ gấp đôi góc tới", "Ánh sáng biến mất", "Góc phản xạ luôn bằng 90°"], "a": 0, "e": "Định luật phản xạ ánh sáng: góc phản xạ bằng góc tới." },
+        { "q": "Nguyên liệu của quang hợp là?", "c": ["Nước và khí carbon dioxide", "Oxygen và tinh bột", "Muối và đường", "Chỉ có ánh sáng"], "a": 0, "e": "Nước + CO₂ —(ánh sáng, diệp lục)→ glucose + O₂." },
+        { "q": "Một xe đi 100 m trong 20 giây. Tốc độ của xe là?", "c": ["5 m/s", "2 000 m/s", "120 m/s", "0,2 m/s"], "a": 0, "e": "v = s : t = 100 : 20 = 5 m/s." }
+      ],
+      "lsdl": [
+        { "q": "Năm 1010, Lý Thái Tổ dời đô từ Hoa Lư về đâu?", "c": ["Đại La (Thăng Long)", "Phú Xuân", "Cổ Loa", "Tây Đô"], "a": 0, "e": "Vua dời đô về Đại La, đổi tên là Thăng Long (Hà Nội ngày nay)." },
+        { "q": "Ai lãnh đạo khởi nghĩa Lam Sơn (1418–1427)?", "c": ["Lê Lợi", "Trần Hưng Đạo", "Quang Trung", "Lý Thường Kiệt"], "a": 0, "e": "Lê Lợi cùng Nguyễn Trãi lãnh đạo khởi nghĩa Lam Sơn đánh đuổi quân Minh." },
+        { "q": "Nhà Trần mấy lần đánh thắng quân Mông – Nguyên?", "c": ["3 lần", "1 lần", "2 lần", "5 lần"], "a": 0, "e": "Ba lần (1258, 1285, 1287–1288), nổi bật là Hưng Đạo Vương Trần Quốc Tuấn." },
+        { "q": "Hoang mạc lớn nhất châu Phi là?", "c": ["Xa-ha-ra", "Gô-bi", "A-ta-ca-ma", "Ca-la-ha-ri"], "a": 0, "e": "Xa-ha-ra ở Bắc Phi là hoang mạc nóng lớn nhất thế giới." },
+        { "q": "Dãy núi cao nhất thế giới nằm ở châu lục nào?", "c": ["Châu Á (Hi-ma-lay-a)", "Châu Âu (An-pơ)", "Châu Mỹ (An-đét)", "Châu Phi"], "a": 0, "e": "Dãy Hi-ma-lay-a có đỉnh Ê-vơ-rét cao nhất thế giới." },
+        { "q": "Bài thơ “Nam quốc sơn hà” gắn với cuộc kháng chiến chống quân nào?", "c": ["Quân Tống", "Quân Minh", "Quân Thanh", "Quân Nguyên"], "a": 0, "e": "Thời Lý, trên phòng tuyến sông Như Nguyệt chống quân Tống (1077)." }
+      ]
+    },
+    "8": {
+      "toan": [
+        { "q": "(a + b)² = ?", "c": ["a² + 2ab + b²", "a² + b²", "a² − 2ab + b²", "2a + 2b"], "a": 0, "e": "Hằng đẳng thức bình phương của một tổng." },
+        { "q": "Giải phương trình 2x + 6 = 0.", "c": ["x = −3", "x = 3", "x = 6", "x = −6"], "a": 0, "e": "2x = −6 ⇒ x = −3." },
+        { "q": "Tam giác vuông có hai cạnh góc vuông 3 cm và 4 cm. Cạnh huyền dài?", "c": ["5 cm", "7 cm", "6 cm", "25 cm"], "a": 0, "e": "Định lí Pythagore: √(3² + 4²) = √25 = 5 cm." },
+        { "q": "a² − b² = ?", "c": ["(a − b)(a + b)", "(a − b)²", "(a + b)²", "a − b"], "a": 0, "e": "Hiệu hai bình phương bằng tích của hiệu và tổng." },
+        { "q": "Hàm số y = 2x − 1. Khi x = 3 thì y = ?", "c": ["5", "6", "7", "1"], "a": 0, "e": "y = 2·3 − 1 = 5." },
+        { "q": "Tổng các góc của một tứ giác bằng?", "c": ["360°", "180°", "540°", "270°"], "a": 0, "e": "Chia tứ giác thành 2 tam giác: 2 × 180° = 360°." }
+      ],
+      "tv": [
+        { "q": "Thơ thất ngôn bát cú Đường luật có mấy câu, mỗi câu mấy chữ?", "c": ["8 câu, mỗi câu 7 chữ", "4 câu, mỗi câu 7 chữ", "8 câu, mỗi câu 5 chữ", "6 câu, mỗi câu 8 chữ"], "a": 0, "e": "Thất ngôn = 7 chữ, bát cú = 8 câu." },
+        { "q": "Từ nào là từ tượng thanh?", "c": ["róc rách", "lom khom", "lênh khênh", "thướt tha"], "a": 0, "e": "Tượng thanh mô phỏng âm thanh (róc rách); các từ còn lại tượng hình." },
+        { "q": "Từ nào là từ tượng hình?", "c": ["lom khom", "ầm ầm", "líu lo", "rì rào"], "a": 0, "e": "“lom khom” gợi dáng vẻ, hình ảnh: từ tượng hình." },
+        { "q": "“A! Mẹ đã về!” – từ “A” là?", "c": ["Thán từ", "Trợ từ", "Phó từ", "Danh từ"], "a": 0, "e": "Thán từ bộc lộ cảm xúc hoặc dùng để gọi đáp." },
+        { "q": "“Lom khom dưới núi, tiều vài chú” (Bà Huyện Thanh Quan) dùng biện pháp gì?", "c": ["Đảo ngữ", "So sánh", "Nói giảm", "Điệp từ"], "a": 0, "e": "Đưa “lom khom” lên đầu câu để nhấn mạnh dáng người: đảo ngữ." },
+        { "q": "Câu “Ai làm cho bể kia đầy?” không cần trả lời, dùng để bộc lộ cảm xúc. Đó là?", "c": ["Câu hỏi tu từ", "Câu cầu khiến", "Câu cảm thán thường", "Câu kể"], "a": 0, "e": "Câu hỏi tu từ hỏi mà không cần trả lời, nhằm nhấn mạnh hay bộc lộ cảm xúc." }
+      ],
+      "kh": [
+        { "q": "Dung dịch có pH = 7 có môi trường gì?", "c": ["Trung tính", "Acid", "Base", "Muối mạnh"], "a": 0, "e": "pH < 7: acid; pH = 7: trung tính; pH > 7: base." },
+        { "q": "Khối lượng riêng của nước khoảng bao nhiêu?", "c": ["1000 kg/m³", "100 kg/m³", "1 kg/m³", "7800 kg/m³"], "a": 0, "e": "Nước ≈ 1000 kg/m³ (1 g/cm³); sắt ≈ 7800 kg/m³." },
+        { "q": "Áp suất phụ thuộc vào những yếu tố nào?", "c": ["Áp lực và diện tích bị ép", "Màu sắc vật", "Nhiệt độ phòng", "Thời gian"], "a": 0, "e": "p = F : S. Diện tích càng nhỏ thì áp suất càng lớn (dao sắc dễ cắt)." },
+        { "q": "Cơ quan nào lọc máu và tạo nước tiểu?", "c": ["Thận", "Gan", "Phổi", "Tim"], "a": 0, "e": "Thận lọc chất thải trong máu, tạo nước tiểu." },
+        { "q": "Giấm ăn chứa acid nào?", "c": ["Acetic acid", "Sulfuric acid", "Hydrochloric acid", "Nitric acid"], "a": 0, "e": "Giấm ăn là dung dịch acetic acid (CH₃COOH) loãng." },
+        { "q": "Dụng cụ nào dùng để đo cường độ dòng điện?", "c": ["Ampe kế", "Vôn kế", "Nhiệt kế", "Lực kế"], "a": 0, "e": "Ampe kế đo cường độ dòng điện (A); vôn kế đo hiệu điện thế (V)." }
+      ],
+      "lsdl": [
+        { "q": "Cách mạng công nghiệp diễn ra đầu tiên ở nước nào?", "c": ["Anh", "Pháp", "Mỹ", "Nhật Bản"], "a": 0, "e": "Cuối thế kỉ XVIII, nước Anh mở đầu cách mạng công nghiệp với máy hơi nước." },
+        { "q": "Đỉnh núi cao nhất Việt Nam là?", "c": ["Phan-xi-păng", "Bà Đen", "Ngọc Linh", "Tây Côn Lĩnh"], "a": 0, "e": "Phan-xi-păng (3 143 m) thuộc dãy Hoàng Liên Sơn." },
+        { "q": "Khí hậu Việt Nam có đặc điểm chính là?", "c": ["Nhiệt đới ẩm gió mùa", "Ôn đới lạnh", "Hoang mạc khô", "Cực đới"], "a": 0, "e": "Việt Nam nằm trong vùng nội chí tuyến, khí hậu nhiệt đới ẩm gió mùa." },
+        { "q": "Hai quần đảo xa bờ của Việt Nam trên Biển Đông là?", "c": ["Hoàng Sa và Trường Sa", "Cô Tô và Cát Bà", "Côn Đảo và Phú Quốc", "Lý Sơn và Cù Lao Chàm"], "a": 0, "e": "Quần đảo Hoàng Sa và Trường Sa là lãnh thổ thiêng liêng của Việt Nam." },
+        { "q": "Sông Mê Công chảy vào Việt Nam tạo nên đồng bằng nào?", "c": ["Đồng bằng sông Cửu Long", "Đồng bằng sông Hồng", "Đồng bằng duyên hải miền Trung", "Cao nguyên Mộc Châu"], "a": 0, "e": "Sông Mê Công (sông Cửu Long) bồi đắp đồng bằng Nam Bộ rộng lớn." }
+      ]
+    },
+    "9": {
+      "toan": [
+        { "q": "Phương trình x² − 5x + 6 = 0 có nghiệm là?", "c": ["x = 2 và x = 3", "x = −2 và x = −3", "x = 1 và x = 6", "Vô nghiệm"], "a": 0, "e": "Viète: tổng 5, tích 6 → hai nghiệm 2 và 3." },
+        { "q": "Trong tam giác vuông, sin của góc nhọn bằng?", "c": ["Cạnh đối chia cạnh huyền", "Cạnh kề chia cạnh huyền", "Cạnh đối chia cạnh kề", "Cạnh huyền chia cạnh đối"], "a": 0, "e": "sin = đối/huyền; cos = kề/huyền; tan = đối/kề." },
+        { "q": "∛27 = ?", "c": ["3", "9", "−3", "13,5"], "a": 0, "e": "Căn bậc ba của 27 là 3 vì 3³ = 27." },
+        { "q": "Hệ x + y = 5; x − y = 1 có nghiệm (x; y) = ?", "c": ["(3; 2)", "(2; 3)", "(4; 1)", "(5; 0)"], "a": 0, "e": "Cộng vế: 2x = 6 ⇒ x = 3, y = 2." },
+        { "q": "Góc nội tiếp chắn nửa đường tròn có số đo?", "c": ["90°", "180°", "45°", "60°"], "a": 0, "e": "Góc nội tiếp chắn nửa đường tròn là góc vuông." },
+        { "q": "Thể tích hình trụ bán kính đáy r, chiều cao h là?", "c": ["πr²h", "2πrh", "πr²h/3", "4πr³/3"], "a": 0, "e": "V = diện tích đáy × chiều cao = πr²h (hình nón là πr²h/3)." }
+      ],
+      "tv": [
+        { "q": "Tác giả của “Truyện Kiều” là ai?", "c": ["Nguyễn Du", "Nguyễn Trãi", "Hồ Xuân Hương", "Nguyễn Đình Chiểu"], "a": 0, "e": "Nguyễn Du (1765–1820) viết Truyện Kiều bằng thơ lục bát." },
+        { "q": "“Chuyện người con gái Nam Xương” là của tác giả nào?", "c": ["Nguyễn Dữ", "Nguyễn Du", "Lê Hữu Trác", "Phạm Đình Hổ"], "a": 0, "e": "Tác phẩm trích trong “Truyền kì mạn lục” của Nguyễn Dữ (thế kỉ XVI)." },
+        { "q": "Trong câu “Có lẽ trời sắp mưa.”, “có lẽ” là thành phần gì?", "c": ["Thành phần biệt lập (tình thái)", "Chủ ngữ", "Vị ngữ", "Trạng ngữ chỉ nơi chốn"], "a": 0, "e": "“có lẽ” thể hiện độ tin cậy của người nói: thành phần tình thái (biệt lập)." },
+        { "q": "Dẫn lại nguyên văn lời nói và đặt trong ngoặc kép là cách dẫn nào?", "c": ["Dẫn trực tiếp", "Dẫn gián tiếp", "Tóm tắt", "Liệt kê"], "a": 0, "e": "Dẫn trực tiếp giữ nguyên lời, đặt trong ngoặc kép; dẫn gián tiếp thuật lại có điều chỉnh." },
+        { "q": "Truyện Kiều được viết bằng thể thơ nào?", "c": ["Lục bát", "Thất ngôn tứ tuyệt", "Song thất lục bát", "Thơ tự do"], "a": 0, "e": "Truyện Kiều gồm 3 254 câu thơ lục bát." },
+        { "q": "“Ôi, sao mà đẹp thế!” – “Ôi” là thành phần gì?", "c": ["Thành phần cảm thán", "Thành phần gọi đáp", "Chủ ngữ", "Phụ chú"], "a": 0, "e": "“Ôi” bộc lộ cảm xúc: thành phần cảm thán (biệt lập)." }
+      ],
+      "kh": [
+        { "q": "Định luật Ohm: cường độ dòng điện I = ?", "c": ["U / R", "U × R", "R / U", "U + R"], "a": 0, "e": "I = U : R; hiệu điện thế càng lớn, điện trở càng nhỏ thì dòng điện càng mạnh." },
+        { "q": "Khí methane (CH₄) là thành phần chính của?", "c": ["Khí thiên nhiên, khí biogas", "Không khí sạch", "Nước biển", "Muối ăn"], "a": 0, "e": "Methane là hydrocarbon đơn giản nhất, có trong khí thiên nhiên và biogas." },
+        { "q": "Phân tử mang thông tin di truyền là?", "c": ["DNA", "Protein", "Glucose", "Lipid"], "a": 0, "e": "DNA chứa các gene quy định tính trạng của sinh vật." },
+        { "q": "Ánh sáng đi từ không khí vào nước bị gãy khúc tại mặt phân cách. Hiện tượng đó là?", "c": ["Khúc xạ ánh sáng", "Phản xạ ánh sáng", "Tán xạ âm", "Nhiễm điện"], "a": 0, "e": "Chiếc đũa trong cốc nước trông như bị gãy là do khúc xạ ánh sáng." },
+        { "q": "Kim loại nào dẫn điện tốt nhất?", "c": ["Bạc", "Sắt", "Nhôm", "Chì"], "a": 0, "e": "Thứ tự dẫn điện: bạc > đồng > vàng > nhôm > sắt." },
+        { "q": "Thấu kính hội tụ có đặc điểm?", "c": ["Phần rìa mỏng hơn phần giữa", "Phần rìa dày hơn phần giữa", "Phẳng hai mặt", "Không cho ánh sáng đi qua"], "a": 0, "e": "Thấu kính hội tụ dày ở giữa, mỏng ở rìa; thấu kính phân kì ngược lại." }
+      ],
+      "lsdl": [
+        { "q": "Cách mạng tháng Tám thành công năm nào?", "c": ["1945", "1930", "1954", "1975"], "a": 0, "e": "Tháng 8/1945 nhân dân cả nước giành chính quyền; 2/9/1945 nước Việt Nam Dân chủ Cộng hoà ra đời." },
+        { "q": "Ngày giải phóng miền Nam, thống nhất đất nước là?", "c": ["30/4/1975", "2/9/1945", "7/5/1954", "19/12/1946"], "a": 0, "e": "Chiến dịch Hồ Chí Minh toàn thắng ngày 30/4/1975." },
+        { "q": "Việt Nam gia nhập ASEAN năm nào?", "c": ["1995", "1975", "2007", "1986"], "a": 0, "e": "Ngày 28/7/1995 Việt Nam trở thành thành viên thứ 7 của ASEAN." },
+        { "q": "Dân số Việt Nam vượt mốc bao nhiêu người vào năm 2023?", "c": ["100 triệu", "50 triệu", "200 triệu", "1 tỉ"], "a": 0, "e": "Năm 2023, dân số Việt Nam vượt 100 triệu người." },
+        { "q": "Năm 1986, Đại hội VI của Đảng đề ra đường lối gì?", "c": ["Đổi mới", "Hợp tác hoá", "Bế quan toả cảng", "Tổng tiến công"], "a": 0, "e": "Đại hội VI (12/1986) mở ra công cuộc Đổi mới đất nước." }
+      ]
+    }
+  }
+}
