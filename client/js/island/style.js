@@ -31,7 +31,12 @@ void main() {`)
     .replace('#include <color_fragment>', `#include <color_fragment>
   { float big = pN(vPaintW * 0.21), mid = pN(vPaintW * 0.9 + 7.3), fine = pN(vPaintW * vec3(3.4, 6.8, 3.4));
     diffuseColor.rgb *= 0.8 + 0.24 * big + 0.1 * mid + 0.08 * fine;                       // mảng màu + nét cọ
-    diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.04, 1.0, 0.95), big * 0.5); }`)
+    diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.04, 1.0, 0.95), big * 0.5);
+    // giữ cỏ/lá trong bảng màu: xanh lá quá gắt → hạ bão hoà, mảng lớn ngả vàng ấm / lam mát (không phẳng một màu)
+    float gm = smoothstep(0.02, 0.14, diffuseColor.g - max(diffuseColor.r, diffuseColor.b));
+    vec3 gry = vec3(dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114)));
+    diffuseColor.rgb = mix(diffuseColor.rgb, gry, gm * 0.16);
+    diffuseColor.rgb *= mix(vec3(1.0), mix(vec3(0.9, 0.97, 1.06), vec3(1.07, 1.01, 0.84), big), gm * 0.6); }`)
     .replace('#include <opaque_fragment>', `{ float lum = dot(outgoingLight, vec3(0.299, 0.587, 0.114));
     vec3 cool = outgoingLight * vec3(0.84, 0.88, 1.10), warm = outgoingLight * vec3(1.05, 1.0, 0.92);
     outgoingLight = mix(cool, warm, smoothstep(0.18, 0.62, lum));                             // bóng lam, sáng ấm
