@@ -248,6 +248,11 @@ export function createMiniGameHost(ctx) {
     ctx.freeCam = true; P.frozen = true; P.pos.set(anchor[0], anchor[3], anchor[1]);   // thế giới (cỏ, cây, người) nạp quanh khu chơi
     document.body.classList.add('mg-on', 'rs-modal'); hudEl.hidden = false; camera.far = Math.min(S.saved.far, 233);
     if (ctx.school && ctx.school.labels) for (const l of ctx.school.labels) l.visible = false;
+    // vật nhỏ của thế giới lọt vào khu chơi (cột đèn, khung thành, ghế…): ẩn tạm, thoát thì hiện lại
+    for (const o of S.hidden || []) o.visible = true; S.hidden = []; { const sp = new THREE.Sphere(), c = new THREE.Vector3(anchor[0], anchor[3], anchor[1]), RR = R * 1.15;
+      scene.traverse(o => { if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || !o.visible || !o.geometry) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
+        if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
+        if (sp.radius < 5 && Math.hypot(sp.center.x - c.x, sp.center.z - c.z) < RR + sp.radius * 0.5 && sp.center.y < c.y + 8 && sp.center.y > c.y - 3) { o.visible = false; S.hidden.push(o); } }); }
     api.me.place(0, R * 0.5, Math.PI);
     try { S.game = G.start(ctx, { key, door, api, onExit: () => host.exit(), ...opts }) || {}; }   // onExit: game có sân khấu riêng (stage.js, kit.js) bấm Thoát → host cũng thoát
     catch (e) { console.error('[mg] lỗi khởi động', key, e); S.game = {}; host.exit(); return false; }
@@ -275,6 +280,7 @@ export function createMiniGameHost(ctx) {
   host.exit = (silent) => {
     if (!S || !S.api) return;
     teardown();
+    for (const o of S.hidden || []) o.visible = true;
     const P = ctx.player; P.pos.copy(S.saved.pos); P.cam.yaw = S.saved.yaw; P.cam.pitch = S.saved.pitch; P.frozen = false; ctx.freeCam = false;
     camera.far = S.saved.far; camera.updateProjectionMatrix();
     hudEl.hidden = true; document.body.classList.remove('mg-on', 'rs-modal'); $('.mg-msg').style.opacity = 0;
