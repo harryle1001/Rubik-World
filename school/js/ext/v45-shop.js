@@ -284,7 +284,9 @@ function v45RenderShop(){
   });
   // size each canvas to its real on-screen pixels so the integer pixel scale stays sharp on every phone
   const dpr = Math.min(3, window.devicePixelRatio || 1);
-  todo.forEach(([cv, it]) => { const w = cv.parentNode.clientWidth; if(w > 0){ cv.width = Math.round(w*dpr); cv.height = Math.round(w*dpr/V45S.PHI); } drawItemPreview(cv, it); });
+  // v61f: đọc mọi bề rộng trước (một lần dàn trang), vẽ 6 món đầu ngay, phần còn lại vẽ dần mỗi khung 4 món
+  const ws = todo.map(([cv]) => cv.parentNode.clientWidth), run = (a, b) => { for(let i = a; i < b && i < todo.length; i++){ const [cv, it] = todo[i], w = ws[i]; if(!cv.isConnected) return false; if(w > 0){ cv.width = Math.round(w*dpr); cv.height = Math.round(w*dpr/V45S.PHI); } drawItemPreview(cv, it); } return true; };
+  run(0, 6); let k = 6; const more = () => { if(k >= todo.length || !run(k, k + 4)) return; k += 4; requestAnimationFrame(more); }; requestAnimationFrame(more);
 }
 
 function v45ShopInit(){
