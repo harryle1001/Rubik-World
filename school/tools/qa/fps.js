@@ -100,7 +100,8 @@ function analyze(frames, prof, off, lm){
       const seen = new Set(); while(id){ const n = node.get(id); const kk = name(n); if(!seen.has(kk) && n.callFrame.url){ seen.add(kk); incl.set(kk, (incl.get(kk) || 0) + dt); } id = par.get(id); }
     }
     const top = m => [...m].sort((x, y) => y[1] - x[1]).slice(0, 5).map(([k, v]) => `${k} ${v.toFixed(0)}ms`);
-    const dur = f[1]*.8; return {self:top(self), incl:[...incl].filter(([k, v]) => v < dur).sort((x, y) => y[1] - x[1]).slice(0, 6).map(([k, v]) => `${k} ${v.toFixed(0)}ms`)};
+    const dur = f[1]*.8; return {self:top(self), incl:[...incl].filter(([k, v]) => v < dur).sort((x, y) => y[1] - x[1]).slice(0, 6).map(([k, v]) => `${k} ${v.toFixed(0)}ms`),
+      deep:[...incl].filter(([k, v]) => v < f[1]*.45 && !/^\(/.test(k)).sort((x, y) => y[1] - x[1]).slice(0, 8).map(([k, v]) => `${k} ${v.toFixed(0)}ms`)};
   };
   const worst = [...long].sort((x, y) => y[1] - x[1]).slice(0, 10).map(f => ({ms:Math.round(f[1]), tag:f[2], ...attr(f)}));
   // gom theo bước

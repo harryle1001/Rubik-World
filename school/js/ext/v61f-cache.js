@@ -13,6 +13,9 @@ function* v61fOvSteps(out){
     try { g.save(); g.setTransform(s, 0, 0, s, 0, 0); g.beginPath(); g.rect(0, y0, V46L.W, h); g.clip(); v46Paint(g, 0, y0, V46L.W, h, 2); } catch(e){ console.warn('v61f ov', e); } finally { g.restore(); ctx = prev; }
     yield; }
   const prev = ctx; ctx = g; try { g.setTransform(s, 0, 0, s, 0, 0); v46OverviewBuildings(g); } catch(e){ console.warn('v61f ovb', e); } finally { g.setTransform(1, 0, 0, 1, 0, 0); ctx = prev; }
+  yield 'ovb';
+  // các lớp bọc v46Overview (v57p vẽ sân bay lên ảnh lần đầu dùng) chạy luôn ở đây, trước khi làm nóng
+  { const keep = V46T.ov; V46T.ov = c; try { v61fOv0(); } catch(e){} finally { V46T.ov = keep; } }
   out.ov = c; yield* v61fWarm([c]);
 }
 
@@ -22,12 +25,12 @@ function* v61fSeasonJob(J){
   const put = o => { groundCache = o.gc; groundSeason = o.gs; northCache = o.nc; northSeason = o.ns; V47W.key = o.wk; V47W.pc = o.wp; V46T.L0 = o.L0; V46T.L1 = o.L1; V46T.key = o.tk; V46T.gc = o.tg; V46T.nc = o.tn; };
   const N = {gs:s, ns:s, wp:{}, L0:new Map(), L1:new Map(), tk:s};
   const inNew = f => { const o = old(); put(Object.assign({}, o, N)); try { f(); } catch(e){ console.warn('v61f season', e); } finally { Object.assign(N, {gc:groundCache, nc:northCache, wk:V47W.key, wp:V47W.pc}); put(o); } };
-  { const o = old(); try { buildGround(); N.gc = groundCache; } finally { put(o); } } yield;
-  { const o = old(); try { buildNorth(); N.nc = northCache; } finally { put(o); } } yield;
+  { const o = old(); try { buildGround(); N.gc = groundCache; } finally { put(o); } } yield 'ground';
+  { const o = old(); try { buildNorth(); N.nc = northCache; } finally { put(o); } } yield 'north';
   N.tg = N.gc; N.tn = N.nc; N.wk = s + '|' + (N.gc ? 1 : 0) + (N.nc ? 1 : 0);
-  for(const z of V46.Z){ if(z.flip) continue; inNew(() => v47wPatch(z)); yield; }
+  for(const z of V46.Z){ if(z.flip) continue; inNew(() => v47wPatch(z)); yield 'patch'; }
   // ảnh toàn cảnh mới: mỗi dải chạy trong bối cảnh cache mùa mới
-  const R2 = {}, it = v61fOvSteps(R2); for(;;){ let d; inNew(() => { d = it.next().done; }); if(d) break; yield; }
+  const R2 = {}, it = v61fOvSteps(R2); for(;;){ let d; inNew(() => { d = it.next().done; }); if(d) break; yield 'ov'; }
   N.ov = R2.ov;
   // ô nền quanh camera (lod đang dùng) để vừa đổi xong là nét ngay
   const VBn = V46.VBn || v46View(), lod = cam.z >= .55 ? 0 : 1, span = V46T.TS*(lod ? 2 : 1), ax = Math.max(0, VBn.x0), ay = Math.max(0, VBn.y0), bx = Math.min(V46L.W, VBn.x1), by = Math.min(V46L.H, VBn.y1);
@@ -68,7 +71,7 @@ function v61fPump(){
   for(let n = 0; n < 40; n++){
     const J = V61F.job && !V61F.job.done ? V61F.job : V61F.ovJob;
     if(!J){ const B = V61F.bg[0]; if(!B) break; let d = true; try { d = B.next().done; } catch(e){ console.warn('v61f bg', e); } if(d) V61F.bg.shift(); V61F.stat.steps++; if(performance.now() - t0 > V61F.budget) break; continue; }
-    let d = false; try { d = J.it.next().done; } catch(e){ console.warn('v61f job', e); d = true; if(J === V61F.job) V61F.job = null; }
+    let d = false; const ts = performance.now(); try { const r = J.it.next(); d = r.done; if(V61F.log) V61F.log.push([r.value || '?', Math.round(performance.now() - ts)]); } catch(e){ console.warn('v61f job', e); d = true; if(J === V61F.job) V61F.job = null; }
     V61F.stat.steps++;
     if(J === V61F.job && (J.done || d)){ V61F.job = null; V61F.ovJob = null; }
     else if(J === V61F.ovJob && d){ V61F.ovJob = null; if(!V46T.ov && J.r.ov){ V46T.ov = J.r.ov; try { V61F.lastOv = v61fOv0(); } catch(e){} } }
