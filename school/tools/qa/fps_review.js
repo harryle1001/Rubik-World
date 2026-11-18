@@ -34,13 +34,13 @@ td.g{color:#7dffa8;font-weight:800}.leg span{display:inline-block;margin-right:1
 <div id=charts></div>
 <h2>🐢 10 chỗ khựng nặng nhất (trái: TRƯỚC · phải: SAU) và hàm gây ra</h2><div class=cols>${worst}</div>
 <h2>📝 Đã sửa</h2><ul class=notes>
-<li>🍂 <b>Đổi mùa</b> (v49 đổi mùa ngẫu nhiên mỗi 6 giờ; đổi giờ / ngày–đêm cũng đổi mùa): trước dựng lại nền cũ + ~40 miếng nền khu (getImageData) + ảnh toàn cảnh 2048² + 6 ô nền 1024² trong <u>một</u> khung (≈2–3 giây). Giờ vẫn vẽ cache mùa cũ, dựng cache mới từng phần (≤ 8 ms/khung), làm nóng canvas mới rồi đổi một lần. Hình giống hệt (khác 0,01–0,06% điểm ảnh do người, nước chuyển động).</li>
-<li>🗺 <b>Ảnh toàn cảnh</b> bị xoá vì đổi mẫu nhà / sân bay / biển: dựng lại theo 8 dải, vẫn hiện ảnh cũ trong lúc chờ. <b>Ô nền 1024²</b>: tối đa 1 ô mỗi khung (trước 6 ô khi mới vào).</li>
+<li>🍂 <b>Đổi mùa</b> (v49 đổi mùa ngẫu nhiên mỗi 6 giờ; đổi giờ / ngày–đêm cũng đổi mùa): trước dựng lại nền cũ + ~40 miếng nền khu (getImageData) + ảnh toàn cảnh 2048² + 6 ô nền 1024² trong <u>một</u> khung (≈2–3 giây). Giờ vẫn vẽ cache mùa cũ, dựng cache mới từng phần (≤ 8 ms/khung, chỉ chạy khi khung còn dư thời gian), làm nóng canvas mới rồi đổi một lần. Hình giống hệt (khác 0,01–0,06% điểm ảnh do người, nước chuyển động).</li>
+<li>🗺 <b>Ảnh toàn cảnh</b> bị xoá vì đổi mẫu nhà / sân bay / biển: dựng lại theo 16 dải, vẫn hiện ảnh cũ trong lúc chờ; lớp sân bay v57p vẽ luôn trong việc nền. <b>Ô nền 1024²</b>: tối đa 1 ô mỗi khung (trước 6 ô khi mới vào).</li>
 <li>♟ <b>Bàn cờ NPC</b>: chọn nước bằng chess.js mất 100–500 ms một lần → giờ thử 2 nước mỗi khung, cùng cách chọn nước.</li>
-<li>✨ <b>Bầu trời sao</b> (30 000 chấm, ~350 ms khi lần đầu bay khinh khí cầu / nhìn lên trời): dựng sẵn từng phần lúc rảnh, cùng thuật toán.</li>
+<li>✨ <b>Bầu trời sao</b> (30 000 chấm, ~350 ms khi lần đầu bay khinh khí cầu / nhìn lên trời): dựng sẵn 500 chấm mỗi bước lúc rảnh, cùng thuật toán.</li>
 <li>🎥 <b>Góc nhìn thứ 3</b>: khung đầu dựng 4 ô nền + 2 cache khu → giờ 1 + 1 mỗi khung.</li>
 <li>🛍 <b>Cửa hàng</b>: đọc kích thước các thẻ một lần (trước dàn trang lại mỗi món), vẽ 6 ảnh xem trước ngay, phần còn lại dần mỗi khung.</li>
-<li>Còn lại: <i>buildNorth / buildGround</i> (~120–180 ms ở CPU ×4) chạy 1 lần mỗi lần đổi mùa — chủ yếu là JS, chia dải không nhanh hơn. FPS trung bình ở 1440×900 thấp vì trình duyệt thử vẽ canvas bằng phần mềm (không GPU); trên máy thật nhẹ hơn nhiều.</li>
+<li>Còn lại: <i>buildNorth / buildGround</i> (~120–180 ms ở CPU ×4) chạy 1 lần mỗi lần đổi mùa — chủ yếu là JS, chia dải không nhanh hơn. FPS trung bình ở 1440×900 thấp vì trình duyệt thử vẽ canvas bằng phần mềm (không GPU); trên máy thật nhẹ hơn nhiều. Máy đo dao động ±15% giữa các lần chạy nên TRƯỚC/SAU được đo xen kẽ.</li>
 </ul></div>
 <script>const D=${data};const host=document.getElementById('charts');
 D.forEach(d=>{const box=document.createElement('div');box.className='ch';box.innerHTML='<h3>'+d.n+'</h3>';const c=document.createElement('canvas');c.width=1500;c.height=170;box.appendChild(c);host.appendChild(box);
