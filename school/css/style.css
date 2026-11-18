@@ -1105,3 +1105,62 @@ body.v44fs #mChess .cboardwrap{width:min(calc(100vw*.618), calc(100dvh - 80px));
 #v48cCard .v48cGo{flex:1;background:#E8C27A;color:#2a1c10}
 #v48cCard .v48cX{width:44px;background:rgba(255,255,255,.14);color:#fff}
 .v48cChip{cursor:pointer;font-weight:800}
+/* ================= v50 · Học viện Phép thuật Rubik ================= */
+#v50{position:fixed;inset:0;z-index:60;background:#0b1028;font-family:"Nunito",system-ui,sans-serif;color:#F7F5EF;overflow:hidden;user-select:none;-webkit-user-select:none}
+#v50[hidden],#v50 [hidden]{display:none!important}
+#v50Cv,#v50GCv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+body.v50on #stage #toast.toast{z-index:80!important}
+body.v50on .floater,body.v50on #lvlUp{z-index:80!important}
+.v50ib{display:grid;place-items:center;width:46px;height:46px;min-height:0;padding:0;border-radius:50%;background:rgba(11,16,32,.62)!important;border:1px solid rgba(255,255,255,.16)!important;color:#F7F5EF!important;font:800 20px "Nunito",sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.3);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);cursor:pointer}
+.v50ib.on{background:#ffd23f!important;color:#1a1430!important}
+.v50ib canvas{width:34px;height:34px;image-rendering:pixelated}
+.v50top,.v50gbar{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(env(safe-area-inset-top) + 8px) max(10px, env(safe-area-inset-right)) 8px max(10px, env(safe-area-inset-left));background:linear-gradient(180deg,rgba(11,16,32,.55),rgba(11,16,32,0));pointer-events:none}
+.v50top>*,.v50gbar>*{pointer-events:auto}
+.v50tt{flex:1;min-width:0;text-align:center;line-height:1.1;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.v50tt b{font-size:17px;display:inline-block;vertical-align:middle;margin-left:4px}
+.v50tt small{display:block;font-size:16px;font-weight:700;color:#ffe9a8;opacity:.9}
+.v50tr,.v50gl,.v50gr{display:flex;gap:8px}
+.v50gm{flex:1;min-width:0;text-align:center;font-weight:800;font-size:16px;line-height:1.15;text-shadow:0 1px 4px rgba(0,0,0,.9)}
+#v50Act{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 22px);min-height:54px;padding:8px 22px;border-radius:30px;background:#ffd23f!important;color:#1a1430!important;border:0!important;font:800 18px "Nunito",sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.4);animation:v50pulse 1.6s ease-in-out infinite;white-space:nowrap}
+#v50Act small{font-size:16px;font-weight:700;opacity:.75}
+@keyframes v50pulse{50%{transform:translateX(-50%) scale(1.05)}}
+#v50Pan,#v50GHow,#v50GEnd{position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,8,20,.55);padding:16px;z-index:3}
+.v50card{position:relative;width:min(560px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:linear-gradient(180deg,#141b33,#0b1020);border:1px solid rgba(255,233,168,.28);border-radius:20px;padding:18px 16px 16px;box-shadow:0 20px 60px rgba(0,0,0,.55);font-size:16px}
+.v50card h2{margin:0 44px 10px 0;font-size:20px;line-height:1.2}
+.v50card h2 small{display:block;font-size:16px;color:#ffe9a8;font-weight:700}
+.v50card h3{margin:14px 0 8px;font-size:17px;color:#ffe9a8}
+.v50x{position:absolute;top:10px;right:10px;width:40px;height:40px}
+.v50grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.v50grid button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px;min-height:44px;border-radius:14px;background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.14)!important;color:#F7F5EF!important;font:700 16px "Nunito",sans-serif;text-align:center;box-shadow:none!important}
+.v50grid button.on{border-color:#ffd23f!important;background:rgba(255,210,63,.16)!important}
+.v50grid button.lock{opacity:.55}
+.v50grid button small,.v50grid button i,.v50grid button em{font-size:16px;font-style:normal;font-weight:700;line-height:1.2}
+.v50grid button small{color:#c8cde0}
+.v50grid button em{color:#ffd23f}
+.v50wands canvas{width:56px;height:56px;image-rendering:pixelated}
+.v50houses canvas{width:34px;height:auto}
+.v50sty{grid-template-columns:repeat(2,1fr)}
+.v50sw{display:flex;flex-wrap:wrap;gap:8px}
+.v50sw button{width:44px;height:44px;min-height:0;padding:0;border-radius:50%;border:3px solid rgba(255,255,255,.25)!important;box-shadow:none!important}
+.v50sw button.on{border-color:#ffd23f!important;transform:scale(1.1)}
+.v50prev{display:grid;place-items:center;margin:4px 0}
+.v50prev canvas{width:120px;height:150px;image-rendering:pixelated;background:radial-gradient(circle,rgba(255,233,168,.18),transparent 70%);border-radius:50%}
+.v50wide{width:100%;min-height:48px;margin-top:10px;border-radius:24px;background:#ffd23f!important;color:#1a1430!important;border:0!important;font:800 17px "Nunito",sans-serif}
+.v50chk{display:flex;gap:10px;align-items:center;margin-top:12px;font-weight:700}
+.v50chk input{width:24px;height:24px}
+.v50note{color:#c8cde0;margin:6px 0}
+.v50how{margin:0;padding-left:4px;list-style:none;display:grid;gap:8px}
+.v50how li{line-height:1.35}
+.v50end{text-align:center}
+.v50stars{font-size:38px;color:#ffd23f;letter-spacing:4px}
+.v50stars span{color:rgba(255,255,255,.18)}
+.v50big{font-size:30px;font-weight:800;margin:4px 0;color:#ffe9a8}
+.v50lb{text-align:left;margin:0 auto;max-width:320px;padding-left:24px}
+.v50lb li{display:list-item;padding:3px 0}
+.v50lb li span{float:right;color:#ffd23f;font-weight:800}
+.v50again{font-size:19px}
+#v50G{position:absolute;inset:0;z-index:2;background:#0b1028}
+#v50Enter{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 96px);z-index:7;min-height:54px;padding:8px 22px;border-radius:30px;background:linear-gradient(90deg,#7a6bff,#e45bd8)!important;color:#fff!important;border:0!important;font:800 18px "Nunito",sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.4);animation:v50pulse 1.6s ease-in-out infinite;white-space:nowrap}
+#v50Enter small{font-size:16px;font-weight:700;opacity:.85}
+@media (max-width:520px){.v50tt small{display:none}.v50tt b{font-size:16px}.v50ib{width:44px;height:44px}#v50Act,#v50Enter{font-size:17px;padding:8px 16px}#v50Act small,#v50Enter small{display:none}}
+@media (prefers-reduced-motion:reduce){#v50Act,#v50Enter{animation:none}}
