@@ -12,6 +12,7 @@ import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { PAL } from './palette.js';
 import { PHI } from '../layout.js';
 import { CHIMNEYS } from '../decor.js';
+import { cbox } from './facade.js';
 
 export const ROOFS = ['gable', 'hip', 'flat', 'mansard', 'shed'];
 export const DOORS = ['single', 'double', 'arch'];
@@ -62,10 +63,13 @@ export function buildHouse(b, o, opt = {}) {
   const plinth = fh / PHI ** 4 + 0.05;           // chân tường ≈ 0,55 m
   const band = fh / PHI ** 5;                    // gờ tầng / phào ≈ 0,31 m
   const Hw = plinth + floors * fh;               // đỉnh tường
-  const wall = C(o.wall), trim = C(o.trim);
-  // THÂN NHÀ: chân đá + thân + gờ mỗi tầng
-  b.box(w + 0.16, plinth, dep + 0.16, 0, 0, zc, C(o.base));
-  b.box(w, Hw - plinth, dep, 0, plinth, zc, wall);
+  const wall = C(o.wall), trim = C(o.trim), d = opt.d || null;
+  const det = fn => { if (d) { d.follow(b); fn(d); } };   // chi tiết nhỏ → DetailGrid (chỉ hiện gần, không đổ bóng)
+  // THÂN NHÀ: chân đá vát 0,05 + thân vát 0,08 (style-guide mục 4) + gờ mỗi tầng + trụ góc (nhà ≥ 2 tầng)
+  cbox(b, w + 0.16, plinth, dep + 0.16, 0, 0, zc, C(o.base), 0.05);
+  cbox(b, w, Hw - plinth, dep, 0, plinth, zc, wall, 0.08);
+  if (floors > 1) for (const s of [-1, 1]) for (const v of [0, -dep]) b.box(0.34, Hw - plinth, 0.34, s * (w / 2 - 0.1), plinth, v + (v ? 0.1 : -0.1), trim);
+  b.box(w + 0.04, 0.07, dep + 0.04, 0, plinth, zc, C('stoneWarmD'));      // mạch chân tường
   for (let f = 1; f <= floors; f++) b.box(w + 0.14, band * (f === floors ? 1 : 0.62), dep + 0.14, 0, plinth + f * fh - band * (f === floors ? 1 : 0.62), zc, trim);
 
   // CỬA HÀNG (tầng trệt): mặt kính rộng w/φ, cửa bên phải, biển hiệu, mái hiên sọc
@@ -75,6 +79,7 @@ export function buildHouse(b, o, opt = {}) {
     const sw = Math.min(w / PHI, w - 2.4), su = -w / 2 + 0.6 + sw / 2; doorU = Math.min(w / 2 - 1.1, su + sw / 2 + 1.0);
     b.box(sw + 0.24, 2.3, 0.1, su, plinth + 0.25, 0.05, C('woodD'));                       // khung tủ kính
     g.plane(sw, 2.06, su, plinth + 0.37 + 1.03, 0.11, C('glass'));
+    det(q => { for (let i = 1; i < 3; i++) q.box(0.07, 2.06, 0.06, su - sw / 2 + i * sw / 3, plinth + 0.37, 0.13, C('woodD')); q.box(sw, 0.07, 0.06, su, plinth + 1.65, 0.13, C('woodD')); });
     const sy = plinth + fh - band * 0.62 - 0.75;                                            // băng biển hiệu dưới gờ tầng
     b.box(w * 0.86, 0.68, 0.16, 0, sy, 0.08, acc);
     if (shop.sign && opt.signAt) opt.signAt(b, shop.sign, Math.min(w * 0.8, 6), 0.52, 0, sy + 0.34, 0.17, shop);
@@ -86,9 +91,11 @@ export function buildHouse(b, o, opt = {}) {
   if (o.door === 'arch') {
     g.push(archGeo(dW + 0.32, dH + 0.16), trim, doorU, plinth - 0.02, 0.04);
     g.push(archGeo(dW, dH), C('wood'), doorU, plinth, 0.07);
+    det(q => { q.box(0.05, dH - 0.1, 0.03, doorU, plinth, 0.09, C('woodD')); q.box(0.22, 0.32, 0.08, doorU, plinth + dH - 0.06, 0.08, trim); q.ball(0.05, doorU + 0.14, plinth + 1.05, 0.11, C('brass')); });
   } else {
     b.box(dW + 0.3, dH + 0.15, 0.08, doorU, plinth - 0.02, 0.04, trim);
     b.box(dW, dH, 0.1, doorU, plinth, 0.06, C(shop ? 'woodD' : 'wood'));
+    det(q => { const pw = o.door === 'double' ? dW / 2 - 0.16 : dW - 0.3; for (const s of o.door === 'double' ? [-1, 1] : [0]) for (const k of [0.25, 1.35]) q.box(pw, dH * 0.36, 0.04, doorU + s * dW / 4, plinth + k, 0.12, C('woodD')); q.ball(0.05, doorU + (o.door === 'double' ? 0.12 : dW * 0.3), plinth + 1.05, 0.14, C('brass')); });
     if (o.door === 'single' && !shop) b.prism(dW + 0.9, 0.42, 1.0, doorU, plinth + dH + 0.3, 0.45, C('roofD'));   // mái che nhỏ
   }
   for (let i = 0; i < 3 && plinth > 0.3; i++) b.box(dW + 0.6 - i * 0.12, plinth / 3, 0.38 * (3 - i), doorU, i * plinth / 3, 0.19 * (3 - i), C('stoneWarm'));   // 3 bậc thềm
@@ -97,12 +104,18 @@ export function buildHouse(b, o, opt = {}) {
   const ww = w < 7 ? 0.8 : 0.9, wh = ww * PHI, step = ww * PHI * PHI;
   const n = Math.max(1, Math.floor((w - 1.0) / step)), us = Array.from({ length: n }, (_, i) => (i - (n - 1) / 2) * step);
   const balcF = f => o.balcony !== 'none' && f >= 1;
-  const win = (u, y, z, ry = 0, tall = false) => {
+  const win = (u, y, z, ry = 0, tall = false, flower = false) => {
     const h = tall ? 2.2 : wh;
     b.group(u, y, z, ry, () => {
       b.box(ww + 0.18, h + 0.18, 0.06, 0, -0.09, 0.03, trim);
       g.plane(ww, h, 0, h / 2, 0.075, C('glass'));
       for (const s of [-1, 1]) g.plane(ww / 2, h, s * (ww * 0.75 + 0.1), h / 2, 0.07, C(o.shutter));
+      det(q => {   // bậu + lanh tô + song cửa + nan chớp + bồn hoa (cửa sổ tầng trệt xen kẽ)
+        q.box(ww + 0.42, 0.09, 0.24, 0, -0.16, 0.1, trim); q.box(ww + 0.3, 0.14, 0.1, 0, h + 0.06, 0.05, trim); q.box(0.2, 0.22, 0.12, 0, h + 0.02, 0.07, C('stoneCreamD'));
+        q.box(0.04, h, 0.03, 0, 0, 0.09, trim); if (!tall) q.box(ww, 0.04, 0.03, 0, h * 0.618, 0.09, trim);
+        for (const s of [-1, 1]) for (let i = 1; i < 5; i++) q.plane(ww / 2 - 0.08, 0.03, s * (ww * 0.75 + 0.1), i * h / 5, 0.075, C('shutterD'));
+        if (flower) { q.box(ww + 0.2, 0.24, 0.26, 0, -0.42, 0.15, C('wood')); for (let i = 0; i < 5; i++) q.ball(0.11, -ww / 2 + 0.05 + i * (ww - 0.1) / 4, -0.14, 0.17, C(FLW[(i + Math.abs(Math.round(u * 7))) % 4])); }
+      });
     });
   };
   for (let f = 0; f < floors; f++) {
@@ -110,7 +123,7 @@ export function buildHouse(b, o, opt = {}) {
     for (const u of us) {
       if (f === 0 && (shop || Math.abs(u - doorU) < dW / 2 + ww)) continue;
       const tall = balcF(f) && Math.abs(u) < step / 2;
-      win(u, tall ? plinth + f * fh + 0.05 : y0, 0, 0, tall);
+      win(u, tall ? plinth + f * fh + 0.05 : y0, 0, 0, tall, f === 0 && Math.abs(Math.round(u / step) + o.seed) % 2 === 0);
     }
     if (dep > 4) for (const s of [-1, 1]) win(s * w / 2, y0, zc, s * Math.PI / 2);   // 1 cửa sổ mỗi bên hồi
   }
@@ -122,7 +135,8 @@ export function buildHouse(b, o, opt = {}) {
       const bw = Math.min(w / PHI, step * 1.6), bd = 1.0;
       b.box(bw, 0.16, bd, 0, y - 0.16, bd / 2, trim);
       b.box(bw, 0.06, 0.06, 0, y + 0.95, bd - 0.03, iron); b.box(bw, 0.05, 0.05, 0, y + 0.12, bd - 0.03, iron);
-      for (let u = -bw / 2; u <= bw / 2 + 1e-3; u += bw / 6) b.box(0.05, 0.85, 0.05, u, y + 0.12, bd - 0.03, iron);
+      det(q => { for (let u = -bw / 2; u <= bw / 2 + 1e-3; u += bw / 8) q.box(0.04, 0.85, 0.04, u, y + 0.12, bd - 0.03, iron); });   // song lan can (gần mới hiện)
+      for (const u of [-bw / 6, bw / 6]) b.box(0.06, 0.85, 0.06, u, y + 0.12, bd - 0.03, iron);
       for (const s of [-1, 1]) b.box(0.05, 0.9, bd, s * bw / 2, y + 0.06, bd / 2, iron);
     } else if (o.balcony === 'loggia') {
       const bw = Math.min(w / PHI, w - 2), bd = 1.1;
@@ -134,7 +148,8 @@ export function buildHouse(b, o, opt = {}) {
       const bw = w + 0.3, bd = 1.2;
       b.box(bw, 0.18, bd, 0, y - 0.18, bd / 2 - 0.02, trim);
       b.box(bw, 0.06, 0.06, 0, y + 0.95, bd - 0.05, iron); b.box(bw, 0.05, 0.05, 0, y + 0.12, bd - 0.05, iron);
-      for (let u = -bw / 2; u <= bw / 2 + 1e-3; u += bw / Math.round(bw / 0.9)) b.box(0.05, 0.85, 0.05, u, y + 0.12, bd - 0.05, iron);
+      det(q => { for (let u = -bw / 2; u <= bw / 2 + 1e-3; u += bw / Math.round(bw / 0.45)) q.box(0.04, 0.85, 0.04, u, y + 0.12, bd - 0.05, iron); });
+      for (let u = -bw / 2 + bw / 4; u < bw / 2; u += bw / 4) b.box(0.06, 0.85, 0.06, u, y + 0.12, bd - 0.05, iron);
       for (const s of [-1, 1]) b.box(0.05, 0.9, bd, s * bw / 2, y + 0.06, bd / 2, iron);
       if (!shop) for (let u = -bw / 2 + 0.5; u < bw / 2; u += step) b.box(0.14, 0.42, 0.7, u, y - 0.6, 0.35, trim, 0, 0.5);   // con-xon (nhà ở; cửa hàng đã có băng biển)
     }
@@ -143,12 +158,18 @@ export function buildHouse(b, o, opt = {}) {
   // MÁI: dốc atan(1/φ), đua mái ov
   const ov = 0.45, RW = w + 2 * ov, RD = dep + 2 * ov, roof = C(o.roofCol), roofD = C('roofD');
   let H = Hw;
+  if (o.roof !== 'flat') b.box(RW + 0.04, 0.14, RD + 0.04, 0, Hw - 0.1, zc, roofD);   // diềm mái (mép tối đỡ viền mái)
+  const ribs = (h, both, hip) => det(q => {   // hàng ngói sáng roofL trên mái dốc (gần mới hiện); mái 1 mái (both=false) dốc suốt chiều sâu
+    for (let t = 0.22; t < 0.95; t += 0.236) for (const s of both ? [1, -1] : [1]) {
+      const L = hip ? RW - RD * t : RW, z = both ? zc + s * RD / 2 * (1 - t) : zc + RD / 2 - RD * t; if (L > 0.3) q.box(L - 0.1, 0.05, 0.1, 0, Hw + h * t + 0.02, z, C('roofL'));
+    }
+  });
   if (o.roof === 'gable') {
-    const h = RD / 2 / PHI; b.push(gableGeo(RW, RD, h), roof, 0, Hw, zc); b.box(RW + 0.1, 0.16, 0.26, 0, Hw + h - 0.08, zc, roofD); H += h;
+    const h = RD / 2 / PHI; b.push(gableGeo(RW, RD, h), roof, 0, Hw, zc); b.box(RW + 0.1, 0.16, 0.26, 0, Hw + h - 0.08, zc, roofD); ribs(h, true, false); H += h;
   } else if (o.roof === 'hip') {
-    const h = RD / 2 / PHI; b.push(hipGeo(RW, RD, h), roof, 0, Hw, zc); H += h;
+    const h = RD / 2 / PHI; b.push(hipGeo(RW, RD, h), roof, 0, Hw, zc); b.box(Math.max(0.3, RW - RD) + 0.2, 0.14, 0.24, 0, Hw + h - 0.08, zc, roofD); ribs(h, true, true); H += h;
   } else if (o.roof === 'shed') {
-    const h = RD / PHI / PHI; b.push(shedGeo(RW, RD, h), roof, 0, Hw, zc); H += h;
+    const h = RD / PHI / PHI; b.push(shedGeo(RW, RD, h), roof, 0, Hw, zc); ribs(h, false, false); H += h;
   } else if (o.roof === 'mansard') {
     const h1 = fh * 0.8, a = h1 / PHI ** 2, h2 = (RD - 2 * a) / 2 / PHI / PHI;            // thân dốc (gần đứng) + đỉnh 4 mái thoải
     b.push(frustumGeo(RW, RD, h1, a), roof, 0, Hw, zc); b.push(hipGeo(RW - 2 * a, RD - 2 * a, h2), roofD, 0, Hw + h1, zc);
@@ -159,6 +180,7 @@ export function buildHouse(b, o, opt = {}) {
     H += h1 + h2;
   } else {   // flat: sàn mái + tường chắn mái + phào
     b.box(w + 0.3, 0.2, dep + 0.3, 0, Hw, zc, trim);
+    det(q => { for (const [u, v, L, ry] of [[0, 0.05, w + 0.5, 0], [0, -dep - 0.05, w + 0.5, 0], [-w / 2 - 0.05, zc, dep, Math.PI / 2], [w / 2 + 0.05, zc, dep, Math.PI / 2]]) q.box(L, 0.1, 0.34, u, Hw + 0.9, v, trim, ry); });   // mũ tường chắn
     for (const [u, v, L, ry] of [[0, 0.05, w + 0.3, 0], [0, -dep - 0.05, w + 0.3, 0], [-w / 2 - 0.05, zc, dep, Math.PI / 2], [w / 2 + 0.05, zc, dep, Math.PI / 2]]) b.box(L, 0.7, 0.2, u, Hw + 0.2, v, wall, ry);
     b.box(w * 0.3, 1.6, dep * 0.3, -w * 0.2, Hw + 0.2, zc - dep * 0.1, wall);             // tum cầu thang
     b.box(w * 0.3 + 0.3, 0.16, dep * 0.3 + 0.3, -w * 0.2, Hw + 1.8, zc - dep * 0.1, trim);
@@ -174,6 +196,7 @@ export function buildHouse(b, o, opt = {}) {
 
 // ---------- BIẾN THỂ: chọn tổ hợp theo hạt giống (giữ đủ 1–3 tầng, 5 mái, 3 cửa, 4 ban công) ----------
 const WALLS = ['stoneCream', 'stoneCream', 'plaster', 'stoneCreamL', 'stoneCream'];   // đá kem chủ đạo 1/φ
+const FLW = ['flowerRed', 'flowerPink', 'flowerYellow', 'flowerWhite'];
 const ACCS = ['rubikR', 'shutter', 'rubikB', 'rubikO', 'rubikG'];
 export function houseVariant(seed, o = {}) {
   let s = (seed * 2654435761 >>> 0) || 1; const r = n => (s = (s * 16807) % 2147483647) % n;
