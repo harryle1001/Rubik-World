@@ -27,5 +27,9 @@ v50 · Học viện Phép thuật Rubik (Rubik Spellcraft Academy)
       https://opengameart.org/content/simple-wands-heart
       https://opengameart.org/content/simple-wands-eye
     License: CC0 1.0 Universal (public domain). https://creativecommons.org/publicdomain/zero/1.0/
+  assets/magic/fx-kenney-cc0.png – 10 hình hiệu ứng (vòng phép, lóe, vòng sóng, sao, nổ sáng, tia sét, xoáy, tim, vòng rune, lửa)
+    thu nhỏ 64×64 từ "Particle Pack" của Kenney (www.kenney.nl), bản đăng chính thức của Kenney trên OpenGameArt:
+      https://opengameart.org/content/particle-pack-80-sprites
+    License: CC0 1.0 Universal (public domain). Nhuộm màu bằng code lúc chạy.
   Mọi thứ khác (lâu đài, núi, hồ, cầu, nhà kính, áo choàng, huy hiệu 6 nhà, cú, nến, hạt phép, 7 mini game, âm thanh)
   vẽ / tạo bằng code (canvas + WebAudio), thiết kế gốc, không dùng hình từ phim, game hay trang bán hàng.

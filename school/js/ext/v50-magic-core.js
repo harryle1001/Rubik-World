@@ -126,9 +126,16 @@ function v50Burst(x, y, w, big){
     const img = sh === 'dot' ? v50Glow(col) : v50Shape(sh, col), gr = w.fx === 'fire' ? -60 : w.fx === 'ice' || w.fx === 'petal' || w.fx === 'leaf' ? 70 : w.fx === 'heart' || w.fx === 'tide' ? -50 : 0;
     v50P(x, y, Math.cos(a)*s*V50FX.k, Math.sin(a)*s*V50FX.k*(w.fx === 'moon' || w.fx === 'galaxy' ? .6 : 1), .6 + Math.random()*.6, (sh === 'dot' ? 11 : 8 + Math.random()*4)*V50FX.k, img, gr); }
   for(let i = 0; i < 6; i++) v50P(x, y, (Math.random() - .5)*30, (Math.random() - .5)*30, .3, 26*V50FX.k, v50Glow(w.c));
-  V50FX.rings.push({x, y, t:0, c:w.fx === 'rainbow' ? null : w.c, c2:w.c2, big:!!big}); if(V50FX.rings.length > 6) V50FX.rings.shift();
+  V50FX.rings.push({x, y, t:0, c:w.fx === 'rainbow' ? null : w.c, c2:w.c2, big:!!big, fx:w.fx, k:V50FX.k, rot:Math.random()*6.28}); if(V50FX.rings.length > 6) V50FX.rings.shift();
   V50FX.flash = Math.max(V50FX.flash, big ? .35 : .22); V50FX.fcol = w.fx === 'rainbow' ? '#fff8e0' : w.c2; V50FX.shake = Math.max(V50FX.shake, big ? .22 : .14); v50Snd('hit');
 }
+// ---------- hiệu ứng Kenney Particle Pack (CC0): atlas 10 ô 64px, nhuộm màu & cache ----------
+// 0 vòng phép · 1 lóe chữ thập · 2 vòng sóng · 3 sao lấp lánh · 4 nổ sáng · 5 tia sét · 6 xoáy · 7 trái tim · 8 vòng rune · 9 ngọn lửa
+function v50KImg(){ if(!V50.kimg){ V50.kimg = new Image(); V50.kimg.src = 'assets/magic/fx-kenney-cc0.png'; } return V50.kimg; }
+function v50KTex(i, col){ const im = v50KImg(); if(!im.complete || !im.naturalWidth) return null; const key = 'k' + i + col; let c = V50.shp.get(key); if(c) return c;
+  c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); g.drawImage(im, i*64, 0, 64, 64, 0, 0, 64, 64); g.globalCompositeOperation = 'source-in'; g.fillStyle = col; g.fillRect(0, 0, 64, 64);
+  g.globalCompositeOperation = 'lighter'; g.globalAlpha = .45; g.drawImage(im, i*64, 0, 64, 64, 0, 0, 64, 64); V50.shp.set(key, c); return c; }
+function v50KDraw(g, i, col, x, y, s, rot, a){ const t = v50KTex(i, col); if(!t) return false; g.globalAlpha = Math.max(0, Math.min(1, a)); if(rot){ g.save(); g.translate(x, y); g.rotate(rot); g.drawImage(t, -s/2, -s/2, s, s); g.restore(); } else g.drawImage(t, x - s/2, y - s/2, s, s); g.globalAlpha = 1; return true; }
 // tia sét: đường gấp khúc vẽ vài khung
 function v50Bolt(x0, y0, x1, y1, col){ const pts = [x0, y0], n = 7; for(let i = 1; i < n; i++){ const u = i/n; pts.push(x0 + (x1 - x0)*u + (Math.random() - .5)*28, y0 + (y1 - y0)*u + (Math.random() - .5)*28); } pts.push(x1, y1); V50FX.bolts.push({pts, t:0, col}); if(V50FX.bolts.length > 4) V50FX.bolts.shift(); }
 // cập nhật + vẽ đạn phép (trong toạ độ đang dùng của g)
@@ -138,15 +145,21 @@ function v50BDraw(g, dt){
     b.x = b.sx + (b.tx - b.sx)*e + nx/nl*wob; b.y = b.sy + (b.ty - b.sy)*e + ny/nl*wob - Math.sin(u*Math.PI)*(w.fx === 'tide' || w.fx === 'heart' ? 30 : 12);
     b.k += dt; const em = w.fx === 'sun' ? .006 : .016; while(b.k > em){ b.k -= em; const sh = V50_FXSH[w.fx], col = v50Col(w, j + Math.floor(b.t*60));
       const img = (sh === 'dot' || Math.random() < .55) ? v50Glow(col) : v50Shape(sh, col); v50P(b.x + (Math.random() - .5)*6, b.y + (Math.random() - .5)*6, (Math.random() - .5)*30, (Math.random() - .5)*30 + (w.fx === 'fire' ? -30 : 0), .45 + Math.random()*.3, (sh === 'dot' || img === V50.glow.get(col) ? 9 : 7)*V50FX.k, img, w.fx === 'fire' ? -40 : 0); }
-    g.globalCompositeOperation = 'lighter'; const gc = v50Glow(v50Col(w, j)); const K = V50FX.k; g.drawImage(gc, b.x - 22*K, b.y - 22*K, 44*K, 44*K); g.drawImage(v50Glow('#ffffff'), b.x - 8*K, b.y - 8*K, 16*K, 16*K);
+    g.globalCompositeOperation = 'lighter'; const gc = v50Glow(v50Col(w, j)); const K = V50FX.k; g.drawImage(gc, b.x - 22*K, b.y - 22*K, 44*K, 44*K); g.drawImage(v50Glow('#ffffff'), b.x - 8*K, b.y - 8*K, 16*K, 16*K); v50KDraw(g, 3, v50Col(w, j), b.x, b.y, 46*K, b.t*6, 1);
     if(w.fx === 'sun'){ g.globalAlpha = .55*(1 - u*.5); g.strokeStyle = w.c; g.lineWidth = 6; g.beginPath(); g.moveTo(b.sx, b.sy); g.lineTo(b.x, b.y); g.stroke(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.stroke(); g.globalAlpha = 1; }
     g.globalCompositeOperation = 'source-over';
     if(u >= 1){ b.on = false; if(w.fx === 'thunder') v50Bolt(b.sx, b.sy, b.tx, b.ty, w.c); v50Burst(b.tx, b.ty, w, w.fx === 'rainbow' || w.fx === 'galaxy'); if(b.hit) try { b.hit(b.tx, b.ty, w); } catch(e){ console.warn('v50 hit', e); } } }
-  for(let i = V50FX.rings.length - 1; i >= 0; i--){ const r = V50FX.rings[i]; r.t += dt; const T = r.big ? .7 : .5; if(r.t > T){ V50FX.rings.splice(i, 1); continue; } const u = r.t/T, R = (14 + u*(r.big ? 90 : 60))*V50FX.k;
-    g.globalAlpha = 1 - u; g.lineWidth = (r.big ? 7 : 5)*(1 - u) + 1; g.strokeStyle = r.c || V50_RUBIK[Math.floor(r.t*20) % 6]; g.beginPath(); g.ellipse(r.x, r.y, R, R*.7, 0, 0, 6.2832); g.stroke();
-    g.strokeStyle = r.c2; g.lineWidth = 2; g.beginPath(); g.ellipse(r.x, r.y, R*.62, R*.43, 0, 0, 6.2832); g.stroke(); g.globalAlpha = 1; }
+  for(let i = V50FX.rings.length - 1; i >= 0; i--){ const r = V50FX.rings[i]; r.t += dt; const T = r.big ? .8 : .55; if(r.t > T){ V50FX.rings.splice(i, 1); continue; } const u = r.t/T, K = r.k || 1, R = (14 + u*(r.big ? 90 : 60))*K, col = r.c || V50_RUBIK[Math.floor(r.t*20) % 6];
+    g.globalCompositeOperation = 'lighter';
+    if(v50KTex(2, col)){ // vòng sóng, lóe chữ thập, vòng phép (Kenney CC0)
+      v50KDraw(g, 2, col, r.x, r.y, R*2.4, 0, (1 - u)*1.1); if(u < .45) v50KDraw(g, 1, r.c2, r.x, r.y, (40 + u*160)*K, r.rot, 1 - u/.45);
+      if(r.big) v50KDraw(g, r.fx === 'galaxy' ? 0 : 8, col, r.x, r.y, (70 + u*60)*K, r.rot + r.t*2, (1 - u)*.9);
+      const sp = {thunder:5, fire:9, heart:7, galaxy:6, rainbow:6, moon:6, tide:6, sun:4, spark:4}[r.fx];
+      if(sp != null){ const a = 1 - u; if(sp === 9) v50KDraw(g, 9, col, r.x, r.y - 30*K*u, 70*K, 0, a); else if(sp === 5) v50KDraw(g, 5, col, r.x, r.y - 30*K, 90*K, 0, a*(Math.floor(r.t*30) % 2 ? .4 : 1)); else if(sp === 7) v50KDraw(g, 7, col, r.x, r.y - 40*K*u, 36*K, 0, a); else v50KDraw(g, sp, col, r.x, r.y, (50 + u*70)*K, r.rot - r.t*4, a); } }
+    else { g.globalAlpha = 1 - u; g.lineWidth = (r.big ? 7 : 5)*(1 - u) + 1; g.strokeStyle = col; g.beginPath(); g.ellipse(r.x, r.y, R, R*.7, 0, 0, 6.2832); g.stroke(); g.strokeStyle = r.c2; g.lineWidth = 2; g.beginPath(); g.ellipse(r.x, r.y, R*.62, R*.43, 0, 0, 6.2832); g.stroke(); }
+    g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; }
   for(let i = V50FX.bolts.length - 1; i >= 0; i--){ const o = V50FX.bolts[i]; o.t += dt; if(o.t > .32){ V50FX.bolts.splice(i, 1); continue; }
-    if(Math.floor(o.t*30) % 2) continue; g.globalCompositeOperation = 'lighter'; g.strokeStyle = o.col; g.lineWidth = 5; g.globalAlpha = .7; g.beginPath(); for(let k = 0; k < o.pts.length; k += 2) k ? g.lineTo(o.pts[k], o.pts[k + 1]) : g.moveTo(o.pts[k], o.pts[k + 1]); g.stroke();
+    if(Math.floor(o.t*30) % 2) continue; g.globalCompositeOperation = 'lighter'; { const x0 = o.pts[0], y0 = o.pts[1], x1 = o.pts[o.pts.length - 2], y1 = o.pts[o.pts.length - 1], tx = v50KTex(5, o.col); if(tx){ g.save(); g.translate((x0 + x1)/2, (y0 + y1)/2); g.rotate(Math.atan2(y1 - y0, x1 - x0) + Math.PI/2); const L = Math.hypot(x1 - x0, y1 - y0); g.globalAlpha = .9; g.drawImage(tx, -30, -L/2, 60, L); g.restore(); } } g.strokeStyle = o.col; g.lineWidth = 5; g.globalAlpha = .7; g.beginPath(); for(let k = 0; k < o.pts.length; k += 2) k ? g.lineTo(o.pts[k], o.pts[k + 1]) : g.moveTo(o.pts[k], o.pts[k + 1]); g.stroke();
     g.strokeStyle = '#fff'; g.lineWidth = 2; g.globalAlpha = 1; g.stroke(); g.globalCompositeOperation = 'source-over'; }
 }
 function v50BClear(){ V50B.forEach(b => { b.on = false; }); V50FX.bolts.length = 0; V50FX.rings.length = 0; V50FX.flash = 0; V50FX.shake = 0; }
@@ -155,7 +168,7 @@ function v50Flash(g, W, H, dt){ if(V50FX.flash <= 0) return; g.globalCompositeOp
 function v50Shake(dt){ if(V50FX.shake <= 0) return [0, 0]; V50FX.shake = Math.max(0, V50FX.shake - dt); const k = V50FX.shake*22; return [(Math.random() - .5)*k, (Math.random() - .5)*k]; }
 
 // ---------- hình đũa (atlas CC0) + dự phòng vẽ bằng code ----------
-function v50WandImg(){
+function v50WandImg(){ v50KImg();
   if(V50.img) return V50.img; const im = new Image(); im.src = 'assets/magic/wands-cc0.png'; V50.img = im; return im;
 }
 function v50DrawWand(g, i, x, y, s){
