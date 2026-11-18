@@ -29,3 +29,10 @@ v50 · Học viện Phép thuật Rubik (Rubik Spellcraft Academy)
     License: CC0 1.0 Universal (public domain). https://creativecommons.org/publicdomain/zero/1.0/
   Mọi thứ khác (lâu đài, núi, hồ, cầu, nhà kính, áo choàng, huy hiệu 6 nhà, cú, nến, hạt phép, 7 mini game, âm thanh)
   vẽ / tạo bằng code (canvas + WebAudio), thiết kế gốc, không dùng hình từ phim, game hay trang bán hàng.
+
+v51a · Phố Cầu Vồng Phép Thuật (Rainbow Spell Lane)
+  KHÔNG tải tài nguyên bên ngoài nào. Toàn bộ hình được vẽ bằng code (canvas), thiết kế gốc, cache thành sprite:
+  phố lát đá cong, nhà khung gỗ nhiều tầng nghiêng, mái nhọn lệch, biển treo, đèn lồng, cờ 6 màu Rubik, quầy hàng,
+  Tháp Đồng Hồ Cầu Vồng, ngân hàng heo đất, bưu cục cú, xe kem, xe bóng bay, đài phun, 7 thú cưng, 5 chổi, 5 đồ chơi Rubik.
+  Âm thanh dùng lại bộ tạo âm WebAudio của v50. Hình đũa trong Tiệm Đũa dùng lại atlas CC0 "Simple Wands" (đã ghi ở trên).
+  Tên phố, tên tiệm, nhân vật, vật phẩm đều tự đặt, không dùng tên/hình từ phim, truyện hay game nào.
