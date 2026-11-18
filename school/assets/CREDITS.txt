@@ -29,3 +29,9 @@ v50 · Học viện Phép thuật Rubik (Rubik Spellcraft Academy)
     License: CC0 1.0 Universal (public domain). https://creativecommons.org/publicdomain/zero/1.0/
   Mọi thứ khác (lâu đài, núi, hồ, cầu, nhà kính, áo choàng, huy hiệu 6 nhà, cú, nến, hạt phép, 7 mini game, âm thanh)
   vẽ / tạo bằng code (canvas + WebAudio), thiết kế gốc, không dùng hình từ phim, game hay trang bán hàng.
+
+v51t · Trường Tin học Rubik (Rubik Code School)
+  Không dùng file tài nguyên bên ngoài. Toà nhà (kính, mái xanh, biển chữ pixel, ăng-ten), sân robot, phòng máy,
+  phòng robot, góc thư viện code, học sinh / cô giáo, 7 bài học, chứng chỉ và âm thanh đều vẽ / tạo bằng code
+  (canvas + WebAudio) trong js/ext/v51t-*.js. Thiết kế gốc: không dùng tên, logo, giao diện của Scratch, Code.org, Minecraft
+  hay sản phẩm khác. Chữ pixel = font Nunito / Be Vietnam Pro (đã có trong game) vẽ nhỏ rồi phóng to không làm mịn.
