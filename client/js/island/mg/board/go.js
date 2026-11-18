@@ -1,5 +1,5 @@
 // mg/board/go.js — CỜ VÂY 9 × 9 ngay trong thế giới (khoá 'go', cửa "Cờ vây"): bàn gỗ lớn trên sân, quân đá đen/trắng dẹt to bằng bánh xe.
-// Em cầm quân ĐEN (đi trước), ông Ba cầm TRẮNG. Luật cho người mới: đặt quân trên giao điểm; nhóm quân hết "khí" (giao điểm trống kề bên) thì bị bắt;
+// Em cầm quân ĐEN (đi trước), ông Sáu cầm TRẮNG. Luật cho người mới: đặt quân trên giao điểm; nhóm quân hết "khí" (giao điểm trống kề bên) thì bị bắt;
 // không được tự sát; cấm lặp lại thế cờ ngay trước (luật cướp/ko). Cả hai "Bỏ lượt" liên tiếp → đếm điểm kiểu Trung Quốc (quân + đất) + 6,5 komi cho Trắng.
 // Học: 💡 hiện số khí của nhóm vừa chạm, cảnh báo "Atari!" khi nhóm chỉ còn 1 khí.
 // Tỷ lệ vàng: bàn 9 ô × φ m ≈ 13 m (Fibonacci), quân dẹt cao 1/φ³, điểm sao (hoshi) 5 điểm, camera 21 m.
@@ -90,7 +90,7 @@ export function startGo(ctx, { api }) {
   }
   function afterMove(who, r, i, j) {
     prevKey = key(B); B = r.B; lastMv = [i, j]; passes = 0; sfx('land');
-    if (r.captured.length) { if (who === 'b') { capB += r.captured.length; me.emote('cheer'); hud.msg(`🎉 Bắt được <b>${r.captured.length}</b> quân trắng!`, 2200); sfx('ok'); } else { capW += r.captured.length; ba && ba.emote('cheer'); hud.msg(`Ông Ba bắt <b>${r.captured.length}</b> quân đen. Nhớ giữ nhiều khí cho nhóm quân nhé!`, 2600); } }
+    if (r.captured.length) { if (who === 'b') { capB += r.captured.length; me.emote('cheer'); hud.msg(`🎉 Bắt được <b>${r.captured.length}</b> quân trắng!`, 2200); sfx('ok'); } else { capW += r.captured.length; ba && ba.emote('cheer'); hud.msg(`Ông Sáu bắt <b>${r.captured.length}</b> quân đen. Nhớ giữ nhiều khí cho nhóm quân nhé!`, 2600); } }
     draw();
     // cảnh báo atari cho em
     if (who === 'w') for (let a = 0; a < N; a++) for (let b = 0; b < N; b++) if (B[a][b] === 'b') { const g = group(B, a, b); if (g.libs.size === 1) { hud.msg('⚠️ <b>Atari!</b> Một nhóm quân đen của em chỉ còn <b>1 khí</b> — nối thêm quân để cứu!', 2800); showLibs(a, b); return; } }
@@ -99,7 +99,7 @@ export function startGo(ctx, { api }) {
     if (over) return; busy = true;
     setTimeout(() => {
       if (over) return; const m = aiMove(B, prevKey, level);
-      if (!m) { passes++; ba && ba.say('Ông bỏ lượt.', 1800); hud.msg('Ông Ba <b>bỏ lượt</b>. Nếu em cũng bỏ lượt thì ván cờ kết thúc và đếm điểm.', 3000); if (passes >= 2) return finish(); }
+      if (!m) { passes++; ba && ba.say('Ông bỏ lượt.', 1800); hud.msg('Ông Sáu <b>bỏ lượt</b>. Nếu em cũng bỏ lượt thì ván cờ kết thúc và đếm điểm.', 3000); if (passes >= 2) return finish(); }
       else { ba && ba.emote('interact'); afterMove('w', m.r, m.i, m.j); }
       turn = 'b'; busy = false;
     }, 650);
@@ -132,7 +132,7 @@ export function startGo(ctx, { api }) {
   // ---------- Nhân vật ----------
   me.place(0, S / 2 + 1.3, Math.PI); me.face(0, 0);
   let ba = null;
-  api.actor('student-male-c', { name: 'Ông Ba', height: 1.62, look: { role: 'adult', shirt: '#6b8f71', pants: '#3b3b3b', glasses: true } }).then(a => { if (!a) return; ba = a; a.place(0, -S / 2 - 1.3, 0); a.face(0, 0); a.sit('floor'); a.say('Cờ vây: vây đất, bắt quân. Thử nhé!', 3000); });
+  api.actor('student-male-c', { name: 'Ông Sáu', height: 1.62, look: { role: 'adult', shirt: '#6b8f71', pants: '#3b3b3b', glasses: true } }).then(a => { if (!a) return; ba = a; a.place(0, -S / 2 - 1.3, 0); a.face(0, 0); a.sit('floor'); a.say('Cờ vây: vây đất, bắt quân. Thử nhé!', 3000); });
   const port = innerWidth < innerHeight;
   api.cam.x = 0; api.cam.y = 0; api.cam.z = port ? 0 : 1; api.cam.yaw = 0; api.cam.pitch = port ? 1.25 : 1.0; api.cam.dist = port ? 22 : 21; api.orbit = true;
   reset();

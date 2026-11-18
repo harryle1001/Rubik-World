@@ -1,6 +1,6 @@
 // mg/board/caro.js — CỜ CARO KHỔNG LỒ ngay trong thế giới (khoá 'caro', cửa "Cờ caro"): bàn 13 × 13 ô vẽ trên sân, mỗi ô 1 m,
-// em cầm quân X (đỏ), bạn Lan cầm quân O (xanh). Ai có 5 quân liền nhau (ngang, dọc, chéo) trước là thắng.
-// Học: 💡 gợi ý chỉ nước chặn/tấn công và giải thích ("chặn 4 của Lan", "tạo 3 mở hai đầu"); nước vừa đi có vòng sáng.
+// em cầm quân X (đỏ), bạn Nhi cầm quân O (xanh). Ai có 5 quân liền nhau (ngang, dọc, chéo) trước là thắng.
+// Học: 💡 gợi ý chỉ nước chặn/tấn công và giải thích ("chặn 4 của Nhi", "tạo 3 mở hai đầu"); nước vừa đi có vòng sáng.
 // Tỷ lệ vàng: bàn 13 (Fibonacci), quân X cao 0,618 m, O vòng tròn π, nảy 0,382 s (1/φ²), camera 21 m.
 import * as THREE from 'three';
 import { PHI } from '../../layout.js';
@@ -76,7 +76,7 @@ export function startCaro(ctx, { api }) {
     over = true; if (cells) showWin(cells); const t = Math.round(performance.now() / 1000 - t0);
     if (win) { me.emote('cheer'); lan && lan.emote('no'); lan && lan.say('Em giỏi quá!'); } else if (win === false) { lan && lan.emote('cheer'); me.emote('no'); }
     setTimeout(() => api.end(win ? { score: Math.max(13, 200 - moves * 3) + (level === 'medium' ? 55 : 0), title: '🎉 5 quân liền — Em thắng!', text: `Thắng sau ${Math.ceil(moves / 2)} nước, ${Math.floor(t / 60)} phút ${t % 60} giây. Mẹo: luôn chặn khi đối thủ có 3 quân mở hai đầu!` }
-      : win === false ? { score: null, save: false, title: 'Bạn Lan thắng ván này', text: 'Không sao! Hãy để ý: khi đối thủ có 3 quân liền mà hai đầu còn trống, phải chặn ngay — nếu để thành 4 mở thì không chặn kịp.' }
+      : win === false ? { score: null, save: false, title: 'Bạn Nhi thắng ván này', text: 'Không sao! Hãy để ý: khi đối thủ có 3 quân liền mà hai đầu còn trống, phải chặn ngay — nếu để thành 4 mở thì không chặn kịp.' }
         : { score: 34, title: '🤝 Hoà cờ', text: 'Bàn đã kín mà chưa ai có 5 quân. Hoà cũng đẹp!' }), 1600);
   }
   function play(i, j) {
@@ -88,11 +88,11 @@ export function startCaro(ctx, { api }) {
     if (lan && Math.random() < 0.4) lan.say(['Hừm…', 'Để mình nghĩ…', 'À ha!'][(Math.random() * 3) | 0], 1200);
     setTimeout(() => {
       if (over) return; const m = bestMove(B, 'o', 'x', level === 'easy' ? 900 : 60);
-      put(m.i, m.j, 'o'); if (m.def >= 4e3 && Math.random() < 0.7) hud.msg('Lan vừa <b>chặn</b> hàng của em!', 1800);
+      put(m.i, m.j, 'o'); if (m.def >= 4e3 && Math.random() < 0.7) hud.msg('Nhi vừa <b>chặn</b> hàng của em!', 1800);
       const w2 = fiveFrom(B, m.i, m.j, 'o'); if (w2) return finish(false, w2);
       if (moves >= N * N) return finish(null);
       const thr = lineInfo(B, m.i, m.j, 'o').some(([n, o]) => (n === 3 && o === 2) || n === 4);
-      if (thr) hud.msg('⚠️ Lan đang có hàng nguy hiểm — <b>chặn</b> ngay!', 2200);
+      if (thr) hud.msg('⚠️ Nhi đang có hàng nguy hiểm — <b>chặn</b> ngay!', 2200);
       turn = 'x'; busy = false;
     }, 700);
   }
@@ -107,13 +107,13 @@ export function startCaro(ctx, { api }) {
   [['easy', '🙂 Dễ'], ['medium', '🤔 Vừa']].forEach(([lv, t]) => { const b = hud.button(t, () => { if (level === lv) return; level = lv; try { localStorage.setItem('mg.caro.level', lv); } catch (e) {} api.restart(); }); b.classList.toggle('on', level === lv); });
   hud.button('💡 Gợi ý', () => {
     if (over || busy || turn !== 'x') return; const m = bestMove(B, 'x', 'o', 0); const [x, z] = cellPos(m.i, m.j); hintM.position.set(x, TOP + 0.03, z); hintM.visible = true;
-    hud.msg(m.def >= 5e4 ? '💡 Lan sắp có 5 — <b>chặn ngay</b> ô sáng xanh!' : m.atk >= 5e4 ? '💡 Đi ô sáng xanh là em có <b>4 mở</b> — gần thắng rồi!' : m.def >= 4e3 ? '💡 Chặn hàng 3 mở của Lan ở ô sáng xanh.' : m.atk >= 4e3 ? '💡 Ô sáng xanh tạo <b>3 mở hai đầu</b> cho em.' : '💡 Đi gần quân của mình để nối dài hàng.', 3500);
+    hud.msg(m.def >= 5e4 ? '💡 Nhi sắp có 5 — <b>chặn ngay</b> ô sáng xanh!' : m.atk >= 5e4 ? '💡 Đi ô sáng xanh là em có <b>4 mở</b> — gần thắng rồi!' : m.def >= 4e3 ? '💡 Chặn hàng 3 mở của Nhi ở ô sáng xanh.' : m.atk >= 4e3 ? '💡 Ô sáng xanh tạo <b>3 mở hai đầu</b> cho em.' : '💡 Đi gần quân của mình để nối dài hàng.', 3500);
   });
   hud.button('🔁 Ván mới', () => api.restart());
   // ---------- Nhân vật ----------
   me.place(0, H + 1.6, Math.PI); me.face(0, 0);
   let lan = null;
-  api.actor('student-female-b', { name: 'Lan', look: { role: 'student', shirt: '#3d8fd9', pants: '#2a2f4a' } }).then(a => { if (!a) return; lan = a; a.place(0, -H - 1.6, 0); a.face(0, 0); a.say('Chơi caro với mình nhé!', 2600); });
+  api.actor('student-female-b', { name: 'Nhi', look: { role: 'student', shirt: '#3d8fd9', pants: '#2a2f4a' } }).then(a => { if (!a) return; lan = a; a.place(0, -H - 1.6, 0); a.face(0, 0); a.say('Chơi caro với mình nhé!', 2600); });
   const port = innerWidth < innerHeight;
   api.cam.x = 0; api.cam.y = 0; api.cam.z = port ? 0 : 1.5; api.cam.yaw = 0; api.cam.pitch = port ? 1.25 : 1.0; api.cam.dist = port ? 22 : 21; api.orbit = true;
   reset();
