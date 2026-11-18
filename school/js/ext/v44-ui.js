@@ -57,7 +57,7 @@ function v44World(){
     for(const id of ['rubik', 'chess', 'music', 'hall', 'office', 'elec']){ const r = R[id]; if(inside(r, ox, oy) !== inside(r, nx, ny) && dist(nx, ny, r.dw[0], r.dw[1]) > 26) return false; }
     return true; };
   // bikes stay on land (no more riding over the sea)
-  const eu = extUpdate; extUpdate = function(dt){ eu(dt); const P = PLAYER; if(P && P.cycling && !P.boat && P.y > 878 && !(typeof V46 !== 'undefined' && V46.on && !V46.sky)){ P.y = 870; P._gx = P._gy = 0; } };
+  const eu = extUpdate; extUpdate = function(dt){ eu(dt); const P = PLAYER; if(P && P.cycling && !P.boat && P.y > 878 && !(typeof V46 !== 'undefined' && V46.on && !V46.sky && v46Raw(P.x))){ P.y = 870; P._gx = P._gy = 0; } };
   // fewer words: no arrow+label toward wildlife, short name tags only
   try { drawWevGuide = function(){}; } catch(e){}
   v36Sprites = function(sp){ for(const h of V36.hosts){ if(!inVB(h.x, h.y)) continue; sp.push({y:h.y, f:() => { const P = PLAYER; if(P && P.visible) h.dir = P.x < h.x ? -1 : 1; drawPerson(h);
