@@ -41,7 +41,8 @@ export function createSchoolTown(ctx) {
     let h = prevExtra ? prevExtra(x, z, y) : -99;
     for (const r of LAND) if (x >= r[0] && x <= r[2] && z >= r[1] && z <= r[3]) { h = Math.max(h, TOWN_Y); break; }
     if (h < TOWN_Y && onFlat(x, z)) h = TOWN_Y;   // đường vòng, đường hướng tâm (cả cầu qua hồ), lô đất
-    for (const d of ctx.decks) if (x >= d.x0 && x <= d.x1 && z >= d.z0 && z <= d.z1) h = Math.max(h, d.y);
+    // sàn treo (cầu vòm, chòi…): chỉ tính khi không cao hơn chân quá 1 bậc (1,1 m = STEP player.js) → đi dưới gầm cầu không bị kéo lên
+    for (const d of ctx.decks) if (d.y <= (y ?? 99) + 1.1 && x >= d.x0 && x <= d.x1 && z >= d.z0 && z <= d.z1) h = Math.max(h, d.y);
     return h;
   };
 

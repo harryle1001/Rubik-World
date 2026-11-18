@@ -1,6 +1,6 @@
 // dive.js — Bơi & lặn biển: bơi trên mặt nước (nổi theo sóng), lặn xuống đáy, dưỡng khí, bong bóng, bọt nước,
 // góc nhìn dưới nước (sương lam theo độ sâu, mặt nước nhìn từ dưới có "cửa sổ Snell", vệt nắng, caustics trên đáy), âm thanh dưới nước.
-// Phím: Q / Shift lặn xuống · Space nổi lên · nút 🤿 / ⬆ trên điện thoại. Hết dưỡng khí → tự nổi lên (an toàn, không "chết").
+// Phím: Q lặn xuống (Shift chỉ để chạy) · Space nổi lên · nút 🤿 / ⬆ trên điện thoại. Hết dưỡng khí → tự nổi lên (an toàn, không "chết").
 // Đặt ctx.underwater (camera dưới nước), ctx.dive = { swimming, diving, depth, oxygen 0..1, maxOxygen (giây) }; phát 'island:underwater'.
 import * as THREE from 'three';
 import { CFG } from './config.js';
@@ -50,7 +50,9 @@ export function createDive(ctx) {
   const ui = id => document.getElementById(id);
   const hold = (id, k) => { const b = ui(id); if (!b) return; b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); held[k] = true; }); for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) b.addEventListener(ev, () => { held[k] = false; }); };
   hold('bDive', 'down'); hold('bSurf', 'up');
-  const wantDown = () => held.down || keys.has('KeyQ') || keys.has('ShiftLeft') || keys.has('ShiftRight');
+  const downRaw = () => held.down || keys.has('KeyQ');   // Shift = chạy (player.js), không lặn
+  let downArmed = false;   // phải bấm Q/🤿 SAU khi đã bơi: giữ Q từ trên bờ chạy ra biển không tự lặn
+  const wantDown = () => downArmed && downRaw();
   const wantUp = () => held.up || keys.has('Space');
 
   // ---------- HUD ----------
@@ -173,13 +175,14 @@ export function createDive(ctx) {
     const sy = surf(p.x, p.z), depth = sy - g; S.depth = Math.max(0, sy - p.y);
     if (!S.swimming) {
       if (depth < SWIM_IN || p.y > sy - 0.15) return false;
-      S.swimming = true; vV = 0; ySt.v = 0;
+      S.swimming = true; vV = 0; ySt.v = 0; downArmed = false;
       if (pl.vy < -4 || sinceSplash > 1) { splash(pl.vy < -4 ? 21 : 8, p.x, p.z, pl.vy < -4 ? 3 : 1.2); ctx.sfx && ctx.sfx('land'); }
       sinceSplash = 0;
-      if (!tipShown) { tipShown = true; ctx.toast && ctx.toast(`🏊 Đang bơi! ${CFG.isMobile ? 'Giữ 🤿 để lặn, ⬆ để nổi' : 'Giữ Q/Shift để lặn, Space để nổi'}.<br>🦺 Ngoài đời, chỉ bơi khi có người lớn và áo phao nhé!`, 5500); }
+      if (!tipShown) { tipShown = true; ctx.toast && ctx.toast(`🏊 Đang bơi! ${CFG.isMobile ? 'Giữ 🤿 để lặn, ⬆ để nổi' : 'Giữ Q để lặn, Space để nổi'}.<br>🦺 Ngoài đời, chỉ bơi khi có người lớn và áo phao nhé!`, 5500); }
     } else if (depth < SWIM_OUT && !S.diving) { S.swimming = false; return false; }   // lên bờ: đi bộ lại
     // giới hạn trong phạm vi bản đồ
     p.x = clamp(p.x, -550, 550); p.z = clamp(p.z, -550, 550);   // biển mở tới 550 m (đáy biển nối dài: terrain.js, mặt sóng: ocean-water.js)
+    if (!downRaw()) downArmed = true;
     const low = g + 0.35;   // không xuyên đáy
     if (!S.diving) {
       if (wantDown() && !forceUp && S.oxygen > 0.1 && depth > 1.6) { S.diving = true; vV = -VSPD * 0.6; ctx.sfx && ctx.sfx('jump'); splash(5, p.x, p.z, 0.8); }
