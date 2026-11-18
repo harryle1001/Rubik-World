@@ -1,0 +1,97 @@
+{
+ "res": {
+  "frames": 156,
+  "avgMs": 415.4,
+  "p95Ms": 533.4,
+  "maxMs": 1200,
+  "over50": 156,
+  "over100": 156,
+  "gcMinor": 12,
+  "gcMajor": 8,
+  "gcTraceMs": 169,
+  "gcProfMs": 70,
+  "heapMB": [
+   141.1,
+   141.1
+  ],
+  "msPerFrame": {
+   "frameJs": 42.95,
+   "render": 28.5,
+   "school": 3.35,
+   "perf": 1.97,
+   "ambience": 1.77,
+   "player": 0.97,
+   "aircraft": 0.73,
+   "weather": 0.39,
+   "physics": 0.34,
+   "audio": 0.25,
+   "sky": 0.22,
+   "dive": 0.22,
+   "living": 0.22,
+   "net": 0.17,
+   "animals": 0.17,
+   "treasure": 0.15,
+   "eggs": 0.11,
+   "vehicles": 0.09,
+   "sealife": 0.08,
+   "worldMap": 0.06,
+   "skyshow": 0.06,
+   "terrain": 0.05,
+   "zen": 0.01,
+   "mg": 0,
+   "brightness": 0
+  }
+ },
+ "top": [
+  {
+   "fn": "updateMatrixWorld http://localhost:3000/lib/three/build/three.module.js:7772",
+   "ms": 649,
+   "pct": 1.1
+  },
+  {
+   "fn": "V https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 444,
+   "pct": 0.7
+  },
+  {
+   "fn": "projectObject http://localhost:3000/lib/three/build/three.module.js:30038",
+   "ms": 275,
+   "pct": 0.4
+  },
+  {
+   "fn": "o.update :3",
+   "ms": 190,
+   "pct": 0.3
+  },
+  {
+   "fn": "renderObject http://localhost:3000/lib/three/build/three.module.js:22551",
+   "ms": 185,
+   "pct": 0.3
+  },
+  {
+   "fn": "er https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 175,
+   "pct": 0.3
+  },
+  {
+   "fn": "texSubImage2D :0",
+   "ms": 169,
+   "pct": 0.3
+  },
+  {
+   "fn": "querySelector :0",
+   "ms": 159,
+   "pct": 0.3
+  },
+  {
+   "fn": "bindVertexArray :0",
+   "ms": 149,
+   "pct": 0.2
+  },
+  {
+   "fn": "Z https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 139,
+   "pct": 0.2
+  }
+ ]
+}
