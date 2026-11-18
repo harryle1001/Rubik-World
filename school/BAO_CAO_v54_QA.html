@@ -1,0 +1,352 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Báo cáo Robo Thám Tử v54</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f4ee;--card:#fff;--ink:#1d2433;--mute:#5a6378;--line:#e4e0d4;--h:#d64545;--m:#e09a1a;--l:#3a7bd5;--ok:#1f9d55;--own:#7b4dd6}
+@media (prefers-color-scheme:dark){:root{--bg:#11151f;--card:#1a2030;--ink:#eef1f7;--mute:#a9b2c6;--line:#2a3247}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:700 16px/1.6 Nunito,system-ui,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:16px}h1{font-size:clamp(26px,5vw,40px);line-height:1.15;margin:12px 0 4px;font-weight:900}
+.sub{color:var(--mute);margin:0 0 20px}h2{font-size:24px;margin:34px 0 12px;font-weight:900}
+.k{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.k div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.k b{display:block;font-size:34px;font-weight:900;line-height:1.1}.k .h b{color:var(--h)}.k .m b{color:var(--m)}.k .l b{color:var(--l)}.k .ok b{color:var(--ok)}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.c{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--l);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.c.h{border-left-color:var(--h)}.c.m{border-left-color:var(--m)}.c header{display:flex;gap:8px;align-items:flex-start}.c h3{font-size:17px;margin:0;line-height:1.35}
+.b{flex:none;border-radius:8px;padding:0 8px;color:#fff;font-size:16px}.b.h{background:var(--h)}.b.m{background:var(--m)}.b.l{background:var(--l)}
+.vp,.f{color:var(--mute);margin:0;font-size:16px;word-break:break-word}.c img{width:100%;border-radius:10px;border:1px solid var(--line);aspect-ratio:16/10;object-fit:cover}
+details p{margin:4px 0;word-break:break-word}summary{cursor:pointer;color:var(--l)}
+.ba{display:grid;grid-template-columns:1fr 1.618fr;gap:8px;margin-top:auto}.ba div{border-radius:10px;padding:6px 10px;background:rgba(214,69,69,.1)}.ba small{display:block;color:var(--mute)}
+.ba .ok{background:rgba(31,157,85,.14)}.ba .ok b{color:var(--ok)}.ba .no{background:rgba(224,154,26,.16)}.ba .own{background:rgba(123,77,214,.14)}.ba .own b{color:var(--own)}
+ul{padding-left:22px}li{margin:6px 0}.note{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 18px}
+</style></head><body><main>
+<h1>🤖 Robo Thám Tử · Báo cáo kiểm tra v54</h1>
+<p class="sub">Trường Rubik của Hà Quân (bản 2D) · Robo đi khắp đảo ở 3 cỡ màn hình, mở từng khu, cửa, mini game, cửa hàng, phương tiện, đổi giờ và mùa.</p>
+<div class="k"><div class="h"><b>0</b>Nghiêm trọng · sửa 0</div><div class="m"><b>32</b>Vừa · sửa 31</div><div class="l"><b>32</b>Nhẹ · sửa 1</div><div class="ok"><b>32/64</b>Đã hết sau khi sửa</div></div>
+<h2>📊 Số liệu chạy</h2><div class="note"><p>Trước: 88 lượt ghi lỗi · 📱 390×844: TB 58 / thấp nhất 14 · 📱↔ 844×390: TB 58 / thấp nhất 23 · 🖥 1440×900: TB 54 / thấp nhất 16</p><p>Sau: 37 lượt ghi lỗi · 📱 390×844: TB 58 / thấp nhất 4 · 📱↔ 844×390: TB 58 / thấp nhất 18 · 🖥 1440×900: TB 52 / thấp nhất 13</p>
+<p>Mỗi lượt Robo: 📱 390×844 265 bước / 439 giây, 📱↔ 844×390 265 bước / 434 giây, 🖥 1440×900 265 bước / 452 giây.</p></div>
+<h2>🧑‍⚖️ Cần chủ game quyết định</h2><div class="note"><ul><li>Chữ &lt; 16px trên MÁY TÍNH (1440×900): quy tắc chỉ bắt buộc ≥16px trên điện thoại. Nâng cả bản máy tính sẽ làm HUD và các bảng to ra — chủ game quyết định có làm không.</li><li>Thẻ lời dạy (mentor) nay tạm ẩn khi có cửa sổ mở (giống lúc chơi mini game). Nếu muốn thẻ vẫn hiện trong cửa sổ, cần chọn chỗ đặt mới không đè nút (vd. thu gọn thành chip nhỏ).</li><li>Hai nhãn bản đồ “Hồ cá Koi &amp; khu cắm trại” và “Khu rừng thông” chồng nhau: chọn dời nhãn nào và dời đi đâu.</li><li>Nhãn nhỏ dưới các nút tròn (Lamp on / Bike / Plane / Flycam) đang là tiếng Anh, nay đã to 16px trên điện thoại: có muốn đổi sang tiếng Việt (Đèn / Xe đạp / Máy bay) không?</li><li>Khu khoá theo Level (Nhà thi đấu, Kart, Vườn bách thảo…): Robo cấp 1 không vào được là đúng thiết kế; nếu muốn, có thể cho “Tự đi tới…” vẫn dẫn đến cổng khu kèm thông báo khoá.</li></ul></div>
+<h2>🐞 Danh sách lỗi (Trước / Sau)</h2><div class="g"><article class="c m"><header><span class="b m">Vừa</span><h3>Nút che nhau ở “Bàn cờ Ikigai” · 📱 cảm ứng</h3></header>
+<p class="vp">📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-land-8.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #chBody button ↔ bảng #mentor (27%)</p><p>🔁 Robo đang ở bước: 🚪 Bàn cờ Ikigai · chơi hoặc thách đấu</p><p>🔧 Đã sửa: v54q-fix.js: khi đang mở một cửa sổ (Cửa hàng, Hội trường, Đấu trường…), thẻ lời dạy (mentor) tạm ẩn; đóng cửa sổ thì hiện lại — cùng cách v44 đã ẩn thẻ này khi chơi mini game.</p></details>
+<p class="f">📄 js/ext/v54q-fix.js mục 4 (gốc: css/style.css:704 #mentor.v39m, css/style.css:850)</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Nút che nhau ở “Khinh khí cầu” · 📱 cảm ứng</h3></header>
+<p class="vp">📱↔ 844×390 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-land-26.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 button#v32MisBtn ↔ button#v52ldBtn (39%) · button#v32LogBtn ↔ button#v52ldBtn (83%)</p><p>🔁 Robo đang ở bước: 🎈 Khinh khí cầu</p><p>🔧 Đã sửa: v54q-fix.js: dời nút Flycam khi xoay ngang (xuống góc dưới, trái cột nút) và trên máy tính (sang trái bảng Nhật ký); dời thẻ lời dạy sang phải cột nút khi xoay ngang; khi đang mở cửa sổ, thẻ lời dạy không chặn bấm và tự ẩn sau 6 giây.</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:19-26 (gốc: css/style.css:1525 #v52ldBtn, css/style.css:704 #mentor.v39m)</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Nút che nhau ở “Nói chuyện với Anh Quân” · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-14.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 button#v45Create ↔ bảng #mentor (45%)</p><p>🔁 Robo đang ở bước: 🚪 Nói chuyện với Anh Quân · Đấu online</p><p>🔧 Đã sửa: v54q-fix.js: khi đang mở một cửa sổ (Cửa hàng, Hội trường, Đấu trường…), thẻ lời dạy (mentor) tạm ẩn; đóng cửa sổ thì hiện lại — cùng cách v44 đã ẩn thẻ này khi chơi mini game.</p></details>
+<p class="f">📄 js/ext/v54q-fix.js mục 4 (gốc: css/style.css:704 #mentor.v39m, css/style.css:850)</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Nút che nhau ở “Nút Cửa hàng” · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-33.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #shopGrid button.primary ↔ bảng #mentor (62%)</p><p>🔁 Robo đang ở bước: 👆 Nút trên màn hình có phản hồi?</p><p>🔧 Đã sửa: v54q-fix.js: khi đang mở một cửa sổ (Cửa hàng, Hội trường, Đấu trường…), thẻ lời dạy (mentor) tạm ẩn; đóng cửa sổ thì hiện lại — cùng cách v44 đã ẩn thẻ này khi chơi mini game.</p></details>
+<p class="f">📄 js/ext/v54q-fix.js mục 4 (gốc: css/style.css:704 #mentor.v39m, css/style.css:850)</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Nút che nhau ở “Trường tin học” · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-26.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 button#v51tHelp ↔ #v51tPan button.v51tib.v51tx (35%) · button#v51tAct ↔ #v51tPan button (26%) · button#v51tAct ↔ #v51tPan button (26%) · button#v51tAct ↔ #v51tPan button (31%) · button#v51tAct ↔ #v51tPan button (31%)</p><p>🔁 Robo đang ở bước: 💻 Trường tin học</p></details>
+<p class="f">📄 chưa rõ</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="own"><small>Sau</small><b>⚪ Không phải lỗi: bảng Bài học phủ lên các nút của phòng học khi đang mở (lớp trên che lớp dưới, đúng thiết kế).</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mAcademy · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 6 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-7.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #acGrid b 14px “Phòng Rubik” · #acGrid span 15px “2×2 · 3×3 · 4×4 · 5×5 · ” · #acGrid b 14px “Học cờ vua” · #acGrid span 15px “Cách đi từng quân, nhập ” · #acGrid b 14px “Sudoku” · #acGrid span 15px “Dễ · vừa · khó, luôn có ” · #acGrid b 14px “Toán nhanh” · #acGrid span 15px “60 giây, càng đúng càng ” · và 4 chỗ khác</p><p>🔁 Mở Lớp lắp ráp điện rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mCaro · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-17.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#caroSt 14px “Lượt X (đỏ) · tới bạn”</p><p>🔁 Mở Nói chuyện với Bạn Nhi rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mChess · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-9.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#cstatus 14px “Lượt Trắng đi”</p><p>🔁 Mở Nói chuyện với Ông Tư rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mFarm · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-12.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#farmSt 14px “40 con vật đang đói, hãy” · #mFarm h2 13px “Chăm sóc” · #mFarm h2 13px “Cưỡi thú” · #mFarm h2 13px “Trò chơi đua thú”</p><p>🔁 Mở Nói chuyện với Bác Năm rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mFish · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-11.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#fstatus 14px “Bấm Quăng câu để bắt đầu” · #mFish h2 13px “Giỏ cá”</p><p>🔁 Mở Nói chuyện với Chú Hải rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mGo · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-18.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#goSt 14px “Lượt Đen · tới bạn (Đen)”</p><p>🔁 Mở Nói chuyện với Ông Sáu rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mHall · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-16.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #hallGrid b 14px “Khúc côn cầu” · #hallGrid span 15px “2 người hoặc đấu máy” · #hallGrid b 14px “Đấu xe tăng” · #hallGrid span 15px “Đạn nảy tường, 2 người” · #hallGrid b 14px “Cờ thả 4” · #hallGrid span 15px “Connect 4: 2 người, máy,” · #hallGrid b 14px “Ô ăn quan” · #hallGrid span 15px “Trò chơi dân gian Việt N” · và 6 chỗ khác</p><p>🔁 Mở Nói chuyện với Bạn Huy rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mLab · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 6 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-5.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #mLab b 14px “📜 Lịch sử nước đi” · #mLab i 14px “Chưa xoay nước nào”</p><p>🔁 Mở Lớp Rubik rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mLib · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-8.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #libList h3.libcat 13px “Truyện cổ tích” · #libList div.cover 13px “Con Rồng cháu Tiên”</p><p>🔁 Mở Thư viện Tri Thức rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mMall · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-15.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#mallMoney 14px “$130 · Level 3 · đã đọc ” · #mallGrid div.sname 12px “Ghế ăn Hiện đại trắng sứ” · #mallGrid div.sdesc 15px “$180” · #mallGrid div.sname 12px “Ghế ăn Hiện đại đen tuyề” · #mallGrid div.sdesc 15px “$180”</p><p>🔁 Mở Nói chuyện với Chị Ngọc rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mMarket · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-24.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 p#mkMoney 14px “$136 · 0 đơn đang chờ gi”</p><p>🔁 Mở Chợ rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mMath · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-21.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 p#mqScore 14px “Đúng 0 câu”</p><p>🔁 Mở Toán nhanh rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mMemory · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-22.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 p#memSt 14px “Lượt lật: 0 · đã ghép 0/”</p><p>🔁 Mở Lật thẻ nhớ rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mMusic · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-6.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #pkeys span.kn 11px “C3” · #pkeys span.kl 13px “Q ,” · #pkeys span.kn 11px “C4” · #pkeys span.kl 13px “2 L” · #pkeys span.kl 13px “W .” · #pkeys span.kl 13px “3 ;” · #pkeys span.kl 13px “E /”</p><p>🔁 Mở Phòng nhạc rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mOly · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-13.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #olyGrid b 14px “Chạy 100 m” · #olyGrid span 15px “Thưởng EXP + $10” · #olyGrid b 14px “110 m vượt rào” · #olyGrid span 15px “Thưởng EXP + $10” · #olyGrid b 14px “Nhảy xa” · #olyGrid span 15px “Thưởng EXP + $10” · #olyGrid b 14px “Nhảy cao” · #olyGrid span 15px “Thưởng EXP + $10” · và 18 chỗ khác</p><p>🔁 Mở Nói chuyện với HLV Hùng rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mRoom · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-23.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #roomBagBox h2 13px “Túi đồ trang trí”</p><p>🔁 Mở Nhà tôi rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mRubik · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-10.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #mRubik b 14px “📜 Lịch sử nước đi” · #mRubik i 14px “Chưa xoay nước nào”</p><p>🔁 Mở Nói chuyện với Bạn Minh rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mSudoku · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-20.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#sdkSt 14px “Lỗi: 0 · đã điền 32/81”</p><p>🔁 Mở Sudoku rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #mentor · 📱 cảm ứng</h3></header>
+<p class="vp">📱↔ 844×390 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-land-6.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 b#mtName 13px “Cô Thư viện” · p#mtLine 13px “Mỗi trang sách là một ng”</p><p>🔁 Mở Hội trường rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #prof · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 6 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-2.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 b#profName 12px “robo_qa” · span#profLvl 12px “Level 1” · span#profMoney 13px “$30” · #v52lHun b 12px “80” · #v37Info span 11.5px “Mưa” · #v37Info span 11.5px “Xuân” · #v37Info span 11.5px “13:17”</p><p>🔁 Mở Màn hình chính rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #v32MisBtn · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 5 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-3.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 i#v32MisN 12px “66”</p><p>🔁 Mở Màn hình chính rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #v40Coach · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-19.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 button#v40Spk 14px “🔊”</p><p>🔁 Mở Nói chuyện với Coach Ru (AI) rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #v41Col · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 4 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-4.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v44Lamp small 10px “Lamp on” · #v41Bike small 10px “Bike” · #v51pBtn small 10px “Plane”</p><p>🔁 Mở Màn hình chính rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #v48mEd · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-25.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 button#v48mSnap 15px “🧲 Lưới φ” · button#v48mReset 15px “↺ Mặc định” · button#v48mCopy 15px “📋 Sao chép bố cục” · button#v48mSave 15px “💾 Lưu”</p><p>🔁 Mở Bản đồ nhà v48 rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #v51pPanel · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-27.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v51pPanel small 14px “Trainer” · #v51pPanel span 14px “Tốc độ” · #v51pPanel span 14px “Độ lượn” · #v51pPanel span 14px “Rẽ” · #v51pPanel span.v51pTag 14px “✓ Đang chọn” · #v51pPanel small 14px “Seaplane” · #v51pPanel span 14px “Tốc độ” · #v51pPanel span 14px “Độ lượn” · và 7 chỗ khác</p><p>🔁 Mở Hangar máy bay rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #v52ldBtn · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-29.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v52ldBtn small 12px “Flycam”</p><p>🔁 Mở Khinh khí cầu rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c m"><header><span class="b m">Vừa</span><h3>Chữ nhỏ hơn 16px trong #v53cPanel · 📱 cảm ứng</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 · gặp 4 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-28.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v53cPanel span 15px “🎖️ Phi công bình tĩnh” · #v53cPanel span 15px “🧯 Lính cứu hỏa nhí” · #v53cPanel span 15px “🛡️ Cảnh sát tốt bụng” · #v53cPanel span 15px “🔭 Người ngắm đảo” · #v53cPanel span 15px “📞 Nhớ số khẩn cấp”</p><p>🔁 Mở Trạm cứu hoả rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mAcademy · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 3 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-9.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #acGrid b 14px “Phòng Rubik” · #acGrid span 15px “2×2 · 3×3 · 4×4 · 5×5 · ” · #acGrid b 14px “Học cờ vua” · #acGrid span 15px “Cách đi từng quân, nhập ” · #acGrid b 14px “Sudoku” · #acGrid span 15px “Dễ · vừa · khó, luôn có ” · #acGrid b 14px “Toán nhanh” · #acGrid span 15px “60 giây, càng đúng càng ” · và 4 chỗ khác</p><p>🔁 Mở Lớp lắp ráp điện rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mCaro · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-19.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#caroSt 14px “Lượt X (đỏ) · tới bạn”</p><p>🔁 Mở Nói chuyện với Bạn Nhi rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mChess · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-11.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#cstatus 14px “Lượt Trắng đi”</p><p>🔁 Mở Nói chuyện với Ông Tư rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mFarm · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-15.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#farmSt 14px “40 con vật đang đói, hãy” · #mFarm h2 13px “Chăm sóc” · #mFarm h2 13px “Cưỡi thú” · #mFarm h2 13px “Trò chơi đua thú”</p><p>🔁 Mở Nói chuyện với Bác Năm rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mFish · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-13.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#fstatus 14px “Bấm Quăng câu để bắt đầu” · #mFish h2 13px “Giỏ cá”</p><p>🔁 Mở Nói chuyện với Chú Hải rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mGo · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-20.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#goSt 14px “Lượt Đen · tới bạn (Đen)”</p><p>🔁 Mở Nói chuyện với Ông Sáu rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mHall · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-18.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #hallGrid b 14px “Khúc côn cầu” · #hallGrid span 15px “2 người hoặc đấu máy” · #hallGrid b 14px “Đấu xe tăng” · #hallGrid span 15px “Đạn nảy tường, 2 người” · #hallGrid b 14px “Cờ thả 4” · #hallGrid span 15px “Connect 4: 2 người, máy,” · #hallGrid b 14px “Ô ăn quan” · #hallGrid span 15px “Trò chơi dân gian Việt N” · và 6 chỗ khác</p><p>🔁 Mở Nói chuyện với Bạn Huy rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mLab · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 3 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-7.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #mLab b 14px “📜 Lịch sử nước đi” · #mLab i 14px “Chưa xoay nước nào” · #mLab h2 13px “Bảng công thức” · #labFormula b 15px “Ký hiệu xoay” · #labFormula button 15px “▶ Xem” · #labFormula button 15px “Từng bước” · #labFormula button.primary 15px “Luyện cùng thầy” · #labFormula b 15px “Xoay cả khối” · và 8 chỗ khác</p><p>🔁 Mở Lớp Rubik rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mLib · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-10.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #libList h3.libcat 13px “Truyện cổ tích” · #libList div.cover 13px “Con Rồng cháu Tiên” · #libList span 14px “Truyện cổ tích Việt Nam ” · #libList div.cover 13px “Bánh chưng bánh giầy” · #libList span 14px “Truyện cổ tích Việt Nam ” · #libList div.cover 13px “Thánh Gióng” · #libList span 14px “Truyện cổ tích Việt Nam ” · #libList div.cover 13px “Sơn Tinh, Thủy Tinh” · và 9 chỗ khác</p><p>🔁 Mở Thư viện Tri Thức rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mMall · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-17.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#mallMoney 14px “$130 · Level 3 · đã đọc ” · #mallGrid div.sname 12px “Ghế ăn Hiện đại trắng sứ” · #mallGrid div.sdesc 15px “$180” · #mallGrid div.sname 12px “Ghế ăn Hiện đại đen tuyề” · #mallGrid div.sdesc 15px “$180” · #mallGrid div.sname 12px “Ghế ăn Hiện đại xám khói” · #mallGrid div.sdesc 15px “$180” · #mallGrid div.sname 12px “Ghế ăn Hiện đại be kem” · và 13 chỗ khác</p><p>🔁 Mở Nói chuyện với Chị Ngọc rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mMarket · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-26.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 p#mkMoney 14px “$171 · 0 đơn đang chờ gi”</p><p>🔁 Mở Chợ rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mMath · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-23.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 p#mqScore 14px “Đúng 0 câu”</p><p>🔁 Mở Toán nhanh rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mMemory · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-24.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 p#memSt 14px “Lượt lật: 0 · đã ghép 0/”</p><p>🔁 Mở Lật thẻ nhớ rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mMusic · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-8.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #pkeys span.kn 11px “C2” · #pkeys span.kn 11px “C3” · #pkeys span.kl 13px “Q ,” · #pkeys span.kn 11px “C4” · #pkeys span.kl 13px “2 L” · #pkeys span.kl 13px “W .” · #pkeys span.kl 13px “3 ;” · #pkeys span.kl 13px “E /” · và 4 chỗ khác</p><p>🔁 Mở Phòng nhạc rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mOly · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-16.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #olyGrid b 14px “Chạy 100 m” · #olyGrid span 15px “Thưởng EXP + $10” · #olyGrid b 14px “110 m vượt rào” · #olyGrid span 15px “Thưởng EXP + $10” · #olyGrid b 14px “Nhảy xa” · #olyGrid span 15px “Thưởng EXP + $10” · #olyGrid b 14px “Nhảy cao” · #olyGrid span 15px “Thưởng EXP + $10” · và 18 chỗ khác</p><p>🔁 Mở Nói chuyện với HLV Hùng rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mPaint · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-14.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #mPaint h2 13px “Phòng tranh” · #gallery figcaption 15px “Cây cổ thụ lấp lánh · Bạ” · #gallery figcaption 15px “Biển chiều trong veo · B” · #gallery figcaption 15px “Giấc mơ đêm bí ẩn · Bạn ” · #gallery figcaption 15px “Hồ cá Koi mơ màng · Bạn ” · #gallery figcaption 15px “Hoàng hôn trên biển rực ” · #gallery figcaption 15px “Vòng tròn và đường thẳng” · #gallery figcaption 15px “Mặt hồ yên ả dịu dàng · ” · và 2 chỗ khác</p><p>🔁 Mở Nói chuyện với Họa sĩ Nam rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mRoom · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-25.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #roomBagBox h2 13px “Túi đồ trang trí”</p><p>🔁 Mở Nhà tôi rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mRubik · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-12.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #mRubik b 14px “📜 Lịch sử nước đi” · #mRubik i 14px “Chưa xoay nước nào”</p><p>🔁 Mở Nói chuyện với Bạn Minh rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mSet · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-31.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v39Vol p.v39cred 13px “Âm thanh: Kenney &amp; uisfx” · #mSet h3 13px “Âm thanh” · #mSet h3 13px “Thời gian, thời tiết, mù” · #mSet button 14px “☀️ Sáng” · #mSet button 14px “🌞 Trưa” · #mSet button 14px “🌇 Chiều” · #mSet button 14px “🌙 Tối” · #mSet h3 13px “Hiển thị”</p><p>🔁 Mở Nút ⚙ Cài đặt rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mSudoku · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-22.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 div#sdkSt 14px “Lỗi: 0 · đã điền 32/81”</p><p>🔁 Mở Sudoku rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mentor · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 3 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-32.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 b#mtName 13px “Bác Thương Gia” · p#mtLine 13px “Buôn bán thật thà, cân đ” · q#mtQuote 13px ““Tất cả những gì anh em ”</p><p>🔁 Mở Nút Cửa hàng rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="ok"><small>Sau</small><b>✅ Đã sửa</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mlog · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-5.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #mlogHead b 12px “Nhật ký” · #mlogHead span 15px “gợi ý &amp; sự kiện” · #mlogList li.tip 14px “💡 Bấm E khi đứng trước ” · #mlogList li 14px “13:16 Bạn Tùng vẽ xong b” · #mlogList small 11.6667px “13:16” · #mlogList li 14px “13:16 robo_qa vừa gia nh” · #mlogList small 11.6667px “13:16” · #mlogList li 14px “13:16 Bạn đang điều khiể” · và 3 chỗ khác</p><p>🔁 Mở Màn hình chính rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #mtrack · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-2.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #mtrackHead b 12px “Nhiệm vụ” · span#mtrackN 15px “0/66” · #mtrackList li.v38h 12px “Hôm nay · thưởng thêm $1” · #mtrackList span 15px “Cho các con vật ở nông t” · #mtrackList span 15px “Ngắm bầu trời và biển mâ” · #mtrackList span 15px “Bày bán món đầu tiên ở c” · #mtrackList span 15px “Ngắm sinh vật biển phát ” · #mtrackList span 15px “Phát hiện tàu hải tặc” · và 2 chỗ khác</p><p>🔁 Mở Màn hình chính rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #prof · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 3 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-3.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 b#profName 12px “robo_qa” · span#profLvl 15px “Level 1” · span#profMoney 15px “$30” · span#v45Heart 15px “❤️ 0” · #v52lHun b 12px “80”</p><p>🔁 Mở Màn hình chính rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #quick · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 3 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-4.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 button#hMenu 14px “☰ Menu” · button#hSet 14px “⚙ Cài đặt” · button#hAdmin 14px “🛠 Chủ game” · button#hMe 14px “Nhân vật của tôi” · button#hShop 14px “Cửa hàng” · button#hHome 14px “Nhà tôi”</p><p>🔁 Mở Màn hình chính rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #v32Menu · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-30.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v32Chips span 14px “Spring · Xuân” · #v32Chips span 14px “Rain · Mưa” · #v32Chips span 14px “14:00 ×10” · #v32Grid b 15px “Mini Games” · #v32Grid small 11.5px “Trò chơi” · #v32Grid b 15px “AI Coach” · #v32Grid small 11.5px “Huấn luyện viên AI” · #v32Grid b 15px “Map” · và 35 chỗ khác</p><p>🔁 Mở Nút ☰ Menu rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #v40Coach · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-21.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 button#v40Spk 14px “🔊”</p><p>🔁 Mở Nói chuyện với Coach Ru (AI) rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #v41Col · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-6.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v44Lamp small 10px “Lamp on” · #v41Bike small 10px “Bike” · #v51pBtn small 10px “Plane”</p><p>🔁 Mở Màn hình chính rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #v51pPanel · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-27.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v51pPanel small 14px “Trainer” · #v51pPanel span 14px “Tốc độ” · #v51pPanel span 14px “Độ lượn” · #v51pPanel span 14px “Rẽ” · #v51pPanel span.v51pTag 14px “✓ Đang chọn” · #v51pPanel small 14px “Seaplane” · #v51pPanel span 14px “Tốc độ” · #v51pPanel span 14px “Độ lượn” · và 21 chỗ khác</p><p>🔁 Mở Hangar máy bay rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #v52ldBtn · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 1 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-29.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v52ldBtn small 12px “Flycam”</p><p>🔁 Mở Khinh khí cầu rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Chữ nhỏ hơn 16px trong #v53cPanel · 🖥 máy tính</h3></header>
+<p class="vp">🖥 1440×900 · gặp 2 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-desk-28.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 #v53cPanel span 15px “🎖️ Phi công bình tĩnh” · #v53cPanel span 15px “🧯 Lính cứu hỏa nhí” · #v53cPanel span 15px “🛡️ Cảnh sát tốt bụng” · #v53cPanel span 15px “🔭 Người ngắm đảo” · #v53cPanel span 15px “📞 Nhớ số khẩn cấp”</p><p>🔁 Mở Trạm cứu hoả rồi nhìn chữ nhỏ.</p><p>🔧 Đã sửa: v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).</p></details>
+<p class="f">📄 js/ext/v54q-fix.js:4-18</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”.</b></div></div></article><article class="c l"><header><span class="b l">Nhẹ</span><h3>Hai nhãn bản đồ chồng lên nhau: “Hồ cá Koi &amp; khu cắm trại” &amp; “Khu rừng thông”</h3></header>
+<p class="vp">📱 390×844 📱↔ 844×390 🖥 1440×900 · gặp 3 lần</p>
+<img loading="lazy" src="tools/qa/shots/before-phone-1.jpg" alt="Ảnh lúc Robo gặp lỗi">
+<details><summary>Mô tả & cách tái hiện</summary><p>📝 Cách nhau 22px.</p><p>🔁 Robo đang ở bước: 🗺 Kiểm tra nhãn bản đồ &amp; khu đè nhau</p></details>
+<p class="f">📄 js/ext/v52w-life.js:207 (mapPlaces)</p>
+<div class="ba"><div><small>Trước</small><b>❌ Có lỗi</b></div><div class="no"><small>Sau</small><b>⏳ Chưa sửa: lỗi nhẹ, nhãn “Hồ cá Koi &amp; khu cắm trại” và “Khu rừng thông” vốn đứng sát nhau; dời nhãn là đổi bố cục bản đồ nên để chủ game chọn chỗ.</b></div></div></article></div>
+<h2>👀 Phát hiện thêm khi xem ảnh Robo chụp</h2><div class="note"><ul><li>Máy tính 1440×900: nút Flycam (chỉ chủ game) đè lên bảng Nhật ký ở góc phải — Robo chưa tự bắt được vì bảng nằm sâu trong khung #stage. Đã sửa: dời Flycam sang trái bảng Nhật ký (v54q-fix.js mục 2). Trước/Sau: xem REVIEW_v54_qa.png.</li><li>Lớp Rubik (1440×900): Robo báo nút danh sách công thức chồng hàng nút xoay — thực ra danh sách đang cuộn và phần bị chồng đã bị cắt khuất, người chơi không thấy. Không phải lỗi; Robo đã được chỉnh để tính phần bị cắt.</li><li>Ba khu “Nhà thi đấu thể dục dụng cụ”, “Trường đua Rubik Kart”, “Vườn bách thảo &amp; đài thiên văn” làm nhân vật đứng yên khi “Tự đi tới…”: do khu khoá theo Level (tài khoản thử Level 1), đúng thiết kế. Robo nay tự bỏ qua khu khoá.</li></ul></div>
+<h2>🆕 Lỗi mới chỉ thấy ở lần chạy lại</h2><div class="note"><ul><li>Nhẹ · FPS thấp ở “🚪 Thư viện Tri Thức”: TB 27, thấp nhất 23 (🖥 1440×900)</li><li>Nhẹ · FPS thấp ở “🚪 Cung thiên văn · ngắm”: TB 30, thấp nhất 28 (🖥 1440×900)</li><li>Nhẹ · FPS thấp ở “🚪 Tháp kính khúc xạ cổ · ngắm”: TB 27, thấp nhất 21 (🖥 1440×900)</li></ul></div>
+<h2>ℹ️ Cách chạy lại</h2><div class="note"><p>Trong game (chỉ chủ game): Menu → 🤖 Robo Thám Tử → ▶ Bắt đầu. Bảng báo cáo có nút 📍 Đi tới chỗ lỗi và ⬇ Tải JSON.</p>
+<p>Tự động: trong <code>school/</code> chạy <code>python3 -m http.server 8754</code>, rồi <code>node tools/qa/run.js after</code> và <code>python3 tools/qa/build_report.py</code>.</p></div>
+</main></body></html>
