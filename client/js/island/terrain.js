@@ -185,12 +185,13 @@ export function createTerrain(scene) {
       for (const m of [set.near, set.far]) if (m) { scene.remove(m); m.dispose(); }
       set.cap = Math.ceil(items.length * 1.1); set.near = mk(set.geo, !!def.shadow); set.far = def.far ? mk(set.geo, false) : null; set.relayout(set.last);
     };
-    const fill = (m, idx) => { idx.forEach((k, j) => { m.setMatrixAt(j, items[k].m); m.setColorAt(j, items[k].c); }); m.count = idx.length; m.visible = idx.length > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
+    const fill = (m, idx) => { for (let j = 0; j < idx.length; j++) { const q = items[idx[j]]; m.setMatrixAt(j, q.m); m.setColorAt(j, q.c); } m.count = idx.length; m.visible = idx.length > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
     set.relayout = p => {
       set.last.copy(p); if (!set.near) return;
-      const dNear = def.dist === 'tree' ? state.treeDist : def.dist === 'grass' ? state.grassDist : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = [], b = [];
+      const dNear = def.dist === 'tree' ? state.treeDist : def.dist === 'grass' ? state.grassDist : def.dist === 'flower' ? state.grassDist * 0.75 : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = set._a || (set._a = []), b = set._b || (set._b = []);
+      a.length = b.length = 0; const n2 = dNear * dNear, f2 = dFar * dFar;   // dùng lại mảng, so bình phương khoảng cách (không tạo rác mỗi lần)
       // tắt bóng đổ (chất lượng 3) → gần/xa như nhau: gộp hết vào 1 mesh, đỡ 1 draw call mỗi loại
-      const one = !state.shadows; items.forEach((q, k) => { const d = Math.hypot(q.m.elements[12] - p.x, q.m.elements[14] - p.z); if (d < dNear) a.push(k); else if (set.far && d < dFar) (one ? a : b).push(k); });
+      const one = !state.shadows; for (let k = 0; k < items.length; k++) { const e = items[k].m.elements, dx = e[12] - p.x, dz = e[14] - p.z, d = dx * dx + dz * dz; if (d < n2) a.push(k); else if (set.far && d < f2) (one ? a : b).push(k); }
       fill(set.near, a); if (set.far) fill(set.far, b);
     };
     kitGeo(kind).then(g => { set.geo = g; set.build(); });
@@ -230,14 +231,16 @@ export function createTerrain(scene) {
     m.computeBoundingSphere(); m.receiveShadow = true; scene.add(m); grass.push({ m, x: cx / list.length, z: cz / list.length });
   }
 
-  let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55, shadows: true };
+  let lodT = 0; const lodQ = []; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55, shadows: true };
   function update(dt, t, player) {
     WIND.uTime.value = t; ocean.update();
     if (player) WIND.uPlayer.value.copy(player);
     if ((lodT += dt) > 0.4 && player) {
       lodT = 0; for (const c of grass) c.m.visible = Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist;
-      for (const L of lodSets) if (L.at.distanceToSquared(player) > 9) { L.at.copy(player); L.relayout(player, state.treeDist); }
+      for (const L of lodSets) if (!L.queued && L.at.distanceToSquared(player) > 9) { L.queued = true; lodQ.push(L); }
     }
+    // chia lại gần/xa: mỗi khung 1 loại (trước: cả 14 loại × hàng nghìn vật trong 1 khung → khựng khi đi bộ)
+    if (lodQ.length && player) { const L = lodQ.shift(); L.queued = false; L.at.copy(player); L.relayout(player); }
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
   return { heightAt, slopeAt, update, colliders, ground, waterMat, waveHeight: ocean.waveHeight, waveNormal: ocean.waveNormal, water: ocean, state, plants, trunks, nature: { add: addNature } };
@@ -253,6 +256,7 @@ export function mergeGeos(list) {
   return out;
 }
 
+// hoa chỉ hiện gần camera: 3/4 tầm cỏ (điện thoại 34 m, Fibonacci), cụm 4 bông (máy tính 6) — trước: 45 m × 6 bông = ~44 k tam giác ở rừng
 // ---------- Model kit cho thiên nhiên (client/assets/models/kit, CC0 — xem CREDITS.txt) ----------
 // parts: vai trò từng phần của model (theo thứ tự trong file .glb) → màu nền + có nhận màu riêng từng cây (tint) không
 const ROLE = {
@@ -270,8 +274,8 @@ export const NATURE = {
   rockL:    { type: 'rock', r: 0.45, model: 'rock_large', parts: ['stone', 'moss'], tints: ['#b9b0a1', '#aaa293', '#c2b9aa'], shadow: true, far: true, dist: 'tree' },
   rockT:    { type: 'rock', r: 0.45, model: 'rock_tall', parts: ['stone', 'moss', 'stoneLt'], tints: ['#b9b0a1', '#a9a297'], shadow: true, far: true, dist: 'tree' },
   pebbles:  { type: 'rock', r: 0.3, model: 'rock_small', parts: ['moss', 'stone'], tints: ['#c2b9aa', '#a9a297', '#d0c7b8'], copies: 4, spread: 0.35, dist: 55 },
-  bush:     { type: 'bush', r: 0.3, model: 'bush_large', parts: ['leaf'], tints: ['#6fb85a', '#5faa4e', '#7cc35e', '#4f9a4a'], copies: 2, spread: 0.25, wind: 0.05, push: 0.5, dist: 70 },
-  flowers:  { type: 'flower', r: 0.3, model: 'flower_red', parts: ['stem', 'petal'], tints: ['#ff8fa8', '#ffd35a', '#ffffff', '#c9a3ff', '#ff7a5c'], copies: 6, spread: 0.45, wind: 0.12, push: 1, dist: 'grass' },
+  bush:     { type: 'bush', r: 0.3, model: 'bush_large', parts: ['leaf'], tints: ['#6fb85a', '#5faa4e', '#7cc35e', '#4f9a4a'], copies: 2, spread: 0.25, wind: 0.05, push: 0.5, dist: CFG.isMobile ? 55 : 70 },
+  flowers:  { type: 'flower', r: 0.3, model: 'flower_red', parts: ['stem', 'petal'], tints: ['#ff8fa8', '#ffd35a', '#ffffff', '#c9a3ff', '#ff7a5c'], copies: CFG.isMobile ? 4 : 6, spread: 0.45, wind: 0.12, push: 1, dist: 'flower' },
   mushrooms:{ type: 'plant', r: 0.2, model: 'mushroom_red', parts: ['cap', 'stalk'], tints: ['#e8453c', '#f07a3a', '#c9864f'], copies: 3, spread: 0.25, dist: 45 },
   stump:    { type: 'plant', r: 0.25, model: 'stump', parts: ['wood', 'woodIn'], tints: ['#ffffff'], dist: 60 },
   log:      { type: 'plant', r: 0.5, model: 'log', parts: ['wood', 'woodIn'], tints: ['#ffffff'], dist: 60 },
