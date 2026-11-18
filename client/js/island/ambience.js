@@ -186,8 +186,8 @@ export function createAmbience(ctx) {
   const mistGeo = new THREE.BufferGeometry(); { const pos = []; for (const g of mistG) { const nn = g.index ? g.toNonIndexed() : g; pos.push(...nn.attributes.position.array); } mistGeo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); }
   const mist = new THREE.Mesh(mistGeo, new THREE.ShaderMaterial({
     uniforms: mistU, transparent: true, depthWrite: false, side: THREE.DoubleSide,
-    vertexShader: 'varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
-    fragmentShader: `uniform float uA, uT; uniform vec3 uP, uCol; varying vec3 vW;
+    vertexShader: 'varying highp vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }',
+    fragmentShader: `uniform float uA; uniform highp float uT; uniform vec3 uP, uCol; varying highp vec3 vW;
       void main(){ vec2 q = vW.xz * .06 + vec2(uT * .02, uT * .013) + vW.y * 3.;
         float n = .55 + .45 * sin(q.x + sin(q.y * 1.3) * 1.7) * sin(q.y * .9 + sin(q.x * .8) * 2.);
         float edge = 1. - smoothstep(34., 72., length(vW.xz - uP.xz));

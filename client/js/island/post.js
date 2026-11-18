@@ -12,6 +12,10 @@ export function createPost(renderer, scene, camera) {
   // lọc dị hướng: texture tạo SAU dòng này (model, biển chữ canvas) tự nhận; texture có sẵn được quét bù ở render()
   const ANISO = Math.min(Q.anisotropy, renderer.capabilities.getMaxAnisotropy()); THREE.Texture.DEFAULT_ANISOTROPY = ANISO;
   const basePR = renderer.getPixelRatio();
+  // CHẶN NaN/inf: render target half-float tràn (> 65504 → inf) hoặc shader lỗi (pow số âm, chia 0) cho NaN → tone mapping
+  // NaN → điểm đen; bloom/làm nét lan NaN sang cả vùng → màn hình đen. Kiểm tra bằng bit (isnan bị fast-math của Metal/ANGLE bỏ qua).
+  const FIN = `bool nfBad(float x){ return (floatBitsToUint(x) & 0x7f800000u) == 0x7f800000u; }
+      vec3 fin(vec3 c){ return (nfBad(c.r) || nfBad(c.g) || nfBad(c.b)) ? vec3(0.) : min(c, vec3(64.)); }`;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = Q.exposure;   // OutputPass áp dụng
   // khử răng cưa MSAA ngay trong render target của hậu kỳ (sắc nét, không nhoè như FXAA)
   const pr = renderer.getPixelRatio(), rt = new THREE.WebGLRenderTarget(innerWidth * pr, innerHeight * pr, { type: THREE.HalfFloatType, samples: Q.msaa });
@@ -20,6 +24,9 @@ export function createPost(renderer, scene, camera) {
   // bloom tính ở nửa độ phân giải cho nhẹ
   const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), Q.bloomStrength, Q.bloomRadius, Q.bloomThreshold);
   composer.addPass(bloom);
+  // bloom lấy điểm sáng → làm mờ rộng: 1 điểm NaN thành cả vùng đen → lọc NaN ngay ở bước lấy điểm sáng
+  { const m = bloom.materialHighPassFilter; m.fragmentShader = m.fragmentShader.replace('void main() {', FIN + '\n void main() {').replace('vec4 texel = texture2D( tDiffuse, vUv );', 'vec4 texel = texture2D( tDiffuse, vUv ); texel.rgb = fin( texel.rgb );'); m.needsUpdate = true;
+    if (!m.fragmentShader.includes('fin( texel.rgb )')) console.warn('post.js: không chèn được lọc NaN vào bloom'); }
   // Hậu kỳ cuối: tia nắng xuyên khe (god rays, 12 mẫu về phía mặt trời) + chỉnh màu theo giờ + vignette — gộp 1 pass cho nhẹ
   const grade = {
     tDiffuse: { value: null }, uAmt: { value: Q.vignette },
@@ -30,15 +37,16 @@ export function createPost(renderer, scene, camera) {
     uniforms: grade,
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
     fragmentShader: `uniform sampler2D tDiffuse; uniform float uAmt, uSat, uCon, uRays, uAsp, uWarm, uSat0, uSharp; uniform vec3 uLift, uGain, uRayCol; uniform vec2 uSunUV, uTexel; varying vec2 vUv;
-      void main(){ vec4 c = texture2D(tDiffuse, vUv);
+      ${FIN}
+      void main(){ vec4 c = texture2D(tDiffuse, vUv); c.rgb = fin(c.rgb);
         if (uSharp > 0.01) {   // làm nét nhẹ (4 mẫu chữ thập, giới hạn biên độ để không viền sáng): ảnh hết nhoè khi máy hạ độ phân giải
-          vec3 n = texture2D(tDiffuse, vUv + vec2(0., uTexel.y)).rgb, s = texture2D(tDiffuse, vUv - vec2(0., uTexel.y)).rgb, e = texture2D(tDiffuse, vUv + vec2(uTexel.x, 0.)).rgb, w = texture2D(tDiffuse, vUv - vec2(uTexel.x, 0.)).rgb;
+          vec3 n = fin(texture2D(tDiffuse, vUv + vec2(0., uTexel.y)).rgb), s = fin(texture2D(tDiffuse, vUv - vec2(0., uTexel.y)).rgb), e = fin(texture2D(tDiffuse, vUv + vec2(uTexel.x, 0.)).rgb), w = fin(texture2D(tDiffuse, vUv - vec2(uTexel.x, 0.)).rgb);
           vec3 mn = min(c.rgb, min(min(n, s), min(e, w))), mx = max(c.rgb, max(max(n, s), max(e, w)));
           c.rgb = clamp(c.rgb + (4. * c.rgb - n - s - e - w) * uSharp * 0.25, mn, mx);
         }
         if (uRays > 0.003) {   // tia nắng: cộng dồn chỗ sáng (trời) dọc đường về phía mặt trời → vệt sáng lọt qua cây, mái nhà
           vec2 dv = (uSunUV - vUv) / 12.; vec2 q = vUv; float acc = 0., w = 1.;
-          for (int i = 0; i < 12; i++) { q += dv; vec3 s = texture2D(tDiffuse, clamp(q, 0., 1.)).rgb; acc += smoothstep(0.78, 1.0, max(s.r, max(s.g, s.b))) * w; w *= 0.9; }
+          for (int i = 0; i < 12; i++) { q += dv; vec3 s = fin(texture2D(tDiffuse, clamp(q, 0., 1.)).rgb); acc += smoothstep(0.78, 1.0, max(s.r, max(s.g, s.b))) * w; w *= 0.9; }
           vec2 o = (vUv - uSunUV) * vec2(uAsp, 1.); float fall = exp(-dot(o, o) * 2.2);
           c.rgb += uRayCol * acc / 7.2 * fall * uRays;
         }
@@ -47,7 +55,7 @@ export function createPost(renderer, scene, camera) {
         c.rgb = max(vec3(0.), (c.rgb - 0.18) * uCon + 0.18);                  // tương phản quanh xám giữa (không gian tuyến tính)
         c.rgb *= vec3(1. + uWarm, 1. + uWarm * 0.35, 1. - uWarm);            // ấm nhẹ (nền cozy)
         vec2 d = vUv - .5; c.rgb *= 1. - uAmt * smoothstep(0.25, 0.8, dot(d, d) * 2.);
-        gl_FragColor = c; }`,
+        gl_FragColor = vec4(fin(c.rgb), c.a); }`,
   });
   composer.addPass(vignette);
   composer.addPass(new OutputPass());
