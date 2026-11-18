@@ -1076,3 +1076,16 @@ body.v44fs #mChess .cboardwrap{width:min(calc(100vw*.618), calc(100dvh - 80px));
 @media (max-width:460px){.v44b{width:47px;height:47px}#v44Bar>*{gap:var(--g1)}#v44Bar{padding-left:max(var(--g1),env(safe-area-inset-left));padding-right:max(var(--g1),env(safe-area-inset-right))}}
 #v44Help{max-height:calc(100dvh - 110px);overflow:auto;box-sizing:border-box}
 @media (max-height:500px){#v44Help{top:max(var(--g2),env(safe-area-inset-top));max-height:calc(100dvh - 2*var(--g2))}}
+/* v48 · Lâu đài + Đũa thần (Session 12) */
+#v48cWand small{font-size:16px;font-family:"Nunito",system-ui,sans-serif;font-weight:800}
+#v48cWand .ic{font-size:26px}
+#v48cWand[hidden]{display:none!important}
+#v48cCard{position:absolute;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw, 360px);padding:14px 16px 12px;border-radius:18px;background:rgba(18,22,48,.92);border:2px solid #E8C27A;box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 24px rgba(232,194,122,.35);color:#FFF8E6;font-family:"Nunito",system-ui,sans-serif;font-weight:700;font-size:16px;line-height:1.45;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#v48cCard[hidden]{display:none}
+#v48cCard b{display:block;font-size:19px;font-weight:800;color:#FFE39A;margin-bottom:4px}
+#v48cCard p{margin:2px 0}
+#v48cCard .v48cRow{display:flex;gap:10px;margin-top:10px}
+#v48cCard button{font:800 16px "Nunito",system-ui,sans-serif;min-height:44px;border-radius:12px;border:0;cursor:pointer}
+#v48cCard .v48cGo{flex:1;background:#E8C27A;color:#2a1c10}
+#v48cCard .v48cX{width:44px;background:rgba(255,255,255,.14);color:#fff}
+.v48cChip{cursor:pointer;font-weight:800}
