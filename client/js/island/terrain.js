@@ -188,7 +188,8 @@ export function createTerrain(scene) {
     const fill = (m, idx) => { idx.forEach((k, j) => { m.setMatrixAt(j, items[k].m); m.setColorAt(j, items[k].c); }); m.count = idx.length; m.visible = idx.length > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
     set.relayout = p => {
       set.last.copy(p); if (!set.near) return;
-      const dNear = def.dist === 'tree' ? state.treeDist : def.dist === 'grass' ? state.grassDist : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = [], b = [];
+      // bay cao (> 21 m): bụi, hoa, nấm, sỏi, gốc cây chỉ còn vài điểm ảnh → ẩn hết (cây, đá lớn giữ nguyên)
+      const dNear = def.dist === 'tree' ? state.treeDist : state.high ? 0 : def.dist === 'grass' ? state.grassDist : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = [], b = [];
       // tắt bóng đổ (chất lượng 3) → gần/xa như nhau: gộp hết vào 1 mesh, đỡ 1 draw call mỗi loại
       const one = !state.shadows; items.forEach((q, k) => { const d = Math.hypot(q.m.elements[12] - p.x, q.m.elements[14] - p.z); if (d < dNear) a.push(k); else if (set.far && d < dFar) (one ? a : b).push(k); });
       fill(set.near, a); if (set.far) fill(set.far, b);
@@ -230,13 +231,15 @@ export function createTerrain(scene) {
     m.computeBoundingSphere(); m.receiveShadow = true; scene.add(m); grass.push({ m, x: cx / list.length, z: cz / list.length });
   }
 
-  let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55, shadows: true };
+  let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55, shadows: true, high: false };
   function update(dt, t, player) {
     WIND.uTime.value = t; ocean.update();
     if (player) WIND.uPlayer.value.copy(player);
     if ((lodT += dt) > 0.4 && player) {
-      lodT = 0; for (const c of grass) c.m.visible = Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist;
-      for (const L of lodSets) if (L.at.distanceToSquared(player) > 9) { L.at.copy(player); L.relayout(player, state.treeDist); }
+      lodT = 0; const high = player.y - Math.max(heightAt(player.x, player.z), W) > 21;   // bay cao 21 m (Fibonacci): cỏ, hoa… không còn thấy
+      const flip = high !== state.high; state.high = high;
+      for (const c of grass) c.m.visible = !high && Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist;
+      for (const L of lodSets) if (flip || L.at.distanceToSquared(player) > 9) { L.at.copy(player); L.relayout(player, state.treeDist); }
     }
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
