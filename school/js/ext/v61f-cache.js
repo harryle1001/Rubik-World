@@ -72,9 +72,9 @@ function v61fPump(ts){
   if(ts && t0 - ts > V61F.slack && V61F.skip < 3 && (V61F.job || V61F.ovJob || V61F.bg.length)){ V61F.skip++; return; } V61F.skip = 0;
   for(let n = 0; n < 40; n++){
     const J = V61F.job && !V61F.job.done ? V61F.job : V61F.ovJob;
-    if(!J){ const B = V61F.bg[0]; if(!B) break; let d = true; try { d = B.next().done; } catch(e){ console.warn('v61f bg', e); } if(d) V61F.bg.shift(); V61F.stat.steps++; if(performance.now() - t0 > V61F.budget) break; continue; }
+    if(!J){ const B = V61F.bg[0]; if(!B) break; let d = true; try { d = B.next().done; } catch(e){ console.warn('v61f bg', e); } if(d) V61F.bg.shift(); V61F.stat.steps++; window.__v61fBusy = 1; if(performance.now() - t0 > V61F.budget) break; continue; }
     let d = false; const ts = performance.now(); try { const r = J.it.next(); d = r.done; if(V61F.log) V61F.log.push([r.value || '?', Math.round(performance.now() - ts)]); } catch(e){ console.warn('v61f job', e); d = true; if(J === V61F.job) V61F.job = null; }
-    V61F.stat.steps++;
+    V61F.stat.steps++; window.__v61fBusy = 1;
     if(J === V61F.job && (J.done || d)){ V61F.job = null; V61F.ovJob = null; }
     else if(J === V61F.ovJob && d){ V61F.ovJob = null; if(!V46T.ov && J.r.ov){ V46T.ov = J.r.ov; try { V61F.lastOv = v61fOv0(); } catch(e){} } }
     if(performance.now() - t0 > V61F.budget) break;

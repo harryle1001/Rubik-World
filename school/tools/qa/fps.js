@@ -46,7 +46,7 @@ async function open(b, vp){
 
 // ghi từng khung hình bằng rAF + nhãn bước hiện tại
 const REC = `(() => { const F = window.__v61fF = []; window.__fpsTag = 'start'; let last = performance.now();
-  const loop = t => { F.push([last, t - last, window.__fpsTag]); last = t; if(!window.__v61fStop) requestAnimationFrame(loop); }; requestAnimationFrame(loop); })()`;
+  let pb = 0; const loop = t => { F.push([last, t - last, window.__fpsTag, pb]); pb = window.__v61fBusy || 0; window.__v61fBusy = 0; last = t; if(!window.__v61fStop) requestAnimationFrame(loop); }; requestAnimationFrame(loop); })()`;
 const MARK = `(() => { const t0 = performance.now(); (function __v61fMark(){ let x = 0; while(performance.now() - t0 < 60) x += Math.sqrt(x + 1); return x; })(); return t0; })()`;
 
 // lộ trình: bước Robo v54q (khu, cửa, mini game, phương tiện, giờ & mùa) + tính năng mới
@@ -111,7 +111,7 @@ function analyze(frames, prof, off, lm){
   // hàm tốn nhiều nhất trong mọi khung dài (cộng dồn, inclusive)
   const agg = new Map(); long.forEach(f => attr(f).incl.forEach(s => { const m = s.match(/^(.*) (\d+)ms$/); agg.set(m[1], (agg.get(m[1]) || 0) + +m[2]); }));
   return {frames:frames.length, secs:Math.round(tot/1000), avg:+avg.toFixed(1), min:+minF.toFixed(1), long50:long.length, long100:frames.filter(f => f[1] > 100).length,
-    tagHot, p99:+[...durs].sort((a, b) => a - b)[Math.floor(durs.length*.99)].toFixed(1), worst, byTag, hot:[...agg].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, v]) => `${k} ${v}ms`),
+    busy:{n:frames.filter(f => f[3]).length, l50:long.filter(f => f[3]).length, l100:frames.filter(f => f[1] > 100 && f[3]).length}, tag100:Object.entries(frames.filter(f => f[1] > 100).reduce((m, f) => { const k = String(f[2]).replace(/ #\d+$/, ''); m[k] = (m[k] || 0) + 1; return m; }, {})).sort((a, b) => b[1] - a[1]).slice(0, 15), tagHot, p99:+[...durs].sort((a, b) => a - b)[Math.floor(durs.length*.99)].toFixed(1), worst, byTag, hot:[...agg].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, v]) => `${k} ${v}ms`),
     hist:frames.map(f => Math.round(f[1])), median:[...durs].sort((a, b) => a - b)[durs.length >> 1]};
 }
 
