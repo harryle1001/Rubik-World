@@ -1,0 +1,33 @@
+[
+ {
+  "name": "dam-dong-co-dinh",
+  "calls": 200,
+  "tris": 602867,
+  "skinDraw": 25.7,
+  "skinShadow": 11.6,
+  "mixPerF": 11.6,
+  "mixMs": 0.54,
+  "actorJs": 1.49,
+  "player": 0.22,
+  "net": 0.01,
+  "animals": 0.02,
+  "school": 1.11,
+  "ambience": 0.05,
+  "sealife": 0.09,
+  "people": 20,
+  "full": 8,
+  "peopleMs": 0.93,
+  "renderMs": 6.9,
+  "ghi_chu": "\u0111o tr\u00ean commit f970041 (code g\u1ed1c), c\u00f9ng c\u00f4ng c\u1ee5"
+ },
+ {
+  "name": "thu-co-dinh",
+  "calls": 332,
+  "skinDraw": 117,
+  "skinShadow": 74,
+  "mixPerF": 16.3,
+  "mixMs": 0.26,
+  "actorJs": 0.96,
+  "ghi_chu": "\u0111o tr\u00ean commit f970041 (code g\u1ed1c), c\u00f9ng c\u00f4ng c\u1ee5"
+ }
+]

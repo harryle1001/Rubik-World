@@ -60,9 +60,9 @@ for (const [name, [x, z], yaw, pitch, dist, clk, dive, fixed] of spots) {
   } else if (fixed) {   // đám đông cố định: dừng mô phỏng trường, 21 người (theo id) đứng trong hình nêm trước camera, cách 3 → 34 m
     const pts = await page.evaluate(async ([x, z, yaw]) => { const l = await import('/js/island/layout.js'), out = [], fx = -Math.sin(yaw), fz = -Math.cos(yaw);
       for (let i = 0; i < 21; i++) { const r = 3 + i * 31 / 20, s = (i % 2 ? 1 : -1) * r * 0.382 * ((i * 0.618) % 1); out.push(l.to2(x + fx * r - fz * s, z + fz * r + fx * s)); } return out; }, [x, z, yaw]);
-    await fr.evaluate(pts => { paused = true; const A = RS.agents.filter(a => a.visible && !a.inSub).sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    await fr.evaluate(pts => { paused = true; const A = RS.agents.slice().sort((a, b) => String(a.id).localeCompare(String(b.id)));
       for (const a of RS.agents) if (!A.slice(0, 21).includes(a)) a.y = -1e4;   // người khác ra khỏi bản đồ 3D
-      A.slice(0, 21).forEach((a, i) => { if (!pts[i]) return; a.x = pts[i][0]; a.y = pts[i][1]; a.moving = false; }); for (const n of RS.npcs) n.y = -1e4; }, pts);
+      A.slice(0, 21).forEach((a, i) => { if (!pts[i]) return; a.x = pts[i][0]; a.y = pts[i][1]; a.moving = false; a.visible = true; a.inSub = false; a.cycling = a.boat = false; }); for (const n of RS.npcs) n.y = -1e4; }, pts);
   }
   await page.evaluate(([x, z, yaw, pitch, dist, dive]) => { const p = __island.player; p.teleport(x, z); if (dive) p.pos.y = -4; p.cam.yaw = yaw; p.cam.pitch = pitch; p.cam.dist = dist; p.snapCamera(); }, [x, z, yaw, pitch, dist, !!dive]);
   await page.waitForTimeout(name.startsWith('san') ? 9000 : 5000);   // chờ người kéo ra sân / chunk / LOD
