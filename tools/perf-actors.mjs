@@ -1,6 +1,7 @@
 // tools/perf-actors.mjs — Đo hiệu năng NHÂN VẬT ở chế độ điện thoại (390×844, DPR 2, UA iPhone → CFG.isMobile), mức chất lượng 1.
-// Chạy: node server/index.js &  rồi  node tools/perf-actors.mjs [--out=docs/perf/actors/buoc] [--n=89]
-// 4 điểm: quảng trường · sân trường giờ ra chơi (đặt đồng hồ trường 9h05 thứ Ba) · rừng đền có thú · biển (lặn ở rạn san hô).
+// Chạy: node server/index.js &  rồi  node tools/perf-actors.mjs [--out=docs/perf/actors/buoc] [--n=89] [--only=dam-dong-co-dinh,rung-thu]
+// 5 điểm: quảng trường · sân trường giờ ra chơi (đặt đồng hồ trường 9h05 thứ Ba) · rừng đền có thú · biển (rạn san hô)
+// · đám đông cố định (dừng mô phỏng, 21 người xếp trước camera, cách 3 → 34 m: so sánh trước/sau chính xác, không phụ thuộc người đi lại).
 // Mỗi điểm (trung bình n khung): draw call, tam giác, số SkinnedMesh được vẽ (lượt chính), số mixer.update, ms JS/khung của
 // các phần nhân vật (player · net · animals · school(people) · ambience(yard) · sealife) và riêng AnimationMixer.update.
 import { createRequire } from 'module';
@@ -25,9 +26,9 @@ if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count().
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
 await page.evaluate(async () => {
   const c = __island, THREE = await import('three'); c.setQuality(1, true); c.sky.state.lock = 13; c.renderer.info.autoReset = false;
-  const P = window.__pm = { n: 0, calls: 0, tris: 0, ms: 0, sk: 0, mix: 0, mixMs: 0, js: {} };
+  const P = window.__pm = { n: 0, calls: 0, tris: 0, ms: 0, sk: 0, skSh: 0, mix: 0, mixMs: 0, js: {} };
   let inMain = false;
-  const sk = THREE.SkinnedMesh.prototype; sk.onBeforeRender = function () { if (inMain) P.sk++; };
+  const sk = THREE.SkinnedMesh.prototype; sk.onBeforeRender = function () { if (inMain) P.sk++; }; sk.onBeforeShadow = function () { P.skSh++; };
   const mu = THREE.AnimationMixer.prototype.update; THREE.AnimationMixer.prototype.update = function (dt) { const s = performance.now(); const r = mu.call(this, dt); P.mixMs += performance.now() - s; P.mix++; return r; };
   const wrap = (name, o) => { if (!o || !o.update) return; const f = o.update; o.update = function (...a) { const s = performance.now(); const r = f.apply(this, a); P.js[name] = (P.js[name] || 0) + performance.now() - s; return r; }; };
   wrap('player', c.player); wrap('net', c.net); wrap('animals', c.animals); wrap('school', c.school); wrap('ambience', c.ambience); wrap('sealife', c.sealife);
@@ -37,18 +38,27 @@ await page.evaluate(async () => {
 const setClock = async m => { if (fr) await fr.evaluate(m => { day = 2; clock = m; }, m).catch(e => errors.push('clock: ' + e.message)); };
 const L = await page.evaluate(async () => {
   const l = await import('/js/island/layout.js'), p = await import('/js/island/sample/plaza.js'), s = await import('/js/island/sealife.js');
-  const R = __island.school.RS.R, y = R.rubikyard || R.yard, yard = l.to3(y.x + y.w / 2, y.y + y.h / 2), reef = s.ZONES.find(z => z.id === 'reef') || s.ZONES[0];
-  return { plaza: [p.PLAZA.x, p.PLAZA.z], yard, temple: l.TEMPLE_C, reef: [reef.x, reef.z] };
+  const R = __island.school.RS.R, y = R.rubikyard || R.yard, yard = l.to3(y.x + y.w / 2, y.y + y.h / 2), f = R.field || y, field = l.to3(f.x + f.w / 2, f.y + f.h / 2), reef = s.ZONES.find(z => z.id === 'reef') || s.ZONES[0];
+  return { plaza: [p.PLAZA.x, p.PLAZA.z], yard, field, temple: l.TEMPLE_C, reef: [reef.x, reef.z] };
 });
 const spots = [
   ['quang-truong', L.plaza, Math.PI / 2, 0.3, 11, 600],
   ['san-truong-ra-choi', L.yard, 0.6, 0.35, 11, 545],
   ['rung-thu', [L.temple[0] + 20, L.temple[1] + 20], 2.4, 0.3, 11, 600],
   ['bien-ran-san-ho', L.reef, 0, 0.2, 6, 600, true],
+  ['dam-dong-co-dinh', L.field, 0.6, 0.35, 11, 545, false, true],   // sân bóng: bãi trống
 ];
-const rows = [];
-for (const [name, [x, z], yaw, pitch, dist, clk, dive] of spots) {
+const ONLY = arg('only'), rows = [];
+for (const [name, [x, z], yaw, pitch, dist, clk, dive, fixed] of spots) {
+  if (ONLY && !ONLY.split(',').includes(name)) continue;
   await setClock(clk);
+  if (fixed) {   // đám đông cố định: dừng mô phỏng trường, 21 người (theo id) đứng trong hình nêm trước camera, cách 3 → 34 m
+    const pts = await page.evaluate(async ([x, z, yaw]) => { const l = await import('/js/island/layout.js'), out = [], fx = -Math.sin(yaw), fz = -Math.cos(yaw);
+      for (let i = 0; i < 21; i++) { const r = 3 + i * 31 / 20, s = (i % 2 ? 1 : -1) * r * 0.382 * ((i * 0.618) % 1); out.push(l.to2(x + fx * r - fz * s, z + fz * r + fx * s)); } return out; }, [x, z, yaw]);
+    await fr.evaluate(pts => { paused = true; const A = RS.agents.filter(a => a.visible && !a.inSub).sort((a, b) => String(a.id).localeCompare(String(b.id)));
+      for (const a of RS.agents) if (!A.slice(0, 21).includes(a)) a.y = -1e4;   // người khác ra khỏi bản đồ 3D
+      A.slice(0, 21).forEach((a, i) => { if (!pts[i]) return; a.x = pts[i][0]; a.y = pts[i][1]; a.moving = false; }); for (const n of RS.npcs) n.y = -1e4; }, pts);
+  }
   await page.evaluate(([x, z, yaw, pitch, dist, dive]) => { const p = __island.player; p.teleport(x, z); if (dive) p.pos.y = -4; p.cam.yaw = yaw; p.cam.pitch = pitch; p.cam.dist = dist; p.snapCamera(); }, [x, z, yaw, pitch, dist, !!dive]);
   await page.waitForTimeout(name.startsWith('san') ? 9000 : 5000);   // chờ người kéo ra sân / chunk / LOD
   // nhìn vào đám đông: người chơi đứng cách tâm nhóm (người trong pool / thú gần nhất) 8 m, camera hướng vào tâm
@@ -56,12 +66,12 @@ for (const [name, [x, z], yaw, pitch, dist, clk, dive] of spots) {
     if (kind === 'people') pts = (c.townPeople || []).filter(e => e.a).map(e => [e.px, e.pz]);
     if (kind === 'animals') { const a = c.animals.list.map(A => [A.root.position.x, A.root.position.z, Math.hypot(A.root.position.x - p.pos.x, A.root.position.z - p.pos.z)]).sort((a, b) => a[2] - b[2]).slice(0, 3); pts = a; }
     if (!pts.length) return; const cx = pts.reduce((s, q) => s + q[0], 0) / pts.length, cz = pts.reduce((s, q) => s + q[1], 0) / pts.length;
-    p.teleport(cx + 8 * Math.SQRT1_2, cz + 8 * Math.SQRT1_2); p.cam.yaw = Math.atan2(-(cx - p.pos.x), -(cz - p.pos.z)); p.snapCamera(); }, name === 'rung-thu' ? 'animals' : name.startsWith('bien') ? '' : 'people');
+    p.teleport(cx + 8 * Math.SQRT1_2, cz + 8 * Math.SQRT1_2); p.cam.yaw = Math.atan2(-(cx - p.pos.x), -(cz - p.pos.z)); p.snapCamera(); }, name === 'rung-thu' ? 'animals' : name.startsWith('bien') || fixed ? '' : 'people');
   await page.waitForTimeout(2500);
-  await page.evaluate(() => Object.assign(__pm, { n: 0, calls: 0, tris: 0, ms: 0, sk: 0, mix: 0, mixMs: 0, js: {} }));
+  await page.evaluate(() => Object.assign(__pm, { n: 0, calls: 0, tris: 0, ms: 0, sk: 0, skSh: 0, mix: 0, mixMs: 0, js: {} }));
   await page.waitForFunction(n => __pm.n >= n, N, { timeout: 300000 });
   const m = await page.evaluate(() => { const P = __pm, n = P.n, js = {}; let tot = 0; for (const k in P.js) { js[k] = +(P.js[k] / n).toFixed(2); tot += P.js[k] / n; } const tp = __island.townPeople || [];
-    return { calls: Math.round(P.calls / n), tris: Math.round(P.tris / n), skinDraw: +(P.sk / n).toFixed(1), mixPerF: +(P.mix / n).toFixed(1), mixMs: +(P.mixMs / n).toFixed(2), actorJs: +tot.toFixed(2), ...js, people: tp.filter(e => e.a).length, renderMs: +(P.ms / n).toFixed(1) }; });
+    return { calls: Math.round(P.calls / n), tris: Math.round(P.tris / n), skinDraw: +(P.sk / n).toFixed(1), skinShadow: +(P.skSh / n).toFixed(1), mixPerF: +(P.mix / n).toFixed(1), mixMs: +(P.mixMs / n).toFixed(2), actorJs: +tot.toFixed(2), ...js, people: tp.filter(e => e.a).length, full: tp.filter(e => e.a && e.hero.model.visible).length, peopleMs: +(__island.perfPeople ? __island.perfPeople() : 0).toFixed(2), renderMs: +(P.ms / n).toFixed(1) }; });
   if (OUT) await page.screenshot({ path: `${OUT}/${name}.png` });
   rows.push({ name, ...m });
 }

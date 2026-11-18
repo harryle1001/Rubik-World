@@ -2,7 +2,7 @@
 // Gửi vị trí 10 lần/giây; người khác được nội suy mượt và có bảng tên trên đầu. Không có chat (an toàn cho trẻ em).
 import * as THREE from 'three';
 import { makeHero } from './player.js';
-import { loadHero, driveHero, KINDS } from './characters.js';
+import { loadHero, driveHero, KINDS, actorLod, stepAnim } from './characters.js';
 import { T, dampV3, dampAngle } from './motion.js';
 
 function nameTag(text) {
@@ -59,7 +59,10 @@ export function createNet(ctx) {
       o.pred.copy(o.vel).multiplyScalar(Math.min(o.age, 1 / 1.618 ** 3)).add(o.to);
       if (root.position.distanceToSquared(o.pred) > 64) { root.position.copy(o.pred); o.pv.set(0, 0, 0); } else dampV3(root.position, o.pred, o.pv, T.soft, dt);
       root.rotation.y = dampAngle(root.rotation.y, o.r, o.kr, T.quick, dt, 12);
-      if (o.hero) { driveHero(o.hero, { speed: o.s, grounded: Math.abs(o.to.y - o.from.y) < 0.6 }); if (root.position.distanceToSquared(ctx.player.pos) < 3600) o.hero.anim.update(dt); continue; }
+      if (o.hero) {   // LOD như người trong thị trấn: viền/bóng chỉ khi gần, animation thưa dần theo khoảng cách, > 60 m đứng yên
+        const d = root.position.distanceTo(ctx.player.pos); driveHero(o.hero, { speed: o.s, grounded: Math.abs(o.to.y - o.from.y) < 0.6 });
+        actorLod(o.hero, o.hero.model, d); if (d < 60) stepAnim(o.hero.anim, o.an || (o.an = {}), d, dt); continue;
+      }
       o.phase += dt * o.s * 2.1; const a = Math.min(1, o.s / 5.5) * 0.8;
       o.h.legL.rotation.x = Math.sin(o.phase) * a; o.h.legR.rotation.x = -Math.sin(o.phase) * a; o.h.armL.rotation.x = -Math.sin(o.phase) * a; o.h.armR.rotation.x = Math.sin(o.phase) * a;
     }

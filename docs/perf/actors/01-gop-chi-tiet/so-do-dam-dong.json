@@ -1,0 +1,19 @@
+[
+ {
+  "name": "dam-dong-co-dinh",
+  "calls": 195,
+  "tris": 607546,
+  "skinDraw": 17.5,
+  "mixPerF": 11.4,
+  "mixMs": 0.59,
+  "actorJs": 1.5,
+  "player": 0.22,
+  "net": 0,
+  "animals": 0.02,
+  "school": 1.12,
+  "ambience": 0.05,
+  "sealife": 0.08,
+  "people": 20,
+  "renderMs": 7.4
+ }
+]
