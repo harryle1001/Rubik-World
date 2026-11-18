@@ -145,7 +145,8 @@ export function createPlayer(ctx) {
         if (!(V && V.water)) { const lim = pos.y + STEP; if (sup(nx, nz, lim) > lim) { if (sup(nx, oz, lim) <= lim) nz = oz; else if (sup(ox, nz, lim) <= lim) nx = ox; else { nx = ox; nz = oz; } } }
       }
       if (V && V.water) { if (sup(nx, nz) > CFG.island.waterLevel - 0.3) { nx = ox; nz = oz; vel.multiplyScalar(0.3); } } // thuyền: chỉ đi trên nước
-      else if (!fly && !D && sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = ox; nz = oz; vel.set(0, 0, 0); } // có dive.js thì được xuống nước bơi
+      else if (V && !fly && sup(nx, nz) < CFG.island.waterLevel - 0.3) { nx = ox; nz = oz; vel.multiplyScalar(-0.5); self.hitWater = true; } // xe đạp: dừng ở mép nước, bật lùi nhẹ (vehicles.js báo)
+      else if (!fly && !D && sup(nx, nz) < CFG.island.waterLevel - 0.7) { nx = ox; nz = oz; vel.set(0, 0, 0); } // đi bộ: có dive.js thì được xuống nước bơi
       pos.x = nx; pos.z = nz;
     }
     // vướng tường/vật cản: vận tốc = phần thật sự đi được (trượt dọc tường) → không "chạy tại chỗ", camera không nhìn xuyên tường
