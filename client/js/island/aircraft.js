@@ -6,12 +6,15 @@ import { T, dampV3 } from './motion.js';
 import { CFG } from './config.js';
 import { gradientMap, addOutline } from './style.js';
 import { mergeGeos } from './terrain.js';
-import { TOWN_Y, BLOCKS, EXTRA } from './layout.js';
+import { TOWN_Y, BLOCKS, EXTRA, PHI, FIB, ISLAND_R, TOWN_DISC, zoneAngle, meadowAt, lagoonDist } from './layout.js';
 
 const AIR = EXTRA.find(e => e.id === 'K').r;                // khu sân bay [x0,z0,x1,z1]
 const RWY = { x0: AIR[0] + 6, x1: AIR[2] - 6, z: AIR[3] - 13, w: 12 }; // đường băng chạy theo trục x
 const GY = TOWN_Y;                                            // cao độ mặt sân bay
-const CENTER = [65, 0], BOUND = 215;                          // tâm thế giới & bán kính bay tối đa
+const CENTER = [65, 0];                                       // tâm quỹ đạo máy bay AI
+const BOUND = 377, EDGE = 89;                                 // vùng bay: bán kính 377 m (Fibonacci, tính từ tâm đảo, phủ cả Làng nổi) + dải mép 89 m rẽ dần về
+const CEIL = 89;                                              // trần bay 89 m (Fibonacci): cao hơn thì sương che hết mặt đất
+const ROOF_GAP = 5;                                           // giữ cách nóc nhà ≥ 5 m (Fibonacci)
 
 const FACTS = [
   'Mặt trên cánh máy bay cong hơn: gió chạy nhanh hơn, áp suất giảm → tạo <b>lực nâng</b> đỡ máy bay.',
@@ -200,7 +203,8 @@ export function createAircraft(ctx) {
   // ================= MÁY BAY =================
   const planes = [];
   // 3 máy bay đỗ ở sân đỗ: người chơi chọn để bay
-  [['chimlua', AIR[0] + 20], ['hoanggia', AIR[0] + 42], ['bacgio', AIR[0] + 64]].forEach(([k, x], i) => {
+  // 3 máy bay bánh xe + 1 thủy phi cơ Hải Âu (phao: đáp được cả trên mặt biển)
+  [['chimlua', AIR[0] + 20], ['hoanggia', AIR[0] + 42], ['bacgio', AIR[0] + 64], ['hailau', AIR[0] + 86]].forEach(([k, x], i) => {
     const pl = makePlane(STYLES[k]); pl.group.position.set(x, GY, AIR[1] + 20); pl.yaw = 0; pl.pitch = 0.1; pl.roll = 0;
     pl.group.rotation.set(-0.1, 0, 0); scene.add(pl.group); pl.parked = true; pl.spin = 0; planes.push(pl);
   });
@@ -262,8 +266,88 @@ export function createAircraft(ctx) {
   const btns = document.querySelector('.btns'), vbtns = document.querySelector('.vbtns');
   const bBoost = document.createElement('button'); bBoost.id = 'bBoost'; bBoost.textContent = '🚀 Tăng tốc'; bBoost.hidden = true; bBoost.style.background = '#d8632acc'; btns && btns.appendChild(bBoost);
   let boostHeld = false; bBoost.addEventListener('pointerdown', e => { e.preventDefault(); boostHeld = true; }); for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) bBoost.addEventListener(ev, () => boostHeld = false);
-  const hud = document.createElement('div'); hud.style.cssText = 'position:fixed;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:26;padding:6px 14px;border-radius:16px;background:#0f1a2acc;color:#f7ecd0;font:700 14px system-ui;display:none;white-space:nowrap;pointer-events:none';
+  // HUD bay nằm DƯỚI hàng nút trên (cao nút ≈ 34 px + lề 13 px), không đè nút
+  const hud = document.createElement('div'); hud.style.cssText = `position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + ${mobile ? 89 : 47}px);left:50%;transform:translateX(-50%);z-index:26;padding:5px 13px;border-radius:16px;background:#0f1a2acc;color:#f7ecd0;font:700 ${mobile ? 13 : 14}px system-ui;display:none;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis;pointer-events:none`;
   document.body.appendChild(hud);
+  const PRESS = mobile ? 'bấm nút cam' : 'bấm <b>E</b>';       // điện thoại không có phím E
+
+  // ---------- tra cứu nhanh (không cấp phát mỗi khung) ----------
+  // nóc nhà/tường cao nhất trong bán kính m quanh (x, z) — ctx.grid (physics.js) tra theo ô 8 m
+  function roofAt(x, z, m = 2) {
+    const L = ctx.grid ? ctx.grid.near(x, z).boxes : (ctx.boxes || []); let top = -99;
+    for (let i = 0; i < L.length; i++) { const B = L[i]; if (B.top > top && x > B.x0 - m && x < B.x1 + m && z > B.z0 - m && z < B.z1 + m) top = B.top; }
+    return top;
+  }
+  // độ nghiêng mặt đất dưới máy bay (dọc thân & ngang cánh) → GT.p, GT.r; GT.ok = đủ phẳng để đáp (≤ ~5°) và không có mái nhà
+  const GT = { p: 0, r: 0, ok: true }, HL = 2.7;
+  function groundTilt(x, z, yw) {
+    const fx = Math.sin(yw) * HL, fz = Math.cos(yw) * HL, f = ground(x + fx, z + fz), b = ground(x - fx, z - fz), l = ground(x - fz, z + fx), r = ground(x + fz, z - fx);
+    GT.p = Math.atan2(f - b, 2 * HL); GT.r = Math.atan2(l - r, 2 * HL);
+    GT.ok = Math.abs(f - b) < 0.47 && Math.abs(l - r) < 0.47 && Math.max(f, b, l, r) - Math.min(f, b, l, r) < 0.6 && roofAt(x, z, 1.5) < ground(x, z) + 0.5;
+    return GT;
+  }
+  // tên vùng cụ thể: khu → vườn tròn → khu nhà ở quanh trường → đồi/bờ biển/biển khơi + hướng + khu gần nhất
+  const ZONE_IDS = 'BCDKFGHI', zoneNameOf = k => { const id = ZONE_IDS[k]; return (BLOCKS.find(q => q.id === id) || EXTRA.find(e => e.id === id)).name; };
+  const DIR8 = ['phía Bắc', 'phía Đông Bắc', 'phía Đông', 'phía Đông Nam', 'phía Nam', 'phía Tây Nam', 'phía Tây', 'phía Tây Bắc'];
+  function placeName(x, z, gh) {
+    const zr = BLOCKS.find(b => x > b.r[0] && x < b.r[2] && z > b.r[1] && z < b.r[3]) || EXTRA.find(e => x > e.r[0] && x < e.r[2] && z > e.r[1] && z < e.r[3]);
+    if (zr) return zr.name;
+    if (meadowAt(x, z)) return 'Vườn tròn giữa đồi cỏ';
+    if (lagoonDist(x, z) < 0) return 'Hồ bán nguyệt';
+    const r = Math.hypot(x, z); if (r < TOWN_DISC && gh >= W) return 'Phố nhà vườn quanh trường';
+    const a = Math.atan2(z, x), k = ((Math.round((a - zoneAngle(0)) / (Math.PI / 4)) % 8) + 8) % 8, d = DIR8[((Math.round((Math.atan2(x, -z) * 180 / Math.PI + 360) / 45)) % 8)];
+    if (gh >= W + 0.3) return `Đồi cỏ ${d} · gần ${zoneNameOf(k)}`;
+    return r < ISLAND_R + 34 ? `Bờ biển ${d}` : `Biển khơi ${d}`;
+  }
+
+  // ================= NHIỆM VỤ BAY =================
+  // (1) VÒNG BAY: 8 vòng (Fibonacci) bán kính 8 m trên vòng tròn 144 m quanh trường, độ cao 21–34–55 m (Fibonacci).
+  //     Vòng 1 nằm ngay trước hướng cất cánh (bay về phía Tây từ sân bay), vòng 8 quay về gần sân bay.
+  const NR = FIB[5], RR = FIB[5], ringH = [21, 34, 55, 34, 21, 34, 55, 34];
+  const rings = Array.from({ length: NR }, (_, k) => {
+    const a = Math.PI / 2 + k * 2 * Math.PI / NR, x = Math.cos(a) * 144, z = Math.sin(a) * 144, nx = -Math.sin(a), nz = Math.cos(a); // pháp tuyến = chiều bay ngược kim đồng hồ (nhìn từ trên)
+    return { x, z, y: Math.max(ringH[k], ground(x, z) + 13, roofAt(x, z, RR) + 13), nx, nz, ry: Math.atan2(nx, nz) };
+  });
+  const ringMat = new THREE.MeshToonMaterial({ color: '#ffffff', gradientMap, emissive: '#ffffff', emissiveIntensity: 0.25 });
+  const ringMesh = new THREE.InstancedMesh(new THREE.TorusGeometry(RR, 0.5, 6, 21), ringMat, NR); ringMesh.frustumCulled = false; ringMesh.visible = false; scene.add(ringMesh);
+  const RC_NEXT = new THREE.Color('#f5c518'), RC_DONE = new THREE.Color('#5ad17a'), RC_WAIT = new THREE.Color('#f2f2f2');
+  let ringNext = 0, ringT0 = 0, ringBest = 0; try { ringBest = +localStorage.getItem('rs.air.rings') || 0; } catch (e) {}
+  const ringSide = new Float32Array(NR);
+  function drawRings(t) {
+    for (let k = 0; k < NR; k++) {
+      const R = rings[k], s = k === ringNext ? 1 + Math.sin(t * PHI * 2) * 0.06 : 1;
+      dummy.position.set(R.x, R.y, R.z); dummy.rotation.set(0, R.ry, 0); dummy.scale.setScalar(s); dummy.updateMatrix(); ringMesh.setMatrixAt(k, dummy.matrix);
+      ringMesh.setColorAt(k, k < ringNext ? RC_DONE : k === ringNext ? RC_NEXT : RC_WAIT);
+    }
+    ringMesh.instanceMatrix.needsUpdate = true; ringMesh.instanceColor.needsUpdate = true;
+  }
+  function checkRings(P, t) {
+    if (ringNext >= NR) return;
+    const R = rings[ringNext], dx = P.x - R.x, dy = P.y - R.y, dz = P.z - R.z, side = dx * R.nx + dz * R.nz;
+    const prev = ringSide[ringNext]; ringSide[ringNext] = side;
+    if (prev < 0 && side >= 0 && Math.hypot(dx - R.nx * side, dy, dz - R.nz * side) < RR) {   // xuyên qua mặt vòng, trong bán kính
+      if (ringNext === 0) ringT0 = t;
+      ringNext++;
+      if (ringNext < NR) ctx.toast(`⭕ Qua vòng <b>${ringNext}/${NR}</b>! Vòng vàng tiếp theo ở ${DIR8[Math.round((Math.atan2(rings[ringNext].x - P.x, -(rings[ringNext].z - P.z)) * 180 / Math.PI + 360) / 45) % 8]}`, 2600);
+      else {
+        const sec = t - ringT0, st = sec < 55 ? 3 : sec < 89 ? 2 : 1;   // mốc Fibonacci 55 s · 89 s
+        if (!ringBest || sec < ringBest) { ringBest = sec; try { localStorage.setItem('rs.air.rings', sec.toFixed(1)); } catch (e) {} }
+        ctx.toast(`🏆 Xong ${NR} vòng bay trong <b>${sec.toFixed(1)} s</b> ${'⭐'.repeat(st)}${'☆'.repeat(3 - st)} · kỷ lục ${ringBest.toFixed(1)} s<br>💡 8 là số Fibonacci: 1, 1, 2, 3, 5, <b>8</b>, 13…`, 7000);
+        setTimeout(() => { ringNext = 0; ringSide.fill(0); }, 9000);   // chơi lại
+      }
+    }
+  }
+  // (2) HẠ CÁNH ĐÚNG ĐƯỜNG BĂNG: chấm 1–3 sao lúc bánh chạm đất (thẳng hàng tim đường băng · lệch tâm · tốc độ)
+  let rwyBest = 0; try { rwyBest = +localStorage.getItem('rs.air.rwy') || 0; } catch (e) {}
+  function scoreTouchdown(P, v) {
+    const onRwy = P.x > RWY.x0 && P.x < RWY.x1 && Math.abs(P.z - RWY.z) < RWY.w / 2;
+    if (!onRwy) { ctx.toast('🛬 Đã đáp ngoài đường băng. Thử đáp <b>trên đường băng</b> sân bay Cánh Diều để nhận ⭐!', 3500); return; }
+    const ang = Math.abs(Math.asin(Math.abs(Math.cos(yaw)))) * 180 / Math.PI;   // đường băng chạy theo trục x: lệch hướng = |cos yaw|
+    const off = Math.abs(P.z - RWY.z), kmh = v * 3.6;
+    const st = Math.max(1, (ang < 8 ? 1 : 0) + (off < RWY.w / 2 / PHI ? 1 : 0) + (kmh < 55 ? 1 : 0));
+    if (st > rwyBest) { rwyBest = st; try { localStorage.setItem('rs.air.rwy', st); } catch (e) {} }
+    ctx.toast(`🛬 Hạ cánh trên đường băng ${'⭐'.repeat(st)}${'☆'.repeat(3 - st)}<br>Lệch hướng <b>${ang.toFixed(0)}°</b> · lệch tim <b>${off.toFixed(1)} m</b> · <b>${kmh.toFixed(0)} km/h</b>${st < 3 ? '<br>💡 Đáp đẹp: thẳng tim đường băng, chậm dưới 55 km/h (đừng giữ 🚀).' : ''}`, 6500);
+  }
 
   let me = null, phase = 'none', spd = 0, yaw = 0, pitch = 0, roll = 0, factT = 8, factI = Math.floor(Math.random() * FACTS.length), zoneName = '', hudT = 0, baseFov = camera.fov;
   const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), tmp = new THREE.Vector3(), seatW = new THREE.Vector3(), camV = new THREE.Vector3(), lookV = new THREE.Vector3();
@@ -274,24 +358,31 @@ export function createAircraft(ctx) {
   const inAir = (x, z) => x > AIR[0] && x < AIR[2] && z > AIR[1] && z < AIR[3];
   function board(pl) {
     if (me || player.vehicle) return;
-    me = pl; pl.parked = false; yaw = pl.yaw; pitch = 0.1; roll = 0; spd = 0; phase = 'takeoff';
-    if (inAir(pl.group.position.x, pl.group.position.z)) { pl.group.position.set(RWY.x0 + 4, GY, RWY.z); yaw = Math.PI / 2; ctx.toast('🛫 Ra đường băng... cất cánh!', 2500); }
+    me = pl; pl.parked = false; yaw = pl.yaw; pitch = 0.1; roll = 0; spd = 0; phase = 'takeoff'; pl._touched = false;
+    // cất cánh từ đầu Đông đường băng, mũi hướng Tây (vào đảo) → không lao ra mép bản đồ
+    if (inAir(pl.group.position.x, pl.group.position.z)) { pl.group.position.set(RWY.x1 - 4, GY, RWY.z); yaw = -Math.PI / 2; ctx.toast('🛫 Ra đường băng... cất cánh về phía đảo!', 2500); }
     else ctx.toast('🛫 Cất cánh!', 2000);
     player.vehicle = { speed: 0, turn: 0, accel: 4, fly: true, lift: 0, maxAlt: 999, anim: 'sit', seat: 0, seatZ: 0, camAdd: 0, plane: true };
     camPos.copy(camera.position); camLook.copy(pl.group.position); camV.set(0, 0, 0); lookV.set(0, 0, 0);
+    ringSide.fill(0); ringMesh.visible = true;
     setUI(true); if (myEng) { myEng.setVolume(0.35); myEng.isPlaying || myEng.play(); }
-    setTimeout(() => ctx.toast('✈️ <b>Joystick/WASD</b>: ⬆ bay lên · ⬇ hạ thấp · ⬅➡ rẽ · <b>Shift/🚀</b> tăng tốc · <b>E</b> hạ cánh', 5000), 2600);
+    const ctl = mobile ? '✈️ <b>Joystick</b>: ⬆ bay lên · ⬇ hạ thấp · ⬅➡ rẽ · <b>🚀</b> tăng tốc · nút <b>🛬 Hạ cánh</b> để đáp'
+      : '✈️ <b>WASD/mũi tên</b>: ⬆ bay lên · ⬇ hạ thấp · ⬅➡ rẽ · <b>Shift</b> tăng tốc · <b>E</b> hạ cánh';
+    setTimeout(() => ctx.toast(ctl + `<br>⭕ Bay xuyên <b>${NR} vòng vàng</b> · 🛬 đáp đúng đường băng để nhận ⭐` + (pl.style.kind === 'sea' ? '<br>🌊 Thủy phi cơ: đáp được cả trên mặt biển!' : ''), 6500), 2600);
   }
   function leave() {
-    const pl = me; if (!pl) return; me = null; phase = 'none'; pl.parked = true; pl.yaw = yaw; pl.pitch = 0.1; pl.group.rotation.set(-0.1, yaw, 0);
-    const p = pl.group.position, rx = -Math.cos(yaw), rz = Math.sin(yaw), x = p.x - rx * 4, z = p.z - rz * 4;
-    player.vehicle = null; player.teleport(x, z, ground(x, z)); player.setRot && player.setRot(yaw); player.cam.yaw = yaw + Math.PI;
+    const pl = me; if (!pl) return; me = null; phase = 'none'; pl.parked = true; pl.yaw = yaw; pl.pitch = 0.1;
+    const p = pl.group.position, onWater = ground(p.x, p.z) < W + 0.3;
+    if (onWater) pl.group.rotation.set(0, yaw, 0); else { groundTilt(p.x, p.z, yaw); pl.group.rotation.set(-0.1 - GT.p, yaw, GT.r); }
+    const rx = -Math.cos(yaw), rz = Math.sin(yaw), x = p.x - rx * 4, z = p.z - rz * 4;
+    player.vehicle = null; player.teleport(x, z, Math.max(ground(x, z), onWater ? W : -99)); player.setRot && player.setRot(yaw); player.cam.yaw = yaw + Math.PI;
     player.root.quaternion.identity(); player.root.rotation.y = yaw; // FOV trở lại dần trong update(); camera người chơi tự hoà từ vị trí này (player.js)
-    setUI(false); if (myEng && myEng.isPlaying) myEng.stop(); ctx.toast('🛬 Hạ cánh an toàn! Bấm <b>E</b> cạnh máy bay để bay tiếp.', 3000);
+    setUI(false); ringMesh.visible = false; if (myEng && myEng.isPlaying) myEng.stop();
+    if (!pl._scored) ctx.toast(`🛬 Hạ cánh an toàn! ${mobile ? 'Bấm nút cam' : 'Bấm <b>E</b>'} cạnh máy bay để bay tiếp.`, 3000);
   }
   function land() {
     if (phase !== 'fly') return;
-    phase = 'landing'; me._wtoast = false; ctx.toast('🛬 Đang hạ cánh... giữ cánh thăng bằng nhé!', 2500);
+    phase = 'landing'; me._wtoast = me._stoast = me._touched = me._scored = false; ctx.toast('🛬 Đang hạ cánh... giữ cánh thăng bằng, nhắm vào chỗ phẳng nhé!', 2500);
   }
 
   function fly(dt, t) {
@@ -301,54 +392,70 @@ export function createAircraft(ctx) {
     if (keys.has('KeyW') || keys.has('ArrowUp')) iz -= 1; if (keys.has('KeyS') || keys.has('ArrowDown')) iz += 1;
     ix = Math.max(-1, Math.min(1, ix)); iz = Math.max(-1, Math.min(1, iz));
     const boost = boostHeld || keys.has('ShiftLeft') || keys.has('ShiftRight') || keys.has('Space');
-    const gh = ground(P.x, P.z), alt = P.y - Math.max(gh, W);
+    const sea = pl.style.kind === 'sea';
+    const gh = ground(P.x, P.z), alt = P.y - Math.max(gh, W), overSea = gh < W + 0.3;
+    // mặt đáp dưới máy bay: biển (thủy phi cơ) hoặc đất đủ phẳng, không có mái nhà
+    const tl = groundTilt(P.x, P.z, yaw), canLand = overSea ? sea : tl.ok;
     let wantSpd = boost ? 36 : 24, wantPitch = -iz * 0.5, wantRoll = ix * 0.75;
     if (phase === 'takeoff') { wantSpd = 26; wantRoll = 0; wantPitch = spd > 15 ? 0.3 : 0; ix *= 0.2; if (alt > 10) phase = 'fly'; }
     if (phase === 'landing') {
-      wantSpd = alt < 1 ? 0 : 13; wantPitch = alt > 2.5 ? -0.16 : alt > 0.4 ? -0.03 : 0; wantRoll = ix * 0.3;
-      if (gh < W + 0.3) { // dưới là biển: tự lượn về phía đảo rồi mới đáp
-        if (alt < 4) wantPitch = 0.05;
-        let d = Math.atan2(CENTER[0] - P.x, CENTER[1] - P.z) - yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); ix = Math.max(-1, Math.min(1, -d * 1.5)); wantRoll = ix * 0.5;
-        if (!pl._wtoast) { pl._wtoast = true; ctx.toast('🌊 Dưới là biển: máy bay tự bay về đảo rồi đáp', 2500); }
+      wantSpd = alt < 1 ? 0 : boost ? 21 : 13; wantPitch = alt > 2.5 ? -0.16 : alt > 0.4 ? -0.03 : 0; wantRoll = ix * 0.3;
+      if (!canLand && !pl._touched && alt < 8) { // chưa có chỗ đáp: giữ độ cao ~8 m, người chơi tự lái tới chỗ phẳng (không tự lái hộ)
+        wantPitch = alt < 6 ? 0.12 : 0; wantSpd = 16; wantRoll = ix * 0.6;
+        if (overSea && !pl._wtoast) { pl._wtoast = true; ctx.toast('🌊 Máy bay <b>bánh xe</b> không đáp trên biển được: lái vào đất liền nhé! (Thủy phi cơ <b>Hải Âu</b> có phao mới đáp được trên nước.)', 4500); }
+        else if (!overSea && !pl._stoast) { pl._stoast = true; ctx.toast('⛰ Chỗ này dốc hoặc vướng nhà: bay tới chỗ <b>phẳng</b> (đường băng, đường, sân) máy bay sẽ tự đáp.', 4000); }
       }
     }
-    // tránh ra khỏi bản đồ: tự rẽ về tâm
-    const dx = P.x - CENTER[0], dz = P.z - CENTER[1];
-    if (Math.hypot(dx, dz) > BOUND && phase === 'fly') { let d = Math.atan2(-dx, -dz) - yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); ix = -Math.sign(d) * Math.min(1, Math.abs(d) * 2); wantRoll = ix * 0.75; if (!pl._btoast) { pl._btoast = true; ctx.toast('🧭 Hết bản đồ rồi, quay về đảo nhé!', 2000); } } else pl._btoast = false;
+    // mép vùng bay: rẽ dần về đảo (càng ra xa càng rẽ mạnh), không giật lái
+    const rC = Math.hypot(P.x, P.z), edge = Math.min(1, Math.max(0, (rC - BOUND) / EDGE));
+    if (edge > 0 && phase !== 'takeoff') {
+      let d = Math.atan2(-P.x, -P.z) - yaw; d = Math.atan2(Math.sin(d), Math.cos(d));
+      const turn = -Math.max(-1, Math.min(1, d * 1.5)); ix = ix * (1 - edge) + turn * edge; wantRoll = wantRoll * (1 - edge) + turn * 0.6 * edge;
+      if (!pl._btoast) { pl._btoast = true; ctx.toast('🧭 Phía trước là biển khơi xa: máy bay đang vòng về đảo.', 3000); }
+    } else if (rC < BOUND - 21) pl._btoast = false;
     const onGround = alt < 0.35 && phase !== 'fly';
     spd += (wantSpd - spd) * Math.min(1, dt * (onGround && phase === 'landing' ? 0.9 : 0.8));
     pitch += (wantPitch - pitch) * Math.min(1, dt * 1.8); roll += (wantRoll - roll) * Math.min(1, dt * 2.5);
     if (!onGround) yaw -= (ix * 0.85 + roll * 0.3) * dt * (phase === 'takeoff' ? 0.5 : 1);
     else yaw -= ix * 0.6 * dt * Math.min(1, spd / 8);
-    // độ cao trần/sàn: không bao giờ đâm đất
+    // độ cao trần/sàn: không bao giờ đâm đất hay xuyên nhà
     const vy = (onGround && phase === 'takeoff' && spd < 15) ? 0 : Math.sin(pitch) * spd;
-    P.x += Math.sin(yaw) * Math.cos(pitch) * spd * dt; P.z += Math.cos(yaw) * Math.cos(pitch) * spd * dt; P.y += vy * dt;
-    const g2 = ground(P.x, P.z), floor = Math.max(g2, W + 0.2);
-    if (phase === 'fly') { if (P.y < floor + 5) { P.y += (floor + 5 - P.y) * Math.min(1, dt * 3); pitch = Math.max(pitch, 0.08); } P.y = Math.min(P.y, 150); }
-    else if (phase === 'landing' && g2 < W + 0.3) P.y = Math.max(P.y, W + 3.5);
-    else if (P.y < g2) P.y = g2;
-    if (phase === 'landing' && g2 >= W + 0.3 && P.y - g2 < 1.2) P.y = Math.max(g2, P.y - dt * (0.6 + (P.y - g2) * 1.5)); // sát đất: hạ êm xuống chạm bánh (trước đây có thể treo lơ lửng mãi)
-    if (phase === 'landing' && P.y - g2 < 0.05 && spd < 0.6) return leave();
-    const tilt = onGround ? -0.1 : 0;
-    g.rotation.set(-pitch + tilt, yaw, onGround ? 0 : roll);
+    const fx = Math.sin(yaw), fz = Math.cos(yaw);
+    P.x += fx * Math.cos(pitch) * spd * dt; P.z += fz * Math.cos(pitch) * spd * dt; P.y += vy * dt;
+    const g2 = ground(P.x, P.z), surf = Math.max(g2, W);                                         // mặt chạm: đất hoặc mặt biển
+    const roof = Math.max(roofAt(P.x, P.z, 4), roofAt(P.x + fx * 13, P.z + fz * 13, 4));      // nóc nhà dưới máy bay + 13 m phía trước (leo sớm, không xuyên tường)
+    const floor = Math.max(g2, W + 0.2, roof);
+    const hold = phase === 'fly' || (phase === 'landing' && !canLand && !pl._touched);
+    if (hold) {
+      const minY = phase === 'fly' ? floor + ROOF_GAP : Math.max(floor + ROOF_GAP, surf + 6);
+      if (P.y < minY) { P.y += (minY - P.y) * Math.min(1, dt * 3); pitch = Math.max(pitch, 0.08); }
+      if (P.y > W + CEIL) { P.y += (W + CEIL - P.y) * Math.min(1, dt * 2); pitch = Math.min(pitch, 0); if (!pl._ctoast) { pl._ctoast = true; ctx.toast(`☁️ Trần bay ${CEIL} m: cao hơn sẽ chỉ thấy mây và sương.`, 2500); } }
+    } else if (P.y < surf) P.y = surf;
+    if (phase === 'landing' && canLand && P.y - surf < 1.2) P.y = Math.max(surf, P.y - dt * (0.6 + (P.y - surf) * 1.5)); // sát mặt: hạ êm chạm bánh/phao
+    if (phase === 'landing' && !pl._touched && P.y - surf < 0.05) { pl._touched = true; if (!overSea) { pl._scored = true; scoreTouchdown(P, spd); } else { pl._scored = true; ctx.toast(`🌊 Thủy phi cơ đáp êm trên mặt biển nhờ <b>phao</b>! Bơi lại gần, ${PRESS} để cất cánh tiếp.`, 4500); } }
+    if (phase === 'landing' && P.y - surf < 0.05 && spd < 0.6) return leave();
+    // trên mặt đất: thân nghiêng theo dốc (càng đuôi -0,1 rad + độ dốc dọc thân, nghiêng ngang theo dốc); trên nước: nằm phẳng
+    const pg = onGround ? (overSea ? 0 : -0.1 - tl.p) : 0, rg = onGround && !overSea ? tl.r : 0;
+    g.rotation.set(-pitch + pg, yaw, onGround ? rg : roll);
     pl.spin = 30 + spd;
+    if (phase !== 'landing') checkRings(P, t);
     // người chơi ngồi trong buồng lái
     seatW.copy(pl.seat).applyMatrix4(g.matrixWorld.compose(P, g.quaternion, g.scale));
     player.pos.copy(seatW); player.root.position.copy(seatW); player.root.quaternion.copy(g.quaternion);
-    // camera thứ 3 bám đuôi (cao, xa hơn khi tăng tốc)
-    const fx = Math.sin(yaw), fz = Math.cos(yaw), D = boost ? 20 : 16, H = 5.5 + Math.max(0, -pitch) * 6;
-    tmp.set(P.x - fx * D, P.y + H, P.z - fz * D); tmp.y = Math.max(tmp.y, ground(tmp.x, tmp.z) + 1.5, W + 1);
+    // camera thứ 3 bám đuôi (cao, xa hơn khi tăng tốc); càng bay cao càng nâng camera và chúc xuống nhìn mặt đất
+    const ah = Math.min(1, Math.max(0, (P.y - floor - 13) / (CEIL - 21)));   // 0 ở 13 m → 1 ở gần trần
+    const D = (boost ? 20 : 16) + ah * 5, H = 5.5 + Math.max(0, -pitch) * 6 + ah * 8;
+    tmp.set(P.x - fx * D, P.y + H, P.z - fz * D); tmp.y = Math.max(tmp.y, ground(tmp.x, tmp.z) + 1.5, roofAt(tmp.x, tmp.z, 1) + 1.5, W + 1);
     dampV3(camPos, tmp, camV, T.soft, dt); camera.position.copy(camPos); // lò xo giảm chấn: bám đuôi mượt cả khi FPS dao động
-    dampV3(camLook, tmp.set(P.x + fx * 8, P.y + 1.5 + pitch * 4, P.z + fz * 8), lookV, T.quick, dt); camera.lookAt(camLook);
+    dampV3(camLook, tmp.set(P.x + fx * (8 + ah * 13), P.y + 1.5 + pitch * 4 - ah * 13, P.z + fz * (8 + ah * 13)), lookV, T.quick, dt); camera.lookAt(camLook);
     const fov = baseFov + (spd / 36) * 12; if (Math.abs(camera.fov - fov) > 0.2) { camera.fov += (fov - camera.fov) * Math.min(1, dt * 2); camera.updateProjectionMatrix(); }
     if (myEng) myEng.setPlaybackRate(0.75 + spd / 40), myEng.setVolume(0.22 + (boost ? 0.15 : 0.08));
     // bảng đồng hồ: độ cao, tốc độ, hướng la bàn (Bắc = -z) + tên vùng đang bay qua
     if ((hudT -= dt) <= 0) {
       hudT = 0.2; const h = ((Math.atan2(fx, -fz) * 180 / Math.PI) + 360 + 22.5) % 360;
-      const zr = BLOCKS.find(b => P.x > b.r[0] && P.x < b.r[2] && P.z > b.r[1] && P.z < b.r[3]) || EXTRA.find(e => P.x > e.r[0] && P.x < e.r[2] && P.z > e.r[1] && P.z < e.r[3]);
-      const zn = zr ? zr.name : (g2 < W ? 'Biển xanh' : 'Đảo Rubik');
+      const zn = placeName(P.x, P.z, g2);
       if (zn !== zoneName && phase === 'fly') { zoneName = zn; ctx.toast('🗺️ Đang bay qua: <b>' + zn + '</b>', 2200); factT = Math.max(factT, 4); }
-      hud.textContent = `✈️ ${pl.style.name} · ⛰ ${Math.round(P.y - W)} m · ${Math.round(spd * 3.6)} km/h · 🧭 ${DIRS[Math.floor(h / 45) % 8]}`;
+      hud.textContent = `${mobile ? '' : '✈️ ' + pl.style.name + ' · '}⛰ ${Math.round(P.y - W)} m · ${Math.round(spd * 3.6)} km/h · 🧭 ${DIRS[Math.floor(h / 45) % 8]} · ⭕ ${Math.min(ringNext, NR)}/${NR}`;
     }
     if (phase === 'fly' && (factT -= dt) <= 0) { factT = 22; ctx.toast('💡 ' + FACTS[factI++ % FACTS.length], 6500); }
   }
@@ -368,16 +475,16 @@ export function createAircraft(ctx) {
     for (const pl of planes) { pl.prop.rotation.z += pl.spin * dt; pl.disc.visible = pl.spin > 20; if (pl.parked) pl.spin = Math.max(0, pl.spin - dt * 20); }
     if (ctx._sock) ctx._sock.rotation.y = 0.4 + Math.sin(t * 0.7) * 0.25;
     updateBirds(dt, t);
-    if (me) { fly(dt, t); if (phase === 'fly') ctx.offer('🛬 Hạ cánh', land, 9); return; }
+    if (me) { fly(dt, t); if (me) drawRings(t); if (phase === 'fly') ctx.offer('🛬 Hạ cánh', land, 9); return; }
     if (Math.abs(camera.fov - baseFov) > 0.05) { camera.fov += (baseFov - camera.fov) * Math.min(1, dt * 3); camera.updateProjectionMatrix(); } else if (camera.fov !== baseFov) { camera.fov = baseFov; camera.updateProjectionMatrix(); }
     // ở dưới đất: lời mời lên máy bay đỗ gần
     const pp = player.pos;
-    if (!welcomed && inAir(pp.x, pp.z)) { welcomed = true; ctx.toast('✈️ <b>Sân bay Cánh Diều</b>: chọn 1 chiếc máy bay cổ điển, bấm <b>E</b> để bay khắp đảo!', 4500); }
+    if (!welcomed && inAir(pp.x, pp.z)) { welcomed = true; ctx.toast(`✈️ <b>Sân bay Cánh Diều</b>: chọn 1 chiếc máy bay cổ điển, ${PRESS} để bay khắp đảo · bay xuyên ${NR} vòng · đáp đúng đường băng nhận ⭐!`, 6500); }
     if (player.vehicle) return;
     let best = null, bd = 5.5;
     for (const pl of planes) if (pl.parked) { const d = Math.hypot(pl.group.position.x - pp.x, pl.group.position.z - pp.z); if (d < bd && Math.abs(pl.group.position.y - pp.y) < 4) { bd = d; best = pl; } }
     if (best) ctx.offer('✈️ Lái máy bay ' + best.style.name, () => board(best), 7);
   }
 
-  return { update, planes, birds: NB, board: () => board(planes[0]), land, get flying() { return !!me; }, get phase() { return phase; } };
+  return { update, planes, birds: NB, board: (i = 0) => board(planes[i]), land, get flying() { return !!me; }, get phase() { return phase; } };
 }
