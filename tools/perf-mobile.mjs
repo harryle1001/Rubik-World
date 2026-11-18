@@ -1,6 +1,6 @@
 // tools/perf-mobile.mjs — Đo hiệu năng Đảo 3D ở chế độ ĐIỆN THOẠI (390×844, DPR 2, cảm ứng, UA iPhone → CFG.isMobile).
-// Chạy: node server/index.js &  rồi  node tools/perf-mobile.mjs [--out=thu/muc/anh] [--q=1] [--net=4g] [--load-only] [--url=http://localhost:3000/ocean.html]
-// --net=4g: giả lập mạng 4G (9 Mbps, trễ 85 ms) để đo thời gian tải lần đầu; --load-only: chỉ đo tải.
+// Chạy: node server/index.js &  rồi  node tools/perf-mobile.mjs [--out=thu/muc/anh] [--q=1] [--net=4g|3g] [--load-only] [--url=http://localhost:3000/ocean.html]
+// --net=4g: giả lập 4G (9 Mbps, trễ 85 ms) · --net=3g: mạng yếu (1,6 Mbps, 150 ms) để đo thời gian tải lần đầu; --load-only: chỉ đo tải.
 // In: thời gian tải, dung lượng tải (KB), rồi tại 3 điểm (cổng trường · quảng trường · sân bay): draw call, tam giác, ms/khung
 // (trung bình 89 khung, chất lượng khoá ở mức --q, mặc định 1 = mức điện thoại khởi đầu), NaN-check ảnh (pixel đen/đơn sắc).
 import { createRequire } from 'module';
@@ -18,7 +18,8 @@ const page = await browser.newPage({
 });
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
-if (arg('net') === '4g') { const cdp = await page.context().newCDPSession(page); await cdp.send('Network.enable'); await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 85, downloadThroughput: 9e6 / 8, uploadThroughput: 1.5e6 / 8 }); }
+const NET = { '4g': [85, 9e6], '3g': [150, 1.6e6] }[arg('net')];   // [trễ ms, bit/s]: 4G thường · 3G/4G yếu (chuẩn Lighthouse)
+if (NET) { const cdp = await page.context().newCDPSession(page); await cdp.send('Network.enable'); await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: NET[0], downloadThroughput: NET[1] / 8, uploadThroughput: 0.75e6 / 8 }); }
 const t0 = Date.now();
 await page.goto(URL);
 await page.waitForFunction(() => window.__island, null, { timeout: 300000 }); const tFirst = (Date.now() - t0) / 1000;   // khung hình 3D đầu tiên

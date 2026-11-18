@@ -23,7 +23,10 @@ export function createAnimals(ctx) {
   const land = beach => { for (let k = 0; k < 60; k++) { const a = Math.random() * 6.283, r = beach ? ISLAND_R * (0.7 + Math.random() * 0.35) : 18 + Math.random() * 55, x = (beach ? 0 : TEMPLE_C[0]) + Math.cos(a) * r, z = (beach ? 0 : TEMPLE_C[1]) + Math.sin(a) * r, h = terrain.heightAt(x, z); if (!blocked(x, z, 1) && (beach ? h > 0.2 && h < 1.4 : h > 1.6 && terrain.slopeAt(x, z) < 0.7)) return [x, z]; } return [TEMPLE_C[0] + 20, TEMPLE_C[1] + 20]; };   // thú rừng quanh đền (khu I), cua/ếch ven biển
   const ok = (a, x, z) => { const h = terrain.heightAt(x, z); return a.beach ? h > 0.15 && h < 2.2 : h > 1.2 && terrain.slopeAt(x, z) < 0.9; };
 
-  for (const S of SPECIES) loadAnimated(S.id).then(g0 => {
+  // TẢI LƯỜI: thú sống ở rừng đền/bãi biển, xa chỗ vào game → chỉ nạp (~1,2 MB model) sau khi trường đã sẵn sàng
+  // (hoặc sau 13 s) để băng thông lúc mở game dành cho phần nhìn thấy ngay
+  let loadT = 0, loading = false;
+  const loadAll = () => { loading = true; for (const S of SPECIES) loadAnimated(S.id).then(g0 => {
     if (!g0) return;
     for (let i = 0; i < S.n; i++) (i === 0 ? Promise.resolve(g0) : loadAnimated(S.id)).then(g => {
       const root = new THREE.Group(), model = g.scene; root.add(model);
@@ -35,7 +38,7 @@ export function createAnimals(ctx) {
       const A = { S, root, anim, target: null, tgt: new THREE.Vector3(), wait: Math.random() * 4, rot: Math.random() * 6.28, fleeing: false, outlines, outlineOn: true, far: 0, tick: i, sp: 0, kr: { v: 0 }, ks: { v: 0 }, idle: S.idle[0] };
       anim.play(S.idle[0], 0); list.push(A);
     });
-  });
+  }); };
 
   // bấm vào thú → hiện điều thú vị
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
@@ -48,6 +51,7 @@ export function createAnimals(ctx) {
   const fauna = createFauna(ctx); // chim, bướm, cá (InstancedMesh)
   let perfMs = 0, perfN = 0; ctx.perfAnimals = () => perfN ? perfMs / perfN : 0;
   function update(dt) {
+    if (!loading && ((ctx.school && ctx.school.ready) || (loadT += dt) > 13)) loadAll();
     const t0 = performance.now(), p = ctx.player.pos;
     fauna.update(dt, t0 / 1000);
     for (const A of list) { // tránh nhau: đẩy nhẹ hướng đi khỏi con khác quá gần (tính thưa: chỉ con đang đi)

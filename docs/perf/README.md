@@ -20,3 +20,10 @@ Chèn 1 vật xuất NaN trước camera: **trước** sửa 100 % điểm ảnh
 |---|---|---|---|
 | before | 6 475 KB | 9,0 s | 17,0 s |
 | 04-nen-server (brotli/gzip) | 2 455 KB | 7,5 s | 13,0 s |
+
+Mạng yếu (`--net=3g`, 1,6 Mbps · 150 ms):
+
+| Bước | Dung lượng tới lúc vào chơi | Khung 3D đầu tiên | Trường sẵn sàng |
+|---|---|---|---|
+| 04-nen-server | 2 520 KB | 12,7 s | 41,5 s |
+| 05-tai-luoi-thu (thú nạp sau khi trường sẵn sàng) | 1 791 KB | 10,4 s | 37,7 s |
