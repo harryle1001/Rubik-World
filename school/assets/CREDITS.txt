@@ -46,3 +46,8 @@ v51t · Trường Tin học Rubik (Rubik Code School)
   phòng robot, góc thư viện code, học sinh / cô giáo, 7 bài học, chứng chỉ và âm thanh đều vẽ / tạo bằng code
   (canvas + WebAudio) trong js/ext/v51t-*.js. Thiết kế gốc: không dùng tên, logo, giao diện của Scratch, Code.org, Minecraft
   hay sản phẩm khác. Chữ pixel = font Nunito / Be Vietnam Pro (đã có trong game) vẽ nhỏ rồi phóng to không làm mịn.
+
+v53s Biển khơi (câu cá thả neo ngoài biển, sổ tay cá, tàu hải tặc Râu Cam):
+không dùng file ảnh hay âm thanh bên ngoài. Chim hải âu, phao câu, rác biển, bản đồ kho báu kiểu Rubik,
+boong tàu, buồm, cờ và mũ hải tặc đều tự vẽ pixel art bằng code canvas (js/ext/v53s-*.js) và cache thành sprite.
+Cá dùng lại hình vẽ bằng code sẵn có (drawSea2, EXT12); âm thanh dùng lại các hàm WebAudio sẵn có và file CC0 đã ghi ở trên.
