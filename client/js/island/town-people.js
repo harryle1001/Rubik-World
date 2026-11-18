@@ -97,7 +97,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       selT = 0.25;
       const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
       near = list.filter(a => a.y > Y_MIN && a.y < Y_MAX).map(a => { const [x, z] = P(a.x, a.y); return [a, Math.hypot(x - p.x, z - p.z)]; }).filter(q => q[1] < 70).sort((a, b) => a[1] - b[1]).slice(0, POOL).map(q => q[0]);
-      const want = new Set(near);
+      const want = new Set(near); if (ctx.talkHold && ctx.talkHold.a) want.add(ctx.talkHold.a);   // đang nói chuyện: không đổi người trong pool
       for (const e of pool) if (e.a && !want.has(e.a)) { e.a = null; e.hero.model.visible = false; if (e.seat) { e.seat.by = null; e.seat = null; } }
       for (const a of near) {
         if (pool.some(e => e.a === a)) continue;
@@ -130,10 +130,11 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       // toạ độ 3D đệm theo vị trí 2D (người đứng yên/ngồi không đổi → không gọi to3, không tạo mảng mới mỗi khung)
       if (a._px !== a.x || a._py !== a.y) { a._p3 = P(a.x, a.y); a._px = a.x; a._py = a.y; } let x = a._p3[0], z = a._p3[1];
       // vị trí hiển thị: lò xo giảm chấn bám theo mô phỏng 2D (đi theo đường cong mượt, tăng/giảm tốc mềm); lệch xa > 4 m thì đặt lại
-      if (Math.hypot(x - e.px, z - e.pz) > 4) { e.kx.v = e.kz.v = 0; } else { x = damp(e.px, x, e.kx, T.soft, dt); z = damp(e.pz, z, e.kz, T.soft, dt); }
+      const hold = ctx.talkHold === e;   // đang nói chuyện với người chơi (teacher-quiz.js): đứng lại, quay mặt về phía người chơi
+      if (hold) { x = e.px; z = e.pz; e.kx.v = e.kz.v = 0; } else if (Math.hypot(x - e.px, z - e.pz) > 4) { e.kx.v = e.kz.v = 0; } else { x = damp(e.px, x, e.kx, T.soft, dt); z = damp(e.pz, z, e.kz, T.soft, dt); }
       const dx = e.kx.v, dz = e.kz.v; e.spd = Math.min(9, Math.hypot(dx, dz));
       e.ox = damp(e.ox, Math.max(-0.618, Math.min(0.618, e.sx)), e.kox, T.slow, dt); e.oz = damp(e.oz, Math.max(-0.618, Math.min(0.618, e.sz)), e.koz, T.slow, dt);
-      const dist = e.d = Math.hypot(x - p.x, z - p.z), moving = a.moving && e.spd > 0.2;
+      const dist = e.d = Math.hypot(x - p.x, z - p.z), moving = !hold && a.moving && e.spd > 0.2;
       if (a._kc !== a.kind) { a._kc = a.kind; a._floor = /sun|picnic|camp|fishing/.test(a.kind || ''); }
       let sit = a.cycling || a.boat || a.kind === 'bike' ? 'drive' : a._floor ? 'floor' : false; // floor: ngồi bệt trên cát/cỏ
       // ghế đá: đứng yên gần ghế trống → ngồi; đi tiếp → đứng dậy
@@ -166,7 +167,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
     }
     imp.visible = imp.count > 0; if (imp.count) { imp.instanceMatrix.needsUpdate = true; imp.instanceColor.needsUpdate = true; }
     for (const b of bubbles) if (b.t > 0) { b.t -= dt; const e = b.e; if (!e || !e.a) { b.t = 0; } else { b.sp.position.set(e.hero.model.position.x, e.hero.model.position.y + e.a._look3d.h + 0.95 + (2.2 - b.t) * 0.12, e.hero.model.position.z); b.sp.material.opacity = Math.min(1, b.t * 2.5); } if (b.t <= 0) { b.sp.visible = false; b.e = null; } }
-    ctx.nearNpc = best && bd < 2.6 ? { d: bd, name: nameOf(best.a), role: best.a._look3d.look.role, female: !!(best.a.long || best.a.skirt || best.a.aodai), e: best } : null;   // teacher-quiz.js: bấm E nói chuyện / hỏi đố
+    ctx.nearNpc = best && bd < 2.6 ? { d: bd, id: best.a.id, kind: best.a.kind, name: nameOf(best.a), role: best.a._look3d.look.role, female: !!(best.a.long || best.a.skirt || best.a.aodai), e: best } : null;   // teacher-quiz.js: bấm E nói chuyện / hỏi đố
     // tên trên đầu người gần nhất
     if (best) {
       if (tagFor !== best.a) { tagFor = best.a; const L = best.a._look3d; drawTag(nameOf(best.a), L.look.role === 'teacher' ? '#ffd23f' : L.look.role === 'student' ? '#ff5a5a' : '#7fd1ff'); }

@@ -136,8 +136,10 @@ export function createSchoolTown(ctx) {
   const title = d => d.n.replace(/^Nói chuyện với /, '').split('·')[0].trim();
   town.enter = q => {
     const k = doorKey(ctx, q.d);
-    if (k && ctx.mg && ctx.miniGames && ctx.miniGames[k] && ctx.mg.start(k, q)) { ctx.sfx && ctx.sfx('ok'); return; }
-    ctx.toast(`🚧 <b>${q.d.n}</b><br>Sắp mở — bản 3D đang được xây. Ghé lại sau nhé!`, 3500);
+    const go = () => { if (k && ctx.mg && ctx.miniGames && ctx.miniGames[k] && ctx.mg.start(k, q)) { ctx.sfx && ctx.sfx('ok'); return; }
+      ctx.toast(`🚧 <b>${q.d.n}</b><br>Sắp mở — bản 3D đang được xây. Ghé lại sau nhé!`, 3500); };
+    // có bản 3D: chủ trò nói 2–3 câu + 1 câu hỏi khởi động (teacher-quiz.js) rồi mới vào
+    if (k && ctx.miniGames && ctx.miniGames[k] && ctx.teacherQuiz && ctx.teacherQuiz.intro) ctx.teacherQuiz.intro(k, { x: q.x, z: q.z, y: TOWN_Y }, go); else go();
   };
   // 📚 Menu trường (3D): các mini game 3D đã mở → bấm để tới cửa & vào chơi
   let menuEl = null;

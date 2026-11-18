@@ -117,6 +117,7 @@ export function createMiniGameHost(ctx) {
   const mat = (c, o) => { const k = c + (o ? JSON.stringify(o) : ''); if (!matCache.has(k)) { const m = new THREE.MeshToonMaterial(Object.assign({ color: c, gradientMap }, o)); m.userData.shared = true; matCache.set(k, m); } return matCache.get(k); };
 
   const host = { active: null, key: null };
+  const G0 = k => ((ctx.miniGames[k] && ctx.miniGames[k].name) || k).replace(/^\P{L}+/u, '');
   let S = null;   // trạng thái phiên chơi hiện tại
 
   // ---------- Tìm chỗ đặt khu chơi: đất phẳng, không đè nhà/cây, xoắn ốc theo góc vàng (2π/φ²) quanh cửa ----------
@@ -214,6 +215,7 @@ export function createMiniGameHost(ctx) {
       const again = document.createElement('button'); again.className = 'pri'; again.textContent = '🔁 Chơi lại'; again.onclick = () => host.restart();
       const out = document.createElement('button'); out.textContent = '✕ Thoát'; out.onclick = () => host.exit();
       card.append(again, out); card.hidden = false; ctx.sfx && ctx.sfx(nb ? 'win' : 'open');
+      if (ctx.reward && !S.rewarded) { S.rewarded = true; ctx.reward(nb ? 2 : 1, `Chơi ${G0(key)}${nb ? ' · kỷ lục mới' : ''}`); card.querySelector('p').insertAdjacentHTML('beforeend', `<br>⭐ +${nb ? 2 : 1} sao · ghi vào 📒 Sổ học tập`); }   // thưởng sao thay tiền, 1 lần mỗi lượt vào
     };
     api.restart = () => host.restart(); api.exit = () => host.exit();
     // nhân vật
