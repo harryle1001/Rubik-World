@@ -31,14 +31,14 @@ const FACT = {
 };
 const MOON = ['trăng non', 'trăng lưỡi liềm đầu tháng', 'trăng bán nguyệt đầu tháng', 'trăng khuyết sắp tròn', 'trăng rằm (tròn)', 'trăng khuyết sau rằm', 'trăng bán nguyệt cuối tháng', 'trăng lưỡi liềm cuối tháng'];
 const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-const _o = new THREE.Object3D(), _v = new THREE.Vector3(), _c = new THREE.Color();
+const _o = new THREE.Object3D(), _v = new THREE.Vector3(), _c = new THREE.Color(), WHITE = new THREE.Color('#ffffff'), _s2 = new THREE.Vector2();   // dùng lại, không tạo mới mỗi khung
 
 export function createAmbience(ctx) {
   const { scene, camera, renderer, terrain, sky } = ctx;
   const Q = () => ctx.qualityLevel || 0;
   const wU = terrain.waterMat.uniforms;
   const scaleU = { value: 600 };     // đổi kích thước điểm (m) → pixel
-  const updScale = () => { const s = new THREE.Vector2(); renderer.getDrawingBufferSize(s); scaleU.value = s.y / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)); };
+  const updScale = () => { const s = _s2; renderer.getDrawingBufferSize(s); scaleU.value = s.y / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)); };
 
   // ---------- Nối nước với bầu trời (phản chiếu chân trời, lấp lánh nắng) ----------
   wU.uSunW.value = sky.U.uSun.value; wU.uSkyH.value = sky.U.uHor.value; wU.uSunC.value = sky.U.uSunCol.value;
@@ -289,13 +289,13 @@ export function createAmbience(ctx) {
     smokeA += ((q < 3 ? cook * (1 - W.r * 0.7) : 0) - smokeA) * Math.min(1, dt * 0.5);
     if ((chimT -= dt) <= 0) { chimT = 2.5; smoke.userData.n = smokeA > 0.01 ? pickChimneys(p) : 0; }
     smoke.visible = smokeA > 0.01 && smoke.userData.n > 0; SU.uA.value = smokeA;
-    SU.uLight.value.copy(sky.hemi.color).multiplyScalar(0.55 + 0.45 * Math.min(1, sky.hemi.intensity)).lerp(_c.set('#ffffff'), 0.4 * day);
+    SU.uLight.value.copy(sky.hemi.color).multiplyScalar(0.55 + 0.45 * Math.min(1, sky.hemi.intensity)).lerp(WHITE, 0.4 * day);
     if (smoke.visible && smokeA > 0.6) fact('smoke');
 
     // sương thấp: bình minh (5h–8h30) + sương mù của thời tiết
     const dawn = smooth(4.6, 5.6, h) * (1 - smooth(7.4, 8.6, h));
     const mA = q >= 2 ? 0 : Math.min(1, dawn * 0.85 + W.f * 0.7) * (1 - W.r * 0.5);
-    mist.visible = mA > 0.02; mistU.uA.value = mA; mist.position.set(p.x, 0, p.z); mistU.uCol.value.copy(scene.fog.color).lerp(_c.set('#ffffff'), 0.35 * day);
+    mist.visible = mA > 0.02; mistU.uA.value = mA; mist.position.set(p.x, 0, p.z); mistU.uCol.value.copy(scene.fog.color).lerp(WHITE, 0.35 * day);
     if (mA > 0.5) fact('mist');
 
     // cá
@@ -329,7 +329,7 @@ export function createAmbience(ctx) {
     // âm thanh theo giờ
     if (A2) {
       const cic = smooth(9.5, 11, h) * (1 - smooth(15.5, 17, h)) * (1 - W.r) * (1 - W.c * 0.6);
-      A2.cicada.gain.setTargetAtTime(cic * 0.035, A2.ac.currentTime, 1.5);
+      if (Math.abs(cic - (st.cic ?? -1)) > 0.01) { st.cic = cic; A2.cicada.gain.setTargetAtTime(cic * 0.035, A2.ac.currentTime, 1.5); }   // chỉ khi đổi (hằng số 1,5 s)
       if (cic > 0.7 && t > 60) fact('cicada');
       // chuông chùa: mỗi 34–55 giây khi ở trong ~200 m, ban ngày và chiều tối
       if ((st.bellT -= dt) <= 0) { st.bellT = 34 + Math.random() * 21; const d = Math.hypot(TEMPLE_C[0] - p.x, TEMPLE_C[1] - p.z); if (d < 200 && (h > 4.5 && h < 21)) { SND.bell(TEMPLE_C[0], 8, TEMPLE_C[1]); if (d < 60) fact('bell'); } }
@@ -363,7 +363,7 @@ export function createAmbience(ctx) {
     const front = sunNDC.z < 1, onScr = Math.max(Math.abs(sunNDC.x), Math.abs(sunNDC.y));
     const rays = q === 0 && front && sky.U.uSun.value.y > 0.02 ? (1 - smooth(1.0, 1.8, onScr)) * day * (1 - W.c * 0.8) * (1 - W.r) * (0.35 + golden * 0.5) : 0;
     G.uRays.value += (rays - G.uRays.value) * 0.1; G.uSunUV.value.set(sunNDC.x * 0.5 + 0.5, sunNDC.y * 0.5 + 0.5); G.uAsp.value = camera.aspect;
-    G.uRayCol.value.copy(sky.sun.color).lerp(_c.set('#ffffff'), 0.3);
+    G.uRayCol.value.copy(sky.sun.color).lerp(WHITE, 0.3);
     if (G.uRays.value > 0.25 && onScr < 0.6) fact('rays');
   }
   return { update, motes, smoke, mist, fish, carts, lights: L, stoves: STOVE, yard };

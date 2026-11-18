@@ -6,6 +6,7 @@
 // - Gỡ lỗi: ctx.weather.set('clear' | 'cloudy' | 'rain' | 'storm' | 'fog') · ?weather=rain trên URL
 import * as THREE from 'three';
 import { WIND } from './terrain.js';
+import { PHI } from './layout.js';
 
 // đích của từng kiểu: c mây · r mưa · w gió · f sương · bolt sét
 const TYPES = {
@@ -30,6 +31,7 @@ const DROPS = [3200, 2200, 1400, 700]; // số hạt mưa theo mức chất lư�
 const lerp = (a, b, k) => a + (b - a) * k;
 
 export function createWeather(ctx) {
+  let sndT = 0;
   const { scene, camera, sky } = ctx;
   const cur = { c: 0, r: 0, w: 0, f: 0, wet: 0, bow: 0 }, st = { type: 'clear', t: 120, flash: 0, boltT: 6, bowT: 0, told: new Set() };
   const fogBase = { near: scene.fog.near, far: scene.fog.far }, grey = new THREE.Color('#8a94a3'), fogGrey = new THREE.Color('#c9d1d8'), white = new THREE.Color('#ffffff');
@@ -186,8 +188,9 @@ export function createWeather(ctx) {
     if (st.bowT <= 0) st.told.delete('bow');
 
     // âm thanh
+    // cập nhật âm thanh thưa 1/φ⁵ s (≈ 11 lần/s): setTargetAtTime hằng số thời gian 0,4–0,5 s nên nghe không khác, bớt 4 sự kiện AudioParam mỗi khung
     const A = sound();
-    if (A) {
+    if (A && (sndT -= dt) <= 0) { sndT = 1 / PHI ** 5;
       const now = A.ac.currentTime, p = ctx.player && ctx.player.pos, under = p && ctx.grid && ctx.grid.near(p.x, p.z).boxes.some(b => p.x > b.x0 && p.x < b.x1 && p.z > b.z0 && p.z < b.z1 && b.top > p.y + 1.5) ? 0.5 : 1; // dưới mái: tiếng mưa nhỏ hơn
       A.rain.g.gain.setTargetAtTime(cur.r * 0.22 * under, now, 0.4); A.rainLow.g.gain.setTargetAtTime(cur.r * 0.12, now, 0.4);
       A.wind.g.gain.setTargetAtTime(cur.w * cur.w * 0.18 * (0.7 + 0.3 * Math.sin(t * 0.7)), now, 0.5); A.wind.fl.frequency.setTargetAtTime(260 + 260 * cur.w + 120 * Math.sin(t * 0.43), now, 0.5);
