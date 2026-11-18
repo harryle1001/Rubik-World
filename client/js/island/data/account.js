@@ -64,7 +64,11 @@ export function createAccount() {
   acc.playGuest = () => enter('Khách', Object.assign(newProfile('Khách'), load(GUEST) || {}, { name: 'Khách' }), true);
   acc.logout = () => { const a = all(); if (a.remember) { a.remember = null; store(KEY, a); } acc.save(); acc.name = null; acc.guest = false; acc.profile = null; emit(); };
   acc.resume = () => { const a = all(), u = a.remember && a.users[a.remember]; if (!u) return false; enter(a.remember, Object.assign(newProfile(a.remember), u.profile || {})); return true; };   // "Lưu đăng nhập": vào thẳng
-  acc.lastName = () => all().last || '';
+  // "Nhớ tên đăng nhập": lưu riêng tên (không lưu mật khẩu) → lần sau ô tên đã điền sẵn
+  const NK = 'island.rememberName';
+  acc.lastName = () => { try { const v = localStorage.getItem(NK); return v != null ? v : (all().last || ''); } catch (e) { return ''; } };
+  acc.rememberName = (name, on) => { try { localStorage.setItem(NK, on ? String(name || '').trim() : ''); } catch (e) {} };
+  acc.nameRemembered = () => { try { return localStorage.getItem(NK) !== ''; } catch (e) { return true; } };
   // xu & vật phẩm
   Object.defineProperty(acc, 'coins', { get: () => acc.profile ? acc.profile.money | 0 : 0 });
   acc.addCoins = n => { if (!acc.profile) return false; if (acc.profile.money + n < 0) return false; acc.profile.money += n; acc.save(); emit(); return true; };

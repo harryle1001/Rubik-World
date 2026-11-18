@@ -39,9 +39,10 @@ body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
         <div class="row"><button class="pri" data-a="close">Chơi tiếp</button><button data-a="out">Đăng xuất</button></div></div>`;
     } else {
       box.innerHTML = `<div class="card"><h3>🏝️ Đảo Rubik</h3><p>Đăng nhập để lưu cấp độ, xu và đồ của bạn. Đừng dùng mật khẩu thật ở nơi khác nhé.</p>
-        <label for="accName">Tên đăng nhập</label><input type="text" id="accName" maxlength="20" autocomplete="username" value="${esc(acc.lastName())}">
-        <label for="accPass">Mật khẩu</label><input type="password" id="accPass" maxlength="40" autocomplete="current-password">
-        <label class="rem"><input type="checkbox" id="accRem" checked> Lưu đăng nhập (lần sau vào thẳng)</label>
+        <form id="accForm" autocomplete="on" onsubmit="return false"><label for="accName">Tên đăng nhập</label><input type="text" id="accName" name="username" maxlength="20" autocomplete="username" value="${esc(acc.lastName())}">
+        <label for="accPass">Mật khẩu</label><input type="password" id="accPass" name="password" maxlength="40" autocomplete="current-password">
+        <label class="rem"><input type="checkbox" id="accKeep" ${acc.nameRemembered() ? 'checked' : ''}> Nhớ tên đăng nhập (lần sau không phải gõ lại)</label>
+        <label class="rem" style="margin-top:-5px"><input type="checkbox" id="accRem" checked> Lưu đăng nhập (lần sau vào thẳng, không cần mật khẩu)</label></form>
         <div class="row"><button class="pri" data-a="in">Đăng nhập</button><button data-a="new">Tạo tài khoản</button><button data-a="guest">Chơi khách</button></div>
         <div class="msg" aria-live="polite"></div></div>`;
       setTimeout(() => { const n = box.querySelector('#accName'); (n.value ? box.querySelector('#accPass') : n).focus(); }, 50);
@@ -56,8 +57,10 @@ body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
     if (a === 'close') return close();
     if (a === 'out') { acc.logout(); ctx.toast && ctx.toast('Đã đăng xuất.'); return open(); }
     if (a === 'guest') { acc.playGuest(); close(); ctx.toast && ctx.toast('🙂 Đang chơi khách — bấm 👤 để đăng nhập lưu tiến độ'); return; }
+    const keepName = !!(box.querySelector('#accKeep') || {}).checked;
     msg.textContent = '…'; const err = await (a === 'in' ? acc.login(v('#accName'), v('#accPass'), rem) : acc.register(v('#accName'), v('#accPass'), rem));
     if (err) { msg.textContent = err; return; }
+    acc.rememberName(acc.name, keepName || rem);
     close(); ctx.sfx && ctx.sfx('ok'); ctx.toast && ctx.toast(`👋 Chào ${esc(acc.name)}!${rem ? ' Đã lưu đăng nhập trên máy này.' : ''}`);
   });
   chip.onclick = open; chip.onkeydown = e => { if (e.key === 'Enter') open(); };
