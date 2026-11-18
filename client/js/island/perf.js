@@ -6,8 +6,8 @@
 //  · Người/thú có xương (SkinnedMesh, trước luôn vẽ): cắt theo khung hình bằng hình cầu bao nới rộng φ lần.
 //  · Vật < 1 m không đổ bóng (bóng đổ của vật nhỏ gần như không thấy, nhưng tốn 1 draw call ở pass bóng);
 //    điện thoại: bán kính < 1/φ ≈ 0,62 m (cả InstancedMesh không ghi itemR: lấy cỡ 1 vật từ hình cầu bao lưới × tỉ lệ instance đầu).
-// Ẩn bằng layers (không đụng .visible mà file khác đang điều khiển). Quét cảnh tìm vật mới mỗi 8 s (lần đầu sau 1,5 s);
-// xét khoảng cách XOAY VÒNG: mỗi khung 1/8 danh sách → mỗi vật được xét ~8 khung/lần, không dồn cả danh sách vào 1 khung (hết giật định kỳ).
+// Ẩn bằng layers (không đụng .visible mà file khác đang điều khiển). Quét cảnh tìm vật mới mỗi 3 s (chỉ gom, rẻ; lần đầu sau 1,5 s đăng ký hết ngay);
+// xét khoảng cách XOAY VÒNG: mỗi khung 1 phần danh sách (60 FPS: 1/12) → mỗi vật ~0,2 s xét 1 lần, không dồn cả danh sách vào 1 khung (hết giật định kỳ).
 import * as THREE from 'three';
 import { PHI } from './layout.js';
 import { CFG } from './config.js';
@@ -60,14 +60,15 @@ export function createPerf(ctx) {
     else { const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); _s.copy(g.boundingSphere); }
     _s.applyMatrix4(o.matrixWorld); return Math.max(0, _s.center.distanceTo(cam) - _s.radius);
   }
-  let tScan = 6.5, cur = 0;
+  let tScan = 1.5, cur = 0, first = true;
   function update(dt) {
-    if ((tScan += dt) > 8) { tScan = 0; scan(); }
-    const t0 = performance.now(); while (pending.length && performance.now() - t0 < 1.5) { const o = pending.pop(); delete o.userData._pq; register(o); }   // ≤ 1,5 ms/khung
+    if ((tScan += dt) > 3) { tScan = 0; scan(); }
+    const t0 = performance.now(), budget = first ? 1e9 : 1.5; if (pending.length) first = false;   // lần quét đầu (đang vào game): đăng ký hết ngay
+    while (pending.length && performance.now() - t0 < budget) { const o = pending.pop(); delete o.userData._pq; register(o); }   // ≤ 1,5 ms/khung
     if (!list.length) return;
     camera.getWorldPosition(cam);
     const k = (ctx.underwater ? 0.5 : 1) * (ctx.perfScale || 1);   // dưới nước nhìn gần hơn; chất lượng thấp: ẩn sớm hơn
-    let n = Math.ceil(list.length / 8);
+    let n = Math.ceil(list.length * Math.min(1, dt / 0.2));   // phần danh sách tỉ lệ thời gian: mỗi vật ~0,2 s xét 1 lần dù FPS cao/thấp
     while (n-- > 0 && list.length) {
       if (cur >= list.length) cur = 0;
       const i = cur++, e = list[i], o = e.o;
