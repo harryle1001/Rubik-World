@@ -165,7 +165,7 @@ function dailyWisdom(){ const w = WISDOM_DAILY[(day + (PROF ? PROF.name.length :
 function lightSprites(sp){
   [[R.plaza.x + 200, R.plaza.y + 300], [R.zen.x + 300, R.zen.y + 200], [1000, 420]].forEach(([x, y], i) => { if(!inVB(x, y)) return; sp.push({y, f:() => { const b = Math.sin(realT*1.5 + i)*3; const g = ctx.createRadialGradient(x, y - 24 + b, 4, x, y - 24 + b, 40); g.addColorStop(0, 'rgba(255,245,200,.85)'); g.addColorStop(1, 'rgba(255,245,200,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y - 24 + b, 40, 0, Math.PI*2); ctx.fill();
     const f = lookFor(9); f.hair = '#f5f5f5'; f.long = true; f.shirt = '#fafafa'; f.style = {outfit:'wizard', shirt:'#fafafa', acc:['aura'], hs:'long'}; f.dir = 1; ctx.save(); ctx.translate(x, y + b); drawBody(f, false); ctx.restore();
-    const near = PLAYER && Math.hypot(PLAYER.x - x, PLAYER.y - y) < 60; ctx.font = '13px VT323, monospace'; ctx.textAlign = 'center'; ctx.fillStyle = near ? '#ffd23f' : '#fff'; ctx.fillText(near ? 'Người Thầy Ánh Sáng · bấm E' : 'Người Thầy Ánh Sáng', x, y - 50 + b); ctx.textAlign = 'left'; }}); });
+    const near = PLAYER && Math.hypot(PLAYER.x - x, PLAYER.y - y) < 60; ctx.font = '13px VT323, monospace'; ctx.textAlign = 'center'; ctx.fillStyle = near ? '#ffd23f' : '#fff'; ctx.fillText(near ? (matchMedia('(pointer:coarse)').matches ? 'Người Thầy Ánh Sáng · chạm để nói chuyện' : 'Người Thầy Ánh Sáng · bấm E') : 'Người Thầy Ánh Sáng', x, y - 50 + b); ctx.textAlign = 'left'; }}); });
 }
 function ext19Init(){
   streetBuild(); setInterval(() => { streetBuild(); }, 20000);

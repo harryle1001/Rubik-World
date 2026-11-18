@@ -401,7 +401,7 @@ function drawBuildings(){
     ctx.font = '18px VT323, monospace'; ctx.fillStyle = '#ffd23f'; ctx.fillText('♪ ' + SONG + ' ♪', 1290, 100);
   }
   walls(r, '#7a4a2e'); sign(r, 'HỘI TRƯỜNG LỚN', '#ff8a2b');
-  ctx.font = '18px VT323, monospace'; ctx.fillStyle = '#f7e0b0'; ctx.fillText('Lớp học lớn nhất trường', r.x+30, r.y+r.h-18);
+  if(!(typeof V46 !== 'undefined' && V46.on)){ ctx.font = '18px VT323, monospace'; ctx.fillStyle = '#f7e0b0'; ctx.fillText('Lớp học lớn nhất trường', r.x+30, r.y+r.h-18); } // v62f: trên đảo, chỗ này là căn tin → bỏ dòng chữ sàn bị cây/hàng rào che
   r = R.rubikyard; floor(r, season==='dong' ? '#d5e0e4' : '#8fc27a', season==='dong' ? '#cad6db' : '#86b971', 20);
   const cx = 220, cy = 610; rect('#555', cx-34, cy-30, 68, 62);
   const cols = ['#ef4b4b','#ffd23f','#3d7bff','#2fbf71','#f4f4f4','#ff8a2b','#2fbf71','#ef4b4b','#ffd23f'];
@@ -442,6 +442,7 @@ function drawBuildings(){
     rect('#2a2a3a', x-21, y-13, 42, 26); rect(s.bag, x-19, y-11, 38, 22);
     rect(stCol[s.mark.sang] || '#888', x-19, y+11, 38, 4);
     ctx.font = '13px VT323, monospace'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+    { const tw = ctx.measureText(s.name).width; if(tw > 48) ctx.font = Math.max(9, Math.floor(13*48/tw)) + 'px VT323, monospace'; } // v62f: tên dài không chồng lên tên ô bên cạnh (ô cách nhau 52px)
     ctx.fillText(s.name, x, y+22);
     ctx.textAlign = 'left';
   });

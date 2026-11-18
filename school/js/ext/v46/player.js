@@ -7,7 +7,7 @@ function v46CamT(a){ if(a.inSub) return v46TS(sub.x, sub.y); if(!V46 || !V46.on 
 function v46OldMove(z, ox, oy, nx, ny){
   if(!gateOK(ox, oy, nx, ny)) return false;
   if(z.flip && ny > (onPier(nx, ny) ? 978 : 1010)) return false;
-  for(const id of ['rubik', 'chess', 'music', 'hall', 'rubikyard', 'office', 'elec']){ const r = R[id]; if(inside(r, ox, oy) !== inside(r, nx, ny) && dist(nx, ny, r.dw[0], r.dw[1]) > 26) return false; }
+  for(const id of ['rubik', 'chess', 'music', 'hall', 'rubikyard', 'office', 'elec']){ const r = R[id]; if(V46.ZI[id] && V46.ZI[id] !== z) continue; /* v62f: phòng của khu khác đã dời đi chỗ khác trên đảo → không còn là tường vô hình ở mép khu này */ if(inside(r, ox, oy) !== inside(r, nx, ny) && dist(nx, ny, r.dw[0], r.dw[1]) > 26) return false; }
   return true;
 }
 function v46PlayerInit(){
