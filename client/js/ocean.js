@@ -31,11 +31,16 @@ import { createDive } from './island/dive.js';
 import { createPerf } from './island/perf.js';
 import { createMiniGameHost } from './island/mg/host.js';
 import { createAccountHud } from './island/account-hud.js';
+import { createLoader } from './island/loader.js';
+import { createStats } from './island/stats.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
 import { register as registerSport } from './island/mg/sport/index.js';
 
+// chỉ báo tải (Rubik xoay góc trái dưới) + màn che lúc vào game: tạo đầu tiên để bắt mọi lượt tải model/âm thanh
+const loading = createLoader();
+const bootJob = loading.begin('Dựng thế giới');
 const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
 let pr = Math.min(devicePixelRatio, CFG.quality.maxPixelRatio); renderer.setPixelRatio(pr);
 renderer.setSize(innerWidth, innerHeight);
@@ -47,7 +52,7 @@ const sky = createSky(scene);
 const post = createPost(renderer, scene, camera);
 
 const terrain = createTerrain(scene);
-const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders };
+const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders, loading };
 // Nút hành động dùng chung (E hoặc nút giữa màn hình): mỗi khung hình các phần gọi ctx.offer(nhãn, hàm, độ ưu tiên)
 {
   const act = document.getElementById('bAct'); let best = null, cur = null;
@@ -89,7 +94,8 @@ const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ 
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
-const accountHud = createAccountHud(ctx); // 👤 đăng nhập / khách / Lưu đăng nhập, xu & vật phẩm (data/account.js)
+const accountHud = createAccountHud(ctx);
+const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms, draw call, tam giác, bộ nhớ… // 👤 đăng nhập / khách / Lưu đăng nhập, xu & vật phẩm (data/account.js)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
@@ -150,11 +156,12 @@ renderer.setAnimationLoop(() => {
   unfreezeGuard(dt);
   // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong
   // → không khựng lần đầu khi quay camera/đi tới khu mới (three chỉ biên dịch lúc vật thể lần đầu vào khung hình)
-  // chờ người chơi đóng bảng đăng nhập 2D (biên dịch chặn luồng chính → bảng đăng nhập bật lại, khoá nhân vật)
-  if (!ctx.warmed && school.ready && !player.frozen && !document.body.classList.contains('rs-modal') && (ctx.warmT = (ctx.warmT || 0) + dt) > 1.618) { ctx.warmed = true; renderer.compileAsync(scene, camera).catch(() => {}); }
-  if (!worldMap.open) post.render(); // bản đồ che kín màn hình → không cần vẽ 3D
+  // làm ngay sau khi trường dựng xong + nhân vật đã nạp, khi màn che còn phủ (người chơi không thấy khựng), rồi mới mở màn che
+  if (!ctx.warmed && school.ready && (player.hero || player.heroFailed) && (ctx.warmT = (ctx.warmT || 0) + dt) > 0.382) { ctx.warmed = true; const wj = loading.begin('Chuẩn bị hình ảnh'); loading.end(bootJob); renderer.compileAsync(scene, camera).catch(() => {}).finally(() => { loading.end(wj); requestAnimationFrame(() => requestAnimationFrame(() => loading.lift())); }); setTimeout(() => loading.lift(), 8000); }   // máy chậm: tối đa 8 s rồi mở màn che
+  if (!worldMap.open && !loading.veil) post.render(); // bản đồ / màn che lúc vào game phủ kín → không vẽ 3D (dồn CPU cho nạp nhân vật, dựng thị trấn)
   worldMap.update();
   quality(dt);
+  stats.frame();
 });
 
 // ---------- Lưới an toàn: nhân vật bị khoá (player.frozen) mà không còn bảng nào mở → mở khoá ----------
@@ -164,7 +171,7 @@ let frzT = 0;
 function unfreezeGuard(dt) {
   if (!player.frozen) { frzT = 0; return; }
   if ((frzT += dt) < 1) return; frzT = 0;
-  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden])')) player.frozen = false;
+  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden]), #accBox:not([hidden]), #schoolMenu:not([hidden])')) player.frozen = false;
 }
 
 // ---------- Tự giảm/tăng chất lượng theo FPS ----------
@@ -183,6 +190,8 @@ function applyQuality() {
 }
 function quality(dt) {
   if (qLock) return;
+  // lúc vào game (màn che + 2 s sau) FPS tụt do dựng thị trấn/biên dịch shader → không tính, kẻo hạ chất lượng oan rồi biên dịch lại (giật)
+  if (loading.veil || (ctx.qHold = (ctx.qHold ?? 2) - dt) > 0) { qFrames = 0; qT = performance.now(); return; }
   // điện thoại: xét mỗi 2 s (nhanh hơn máy tính 3 s); FPS rất thấp (< lowFps/φ ≈ 25) → hạ 2 mức một lần
   qFrames++; const el = (performance.now() - qT) / 1000; if (el < (CFG.isMobile ? 2 : 3)) return;
   const fps = qFrames / el; qFrames = 0; qT = performance.now(); ctx.fps = Math.round(fps);
