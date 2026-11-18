@@ -51,10 +51,13 @@ await cdp.send('Tracing.start', { traceConfig: { includedCategories: ['devtools.
 const heap0 = await page.evaluate(() => performance.memory ? performance.memory.usedJSHeapSize : 0);
 await page.evaluate(() => { __fr.t.length = 0; for (const k in __mod) __mod[k] = 0; __fj.length = 0; __spk.length = 0; });
 await cdp.send('Profiler.start');
+const ALLOC = process.argv.includes('--alloc');   // --alloc: lấy mẫu cấp phát bộ nhớ (hàm nào tạo rác cho GC)
+if (ALLOC) { await cdp.send('HeapProfiler.enable'); await cdp.send('HeapProfiler.startSampling', { samplingInterval: 8192, includeObjectsCollectedByMajorGC: true, includeObjectsCollectedByMinorGC: true }); }
 await page.keyboard.down('KeyW'); await page.waitForTimeout(SEC * 1000);                       // đi bộ
 await page.keyboard.down('ShiftLeft'); await page.waitForTimeout(SEC * 1000);                  // chạy
 await page.keyboard.up('ShiftLeft'); await page.keyboard.up('KeyW');
 const { profile } = await cdp.send('Profiler.stop');
+let allocTop = null; if (ALLOC) { const { profile: hp } = await cdp.send('HeapProfiler.stopSampling'); const m = new Map(); const walk = n => { const cf = n.callFrame, k = `${cf.functionName || '(anon)'} ${(cf.url || '').replace(/^.*\/(js|lib)\//, '')}:${cf.lineNumber + 1}`; m.set(k, (m.get(k) || 0) + n.selfSize); n.children.forEach(walk); }; walk(hp.head); allocTop = [...m].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, b]) => ({ fn: k.slice(0, 90), KB: Math.round(b / 1024) })); }
 await cdp.send('Tracing.end'); await done;
 const heap1 = await page.evaluate(() => performance.memory ? performance.memory.usedJSHeapSize : 0);
 const ft = await page.evaluate(() => { cancelAnimationFrame(__fr.raf); clearInterval(__steer); return __fr.t; });
@@ -81,7 +84,7 @@ const res = {
   heapMB: [+(heap0 / 1048576).toFixed(1), +(heap1 / 1048576).toFixed(1)],
 };
 res.msPerFrame = mod; res.spikes = await page.evaluate(() => __spk);
-console.table(top); console.log(JSON.stringify(res));
+console.table(top); if (allocTop) console.table(allocTop); console.log(JSON.stringify(res));
 if (OUT) { fs.writeFileSync(`${OUT}/cpu.cpuprofile`, JSON.stringify(profile)); fs.writeFileSync(`${OUT}/result.json`, JSON.stringify({ res, top }, null, 1)); await page.screenshot({ path: `${OUT}/end.png` }); }
 console.log(errors.length ? 'LỖI CONSOLE:\n' + errors.slice(0, 10).join('\n') : 'Không lỗi console');
 await browser.close();
