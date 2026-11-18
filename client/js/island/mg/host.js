@@ -264,6 +264,8 @@ export function createMiniGameHost(ctx) {
     });
     S.lastCam = { ...api.cam }; S.api = null; S.game = null;
   }
+  host.findSpot = findSpot;
+  Object.defineProperty(host, 'api', { get: () => S && S.api });   // (kiểm thử) bộ công cụ của phiên đang chơi   // game tự chọn chỗ (vd cờ vua cạnh công viên cờ)
   host.start = (key, door, opts) => begin(key, door, opts);
   host.restart = () => { if (!S || !S.api) return; const { key, door } = S; teardown(); S.restarting = true; begin(key, door); };
   host.exit = (silent) => {
