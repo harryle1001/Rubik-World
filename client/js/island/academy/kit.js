@@ -92,6 +92,10 @@ export function makeKit(B, { far = false, Y, ground }) {
     roof.gable(v0 - 0.6, v1 + 0.6, u0 - 0.6, u1 + 0.6, Y + top, rh, COL.roof);
     const alongV = v1 - v0 > u1 - u0, a0 = alongV ? v0 : u0, a1 = alongV ? v1 : u1, y = Y + top - 7;
     for (let a = a0 + 3; a <= a1 - 3; a += far ? 8.4 : 4.2) { if (alongV) { winAt('u', u0, -1, a, y); winAt('u', u1, 1, a, y); } else { winAt('v', v0, -1, a, y); winAt('v', v1, 1, a, y); } }
+    if (det) for (const a of [a0 + 1.2, a1 - 1.2]) {                                                   // chóp nhọn 2 đầu nóc mái
+      const [x, z] = alongV ? [a, (u0 + u1) / 2] : [(v0 + v1) / 2, a];
+      det.cyl(x, Y + top - 1, z, 0.9, rh + 1.6, COL.wall, 8); det.cone(x, Y + top + rh + 0.6, z, 1.15, 5.5, COL.roof, 8);
+    }
   };
 
   /** Tháp góc nhỏ trên nóc (không va chạm — ở trên mái) */
@@ -112,7 +116,7 @@ export function makeKit(B, { far = false, Y, ground }) {
 
   /** Tường thành chữ nhật quanh mép vách: front/back/west/east gaps theo trục chạy của từng cạnh */
   const curtain = ({ u0, u1, hv, h, t }, gaps) => {
-    const run = (axis, a0, a1, f0, f1, gs, outer) => {
+    const run = (axis, a0, a1, f0, f1, gs, outer, side) => {
       let s = a0;
       for (const [g0, g1] of [...gs, [a1, a1]].sort((p, q) => p[0] - q[0])) {
         if (g0 > s) {
@@ -122,12 +126,15 @@ export function makeKit(B, { far = false, Y, ground }) {
         s = Math.max(s, g1);
       }
       merlons(axis, a0, a1, outer, Y + h, gs);
+      const fo = side > 0 ? f1 : f0;
+      for (let a = a0 + 4.2; a < a1 - 3; a += 8.4) { if (gs.some(([g0, g1]) => a > g0 - 2 && a < g1 + 2)) continue; winAt(axis === 'v' ? 'u' : 'v', fo, side, a, Y + 1.8, 0.45, 1.6); }   // khe bắn tên
+      if (det) { if (axis === 'v') det.box(a0, a1, Y - 1, Y + 0.9, Math.min(f0, f1) - 0.35, Math.max(f0, f1) + 0.35, '#6f7466'); else det.box(Math.min(f0, f1) - 0.35, Math.max(f0, f1) + 0.35, Y - 1, Y + 0.9, a0, a1, '#6f7466'); }   // chân tường rêu
       if (!far) for (const [g0, g1] of gs) for (const g of [g0, g1]) if (axis === 'v') wall.box(g - 0.6, g + 0.6, Y - 1, Y + h + 2.1, f0 - 0.4, f1 + 0.4, COL.wall); else wall.box(f0 - 0.4, f1 + 0.4, Y - 1, Y + h + 2.1, g - 0.6, g + 0.6, COL.wall);   // trụ cổng
     };
-    run('v', -hv, hv, u1 - t, u1, gaps.front, u1 - 0.3);
-    run('v', -hv, hv, u0, u0 + t, gaps.back, u0 + 0.3);
-    run('u', u0, u1, -hv, -hv + t, gaps.west, -hv + 0.3);
-    run('u', u0, u1, hv - t, hv, gaps.east, hv - 0.3);
+    run('v', -hv, hv, u1 - t, u1, gaps.front, u1 - 0.3, 1);
+    run('v', -hv, hv, u0, u0 + t, gaps.back, u0 + 0.3, -1);
+    run('u', u0, u1, -hv, -hv + t, gaps.west, -hv + 0.3, -1);
+    run('u', u0, u1, hv - t, hv, gaps.east, hv - 0.3, 1);
   };
 
   /** Tháp canh thấp trên tường thành: thân tròn, vành răng cưa, mái nón thấp */
@@ -135,7 +142,9 @@ export function makeKit(B, { far = false, Y, ground }) {
     wall.cyl(v, Y - 4, u, r, h + 4, COL.wallD, seg, r * 0.92);
     if (!far) { wall.cyl(v, Y + h - 1, u, r * 1.12, 1, COL.wall, seg); for (let k = 0; k < 13; k++) { const a = k / 13 * Math.PI * 2; put('merlon', MERLON, COL.wallD, v + Math.cos(a) * r * 1.02, Y + h + 0.65, u + Math.sin(a) * r * 1.02, -a + Math.PI / 2); } }
     roof.cone(v, Y + h + 1.3, u, r * 0.92, r * PHI, COL.roofG, seg);
-    if (!far) { winAt('u', u + r, 1, v, Y + h - 5, 0.8, 1.9); winAt('u', u - r, -1, v, Y + h - 5, 0.8, 1.9); }
+    if (!far) { winAt('u', u + r, 1, v, Y + h - 5, 0.8, 1.9); winAt('u', u - r, -1, v, Y + h - 5, 0.8, 1.9); winAt('v', v + r, 1, u, Y + h - 5, 0.8, 1.9); winAt('v', v - r, -1, u, Y + h - 5, 0.8, 1.9); }
+    if (det) { det.cyl(v, Y - 1, u, r * 1.04, 1.9, '#6f7466', seg); det.cyl(v, Y + h + 1.3 + r * PHI - 0.4, u, 0.05, 3.4, COL.wood, 5); }
+    tips.push([v, Y + h + 1.3 + r * PHI - 0.7, u]);
     solid(u - r, u + r, v - r, v + r, Y + h);
   };
 
@@ -153,6 +162,7 @@ export function makeKit(B, { far = false, Y, ground }) {
       const a = a0 + k * S, top = lerp(y0, y1, k / n) - 1.2 - ARCH.H + 0.6, g = gAt(a) - 2;
       if (top - g < 1) continue;
       const ap = ARCH.p, wp = w + 0.6;
+      if (det && g < 2) { if (axis === 'v') det.box(a - ap - 0.25, a + ap + 0.25, g, 2.6, f - wp - 0.25, f + wp + 0.25, '#5f7352'); else det.box(f - wp - 0.25, f + wp + 0.25, g, 2.6, a - ap - 0.25, a + ap + 0.25, '#5f7352'); }   // rêu chân trụ sát mặt hồ
       if (axis === 'v') { wall.box(a - ap, a + ap, g, top, f - wp, f + wp, COL.wallD); solid(f - wp, f + wp, a - ap, a + ap, top); }
       else { wall.box(f - wp, f + wp, g, top, a - ap, a + ap, COL.wallD); solid(a - ap, a + ap, f - wp, f + wp, top); }
     }
@@ -166,7 +176,12 @@ export function makeKit(B, { far = false, Y, ground }) {
       : wall.add(new THREE.BoxGeometry(wd, h, L), col, f + off, yc, am, 0, -ang, 0);
     slab(2 * w, 1.2, 0, ym - 0.6 / Math.cos(ang), COL.wall);                                // mặt cầu
     if (!far) for (const s of rails) slab(0.5, 1.1, s * (w - 0.25), ym + 0.55, COL.wallD);  // lan can 1,1 m
+    if (!far) slab(2 * w + 0.7, 0.4, 0, ym - 1.2 - 0.2 / Math.cos(ang), COL.wallD);           // gờ đá dưới mặt cầu (bóng đổ viền)
     arches(axis, a0, a1, f, y0, y1, w);
+    if (!far && rails.length === 2 && len > 21) for (let k = 0, a = a0 + 6.5; Math.abs(a - a0) < len - 3; a += (a1 > a0 ? 13 : -13), k++) {   // cột đèn lồng so le 2 bên, 13 m/cột
+      const s = k % 2 ? 1 : -1, y = lerp(y0, y1, (a - a0) / (a1 - a0)) + 1.1, [x, z] = axis === 'v' ? [a, f + s * (w - 0.25)] : [f + s * (w - 0.25), a];
+      wall.cyl(x, y, z, 0.08, 2.2, '#3a3344', 6); if (B.glow) B.glow.box(x - 0.2, x + 0.2, y + 2.2, y + 2.65, z - 0.2, z + 0.2, '#ffe3a0');
+    }
     const lo = Math.min(a0, a1), hi = Math.max(a0, a1), yAt = a => lerp(y0, y1, (a - a0) / (a1 - a0));
     decks.push({ axis, a0: lo, a1: hi, f, w, y: yAt });
     if (!far) for (let a = lo; a < hi - 0.01; a += 8) { const b = Math.min(hi, a + 8), top = Math.max(yAt(a), yAt(b)) + 1.1; for (const s of rails) { const c = f + s * (w - 0.25); if (axis === 'v') solid(c - 0.25, c + 0.25, a, b, top); else solid(a, b, c - 0.25, c + 0.25, top); } }
