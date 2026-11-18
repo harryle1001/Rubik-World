@@ -1,0 +1,2083 @@
+{
+ "id": "su",
+ "topics": [
+  "Tiền sử & văn minh cổ",
+  "Thời dựng nước",
+  "Các triều đại Việt Nam",
+  "Lịch sử thế giới",
+  "Phát minh đổi thế giới",
+  "Di sản & văn hoá"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Thời tiền sử là gì?",
+   "vi": "Thời tiền sử là khoảng thời gian rất dài trước khi con người có chữ viết. Vì chưa có sách vở, các nhà khảo cổ tìm hiểu thời này qua công cụ đá, xương, đồ gốm và tranh vẽ trong hang.",
+   "ex": "Tiền sử = trước khi có chữ viết.",
+   "en": [
+    "prehistory",
+    "archaeology"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Thời đại đồ đá",
+   "vi": "Người nguyên thủy ghè đẽo đá thành rìu, dao, mũi nhọn để chặt cây, săn bắt và hái lượm. Thời đại đồ đá kéo dài rất lâu, chiếm phần lớn lịch sử loài người.",
+   "ex": "Đá cứng là 'công cụ đa năng' đầu tiên của loài người.",
+   "en": [
+    "Stone Age",
+    "stone tool"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Lửa thay đổi cuộc sống",
+   "vi": "Khi biết giữ và dùng lửa, người nguyên thủy có thể sưởi ấm, nấu chín thức ăn và xua đuổi thú dữ. Thức ăn chín dễ tiêu hơn, giúp con người khoẻ mạnh hơn.",
+   "ex": "Bếp lửa là 'lò sưởi' và 'bếp ăn' đầu tiên.",
+   "en": [
+    "fire",
+    "cooking"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Tranh hang động",
+   "vi": "Người tiền sử vẽ bò, ngựa, hươu lên vách hang bằng đất màu và than. Hang Lascaux ở Pháp có những bức tranh khoảng 17.000 năm tuổi.",
+   "ex": "Màu vẽ làm từ đất đỏ, đất vàng và than củi.",
+   "en": [
+    "cave painting",
+    "Lascaux"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Từ hái lượm đến trồng trọt",
+   "vi": "Khoảng 10.000 năm trước, con người bắt đầu trồng cây và nuôi gia súc. Nhờ có lương thực ổn định, họ ở lại một chỗ, dựng làng và dần hình thành xã hội lớn hơn.",
+   "ex": "Biết trồng trọt, con người không phải đi lang thang tìm thức ăn nữa.",
+   "en": [
+    "agriculture",
+    "farming"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Ai Cập cổ đại",
+   "vi": "Nền văn minh Ai Cập phát triển bên sông Nin. Người Ai Cập xây kim tự tháp làm lăng mộ cho các pharaoh và viết bằng chữ tượng hình. Kim tự tháp lớn ở Giza đã có khoảng 4.500 năm tuổi.",
+   "ex": "Sông Nin mang phù sa giúp ruộng đồng màu mỡ.",
+   "en": [
+    "ancient Egypt",
+    "pyramid",
+    "hieroglyph"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Lưỡng Hà – nơi có chữ viết sớm",
+   "vi": "Lưỡng Hà là vùng đất giữa hai sông Tigris và Euphrates. Người Sumer ở đây đã viết chữ hình nêm lên phiến đất sét từ khoảng 5.000 năm trước, một trong những chữ viết sớm nhất thế giới.",
+   "ex": "Lưỡng Hà nghĩa là 'vùng giữa hai con sông'.",
+   "en": [
+    "Mesopotamia",
+    "cuneiform"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Ấn Độ cổ đại",
+   "vi": "Văn minh sông Ấn có các thành phố như Harappa và Mohenjo-daro với đường phố thẳng và hệ thống thoát nước. Người Ấn Độ cổ còn góp phần tạo ra cách viết số có chữ số 0 mà cả thế giới dùng ngày nay.",
+   "ex": "Chữ số ta dùng hằng ngày có nguồn gốc từ Ấn Độ.",
+   "en": [
+    "Indus Valley",
+    "zero"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Trung Quốc cổ đại",
+   "vi": "Văn minh Trung Quốc hình thành bên sông Hoàng Hà. Người Trung Quốc cổ có bốn phát minh nổi tiếng: giấy, la bàn, thuốc súng và kỹ thuật in. Họ cũng xây Vạn Lý Trường Thành qua nhiều triều đại.",
+   "ex": "Bốn phát minh lớn: giấy – la bàn – thuốc súng – in.",
+   "en": [
+    "ancient China",
+    "Great Wall"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Hy Lạp cổ đại",
+   "vi": "Người Hy Lạp cổ đại để lại nhiều thành tựu về triết học, toán học và kiến trúc. Thành Athens có cách cho công dân bỏ phiếu quyết định việc chung. Thế vận hội cổ đại được tổ chức ở Olympia.",
+   "ex": "Định lý Pythagoras mang tên một nhà toán học Hy Lạp.",
+   "en": [
+    "ancient Greece",
+    "Olympics",
+    "democracy"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "La Mã cổ đại",
+   "vi": "Người La Mã xây đường sá, cầu dẫn nước và đấu trường Colosseum. Họ để lại nhiều luật lệ và bảng chữ cái Latinh. Chữ cái tiếng Việt ngày nay cũng dựa trên chữ Latinh.",
+   "ex": "Câu nói 'Mọi con đường đều dẫn tới La Mã' cho thấy đường sá La Mã rất nhiều.",
+   "en": [
+    "ancient Rome",
+    "Colosseum",
+    "Latin"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Bảy kỳ quan thế giới cổ đại",
+   "vi": "Người xưa liệt kê bảy công trình kỳ vĩ của thế giới cổ đại. Ngày nay chỉ còn Kim tự tháp Giza ở Ai Cập. Các kỳ quan khác như Vườn treo Babylon hay Ngọn hải đăng Alexandria đều không còn.",
+   "ex": "Kim tự tháp là kỳ quan già nhất nhưng lại 'sống sót' duy nhất.",
+   "en": [
+    "Seven Wonders",
+    "Giza"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Con Rồng cháu Tiên",
+   "vi": "Truyền thuyết kể Lạc Long Quân lấy Âu Cơ, sinh ra một bọc trăm trứng nở thành trăm người con. Năm mươi người theo cha xuống biển, năm mươi người theo mẹ lên núi. Người Việt tự hào mình là con Rồng cháu Tiên.",
+   "ex": "'Đồng bào' nghĩa là cùng một bọc.",
+   "en": [
+    "legend",
+    "dragon",
+    "fairy"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Bánh chưng, bánh giầy",
+   "vi": "Truyền thuyết kể hoàng tử Lang Liêu làm bánh chưng vuông tượng trưng cho đất và bánh giầy tròn tượng trưng cho trời để dâng vua Hùng. Vua khen bánh giản dị mà ý nghĩa và truyền ngôi cho Lang Liêu.",
+   "ex": "Bánh chưng xanh là món không thể thiếu ngày Tết.",
+   "en": [
+    "rice cake",
+    "Tet"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Thánh Gióng",
+   "vi": "Truyền thuyết kể cậu bé làng Gióng lên ba tuổi vẫn chưa biết nói. Khi đất nước có giặc, Gióng bỗng vươn vai thành tráng sĩ, cưỡi ngựa sắt đánh tan giặc rồi bay về trời. Câu chuyện ca ngợi tinh thần yêu nước.",
+   "ex": "Hội Gióng vẫn được tổ chức hằng năm để tưởng nhớ.",
+   "en": [
+    "legend",
+    "hero"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Sơn Tinh, Thủy Tinh",
+   "vi": "Truyền thuyết kể thần núi Sơn Tinh và thần nước Thủy Tinh cùng cầu hôn công chúa Mị Nương. Sơn Tinh đến trước và cưới được nàng. Thủy Tinh tức giận dâng nước, nên năm nào cũng có mùa lũ.",
+   "ex": "Câu chuyện thể hiện ước mơ chống lũ lụt của người Việt cổ.",
+   "en": [
+    "flood",
+    "legend"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Đời sống người Văn Lang",
+   "vi": "Cư dân Văn Lang trồng lúa nước, đánh cá và chăn nuôi. Họ ở nhà sàn để tránh ẩm và thú dữ, có tục ăn trầu, nhuộm răng và làm bánh dày, bánh chưng. Lễ hội thường có đua thuyền, giã gạo.",
+   "ex": "Nhà sàn cao ráo, mát mẻ, hợp với vùng nhiều mưa.",
+   "en": [
+    "rice farming",
+    "stilt house"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Nước Văn Lang",
+   "vi": "Văn Lang là nhà nước đầu tiên của người Việt, ra đời khoảng thế kỷ VII trước Công nguyên. Đứng đầu là vua Hùng, giúp việc có Lạc hầu, Lạc tướng. Kinh đô đặt ở Phong Châu, thuộc tỉnh Phú Thọ ngày nay.",
+   "ex": "Văn Lang chia thành khoảng 15 bộ.",
+   "en": [
+    "Van Lang",
+    "Hung King"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Trống đồng Đông Sơn",
+   "vi": "Văn hoá Đông Sơn nổi tiếng với trống đồng. Mặt trống có hình ngôi sao ở giữa, xung quanh là người giã gạo, nhà sàn, thuyền và chim bay. Trống đồng Ngọc Lũ là một trong những chiếc đẹp nhất.",
+   "ex": "Nhìn hoa văn trống đồng là thấy cả đời sống người Việt cổ.",
+   "en": [
+    "bronze drum",
+    "Dong Son"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Nước Âu Lạc",
+   "vi": "Khoảng năm 208 trước Công nguyên, Thục Phán hợp nhất người Lạc Việt và Âu Việt, lập nước Âu Lạc và xưng là An Dương Vương. Kinh đô đặt ở Phong Khê, nay thuộc Đông Anh, Hà Nội.",
+   "ex": "Âu Lạc = Âu Việt + Lạc Việt.",
+   "en": [
+    "Au Lac",
+    "An Duong Vuong"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Thành Cổ Loa",
+   "vi": "An Dương Vương cho xây thành Cổ Loa với nhiều vòng thành đất uốn lượn như hình xoắn ốc. Bên ngoài có hào nước bao quanh. Đây là một tòa thành cổ rất lớn và độc đáo ở Đông Nam Á.",
+   "ex": "Cổ Loa có ba vòng thành chính.",
+   "en": [
+    "citadel",
+    "Co Loa"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Người xưa trên đất Việt",
+   "vi": "Các nhà khảo cổ tìm thấy công cụ đá của người tối cổ ở Núi Đọ (Thanh Hoá) và nhiều hang động khác. Về sau có văn hoá Hoà Bình, Bắc Sơn với rìu đá mài, đồ gốm và dấu vết trồng trọt sơ khai.",
+   "ex": "Tên các nền văn hoá thường đặt theo nơi tìm thấy di chỉ.",
+   "en": [
+    "archaeology",
+    "Hoa Binh culture"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Từ đồ đồng đến đồ sắt",
+   "vi": "Cư dân trên đất Việt sớm biết đúc đồ đồng qua các văn hoá Phùng Nguyên, Đồng Đậu, Gò Mun rồi Đông Sơn. Khi có công cụ đồng và sắt, việc khai hoang, làm ruộng dễ hơn, tạo nền móng cho nhà nước Văn Lang.",
+   "ex": "Lưỡi cày đồng giúp làm ruộng nhanh hơn cày gỗ.",
+   "en": [
+    "Bronze Age",
+    "Iron Age"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Nỏ thần và chuyện Mị Châu",
+   "vi": "Truyền thuyết kể thần Kim Quy giúp An Dương Vương làm nỏ thần bắn một phát ra nhiều mũi tên. Sau đó nước Âu Lạc mất vì mất cảnh giác. Thực tế, khảo cổ tìm thấy ở Cổ Loa hàng vạn mũi tên đồng.",
+   "ex": "Bài học từ truyền thuyết: luôn cảnh giác, giữ gìn bí mật.",
+   "en": [
+    "crossbow",
+    "legend"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Giỗ Tổ Hùng Vương",
+   "vi": "Ngày 10 tháng 3 âm lịch hằng năm là ngày Giỗ Tổ Hùng Vương, tưởng nhớ các vua Hùng có công dựng nước. Lễ hội chính diễn ra ở Đền Hùng, Phú Thọ. Tín ngưỡng thờ cúng Hùng Vương được UNESCO ghi danh năm 2012.",
+   "ex": "'Dù ai đi ngược về xuôi, nhớ ngày Giỗ Tổ mùng mười tháng ba.'",
+   "en": [
+    "Hung Kings",
+    "festival"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Hai Bà Trưng",
+   "vi": "Năm 40, hai chị em Trưng Trắc và Trưng Nhị phất cờ khởi nghĩa chống ách đô hộ của nhà Hán. Cuộc khởi nghĩa giành thắng lợi, Trưng Trắc lên làm vua. Đây là tấm gương phụ nữ Việt Nam anh hùng.",
+   "ex": "Nhiều thành phố có phố Hai Bà Trưng để ghi nhớ công lao.",
+   "en": [
+    "Trung Sisters",
+    "uprising"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Ngô Quyền và sông Bạch Đằng",
+   "vi": "Năm 938, Ngô Quyền cho cắm cọc gỗ nhọn dưới lòng sông Bạch Đằng. Khi nước triều rút, thuyền giặc Nam Hán mắc cọc và bị đánh bại. Chiến thắng này chấm dứt hơn một nghìn năm Bắc thuộc.",
+   "ex": "Biết lợi dụng thủy triều là một mưu kế rất thông minh.",
+   "en": [
+    "Bach Dang",
+    "Ngo Quyen"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Lý Công Uẩn dời đô",
+   "vi": "Năm 1010, vua Lý Công Uẩn dời đô từ Hoa Lư ra thành Đại La và đặt tên là Thăng Long, nghĩa là rồng bay lên. Thăng Long chính là Hà Nội ngày nay. Năm 2010, Hà Nội kỷ niệm 1000 năm Thăng Long.",
+   "ex": "Thăng Long = rồng bay lên.",
+   "en": [
+    "Thang Long",
+    "capital"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Hội nghị Diên Hồng",
+   "vi": "Năm 1284, trước khi quân Nguyên kéo sang, vua Trần mời các bô lão khắp nơi về hỏi nên đánh hay nên hoà. Các cụ đồng thanh hô 'Đánh!'. Cả nước đoàn kết một lòng bảo vệ đất nước.",
+   "ex": "Đoàn kết là sức mạnh lớn nhất.",
+   "en": [
+    "Dien Hong",
+    "unity"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Lê Lợi và Hồ Gươm",
+   "vi": "Lê Lợi lãnh đạo khởi nghĩa Lam Sơn từ năm 1418 đến 1427, giành lại độc lập rồi lên ngôi năm 1428. Truyền thuyết kể vua trả lại gươm thần cho Rùa Vàng ở hồ Tả Vọng, từ đó hồ có tên là Hồ Hoàn Kiếm.",
+   "ex": "Hoàn Kiếm nghĩa là trả lại gươm.",
+   "en": [
+    "Le Loi",
+    "Hoan Kiem Lake"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Đinh Bộ Lĩnh thống nhất đất nước",
+   "vi": "Tương truyền thuở nhỏ Đinh Bộ Lĩnh hay chơi trò cờ lau tập trận. Lớn lên, ông dẹp loạn 12 sứ quân, thống nhất đất nước. Năm 968, ông lên ngôi, đặt tên nước là Đại Cồ Việt, đóng đô ở Hoa Lư.",
+   "ex": "Hoa Lư nay thuộc tỉnh Ninh Bình.",
+   "en": [
+    "Dinh Bo Linh",
+    "Hoa Lu"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Nhà Lý và Văn Miếu",
+   "vi": "Nhà Lý xây Văn Miếu ở Thăng Long năm 1070 để thờ Khổng Tử. Năm 1076, Quốc Tử Giám được lập, được xem là trường đại học đầu tiên của nước ta. Năm 1054, nhà Lý đổi tên nước thành Đại Việt.",
+   "ex": "Văn Miếu – Quốc Tử Giám là nơi tôn vinh việc học.",
+   "en": [
+    "Temple of Literature",
+    "Ly dynasty"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Ba lần thắng Mông – Nguyên",
+   "vi": "Thời nhà Trần, quân dân Đại Việt ba lần đánh thắng quân Mông – Nguyên vào các năm 1258, 1285 và 1288. Trần Hưng Đạo là vị tướng tài giỏi, viết bài Hịch tướng sĩ để khích lệ quân lính.",
+   "ex": "Năm 1288, trận Bạch Đằng lại dùng cọc gỗ như thời Ngô Quyền.",
+   "en": [
+    "Tran dynasty",
+    "Tran Hung Dao"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Quang Trung đại phá quân Thanh",
+   "vi": "Năm 1788, Nguyễn Huệ lên ngôi lấy hiệu Quang Trung rồi thần tốc tiến quân ra Bắc. Dịp Tết Kỷ Dậu năm 1789, nghĩa quân đánh thắng quân Thanh ở Ngọc Hồi – Đống Đa và tiến vào Thăng Long.",
+   "ex": "Hội Gò Đống Đa ở Hà Nội diễn ra vào mùng 5 Tết.",
+   "en": [
+    "Quang Trung",
+    "Tay Son"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Nhà Nguyễn và kinh đô Huế",
+   "vi": "Năm 1802, Nguyễn Ánh lên ngôi lấy hiệu Gia Long, đóng đô ở Phú Xuân, tức Huế. Năm 1804, tên nước Việt Nam được dùng chính thức. Nhà Nguyễn là triều đại phong kiến cuối cùng, kết thúc năm 1945.",
+   "ex": "Kinh thành Huế nằm bên bờ sông Hương.",
+   "en": [
+    "Nguyen dynasty",
+    "Hue"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Bà Triệu và Lý Bí",
+   "vi": "Năm 248, Bà Triệu (Triệu Thị Trinh) khởi nghĩa ở vùng Thanh Hoá. Năm 544, Lý Bí khởi nghĩa thắng lợi, lên ngôi Lý Nam Đế và đặt tên nước là Vạn Xuân, mong đất nước bền vững muôn đời.",
+   "ex": "Vạn Xuân = muôn mùa xuân.",
+   "en": [
+    "Lady Trieu",
+    "Van Xuan"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Lý Thường Kiệt",
+   "vi": "Năm 1077, Lý Thường Kiệt chỉ huy quân dân nhà Lý chặn đánh quân Tống ở phòng tuyến sông Như Nguyệt. Tương truyền bài thơ 'Nam quốc sơn hà' vang lên trong đêm, khẳng định nước Nam là của người Nam.",
+   "ex": "'Nam quốc sơn hà' được nhiều người xem là một bản tuyên ngôn độc lập.",
+   "en": [
+    "Ly Thuong Kiet",
+    "independence"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Nguyễn Trãi và Bình Ngô đại cáo",
+   "vi": "Nguyễn Trãi là nhà văn, nhà chính trị tài giỏi, giúp Lê Lợi trong khởi nghĩa Lam Sơn. Năm 1428, ông viết 'Bình Ngô đại cáo' tuyên bố thắng lợi và khẳng định Đại Việt là một nước có nền văn hiến lâu đời.",
+   "ex": "Bình Ngô đại cáo được ví như bản tuyên ngôn độc lập thứ hai.",
+   "en": [
+    "Nguyen Trai",
+    "proclamation"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Lê Thánh Tông và luật Hồng Đức",
+   "vi": "Vua Lê Thánh Tông trị vì từ năm 1460 đến 1497, là thời kỳ thịnh trị của nhà Hậu Lê. Thời ông có bộ luật Hồng Đức, trong đó có những điều bảo vệ quyền lợi của phụ nữ, và việc học, thi cử rất được coi trọng.",
+   "ex": "Hồng Đức là niên hiệu của vua Lê Thánh Tông.",
+   "en": [
+    "Le Thanh Tong",
+    "law"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Lâu đài thời Trung cổ",
+   "vi": "Thời Trung cổ ở châu Âu kéo dài khoảng một nghìn năm. Các lãnh chúa xây lâu đài bằng đá có tường dày, tháp canh và hào nước. Hiệp sĩ mặc áo giáp và cưỡi ngựa.",
+   "ex": "Hào nước quanh lâu đài giúp bảo vệ khỏi kẻ địch.",
+   "en": [
+    "Middle Ages",
+    "castle",
+    "knight"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Columbus đến châu Mỹ",
+   "vi": "Năm 1492, Christopher Columbus dẫn ba con tàu từ Tây Ban Nha vượt Đại Tây Dương. Ông muốn tìm đường đến châu Á nhưng lại đến các đảo ở vùng biển Caribe thuộc châu Mỹ. Chuyến đi mở ra giao lưu giữa hai bờ đại dương.",
+   "ex": "Columbus tưởng mình đến Ấn Độ nên gọi người bản địa là 'người Indian'.",
+   "en": [
+    "Columbus",
+    "Americas"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Con người lên Mặt Trăng",
+   "vi": "Ngày 20 tháng 7 năm 1969, tàu Apollo 11 của Mỹ đưa con người xuống Mặt Trăng. Phi hành gia Neil Armstrong là người đầu tiên đặt chân lên đó. Dấu chân trên Mặt Trăng vẫn còn vì nơi đó không có gió.",
+   "ex": "'Một bước nhỏ của một người, một bước nhảy vọt của nhân loại.'",
+   "en": [
+    "Moon landing",
+    "Apollo 11"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Thế vận hội hiện đại",
+   "vi": "Thế vận hội hiện đại đầu tiên được tổ chức năm 1896 ở Athens, Hy Lạp, để nối lại truyền thống Olympic cổ đại. Biểu tượng năm vòng tròn đan nhau tượng trưng cho năm châu lục đoàn kết.",
+   "ex": "Thế vận hội mùa hè tổ chức bốn năm một lần.",
+   "en": [
+    "Olympic Games",
+    "Athens"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Con đường tơ lụa",
+   "vi": "Con đường tơ lụa là mạng lưới đường buôn bán nối Trung Quốc với Trung Á, Tây Á và châu Âu. Thương nhân chở lụa, gốm, gia vị bằng lạc đà. Cùng với hàng hoá, các ý tưởng và phát minh cũng được lan truyền.",
+   "ex": "Lụa Trung Quốc từng rất quý ở châu Âu.",
+   "en": [
+    "Silk Road",
+    "trade"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Thời Phục hưng",
+   "vi": "Thời Phục hưng bắt đầu ở Ý vào khoảng thế kỷ XIV rồi lan khắp châu Âu. Con người quan tâm hơn đến nghệ thuật, khoa học và học hỏi từ Hy Lạp, La Mã cổ. Leonardo da Vinci vẽ bức Mona Lisa nổi tiếng.",
+   "ex": "Phục hưng nghĩa là 'hồi sinh' văn hoá cổ.",
+   "en": [
+    "Renaissance",
+    "Leonardo da Vinci"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Cách mạng công nghiệp",
+   "vi": "Cách mạng công nghiệp bắt đầu ở Anh vào thế kỷ XVIII. James Watt cải tiến máy hơi nước, giúp nhà máy, tàu hoả và tàu thủy chạy bằng máy. Hàng hoá được làm ra nhanh và nhiều hơn trước rất nhiều.",
+   "ex": "Từ làm bằng tay chuyển sang làm bằng máy.",
+   "en": [
+    "Industrial Revolution",
+    "steam engine"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Văn minh Inca và Maya",
+   "vi": "Ở châu Mỹ có những nền văn minh lớn. Người Maya có chữ viết và lịch rất chính xác. Người Inca xây thành phố Machu Picchu trên núi cao ở Peru bằng những khối đá ghép khít vào nhau.",
+   "ex": "Machu Picchu nằm trên dãy núi Andes.",
+   "en": [
+    "Inca",
+    "Maya",
+    "Machu Picchu"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Liên Hợp Quốc",
+   "vi": "Sau Chiến tranh thế giới thứ hai, Liên Hợp Quốc được thành lập năm 1945 để gìn giữ hoà bình và giúp các nước hợp tác. Việt Nam là thành viên của Liên Hợp Quốc từ năm 1977.",
+   "ex": "UNESCO, UNICEF là các tổ chức thuộc Liên Hợp Quốc.",
+   "en": [
+    "United Nations",
+    "peace"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Người Viking đi biển",
+   "vi": "Người Viking sống ở Bắc Âu, giỏi đóng thuyền dài và đi biển xa. Khoảng năm 1000, nhà thám hiểm Viking Leif Erikson đã đến Bắc Mỹ, sớm hơn Columbus gần 500 năm.",
+   "ex": "Thuyền Viking dài, hẹp, có thể vừa chèo vừa căng buồm.",
+   "en": [
+    "Viking",
+    "longship"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Marco Polo",
+   "vi": "Marco Polo là thương nhân người Venice, Ý. Vào thế kỷ XIII, ông theo con đường tơ lụa sang Trung Quốc và sống ở đó nhiều năm. Cuốn sách kể về chuyến đi của ông khiến người châu Âu tò mò về phương Đông.",
+   "ex": "Sách của ông giúp người châu Âu biết đến những điều lạ ở phương Đông.",
+   "en": [
+    "Marco Polo",
+    "travel"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Vòng quanh Trái Đất",
+   "vi": "Năm 1519, đoàn thuyền của Magellan rời Tây Ban Nha để đi vòng quanh thế giới. Magellan mất giữa đường, nhưng một con tàu của đoàn đã trở về năm 1522. Chuyến đi chứng minh có thể đi thuyền vòng quanh Trái Đất.",
+   "ex": "Chuyến đi kéo dài khoảng ba năm.",
+   "en": [
+    "Magellan",
+    "circumnavigation"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Nhìn lịch sử qua thời gian",
+   "vi": "Các nhà sử học chia lịch sử thành các thời kỳ: tiền sử, cổ đại, trung đại, cận đại và hiện đại. Năm trước Công nguyên được viết là TCN và đếm ngược. Ví dụ, năm 208 TCN xảy ra trước năm 100 TCN.",
+   "ex": "Một thế kỷ = 100 năm; năm 2026 thuộc thế kỷ XXI.",
+   "en": [
+    "timeline",
+    "century"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Bánh xe",
+   "vi": "Bánh xe ra đời ở vùng Lưỡng Hà khoảng hơn 5.000 năm trước. Ban đầu người ta dùng bánh xe cho xe kéo và bàn xoay làm gốm. Nhờ bánh xe, việc chở đồ nặng đi xa nhẹ nhàng hơn nhiều.",
+   "ex": "Xe đạp, ô tô, tàu hoả đều cần bánh xe.",
+   "en": [
+    "wheel",
+    "transport"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Bóng đèn điện",
+   "vi": "Năm 1879, Thomas Edison và các cộng sự làm ra bóng đèn sợi đốt sáng được lâu, dùng tiện lợi trong nhà. Trước đó, người ta thắp nến và đèn dầu. Nhiều nhà phát minh khác cũng góp công làm ra bóng đèn.",
+   "ex": "Edison từng thử rất nhiều vật liệu làm sợi đèn.",
+   "en": [
+    "light bulb",
+    "Edison"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Điện thoại",
+   "vi": "Năm 1876, Alexander Graham Bell được cấp bằng sáng chế điện thoại. Điện thoại biến giọng nói thành tín hiệu điện truyền theo dây đi xa. Ngày nay điện thoại di động còn chụp ảnh và lên mạng được.",
+   "ex": "Từ dây điện đến sóng vô tuyến, điện thoại ngày càng nhỏ gọn.",
+   "en": [
+    "telephone",
+    "Bell"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Chiếc máy bay đầu tiên",
+   "vi": "Ngày 17 tháng 12 năm 1903, anh em Wilbur và Orville Wright bay thành công chiếc máy bay có động cơ ở Mỹ. Chuyến bay đầu tiên chỉ kéo dài khoảng 12 giây, nhưng mở ra thời đại hàng không.",
+   "ex": "Hai anh em vốn làm nghề sửa xe đạp.",
+   "en": [
+    "airplane",
+    "Wright brothers"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Giấy",
+   "vi": "Người Trung Quốc làm ra giấy từ rất sớm. Khoảng năm 105, Thái Luân cải tiến cách làm giấy từ vỏ cây, vải vụn và lưới cũ. Giấy rẻ và nhẹ hơn thẻ tre, lụa nên giúp sách vở lan truyền rộng.",
+   "ex": "Trước khi có giấy, người ta viết lên thẻ tre, lụa hoặc đất sét.",
+   "en": [
+    "paper",
+    "Cai Lun"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "La bàn",
+   "vi": "La bàn có kim nam châm luôn chỉ theo hướng Bắc – Nam. Người Trung Quốc dùng la bàn từ thời xưa, sau đó la bàn giúp các thủy thủ đi biển xa mà không bị lạc khi trời nhiều mây.",
+   "ex": "Kim la bàn quay vì Trái Đất giống như một thanh nam châm khổng lồ.",
+   "en": [
+    "compass",
+    "navigation"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Máy in Gutenberg",
+   "vi": "Khoảng năm 1440, Johannes Gutenberg ở Đức làm ra máy in dùng chữ rời bằng kim loại. Sách được in nhanh và rẻ hơn chép tay rất nhiều, nhờ đó nhiều người có cơ hội đọc sách và học hỏi.",
+   "ex": "Trước đó, mỗi cuốn sách phải chép tay mất hàng tháng.",
+   "en": [
+    "printing press",
+    "Gutenberg"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Kính viễn vọng của Galileo",
+   "vi": "Năm 1609, Galileo Galilei tự làm kính viễn vọng và hướng lên bầu trời. Ông thấy núi trên Mặt Trăng và năm 1610 phát hiện bốn mặt trăng quay quanh Sao Mộc. Từ đó thiên văn học tiến bộ rất nhanh.",
+   "ex": "Bốn mặt trăng ấy ngày nay gọi là 'các mặt trăng Galileo'.",
+   "en": [
+    "telescope",
+    "Galileo"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Máy tính và Internet",
+   "vi": "Những chiếc máy tính điện tử đầu tiên vào khoảng những năm 1940 to bằng cả căn phòng. Dần dần máy tính nhỏ lại và nối với nhau thành Internet. Trang web ra đời khoảng năm 1990, giúp mọi người chia sẻ thông tin khắp thế giới.",
+   "ex": "Điện thoại của em mạnh hơn nhiều chiếc máy tính khổng lồ ngày xưa.",
+   "en": [
+    "computer",
+    "Internet"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Chữ rời đầu tiên",
+   "vi": "Vào thế kỷ XI, ở Trung Quốc, Tất Thăng đã làm chữ rời bằng đất nung để in. Mỗi chữ là một khối nhỏ, có thể sắp xếp lại để in trang khác. Đây là bước tiến quan trọng trước máy in Gutenberg.",
+   "ex": "Chữ rời giống như xếp các khối chữ thành câu.",
+   "en": [
+    "movable type",
+    "printing"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Vắc xin đầu tiên",
+   "vi": "Năm 1796, bác sĩ người Anh Edward Jenner thử nghiệm cách phòng bệnh đậu mùa bằng vắc xin. Nhờ tiêm chủng trên toàn thế giới, bệnh đậu mùa được tuyên bố xoá sổ năm 1980.",
+   "ex": "Chữ 'vaccine' bắt nguồn từ tiếng Latinh nghĩa là 'con bò'.",
+   "en": [
+    "vaccine",
+    "smallpox"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Penicillin",
+   "vi": "Năm 1928, Alexander Fleming phát hiện một loại nấm mốc tiết ra chất diệt vi khuẩn, gọi là penicillin. Sau đó các nhà khoa học khác tìm cách sản xuất nhiều. Penicillin là thuốc kháng sinh cứu sống rất nhiều người.",
+   "ex": "Kháng sinh chỉ diệt vi khuẩn, không chữa được bệnh do virus.",
+   "en": [
+    "penicillin",
+    "antibiotic"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Kính hiển vi",
+   "vi": "Vào thế kỷ XVII, Antonie van Leeuwenhoek người Hà Lan tự làm kính hiển vi và nhìn thấy những sinh vật rất nhỏ trong giọt nước. Từ đó con người biết có một thế giới vi sinh vật mà mắt thường không thấy.",
+   "ex": "Kính hiển vi giúp phát hiện vi khuẩn gây bệnh.",
+   "en": [
+    "microscope",
+    "microbe"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Vịnh Hạ Long",
+   "vi": "Vịnh Hạ Long ở tỉnh Quảng Ninh có hàng nghìn đảo đá vôi lớn nhỏ nhô lên giữa biển xanh. Năm 1994, UNESCO công nhận Hạ Long là Di sản thiên nhiên thế giới.",
+   "ex": "Hạ Long nghĩa là 'rồng đáp xuống'.",
+   "en": [
+    "Ha Long Bay",
+    "heritage"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Múa rối nước",
+   "vi": "Múa rối nước là nghệ thuật dân gian độc đáo của vùng đồng bằng Bắc Bộ. Sân khấu là mặt nước, nghệ nhân đứng sau tấm mành điều khiển con rối bằng sào và dây. Chú Tễu là nhân vật vui nhộn quen thuộc.",
+   "ex": "Nước vừa là sân khấu, vừa giấu kỹ thuật điều khiển.",
+   "en": [
+    "water puppetry",
+    "folk art"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Tết Nguyên đán",
+   "vi": "Tết Nguyên đán là ngày Tết lớn nhất của người Việt, bắt đầu từ mùng 1 tháng Giêng âm lịch. Mọi người dọn nhà, gói bánh chưng, đi chúc Tết và lì xì cho trẻ em để cầu chúc năm mới may mắn.",
+   "ex": "Tết là dịp cả gia đình sum họp.",
+   "en": [
+    "Lunar New Year",
+    "Tet"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Tết Trung thu",
+   "vi": "Tết Trung thu vào rằm tháng Tám âm lịch, khi trăng tròn và sáng. Trẻ em rước đèn ông sao, phá cỗ, ăn bánh nướng, bánh dẻo và nghe chuyện chú Cuội, chị Hằng.",
+   "ex": "Đèn ông sao năm cánh là biểu tượng của Trung thu.",
+   "en": [
+    "Mid-Autumn Festival",
+    "lantern"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Cố đô Huế",
+   "vi": "Huế là kinh đô của nhà Nguyễn. Quần thể di tích Cố đô Huế có kinh thành, cung điện, lăng tẩm vua bên sông Hương. Năm 1993, đây là di sản đầu tiên của Việt Nam được UNESCO công nhận.",
+   "ex": "Huế còn nổi tiếng với nhã nhạc và áo dài tím.",
+   "en": [
+    "Hue",
+    "Imperial City"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Hội An và Mỹ Sơn",
+   "vi": "Phố cổ Hội An ở miền Trung từng là thương cảng sầm uất, còn giữ nhiều nhà cổ và Chùa Cầu. Gần đó là Thánh địa Mỹ Sơn với các đền tháp gạch của người Chăm Pa. Cả hai được UNESCO công nhận năm 1999.",
+   "ex": "Tháp Chăm xây bằng gạch nung mà gần như không thấy mạch vữa.",
+   "en": [
+    "Hoi An",
+    "My Son",
+    "Champa"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Văn Miếu – Quốc Tử Giám",
+   "vi": "Văn Miếu – Quốc Tử Giám ở Hà Nội còn giữ 82 tấm bia tiến sĩ, ghi tên những người đỗ đạt thời xưa. Mỗi tấm bia đặt trên lưng một con rùa đá. Các bia này được UNESCO ghi danh là Di sản tư liệu thế giới.",
+   "ex": "Rùa đá tượng trưng cho sự trường tồn.",
+   "en": [
+    "Temple of Literature",
+    "stele"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Cồng chiêng Tây Nguyên",
+   "vi": "Cồng chiêng là nhạc cụ bằng đồng của các dân tộc ở Tây Nguyên, vang lên trong lễ hội và sinh hoạt cộng đồng. Năm 2005, Không gian văn hoá Cồng chiêng Tây Nguyên được UNESCO ghi danh.",
+   "ex": "Mỗi chiếc cồng, chiếc chiêng phát ra một âm khác nhau.",
+   "en": [
+    "gong",
+    "Central Highlands"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Dân ca Quan họ",
+   "vi": "Quan họ là lối hát đối đáp giữa liền anh và liền chị của vùng Kinh Bắc, nay thuộc Bắc Ninh. Người hát mặc áo tứ thân, đội nón quai thao. Năm 2009, Dân ca Quan họ được UNESCO ghi danh.",
+   "ex": "'Người ơi người ở đừng về' là bài quan họ nổi tiếng.",
+   "en": [
+    "folk song",
+    "Quan ho"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Phong Nha – Kẻ Bàng",
+   "vi": "Vườn quốc gia Phong Nha – Kẻ Bàng ở miền Trung có rất nhiều hang động đá vôi kỳ vĩ. Nơi đây được UNESCO công nhận là Di sản thiên nhiên thế giới từ năm 2003. Hang Sơn Đoòng ở đây là một trong những hang lớn nhất thế giới.",
+   "ex": "Hang động hình thành do nước bào mòn đá vôi suốt hàng triệu năm.",
+   "en": [
+    "cave",
+    "national park"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Hoàng thành Thăng Long",
+   "vi": "Hoàng thành Thăng Long ở Hà Nội là nơi các triều vua làm việc qua nhiều thế kỷ. Khảo cổ tìm thấy dưới lòng đất nhiều lớp nền móng cung điện và đồ gốm từ nhiều triều đại. UNESCO công nhận di sản này năm 2010.",
+   "ex": "Mỗi lớp đất như một trang sách lịch sử.",
+   "en": [
+    "Imperial Citadel",
+    "Thang Long"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Thành nhà Hồ",
+   "vi": "Thành nhà Hồ ở Thanh Hoá được xây năm 1397 bằng những khối đá lớn ghép khít vào nhau. Dù đã hơn 600 năm, nhiều đoạn tường vẫn còn vững chắc. Năm 2011, UNESCO công nhận đây là Di sản văn hoá thế giới.",
+   "ex": "Có những khối đá nặng hàng chục tấn.",
+   "en": [
+    "Ho Citadel",
+    "stone"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Tràng An",
+   "vi": "Quần thể danh thắng Tràng An ở Ninh Bình có núi đá vôi, hang động và sông nước tuyệt đẹp. Nơi đây còn có dấu tích người tiền sử và cố đô Hoa Lư. Năm 2014, Tràng An trở thành di sản hỗn hợp đầu tiên của Việt Nam.",
+   "ex": "Di sản hỗn hợp = vừa có giá trị thiên nhiên vừa có giá trị văn hoá.",
+   "en": [
+    "Trang An",
+    "mixed heritage"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Nhã nhạc và Ca trù",
+   "vi": "Nhã nhạc cung đình Huế là âm nhạc trong cung đình nhà Nguyễn, được UNESCO ghi danh năm 2003. Ca trù là lối hát có đàn đáy, phách và trống chầu, được ghi danh năm 2009. Đây là những di sản văn hoá phi vật thể quý giá.",
+   "ex": "Di sản phi vật thể là những gì ta truyền cho nhau như lời ca, điệu múa.",
+   "en": [
+    "court music",
+    "intangible heritage"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Di sản vật thể và phi vật thể",
+   "vi": "Di sản vật thể là những thứ sờ được như đền chùa, thành quách, đồ cổ. Di sản phi vật thể là tiếng hát, lễ hội, nghề thủ công được truyền qua nhiều thế hệ. Cả hai đều cần được giữ gìn.",
+   "ex": "Lăng Tự Đức là vật thể, còn Đờn ca tài tử là phi vật thể.",
+   "en": [
+    "tangible heritage",
+    "intangible heritage"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Thời tiền sử là thời kỳ nào?",
+   "a": [
+    "Sau khi có máy tính",
+    "Khi đã có ô tô",
+    "Khi đã có điện thoại",
+    "Trước khi con người có chữ viết"
+   ],
+   "c": 3,
+   "why": "Tiền sử là thời kỳ trước khi con người biết viết chữ.",
+   "en": "prehistory"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Người nguyên thủy dùng lửa để làm gì?",
+   "a": [
+    "Sạc điện thoại",
+    "Chạy máy bay",
+    "Thắp bóng đèn điện",
+    "Sưởi ấm và nấu chín thức ăn"
+   ],
+   "c": 3,
+   "why": "Lửa giúp người xưa sưởi ấm, nấu ăn và xua thú dữ.",
+   "en": "fire"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Công cụ chủ yếu thời đồ đá được làm bằng gì?",
+   "a": [
+    "Đá",
+    "Nhựa",
+    "Thép không gỉ",
+    "Thủy tinh"
+   ],
+   "c": 0,
+   "why": "Đúng như tên gọi, thời đồ đá dùng công cụ ghè đẽo từ đá.",
+   "en": "Stone Age"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Kim tự tháp Giza nổi tiếng nằm ở nước nào?",
+   "a": [
+    "Pháp",
+    "Ai Cập",
+    "Nhật Bản",
+    "Brazil"
+   ],
+   "c": 1,
+   "why": "Kim tự tháp Giza ở Ai Cập, là lăng mộ của các pharaoh.",
+   "en": "pyramid"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Văn minh Ai Cập cổ đại phát triển bên dòng sông nào?",
+   "a": [
+    "Sông Hồng",
+    "Sông Amazon",
+    "Sông Nin",
+    "Sông Thames"
+   ],
+   "c": 2,
+   "why": "Sông Nin mang nước và phù sa nuôi sống người Ai Cập cổ.",
+   "en": "Nile"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Người Sumer ở Lưỡng Hà viết chữ lên vật liệu gì?",
+   "a": [
+    "Giấy in",
+    "Màn hình",
+    "Tấm nhựa",
+    "Phiến đất sét"
+   ],
+   "c": 3,
+   "why": "Họ dùng que nhọn ấn chữ hình nêm lên đất sét ướt.",
+   "en": "cuneiform"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Chữ viết của người Ai Cập cổ gọi là gì?",
+   "a": [
+    "Chữ tượng hình",
+    "Chữ Latinh",
+    "Chữ nổi Braille",
+    "Chữ Quốc ngữ"
+   ],
+   "c": 0,
+   "why": "Người Ai Cập cổ dùng chữ tượng hình, vẽ hình để ghi ý và âm.",
+   "en": "hieroglyph"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Con người bắt đầu trồng trọt khoảng bao lâu trước?",
+   "a": [
+    "Khoảng 10.000 năm trước",
+    "Khoảng 100 năm trước",
+    "Khoảng 10 năm trước",
+    "Khoảng 1 năm trước"
+   ],
+   "c": 0,
+   "why": "Nông nghiệp ra đời khoảng 10.000 năm trước.",
+   "en": "agriculture"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Thế vận hội cổ đại được tổ chức ở đâu?",
+   "a": [
+    "Roma, Ý",
+    "Olympia, Hy Lạp",
+    "Bắc Kinh, Trung Quốc",
+    "Cairo, Ai Cập"
+   ],
+   "c": 1,
+   "why": "Thế vận hội cổ đại diễn ra ở Olympia, Hy Lạp, nên mới có tên Olympic.",
+   "en": "Olympia"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Bốn phát minh lớn của Trung Quốc cổ gồm giấy, la bàn, thuốc súng và gì?",
+   "a": [
+    "Kỹ thuật in",
+    "Máy hơi nước",
+    "Bóng đèn",
+    "Điện thoại"
+   ],
+   "c": 0,
+   "why": "Kỹ thuật in là phát minh lớn thứ tư của Trung Quốc cổ.",
+   "en": "printing"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Công trình nào là đấu trường nổi tiếng của La Mã cổ đại?",
+   "a": [
+    "Kim tự tháp Giza",
+    "Tháp Eiffel",
+    "Vạn Lý Trường Thành",
+    "Colosseum"
+   ],
+   "c": 3,
+   "why": "Colosseum ở Roma là đấu trường lớn của người La Mã.",
+   "en": "Colosseum"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Kỳ quan nào trong bảy kỳ quan thế giới cổ đại vẫn còn đến nay?",
+   "a": [
+    "Vườn treo Babylon",
+    "Kim tự tháp Giza",
+    "Ngọn hải đăng Alexandria",
+    "Tượng thần Mặt Trời ở Rhodes"
+   ],
+   "c": 1,
+   "why": "Chỉ còn Kim tự tháp Giza; sáu kỳ quan kia đã không còn.",
+   "en": "Seven Wonders"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Theo truyền thuyết, Âu Cơ sinh ra một bọc bao nhiêu trứng?",
+   "a": [
+    "Hai trứng",
+    "Mười trứng",
+    "Một trăm trứng",
+    "Một nghìn trứng"
+   ],
+   "c": 2,
+   "why": "Bọc trăm trứng nở ra trăm người con, nên người Việt gọi nhau là đồng bào.",
+   "en": "legend"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Nhà nước đầu tiên của người Việt tên là gì?",
+   "a": [
+    "Đại Nam",
+    "Đại Cồ Việt",
+    "Vạn Xuân",
+    "Văn Lang"
+   ],
+   "c": 3,
+   "why": "Văn Lang do các vua Hùng đứng đầu là nhà nước đầu tiên.",
+   "en": "Van Lang"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Người đứng đầu nước Văn Lang gọi là gì?",
+   "a": [
+    "Pharaoh",
+    "Vua Hùng",
+    "Hoàng đế La Mã",
+    "Tổng thống"
+   ],
+   "c": 1,
+   "why": "Người đứng đầu Văn Lang là vua Hùng.",
+   "en": "Hung King"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Lang Liêu dâng vua Hùng hai thứ bánh nào?",
+   "a": [
+    "Bánh mì và bánh ngọt",
+    "Bánh pizza và bánh kem",
+    "Bánh chưng và bánh giầy",
+    "Bánh quy và bánh xốp"
+   ],
+   "c": 2,
+   "why": "Bánh chưng tượng trưng cho đất, bánh giầy tượng trưng cho trời.",
+   "en": "rice cake"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Trong truyền thuyết, Sơn Tinh là vị thần gì?",
+   "a": [
+    "Thần biển",
+    "Thần núi",
+    "Thần lửa",
+    "Thần gió"
+   ],
+   "c": 1,
+   "why": "Sơn Tinh là thần núi Tản Viên, còn Thủy Tinh là thần nước.",
+   "en": "mountain god"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Cư dân Văn Lang chủ yếu sống bằng nghề gì?",
+   "a": [
+    "Khai thác dầu mỏ",
+    "Chăn tuần lộc",
+    "Trồng lúa nước",
+    "Làm phần mềm"
+   ],
+   "c": 2,
+   "why": "Người Văn Lang sống chủ yếu bằng nghề trồng lúa nước.",
+   "en": "rice farming"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Kinh đô của nước Văn Lang đặt ở đâu?",
+   "a": [
+    "Thăng Long",
+    "Phong Châu",
+    "Phú Xuân",
+    "Gia Định"
+   ],
+   "c": 1,
+   "why": "Kinh đô Văn Lang ở Phong Châu, thuộc Phú Thọ ngày nay.",
+   "en": "capital"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Ai là người lập ra nước Âu Lạc?",
+   "a": [
+    "Lý Công Uẩn",
+    "Thục Phán – An Dương Vương",
+    "Ngô Quyền",
+    "Quang Trung"
+   ],
+   "c": 1,
+   "why": "Thục Phán lập nước Âu Lạc và xưng là An Dương Vương.",
+   "en": "Au Lac"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Thành Cổ Loa có hình dáng đặc biệt nào?",
+   "a": [
+    "Nhiều vòng uốn như xoắn ốc",
+    "Hình tam giác đều",
+    "Hình ngôi sao năm cánh",
+    "Một vòng tròn nhỏ"
+   ],
+   "c": 0,
+   "why": "Thành Cổ Loa có nhiều vòng thành uốn lượn như hình xoắn ốc.",
+   "en": "Co Loa"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Trống đồng nổi tiếng của người Việt cổ thuộc nền văn hoá nào?",
+   "a": [
+    "Văn hoá Đông Sơn",
+    "Văn hoá Hy Lạp",
+    "Văn hoá Maya",
+    "Văn hoá Viking"
+   ],
+   "c": 0,
+   "why": "Trống đồng là thành tựu tiêu biểu của văn hoá Đông Sơn.",
+   "en": "bronze drum"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Theo sách giáo khoa, nước Âu Lạc ra đời khoảng năm nào?",
+   "a": [
+    "Năm 1010",
+    "Năm 1945",
+    "Khoảng năm 208 TCN",
+    "Năm 938"
+   ],
+   "c": 2,
+   "why": "Âu Lạc ra đời khoảng năm 208 trước Công nguyên.",
+   "en": "Au Lac"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Ngày Giỗ Tổ Hùng Vương là ngày nào âm lịch?",
+   "a": [
+    "Mùng 1 tháng Giêng",
+    "Mùng 10 tháng 3",
+    "Rằm tháng 8",
+    "Mùng 5 tháng 5"
+   ],
+   "c": 1,
+   "why": "Giỗ Tổ Hùng Vương là ngày 10 tháng 3 âm lịch.",
+   "en": "Hung Kings"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Dấu vết người tối cổ được tìm thấy ở Núi Đọ thuộc tỉnh nào?",
+   "a": [
+    "Cà Mau",
+    "Kiên Giang",
+    "Thanh Hoá",
+    "Lâm Đồng"
+   ],
+   "c": 2,
+   "why": "Núi Đọ ở Thanh Hoá có nhiều công cụ đá của người tối cổ.",
+   "en": "archaeology"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Hai Bà Trưng là hai chị em có tên là gì?",
+   "a": [
+    "Trưng Hoa và Trưng Lan",
+    "Trưng Mai và Trưng Cúc",
+    "Trưng Xuân và Trưng Thu",
+    "Trưng Trắc và Trưng Nhị"
+   ],
+   "c": 3,
+   "why": "Hai Bà Trưng là Trưng Trắc và Trưng Nhị, khởi nghĩa năm 40.",
+   "en": "Trung Sisters"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Truyền thuyết trả gươm cho Rùa Vàng ở Hồ Gươm gắn với vua nào?",
+   "a": [
+    "Lý Công Uẩn",
+    "Gia Long",
+    "Đinh Bộ Lĩnh",
+    "Lê Lợi"
+   ],
+   "c": 3,
+   "why": "Sau khởi nghĩa Lam Sơn, vua Lê Lợi trả gươm thần cho Rùa Vàng.",
+   "en": "Hoan Kiem Lake"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Ở Hội nghị Diên Hồng, các bô lão đồng thanh hô gì?",
+   "a": [
+    "Đánh!",
+    "Về nhà!",
+    "Đợi mai!",
+    "Đi ngủ!"
+   ],
+   "c": 0,
+   "why": "Các bô lão hô 'Đánh!', thể hiện quyết tâm bảo vệ đất nước.",
+   "en": "unity"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Năm 1010, vua Lý Công Uẩn dời đô về đâu?",
+   "a": [
+    "Huế",
+    "Thăng Long",
+    "Hoa Lư",
+    "Gia Định"
+   ],
+   "c": 1,
+   "why": "Vua dời đô từ Hoa Lư ra Đại La và đổi tên là Thăng Long.",
+   "en": "Thang Long"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Năm 938, Ngô Quyền đánh thắng quân Nam Hán trên sông nào?",
+   "a": [
+    "Sông Bạch Đằng",
+    "Sông Nin",
+    "Sông Mê Kông",
+    "Sông Hương"
+   ],
+   "c": 0,
+   "why": "Trận Bạch Đằng năm 938 chấm dứt hơn một nghìn năm Bắc thuộc.",
+   "en": "Bach Dang"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Ngô Quyền dùng mưu gì trên sông Bạch Đằng?",
+   "a": [
+    "Dùng máy bay",
+    "Đào đường hầm",
+    "Cắm cọc gỗ nhọn dưới lòng sông",
+    "Xây tường đá chắn sông"
+   ],
+   "c": 2,
+   "why": "Thuyền giặc mắc cọc khi thủy triều rút nên bị đánh bại.",
+   "en": "stakes"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Nhà Trần đã mấy lần đánh thắng quân Mông – Nguyên?",
+   "a": [
+    "Một lần",
+    "Mười lần",
+    "Hai mươi lần",
+    "Ba lần"
+   ],
+   "c": 3,
+   "why": "Nhà Trần thắng vào các năm 1258, 1285 và 1288.",
+   "en": "Tran dynasty"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Năm 968, Đinh Bộ Lĩnh đặt tên nước là gì?",
+   "a": [
+    "Đại Nam",
+    "Đại Cồ Việt",
+    "Văn Lang",
+    "Âu Lạc"
+   ],
+   "c": 1,
+   "why": "Đinh Bộ Lĩnh đặt tên nước là Đại Cồ Việt, đóng đô ở Hoa Lư.",
+   "en": "Dai Co Viet"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Vua Quang Trung đại phá quân Thanh vào dịp nào?",
+   "a": [
+    "Trung thu năm 1945",
+    "Tết năm 1010",
+    "Mùa hè năm 2000",
+    "Tết Kỷ Dậu năm 1789"
+   ],
+   "c": 3,
+   "why": "Quân Tây Sơn thắng lớn ở Ngọc Hồi – Đống Đa dịp Tết Kỷ Dậu 1789.",
+   "en": "Quang Trung"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Bộ luật nổi tiếng thời vua Lê Thánh Tông tên là gì?",
+   "a": [
+    "Luật Hammurabi",
+    "Luật La Mã",
+    "Luật Hồng Đức",
+    "Luật Lam Sơn"
+   ],
+   "c": 2,
+   "why": "Luật Hồng Đức mang niên hiệu Hồng Đức của vua Lê Thánh Tông.",
+   "en": "law"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Văn Miếu ở Thăng Long được xây dựng năm nào?",
+   "a": [
+    "Năm 1945",
+    "Năm 1802",
+    "Năm 1070",
+    "Năm 40"
+   ],
+   "c": 2,
+   "why": "Nhà Lý xây Văn Miếu năm 1070 để thờ Khổng Tử.",
+   "en": "Temple of Literature"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Triều đại phong kiến cuối cùng của Việt Nam là triều nào?",
+   "a": [
+    "Nhà Nguyễn",
+    "Nhà Lý",
+    "Nhà Trần",
+    "Nhà Đinh"
+   ],
+   "c": 0,
+   "why": "Nhà Nguyễn bắt đầu năm 1802 và kết thúc năm 1945.",
+   "en": "Nguyen dynasty"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Ai là tác giả của 'Bình Ngô đại cáo'?",
+   "a": [
+    "Trần Hưng Đạo",
+    "Ngô Quyền",
+    "Nguyễn Trãi",
+    "Hai Bà Trưng"
+   ],
+   "c": 2,
+   "why": "Nguyễn Trãi viết Bình Ngô đại cáo năm 1428 sau khởi nghĩa Lam Sơn.",
+   "en": "Nguyen Trai"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Năm 1969, con người lần đầu đặt chân lên đâu?",
+   "a": [
+    "Mặt Trăng",
+    "Sao Hỏa",
+    "Mặt Trời",
+    "Sao Mộc"
+   ],
+   "c": 0,
+   "why": "Tàu Apollo 11 đưa con người xuống Mặt Trăng năm 1969.",
+   "en": "Moon landing"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Năm 1492, đoàn tàu của Columbus đến vùng đất thuộc châu lục nào?",
+   "a": [
+    "Châu Mỹ",
+    "Châu Nam Cực",
+    "Châu Đại Dương",
+    "Bắc Cực"
+   ],
+   "c": 0,
+   "why": "Columbus đến các đảo vùng Caribe thuộc châu Mỹ.",
+   "en": "Columbus"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Thời Trung cổ ở châu Âu, các lãnh chúa thường sống ở đâu?",
+   "a": [
+    "Nhà chọc trời",
+    "Trạm vũ trụ",
+    "Lâu đài",
+    "Tàu ngầm"
+   ],
+   "c": 2,
+   "why": "Lãnh chúa sống trong lâu đài đá có tường dày và hào nước.",
+   "en": "castle"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Thế vận hội hiện đại đầu tiên năm 1896 tổ chức ở đâu?",
+   "a": [
+    "Athens, Hy Lạp",
+    "Tokyo, Nhật Bản",
+    "Hà Nội, Việt Nam",
+    "Sydney, Úc"
+   ],
+   "c": 0,
+   "why": "Thế vận hội hiện đại đầu tiên diễn ra ở Athens để nối lại truyền thống cổ.",
+   "en": "Olympic Games"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Con đường tơ lụa nối Trung Quốc với vùng nào?",
+   "a": [
+    "Châu Nam Cực",
+    "Châu Mỹ",
+    "Châu Úc",
+    "Tây Á và châu Âu"
+   ],
+   "c": 3,
+   "why": "Con đường tơ lụa nối Trung Quốc qua Trung Á, Tây Á tới châu Âu.",
+   "en": "Silk Road"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Bức tranh Mona Lisa do ai vẽ?",
+   "a": [
+    "Christopher Columbus",
+    "Leonardo da Vinci",
+    "Marco Polo",
+    "James Watt"
+   ],
+   "c": 1,
+   "why": "Leonardo da Vinci, danh hoạ thời Phục hưng, vẽ Mona Lisa.",
+   "en": "Mona Lisa"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Cách mạng công nghiệp bắt đầu ở nước nào?",
+   "a": [
+    "Brazil",
+    "Úc",
+    "Ai Cập",
+    "Anh"
+   ],
+   "c": 3,
+   "why": "Cách mạng công nghiệp bắt đầu ở Anh vào thế kỷ XVIII.",
+   "en": "Industrial Revolution"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Liên Hợp Quốc được thành lập năm nào?",
+   "a": [
+    "Năm 1492",
+    "Năm 1945",
+    "Năm 1010",
+    "Năm 2020"
+   ],
+   "c": 1,
+   "why": "Liên Hợp Quốc ra đời năm 1945 sau Chiến tranh thế giới thứ hai.",
+   "en": "United Nations"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Thành phố trên núi Machu Picchu do người nào xây dựng?",
+   "a": [
+    "Người Viking",
+    "Người La Mã",
+    "Người Inca",
+    "Người Ai Cập"
+   ],
+   "c": 2,
+   "why": "Người Inca xây Machu Picchu trên dãy Andes ở Peru.",
+   "en": "Machu Picchu"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Đoàn thám hiểm đầu tiên đi thuyền vòng quanh Trái Đất do ai dẫn đầu khi khởi hành?",
+   "a": [
+    "Marco Polo",
+    "Magellan",
+    "Leonardo da Vinci",
+    "Gutenberg"
+   ],
+   "c": 1,
+   "why": "Đoàn của Magellan khởi hành năm 1519 và trở về năm 1522.",
+   "en": "Magellan"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Thời Phục hưng bắt đầu ở nước nào?",
+   "a": [
+    "Nhật Bản",
+    "Ý",
+    "Úc",
+    "Canada"
+   ],
+   "c": 1,
+   "why": "Thời Phục hưng bắt đầu ở Ý rồi lan ra khắp châu Âu.",
+   "en": "Renaissance"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Ai cải tiến máy hơi nước, góp phần thúc đẩy Cách mạng công nghiệp?",
+   "a": [
+    "James Watt",
+    "Galileo Galilei",
+    "Christopher Columbus",
+    "Marco Polo"
+   ],
+   "c": 0,
+   "why": "James Watt cải tiến máy hơi nước giúp máy móc chạy hiệu quả hơn.",
+   "en": "steam engine"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Năm 208 TCN và năm 100 TCN, năm nào xảy ra trước?",
+   "a": [
+    "Năm 100 TCN",
+    "Hai năm là một",
+    "Năm 208 TCN",
+    "Không so sánh được"
+   ],
+   "c": 2,
+   "why": "Năm trước Công nguyên đếm ngược, số càng lớn thì càng xa xưa.",
+   "en": "timeline"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Anh em nhà Wright nổi tiếng vì điều gì?",
+   "a": [
+    "Phát minh điện thoại",
+    "Làm ra bóng đèn",
+    "Bay thành công máy bay có động cơ",
+    "Phát minh ra giấy"
+   ],
+   "c": 2,
+   "why": "Năm 1903, anh em Wright bay thành công chiếc máy bay có động cơ.",
+   "en": "Wright brothers"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Alexander Graham Bell gắn với phát minh nào?",
+   "a": [
+    "Điện thoại",
+    "Máy bay",
+    "La bàn",
+    "Kính viễn vọng"
+   ],
+   "c": 0,
+   "why": "Năm 1876, Bell được cấp bằng sáng chế điện thoại.",
+   "en": "telephone"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Thomas Edison nổi tiếng với việc làm ra loại đèn nào?",
+   "a": [
+    "Bóng đèn điện sợi đốt",
+    "Đèn dầu",
+    "Cây nến",
+    "Bó đuốc"
+   ],
+   "c": 0,
+   "why": "Năm 1879, Edison làm ra bóng đèn sợi đốt sáng được lâu.",
+   "en": "light bulb"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Bánh xe giúp con người làm việc gì dễ hơn?",
+   "a": [
+    "Nghe nhạc",
+    "Xem phim",
+    "Gọi điện thoại",
+    "Chở đồ nặng đi xa"
+   ],
+   "c": 3,
+   "why": "Bánh xe lăn giúp kéo, chở đồ nặng nhẹ nhàng hơn.",
+   "en": "wheel"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Giấy được phát minh đầu tiên ở đâu?",
+   "a": [
+    "Úc",
+    "Trung Quốc",
+    "Canada",
+    "Brazil"
+   ],
+   "c": 1,
+   "why": "Người Trung Quốc làm ra giấy; Thái Luân cải tiến khoảng năm 105.",
+   "en": "paper"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "La bàn giúp người đi biển biết điều gì?",
+   "a": [
+    "Nhiệt độ nước",
+    "Độ mặn của biển",
+    "Độ sâu của biển",
+    "Phương hướng"
+   ],
+   "c": 3,
+   "why": "Kim la bàn chỉ hướng Bắc – Nam nên thủy thủ biết đường đi.",
+   "en": "compass"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Gutenberg làm ra máy in chữ rời kim loại ở nước nào?",
+   "a": [
+    "Ai Cập",
+    "Mexico",
+    "Đức",
+    "Ấn Độ"
+   ],
+   "c": 2,
+   "why": "Khoảng năm 1440, Gutenberg làm máy in ở Đức.",
+   "en": "printing press"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Năm 1610, Galileo dùng kính viễn vọng phát hiện gì quanh Sao Mộc?",
+   "a": [
+    "Một con tàu vũ trụ",
+    "Những thành phố",
+    "Rừng cây xanh",
+    "Bốn mặt trăng"
+   ],
+   "c": 3,
+   "why": "Galileo thấy bốn mặt trăng quay quanh Sao Mộc.",
+   "en": "Galileo"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Penicillin do Alexander Fleming phát hiện là loại thuốc gì?",
+   "a": [
+    "Thuốc nhuộm vải",
+    "Thuốc nổ",
+    "Phân bón",
+    "Thuốc kháng sinh"
+   ],
+   "c": 3,
+   "why": "Penicillin là kháng sinh, giúp diệt vi khuẩn gây bệnh.",
+   "en": "penicillin"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Edward Jenner làm vắc xin phòng bệnh gì?",
+   "a": [
+    "Sâu răng",
+    "Cận thị",
+    "Bệnh đậu mùa",
+    "Say nắng"
+   ],
+   "c": 2,
+   "why": "Năm 1796, Jenner thử nghiệm vắc xin phòng bệnh đậu mùa.",
+   "en": "vaccine"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Leeuwenhoek dùng kính hiển vi để quan sát gì?",
+   "a": [
+    "Các ngôi sao xa",
+    "Những sinh vật rất nhỏ",
+    "Đáy đại dương",
+    "Miệng núi lửa"
+   ],
+   "c": 1,
+   "why": "Ông nhìn thấy vi sinh vật nhỏ xíu trong giọt nước.",
+   "en": "microscope"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Vào thế kỷ XI, ai đã làm chữ rời bằng đất nung để in?",
+   "a": [
+    "Gutenberg",
+    "Tất Thăng",
+    "Edison",
+    "Fleming"
+   ],
+   "c": 1,
+   "why": "Tất Thăng ở Trung Quốc làm chữ rời bằng đất nung từ thế kỷ XI.",
+   "en": "movable type"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Vịnh Hạ Long nằm ở tỉnh nào?",
+   "a": [
+    "Quảng Ninh",
+    "Cà Mau",
+    "Lâm Đồng",
+    "An Giang"
+   ],
+   "c": 0,
+   "why": "Vịnh Hạ Long thuộc tỉnh Quảng Ninh.",
+   "en": "Ha Long Bay"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Sân khấu của múa rối nước là gì?",
+   "a": [
+    "Bầu trời",
+    "Sân bóng",
+    "Đỉnh núi",
+    "Mặt nước"
+   ],
+   "c": 3,
+   "why": "Con rối biểu diễn trên mặt nước, nghệ nhân điều khiển từ sau mành.",
+   "en": "water puppetry"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Tết Trung thu diễn ra vào ngày nào âm lịch?",
+   "a": [
+    "Rằm tháng Tám",
+    "Mùng 1 tháng Giêng",
+    "Mùng 10 tháng 3",
+    "Mùng 5 tháng 5"
+   ],
+   "c": 0,
+   "why": "Trung thu là ngày rằm tháng Tám, khi trăng tròn nhất.",
+   "en": "Mid-Autumn Festival"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Nhân vật vui nhộn quen thuộc trong múa rối nước là ai?",
+   "a": [
+    "Ông Già Noel",
+    "Người tuyết",
+    "Cô tiên răng",
+    "Chú Tễu"
+   ],
+   "c": 3,
+   "why": "Chú Tễu là nhân vật dẫn chuyện hài hước của múa rối nước.",
+   "en": "puppet"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Cố đô Huế là kinh đô của triều đại nào?",
+   "a": [
+    "Nhà Lý",
+    "Nhà Đinh",
+    "Nhà Nguyễn",
+    "Nhà Ngô"
+   ],
+   "c": 2,
+   "why": "Huế là kinh đô của nhà Nguyễn từ năm 1802.",
+   "en": "Hue"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Thánh địa Mỹ Sơn là di tích của nền văn hoá nào?",
+   "a": [
+    "Chăm Pa",
+    "Ai Cập",
+    "Hy Lạp",
+    "Inca"
+   ],
+   "c": 0,
+   "why": "Mỹ Sơn có các đền tháp gạch của người Chăm Pa.",
+   "en": "Champa"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Không gian văn hoá Cồng chiêng được UNESCO ghi danh thuộc vùng nào?",
+   "a": [
+    "Tây Nguyên",
+    "Nam Cực",
+    "Sa mạc Sahara",
+    "Bắc Âu"
+   ],
+   "c": 0,
+   "why": "Không gian văn hoá Cồng chiêng Tây Nguyên được ghi danh năm 2005.",
+   "en": "gong"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Dân ca Quan họ là của vùng nào?",
+   "a": [
+    "Cà Mau",
+    "Kinh Bắc (Bắc Ninh)",
+    "Đà Lạt",
+    "Phú Quốc"
+   ],
+   "c": 1,
+   "why": "Quan họ là dân ca của vùng Kinh Bắc, nay là Bắc Ninh.",
+   "en": "Quan ho"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Hoàng thành Thăng Long nằm ở thành phố nào?",
+   "a": [
+    "Huế",
+    "Đà Nẵng",
+    "Hà Nội",
+    "Cần Thơ"
+   ],
+   "c": 2,
+   "why": "Hoàng thành Thăng Long ở Hà Nội, được UNESCO công nhận năm 2010.",
+   "en": "Imperial Citadel"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Nhã nhạc cung đình Huế là loại âm nhạc nào?",
+   "a": [
+    "Nhạc rock hiện đại",
+    "Nhạc phim hoạt hình",
+    "Âm nhạc trong cung đình nhà Nguyễn",
+    "Nhạc của người Viking"
+   ],
+   "c": 2,
+   "why": "Nhã nhạc được biểu diễn trong các nghi lễ của cung đình nhà Nguyễn.",
+   "en": "court music"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Văn Miếu – Quốc Tử Giám còn giữ bao nhiêu tấm bia tiến sĩ?",
+   "a": [
+    "2 tấm",
+    "5 tấm",
+    "1.000 tấm",
+    "82 tấm"
+   ],
+   "c": 3,
+   "why": "Văn Miếu còn 82 tấm bia tiến sĩ đặt trên lưng rùa đá.",
+   "en": "stele"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Tràng An ở Ninh Bình là loại di sản thế giới nào?",
+   "a": [
+    "Di sản dưới đáy biển",
+    "Di sản hỗn hợp",
+    "Di sản trên Mặt Trăng",
+    "Không phải di sản"
+   ],
+   "c": 1,
+   "why": "Tràng An là di sản hỗn hợp, vừa có giá trị thiên nhiên vừa có giá trị văn hoá.",
+   "en": "mixed heritage"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Chú chó và hang tranh Lascaux",
+   "vi": "Năm 1940, ở miền nam nước Pháp, mấy cậu thiếu niên đi dạo cùng chú chó tên Robot. Theo lời kể, chú chó chạy vào một cái hố giữa rừng. Các cậu tò mò chui xuống và phát hiện một hang động đầy tranh vẽ bò, ngựa, hươu. Đó là hang Lascaux với những bức tranh khoảng 17.000 năm tuổi! Ngày nay, để bảo vệ tranh thật, khách tham quan được xem một bản sao rất giống.",
+   "en": [
+    "Lascaux",
+    "cave painting"
+   ]
+  },
+  {
+   "t": "Phiến đá Rosetta – chìa khoá giải mã",
+   "vi": "Năm 1799, người ta tìm thấy một phiến đá ở Ai Cập. Trên đá khắc cùng một nội dung bằng ba kiểu chữ: chữ tượng hình, chữ Ai Cập bình dân và chữ Hy Lạp cổ. Vì đọc được chữ Hy Lạp, các nhà khoa học có thể so sánh để tìm nghĩa chữ tượng hình. Năm 1822, nhà ngôn ngữ học Champollion đã giải mã thành công. Từ đó, những dòng chữ bí ẩn trên kim tự tháp bắt đầu 'lên tiếng'.",
+   "en": [
+    "Rosetta Stone",
+    "hieroglyph"
+   ]
+  },
+  {
+   "t": "Đội quân đất nung dưới lòng đất",
+   "vi": "Năm 1974, vài người nông dân ở gần thành phố Tây An, Trung Quốc, đào giếng tìm nước. Họ bất ngờ đào trúng những mảnh tượng bằng đất nung. Các nhà khảo cổ đến và tìm ra hàng nghìn tượng lính, ngựa có kích thước như thật. Điều kỳ lạ là gương mặt mỗi bức tượng đều khác nhau. Đội quân này được làm cho lăng mộ của Tần Thủy Hoàng hơn 2.000 năm trước.",
+   "en": [
+    "Terracotta Army",
+    "archaeology"
+   ]
+  },
+  {
+   "t": "Kho báu của vị vua trẻ Tutankhamun",
+   "vi": "Nhà khảo cổ Howard Carter tìm kiếm ở Thung lũng các vị vua, Ai Cập, suốt nhiều năm. Năm 1922, nhóm của ông tìm thấy bậc thang dẫn xuống một ngôi mộ gần như còn nguyên vẹn. Bên trong có rất nhiều đồ vật bằng vàng, trong đó có chiếc mặt nạ vàng nổi tiếng. Đây là mộ của pharaoh Tutankhamun, người lên ngôi khi còn là một cậu bé. Câu chuyện cho thấy sự kiên trì có thể mang lại khám phá lớn.",
+   "en": [
+    "Tutankhamun",
+    "tomb"
+   ]
+  },
+  {
+   "t": "Chiếc đĩa bị bỏ quên của Fleming",
+   "vi": "Năm 1928, nhà khoa học Alexander Fleming đi nghỉ và để quên vài đĩa nuôi vi khuẩn trong phòng thí nghiệm. Khi trở về, ông thấy một đĩa bị mốc xanh. Điều lạ là quanh vết mốc, vi khuẩn không mọc được. Fleming tò mò nghiên cứu và đặt tên chất đó là penicillin. Một lần 'bừa bộn' đã giúp tìm ra thuốc kháng sinh cứu sống rất nhiều người.",
+   "en": [
+    "penicillin",
+    "Fleming"
+   ]
+  },
+  {
+   "t": "Hai anh em thợ sửa xe đạp",
+   "vi": "Wilbur và Orville Wright có một cửa hàng bán và sửa xe đạp ở Mỹ. Hai anh em mê ước mơ bay lên trời nên quan sát chim và tự làm diều, tàu lượn để thử. Họ còn tự làm một đường hầm gió nhỏ để thử hình dáng cánh. Ngày 17 tháng 12 năm 1903, chiếc máy bay của họ bay được khoảng 12 giây. Từ chuyến bay ngắn ấy, ngày nay máy bay đưa người đi khắp thế giới.",
+   "en": [
+    "Wright brothers",
+    "airplane"
+   ]
+  },
+  {
+   "t": "Rùa Vàng và thanh gươm thần",
+   "vi": "Truyền thuyết kể rằng Lê Lợi được một thanh gươm thần giúp nghĩa quân Lam Sơn đánh đuổi giặc Minh. Khi đất nước đã yên bình, vua dạo thuyền trên hồ Tả Vọng. Bỗng một con Rùa Vàng nổi lên xin lại gươm. Vua hiểu ý và trả gươm cho Rùa. Từ đó, hồ được gọi là Hồ Hoàn Kiếm, nghĩa là hồ trả gươm.",
+   "en": [
+    "legend",
+    "Hoan Kiem Lake"
+   ]
+  },
+  {
+   "t": "Archimedes và bồn tắm",
+   "vi": "Giai thoại kể rằng một vị vua nhờ nhà khoa học Hy Lạp Archimedes kiểm tra xem chiếc vương miện có phải vàng nguyên chất không. Archimedes nghĩ mãi chưa ra. Một hôm bước vào bồn tắm, ông thấy nước dâng lên và tràn ra. Ông nhận ra có thể đo thể tích vật bằng lượng nước bị đẩy ra. Tương truyền ông vui quá hét lên 'Eureka!', nghĩa là 'Tìm ra rồi!'.",
+   "en": [
+    "Archimedes",
+    "Eureka"
+   ]
+  },
+  {
+   "t": "Cậu bé chăn trâu cờ lau",
+   "vi": "Tương truyền thuở nhỏ, Đinh Bộ Lĩnh đi chăn trâu cùng các bạn ở Hoa Lư. Cậu hay bẻ bông lau làm cờ, tập hợp bạn bè chơi trò đánh trận. Các bạn đều phục cậu và tôn cậu làm 'tướng'. Lớn lên, ông dẹp loạn 12 sứ quân, thống nhất đất nước năm 968. Câu chuyện cho thấy những ước mơ lớn có khi bắt đầu từ trò chơi tuổi thơ.",
+   "en": [
+    "Dinh Bo Linh",
+    "legend"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: Lịch sử ở quanh em",
+   "vi": "Lịch sử không chỉ có trong sách. Tên đường, ngôi đình, đồ vật cũ trong nhà đều kể chuyện ngày xưa. Khi biết quá khứ, em hiểu vì sao cuộc sống hôm nay lại như thế.",
+   "try": "Hỏi ông bà về một đồ vật cũ trong nhà và ghi lại câu chuyện của nó."
+  },
+  {
+   "t": "Bài học hôm nay: Vẽ trục thời gian",
+   "vi": "Trục thời gian là một đường thẳng ghi các sự kiện theo thứ tự trước sau. Năm trước Công nguyên nằm bên trái, năm sau Công nguyên nằm bên phải. Nhìn trục thời gian, em dễ nhớ sự kiện nào xảy ra trước.",
+   "try": "Vẽ trục thời gian cuộc đời em: năm sinh, năm đi học lớp 1, năm nay."
+  },
+  {
+   "t": "Bài học hôm nay: Truyền thuyết và sự thật",
+   "vi": "Truyền thuyết là câu chuyện dân gian có yếu tố thần kỳ, như Thánh Gióng hay Sơn Tinh, Thủy Tinh. Nó gửi gắm ước mơ và bài học của người xưa. Còn sự thật lịch sử được chứng minh bằng tài liệu và hiện vật khảo cổ.",
+   "try": "Đọc lại một truyền thuyết và tìm xem chi tiết nào là thần kỳ, chi tiết nào có thể có thật."
+  },
+  {
+   "t": "Bài học hôm nay: Làm nhà khảo cổ nhí",
+   "vi": "Nhà khảo cổ đào đất rất cẩn thận, ghi chép vị trí từng hiện vật. Lớp đất ở dưới thường cũ hơn lớp ở trên. Nhờ đó, họ biết đồ vật nào có trước.",
+   "try": "Nhờ bố mẹ vùi vài đồ chơi nhỏ trong khay cát rồi dùng cọ, thìa nhựa tìm lại và ghi vị trí."
+  },
+  {
+   "t": "Bài học hôm nay: Chữ viết kỳ diệu",
+   "vi": "Chữ viết giúp con người ghi nhớ và truyền kiến thức cho đời sau. Người Ai Cập dùng hình vẽ, người Sumer ấn chữ lên đất sét. Chữ Quốc ngữ ta dùng hôm nay dựa trên chữ cái Latinh.",
+   "try": "Tự sáng tạo 5 kí hiệu hình vẽ và viết một câu ngắn bằng 'chữ tượng hình' của riêng em."
+  },
+  {
+   "t": "Bài học hôm nay: Phát minh từ quan sát",
+   "vi": "Nhiều phát minh bắt đầu từ việc quan sát kỹ và đặt câu hỏi. Anh em Wright ngắm chim bay, Fleming để ý đĩa mốc lạ. Kiên trì thử nhiều lần cũng rất quan trọng.",
+   "try": "Gấp một chiếc máy bay giấy, thử gấp cánh khác nhau và ghi lại kiểu nào bay xa nhất."
+  },
+  {
+   "t": "Bài học hôm nay: Ứng xử ở di tích",
+   "vi": "Di tích là tài sản chung của mọi người và của cả con cháu mai sau. Khi tham quan, em không viết vẽ lên tường, không leo trèo và không xả rác. Giữ gìn di tích cũng là giữ gìn lịch sử.",
+   "try": "Làm một tấm áp phích nhỏ nhắc mọi người cách giữ gìn di tích."
+  },
+  {
+   "t": "Bài học hôm nay: Ý nghĩa ngày Tết",
+   "vi": "Tết là dịp sum họp, nhớ ơn tổ tiên và chúc nhau năm mới tốt lành. Bánh chưng gắn với truyền thuyết Lang Liêu thời vua Hùng. Mỗi phong tục Tết đều mang một mong ước đẹp.",
+   "try": "Hỏi bố mẹ về một phong tục Tết của gia đình em và vẽ tranh về phong tục đó."
+  },
+  {
+   "t": "Bài học hôm nay: Đoàn kết là sức mạnh",
+   "vi": "Nhiều chiến thắng trong lịch sử Việt Nam đến từ sự đoàn kết của toàn dân, như Hội nghị Diên Hồng thời Trần. Khi mọi người cùng chung sức, việc khó cũng thành dễ. Ở lớp học cũng vậy.",
+   "try": "Cùng anh chị em hoặc bạn bè dọn dẹp góc học tập trong 10 phút và xem kết quả."
+  },
+  {
+   "t": "Bài học hôm nay: Bảo tàng gia đình",
+   "vi": "Mỗi gia đình đều có những kỷ vật đáng nhớ như ảnh cũ, thư tay, đồ chơi xưa. Sắp xếp và ghi chú chúng giống như làm một bảo tàng nhỏ. Đó là cách giữ lại ký ức cho mai sau.",
+   "try": "Chọn 3 kỷ vật trong nhà, nhờ bố mẹ kể chuyện rồi viết một tấm nhãn ngắn cho mỗi món."
+  },
+  {
+   "t": "Bài học hôm nay: Hỏi 'vì sao' như nhà sử học",
+   "vi": "Nhà sử học không chỉ nhớ năm tháng mà còn hỏi vì sao sự việc xảy ra và nó dẫn đến điều gì. Ví dụ, vì sao vua Lý dời đô ra Thăng Long? Vì nơi đó rộng, bằng phẳng và thuận tiện giao thông.",
+   "try": "Chọn một sự kiện em vừa học và viết ra hai câu hỏi 'vì sao' rồi cùng bố mẹ tìm câu trả lời."
+  }
+ ]
+}

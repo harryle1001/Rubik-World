@@ -1,0 +1,1924 @@
+{
+ "id": "ly",
+ "topics": [
+  "Lực & chuyển động",
+  "Năng lượng",
+  "Ánh sáng",
+  "Âm thanh",
+  "Điện & từ",
+  "Bay, nổi & áp suất"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Lực là gì?",
+   "vi": "Lực là sự đẩy hoặc kéo. Lực có thể làm vật bắt đầu chuyển động, dừng lại, đổi hướng hoặc bị biến dạng. Đơn vị đo lực là niutơn, kí hiệu N.",
+   "ex": "Đá quả bóng là em tác dụng lực đẩy lên bóng.",
+   "en": [
+    "force",
+    "push",
+    "pull"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Trọng lực kéo mọi thứ xuống",
+   "vi": "Trái Đất hút mọi vật về phía nó, lực hút này gọi là trọng lực. Vì thế quả táo rơi xuống đất chứ không bay lên trời. Lực hút của Trái Đất cũng giữ Mặt Trăng quay quanh Trái Đất.",
+   "ex": "Nhảy lên cao bao nhiêu, em cũng sẽ rơi xuống lại.",
+   "en": [
+    "gravity"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Ma sát giúp ta đi không ngã",
+   "vi": "Ma sát là lực cản xuất hiện khi hai bề mặt cọ xát vào nhau. Nhờ ma sát, đế giày bám vào mặt đường nên ta đi không bị trượt. Trên sàn ướt hay mặt băng, ma sát nhỏ nên rất dễ trơn ngã.",
+   "ex": "Lốp xe có rãnh để tăng ma sát với mặt đường.",
+   "en": [
+    "friction"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Nhanh hay chậm: tốc độ",
+   "vi": "Tốc độ cho biết vật đi nhanh hay chậm. Tốc độ bằng quãng đường đi được chia cho thời gian đi hết quãng đường đó. Đơn vị hay dùng là km/h hoặc m/s.",
+   "ex": "Đi 10 km trong 2 giờ thì tốc độ là 5 km/h.",
+   "en": [
+    "speed"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Quán tính",
+   "vi": "Mọi vật đều có xu hướng giữ nguyên chuyển động của mình, gọi là quán tính. Khi xe buýt phanh gấp, người ngồi trên xe bị chúi về phía trước. Vì vậy đi ô tô cần thắt dây an toàn.",
+   "ex": "Vật càng nặng thì quán tính càng lớn, càng khó dừng lại.",
+   "en": [
+    "inertia"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Khối lượng và trọng lượng",
+   "vi": "Khối lượng cho biết lượng chất trong vật, đo bằng kilôgam (kg). Trọng lượng là độ lớn lực hút của Trái Đất lên vật, đo bằng niutơn (N). Trên Trái Đất, vật có khối lượng 1 kg có trọng lượng khoảng 10 N.",
+   "ex": "Lên Mặt Trăng, khối lượng em không đổi nhưng trọng lượng nhỏ đi nhiều.",
+   "en": [
+    "mass",
+    "weight"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Đòn bẩy nâng vật nặng",
+   "vi": "Đòn bẩy là một thanh cứng quay quanh một điểm tựa. Khi điểm tựa ở gần vật nặng và ta đặt lực ở đầu xa, ta nâng vật dễ hơn nhiều. Bập bênh, cái kéo, xà beng đều là đòn bẩy.",
+   "ex": "Archimedes từng nói đại ý: cho ta một điểm tựa, ta sẽ nâng cả Trái Đất.",
+   "en": [
+    "lever",
+    "fulcrum"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Lực đàn hồi của lò xo",
+   "vi": "Khi bị kéo dãn hoặc bị nén, lò xo sinh ra lực đàn hồi để trở về hình dạng cũ. Trong giới hạn cho phép, kéo càng mạnh thì lò xo dãn càng nhiều. Lực kế dùng lò xo để đo lực.",
+   "ex": "Dây chun bị kéo căng cũng có lực đàn hồi.",
+   "en": [
+    "spring",
+    "elastic force"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Định luật I Newton",
+   "vi": "Nếu không có lực nào tác dụng, hoặc các lực tác dụng cân bằng nhau, thì vật đang đứng yên sẽ đứng yên, vật đang chuyển động sẽ chuyển động thẳng đều mãi. Đây là định luật quán tính do Isaac Newton phát biểu.",
+   "ex": "Ngoài vũ trụ gần như không có ma sát, tàu thăm dò cứ thế bay đi rất xa.",
+   "en": [
+    "Newton's first law",
+    "inertia"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Định luật II Newton: F = m·a",
+   "vi": "Lực càng lớn thì vật tăng tốc càng nhanh. Vật càng nặng thì càng khó tăng tốc. Công thức là F = m·a, trong đó F là lực (N), m là khối lượng (kg), a là gia tốc (m/s²).",
+   "ex": "Đẩy xe đẩy rỗng dễ tăng tốc hơn xe chở đầy hàng.",
+   "en": [
+    "Newton's second law",
+    "acceleration"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Định luật III Newton: lực và phản lực",
+   "vi": "Khi vật A tác dụng lực lên vật B, vật B cũng tác dụng lại lên vật A một lực có cùng độ lớn nhưng ngược chiều. Tên lửa phụt khí ra phía sau nên được đẩy về phía trước. Khi bơi, em đẩy nước ra sau để tiến lên trước.",
+   "ex": "Thả quả bóng bay đã thổi căng, khí phụt ra làm bóng vọt đi.",
+   "en": [
+    "action and reaction",
+    "Newton's third law"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Rơi tự do",
+   "vi": "Nếu bỏ qua sức cản của không khí, mọi vật rơi nhanh như nhau, dù nặng hay nhẹ. Galileo Galilei là người nghiên cứu kĩ điều này. Gần mặt đất, vận tốc của vật rơi tự do tăng thêm khoảng 9,8 m/s sau mỗi giây.",
+   "ex": "Trên Mặt Trăng không có không khí, búa và lông chim rơi chạm đất cùng lúc.",
+   "en": [
+    "free fall"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Năng lượng là gì?",
+   "vi": "Năng lượng là khả năng làm cho vật chuyển động, nóng lên, phát sáng hay thay đổi. Thức ăn cho cơ thể ta năng lượng để học bài và chạy nhảy. Đơn vị đo năng lượng là jun, kí hiệu J.",
+   "ex": "Pin trong đồ chơi chứa năng lượng để đồ chơi chạy.",
+   "en": [
+    "energy"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Mặt Trời: nguồn năng lượng lớn",
+   "vi": "Hầu hết năng lượng trên Trái Đất đến từ Mặt Trời. Cây xanh dùng ánh sáng Mặt Trời để tạo ra chất dinh dưỡng. Gió và mưa cũng hình thành nhờ Mặt Trời sưởi nóng không khí và nước.",
+   "ex": "Không có Mặt Trời, Trái Đất sẽ lạnh giá và tối tăm.",
+   "en": [
+    "solar energy",
+    "sun"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Nhiệt truyền từ nóng sang lạnh",
+   "vi": "Nhiệt luôn tự truyền từ vật nóng hơn sang vật lạnh hơn. Cốc nước nóng để lâu sẽ nguội dần vì nhiệt truyền ra không khí. Viên đá cầm trong tay tan ra vì nhận nhiệt từ bàn tay em.",
+   "ex": "Áo len giữ ấm vì nó làm nhiệt từ cơ thể thoát ra chậm hơn.",
+   "en": [
+    "heat",
+    "temperature"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Tiết kiệm năng lượng",
+   "vi": "Tắt đèn, tắt quạt khi ra khỏi phòng giúp tiết kiệm điện. Tiết kiệm năng lượng giúp giảm tiền điện và bảo vệ môi trường. Đi bộ hoặc đạp xe cho quãng đường ngắn cũng tiết kiệm nhiên liệu.",
+   "ex": "Ra khỏi phòng: nhìn lại, tắt đèn!",
+   "en": [
+    "save energy"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Động năng",
+   "vi": "Vật đang chuyển động có động năng. Vật càng nặng và chạy càng nhanh thì động năng càng lớn. Quả bóng lăn nhanh có thể làm đổ cả hàng chai nhựa trên đường đi.",
+   "ex": "Vật đứng yên thì động năng bằng 0.",
+   "en": [
+    "kinetic energy"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Thế năng",
+   "vi": "Vật ở trên cao có thế năng hấp dẫn. Vật càng cao và càng nặng thì thế năng càng lớn. Lò xo bị nén hay dây cung bị kéo căng cũng có thế năng, gọi là thế năng đàn hồi.",
+   "ex": "Nước trên đập cao có thế năng lớn, dùng để chạy nhà máy thủy điện.",
+   "en": [
+    "potential energy"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Năng lượng không tự mất đi",
+   "vi": "Năng lượng không tự sinh ra và không tự mất đi, nó chỉ chuyển từ dạng này sang dạng khác. Bóng đèn biến điện năng thành quang năng và nhiệt năng. Đây là định luật bảo toàn năng lượng.",
+   "ex": "Quạt điện biến điện năng chủ yếu thành động năng của cánh quạt.",
+   "en": [
+    "conservation of energy"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Dẫn nhiệt, đối lưu, bức xạ",
+   "vi": "Nhiệt truyền theo ba cách. Dẫn nhiệt xảy ra rõ nhất trong chất rắn, như thìa kim loại nóng dần khi nhúng vào canh nóng. Đối lưu xảy ra trong chất lỏng và chất khí. Bức xạ nhiệt truyền được cả qua chân không, như nhiệt từ Mặt Trời.",
+   "ex": "Nồi nước đun từ đáy mà cả nồi đều nóng là nhờ đối lưu.",
+   "en": [
+    "conduction",
+    "convection",
+    "radiation"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Năng lượng tái tạo",
+   "vi": "Năng lượng tái tạo đến từ những nguồn được bổ sung liên tục như ánh sáng Mặt Trời, gió, dòng nước chảy. Than đá, dầu mỏ, khí đốt là nhiên liệu hóa thạch, sẽ cạn dần và thải ra nhiều khí CO2. Pin mặt trời và tua-bin gió giúp tạo ra điện sạch hơn.",
+   "ex": "Nhiên liệu hóa thạch hình thành từ xác sinh vật qua hàng triệu năm.",
+   "en": [
+    "renewable energy",
+    "fossil fuel"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Công cơ học",
+   "vi": "Khi lực làm vật dịch chuyển, lực đó thực hiện công cơ học. Công bằng lực nhân với quãng đường dịch chuyển theo phương của lực: A = F·s. Đơn vị của công là jun (J). Đẩy bức tường mà tường không nhúc nhích thì không có công cơ học.",
+   "ex": "Kéo vật bằng lực 10 N đi 2 m thì công là 20 J.",
+   "en": [
+    "work"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Công suất",
+   "vi": "Công suất cho biết làm việc nhanh hay chậm, bằng công chia cho thời gian: P = A/t. Đơn vị công suất là oát (W), đặt theo tên nhà phát minh James Watt. Trong cùng thời gian, bóng đèn 100 W tiêu thụ điện năng gấp đôi bóng 50 W.",
+   "ex": "1 kW = 1000 W.",
+   "en": [
+    "power",
+    "watt"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Hiệu suất: không máy nào hoàn hảo",
+   "vi": "Khi máy móc chuyển hóa năng lượng, luôn có một phần biến thành nhiệt hao phí. Hiệu suất là tỉ lệ giữa phần năng lượng có ích và toàn bộ năng lượng tiêu thụ. Đèn LED có hiệu suất cao hơn bóng đèn sợi đốt nên tiết kiệm điện hơn.",
+   "ex": "Bóng đèn sợi đốt sờ vào rất nóng: đó là năng lượng bị hao phí.",
+   "en": [
+    "efficiency"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Ánh sáng đi thẳng",
+   "vi": "Trong không khí đồng nhất, ánh sáng truyền theo đường thẳng. Vì vậy ta không nhìn được vật ở sau bức tường. Tia nắng xuyên qua khe lá tạo thành những vệt sáng thẳng tắp.",
+   "ex": "Đèn pin chiếu trong phòng tối có bụi, em thấy rõ chùm sáng thẳng.",
+   "en": [
+    "light",
+    "straight line"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Bóng tối hình thành thế nào?",
+   "vi": "Khi một vật cản đường đi của ánh sáng, phía sau vật có vùng không nhận được ánh sáng, gọi là bóng tối. Đèn càng gần vật thì bóng trên tường càng to. Buổi trưa Mặt Trời lên cao nên bóng của em ngắn.",
+   "ex": "Múa tay trước đèn để làm bóng hình con chó, con chim.",
+   "en": [
+    "shadow"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Ta nhìn thấy nhờ ánh sáng",
+   "vi": "Ta nhìn thấy vật khi có ánh sáng từ vật truyền vào mắt. Có vật tự phát sáng như Mặt Trời, bóng đèn đang bật. Phần lớn vật khác, như quyển sách hay Mặt Trăng, chỉ hắt lại ánh sáng chiếu vào nó.",
+   "ex": "Trong phòng tối hoàn toàn, em không thấy gì cả.",
+   "en": [
+    "light source",
+    "see"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Cầu vồng bảy sắc",
+   "vi": "Ánh sáng trắng của Mặt Trời là hỗn hợp của nhiều màu. Khi đi qua những giọt nước mưa, ánh sáng bị tách ra thành dải màu: đỏ, cam, vàng, lục, lam, chàm, tím. Cầu vồng thường hiện ra khi vừa mưa vừa nắng, ở phía đối diện Mặt Trời.",
+   "ex": "Nhớ thứ tự màu: Đỏ – Cam – Vàng – Lục – Lam – Chàm – Tím.",
+   "en": [
+    "rainbow"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Phản xạ ánh sáng",
+   "vi": "Khi chiếu tới mặt gương, ánh sáng bị hắt trở lại, gọi là phản xạ ánh sáng. Với gương phẳng, góc phản xạ luôn bằng góc tới. Nhờ phản xạ, ta soi được mặt mình trong gương.",
+   "ex": "Gương chiếu hậu giúp người lái xe nhìn thấy phía sau.",
+   "en": [
+    "reflection",
+    "mirror"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Khúc xạ: chiếc đũa bị gãy",
+   "vi": "Khi đi từ không khí vào nước, ánh sáng bị đổi hướng ở mặt phân cách, gọi là khúc xạ ánh sáng. Vì thế chiếc đũa cắm trong cốc nước trông như bị gãy. Đáy bể bơi nhìn cũng nông hơn thực tế.",
+   "ex": "Đừng đoán độ sâu của nước bằng mắt, hãy hỏi người lớn.",
+   "en": [
+    "refraction"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Màu sắc của vật",
+   "vi": "Vật có màu vì nó hắt lại ánh sáng màu đó nhiều nhất. Lá cây màu xanh vì hắt lại nhiều ánh sáng xanh lục. Vật màu đen hấp thụ hầu hết ánh sáng nên phơi nắng rất mau nóng.",
+   "ex": "Mùa hè mặc áo sáng màu sẽ mát hơn áo đen.",
+   "en": [
+    "color"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Thấu kính và kính lúp",
+   "vi": "Thấu kính hội tụ dày ở giữa, mỏng ở rìa, làm các tia sáng gom lại. Kính lúp là một thấu kính hội tụ giúp ta nhìn vật nhỏ to hơn. Kính hiển vi và nhiều loại kính thiên văn đều dùng thấu kính.",
+   "ex": "Giọt nước trên lá cũng hoạt động như một kính lúp tí hon.",
+   "en": [
+    "lens",
+    "magnifying glass"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Tốc độ ánh sáng",
+   "vi": "Trong chân không, ánh sáng đi khoảng 300 000 km mỗi giây, không gì nhanh hơn. Ánh sáng từ Mặt Trời đến Trái Đất mất khoảng 8 phút. Ánh sáng nhanh hơn âm thanh rất nhiều, nên ta thấy chớp trước khi nghe tiếng sấm.",
+   "ex": "Trong 1 giây, ánh sáng có thể đi khoảng 7 vòng rưỡi quanh Trái Đất.",
+   "en": [
+    "speed of light"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Lăng kính tách màu",
+   "vi": "Isaac Newton cho ánh sáng trắng đi qua lăng kính thủy tinh và thu được dải màu giống cầu vồng. Mỗi màu bị khúc xạ lệch một mức khác nhau nên chúng tách nhau ra. Ông chứng minh ánh sáng trắng là hỗn hợp của nhiều ánh sáng màu.",
+   "ex": "Dải màu này gọi là quang phổ.",
+   "en": [
+    "prism",
+    "spectrum"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Ánh sáng ta không nhìn thấy",
+   "vi": "Ngoài ánh sáng nhìn thấy, còn có tia hồng ngoại và tia tử ngoại mà mắt người không thấy được. Điều khiển tivi thường dùng tia hồng ngoại. Tia tử ngoại trong nắng có thể làm cháy nắng da, nên cần che chắn khi trời nắng gắt.",
+   "ex": "Đội mũ rộng vành khi ra nắng buổi trưa.",
+   "en": [
+    "infrared",
+    "ultraviolet"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Mắt hoạt động như máy ảnh",
+   "vi": "Thể thủy tinh trong mắt giống một thấu kính hội tụ, tạo ảnh của vật trên màng lưới. Các tế bào trên màng lưới biến ánh sáng thành tín hiệu thần kinh gửi lên não. Người bị cận thị nhìn rõ vật ở gần nhưng nhìn mờ vật ở xa.",
+   "ex": "Đọc sách đủ sáng và nghỉ mắt thường xuyên để bảo vệ mắt.",
+   "en": [
+    "eye",
+    "retina"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Âm thanh do rung động",
+   "vi": "Âm thanh được tạo ra khi vật rung động. Gảy dây đàn, dây đàn rung lên và phát ra tiếng. Khi em nói, dây thanh quản trong cổ rung lên, em đặt tay lên cổ sẽ cảm nhận được.",
+   "ex": "Hết rung là hết kêu: chạm tay giữ dây đàn, tiếng đàn tắt ngay.",
+   "en": [
+    "sound",
+    "vibration"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "To và nhỏ",
+   "vi": "Vật rung càng mạnh thì âm phát ra càng to. Gõ trống mạnh, mặt trống rung mạnh nên tiếng trống to hơn. Độ to của âm được đo bằng đơn vị đêxiben, kí hiệu dB.",
+   "ex": "Gõ khẽ thì nhỏ, gõ mạnh thì to.",
+   "en": [
+    "loudness",
+    "decibel"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Trầm và bổng",
+   "vi": "Vật rung càng nhanh thì âm càng cao, hay còn gọi là bổng. Vật rung chậm thì âm thấp, hay trầm. Dây đàn ngắn và căng phát ra âm cao hơn dây đàn dài và chùng.",
+   "ex": "Tiếng chim hót thường bổng, tiếng trống cái thường trầm.",
+   "en": [
+    "pitch"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Bảo vệ đôi tai",
+   "vi": "Tiếng ồn quá to và kéo dài có thể làm hại tai. Khi dùng tai nghe, hãy để âm lượng vừa phải và cho tai nghỉ ngơi. Trồng cây xanh và đóng cửa giúp giảm tiếng ồn vào nhà.",
+   "ex": "Nếu phải hét mới nghe thấy nhau, chỗ đó đang quá ồn.",
+   "en": [
+    "noise",
+    "hearing"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Âm cần môi trường để truyền",
+   "vi": "Âm truyền được qua chất rắn, chất lỏng và chất khí. Âm không truyền được trong chân không vì không có gì để rung. Vì vậy ngoài vũ trụ, các nhà du hành liên lạc với nhau bằng sóng vô tuyến.",
+   "ex": "Áp tai xuống mặt bàn, em nghe tiếng gõ nhẹ rất rõ.",
+   "en": [
+    "medium",
+    "vacuum"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Tiếng vang",
+   "vi": "Khi gặp vật cản lớn như vách núi, âm bị phản xạ trở lại. Nếu âm phản xạ đến tai chậm hơn âm gốc đủ lâu, ta nghe thấy tiếng vang. Hét to trong hang động hay thung lũng, em dễ nghe thấy tiếng vang.",
+   "ex": "Rèm vải và thảm giúp phòng bớt tiếng vang.",
+   "en": [
+    "echo"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Tần số và héc",
+   "vi": "Tần số là số lần vật dao động trong một giây, đo bằng héc, kí hiệu Hz. Tai người nghe được âm có tần số khoảng từ 20 Hz đến 20 000 Hz. Tần số càng cao thì âm càng bổng.",
+   "ex": "Dao động 100 lần mỗi giây là tần số 100 Hz.",
+   "en": [
+    "frequency",
+    "hertz"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Âm đi nhanh cỡ nào?",
+   "vi": "Trong không khí, âm đi khoảng 340 m mỗi giây. Trong nước, âm đi nhanh hơn, khoảng 1500 m mỗi giây. Trong chất rắn như thép, âm còn đi nhanh hơn nữa.",
+   "ex": "Đếm số giây từ lúc thấy chớp đến khi nghe sấm, chia 3 là ra khoảng cách tính bằng km.",
+   "en": [
+    "speed of sound"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Siêu âm và hạ âm",
+   "vi": "Âm có tần số trên 20 000 Hz gọi là siêu âm, dưới 20 Hz gọi là hạ âm. Tai người không nghe được cả hai loại này. Dơi và cá heo dùng siêu âm để định hướng và tìm mồi, còn voi có thể trò chuyện bằng hạ âm.",
+   "ex": "Bác sĩ dùng máy siêu âm để xem bên trong cơ thể mà không cần mổ.",
+   "en": [
+    "ultrasound",
+    "infrasound"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Sóng âm là sóng dọc",
+   "vi": "Trong không khí, âm truyền đi thành những lớp không khí bị nén và giãn xen kẽ nhau. Các phần tử không khí chỉ dao động qua lại tại chỗ, chứ không bay theo âm đến tai ta. Sóng như vậy gọi là sóng dọc.",
+   "ex": "Đẩy một đầu lò xo dài, em thấy chỗ nén chạy dọc theo lò xo.",
+   "en": [
+    "sound wave",
+    "longitudinal wave"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Sonar đo độ sâu biển",
+   "vi": "Tàu biển phát sóng siêu âm xuống đáy biển rồi đo thời gian tiếng vọng quay lại. Biết tốc độ âm trong nước, người ta tính được độ sâu. Nếu cả đi lẫn về mất 2 giây thì đáy biển sâu khoảng 1500 m.",
+   "ex": "Nhớ chia đôi thời gian, vì âm phải đi xuống rồi đi lên.",
+   "en": [
+    "sonar"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Cộng hưởng",
+   "vi": "Mỗi vật có một tần số dao động riêng. Khi bị kích thích đúng tần số đó, vật dao động rất mạnh, gọi là cộng hưởng. Hộp gỗ của đàn ghi-ta cộng hưởng với dây đàn, giúp tiếng đàn to và vang hơn.",
+   "ex": "Đẩy xích đu đúng nhịp, xích đu bay càng lúc càng cao.",
+   "en": [
+    "resonance"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Điện cần mạch kín",
+   "vi": "Dòng điện chỉ chạy khi mạch điện kín, nghĩa là có đường đi liền từ một cực của pin, qua bóng đèn, về cực kia. Công tắc dùng để đóng hoặc ngắt mạch. Khi ngắt mạch, dòng điện dừng và đèn tắt.",
+   "ex": "Bật công tắc là đóng mạch, tắt công tắc là ngắt mạch.",
+   "en": [
+    "circuit",
+    "switch"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Chất dẫn điện và cách điện",
+   "vi": "Kim loại như đồng, nhôm dẫn điện tốt. Nhựa, cao su, gỗ khô, thủy tinh là chất cách điện. Dây điện có lõi đồng bên trong để dẫn điện và vỏ nhựa bên ngoài để an toàn.",
+   "ex": "Nước thường có lẫn chất tan nên dẫn được điện, rất nguy hiểm.",
+   "en": [
+    "conductor",
+    "insulator"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Nam châm hút sắt",
+   "vi": "Nam châm hút được các vật làm bằng sắt, thép, niken. Nam châm không hút nhựa, gỗ hay giấy. Mỗi nam châm có hai cực là cực Bắc và cực Nam.",
+   "ex": "Nam châm dán tủ lạnh bám được vì cửa tủ làm bằng thép.",
+   "en": [
+    "magnet"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "An toàn với điện",
+   "vi": "Điện lưới trong nhà rất mạnh và nguy hiểm. Không chạm tay ướt vào ổ cắm, công tắc, không chọc vật gì vào lỗ ổ điện. Thấy dây điện bị đứt, hãy tránh xa và báo ngay cho người lớn.",
+   "ex": "Pin nhỏ dùng làm thí nghiệm thì an toàn, điện lưới thì không.",
+   "en": [
+    "electrical safety"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Cùng cực đẩy, khác cực hút",
+   "vi": "Hai cực cùng tên của hai nam châm thì đẩy nhau. Hai cực khác tên thì hút nhau. Kim la bàn là một nam châm nhỏ, khi đứng yên luôn chỉ hướng Bắc – Nam.",
+   "ex": "Bắc gặp Nam thì hút, Bắc gặp Bắc thì đẩy.",
+   "en": [
+    "magnetic poles",
+    "compass"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Trái Đất là nam châm khổng lồ",
+   "vi": "Trái Đất có từ trường giống như một thanh nam châm rất lớn. Nhờ vậy kim la bàn luôn quay về hướng Bắc – Nam. Từ trường Trái Đất còn che chắn bớt các hạt mang điện từ Mặt Trời và tạo ra cực quang ở gần hai cực.",
+   "ex": "Cực quang là những dải sáng xanh, tím lung linh trên bầu trời vùng cực.",
+   "en": [
+    "magnetic field",
+    "aurora"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Điện tích và tĩnh điện",
+   "vi": "Cọ xát thước nhựa vào tóc khô, thước bị nhiễm điện và hút được những mẩu giấy nhỏ. Có hai loại điện tích là điện tích dương và điện tích âm. Điện tích cùng loại đẩy nhau, khác loại hút nhau.",
+   "ex": "Cởi áo len trong mùa khô đôi khi nghe lách tách: đó là tĩnh điện.",
+   "en": [
+    "static electricity",
+    "electric charge"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Sét là tia lửa điện khổng lồ",
+   "vi": "Trong đám mây giông, điện tích tích tụ rất nhiều. Khi đủ lớn, điện phóng qua không khí thành tia sét rất sáng và rất nóng. Không khí bị nung nóng đột ngột giãn nở mạnh, tạo ra tiếng sấm.",
+   "ex": "Khi có giông, hãy vào trong nhà, tránh đứng dưới cây cao.",
+   "en": [
+    "lightning",
+    "thunder"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Hiệu điện thế, dòng điện, điện trở",
+   "vi": "Hiệu điện thế (đơn vị vôn, V) giống như sức đẩy dòng điện đi. Cường độ dòng điện (đơn vị ampe, A) cho biết dòng điện mạnh hay yếu. Điện trở (đơn vị ôm, Ω) cản trở dòng điện. Định luật Ôm: I = U/R.",
+   "ex": "Pin AA thường có hiệu điện thế khoảng 1,5 V.",
+   "en": [
+    "voltage",
+    "current",
+    "resistance"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Nam châm điện",
+   "vi": "Cho dòng điện chạy qua cuộn dây quấn quanh lõi sắt, ta được nam châm điện. Ngắt điện thì nam châm điện gần như mất hết từ tính. Năm 1820, Hans Christian Ørsted phát hiện dòng điện tạo ra từ trường làm lệch kim la bàn.",
+   "ex": "Cần cẩu ở bãi phế liệu dùng nam châm điện để nhấc sắt thép.",
+   "en": [
+    "electromagnet"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Máy phát điện",
+   "vi": "Michael Faraday phát hiện khi nam châm chuyển động gần cuộn dây kín thì trong dây xuất hiện dòng điện. Đó là hiện tượng cảm ứng điện từ. Máy phát điện ở nhà máy thủy điện, nhiệt điện hay điện gió đều dựa trên nguyên lý này.",
+   "ex": "Đèn xe đạp kiểu cũ sáng nhờ một máy phát nhỏ quay theo bánh xe.",
+   "en": [
+    "generator",
+    "electromagnetic induction"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Mạch nối tiếp và song song",
+   "vi": "Trong mạch nối tiếp, các bóng đèn nối liền trên một đường; một bóng hỏng thì cả mạch tắt. Trong mạch song song, mỗi bóng có nhánh riêng; một bóng hỏng thì các bóng khác vẫn sáng. Đèn trong nhà được mắc song song.",
+   "ex": "Nhờ mắc song song, tắt đèn phòng khách thì đèn bếp vẫn sáng.",
+   "en": [
+    "series circuit",
+    "parallel circuit"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Không khí có thật",
+   "vi": "Không khí không màu, không mùi nhưng có thật và chiếm chỗ. Úp ngược một cái cốc xuống chậu nước, nước không tràn vào đầy cốc vì không khí bên trong đang chiếm chỗ. Gió chính là không khí chuyển động.",
+   "ex": "Thổi phồng quả bóng bay là em đang nhốt không khí vào trong.",
+   "en": [
+    "air",
+    "wind"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Vì sao vật nổi?",
+   "vi": "Khi thả vật vào nước, nước đẩy vật lên bằng một lực gọi là lực đẩy. Nếu lực đẩy đủ lớn để thắng trọng lượng của vật, vật sẽ nổi. Gỗ, xốp nhẹ hơn nước cùng thể tích nên nổi, còn hòn sỏi nặng hơn nên chìm.",
+   "ex": "Phao bơi chứa đầy không khí nên giúp ta nổi.",
+   "en": [
+    "float",
+    "sink"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Chiếc dù rơi chậm",
+   "vi": "Khi rơi, vật bị không khí cản lại. Chiếc dù xòe rộng nên chịu sức cản không khí rất lớn và rơi chậm. Nhờ đó người nhảy dù có thể tiếp đất an toàn.",
+   "ex": "Tờ giấy phẳng rơi chậm hơn tờ giấy vo tròn.",
+   "en": [
+    "parachute",
+    "air resistance"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Diều bay nhờ gió",
+   "vi": "Khi gió thổi vào mặt diều đặt nghiêng, không khí đẩy diều lên cao. Sợi dây giữ cho diều nghiêng đúng góc với gió. Khi gió yếu, em chạy ngược chiều gió để tạo thêm luồng gió cho diều.",
+   "ex": "Thả diều ở bãi rộng, tránh xa đường dây điện.",
+   "en": [
+    "kite"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Áp suất là gì?",
+   "vi": "Áp suất cho biết lực ép mạnh cỡ nào trên mỗi đơn vị diện tích bị ép. Cùng một lực, diện tích bị ép càng nhỏ thì áp suất càng lớn. Vì vậy dao sắc cắt dễ hơn dao cùn, còn xe tăng có bánh xích rộng để không bị lún.",
+   "ex": "Đi giày cao gót gót nhọn dễ lún xuống bãi cỏ mềm hơn giày đế bằng.",
+   "en": [
+    "pressure"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Áp suất khí quyển",
+   "vi": "Lớp không khí bao quanh Trái Đất đè lên mọi vật, tạo ra áp suất khí quyển. Càng lên cao, không khí càng loãng nên áp suất khí quyển càng giảm. Khi em hút ống hút, áp suất khí quyển đẩy nước dâng lên miệng.",
+   "ex": "Leo núi cao, gói bim bim mang theo có thể phồng to lên.",
+   "en": [
+    "atmospheric pressure"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Khinh khí cầu bay nhờ khí nóng",
+   "vi": "Không khí nóng nhẹ hơn không khí lạnh có cùng thể tích. Khinh khí cầu làm nóng không khí trong túi lớn, nên được không khí lạnh xung quanh đẩy lên. Năm 1783 ở Pháp, khinh khí cầu của anh em nhà Montgolfier lần đầu chở người bay lên trời.",
+   "ex": "Không khí nóng bốc lên, không khí lạnh chìm xuống.",
+   "en": [
+    "hot air balloon"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Áp suất trong nước",
+   "vi": "Càng xuống sâu trong nước, áp suất càng lớn. Khi lặn xuống đáy bể bơi, em thấy tai bị ép. Vì vậy chân đập nước được xây dày hơn phần đỉnh để chịu được áp suất lớn ở dưới sâu.",
+   "ex": "Tàu ngầm có vỏ rất dày để lặn sâu.",
+   "en": [
+    "water pressure"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Định luật Archimedes",
+   "vi": "Vật nhúng trong chất lỏng bị đẩy lên một lực bằng trọng lượng của phần chất lỏng mà vật chiếm chỗ. Tàu thép to vẫn nổi vì thân tàu rỗng, chiếm chỗ rất nhiều nước. Nhà bác học Archimedes ở Hy Lạp cổ đại đã tìm ra điều này.",
+   "ex": "Nước biển mặn đẩy mạnh hơn nước ngọt nên bơi ở biển dễ nổi hơn.",
+   "en": [
+    "buoyancy",
+    "Archimedes"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Lực nâng của cánh máy bay",
+   "vi": "Cánh máy bay có hình dạng đặc biệt và được đặt hơi chếch lên. Khi máy bay lao nhanh, cánh hướng luồng không khí xuống dưới, và áp suất không khí phía trên cánh thấp hơn phía dưới. Nhờ vậy cánh được nâng lên.",
+   "ex": "Máy bay phải chạy rất nhanh trên đường băng mới đủ lực nâng để cất cánh.",
+   "en": [
+    "lift",
+    "wing"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Bốn lực trên máy bay",
+   "vi": "Khi bay, máy bay chịu bốn lực chính: lực nâng hướng lên, trọng lực hướng xuống, lực đẩy của động cơ hướng về trước và lực cản không khí hướng về sau. Khi bay bằng với tốc độ không đổi, các lực này cân bằng nhau.",
+   "ex": "Nâng thắng trọng thì lên cao, đẩy thắng cản thì tăng tốc.",
+   "en": [
+    "thrust",
+    "drag"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Anh em nhà Wright",
+   "vi": "Năm 1903 ở Mỹ, hai anh em Wilbur và Orville Wright thực hiện chuyến bay đầu tiên bằng máy bay có động cơ và điều khiển được. Chuyến bay đầu tiên chỉ kéo dài khoảng 12 giây. Ngày nay máy bay chở hàng triệu hành khách mỗi ngày.",
+   "ex": "Họ từng làm nghề sửa và bán xe đạp.",
+   "en": [
+    "Wright brothers",
+    "airplane"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Lực là gì?",
+   "a": [
+    "Một loại ánh sáng",
+    "Một loại âm thanh",
+    "Sự đẩy hoặc kéo",
+    "Nhiệt độ của vật"
+   ],
+   "c": 2,
+   "why": "Lực là sự đẩy hoặc kéo, có thể làm vật chuyển động, dừng lại hay biến dạng.",
+   "en": "force"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Vì sao quả táo chín rơi xuống đất?",
+   "a": [
+    "Do gió luôn thổi xuống",
+    "Do ánh nắng đẩy xuống",
+    "Do Trái Đất hút (trọng lực)",
+    "Do không khí hút xuống"
+   ],
+   "c": 2,
+   "why": "Trái Đất hút mọi vật về phía nó, lực đó là trọng lực.",
+   "en": "gravity"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Vì sao đi trên sàn ướt dễ bị trơn ngã?",
+   "a": [
+    "Vì ma sát giữa giày và sàn nhỏ đi",
+    "Vì trọng lực mạnh lên",
+    "Vì sàn nóng lên",
+    "Vì nước hút chân ta"
+   ],
+   "c": 0,
+   "why": "Nước làm ma sát giảm, giày bám kém nên dễ trượt.",
+   "en": "friction"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Đơn vị đo lực là gì?",
+   "a": [
+    "Mét (m)",
+    "Giây (s)",
+    "Niutơn (N)",
+    "Lít (l)"
+   ],
+   "c": 2,
+   "why": "Lực đo bằng niutơn, đặt theo tên nhà khoa học Isaac Newton.",
+   "en": "newton"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Xe buýt phanh gấp, hành khách bị chúi về phía trước là do đâu?",
+   "a": [
+    "Lực từ",
+    "Áp suất nước",
+    "Tiếng vang",
+    "Quán tính"
+   ],
+   "c": 3,
+   "why": "Cơ thể có quán tính, muốn tiếp tục chuyển động về trước khi xe dừng lại.",
+   "en": "inertia"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Trên Trái Đất, vật có khối lượng 1 kg có trọng lượng khoảng bao nhiêu?",
+   "a": [
+    "Khoảng 1 N",
+    "Khoảng 100 N",
+    "Khoảng 1000 N",
+    "Khoảng 10 N"
+   ],
+   "c": 3,
+   "why": "Trọng lượng (N) xấp xỉ bằng khối lượng (kg) nhân 10.",
+   "en": "weight"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Vật nào sau đây là một đòn bẩy?",
+   "a": [
+    "Cái bập bênh",
+    "Quả bóng",
+    "Cái cốc",
+    "Viên gạch"
+   ],
+   "c": 0,
+   "why": "Bập bênh là thanh cứng quay quanh điểm tựa ở giữa, đúng là đòn bẩy.",
+   "en": "lever"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Lực kế dùng bộ phận nào để đo lực?",
+   "a": [
+    "Lò xo",
+    "Nam châm",
+    "Bóng đèn",
+    "Thấu kính"
+   ],
+   "c": 0,
+   "why": "Lực càng lớn thì lò xo trong lực kế dãn càng nhiều.",
+   "en": "spring scale"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Theo F = m·a, cùng một lực, vật nặng hơn sẽ thế nào?",
+   "a": [
+    "Tăng tốc nhanh hơn",
+    "Tăng tốc chậm hơn",
+    "Tự bay lên cao",
+    "Đổi màu"
+   ],
+   "c": 1,
+   "why": "Với cùng lực F, khối lượng m lớn hơn thì gia tốc a nhỏ hơn.",
+   "en": "acceleration"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Tên lửa phụt khí ra sau để bay lên là ví dụ của định luật nào?",
+   "a": [
+    "Định luật III Newton",
+    "Định luật Ôm",
+    "Định luật Archimedes",
+    "Định luật phản xạ ánh sáng"
+   ],
+   "c": 0,
+   "why": "Tên lửa đẩy khí ra sau, khí đẩy lại tên lửa về trước: lực và phản lực.",
+   "en": "action and reaction"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Bỏ qua sức cản không khí, thả búa và lông chim cùng lúc thì sao?",
+   "a": [
+    "Búa chạm đất trước",
+    "Lông chim chạm đất trước",
+    "Cả hai chạm đất cùng lúc",
+    "Lông chim bay lên"
+   ],
+   "c": 2,
+   "why": "Rơi tự do, mọi vật rơi nhanh như nhau; các nhà du hành đã thử điều này trên Mặt Trăng.",
+   "en": "free fall"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Vật đang chuyển động, nếu không có lực nào tác dụng thì sẽ thế nào?",
+   "a": [
+    "Chuyển động thẳng đều mãi",
+    "Dừng lại ngay",
+    "Tự quay tròn",
+    "Rơi thẳng xuống"
+   ],
+   "c": 0,
+   "why": "Theo định luật I Newton, vật giữ nguyên chuyển động khi không có lực tác dụng.",
+   "en": "Newton's first law"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Phần lớn năng lượng trên Trái Đất đến từ đâu?",
+   "a": [
+    "Mặt Trăng",
+    "Các ngôi sao xa",
+    "Gió biển",
+    "Mặt Trời"
+   ],
+   "c": 3,
+   "why": "Mặt Trời cung cấp ánh sáng và nhiệt, nuôi cây xanh và tạo ra gió, mưa.",
+   "en": "sun"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Nhiệt tự truyền theo chiều nào?",
+   "a": [
+    "Từ vật lạnh sang vật nóng",
+    "Từ vật nhỏ sang vật to",
+    "Từ vật nóng sang vật lạnh",
+    "Không truyền đi đâu cả"
+   ],
+   "c": 2,
+   "why": "Nhiệt luôn tự truyền từ nơi nóng hơn sang nơi lạnh hơn.",
+   "en": "heat"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Việc nào giúp tiết kiệm điện?",
+   "a": [
+    "Mở cửa tủ lạnh thật lâu",
+    "Tắt đèn khi ra khỏi phòng",
+    "Bật quạt khi không có ai",
+    "Để tivi bật suốt đêm"
+   ],
+   "c": 1,
+   "why": "Tắt thiết bị khi không dùng giúp không tốn điện vô ích.",
+   "en": "save energy"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Cơ thể em lấy năng lượng chủ yếu từ đâu?",
+   "a": [
+    "Tiếng nhạc",
+    "Bóng tối",
+    "Thức ăn",
+    "Màu sắc quần áo"
+   ],
+   "c": 2,
+   "why": "Thức ăn cung cấp năng lượng cho cơ thể hoạt động.",
+   "en": "food"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Quả bóng đang lăn có dạng năng lượng nào?",
+   "a": [
+    "Năng lượng âm",
+    "Động năng",
+    "Điện năng",
+    "Quang năng"
+   ],
+   "c": 1,
+   "why": "Vật đang chuyển động thì có động năng.",
+   "en": "kinetic energy"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Quyển sách nằm trên nóc tủ cao có dạng năng lượng nào?",
+   "a": [
+    "Động năng",
+    "Thế năng hấp dẫn",
+    "Điện năng",
+    "Năng lượng âm thanh"
+   ],
+   "c": 1,
+   "why": "Vật ở trên cao so với mặt đất có thế năng hấp dẫn.",
+   "en": "potential energy"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Bóng đèn sợi đốt biến điện năng chủ yếu thành gì?",
+   "a": [
+    "Động năng và âm thanh",
+    "Thế năng đàn hồi",
+    "Quang năng và nhiệt năng",
+    "Năng lượng gió"
+   ],
+   "c": 2,
+   "why": "Đèn phát sáng và nóng lên: điện năng thành quang năng và nhiệt năng.",
+   "en": "energy transformation"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Nhiệt từ Mặt Trời đến Trái Đất qua khoảng không vũ trụ bằng cách nào?",
+   "a": [
+    "Dẫn nhiệt",
+    "Bức xạ nhiệt",
+    "Đối lưu",
+    "Ma sát"
+   ],
+   "c": 1,
+   "why": "Chỉ bức xạ nhiệt truyền được qua chân không.",
+   "en": "radiation"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Nguồn nào sau đây là năng lượng tái tạo?",
+   "a": [
+    "Gió",
+    "Than đá",
+    "Dầu mỏ",
+    "Khí đốt tự nhiên"
+   ],
+   "c": 0,
+   "why": "Gió luôn được bổ sung, còn than, dầu, khí là nhiên liệu hóa thạch sẽ cạn dần.",
+   "en": "renewable energy"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Đơn vị của công suất là gì?",
+   "a": [
+    "Jun (J)",
+    "Niutơn (N)",
+    "Héc (Hz)",
+    "Oát (W)"
+   ],
+   "c": 3,
+   "why": "Công suất đo bằng oát; jun là đơn vị của công và năng lượng.",
+   "en": "power"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Đẩy một bức tường nhưng tường không dịch chuyển. Công cơ học bằng bao nhiêu?",
+   "a": [
+    "Rất lớn",
+    "Bằng lực đẩy",
+    "Bằng 0",
+    "Bằng trọng lượng bức tường"
+   ],
+   "c": 2,
+   "why": "Công A = F·s, vật không dịch chuyển (s = 0) nên công bằng 0.",
+   "en": "work"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Vì sao đèn LED tiết kiệm điện hơn đèn sợi đốt?",
+   "a": [
+    "Vì đèn LED to hơn",
+    "Ít năng lượng hao phí thành nhiệt hơn",
+    "Vì đèn LED không cần điện",
+    "Vì đèn LED phát ra âm thanh"
+   ],
+   "c": 1,
+   "why": "Đèn LED có hiệu suất cao, biến nhiều điện năng thành ánh sáng hơn.",
+   "en": "efficiency"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Trong không khí đồng nhất, ánh sáng truyền theo đường nào?",
+   "a": [
+    "Đường zíc zắc",
+    "Đường tròn",
+    "Đường thẳng",
+    "Đường xoắn ốc"
+   ],
+   "c": 2,
+   "why": "Ánh sáng truyền thẳng, nên ta không nhìn được vật sau bức tường.",
+   "en": "light"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Buổi trưa nắng, bóng của em thường thế nào?",
+   "a": [
+    "Dài nhất trong ngày",
+    "Có màu đỏ",
+    "Dài gấp mười lần em",
+    "Ngắn"
+   ],
+   "c": 3,
+   "why": "Buổi trưa Mặt Trời ở cao trên đầu nên bóng ngắn.",
+   "en": "shadow"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Vật nào tự phát ra ánh sáng?",
+   "a": [
+    "Mặt Trời",
+    "Mặt Trăng",
+    "Quyển sách",
+    "Cái gương"
+   ],
+   "c": 0,
+   "why": "Mặt Trời tự phát sáng; Mặt Trăng chỉ hắt lại ánh sáng Mặt Trời.",
+   "en": "light source"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Cầu vồng thường được kể có bao nhiêu màu?",
+   "a": [
+    "Bảy màu",
+    "Ba màu",
+    "Năm màu",
+    "Mười hai màu"
+   ],
+   "c": 0,
+   "why": "Đỏ, cam, vàng, lục, lam, chàm, tím: bảy màu.",
+   "en": "rainbow"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Chiếc đũa cắm trong cốc nước trông như bị gãy là do đâu?",
+   "a": [
+    "Phản xạ âm thanh",
+    "Khúc xạ ánh sáng",
+    "Lực ma sát",
+    "Từ trường"
+   ],
+   "c": 1,
+   "why": "Ánh sáng đổi hướng khi đi từ nước sang không khí, gọi là khúc xạ.",
+   "en": "refraction"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Ánh sáng phản xạ trên gương phẳng: góc phản xạ thế nào?",
+   "a": [
+    "Bằng góc tới",
+    "Gấp đôi góc tới",
+    "Luôn bằng 0 độ",
+    "Luôn bằng 90 độ"
+   ],
+   "c": 0,
+   "why": "Định luật phản xạ: góc phản xạ bằng góc tới.",
+   "en": "reflection"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Vì sao lá cây có màu xanh?",
+   "a": [
+    "Lá hấp thụ hết ánh sáng xanh",
+    "Lá tự phát sáng màu xanh",
+    "Do gió nhuộm lá",
+    "Lá hắt lại nhiều ánh sáng xanh lục"
+   ],
+   "c": 3,
+   "why": "Ta thấy màu của ánh sáng mà vật hắt lại nhiều nhất.",
+   "en": "color"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Kính lúp là loại gì?",
+   "a": [
+    "Gương phẳng",
+    "Thấu kính phân kì",
+    "Tấm kính màu",
+    "Thấu kính hội tụ"
+   ],
+   "c": 3,
+   "why": "Kính lúp là thấu kính hội tụ, giúp nhìn vật nhỏ to hơn.",
+   "en": "magnifying glass"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Trong chân không, ánh sáng đi khoảng bao nhiêu mỗi giây?",
+   "a": [
+    "Khoảng 340 m",
+    "Khoảng 3000 km",
+    "Khoảng 300 000 km",
+    "Khoảng 30 km"
+   ],
+   "c": 2,
+   "why": "Tốc độ ánh sáng khoảng 300 000 km/s; 340 m/s là tốc độ âm trong không khí.",
+   "en": "speed of light"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Ai đã dùng lăng kính chứng minh ánh sáng trắng gồm nhiều màu?",
+   "a": [
+    "Thomas Edison",
+    "Isaac Newton",
+    "Archimedes",
+    "Michael Faraday"
+   ],
+   "c": 1,
+   "why": "Newton cho ánh sáng trắng qua lăng kính và thu được dải màu quang phổ.",
+   "en": "prism"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Điều khiển tivi thường dùng loại tia nào?",
+   "a": [
+    "Tia tử ngoại",
+    "Tia X",
+    "Ánh sáng tím",
+    "Tia hồng ngoại"
+   ],
+   "c": 3,
+   "why": "Điều khiển phát tia hồng ngoại, mắt ta không nhìn thấy.",
+   "en": "infrared"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Ảnh của vật trong mắt người hiện lên ở đâu?",
+   "a": [
+    "Lông mi",
+    "Lông mày",
+    "Mí mắt",
+    "Màng lưới"
+   ],
+   "c": 3,
+   "why": "Thể thủy tinh tạo ảnh trên màng lưới, rồi tín hiệu được gửi lên não.",
+   "en": "retina"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Âm thanh được tạo ra khi nào?",
+   "a": [
+    "Khi vật đứng yên",
+    "Khi vật đổi màu",
+    "Khi vật rung động",
+    "Khi vật bị làm lạnh"
+   ],
+   "c": 2,
+   "why": "Mọi âm thanh đều do vật rung động tạo ra.",
+   "en": "vibration"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Gõ trống mạnh hơn thì tiếng trống thế nào?",
+   "a": [
+    "To hơn",
+    "Nhỏ hơn",
+    "Tắt hẳn",
+    "Biến thành ánh sáng"
+   ],
+   "c": 0,
+   "why": "Mặt trống rung mạnh hơn nên âm to hơn.",
+   "en": "loudness"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Dây đàn ngắn và căng phát ra âm thế nào so với dây dài và chùng?",
+   "a": [
+    "Thấp (trầm) hơn",
+    "Giống hệt nhau",
+    "Không phát ra âm",
+    "Cao (bổng) hơn"
+   ],
+   "c": 3,
+   "why": "Dây ngắn, căng rung nhanh hơn nên âm cao hơn.",
+   "en": "pitch"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Độ to của âm được đo bằng đơn vị nào?",
+   "a": [
+    "Kilôgam (kg)",
+    "Mét (m)",
+    "Đêxiben (dB)",
+    "Oát (W)"
+   ],
+   "c": 2,
+   "why": "Độ to của âm thường đo bằng đêxiben, kí hiệu dB.",
+   "en": "decibel"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Âm thanh KHÔNG truyền được trong môi trường nào?",
+   "a": [
+    "Nước",
+    "Chân không",
+    "Không khí",
+    "Thép"
+   ],
+   "c": 1,
+   "why": "Chân không không có gì để rung nên âm không truyền được.",
+   "en": "vacuum"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Hét to trong hang động, em nghe lại tiếng của mình. Đó là gì?",
+   "a": [
+    "Khúc xạ ánh sáng",
+    "Tiếng vang",
+    "Tĩnh điện",
+    "Tia hồng ngoại"
+   ],
+   "c": 1,
+   "why": "Âm phản xạ từ vách hang quay lại tai em, gọi là tiếng vang.",
+   "en": "echo"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Tai người nghe được âm có tần số trong khoảng nào?",
+   "a": [
+    "Chỉ từ 1 Hz đến 5 Hz",
+    "Khoảng 20 Hz đến 20 000 Hz",
+    "Chỉ trên 100 000 Hz",
+    "Chỉ đúng 440 Hz"
+   ],
+   "c": 1,
+   "why": "Tai người nghe được khoảng 20 Hz đến 20 000 Hz.",
+   "en": "frequency"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Trong không khí, âm đi khoảng bao nhiêu mét mỗi giây?",
+   "a": [
+    "Khoảng 3 m",
+    "Khoảng 340 m",
+    "Khoảng 34 000 m",
+    "Khoảng 300 000 km"
+   ],
+   "c": 1,
+   "why": "Âm trong không khí đi khoảng 340 m/s.",
+   "en": "speed of sound"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Loài nào dùng siêu âm để định hướng khi bay trong đêm?",
+   "a": [
+    "Gà",
+    "Bò",
+    "Ngựa",
+    "Dơi"
+   ],
+   "c": 3,
+   "why": "Dơi phát siêu âm và nghe tiếng vọng để tránh vật cản, tìm mồi.",
+   "en": "echolocation"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Siêu âm là âm có tần số thế nào?",
+   "a": [
+    "Dưới 20 Hz",
+    "Trên 20 000 Hz",
+    "Đúng bằng 1000 Hz",
+    "Bằng 0 Hz"
+   ],
+   "c": 1,
+   "why": "Âm trên 20 000 Hz là siêu âm; dưới 20 Hz là hạ âm.",
+   "en": "ultrasound"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Sonar nhận tiếng vọng sau 2 giây. Âm trong nước đi khoảng 1500 m/s. Đáy biển sâu khoảng bao nhiêu?",
+   "a": [
+    "Khoảng 3000 m",
+    "Khoảng 1500 m",
+    "Khoảng 750 m",
+    "Khoảng 340 m"
+   ],
+   "c": 1,
+   "why": "Âm đi tổng cộng 3000 m cho cả lượt xuống và lên, nên độ sâu là một nửa: 1500 m.",
+   "en": "sonar"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Hộp gỗ của đàn ghi-ta giúp tiếng đàn to hơn nhờ hiện tượng gì?",
+   "a": [
+    "Cộng hưởng",
+    "Khúc xạ",
+    "Quán tính",
+    "Nhiễm từ"
+   ],
+   "c": 0,
+   "why": "Hộp đàn dao động cộng hưởng theo dây đàn, làm âm to và vang hơn.",
+   "en": "resonance"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Muốn bóng đèn sáng, mạch điện phải thế nào?",
+   "a": [
+    "Là mạch kín",
+    "Là mạch hở",
+    "Không cần có pin",
+    "Có dây bị cắt đứt"
+   ],
+   "c": 0,
+   "why": "Dòng điện chỉ chạy được trong mạch kín.",
+   "en": "circuit"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Vật nào dẫn điện tốt?",
+   "a": [
+    "Thước nhựa",
+    "Cục tẩy cao su",
+    "Dây đồng",
+    "Que gỗ khô"
+   ],
+   "c": 2,
+   "why": "Đồng là kim loại, dẫn điện tốt; nhựa, cao su, gỗ khô là chất cách điện.",
+   "en": "conductor"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Nam châm hút được vật nào?",
+   "a": [
+    "Cái đinh sắt",
+    "Mẩu giấy",
+    "Cốc nhựa",
+    "Cái thìa gỗ"
+   ],
+   "c": 0,
+   "why": "Nam châm hút sắt, thép, niken; không hút giấy, nhựa, gỗ.",
+   "en": "magnet"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Thấy dây điện bị đứt rơi xuống đất, em nên làm gì?",
+   "a": [
+    "Tránh xa và báo người lớn",
+    "Nhặt lên cất đi",
+    "Lấy que ướt khều thử",
+    "Chạm thử xem còn điện không"
+   ],
+   "c": 0,
+   "why": "Dây điện đứt có thể còn điện, rất nguy hiểm, phải tránh xa.",
+   "en": "electrical safety"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Hai cực cùng tên của hai nam châm đặt gần nhau thì sao?",
+   "a": [
+    "Đẩy nhau",
+    "Hút nhau",
+    "Dính chặt mãi",
+    "Phát ra ánh sáng"
+   ],
+   "c": 0,
+   "why": "Cùng cực thì đẩy, khác cực thì hút.",
+   "en": "magnetic poles"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Kim la bàn khi đứng yên luôn chỉ hướng nào?",
+   "a": [
+    "Đông – Tây",
+    "Lên – xuống",
+    "Theo hướng gió",
+    "Bắc – Nam"
+   ],
+   "c": 3,
+   "why": "Kim la bàn là nam châm nhỏ, quay theo từ trường Trái Đất về hướng Bắc – Nam.",
+   "en": "compass"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Cọ thước nhựa vào tóc khô, thước hút được mẩu giấy nhỏ. Vì sao?",
+   "a": [
+    "Thước bị nhiễm điện",
+    "Thước bị nóng chảy",
+    "Thước có nam châm",
+    "Giấy bị ướt"
+   ],
+   "c": 0,
+   "why": "Cọ xát làm thước nhiễm điện, nên hút được vật nhẹ.",
+   "en": "static electricity"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Tiếng sấm được tạo ra do đâu?",
+   "a": [
+    "Hai đám mây va vào nhau như đá",
+    "Mưa rơi lên mái nhà",
+    "Gió thổi qua núi",
+    "Sét nung nóng không khí, làm nó giãn nở đột ngột"
+   ],
+   "c": 3,
+   "why": "Tia sét nung nóng không khí rất nhanh, không khí giãn nở mạnh tạo ra tiếng sấm.",
+   "en": "thunder"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Theo định luật Ôm, cường độ dòng điện I bằng gì?",
+   "a": [
+    "U nhân với R",
+    "U chia cho R",
+    "R chia cho U",
+    "U cộng với R"
+   ],
+   "c": 1,
+   "why": "Định luật Ôm: I = U/R.",
+   "en": "Ohm's law"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Ai phát hiện hiện tượng cảm ứng điện từ, nền tảng của máy phát điện?",
+   "a": [
+    "Isaac Newton",
+    "Galileo Galilei",
+    "Archimedes",
+    "Michael Faraday"
+   ],
+   "c": 3,
+   "why": "Faraday phát hiện nam châm chuyển động gần cuộn dây tạo ra dòng điện.",
+   "en": "electromagnetic induction"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Đèn trong nhà thường được mắc thế nào?",
+   "a": [
+    "Mắc song song",
+    "Mắc nối tiếp tất cả",
+    "Không cần dây nối",
+    "Mắc vào nam châm"
+   ],
+   "c": 0,
+   "why": "Mắc song song giúp mỗi đèn bật tắt riêng và một đèn hỏng không làm tắt đèn khác.",
+   "en": "parallel circuit"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Ngắt dòng điện, nam châm điện sẽ thế nào?",
+   "a": [
+    "Hút mạnh gấp đôi",
+    "Phát ra tia sét",
+    "Gần như mất hết từ tính",
+    "Biến thành nam châm vĩnh cửu mạnh hơn"
+   ],
+   "c": 2,
+   "why": "Nam châm điện chỉ có từ tính mạnh khi có dòng điện chạy qua cuộn dây.",
+   "en": "electromagnet"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Gió là gì?",
+   "a": [
+    "Nước bay hơi",
+    "Ánh sáng Mặt Trời",
+    "Một loại âm thanh",
+    "Không khí chuyển động"
+   ],
+   "c": 3,
+   "why": "Gió là không khí di chuyển từ nơi này đến nơi khác.",
+   "en": "wind"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Vì sao miếng xốp nổi trên nước?",
+   "a": [
+    "Vì nó có màu trắng",
+    "Nó nhẹ hơn nước cùng thể tích",
+    "Vì nước đẩy nó xuống",
+    "Vì nó có nam châm"
+   ],
+   "c": 1,
+   "why": "Vật nhẹ hơn nước cùng thể tích thì lực đẩy của nước đủ làm nó nổi.",
+   "en": "float"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Vì sao chiếc dù giúp người nhảy dù rơi chậm?",
+   "a": [
+    "Dù làm người nhẹ đi",
+    "Dù hút người lên trời",
+    "Dù xòe rộng nên sức cản không khí lớn",
+    "Dù làm mất trọng lực"
+   ],
+   "c": 2,
+   "why": "Diện tích rộng làm không khí cản nhiều, nên rơi chậm.",
+   "en": "parachute"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Muốn thả diều khi gió yếu, em có thể làm gì?",
+   "a": [
+    "Tưới nước lên diều",
+    "Buộc đá vào diều",
+    "Cắt ngắn dây còn một gang tay",
+    "Chạy để tạo thêm luồng gió"
+   ],
+   "c": 3,
+   "why": "Khi em chạy, không khí thổi vào mặt diều mạnh hơn, đẩy diều lên.",
+   "en": "kite"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Vì sao dao sắc cắt dễ hơn dao cùn?",
+   "a": [
+    "Dao sắc luôn nặng hơn",
+    "Dao sắc có điện",
+    "Dao cùn có nam châm",
+    "Lưỡi mỏng nên áp suất lớn hơn"
+   ],
+   "c": 3,
+   "why": "Cùng lực, diện tích tiếp xúc nhỏ thì áp suất lớn.",
+   "en": "pressure"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Càng lên cao, áp suất khí quyển thay đổi thế nào?",
+   "a": [
+    "Càng tăng",
+    "Không đổi",
+    "Càng giảm",
+    "Gấp đôi sau mỗi mét"
+   ],
+   "c": 2,
+   "why": "Lên cao không khí loãng hơn nên áp suất khí quyển giảm.",
+   "en": "atmospheric pressure"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Khinh khí cầu bay lên nhờ đâu?",
+   "a": [
+    "Khí nóng trong túi nhẹ hơn khí lạnh bên ngoài",
+    "Cánh quạt rất to",
+    "Nam châm trên mây",
+    "Lò xo bật lên"
+   ],
+   "c": 0,
+   "why": "Không khí nóng nhẹ hơn không khí lạnh cùng thể tích nên bị đẩy lên.",
+   "en": "hot air balloon"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Vì sao chân đập nước được xây dày hơn phần đỉnh?",
+   "a": [
+    "Để cá có chỗ ở",
+    "Càng sâu áp suất nước càng lớn",
+    "Chỉ để trông đẹp hơn",
+    "Vì nước ở đáy nhẹ hơn"
+   ],
+   "c": 1,
+   "why": "Áp suất nước tăng theo độ sâu, nên chân đập phải chắc hơn.",
+   "en": "water pressure"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Tàu thép rất nặng vẫn nổi trên biển vì sao?",
+   "a": [
+    "Thép nhẹ hơn nước",
+    "Nước biển không có trọng lực",
+    "Thân tàu rỗng, chiếm chỗ rất nhiều nước",
+    "Tàu có nam châm đẩy lên"
+   ],
+   "c": 2,
+   "why": "Lực đẩy Archimedes bằng trọng lượng nước bị chiếm chỗ, đủ lớn để đỡ tàu.",
+   "en": "buoyancy"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Bốn lực chính trên máy bay gồm lực nâng, trọng lực, lực đẩy và lực nào?",
+   "a": [
+    "Lực từ",
+    "Lực đàn hồi lò xo",
+    "Lực cản không khí",
+    "Lực tĩnh điện"
+   ],
+   "c": 2,
+   "why": "Lực cản không khí hướng ngược chiều bay, chống lại lực đẩy của động cơ.",
+   "en": "drag"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Ai bay chuyến đầu tiên bằng máy bay có động cơ năm 1903?",
+   "a": [
+    "Anh em nhà Montgolfier",
+    "Isaac Newton",
+    "Galileo Galilei",
+    "Anh em nhà Wright"
+   ],
+   "c": 3,
+   "why": "Anh em Wright bay năm 1903; anh em Montgolfier làm khinh khí cầu năm 1783.",
+   "en": "Wright brothers"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Lực đẩy Archimedes lên vật nhúng trong nước bằng gì?",
+   "a": [
+    "Khối lượng của vật nhân hai",
+    "Trọng lượng phần nước bị vật chiếm chỗ",
+    "Luôn luôn bằng 0",
+    "Nhiệt độ của nước"
+   ],
+   "c": 1,
+   "why": "Đó chính là nội dung định luật Archimedes.",
+   "en": "Archimedes' principle"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Archimedes và chiếc vương miện",
+   "vi": "Theo truyền thuyết, nhà vua nhờ Archimedes kiểm tra chiếc vương miện có phải bằng vàng nguyên chất không. Ông suy nghĩ mãi mà chưa ra cách. Một hôm, khi bước vào bồn tắm, ông thấy nước dâng lên và tràn ra ngoài. Ông chợt hiểu: có thể đo thể tích vương miện bằng lượng nước nó chiếm chỗ! Người ta kể ông vui quá, reo lên “Eureka!”, nghĩa là “Tìm ra rồi!”.",
+   "en": [
+    "Archimedes",
+    "Eureka"
+   ]
+  },
+  {
+   "t": "Newton và quả táo",
+   "vi": "Người ta kể rằng Isaac Newton ngồi dưới gốc cây và thấy một quả táo rơi xuống. Ông tự hỏi: vì sao quả táo luôn rơi thẳng xuống đất mà không bay lên hay bay ngang? Ông nghĩ tiếp: phải chăng lực kéo quả táo cũng là lực giữ Mặt Trăng quay quanh Trái Đất? Từ đó, ông xây dựng định luật vạn vật hấp dẫn. Một câu hỏi nhỏ đã mở ra cả một khoa học lớn.",
+   "en": [
+    "Isaac Newton",
+    "gravity"
+   ]
+  },
+  {
+   "t": "Galileo và những quả cầu",
+   "vi": "Ngày xưa, nhiều người tin rằng vật nặng rơi nhanh hơn vật nhẹ. Galileo Galilei không tin ngay mà làm thí nghiệm để kiểm chứng. Ông cho các quả cầu lăn trên mặt phẳng nghiêng và đo thời gian thật cẩn thận. Ông kết luận: nếu bỏ qua sức cản không khí, mọi vật rơi nhanh như nhau. Câu chuyện ông thả vật từ tháp nghiêng Pisa rất nổi tiếng, dù các nhà sử học chưa chắc nó có thật.",
+   "en": [
+    "Galileo",
+    "falling objects"
+   ]
+  },
+  {
+   "t": "Những hành khách đầu tiên của khinh khí cầu",
+   "vi": "Năm 1783, anh em nhà Montgolfier ở Pháp làm ra khinh khí cầu dùng không khí nóng. Trước khi cho người bay, họ thử với ba hành khách đặc biệt: một con cừu, một con vịt và một con gà trống. Khinh khí cầu bay lên rồi hạ xuống, cả ba con vật đều bình an. Vài tháng sau, lần đầu tiên con người bay lên trời bằng khinh khí cầu. Thế là giấc mơ bay của loài người bắt đầu thành hiện thực.",
+   "en": [
+    "Montgolfier",
+    "hot air balloon"
+   ]
+  },
+  {
+   "t": "Tiệm xe đạp và chiếc máy bay",
+   "vi": "Wilbur và Orville Wright là hai anh em ở Mỹ, làm nghề sửa và bán xe đạp. Họ say mê tìm hiểu cách chim bay và thử nghiệm với tàu lượn suốt nhiều năm. Họ còn tự làm một ống thổi gió để thử nhiều kiểu cánh khác nhau. Năm 1903, chiếc máy bay có động cơ của họ cất cánh và bay khoảng 12 giây. Chuyến bay ngắn ngủi ấy đã mở ra kỉ nguyên hàng không.",
+   "en": [
+    "Wright brothers",
+    "first flight"
+   ]
+  },
+  {
+   "t": "Cậu bé đóng sách thành nhà khoa học",
+   "vi": "Michael Faraday sinh ra trong một gia đình nghèo ở Anh và đi học rất ít. Lúc nhỏ, cậu học việc ở một tiệm đóng sách và tranh thủ đọc những cuốn sách khoa học đi qua tay mình. Cậu chép bài giảng của nhà hóa học Humphry Davy thật cẩn thận rồi gửi tặng ông. Davy nhận Faraday làm trợ lí. Về sau, Faraday phát hiện ra cảm ứng điện từ, nền tảng của máy phát điện ngày nay.",
+   "en": [
+    "Michael Faraday",
+    "electricity"
+   ]
+  },
+  {
+   "t": "Chiếc kim la bàn bỗng nhúc nhích",
+   "vi": "Năm 1820, nhà khoa học Đan Mạch Hans Christian Ørsted đang làm thí nghiệm với dòng điện. Ông để ý thấy chiếc kim la bàn đặt gần dây điện bỗng quay lệch đi mỗi khi có dòng điện chạy qua. Điều đó cho thấy dòng điện tạo ra từ trường. Đây là lần đầu tiên người ta thấy rõ điện và từ có liên quan với nhau. Từ phát hiện ấy, nam châm điện và động cơ điện ra đời.",
+   "en": [
+    "Ørsted",
+    "electromagnetism"
+   ]
+  },
+  {
+   "t": "Bí mật bay đêm của loài dơi",
+   "vi": "Vào thế kỉ 18, nhà khoa học Ý Lazzaro Spallanzani thắc mắc vì sao dơi bay trong đêm tối mà không đâm vào đồ vật. Ông thấy dơi bị che mắt vẫn bay tránh vật cản rất giỏi. Nhưng khi tai dơi bị bịt lại, chúng lúng túng hẳn. Ông đoán dơi dùng tai để định hướng. Hơn một trăm năm sau, các nhà khoa học mới phát hiện dơi phát ra siêu âm và nghe tiếng vọng của nó.",
+   "en": [
+    "bats",
+    "echolocation"
+   ]
+  },
+  {
+   "t": "Đo tốc độ ánh sáng nhờ Sao Mộc",
+   "vi": "Ngày xưa nhiều người nghĩ ánh sáng đến ngay tức thì. Năm 1676, nhà thiên văn Đan Mạch Ole Rømer quan sát Io, một mặt trăng của Sao Mộc. Ông thấy Io bị che khuất sớm hay muộn tùy lúc Trái Đất ở gần hay xa Sao Mộc. Ông giải thích: ánh sáng cần thời gian để đi, đường càng xa thì đến càng muộn. Đó là lần đầu tiên con người ước lượng được tốc độ ánh sáng.",
+   "en": [
+    "Ole Rømer",
+    "speed of light"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: Ma sát ở quanh ta",
+   "vi": "Ma sát là lực cản khi hai bề mặt cọ vào nhau. Bề mặt càng nhám thì ma sát càng lớn. Ma sát giúp ta cầm nắm, đi lại và phanh xe. Nhưng ma sát cũng làm đồ vật mòn đi.",
+   "try": "Đẩy nhẹ một quyển sách trên mặt bàn trơn, rồi trên một chiếc khăn bông. Xem chỗ nào sách trượt xa hơn."
+  },
+  {
+   "t": "Bài học hôm nay: Vật nặng có rơi nhanh hơn?",
+   "vi": "Mọi vật đều bị Trái Đất hút xuống. Vật rơi chậm thường là do không khí cản lại chứ không phải do nhẹ. Nếu không có không khí, mọi vật rơi nhanh như nhau.",
+   "try": "Cầm hai tờ giấy giống nhau, vo tròn một tờ. Thả cả hai cùng lúc từ cùng độ cao và xem tờ nào chạm đất trước."
+  },
+  {
+   "t": "Bài học hôm nay: Sức mạnh của đòn bẩy",
+   "vi": "Đòn bẩy gồm một thanh cứng và một điểm tựa. Đặt điểm tựa gần vật nặng thì nâng vật dễ hơn. Ta dùng đòn bẩy hằng ngày mà không để ý, như khi mở nắp lon hay chơi bập bênh.",
+   "try": "Đặt thước kẻ lên một cây bút chì làm điểm tựa, để cục tẩy ở một đầu. Ấn đầu kia và thử dịch bút chì để thấy khi nào nâng dễ nhất."
+  },
+  {
+   "t": "Bài học hôm nay: Ánh sáng đi thẳng",
+   "vi": "Ánh sáng truyền theo đường thẳng trong không khí. Vì thế ta chỉ thấy vật khi đường từ vật đến mắt không bị che. Bóng tối cũng hình thành nhờ ánh sáng đi thẳng.",
+   "try": "Đục lỗ ở giữa ba tấm bìa, xếp thẳng hàng rồi nhìn qua lỗ về phía một chiếc đèn bàn. Lệch một tấm bìa xem em còn thấy đèn không. Không bao giờ nhìn thẳng vào Mặt Trời."
+  },
+  {
+   "t": "Bài học hôm nay: Chiếc bút chì bị gãy",
+   "vi": "Ánh sáng đổi hướng khi đi từ nước sang không khí, gọi là khúc xạ. Vì thế vật trong nước trông lệch chỗ so với thực tế. Hiện tượng này giúp ta làm ra kính lúp, kính mắt.",
+   "try": "Cắm một chiếc bút chì vào cốc nước trong rồi nhìn từ bên cạnh. Em sẽ thấy bút chì như bị gãy ở mặt nước."
+  },
+  {
+   "t": "Bài học hôm nay: Âm thanh từ rung động",
+   "vi": "Mọi âm thanh đều do vật rung động. Dây căng hơn hoặc ngắn hơn thì rung nhanh hơn và phát ra âm cao hơn. Đó là bí mật của các nhạc cụ dây.",
+   "try": "Quấn vài sợi dây chun quanh một hộp nhựa rỗng không nắp. Gảy từng sợi và nghe xem sợi căng hơn kêu cao hay thấp."
+  },
+  {
+   "t": "Bài học hôm nay: Điện thoại cốc giấy",
+   "vi": "Âm thanh truyền được qua chất rắn như sợi dây. Khi em nói vào cốc, đáy cốc rung, rung động chạy theo dây căng sang cốc bên kia. Bạn em sẽ nghe được tiếng nói.",
+   "try": "Nhờ bố mẹ đục lỗ đáy hai cốc giấy, luồn sợi dây dài và buộc nút. Kéo căng dây rồi cùng bạn nói chuyện thì thầm."
+  },
+  {
+   "t": "Bài học hôm nay: Phép thuật tĩnh điện",
+   "vi": "Cọ xát có thể làm vật nhiễm điện. Vật nhiễm điện hút được những vật nhẹ như mẩu giấy. Tĩnh điện thể hiện rõ hơn khi trời hanh khô.",
+   "try": "Xé vài mẩu giấy thật nhỏ. Chải chiếc lược nhựa lên mái tóc khô vài lần rồi đưa lại gần mẩu giấy và quan sát."
+  },
+  {
+   "t": "Bài học hôm nay: Nam châm hút gì?",
+   "vi": "Nam châm hút sắt, thép và niken. Nhiều kim loại khác như nhôm, đồng thì nam châm không hút. Phân loại vật bằng nam châm là cách người ta tách sắt ra khỏi rác.",
+   "try": "Lấy một nam châm dán tủ lạnh, thử đưa lại gần kẹp giấy, thìa, đồng xu, giấy, nhựa. Ghi lại vật nào bị hút. Để nam châm xa điện thoại."
+  },
+  {
+   "t": "Bài học hôm nay: Không khí cũng biết đẩy",
+   "vi": "Không khí quanh ta tạo ra áp suất khí quyển, ép lên mọi phía. Áp suất này đủ mạnh để giữ một tấm bìa dưới cốc nước. Ta không cảm thấy vì cơ thể đã quen với nó.",
+   "try": "Làm trên bồn rửa: đổ đầy nước vào cốc, đặt tấm bìa cứng lên miệng cốc, giữ chặt rồi úp ngược cốc và từ từ bỏ tay giữ bìa ra."
+  },
+  {
+   "t": "Bài học hôm nay: Chìm hay nổi?",
+   "vi": "Vật nổi khi lực đẩy của nước đủ đỡ trọng lượng của nó. Cùng một cục đất nặn, vo tròn thì chìm, nặn thành hình chiếc thuyền thì có thể nổi. Hình dạng giúp vật chiếm chỗ nhiều nước hơn.",
+   "try": "Thả một viên đất nặn tròn vào chậu nước, rồi nặn chính nó thành chiếc thuyền lòng rộng và thả lại. Quan sát sự khác biệt."
+  },
+  {
+   "t": "Bài học hôm nay: Năng lượng đổi dạng",
+   "vi": "Vật ở trên cao có thế năng. Khi lăn xuống, thế năng biến thành động năng. Điểm xuất phát càng cao thì vật chạy càng nhanh ở chân dốc.",
+   "try": "Dựng một tấm bìa làm dốc bằng vài quyển sách. Thả viên bi từ chỗ thấp rồi chỗ cao, xem viên bi lăn xa bao nhiêu trên sàn."
+  }
+ ]
+}

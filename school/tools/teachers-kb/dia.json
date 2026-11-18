@@ -1,0 +1,1791 @@
+{
+ "id": "dia",
+ "topics": [
+  "Trái Đất & bản đồ",
+  "Khí hậu & thời tiết",
+  "Sông, biển & đại dương",
+  "Núi, đất & tài nguyên",
+  "Địa lý Việt Nam",
+  "Châu lục & quốc gia"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Ngôi nhà thứ ba từ Mặt Trời",
+   "vi": "Trái Đất là hành tinh thứ ba tính từ Mặt Trời. Đây là hành tinh duy nhất mà con người biết có sự sống. Trái Đất có nước, không khí và nhiệt độ vừa phải cho cây cối, động vật và con người.",
+   "ex": "Thứ tự gần Mặt Trời: Sao Thủy, Sao Kim, rồi đến Trái Đất.",
+   "en": [
+    "Earth",
+    "planet"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Vì sao có ngày và đêm?",
+   "vi": "Trái Đất luôn tự quay quanh trục của nó. Mỗi vòng quay mất khoảng 24 giờ. Nửa nào hướng về Mặt Trời thì là ban ngày, nửa còn lại chìm trong bóng tối là ban đêm.",
+   "ex": "Cầm đèn pin chiếu vào quả bóng rồi xoay bóng, em sẽ thấy ngày và đêm.",
+   "en": [
+    "day and night",
+    "rotation"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Một năm là một vòng quanh Mặt Trời",
+   "vi": "Trái Đất không chỉ tự quay mà còn chuyển động quanh Mặt Trời. Một vòng như vậy mất khoảng 365 ngày, gọi là một năm. Phần lẻ khoảng 6 giờ mỗi năm cộng dồn lại, nên cứ 4 năm lại có một năm nhuận 366 ngày.",
+   "ex": "Năm nhuận, tháng Hai có 29 ngày.",
+   "en": [
+    "orbit",
+    "year"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Hành tinh xanh",
+   "vi": "Nhìn từ vũ trụ, Trái Đất có màu xanh dương vì nước bao phủ khoảng 70% bề mặt. Phần còn lại là đất liền gồm các lục địa và đảo. Vì vậy người ta hay gọi Trái Đất là hành tinh xanh.",
+   "ex": "Cứ 10 phần bề mặt thì khoảng 7 phần là nước.",
+   "en": [
+    "ocean",
+    "blue planet"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Kinh tuyến và vĩ tuyến",
+   "vi": "Trên quả địa cầu có các đường kẻ tưởng tượng. Kinh tuyến nối cực Bắc với cực Nam. Vĩ tuyến là những vòng tròn nằm ngang, song song với Xích đạo. Xích đạo là vĩ tuyến 0°, chia Trái Đất thành nửa cầu Bắc và nửa cầu Nam.",
+   "ex": "Vĩ tuyến nằm ngang như bậc thang, kinh tuyến dọc như múi bưởi.",
+   "en": [
+    "latitude",
+    "longitude",
+    "equator"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Kinh tuyến gốc",
+   "vi": "Kinh tuyến 0° gọi là kinh tuyến gốc. Nó đi qua đài thiên văn Greenwich ở thành phố Luân Đôn, nước Anh. Từ kinh tuyến gốc, người ta tính sang phía đông và phía tây, mỗi phía đến 180°.",
+   "ex": "Bên phải kinh tuyến gốc là kinh độ Đông, bên trái là kinh độ Tây.",
+   "en": [
+    "prime meridian",
+    "Greenwich"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Tỉ lệ bản đồ",
+   "vi": "Bản đồ vẽ thu nhỏ mặt đất nhiều lần. Tỉ lệ bản đồ cho biết thu nhỏ bao nhiêu. Ví dụ tỉ lệ 1:100.000 nghĩa là 1 cm trên bản đồ bằng 100.000 cm, tức 1 km ngoài thực tế.",
+   "ex": "Mẫu số càng lớn thì bản đồ càng thu nhỏ nhiều, ít chi tiết hơn.",
+   "en": [
+    "map scale"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Phương hướng trên bản đồ",
+   "vi": "Có bốn hướng chính: Bắc, Nam, Đông, Tây. Trên phần lớn bản đồ, phía trên là hướng Bắc, phía dưới là Nam, bên phải là Đông, bên trái là Tây. La bàn có kim nam châm luôn chỉ về phía bắc nên giúp ta tìm đường.",
+   "ex": "Mặt Trời mọc ở phía đông, lặn ở phía tây.",
+   "en": [
+    "compass",
+    "direction",
+    "north"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Trục nghiêng tạo ra bốn mùa",
+   "vi": "Trục Trái Đất nghiêng khoảng 23,5° so với phương vuông góc với mặt phẳng quỹ đạo. Khi Trái Đất đi quanh Mặt Trời, mỗi nửa cầu lần lượt ngả về phía Mặt Trời. Nửa cầu nào ngả về Mặt Trời thì nhận nhiều nắng hơn, ngày dài hơn và đang là mùa hạ.",
+   "ex": "Khi nửa cầu Bắc là mùa hạ thì nửa cầu Nam là mùa đông.",
+   "en": [
+    "axial tilt",
+    "seasons"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Bên trong Trái Đất",
+   "vi": "Trái Đất có ba lớp chính. Ngoài cùng là lớp vỏ mỏng, nơi chúng ta sống. Ở giữa là lớp manti rất dày và nóng. Trong cùng là nhân, chủ yếu gồm sắt và niken, nhiệt độ có thể lên tới hàng nghìn độ C.",
+   "ex": "Giống quả trứng: vỏ, lòng trắng, lòng đỏ.",
+   "en": [
+    "crust",
+    "mantle",
+    "core"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Múi giờ",
+   "vi": "Vì Trái Đất tự quay, các nơi không cùng lúc thấy Mặt Trời. Người ta chia bề mặt thành 24 múi giờ, mỗi múi rộng 15° kinh tuyến. Việt Nam dùng giờ UTC+7, tức sớm hơn giờ ở kinh tuyến gốc 7 tiếng.",
+   "ex": "Khi ở Luân Đôn là 5 giờ sáng (giờ mùa đông), ở Hà Nội đã là 12 giờ trưa.",
+   "en": [
+    "time zone"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Thời tiết và khí hậu",
+   "vi": "Thời tiết là trạng thái không khí ở một nơi trong thời gian ngắn, như hôm nay nắng hay mưa. Khí hậu là tình hình thời tiết lặp lại nhiều năm ở một vùng. Thời tiết đổi từng ngày, còn khí hậu ổn định lâu dài.",
+   "ex": "Mai có mưa không là hỏi thời tiết; miền Nam có mùa mưa là nói khí hậu.",
+   "en": [
+    "weather",
+    "climate"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Mưa từ đâu ra?",
+   "vi": "Nắng làm nước ở sông, hồ, biển bốc hơi bay lên cao. Lên cao trời lạnh, hơi nước ngưng tụ thành những giọt rất nhỏ tạo thành mây. Khi các giọt nhập lại đủ lớn và nặng, chúng rơi xuống thành mưa.",
+   "ex": "Bốc hơi, ngưng tụ, rơi xuống: vòng tuần hoàn của nước.",
+   "en": [
+    "rain",
+    "water cycle"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Cầu vồng",
+   "vi": "Cầu vồng xuất hiện khi ánh nắng chiếu qua những giọt nước trong không khí. Giọt nước làm ánh sáng trắng tách ra thành nhiều màu. Muốn thấy cầu vồng, em phải đứng quay lưng về phía Mặt Trời.",
+   "ex": "Bảy màu: đỏ, cam, vàng, lục, lam, chàm, tím.",
+   "en": [
+    "rainbow"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Thấy chớp trước, nghe sấm sau",
+   "vi": "Sấm và chớp sinh ra cùng lúc trong cơn dông. Nhưng ánh sáng đi nhanh hơn âm thanh rất nhiều, nên ta thấy tia chớp trước rồi mới nghe tiếng sấm. Đếm số giây giữa chớp và sấm rồi chia 3 sẽ ra khoảng cách tính bằng km.",
+   "ex": "Đếm được 6 giây: cơn dông cách em khoảng 2 km.",
+   "en": [
+    "lightning",
+    "thunder"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Đo nhiệt độ không khí",
+   "vi": "Nhiệt độ không khí được đo bằng nhiệt kế, đơn vị thường dùng ở Việt Nam là độ C. Trạm khí tượng đặt nhiệt kế trong bóng râm, cách mặt đất khoảng 1,5 m. Nước đá tan ở 0°C, nước sôi ở khoảng 100°C khi ở mực nước biển.",
+   "ex": "Đặt nhiệt kế ngoài nắng sẽ đo sai, cao hơn thực tế.",
+   "en": [
+    "temperature",
+    "thermometer"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Gió sinh ra thế nào?",
+   "vi": "Không khí luôn có sức ép lên mặt đất, gọi là khí áp. Nơi không khí nóng thường có khí áp thấp, nơi lạnh có khí áp cao. Gió là không khí chuyển động từ nơi khí áp cao đến nơi khí áp thấp.",
+   "ex": "Mở nắp chai nước ngọt, khí xì ra từ nơi áp suất cao.",
+   "en": [
+    "wind",
+    "air pressure"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Các đới khí hậu",
+   "vi": "Trên Trái Đất có ba nhóm đới khí hậu chính. Đới nóng nằm quanh Xích đạo, nắng nhiều quanh năm. Hai đới ôn hòa có bốn mùa rõ rệt. Hai đới lạnh ở gần hai cực, băng tuyết phủ gần như quanh năm.",
+   "ex": "Càng xa Xích đạo, trời càng lạnh hơn.",
+   "en": [
+    "climate zone",
+    "tropical",
+    "polar"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Bão",
+   "vi": "Bão là vùng gió xoáy rất mạnh, kèm mưa to, thường hình thành trên biển nóng. Ở giữa cơn bão có mắt bão, nơi trời khá lặng gió. Việt Nam hay chịu bão từ Biển Đông, nhiều nhất vào khoảng tháng 6 đến tháng 11.",
+   "ex": "Khi có bão, hãy ở trong nhà và nghe theo hướng dẫn của người lớn.",
+   "en": [
+    "typhoon",
+    "storm"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Không khí gồm những gì?",
+   "vi": "Lớp không khí bao quanh Trái Đất gọi là khí quyển. Khí nitơ chiếm khoảng 78%, khí ôxi khoảng 21%. Phần còn lại rất nhỏ gồm hơi nước, khí cacbonic và một số khí khác. Ôxi giúp người và động vật thở.",
+   "ex": "Cứ 5 phần không khí thì khoảng 1 phần là ôxi.",
+   "en": [
+    "atmosphere",
+    "oxygen",
+    "nitrogen"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Tầng đối lưu",
+   "vi": "Tầng đối lưu là tầng khí quyển sát mặt đất, dày khoảng 16 km ở Xích đạo và khoảng 8 km ở hai cực. Hầu hết mây, mưa, gió, bão đều xảy ra ở đây. Trong tầng này, càng lên cao càng lạnh, trung bình khoảng 0,6°C mỗi 100 m.",
+   "ex": "Vì thế đỉnh núi cao lạnh hơn chân núi.",
+   "en": [
+    "troposphere"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Hiệu ứng nhà kính",
+   "vi": "Một số khí như khí cacbonic giữ lại bớt nhiệt của Trái Đất, giống tấm kính của nhà kính trồng cây. Nhờ vậy Trái Đất đủ ấm để sống. Nhưng con người đốt nhiều than, dầu nên lượng khí này tăng, làm Trái Đất nóng dần lên và khí hậu biến đổi.",
+   "ex": "Trồng cây và tiết kiệm điện giúp giảm khí nhà kính.",
+   "en": [
+    "greenhouse effect",
+    "climate change"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Năm đại dương",
+   "vi": "Nước mặn trên Trái Đất nối liền với nhau thành đại dương thế giới. Người ta chia thành năm đại dương: Thái Bình Dương, Đại Tây Dương, Ấn Độ Dương, Bắc Băng Dương và Nam Đại Dương quanh châu Nam Cực.",
+   "ex": "Bắc Băng Dương là đại dương nhỏ nhất.",
+   "en": [
+    "ocean"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Thái Bình Dương khổng lồ",
+   "vi": "Thái Bình Dương là đại dương lớn nhất và sâu nhất. Nó rộng hơn cả toàn bộ đất liền trên Trái Đất cộng lại. Việt Nam nằm bên bờ Biển Đông, một biển thuộc Thái Bình Dương.",
+   "ex": "Thái Bình nghĩa là yên bình, do nhà thám hiểm Magellan đặt tên.",
+   "en": [
+    "Pacific Ocean"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Vì sao nước biển mặn?",
+   "vi": "Mưa và sông suối hòa tan một ít muối khoáng từ đất đá rồi mang ra biển. Qua hàng triệu năm, nước bốc hơi đi nhưng muối ở lại, nên biển ngày càng mặn. Trung bình mỗi lít nước biển có khoảng 35 gam muối.",
+   "ex": "Không được uống nước biển khi khát, vì càng uống càng khát.",
+   "en": [
+    "salt water",
+    "sea"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Sông chảy về đâu?",
+   "vi": "Nước luôn chảy từ nơi cao xuống nơi thấp. Sông bắt đầu từ nguồn trên núi cao, nhận thêm nước mưa và suối nhỏ, rồi đổ ra biển hoặc hồ. Nơi sông đổ ra biển gọi là cửa sông.",
+   "ex": "Sông Hồng bắt nguồn từ Trung Quốc và đổ ra vịnh Bắc Bộ.",
+   "en": [
+    "river",
+    "river mouth"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Thủy triều",
+   "vi": "Mực nước biển dâng lên rồi rút xuống mỗi ngày, gọi là thủy triều. Nguyên nhân chính là sức hút của Mặt Trăng, thêm một phần sức hút của Mặt Trời. Nhiều nơi có hai lần triều lên và hai lần triều xuống mỗi ngày.",
+   "ex": "Triều lớn nhất vào những ngày trăng tròn và không trăng.",
+   "en": [
+    "tide",
+    "Moon"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Sóng biển",
+   "vi": "Sóng biển chủ yếu do gió thổi trên mặt nước tạo ra. Gió càng mạnh và thổi càng lâu thì sóng càng to. Động đất dưới đáy biển có thể gây ra sóng thần rất nguy hiểm.",
+   "ex": "Thấy nước biển rút xa bất thường, phải chạy ngay lên chỗ cao.",
+   "en": [
+    "wave",
+    "tsunami"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Sông Nin và sông A-ma-dôn",
+   "vi": "Sông Nin ở châu Phi dài khoảng 6.650 km, thường được coi là sông dài nhất thế giới. Sông A-ma-dôn ở Nam Mỹ dài gần bằng nhưng chở nhiều nước nhất, nhiều hơn mọi con sông khác. Hai con sông này luôn được xếp hàng đầu.",
+   "ex": "Nin dài nhất, A-ma-dôn nhiều nước nhất.",
+   "en": [
+    "Nile",
+    "Amazon River"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Vực Ma-ri-a-na",
+   "vi": "Nơi sâu nhất của đại dương là vực Ma-ri-a-na ở Thái Bình Dương. Điểm sâu nhất của nó sâu gần 11.000 m. Nếu đặt đỉnh Ê-vơ-rét xuống đó, đỉnh núi vẫn còn cách mặt nước hơn 2 km.",
+   "ex": "Dưới đáy vực tối om, lạnh và áp suất cực lớn.",
+   "en": [
+    "Mariana Trench",
+    "deep sea"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Dòng biển nóng và lạnh",
+   "vi": "Trong đại dương có những dòng nước lớn chảy như những con sông, gọi là dòng biển. Dòng biển nóng mang nước ấm từ vùng Xích đạo về phía cực. Dòng biển lạnh mang nước lạnh từ vùng cực về phía Xích đạo. Chúng ảnh hưởng mạnh tới khí hậu ven biển.",
+   "ex": "Dòng biển nóng Gơn-xtrim giúp Tây Âu ấm hơn nhiều nơi cùng vĩ độ.",
+   "en": [
+    "ocean current",
+    "Gulf Stream"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Phụ lưu và chi lưu",
+   "vi": "Một hệ thống sông gồm dòng chính, các phụ lưu và chi lưu. Phụ lưu là sông nhỏ đổ nước vào dòng chính. Chi lưu là nhánh tách ra từ dòng chính, thường ở vùng hạ lưu gần cửa biển. Vùng đất mà sông nhận nước gọi là lưu vực.",
+   "ex": "Phụ lưu đổ vào, chi lưu chia ra.",
+   "en": [
+    "tributary",
+    "distributary",
+    "basin"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Nước ngọt rất quý",
+   "vi": "Phần lớn nước trên Trái Đất là nước mặn ở biển và đại dương. Nước ngọt chỉ chiếm chưa tới 3%. Trong số đó, phần lớn đóng băng ở hai cực và trên núi cao, hoặc nằm sâu dưới đất. Nước ngọt ở sông, hồ mà ta dùng được chỉ là một phần rất nhỏ.",
+   "ex": "Khóa vòi nước khi đánh răng là góp phần giữ nước ngọt.",
+   "en": [
+    "fresh water",
+    "glacier"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Núi là gì?",
+   "vi": "Núi là dạng địa hình nhô cao rõ rệt so với vùng xung quanh. Núi có đỉnh, sườn và chân núi. Theo sách giáo khoa, núi thường có độ cao tuyệt đối trên 500 m. Nhiều núi nối với nhau thành dãy núi.",
+   "ex": "Đồi thấp hơn núi, đỉnh tròn và sườn thoải.",
+   "en": [
+    "mountain",
+    "hill"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Đỉnh Ê-vơ-rét",
+   "vi": "Ê-vơ-rét là đỉnh núi cao nhất thế giới, cao khoảng 8.849 m so với mực nước biển. Nó nằm trong dãy Hi-ma-lay-a, trên biên giới giữa Nê-pan và Trung Quốc. Trên đỉnh rất lạnh, gió mạnh và không khí loãng.",
+   "ex": "Cao gần bằng 9 km, máy bay chở khách bay ở khoảng 10 km.",
+   "en": [
+    "Mount Everest",
+    "Himalayas"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Đồng bằng",
+   "vi": "Đồng bằng là vùng đất thấp, khá bằng phẳng. Nhiều đồng bằng do sông bồi đắp phù sa nên đất rất màu mỡ. Vì dễ trồng trọt và đi lại, đồng bằng thường đông dân cư.",
+   "ex": "Lúa nước được trồng rất nhiều ở đồng bằng.",
+   "en": [
+    "plain",
+    "delta"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Đất được tạo ra rất chậm",
+   "vi": "Đất hình thành từ đá bị nắng, mưa, gió làm vỡ vụn qua thời gian rất dài, trộn thêm xác cây cỏ, động vật mục nát. Để tạo ra một lớp đất mỏng vài cm có thể mất hàng trăm năm. Vì vậy cần giữ gìn đất, tránh xói mòn.",
+   "ex": "Trồng cây trên đồi giúp rễ giữ đất không bị trôi.",
+   "en": [
+    "soil",
+    "erosion"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Núi lửa",
+   "vi": "Sâu dưới lòng đất có đá nóng chảy gọi là mắc-ma. Khi mắc-ma phun trào lên mặt đất qua miệng núi lửa thì gọi là dung nham. Tro và dung nham nguội đi lâu ngày tạo thành đất bazan rất màu mỡ.",
+   "ex": "Tây Nguyên có nhiều đất đỏ bazan, rất hợp trồng cà phê.",
+   "en": [
+    "volcano",
+    "magma",
+    "lava"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Động đất",
+   "vi": "Vỏ Trái Đất được ghép từ nhiều mảng lớn luôn dịch chuyển rất chậm. Khi các mảng va vào nhau hoặc trượt qua nhau đột ngột, mặt đất rung chuyển, gọi là động đất. Nhật Bản nằm gần chỗ tiếp giáp các mảng nên hay có động đất.",
+   "ex": "Khi động đất, hãy chui xuống gầm bàn chắc chắn và che đầu.",
+   "en": [
+    "earthquake"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Tài nguyên tái tạo và không tái tạo",
+   "vi": "Tài nguyên thiên nhiên là những thứ tự nhiên con người dùng được. Có loại tái tạo được như nắng, gió, nước, rừng nếu biết giữ gìn. Có loại không tái tạo như than đá, dầu mỏ, quặng sắt, dùng hết là không còn.",
+   "ex": "Dùng điện mặt trời là dùng nguồn năng lượng tái tạo.",
+   "en": [
+    "renewable resources",
+    "natural resources"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Hang động đá vôi",
+   "vi": "Nước mưa có chút axit yếu nên hòa tan đá vôi rất chậm. Qua hàng triệu năm, nước khoét núi đá vôi thành hang động. Những giọt nước nhỏ từ trần hang để lại đá, tạo thành thạch nhũ và măng đá.",
+   "ex": "Thạch nhũ treo từ trên xuống, măng đá mọc từ dưới lên.",
+   "en": [
+    "cave",
+    "limestone",
+    "stalactite"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Thuyết kiến tạo mảng",
+   "vi": "Năm 1912, nhà khoa học Đức An-phrết Vê-ghe-nơ cho rằng các lục địa từng dính liền rồi trôi xa dần. Ngày nay, thuyết kiến tạo mảng giải thích lớp vỏ cứng của Trái Đất gồm nhiều mảng di chuyển vài cm mỗi năm. Điều này tạo ra núi, núi lửa và động đất.",
+   "ex": "Bờ châu Phi và Nam Mỹ khớp với nhau như hai mảnh ghép.",
+   "en": [
+    "plate tectonics",
+    "continental drift"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Ba nhóm đá",
+   "vi": "Đá mác-ma hình thành khi đá nóng chảy nguội đi, như đá bazan, đá granit. Đá trầm tích do các lớp vụn đá, cát, vỏ sinh vật lắng đọng và nén chặt, như đá vôi. Đá biến chất là đá cũ bị nhiệt và áp suất cao biến đổi, như đá hoa.",
+   "ex": "Đá luôn biến đổi từ loại này sang loại khác qua hàng triệu năm.",
+   "en": [
+    "rock",
+    "sedimentary",
+    "igneous"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Nhiên liệu hóa thạch",
+   "vi": "Than đá, dầu mỏ và khí đốt được gọi là nhiên liệu hóa thạch. Chúng hình thành từ xác thực vật và sinh vật bị chôn vùi trong đất hàng triệu năm. Đốt chúng cho nhiều năng lượng nhưng thải ra khí cacbonic, góp phần làm Trái Đất nóng lên.",
+   "ex": "Quảng Ninh là vùng có nhiều than đá nhất nước ta.",
+   "en": [
+    "fossil fuel",
+    "coal",
+    "oil"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Dải đất hình chữ S",
+   "vi": "Việt Nam nằm ở khu vực Đông Nam Á, phía đông bán đảo Đông Dương. Lãnh thổ đất liền kéo dài và cong như hình chữ S. Phía đông và phía nam giáp biển, nên nước ta có đường bờ biển rất dài.",
+   "ex": "Chỗ hẹp nhất ở Quảng Bình chỉ rộng khoảng 50 km.",
+   "en": [
+    "Vietnam",
+    "Southeast Asia"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Thủ đô Hà Nội",
+   "vi": "Hà Nội là thủ đô của Việt Nam, nằm ở đồng bằng sông Hồng. Năm 1010, vua Lý Thái Tổ dời đô về đây và đặt tên là Thăng Long. Thành phố đông dân nhất nước ta là Thành phố Hồ Chí Minh ở miền Nam.",
+   "ex": "Năm 2010, Hà Nội kỉ niệm 1000 năm Thăng Long.",
+   "en": [
+    "capital",
+    "Hanoi"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Phan-xi-păng, nóc nhà Đông Dương",
+   "vi": "Phan-xi-păng là đỉnh núi cao nhất Việt Nam, cao khoảng 3.143 m. Đỉnh núi nằm trên dãy Hoàng Liên Sơn ở phía tây bắc. Người ta gọi nó là nóc nhà Đông Dương vì cao nhất ba nước Việt Nam, Lào, Cam-pu-chia.",
+   "ex": "Mùa đông, đỉnh núi đôi khi có băng giá.",
+   "en": [
+    "Fansipan",
+    "mountain"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Hai đồng bằng lớn",
+   "vi": "Nước ta có hai đồng bằng lớn. Đồng bằng sông Hồng ở miền Bắc do sông Hồng và sông Thái Bình bồi đắp. Đồng bằng sông Cửu Long ở miền Nam rộng nhất, do sông Mê Công bồi đắp. Cả hai đều là vựa lúa lớn.",
+   "ex": "Sông Cửu Long là tên gọi đoạn sông Mê Công chảy qua nước ta.",
+   "en": [
+    "delta",
+    "Mekong",
+    "Red River"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Diện tích nước ta",
+   "vi": "Phần đất liền của Việt Nam rộng khoảng 331.000 km². Ngoài ra nước ta còn có vùng biển rộng lớn với hàng nghìn hòn đảo lớn nhỏ. Từ bắc vào nam, đất liền dài khoảng 1.650 km theo đường thẳng.",
+   "ex": "Đảo Phú Quốc là đảo lớn nhất nước ta.",
+   "en": [
+    "area",
+    "island"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Bờ biển dài",
+   "vi": "Đường bờ biển Việt Nam dài khoảng 3.260 km, chạy từ Móng Cái ở Quảng Ninh đến Hà Tiên ở Kiên Giang. Bờ biển có nhiều bãi tắm đẹp, vịnh, cảng và đầm phá. Biển cho nước ta nhiều cá, tôm và muối.",
+   "ex": "Biển Đông là biển lớn, nằm ở phía đông và nam nước ta.",
+   "en": [
+    "coastline",
+    "East Sea"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Khí hậu nhiệt đới gió mùa ẩm",
+   "vi": "Việt Nam nằm trong vùng nhiệt đới nên nắng nhiều, nóng ẩm. Nước ta chịu ảnh hưởng của gió mùa nên mưa nhiều theo mùa. Miền Bắc có mùa đông lạnh, còn miền Nam nóng quanh năm với mùa mưa và mùa khô.",
+   "ex": "Mùa đông miền Bắc lạnh là nhờ gió mùa Đông Bắc.",
+   "en": [
+    "monsoon",
+    "tropical climate"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Ba nước láng giềng",
+   "vi": "Trên đất liền, Việt Nam có chung đường biên giới với ba nước. Phía bắc là Trung Quốc, phía tây là Lào và phía tây nam là Cam-pu-chia. Đường biên giới với Lào là dài nhất.",
+   "ex": "Bắc Trung, tây Lào, tây nam Cam-pu-chia.",
+   "en": [
+    "border",
+    "neighbor"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Đồi núi chiếm phần lớn",
+   "vi": "Đồi núi chiếm khoảng ba phần tư diện tích lãnh thổ nước ta, nhưng phần lớn là đồi núi thấp. Đồng bằng chỉ chiếm khoảng một phần tư. Địa hình cao ở phía tây bắc và thấp dần ra biển ở phía đông nam, nên nhiều sông chảy theo hướng tây bắc - đông nam.",
+   "ex": "Sông Hồng và sông Đà đều chảy theo hướng tây bắc - đông nam.",
+   "en": [
+    "terrain",
+    "highland"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Dòng Mê Công",
+   "vi": "Sông Mê Công là một trong những sông lớn nhất châu Á. Sông bắt nguồn từ cao nguyên Tây Tạng, chảy qua sáu nước: Trung Quốc, Mi-an-ma, Lào, Thái Lan, Cam-pu-chia và Việt Nam. Ở nước ta, sông chia thành nhiều nhánh rồi đổ ra Biển Đông.",
+   "ex": "Cửu Long nghĩa là chín con rồng, chỉ các cửa sông đổ ra biển.",
+   "en": [
+    "Mekong River"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Vịnh Hạ Long",
+   "vi": "Vịnh Hạ Long ở tỉnh Quảng Ninh có gần 2.000 hòn đảo, phần lớn là đảo đá vôi. Năm 1994, UNESCO công nhận đây là di sản thiên nhiên thế giới. Các đảo được tạo nên do nước biển và mưa bào mòn đá vôi qua hàng triệu năm.",
+   "ex": "Hạ Long nghĩa là rồng đáp xuống, theo truyền thuyết.",
+   "en": [
+    "Ha Long Bay",
+    "heritage"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Bảy châu lục",
+   "vi": "Theo cách chia phổ biến, thế giới có bảy châu lục: châu Á, châu Phi, châu Âu, Bắc Mỹ, Nam Mỹ, châu Đại Dương và châu Nam Cực. Mỗi châu có cảnh vật, khí hậu và con người rất khác nhau.",
+   "ex": "Việt Nam nằm ở châu Á.",
+   "en": [
+    "continent"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Châu Á rộng nhất",
+   "vi": "Châu Á là châu lục rộng nhất và đông dân nhất thế giới. Hơn một nửa dân số thế giới sống ở châu Á. Châu Á có cả đỉnh núi cao nhất là Ê-vơ-rét và nhiều đồng bằng lớn.",
+   "ex": "Ấn Độ và Trung Quốc là hai nước đông dân nhất thế giới.",
+   "en": [
+    "Asia"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Châu Nam Cực lạnh giá",
+   "vi": "Châu Nam Cực nằm quanh cực Nam, gần như toàn bộ bị băng dày phủ kín. Đây là châu lục lạnh nhất, nhiều gió nhất và không có người sống thường xuyên. Chỉ có các nhà khoa học đến làm việc tại các trạm nghiên cứu.",
+   "ex": "Chim cánh cụt hoàng đế sống ở vùng Nam Cực.",
+   "en": [
+    "Antarctica",
+    "penguin"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Hoang mạc Xa-ha-ra",
+   "vi": "Xa-ha-ra ở Bắc Phi là hoang mạc nóng lớn nhất thế giới. Ở đây rất ít mưa, ban ngày rất nóng nhưng ban đêm có thể khá lạnh. Lạc đà là con vật quen thuộc giúp người dân đi lại trên cát.",
+   "ex": "Không phải hoang mạc nào cũng chỉ toàn cát, có nơi là đá sỏi.",
+   "en": [
+    "Sahara",
+    "desert"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Rừng A-ma-dôn",
+   "vi": "Rừng mưa A-ma-dôn ở Nam Mỹ là rừng mưa nhiệt đới lớn nhất thế giới. Phần lớn khu rừng nằm ở nước Bra-xin. Nơi đây có rất nhiều loài cây và động vật. Rừng hút khí cacbonic và nhả ôxi, rất quan trọng cho Trái Đất.",
+   "ex": "Rừng A-ma-dôn mọc dọc theo lưu vực sông A-ma-dôn.",
+   "en": [
+    "Amazon rainforest"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Ô-xtrây-li-a đặc biệt",
+   "vi": "Ô-xtrây-li-a vừa là một quốc gia vừa chiếm gần trọn một lục địa. Nước này thuộc châu Đại Dương. Ở đây có những con vật chỉ sống tự nhiên ở vùng này như chuột túi và gấu túi.",
+   "ex": "Chuột túi mẹ mang con trong chiếc túi trước bụng.",
+   "en": [
+    "Australia",
+    "kangaroo"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Nước rộng nhất thế giới",
+   "vi": "Liên bang Nga là quốc gia có diện tích rộng nhất thế giới. Lãnh thổ trải dài trên cả châu Âu và châu Á. Nước Nga rộng tới mức có tới 11 múi giờ khác nhau.",
+   "ex": "Khi phía tây nước Nga còn tối, phía đông đã sáng.",
+   "en": [
+    "Russia",
+    "largest country"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Khu vực Đông Nam Á",
+   "vi": "Đông Nam Á gồm 11 quốc gia, nằm giữa Ấn Độ Dương và Thái Bình Dương. Khu vực có phần đất liền và rất nhiều đảo. Khí hậu chủ yếu là nhiệt đới, nhiều nước trồng lúa nước như Việt Nam, Thái Lan.",
+   "ex": "In-đô-nê-xi-a là quốc gia có nhiều đảo nhất khu vực.",
+   "en": [
+    "Southeast Asia"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Dãy Hi-ma-lay-a mọc lên",
+   "vi": "Hàng chục triệu năm trước, mảng Ấn Độ trôi lên phía bắc và va vào mảng Á - Âu. Hai mảng ép vào nhau làm lớp đá bị nhô cao thành dãy Hi-ma-lay-a. Các nhà khoa học còn tìm thấy hóa thạch sinh vật biển trên núi cao.",
+   "ex": "Dãy núi này đến nay vẫn còn cao lên rất chậm.",
+   "en": [
+    "Himalayas",
+    "plate collision"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Dân số thế giới",
+   "vi": "Năm 2022, dân số thế giới đạt khoảng 8 tỉ người. Dân cư phân bố không đều: đông ở đồng bằng, ven biển, khí hậu ôn hòa; thưa ở hoang mạc, vùng cực và núi cao. Mật độ dân số cho biết trung bình bao nhiêu người sống trên 1 km².",
+   "ex": "Mật độ dân số = số dân chia cho diện tích.",
+   "en": [
+    "population",
+    "density"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Kênh đào nối đại dương",
+   "vi": "Con người đào kênh để tàu đi ngắn hơn. Kênh Xuy-ê ở Ai Cập nối Địa Trung Hải với Biển Đỏ, giúp tàu từ châu Âu sang châu Á không phải vòng qua châu Phi. Kênh Pa-na-ma nối Đại Tây Dương với Thái Bình Dương.",
+   "ex": "Xuy-ê nối Âu với Á, Pa-na-ma nối hai đại dương.",
+   "en": [
+    "Suez Canal",
+    "Panama Canal"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Trái Đất là hành tinh thứ mấy tính từ Mặt Trời?",
+   "a": [
+    "Thứ ba",
+    "Thứ nhất",
+    "Thứ hai",
+    "Thứ năm"
+   ],
+   "c": 0,
+   "why": "Theo thứ tự: Sao Thủy, Sao Kim rồi đến Trái Đất.",
+   "en": "Earth"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Vì sao có ngày và đêm?",
+   "a": [
+    "Mặt Trời tắt rồi bật lại",
+    "Trái Đất tự quay quanh trục",
+    "Mặt Trăng che Mặt Trời",
+    "Mây che kín bầu trời"
+   ],
+   "c": 1,
+   "why": "Trái Đất tự quay, nửa hướng về Mặt Trời là ngày, nửa kia là đêm.",
+   "en": "rotation"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Trái Đất quay quanh Mặt Trời một vòng mất khoảng bao lâu?",
+   "a": [
+    "Khoảng 24 giờ",
+    "Khoảng 30 ngày",
+    "Khoảng 365 ngày",
+    "Khoảng 100 năm"
+   ],
+   "c": 2,
+   "why": "Một vòng quanh Mặt Trời là một năm, khoảng 365 ngày.",
+   "en": "orbit"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Nước bao phủ khoảng bao nhiêu phần bề mặt Trái Đất?",
+   "a": [
+    "Khoảng 10%",
+    "Khoảng 30%",
+    "Khoảng 50%",
+    "Khoảng 70%"
+   ],
+   "c": 3,
+   "why": "Khoảng 70% bề mặt Trái Đất là nước nên gọi là hành tinh xanh.",
+   "en": "ocean"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Xích đạo là vĩ tuyến bao nhiêu độ?",
+   "a": [
+    "0°",
+    "90°",
+    "45°",
+    "180°"
+   ],
+   "c": 0,
+   "why": "Xích đạo là vĩ tuyến 0°, chia đôi nửa cầu Bắc và nửa cầu Nam.",
+   "en": "equator"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Kinh tuyến gốc đi qua đài thiên văn nào?",
+   "a": [
+    "Một đài ở Hà Nội",
+    "Greenwich ở Luân Đôn",
+    "Một đài ở Tô-ky-ô",
+    "Một đài ở Xít-ni"
+   ],
+   "c": 1,
+   "why": "Kinh tuyến 0° đi qua đài thiên văn Greenwich, Luân Đôn, nước Anh.",
+   "en": "prime meridian"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Bản đồ tỉ lệ 1:100.000, 1 cm trên bản đồ bằng bao nhiêu ngoài thực tế?",
+   "a": [
+    "1 m",
+    "10 m",
+    "1 km",
+    "100 km"
+   ],
+   "c": 2,
+   "why": "100.000 cm = 1.000 m = 1 km.",
+   "en": "map scale"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Trên phần lớn bản đồ, phía trên là hướng nào?",
+   "a": [
+    "Hướng Nam",
+    "Hướng Đông",
+    "Hướng Tây",
+    "Hướng Bắc"
+   ],
+   "c": 3,
+   "why": "Quy ước thường gặp: trên là Bắc, dưới là Nam, phải là Đông, trái là Tây.",
+   "en": "north"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Nguyên nhân chính tạo ra các mùa trong năm là gì?",
+   "a": [
+    "Trục Trái Đất nghiêng khi quay quanh Mặt Trời",
+    "Mặt Trời to lên rồi nhỏ lại",
+    "Mặt Trăng che bớt ánh nắng",
+    "Gió thổi mạnh hay yếu"
+   ],
+   "c": 0,
+   "why": "Do trục nghiêng khoảng 23,5°, mỗi nửa cầu lần lượt ngả về Mặt Trời và nhận nhiều nắng hơn.",
+   "en": "seasons"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Lớp nào nằm ở trong cùng của Trái Đất?",
+   "a": [
+    "Lớp vỏ",
+    "Nhân",
+    "Lớp manti",
+    "Khí quyển"
+   ],
+   "c": 1,
+   "why": "Từ ngoài vào trong là vỏ, manti, rồi đến nhân.",
+   "en": "core"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Mỗi múi giờ rộng bao nhiêu độ kinh tuyến?",
+   "a": [
+    "1°",
+    "10°",
+    "15°",
+    "24°"
+   ],
+   "c": 2,
+   "why": "360° chia cho 24 múi giờ được 15° mỗi múi.",
+   "en": "time zone"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Câu nào nói về khí hậu chứ không phải thời tiết?",
+   "a": [
+    "Chiều nay trời mưa to",
+    "Sáng mai có sương mù",
+    "Bây giờ trời đang nắng",
+    "Miền Nam có mùa mưa và mùa khô"
+   ],
+   "c": 3,
+   "why": "Khí hậu là thời tiết lặp lại nhiều năm ở một vùng, còn thời tiết là chuyện ngắn hạn.",
+   "en": "climate"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Mây được tạo thành từ gì?",
+   "a": [
+    "Những giọt nước rất nhỏ",
+    "Khói từ nhà máy",
+    "Bông gòn bay lên",
+    "Bụi cát sa mạc"
+   ],
+   "c": 0,
+   "why": "Hơi nước bay lên cao gặp lạnh ngưng tụ thành giọt nhỏ, tụ lại thành mây.",
+   "en": "cloud"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Muốn thấy cầu vồng, em nên đứng thế nào?",
+   "a": [
+    "Nhìn thẳng vào Mặt Trời",
+    "Quay lưng về phía Mặt Trời",
+    "Đứng trong phòng tối",
+    "Nhắm mắt lại"
+   ],
+   "c": 1,
+   "why": "Cầu vồng hiện ra ở phía đối diện Mặt Trời, nơi có giọt nước trong không khí.",
+   "en": "rainbow"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Vì sao ta thấy chớp trước khi nghe sấm?",
+   "a": [
+    "Sấm sinh ra muộn hơn chớp",
+    "Tai nghe chậm hơn mắt nhìn",
+    "Ánh sáng đi nhanh hơn âm thanh",
+    "Gió thổi tiếng sấm đi xa"
+   ],
+   "c": 2,
+   "why": "Sấm và chớp xảy ra cùng lúc, nhưng ánh sáng đến mắt ta nhanh hơn nhiều.",
+   "en": "lightning"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Dụng cụ nào dùng để đo nhiệt độ không khí?",
+   "a": [
+    "La bàn",
+    "Thước dây",
+    "Cân",
+    "Nhiệt kế"
+   ],
+   "c": 3,
+   "why": "Nhiệt kế đo nhiệt độ, đơn vị thường dùng là độ C.",
+   "en": "thermometer"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Gió thổi từ đâu đến đâu?",
+   "a": [
+    "Từ nơi khí áp cao đến nơi khí áp thấp",
+    "Từ nơi khí áp thấp đến cao",
+    "Luôn từ biển vào đất liền",
+    "Luôn từ Bắc xuống Nam"
+   ],
+   "c": 0,
+   "why": "Không khí luôn chuyển động từ vùng khí áp cao sang vùng khí áp thấp.",
+   "en": "wind"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Đới khí hậu nào nằm quanh Xích đạo?",
+   "a": [
+    "Đới lạnh",
+    "Đới nóng",
+    "Đới ôn hòa",
+    "Không có đới nào"
+   ],
+   "c": 1,
+   "why": "Vùng quanh Xích đạo nhận nhiều nắng quanh năm nên là đới nóng.",
+   "en": "tropical"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Ở giữa cơn bão, nơi trời khá lặng gió gọi là gì?",
+   "a": [
+    "Đuôi bão",
+    "Chân bão",
+    "Mắt bão",
+    "Tai bão"
+   ],
+   "c": 2,
+   "why": "Mắt bão là vùng trung tâm khá lặng gió, xung quanh là gió rất mạnh.",
+   "en": "eye of the storm"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Khí nào chiếm nhiều nhất trong không khí?",
+   "a": [
+    "Khí ôxi",
+    "Khí cacbonic",
+    "Hơi nước",
+    "Khí nitơ"
+   ],
+   "c": 3,
+   "why": "Nitơ chiếm khoảng 78%, ôxi khoảng 21%.",
+   "en": "nitrogen"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Trong tầng đối lưu, càng lên cao thì nhiệt độ thế nào?",
+   "a": [
+    "Càng giảm",
+    "Càng tăng",
+    "Không đổi",
+    "Lúc nóng lúc lạnh bất kì"
+   ],
+   "c": 0,
+   "why": "Trung bình cứ lên cao 100 m, nhiệt độ giảm khoảng 0,6°C.",
+   "en": "troposphere"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Việc làm nào làm tăng khí nhà kính?",
+   "a": [
+    "Trồng thêm cây xanh",
+    "Đốt nhiều than và dầu",
+    "Đi xe đạp",
+    "Tắt điện khi ra khỏi phòng"
+   ],
+   "c": 1,
+   "why": "Đốt nhiên liệu hóa thạch thải ra khí cacbonic, làm Trái Đất nóng lên.",
+   "en": "greenhouse effect"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Đại dương nào lớn nhất thế giới?",
+   "a": [
+    "Đại Tây Dương",
+    "Ấn Độ Dương",
+    "Thái Bình Dương",
+    "Bắc Băng Dương"
+   ],
+   "c": 2,
+   "why": "Thái Bình Dương lớn nhất và sâu nhất, rộng hơn toàn bộ đất liền cộng lại.",
+   "en": "Pacific Ocean"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Có bao nhiêu đại dương theo cách chia hiện nay?",
+   "a": [
+    "3",
+    "7",
+    "10",
+    "5"
+   ],
+   "c": 3,
+   "why": "Gồm Thái Bình Dương, Đại Tây Dương, Ấn Độ Dương, Bắc Băng Dương và Nam Đại Dương.",
+   "en": "ocean"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Vì sao nước biển có vị mặn?",
+   "a": [
+    "Có muối hòa tan trong nước",
+    "Có nhiều đường",
+    "Do cá thải ra",
+    "Do ánh nắng mặt trời"
+   ],
+   "c": 0,
+   "why": "Sông suối mang muối khoáng ra biển, nước bốc hơi còn muối ở lại.",
+   "en": "salt water"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Nước sông chảy theo hướng nào?",
+   "a": [
+    "Từ nơi thấp lên nơi cao",
+    "Từ nơi cao xuống nơi thấp",
+    "Đứng yên không chảy",
+    "Theo hướng gió thổi"
+   ],
+   "c": 1,
+   "why": "Nước luôn chảy xuống thấp, từ nguồn trên núi ra biển hoặc hồ.",
+   "en": "river"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Nguyên nhân chính gây ra thủy triều là gì?",
+   "a": [
+    "Cá voi bơi",
+    "Tàu thuyền chạy",
+    "Sức hút của Mặt Trăng",
+    "Núi lửa dưới biển"
+   ],
+   "c": 2,
+   "why": "Mặt Trăng hút nước biển, thêm một phần sức hút của Mặt Trời, tạo ra thủy triều.",
+   "en": "tide"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Sóng biển thường ngày chủ yếu do đâu tạo ra?",
+   "a": [
+    "Mặt Trăng",
+    "Cá bơi",
+    "Mưa rơi",
+    "Gió"
+   ],
+   "c": 3,
+   "why": "Gió thổi trên mặt nước tạo ra sóng; gió càng mạnh sóng càng to.",
+   "en": "wave"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Con sông nào chở nhiều nước nhất thế giới?",
+   "a": [
+    "Sông A-ma-dôn",
+    "Sông Nin",
+    "Sông Hồng",
+    "Sông Thames"
+   ],
+   "c": 0,
+   "why": "A-ma-dôn ở Nam Mỹ có lượng nước lớn hơn mọi sông khác.",
+   "en": "Amazon River"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Nơi sâu nhất của đại dương là ở đâu?",
+   "a": [
+    "Vịnh Hạ Long",
+    "Vực Ma-ri-a-na",
+    "Biển Chết",
+    "Hồ Ba Bể"
+   ],
+   "c": 1,
+   "why": "Vực Ma-ri-a-na ở Thái Bình Dương sâu gần 11.000 m.",
+   "en": "Mariana Trench"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Dòng biển nóng thường chảy theo hướng nào?",
+   "a": [
+    "Từ vùng cực về Xích đạo",
+    "Từ đáy biển lên trời",
+    "Từ vùng Xích đạo về phía cực",
+    "Chỉ chảy quanh các đảo"
+   ],
+   "c": 2,
+   "why": "Dòng biển nóng mang nước ấm từ vùng vĩ độ thấp lên vĩ độ cao.",
+   "en": "ocean current"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Sông nhỏ đổ nước vào dòng sông chính gọi là gì?",
+   "a": [
+    "Chi lưu",
+    "Cửa sông",
+    "Lưu vực",
+    "Phụ lưu"
+   ],
+   "c": 3,
+   "why": "Phụ lưu đổ vào dòng chính; chi lưu thì tách ra từ dòng chính.",
+   "en": "tributary"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Nước ngọt chiếm khoảng bao nhiêu lượng nước trên Trái Đất?",
+   "a": [
+    "Chưa tới 3%",
+    "Khoảng 30%",
+    "Khoảng 50%",
+    "Khoảng 97%"
+   ],
+   "c": 0,
+   "why": "Khoảng 97% là nước mặn, nước ngọt chưa tới 3% và phần lớn là băng.",
+   "en": "fresh water"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Đỉnh núi nào cao nhất thế giới?",
+   "a": [
+    "Phan-xi-păng",
+    "Ê-vơ-rét",
+    "Phú Sĩ",
+    "Ki-li-man-gia-rô"
+   ],
+   "c": 1,
+   "why": "Ê-vơ-rét cao khoảng 8.849 m, nằm trong dãy Hi-ma-lay-a.",
+   "en": "Mount Everest"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Theo sách giáo khoa, núi thường có độ cao tuyệt đối trên bao nhiêu mét?",
+   "a": [
+    "5 m",
+    "50 m",
+    "500 m",
+    "50.000 m"
+   ],
+   "c": 2,
+   "why": "Núi là địa hình nhô cao rõ rệt, thường cao trên 500 m so với mực nước biển.",
+   "en": "mountain"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Đồng bằng có đặc điểm gì?",
+   "a": [
+    "Rất cao và dốc",
+    "Phủ băng quanh năm",
+    "Toàn đá không có đất",
+    "Thấp và khá bằng phẳng"
+   ],
+   "c": 3,
+   "why": "Đồng bằng thấp, bằng phẳng, thường có đất phù sa màu mỡ.",
+   "en": "plain"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Việc nào giúp giữ đất trên đồi không bị trôi khi mưa?",
+   "a": [
+    "Trồng cây",
+    "Chặt hết cây",
+    "Đốt cỏ",
+    "Đào nhiều hố sâu"
+   ],
+   "c": 0,
+   "why": "Rễ cây giữ đất lại, giúp chống xói mòn.",
+   "en": "erosion"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Đá nóng chảy phun lên mặt đất từ núi lửa gọi là gì?",
+   "a": [
+    "Phù sa",
+    "Dung nham",
+    "Thạch nhũ",
+    "Băng hà"
+   ],
+   "c": 1,
+   "why": "Mắc-ma khi phun ra khỏi miệng núi lửa thì gọi là dung nham.",
+   "en": "lava"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Động đất xảy ra chủ yếu do đâu?",
+   "a": [
+    "Mưa quá nhiều",
+    "Gió thổi quá mạnh",
+    "Các mảng vỏ Trái Đất dịch chuyển",
+    "Mặt Trăng quá gần"
+   ],
+   "c": 2,
+   "why": "Khi các mảng va vào hoặc trượt qua nhau đột ngột, mặt đất rung chuyển.",
+   "en": "earthquake"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Tài nguyên nào sau đây KHÔNG tái tạo được?",
+   "a": [
+    "Ánh nắng mặt trời",
+    "Sức gió",
+    "Rừng được trồng lại",
+    "Dầu mỏ"
+   ],
+   "c": 3,
+   "why": "Dầu mỏ cần hàng triệu năm mới hình thành, dùng hết là không còn.",
+   "en": "natural resources"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Thạch nhũ thường gặp ở đâu?",
+   "a": [
+    "Trong hang động đá vôi",
+    "Trên bãi cát",
+    "Dưới đáy hồ băng",
+    "Trong rừng thông"
+   ],
+   "c": 0,
+   "why": "Nước hòa tan đá vôi rồi nhỏ giọt, để lại đá tạo thành thạch nhũ.",
+   "en": "stalactite"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Ai đưa ra ý tưởng lục địa trôi dạt năm 1912?",
+   "a": [
+    "Ni-u-tơn",
+    "An-phrết Vê-ghe-nơ",
+    "Ga-li-lê",
+    "Đác-uyn"
+   ],
+   "c": 1,
+   "why": "Nhà khoa học Đức Alfred Wegener cho rằng các lục địa từng dính liền rồi trôi xa dần.",
+   "en": "continental drift"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Đá vôi thuộc nhóm đá nào?",
+   "a": [
+    "Đá mác-ma",
+    "Đá biến chất",
+    "Đá trầm tích",
+    "Đá không gian"
+   ],
+   "c": 2,
+   "why": "Đá vôi hình thành do vỏ sinh vật, vụn đá lắng đọng và nén chặt.",
+   "en": "sedimentary rock"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Nhiên liệu nào sau đây là nhiên liệu hóa thạch?",
+   "a": [
+    "Gió",
+    "Ánh nắng",
+    "Nước chảy",
+    "Than đá"
+   ],
+   "c": 3,
+   "why": "Than đá hình thành từ xác thực vật bị chôn vùi hàng triệu năm.",
+   "en": "fossil fuel"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Thủ đô của Việt Nam là thành phố nào?",
+   "a": [
+    "Hà Nội",
+    "Huế",
+    "Đà Nẵng",
+    "Cần Thơ"
+   ],
+   "c": 0,
+   "why": "Hà Nội là thủ đô, xưa có tên Thăng Long.",
+   "en": "capital"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Đỉnh núi cao nhất Việt Nam là gì?",
+   "a": [
+    "Bà Đen",
+    "Phan-xi-păng",
+    "Ngọc Linh",
+    "Tản Viên"
+   ],
+   "c": 1,
+   "why": "Phan-xi-păng cao khoảng 3.143 m, trên dãy Hoàng Liên Sơn.",
+   "en": "Fansipan"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Lãnh thổ đất liền Việt Nam có hình dạng giống chữ cái nào?",
+   "a": [
+    "Chữ O",
+    "Chữ L",
+    "Chữ S",
+    "Chữ T"
+   ],
+   "c": 2,
+   "why": "Đất liền nước ta kéo dài và cong như hình chữ S.",
+   "en": "Vietnam"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Đồng bằng nào ở miền Nam nước ta?",
+   "a": [
+    "Đồng bằng sông Hồng",
+    "Đồng bằng sông Mã",
+    "Cao nguyên Mộc Châu",
+    "Đồng bằng sông Cửu Long"
+   ],
+   "c": 3,
+   "why": "Đồng bằng sông Cửu Long do sông Mê Công bồi đắp, rộng nhất nước ta.",
+   "en": "Mekong Delta"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Diện tích đất liền Việt Nam khoảng bao nhiêu?",
+   "a": [
+    "Khoảng 331.000 km²",
+    "Khoảng 3.310 km²",
+    "Khoảng 33.100 km²",
+    "Khoảng 3,3 triệu km²"
+   ],
+   "c": 0,
+   "why": "Phần đất liền nước ta rộng khoảng 331.000 km².",
+   "en": "area"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Đường bờ biển Việt Nam dài khoảng bao nhiêu?",
+   "a": [
+    "Khoảng 326 km",
+    "Khoảng 3.260 km",
+    "Khoảng 32.600 km",
+    "Khoảng 100 km"
+   ],
+   "c": 1,
+   "why": "Bờ biển chạy từ Móng Cái đến Hà Tiên, dài khoảng 3.260 km.",
+   "en": "coastline"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Khí hậu Việt Nam thuộc kiểu nào?",
+   "a": [
+    "Hàn đới khô",
+    "Hoang mạc nóng",
+    "Nhiệt đới gió mùa ẩm",
+    "Ôn đới lạnh quanh năm"
+   ],
+   "c": 2,
+   "why": "Nước ta nằm trong vùng nhiệt đới và chịu ảnh hưởng mạnh của gió mùa.",
+   "en": "monsoon"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Nước nào KHÔNG có chung biên giới đất liền với Việt Nam?",
+   "a": [
+    "Trung Quốc",
+    "Lào",
+    "Cam-pu-chia",
+    "Thái Lan"
+   ],
+   "c": 3,
+   "why": "Việt Nam chỉ giáp Trung Quốc, Lào và Cam-pu-chia trên đất liền.",
+   "en": "border"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Đồi núi chiếm khoảng bao nhiêu diện tích lãnh thổ nước ta?",
+   "a": [
+    "Khoảng ba phần tư",
+    "Khoảng một phần mười",
+    "Khoảng một nửa",
+    "Gần như toàn bộ"
+   ],
+   "c": 0,
+   "why": "Đồi núi chiếm khoảng 3/4 diện tích, đồng bằng khoảng 1/4.",
+   "en": "terrain"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Sông Mê Công chảy qua bao nhiêu quốc gia?",
+   "a": [
+    "2",
+    "6",
+    "4",
+    "10"
+   ],
+   "c": 1,
+   "why": "Gồm Trung Quốc, Mi-an-ma, Lào, Thái Lan, Cam-pu-chia và Việt Nam.",
+   "en": "Mekong River"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Vịnh Hạ Long được UNESCO công nhận là di sản thiên nhiên thế giới năm nào?",
+   "a": [
+    "1945",
+    "1975",
+    "1994",
+    "2020"
+   ],
+   "c": 2,
+   "why": "Năm 1994, vịnh Hạ Long được công nhận là di sản thiên nhiên thế giới.",
+   "en": "Ha Long Bay"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Theo cách chia phổ biến, thế giới có bao nhiêu châu lục?",
+   "a": [
+    "3",
+    "5",
+    "12",
+    "7"
+   ],
+   "c": 3,
+   "why": "Gồm châu Á, Phi, Âu, Bắc Mỹ, Nam Mỹ, Đại Dương và Nam Cực.",
+   "en": "continent"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Châu lục nào rộng nhất thế giới?",
+   "a": [
+    "Châu Á",
+    "Châu Phi",
+    "Châu Âu",
+    "Châu Đại Dương"
+   ],
+   "c": 0,
+   "why": "Châu Á rộng nhất và cũng đông dân nhất thế giới.",
+   "en": "Asia"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Châu lục nào lạnh nhất và phủ đầy băng?",
+   "a": [
+    "Châu Phi",
+    "Châu Nam Cực",
+    "Nam Mỹ",
+    "Châu Đại Dương"
+   ],
+   "c": 1,
+   "why": "Châu Nam Cực gần như bị băng phủ kín, là nơi lạnh nhất Trái Đất.",
+   "en": "Antarctica"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Hoang mạc Xa-ha-ra nằm ở châu lục nào?",
+   "a": [
+    "Châu Âu",
+    "Châu Nam Cực",
+    "Châu Phi",
+    "Bắc Mỹ"
+   ],
+   "c": 2,
+   "why": "Xa-ha-ra ở Bắc Phi là hoang mạc nóng lớn nhất thế giới.",
+   "en": "Sahara"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Rừng mưa nhiệt đới lớn nhất thế giới là rừng nào?",
+   "a": [
+    "Rừng Cúc Phương",
+    "Rừng thông Đà Lạt",
+    "Rừng tre Nhật Bản",
+    "Rừng A-ma-dôn"
+   ],
+   "c": 3,
+   "why": "Rừng A-ma-dôn ở Nam Mỹ, phần lớn nằm ở Bra-xin.",
+   "en": "Amazon rainforest"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Chuột túi sống tự nhiên ở nước nào?",
+   "a": [
+    "Ô-xtrây-li-a",
+    "Ai Cập",
+    "Na Uy",
+    "Mông Cổ"
+   ],
+   "c": 0,
+   "why": "Chuột túi là loài đặc trưng của Ô-xtrây-li-a.",
+   "en": "kangaroo"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Quốc gia nào có diện tích rộng nhất thế giới?",
+   "a": [
+    "Việt Nam",
+    "Liên bang Nga",
+    "Nhật Bản",
+    "Pháp"
+   ],
+   "c": 1,
+   "why": "Nga trải dài trên cả châu Âu và châu Á, rộng nhất thế giới.",
+   "en": "Russia"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Khu vực Đông Nam Á gồm bao nhiêu quốc gia?",
+   "a": [
+    "3",
+    "25",
+    "11",
+    "50"
+   ],
+   "c": 2,
+   "why": "Đông Nam Á có 11 quốc gia, trong đó có Việt Nam.",
+   "en": "Southeast Asia"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Dãy Hi-ma-lay-a hình thành chủ yếu do đâu?",
+   "a": [
+    "Gió bồi đắp cát",
+    "Con người xây dựng",
+    "Thiên thạch rơi xuống",
+    "Mảng Ấn Độ va vào mảng Á - Âu"
+   ],
+   "c": 3,
+   "why": "Hai mảng ép vào nhau đẩy lớp đá nhô cao thành dãy núi.",
+   "en": "Himalayas"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Mật độ dân số được tính thế nào?",
+   "a": [
+    "Số dân chia cho diện tích",
+    "Diện tích chia cho số dân",
+    "Số dân nhân với diện tích",
+    "Số nhà chia cho số đường"
+   ],
+   "c": 0,
+   "why": "Mật độ dân số cho biết trung bình bao nhiêu người trên 1 km².",
+   "en": "population density"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Kênh đào Pa-na-ma nối hai đại dương nào?",
+   "a": [
+    "Ấn Độ Dương và Bắc Băng Dương",
+    "Đại Tây Dương và Thái Bình Dương",
+    "Thái Bình Dương và Ấn Độ Dương",
+    "Đại Tây Dương và Nam Đại Dương"
+   ],
+   "c": 1,
+   "why": "Kênh Pa-na-ma ở Trung Mỹ giúp tàu đi giữa Đại Tây Dương và Thái Bình Dương.",
+   "en": "Panama Canal"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Ông Ê-ra-tô-xten đo Trái Đất bằng cái bóng",
+   "vi": "Khoảng năm 240 trước Công nguyên, nhà khoa học Hy Lạp Ê-ra-tô-xten sống ở thành A-lếch-xan-đri-a, Ai Cập. Ông nghe nói ở thành Xy-en phía nam, trưa một ngày mùa hạ, ánh nắng chiếu thẳng xuống đáy giếng. Cùng lúc đó ở A-lếch-xan-đri-a, cây cột vẫn có bóng ngắn. Ông đo góc của bóng nắng và khoảng cách giữa hai thành. Chỉ bằng phép tính, ông ước được chu vi Trái Đất khá gần với con số thật, khoảng 40.000 km. Thật tài tình chỉ với cái bóng và cái đầu biết suy nghĩ!",
+   "en": [
+    "Eratosthenes",
+    "circumference"
+   ]
+  },
+  {
+   "t": "Chuyến đi vòng quanh thế giới đầu tiên",
+   "vi": "Năm 1519, đoàn thuyền do nhà hàng hải Ma-gien-lan dẫn đầu rời Tây Ban Nha, đi về phía tây. Họ vượt Đại Tây Dương, đi qua một eo biển ở cực nam châu Mỹ, rồi vào một đại dương mênh mông lặng sóng. Ma-gien-lan đặt tên là Thái Bình Dương. Chuyến đi rất vất vả và ông không về được quê nhà. Năm 1522, một chiếc thuyền với số ít thủy thủ còn lại trở về Tây Ban Nha. Họ là những người đầu tiên đi vòng quanh Trái Đất, chứng minh Trái Đất hình cầu.",
+   "en": [
+    "Magellan",
+    "circumnavigation"
+   ]
+  },
+  {
+   "t": "Vê-ghe-nơ và trò ghép hình khổng lồ",
+   "vi": "Nhà khoa học Đức An-phrết Vê-ghe-nơ thích ngắm bản đồ thế giới. Ông thấy bờ đông Nam Mỹ và bờ tây châu Phi khớp nhau như hai mảnh ghép. Ông còn tìm thấy hóa thạch của cùng một loài sinh vật ở cả hai bờ đại dương. Năm 1912, ông nói các lục địa từng dính liền rồi trôi xa nhau. Lúc đầu nhiều người không tin. Mãi nhiều năm sau, các nhà khoa học mới chứng minh ông đúng với thuyết kiến tạo mảng.",
+   "en": [
+    "Wegener",
+    "continental drift"
+   ]
+  },
+  {
+   "t": "Lên tới nóc nhà thế giới",
+   "vi": "Ngày 29 tháng 5 năm 1953, nhà leo núi Ét-mun Hi-la-ri người Niu Di-lân và người dẫn đường Ten-sinh Noóc-gây người Sẹc-pa đã đứng trên đỉnh Ê-vơ-rét. Họ là những người đầu tiên được ghi nhận lên tới đỉnh núi cao nhất thế giới. Hai người phải mang bình ôxi vì trên cao không khí rất loãng. Họ chỉ ở trên đỉnh khoảng 15 phút để chụp ảnh rồi xuống núi. Chuyến đi cho thấy sức mạnh của tinh thần đồng đội.",
+   "en": [
+    "Mount Everest",
+    "Hillary",
+    "Tenzing"
+   ]
+  },
+  {
+   "t": "Cuộc đua đến cực Nam",
+   "vi": "Đầu thế kỉ 20, nhiều nhà thám hiểm muốn là người đầu tiên đến cực Nam. Nhà thám hiểm Na Uy Rô-an A-mun-xen chuẩn bị rất kĩ. Ông học cách mặc áo lông và dùng chó kéo xe trượt tuyết từ người dân vùng cực. Ngày 14 tháng 12 năm 1911, đoàn của ông đến cực Nam đầu tiên. Bí quyết của ông là chuẩn bị cẩn thận và học hỏi người có kinh nghiệm.",
+   "en": [
+    "Amundsen",
+    "South Pole"
+   ]
+  },
+  {
+   "t": "Lặn xuống nơi sâu nhất đại dương",
+   "vi": "Năm 1960, hai nhà thám hiểm Giắc Pi-ca và Đôn Oan-sơ ngồi trong một tàu lặn đặc biệt tên là Tri-ét-xtơ. Họ lặn xuống đáy vực Ma-ri-a-na, nơi sâu gần 11.000 m. Chuyến lặn xuống mất gần 5 tiếng. Dưới đáy tối đen và áp suất nước cực lớn. Họ ở dưới đáy khoảng 20 phút rồi từ từ nổi lên an toàn. Đến nay rất ít người từng xuống tới nơi này.",
+   "en": [
+    "Mariana Trench",
+    "Trieste"
+   ]
+  },
+  {
+   "t": "Hang Sơn Đoòng khổng lồ",
+   "vi": "Ở Vườn quốc gia Phong Nha - Kẻ Bàng, tỉnh Quảng Bình, có một hang động tên là Sơn Đoòng. Một người dân địa phương đã tìm thấy cửa hang khi đi rừng. Năm 2009, một đoàn nhà thám hiểm hang động từ nước Anh cùng các nhà khoa học Việt Nam vào khảo sát. Họ thấy hang rộng đến mức có cả rừng cây và mây bên trong. Sơn Đoòng được coi là hang động tự nhiên lớn nhất thế giới.",
+   "en": [
+    "Son Doong",
+    "cave"
+   ]
+  },
+  {
+   "t": "Bản đồ của Mơ-ca-to",
+   "vi": "Năm 1569, nhà vẽ bản đồ Ghê-rác-đút Mơ-ca-to vẽ một tấm bản đồ thế giới đặc biệt. Trên bản đồ của ông, hướng đi trên biển được vẽ thành đường thẳng, giúp thủy thủ dễ dẫn đường. Nhưng cách vẽ này làm các vùng gần hai cực trông to hơn thật rất nhiều. Ví dụ đảo Grơn-len trông to gần bằng châu Phi, dù châu Phi rộng hơn khoảng 14 lần. Bản đồ nào cũng có ưu điểm và nhược điểm riêng.",
+   "en": [
+    "Mercator",
+    "map projection"
+   ]
+  },
+  {
+   "t": "Truyền thuyết rồng đáp xuống vịnh",
+   "vi": "Người xưa kể rằng khi giặc từ biển kéo đến, Ngọc Hoàng sai một mẹ rồng cùng đàn rồng con xuống giúp dân. Rồng phun ra ngọc, ngọc biến thành muôn hòn đảo đá chắn ngoài biển. Nơi rồng mẹ đáp xuống gọi là Hạ Long. Đó là truyền thuyết. Còn theo khoa học, các đảo đá vôi được tạo nên do nước biển và nước mưa bào mòn trong hàng triệu năm.",
+   "en": [
+    "legend",
+    "Ha Long Bay"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: Ngày và đêm",
+   "vi": "Trái Đất tự quay quanh trục, mỗi vòng khoảng 24 giờ. Nửa hướng về Mặt Trời là ngày, nửa kia là đêm. Vì Trái Đất quay từ tây sang đông nên ta thấy Mặt Trời mọc ở đằng đông.",
+   "try": "Tắt đèn phòng, nhờ bạn cầm đèn pin chiếu vào quả cam, em xoay quả cam chậm và xem phần sáng, phần tối thay đổi."
+  },
+  {
+   "t": "Bài học hôm nay: Đọc tỉ lệ bản đồ",
+   "vi": "Tỉ lệ bản đồ cho biết bản đồ đã thu nhỏ bao nhiêu lần. Với tỉ lệ 1:100.000, cứ 1 cm trên bản đồ bằng 1 km ngoài thực tế. Biết tỉ lệ, em đo được khoảng cách thật giữa hai nơi.",
+   "try": "Vẽ sơ đồ căn phòng của em lên giấy, quy ước 1 cm trên giấy bằng 50 cm ngoài thực tế."
+  },
+  {
+   "t": "Bài học hôm nay: Tìm phương hướng",
+   "vi": "Có bốn hướng chính là Bắc, Nam, Đông, Tây. Buổi sáng, Mặt Trời ở phía đông. Nếu em dang tay phải về phía Mặt Trời mọc, thì trước mặt em là hướng Bắc, sau lưng là hướng Nam.",
+   "try": "Sáng sớm ra sân, xác định hướng Mặt Trời mọc rồi chỉ ra bốn hướng quanh nhà em. Không nhìn thẳng vào Mặt Trời."
+  },
+  {
+   "t": "Bài học hôm nay: Vòng tuần hoàn của nước",
+   "vi": "Nước bốc hơi nhờ nắng, bay lên cao, ngưng tụ thành mây rồi rơi xuống thành mưa. Nước mưa chảy vào sông, ra biển và vòng lại từ đầu. Nước trên Trái Đất cứ luân chuyển như vậy mãi.",
+   "try": "Nhờ bố mẹ rót nước ấm vào bát, úp đĩa lạnh lên trên vài phút, rồi xem những giọt nước đọng dưới đĩa giống mưa."
+  },
+  {
+   "t": "Bài học hôm nay: Ghi nhật kí thời tiết",
+   "vi": "Thời tiết thay đổi từng ngày. Các nhà khí tượng ghi lại nắng, mưa, gió, nhiệt độ mỗi ngày để dự báo. Khi gom nhiều năm lại, họ biết được khí hậu của một vùng.",
+   "try": "Trong một tuần, mỗi tối ghi vào sổ: hôm nay nắng hay mưa, có gió không, trời nóng hay mát."
+  },
+  {
+   "t": "Bài học hôm nay: Đo khoảng cách cơn dông",
+   "vi": "Ánh sáng đi rất nhanh, còn âm thanh đi khoảng 340 m mỗi giây. Đếm số giây từ lúc thấy chớp đến lúc nghe sấm rồi chia cho 3, em biết cơn dông cách bao nhiêu km.",
+   "try": "Khi trời có dông, ngồi trong nhà cạnh cửa sổ đóng kín, đếm giây giữa chớp và sấm rồi tính khoảng cách."
+  },
+  {
+   "t": "Bài học hôm nay: Nước ngọt rất quý",
+   "vi": "Phần lớn nước trên Trái Đất là nước mặn. Nước ngọt dùng được chỉ là một phần rất nhỏ. Mỗi người tiết kiệm một chút là đã giúp giữ nguồn nước cho mọi người.",
+   "try": "Hứng nước rửa rau vào chậu để tưới cây, và khóa vòi khi đánh răng."
+  },
+  {
+   "t": "Bài học hôm nay: Rễ cây giữ đất",
+   "vi": "Khi mưa to, đất trống dễ bị nước cuốn trôi, gọi là xói mòn. Rễ cây bám chặt và giữ đất lại. Vì thế trồng rừng trên đồi núi giúp chống xói mòn và lũ quét.",
+   "try": "Lấy hai khay đất, một khay có cỏ, một khay đất trống. Nghiêng nhẹ rồi tưới nước từ từ, so sánh khay nào bị trôi đất nhiều hơn."
+  },
+  {
+   "t": "Bài học hôm nay: Đất nước hình chữ S",
+   "vi": "Việt Nam nằm ở Đông Nam Á, có đất liền hình chữ S và bờ biển dài khoảng 3.260 km. Phía bắc giáp Trung Quốc, phía tây giáp Lào và Cam-pu-chia. Thủ đô là Hà Nội.",
+   "try": "Tô lại hình bản đồ Việt Nam trên giấy mỏng, đánh dấu Hà Nội, đỉnh Phan-xi-păng và hai đồng bằng lớn."
+  },
+  {
+   "t": "Bài học hôm nay: Bảy châu lục",
+   "vi": "Thế giới có bảy châu lục: châu Á, Phi, Âu, Bắc Mỹ, Nam Mỹ, Đại Dương và Nam Cực. Châu Á rộng nhất, châu Nam Cực lạnh nhất. Mỗi châu có thiên nhiên và con người rất khác nhau.",
+   "try": "Xem quả địa cầu hoặc bản đồ thế giới, chỉ ra bảy châu lục và năm đại dương, rồi đố người nhà cùng chơi."
+  }
+ ]
+}

@@ -1,0 +1,1777 @@
+{
+ "id": "hoa",
+ "topics": [
+  "Chất & trạng thái",
+  "Nguyên tử & nguyên tố",
+  "Phản ứng hoá học",
+  "Nước & dung dịch",
+  "Axit-bazơ & đời sống",
+  "Hoá học quanh em"
+ ],
+ "cards": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Chất là gì?",
+   "vi": "Mọi thứ quanh em đều được tạo nên từ chất: nước, không khí, gỗ, sắt, muối ăn. Có chất nhìn thấy được như hòn đá, có chất không nhìn thấy như không khí. Mỗi chất có tính chất riêng như màu, mùi, độ cứng.",
+   "ex": "Cái cốc là vật thể, còn thuỷ tinh làm nên cái cốc là chất.",
+   "en": [
+    "matter",
+    "substance"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Ba thể quen thuộc của chất",
+   "vi": "Chất thường tồn tại ở ba thể: rắn, lỏng và khí. Chất rắn có hình dạng riêng. Chất lỏng chảy được và có hình dạng của vật chứa. Chất khí lan ra chiếm đầy vật chứa.",
+   "ex": "Viên đá là rắn, nước là lỏng, hơi nước là khí.",
+   "en": [
+    "solid",
+    "liquid",
+    "gas"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Nóng chảy và đông đặc",
+   "vi": "Khi được làm nóng, chất rắn có thể chuyển thành chất lỏng, gọi là sự nóng chảy. Ngược lại, chất lỏng bị làm lạnh có thể thành chất rắn, gọi là sự đông đặc. Nước đá tinh khiết nóng chảy ở 0°C.",
+   "ex": "Kem để ngoài nắng chảy ra là sự nóng chảy.",
+   "en": [
+    "melting",
+    "freezing"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "t": "Bay hơi và ngưng tụ",
+   "vi": "Chất lỏng chuyển thành hơi gọi là sự bay hơi, như quần áo phơi khô dần. Hơi gặp lạnh chuyển lại thành chất lỏng gọi là sự ngưng tụ. Những giọt nước bám ngoài cốc nước đá chính là hơi nước ngưng tụ.",
+   "ex": "Gương nhà tắm mờ hơi nước sau khi tắm nước ấm.",
+   "en": [
+    "evaporation",
+    "condensation"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Sôi khác bay hơi thế nào?",
+   "vi": "Bay hơi xảy ra ở mặt thoáng chất lỏng, ở nhiều nhiệt độ khác nhau. Sôi là bay hơi mạnh, xảy ra cả trong lòng chất lỏng với nhiều bọt hơi. Ở áp suất thường, nước tinh khiết sôi ở 100°C. Trên núi cao áp suất thấp nên nước sôi dưới 100°C.",
+   "ex": "Bọt hơi to nổi lên trong nồi là dấu hiệu nước đang sôi.",
+   "en": [
+    "boiling",
+    "boiling point"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Thăng hoa",
+   "vi": "Một số chất rắn có thể chuyển thẳng sang thể khí mà không qua thể lỏng, gọi là sự thăng hoa. Băng phiến để trong tủ quần áo nhỏ dần là ví dụ quen thuộc. Đá khô (carbon dioxide rắn) cũng thăng hoa, tạo làn khói trắng.",
+   "ex": "Đá khô rất lạnh, không được cầm bằng tay không.",
+   "en": [
+    "sublimation",
+    "dry ice"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Chất tinh khiết và hỗn hợp",
+   "vi": "Chất tinh khiết chỉ gồm một chất duy nhất, ví dụ nước cất. Hỗn hợp gồm hai hay nhiều chất trộn lẫn, ví dụ nước muối hay không khí. Trong hỗn hợp, mỗi chất vẫn giữ tính chất riêng của nó.",
+   "ex": "Nước muối vẫn mặn vì muối vẫn còn trong đó.",
+   "en": [
+    "pure substance",
+    "mixture"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "t": "Tách chất khỏi hỗn hợp",
+   "vi": "Người ta tách chất dựa vào tính chất khác nhau của chúng. Lọc giữ lại cát không tan. Cô cạn làm nước bay hơi để lấy muối. Nam châm hút mạt sắt ra khỏi cát. Chưng cất tách các chất lỏng có nhiệt độ sôi khác nhau.",
+   "ex": "Muốn lấy muối từ nước muối: đun cho nước bay hơi hết.",
+   "en": [
+    "filtration",
+    "distillation"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Mô hình hạt của chất",
+   "vi": "Chất được tạo nên từ những hạt rất nhỏ luôn chuyển động. Ở thể rắn, các hạt xếp khít và dao động tại chỗ. Ở thể lỏng, các hạt gần nhau nhưng trượt qua nhau được. Ở thể khí, các hạt ở xa nhau và chuyển động hỗn loạn. Nhiệt độ càng cao, hạt chuyển động càng nhanh.",
+   "ex": "Mùi nước hoa lan khắp phòng vì hạt khí chuyển động không ngừng.",
+   "en": [
+    "particle model",
+    "kinetic"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Khối lượng riêng",
+   "vi": "Khối lượng riêng cho biết khối lượng của một đơn vị thể tích chất, tính bằng D = m : V. Nước có khối lượng riêng khoảng 1 g/cm³. Nước đá chỉ khoảng 0,92 g/cm³, nhỏ hơn nước, nên nước đá nổi.",
+   "ex": "Vật có khối lượng riêng nhỏ hơn nước thì nổi trên nước.",
+   "en": [
+    "density"
+   ]
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "t": "Plasma – thể thứ tư",
+   "vi": "Khi chất khí bị nung cực nóng, electron bị tách khỏi nguyên tử, tạo ra plasma gồm các hạt mang điện. Plasma phát sáng và dẫn điện. Mặt Trời, các ngôi sao và tia sét đều có plasma.",
+   "ex": "Tia sét lóe sáng là một luồng plasma rất nóng.",
+   "en": [
+    "plasma"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Nguyên tử siêu nhỏ",
+   "vi": "Mọi chất đều được tạo nên từ những hạt cực nhỏ gọi là nguyên tử. Nguyên tử nhỏ đến mức phải xếp khoảng vài trăm nghìn nguyên tử thành hàng mới bằng bề ngang một sợi tóc. Mắt thường và kính lúp không thể nhìn thấy nguyên tử.",
+   "ex": "Nguyên tử giống như những viên gạch xây nên mọi chất.",
+   "en": [
+    "atom"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Nguyên tố hoá học",
+   "vi": "Nguyên tố hoá học là tập hợp những nguyên tử cùng loại. Đến nay con người biết khoảng 118 nguyên tố. Oxygen, hydrogen, carbon, sắt, vàng đều là nguyên tố. Hàng triệu chất khác nhau được tạo từ các nguyên tố này.",
+   "ex": "Giống như 29 chữ cái ghép thành vô số từ tiếng Việt.",
+   "en": [
+    "element"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Kí hiệu hoá học",
+   "vi": "Mỗi nguyên tố có một kí hiệu gồm một hoặc hai chữ cái, chữ đầu luôn viết hoa. Ví dụ: H là hydrogen, O là oxygen, C là carbon, Fe là sắt, Cu là đồng, Au là vàng. Nhiều kí hiệu lấy từ tên Latin, như Fe từ ferrum.",
+   "ex": "Viết Co là cobalt, còn CO là khí carbon monoxide – khác nhau!",
+   "en": [
+    "chemical symbol"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "t": "Kim loại và phi kim",
+   "vi": "Kim loại như sắt, đồng, nhôm thường có ánh kim, dẫn điện và dẫn nhiệt tốt. Phi kim như oxygen, carbon, lưu huỳnh thường không dẫn điện (trừ một số như than chì). Thuỷ ngân là kim loại duy nhất ở thể lỏng ở nhiệt độ phòng.",
+   "ex": "Dây điện làm bằng đồng vì đồng dẫn điện rất tốt.",
+   "en": [
+    "metal",
+    "nonmetal"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Bên trong nguyên tử",
+   "vi": "Nguyên tử gồm hạt nhân ở giữa và các electron chuyển động xung quanh. Hạt nhân chứa proton mang điện dương và neutron không mang điện. Electron mang điện âm và rất nhẹ so với proton.",
+   "ex": "Proton – dương, Electron – âm, Neutron – trung hoà.",
+   "en": [
+    "proton",
+    "neutron",
+    "electron"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Số hiệu nguyên tử",
+   "vi": "Số proton trong hạt nhân quyết định nguyên tử thuộc nguyên tố nào, gọi là số hiệu nguyên tử. Hydrogen có 1 proton, carbon có 6, oxygen có 8. Trong nguyên tử trung hoà, số electron bằng số proton.",
+   "ex": "Đổi số proton là đổi luôn nguyên tố.",
+   "en": [
+    "atomic number"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Bảng tuần hoàn",
+   "vi": "Năm 1869, nhà hoá học Nga Mendeleev sắp xếp các nguyên tố thành bảng tuần hoàn. Ngày nay các nguyên tố được xếp theo số hiệu nguyên tử tăng dần. Hàng ngang gọi là chu kì, cột dọc gọi là nhóm. Các nguyên tố cùng nhóm có tính chất hoá học giống nhau.",
+   "ex": "Nhóm cuối bảng là các khí hiếm như helium, neon.",
+   "en": [
+    "periodic table"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "t": "Phân tử",
+   "vi": "Phân tử là nhóm nguyên tử liên kết với nhau. Phân tử nước H₂O gồm 2 nguyên tử hydrogen và 1 nguyên tử oxygen. Khí oxygen em hít thở có phân tử O₂ gồm 2 nguyên tử oxygen. Công thức hoá học cho biết phân tử có những nguyên tử nào.",
+   "ex": "Số nhỏ viết dưới chân kí hiệu cho biết số nguyên tử.",
+   "en": [
+    "molecule",
+    "chemical formula"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Đồng vị",
+   "vi": "Các nguyên tử cùng số proton nhưng khác số neutron gọi là đồng vị của cùng một nguyên tố. Ví dụ carbon-12 và carbon-14 đều là carbon. Carbon-14 phân rã rất chậm nên các nhà khoa học dùng nó để xác định tuổi của đồ vật cổ từ sinh vật.",
+   "ex": "Đồng vị giống anh em sinh đôi, chỉ khác cân nặng.",
+   "en": [
+    "isotope"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Ion",
+   "vi": "Khi nguyên tử nhường electron, nó trở thành ion dương. Khi nhận thêm electron, nó trở thành ion âm. Trong muối ăn, natri (sodium) nhường 1 electron thành Na⁺, chlorine nhận 1 electron thành Cl⁻. Hai ion trái dấu hút nhau tạo liên kết ion.",
+   "ex": "Mất electron (âm) thì thành dương.",
+   "en": [
+    "ion",
+    "ionic bond"
+   ]
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "t": "Liên kết cộng hoá trị",
+   "vi": "Nhiều nguyên tử phi kim liên kết bằng cách góp chung electron, gọi là liên kết cộng hoá trị. Trong phân tử nước, nguyên tử oxygen góp chung electron với hai nguyên tử hydrogen. Khí carbon dioxide CO₂ và khí oxygen O₂ cũng có liên kết cộng hoá trị.",
+   "ex": "Góp chung đồ chơi để cùng chơi – đó là cộng hoá trị.",
+   "en": [
+    "covalent bond"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Biến đổi vật lí và hoá học",
+   "vi": "Biến đổi vật lí không tạo ra chất mới, như nước đá tan hay xé giấy. Biến đổi hoá học tạo ra chất mới, như đốt giấy thành tro và khói, hay sắt bị gỉ. Biến đổi hoá học còn gọi là phản ứng hoá học.",
+   "ex": "Hỏi: có chất mới không? Có là hoá học.",
+   "en": [
+    "physical change",
+    "chemical change"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Dấu hiệu có phản ứng",
+   "vi": "Có thể nhận ra phản ứng hoá học qua các dấu hiệu: đổi màu, sủi bọt khí, xuất hiện chất rắn không tan (kết tủa), toả nhiệt hoặc phát sáng, có mùi mới. Tuy vậy, cần kiểm tra xem có chất mới thật sự hay không.",
+   "ex": "Táo cắt ra để lâu bị thâm màu nâu là một phản ứng.",
+   "en": [
+    "chemical reaction",
+    "signs"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Sắt bị gỉ",
+   "vi": "Sắt để nơi ẩm ướt sẽ phản ứng với oxygen và nước, tạo ra gỉ sắt màu nâu đỏ. Gỉ sắt xốp, giòn, làm đồ vật yếu đi. Người ta sơn, mạ hoặc bôi dầu mỡ để ngăn sắt tiếp xúc với không khí ẩm.",
+   "ex": "Xe đạp để ngoài mưa nhanh bị gỉ hơn.",
+   "en": [
+    "rust",
+    "corrosion"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "t": "Sự cháy cần gì?",
+   "vi": "Sự cháy là phản ứng của chất cháy với oxygen, toả nhiệt và phát sáng. Muốn cháy cần đủ ba yếu tố: chất cháy, oxygen và nhiệt độ đủ cao. Thiếu một yếu tố, lửa sẽ tắt. Em không được tự nghịch lửa.",
+   "ex": "Úp cốc lên ngọn nến, nến tắt vì hết oxygen.",
+   "en": [
+    "combustion",
+    "fire triangle"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Chất tham gia và sản phẩm",
+   "vi": "Trong phản ứng hoá học, chất ban đầu gọi là chất tham gia, chất mới tạo thành gọi là sản phẩm. Ta viết bằng phương trình chữ, ví dụ: hydrogen + oxygen → nước. Mũi tên đọc là “tạo thành”.",
+   "ex": "Chất tham gia ở bên trái, sản phẩm ở bên phải mũi tên.",
+   "en": [
+    "reactant",
+    "product"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Bảo toàn khối lượng",
+   "vi": "Nhà hoá học Pháp Lavoisier đã chứng minh: trong phản ứng hoá học, tổng khối lượng các chất tham gia bằng tổng khối lượng các sản phẩm. Lí do là các nguyên tử không mất đi, chỉ sắp xếp lại thành chất mới.",
+   "ex": "Khi đốt củi, khối lượng “mất” đi vào khói và khí bay lên.",
+   "en": [
+    "conservation of mass"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Toả nhiệt và thu nhiệt",
+   "vi": "Phản ứng toả nhiệt giải phóng nhiệt ra ngoài, như đốt than, đốt gas. Phản ứng thu nhiệt cần lấy nhiệt liên tục mới xảy ra, như nung đá vôi để làm vôi sống. Năng lượng luôn đi kèm phản ứng hoá học.",
+   "ex": "Bếp lửa ấm áp nhờ phản ứng toả nhiệt.",
+   "en": [
+    "exothermic",
+    "endothermic"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "t": "Quang hợp",
+   "vi": "Cây xanh dùng năng lượng ánh sáng Mặt Trời để biến carbon dioxide và nước thành đường glucose và khí oxygen. Phản ứng này xảy ra chủ yếu ở lá, nhờ chất diệp lục màu xanh. Nhờ quang hợp, chúng ta có oxygen để thở.",
+   "ex": "Carbon dioxide + nước → glucose + oxygen (cần ánh sáng).",
+   "en": [
+    "photosynthesis"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Tốc độ phản ứng",
+   "vi": "Phản ứng xảy ra nhanh hơn khi tăng nhiệt độ, tăng nồng độ, tăng diện tích bề mặt tiếp xúc, hoặc dùng chất xúc tác. Vì vậy thức ăn để tủ lạnh lâu hỏng hơn, và than dạng bột cháy nhanh hơn than cục.",
+   "ex": "Nhai kĩ thức ăn giúp tiêu hoá nhanh hơn nhờ tăng bề mặt.",
+   "en": [
+    "reaction rate"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Chất xúc tác",
+   "vi": "Chất xúc tác làm phản ứng xảy ra nhanh hơn nhưng không bị tiêu hao sau phản ứng. Enzyme trong cơ thể là chất xúc tác sinh học. Ví dụ enzyme amylase trong nước bọt giúp phân giải tinh bột thành đường.",
+   "ex": "Nhai cơm lâu thấy ngọt nhờ enzyme trong nước bọt.",
+   "en": [
+    "catalyst",
+    "enzyme"
+   ]
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "t": "Cân bằng phương trình",
+   "vi": "Phương trình hoá học phải có số nguyên tử mỗi nguyên tố ở hai vế bằng nhau. Ví dụ: 2H₂ + O₂ → 2H₂O. Vế trái có 4 nguyên tử H và 2 nguyên tử O; vế phải cũng có 4 H và 2 O. Đó là cách viết đúng định luật bảo toàn khối lượng.",
+   "ex": "Chỉ thêm hệ số đằng trước, không sửa chỉ số trong công thức.",
+   "en": [
+    "balancing equations"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Nước kì diệu",
+   "vi": "Nước có mặt ở cả ba thể: băng tuyết, nước lỏng và hơi nước. Nước bao phủ khoảng 70% bề mặt Trái Đất. Cơ thể người lớn có khoảng 60% là nước. Không có nước, sự sống không thể tồn tại.",
+   "ex": "Uống đủ nước mỗi ngày giúp cơ thể khoẻ mạnh.",
+   "en": [
+    "water"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Vòng tuần hoàn của nước",
+   "vi": "Mặt Trời làm nước ở biển, sông, hồ bay hơi. Hơi nước bay lên cao, gặp lạnh ngưng tụ thành những giọt nước nhỏ tạo thành mây. Giọt nước lớn dần rồi rơi xuống thành mưa, chảy về sông, biển và vòng lặp lại.",
+   "ex": "Bay hơi → ngưng tụ → mưa → chảy về biển.",
+   "en": [
+    "water cycle"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Sự hoà tan",
+   "vi": "Khi cho đường hay muối vào nước rồi khuấy, chúng tan dần và không còn nhìn thấy, tạo thành dung dịch. Một số chất như cát, dầu ăn không tan trong nước. Chất đã tan vẫn còn đó, ta nếm nước đường vẫn thấy ngọt.",
+   "ex": "Khuấy và dùng nước ấm giúp đường tan nhanh hơn.",
+   "en": [
+    "dissolve",
+    "solution"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "t": "Nước sạch, uống an toàn",
+   "vi": "Nước trông trong chưa chắc đã sạch vì có thể chứa vi khuẩn. Đun sôi nước là cách đơn giản để diệt phần lớn vi khuẩn. Nên uống nước đã đun sôi để nguội hoặc nước đã được xử lí đảm bảo vệ sinh.",
+   "ex": "Không uống nước ao, hồ, suối khi chưa xử lí.",
+   "en": [
+    "clean water"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Dung môi, chất tan, dung dịch",
+   "vi": "Dung dịch là hỗn hợp đồng nhất của dung môi và chất tan. Trong nước muối, nước là dung môi, muối là chất tan. Nước hoà tan được rất nhiều chất nên được gọi là dung môi phổ biến.",
+   "ex": "Dung môi + chất tan = dung dịch.",
+   "en": [
+    "solvent",
+    "solute"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Dung dịch bão hoà",
+   "vi": "Ở một nhiệt độ nhất định, nước chỉ hoà tan được một lượng chất tan có hạn. Khi không thể hoà tan thêm, ta có dung dịch bão hoà. Với đường và muối ăn, nước nóng thường hoà tan được nhiều hơn nước lạnh.",
+   "ex": "Cho quá nhiều đường, phần thừa sẽ lắng dưới đáy cốc.",
+   "en": [
+    "saturated solution",
+    "solubility"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Làm trong nước",
+   "vi": "Nước đục có thể được làm trong bằng cách để lắng rồi lọc. Ở Việt Nam, người ta từng dùng phèn chua để các hạt bẩn kết lại và lắng xuống nhanh hơn. Bể lọc dùng các lớp sỏi, cát, than để giữ cặn. Nước lọc xong vẫn cần đun sôi trước khi uống.",
+   "ex": "Lắng → lọc → đun sôi.",
+   "en": [
+    "filtration",
+    "water treatment"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "t": "Vì sao nước biển mặn?",
+   "vi": "Nước biển có nhiều muối hoà tan, trung bình khoảng 35 g muối trong mỗi kilôgam nước biển. Muối đến từ đất đá bị nước mưa và sông hoà tan, mang ra biển qua hàng triệu năm. Người làm muối phơi nước biển dưới nắng cho nước bay hơi để thu muối.",
+   "ex": "Nước biển không uống được vì quá mặn.",
+   "en": [
+    "seawater",
+    "salt"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Nồng độ phần trăm",
+   "vi": "Nồng độ phần trăm cho biết có bao nhiêu gam chất tan trong 100 g dung dịch: C% = khối lượng chất tan : khối lượng dung dịch × 100%. Hoà 10 g muối vào 90 g nước được 100 g dung dịch, nồng độ 10%.",
+   "ex": "Khối lượng dung dịch = chất tan + dung môi.",
+   "en": [
+    "concentration",
+    "percentage"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Chất khí tan trong nước",
+   "vi": "Một số khí tan được trong nước. Oxygen hoà tan trong nước giúp cá hô hấp. Khí thường tan kém hơn khi nước ấm lên. Nước có ga chứa nhiều khí carbon dioxide được nén; khi mở nắp, áp suất giảm, khí thoát ra thành bọt.",
+   "ex": "Bể cá cần máy sục khí để bổ sung oxygen.",
+   "en": [
+    "dissolved gas",
+    "carbon dioxide"
+   ]
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "t": "Nước cứng và cặn ấm",
+   "vi": "Nước cứng chứa nhiều ion calcium và magnesium hoà tan. Khi đun nhiều lần, chúng tạo cặn trắng bám đáy ấm, chủ yếu là calcium carbonate. Giấm có axit nên hoà tan được lớp cặn này.",
+   "ex": "Ngâm giấm loãng giúp làm sạch cặn trong ấm (nhờ người lớn).",
+   "en": [
+    "hard water",
+    "limescale"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Vị chua là nhờ axit",
+   "vi": "Chanh, giấm, me, quả khế có vị chua vì chứa axit. Axit trong chanh chủ yếu là axit citric, trong giấm là axit acetic. Đây là các axit yếu, ăn được. Còn axit trong phòng thí nghiệm có thể rất nguy hiểm, tuyệt đối không nếm.",
+   "ex": "Chỉ nếm thức ăn, không bao giờ nếm hoá chất.",
+   "en": [
+    "acid",
+    "citric acid"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Bazơ quanh em",
+   "vi": "Bazơ là nhóm chất có tính chất ngược với axit. Dung dịch bazơ thường có cảm giác trơn nhờn. Xà phòng và nhiều chất tẩy rửa có tính bazơ. Một số bazơ mạnh có thể làm bỏng da, nên phải đeo găng tay khi dùng.",
+   "ex": "Nước xà phòng có tính bazơ nhẹ.",
+   "en": [
+    "base",
+    "alkali"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Chất chỉ thị bắp cải tím",
+   "vi": "Nước ép bắp cải tím chứa chất màu đổi màu theo độ chua. Gặp axit như giấm hay nước chanh, nó chuyển sang màu đỏ hồng. Gặp bazơ như nước pha muối nở, nó chuyển sang màu xanh lục. Đó là một chất chỉ thị tự nhiên.",
+   "ex": "Hoa đậu biếc cũng đổi màu khi vắt chanh vào.",
+   "en": [
+    "indicator",
+    "red cabbage"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "t": "Axit trong dạ dày",
+   "vi": "Dạ dày của em tiết ra dịch vị có axit hydrochloric. Axit này giúp tiêu hoá thức ăn và diệt nhiều vi khuẩn có hại. Thành dạ dày có lớp nhầy bảo vệ nên không bị axit làm hại.",
+   "ex": "Ăn uống đúng giờ giúp bảo vệ dạ dày.",
+   "en": [
+    "stomach acid"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Thang pH",
+   "vi": "Thang pH thường từ 0 đến 14 để đo độ axit hay bazơ của dung dịch. pH bằng 7 là trung tính, như nước tinh khiết. pH nhỏ hơn 7 là axit, càng nhỏ càng chua mạnh. pH lớn hơn 7 là bazơ.",
+   "ex": "Nước chanh pH khoảng 2, nước xà phòng pH lớn hơn 7.",
+   "en": [
+    "pH scale"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Giấy quỳ tím",
+   "vi": "Quỳ tím là chất chỉ thị dùng trong phòng thí nghiệm. Dung dịch axit làm quỳ tím chuyển sang màu đỏ. Dung dịch bazơ làm quỳ tím chuyển sang màu xanh. Dung dịch trung tính không làm quỳ tím đổi màu.",
+   "ex": "Axit – Đỏ, Bazơ – Xanh.",
+   "en": [
+    "litmus paper"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Phản ứng trung hoà",
+   "vi": "Khi axit phản ứng với bazơ, chúng tạo ra muối và nước, gọi là phản ứng trung hoà. Thuốc giảm đau dạ dày thường chứa chất có tính bazơ để trung hoà bớt axit thừa.",
+   "ex": "Axit + bazơ → muối + nước.",
+   "en": [
+    "neutralization"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "t": "Muối không chỉ là muối ăn",
+   "vi": "Trong hoá học, “muối” là cả một nhóm chất, thường tạo thành khi axit phản ứng với bazơ. Muối ăn sodium chloride (NaCl) chỉ là một loại muối. Đá vôi calcium carbonate (CaCO₃) và muối nở sodium bicarbonate (NaHCO₃) cũng là muối.",
+   "ex": "Không phải muối nào cũng ăn được!",
+   "en": [
+    "salt",
+    "sodium chloride"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Axit mạnh và bazơ mạnh",
+   "vi": "Axit sulfuric đặc và sodium hydroxide (xút) là những chất ăn mòn mạnh, gây bỏng da và hỏng mắt. Khi dùng phải có kính bảo hộ, găng tay và người hướng dẫn. Khi pha loãng axit sulfuric đặc, phải rót từ từ axit vào nước, không làm ngược lại, vì toả nhiệt rất mạnh.",
+   "ex": "Nhớ câu: rót axit vào nước, đừng rót nước vào axit.",
+   "en": [
+    "corrosive",
+    "strong acid"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "Mưa axit",
+   "vi": "Khi đốt than, dầu, khí sulfur dioxide và các nitrogen oxide bay vào không khí. Chúng phản ứng với nước trong mây tạo thành mưa axit. Mưa axit làm hại cây cối, cá ở hồ và ăn mòn tượng, công trình bằng đá vôi.",
+   "ex": "Giảm đốt nhiên liệu là giảm mưa axit.",
+   "en": [
+    "acid rain"
+   ]
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "t": "pH và đất trồng",
+   "vi": "Mỗi loại cây thích hợp với một khoảng pH của đất. Đất quá chua làm cây khó hút chất dinh dưỡng. Nông dân thường bón vôi để giảm độ chua của đất. Nhiều loài cá và sinh vật cũng chỉ sống tốt trong nước có pH phù hợp.",
+   "ex": "Bón vôi khử chua là ứng dụng phản ứng trung hoà.",
+   "en": [
+    "soil pH",
+    "lime"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Nhãn cảnh báo hoá chất",
+   "vi": "Trên chai hoá chất thường có hình cảnh báo trong khung viền đỏ. Ngọn lửa nghĩa là dễ cháy, đầu lâu xương chéo nghĩa là chất độc, hình giọt chất lỏng ăn mòn bàn tay nghĩa là chất ăn mòn. Thấy các nhãn này, em không tự mở mà báo người lớn.",
+   "ex": "Đọc nhãn trước – hỏi người lớn sau – không tự dùng.",
+   "en": [
+    "hazard symbol",
+    "warning label"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Không trộn chất tẩy rửa",
+   "vi": "Mỗi chất tẩy rửa chỉ dùng riêng theo hướng dẫn. Trộn nước tẩy Javen với chất tẩy có axit có thể sinh ra khí chlorine rất độc. Khi lau dọn bằng hoá chất, cần mở cửa thoáng khí và đeo găng tay.",
+   "ex": "Không bao giờ trộn hai loại nước tẩy với nhau.",
+   "en": [
+    "bleach",
+    "toxic gas"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Hoá học trong bếp",
+   "vi": "Căn bếp là phòng thí nghiệm nhỏ. Khi luộc trứng, lòng trắng đông lại và không thể trở lại như cũ. Đường đun nóng chuyển thành caramel màu nâu thơm. Bánh mì nướng vàng giòn cũng nhờ phản ứng hoá học.",
+   "ex": "Nấu ăn luôn cần có người lớn bên cạnh.",
+   "en": [
+    "cooking chemistry"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "t": "Phân loại rác",
+   "vi": "Giấy, chai nhựa, lon nhôm có thể thu gom để tái chế thành vật mới. Pin cũ chứa kim loại có thể gây ô nhiễm đất và nước, nên cần mang đến điểm thu gom pin. Phân loại rác giúp tiết kiệm tài nguyên và bảo vệ môi trường.",
+   "ex": "Rửa sạch và ép dẹp chai nhựa trước khi bỏ vào thùng tái chế.",
+   "en": [
+    "recycling"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Khí CO nguy hiểm",
+   "vi": "Khi than hay củi cháy trong nơi thiếu không khí, có thể tạo ra khí carbon monoxide (CO). Khí này không màu, không mùi nhưng rất độc, gây ngộ độc khi hít phải. Tuyệt đối không đốt than sưởi trong phòng kín.",
+   "ex": "Đốt lửa phải ở nơi thoáng khí.",
+   "en": [
+    "carbon monoxide"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Hợp kim",
+   "vi": "Hợp kim là hỗn hợp của kim loại với kim loại hoặc phi kim khác. Thép là sắt với một ít carbon, cứng hơn sắt. Đồng thau là đồng với kẽm. Đồng thiếc là đồng với thiếc, được người Việt cổ dùng đúc trống đồng Đông Sơn.",
+   "ex": "Hợp kim thường bền và cứng hơn kim loại nguyên chất.",
+   "en": [
+    "alloy",
+    "bronze",
+    "steel"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Nhựa và môi trường",
+   "vi": "Phần lớn nhựa được sản xuất từ dầu mỏ. Nhựa bền, nhẹ, rẻ nhưng nhiều loại cần hàng trăm năm mới phân huỷ. Rác nhựa trôi ra biển làm hại rùa, cá, chim biển. Hãy dùng túi vải, bình nước cá nhân để giảm rác nhựa.",
+   "ex": "Giảm dùng – dùng lại – tái chế.",
+   "en": [
+    "plastic",
+    "pollution"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "t": "Pháo hoa nhiều màu",
+   "vi": "Màu sắc pháo hoa đến từ các muối kim loại khi bị đốt nóng. Muối sodium cho màu vàng, muối strontium cho màu đỏ, muối copper cho màu xanh lam hoặc xanh lục. Pháo hoa rất nguy hiểm, chỉ những người chuyên nghiệp mới được bắn.",
+   "ex": "Ngọn lửa bếp gas có lúc ánh vàng khi nước muối rơi vào.",
+   "en": [
+    "fireworks",
+    "flame test"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Hiệu ứng nhà kính",
+   "vi": "Một số khí như carbon dioxide và methane giữ lại nhiệt trong bầu khí quyển, giống tấm kính nhà kính. Nhờ đó Trái Đất đủ ấm cho sự sống. Nhưng khi con người đốt nhiều than, dầu, khí đốt, lượng carbon dioxide tăng, làm Trái Đất nóng lên.",
+   "ex": "Trồng cây và tiết kiệm điện giúp giảm khí nhà kính.",
+   "en": [
+    "greenhouse effect"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Tầng ozone",
+   "vi": "Ozone là phân tử gồm 3 nguyên tử oxygen (O₃). Tầng ozone trên cao hấp thụ phần lớn tia cực tím có hại từ Mặt Trời. Các chất CFC từng dùng trong tủ lạnh làm suy giảm tầng ozone. Năm 1987, các nước kí Nghị định thư Montreal để hạn chế các chất này.",
+   "ex": "O₂ là khí ta thở, O₃ là ozone.",
+   "en": [
+    "ozone layer"
+   ]
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "t": "Phân bón N–P–K",
+   "vi": "Cây cần nhiều nguyên tố để lớn, quan trọng nhất là nitrogen (N), phosphorus (P) và potassium (K). Phân bón hoá học bổ sung các nguyên tố này. Nhưng bón quá nhiều, phân trôi xuống ao hồ làm tảo phát triển mạnh, khiến nước thiếu oxygen.",
+   "ex": "Bón phân đúng loại, đúng lượng, đúng lúc.",
+   "en": [
+    "fertilizer"
+   ]
+  }
+ ],
+ "quiz": [
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Nước đá tan thành nước lỏng gọi là hiện tượng gì?",
+   "a": [
+    "Sự nóng chảy",
+    "Sự đông đặc",
+    "Sự ngưng tụ",
+    "Sự thăng hoa"
+   ],
+   "c": 0,
+   "why": "Chất rắn chuyển thành chất lỏng khi được làm nóng gọi là sự nóng chảy.",
+   "en": "melting"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Chất nào ở thể khí ở nhiệt độ phòng?",
+   "a": [
+    "Sắt",
+    "Khí oxygen",
+    "Nước",
+    "Muối ăn"
+   ],
+   "c": 1,
+   "why": "Oxygen là chất khí; sắt và muối là chất rắn, nước là chất lỏng ở nhiệt độ phòng.",
+   "en": "gas"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Chất lỏng có đặc điểm nào sau đây?",
+   "a": [
+    "Luôn giữ hình dạng riêng",
+    "Không có khối lượng",
+    "Có hình dạng theo vật chứa",
+    "Luôn cứng như đá"
+   ],
+   "c": 2,
+   "why": "Chất lỏng chảy được nên có hình dạng của bình chứa nó.",
+   "en": "liquid"
+  },
+  {
+   "tp": 0,
+   "lv": 1,
+   "q": "Giọt nước bám bên ngoài cốc nước đá là do đâu?",
+   "a": [
+    "Nước thấm qua thành cốc",
+    "Đá tự nhân lên ngoài cốc",
+    "Cốc bị thủng lỗ nhỏ",
+    "Hơi nước trong không khí ngưng tụ"
+   ],
+   "c": 3,
+   "why": "Hơi nước trong không khí gặp thành cốc lạnh nên ngưng tụ thành giọt nước.",
+   "en": "condensation"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Ở áp suất thường, nước tinh khiết sôi ở bao nhiêu độ C?",
+   "a": [
+    "100°C",
+    "0°C",
+    "50°C",
+    "37°C"
+   ],
+   "c": 0,
+   "why": "Ở áp suất thường (ngang mực nước biển), nước tinh khiết sôi ở 100°C.",
+   "en": "boiling point"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Băng phiến trong tủ quần áo nhỏ dần là hiện tượng gì?",
+   "a": [
+    "Sự nóng chảy",
+    "Sự thăng hoa",
+    "Sự đông đặc",
+    "Sự ngưng tụ"
+   ],
+   "c": 1,
+   "why": "Băng phiến chuyển thẳng từ thể rắn sang thể khí, đó là sự thăng hoa.",
+   "en": "sublimation"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Cách nào lấy được muối từ nước muối?",
+   "a": [
+    "Lọc qua giấy lọc",
+    "Dùng nam châm hút",
+    "Đun cho nước bay hơi hết",
+    "Khuấy thật mạnh"
+   ],
+   "c": 2,
+   "why": "Muối tan trong nước nên lọc không giữ được; làm nước bay hơi (cô cạn) sẽ còn lại muối.",
+   "en": "evaporation"
+  },
+  {
+   "tp": 0,
+   "lv": 2,
+   "q": "Đâu là một hỗn hợp?",
+   "a": [
+    "Nước cất",
+    "Khí oxygen",
+    "Vàng nguyên chất",
+    "Không khí"
+   ],
+   "c": 3,
+   "why": "Không khí gồm nhiều khí trộn lẫn như nitrogen, oxygen, carbon dioxide nên là hỗn hợp.",
+   "en": "mixture"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Vì sao nước đá nổi trên mặt nước?",
+   "a": [
+    "Nước đá có khối lượng riêng nhỏ hơn nước",
+    "Nước đá có khối lượng riêng lớn hơn nước",
+    "Nước đá không có khối lượng",
+    "Mọi chất rắn đều nổi trên nước"
+   ],
+   "c": 0,
+   "why": "Nước đá có khối lượng riêng khoảng 0,92 g/cm³, nhỏ hơn nước (khoảng 1 g/cm³) nên nổi.",
+   "en": "density"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Khi chất khí được đun nóng, các hạt của nó thế nào?",
+   "a": [
+    "Đứng yên hoàn toàn",
+    "Chuyển động nhanh hơn",
+    "Chuyển động chậm lại",
+    "Biến mất"
+   ],
+   "c": 1,
+   "why": "Nhiệt độ càng cao, các hạt nhận thêm năng lượng và chuyển động càng nhanh.",
+   "en": "particle motion"
+  },
+  {
+   "tp": 0,
+   "lv": 3,
+   "q": "Trên đỉnh núi cao, nước sôi ở nhiệt độ thế nào so với 100°C?",
+   "a": [
+    "Cao hơn 100°C",
+    "Đúng bằng 100°C",
+    "Thấp hơn 100°C",
+    "Nước không thể sôi"
+   ],
+   "c": 2,
+   "why": "Trên núi cao áp suất không khí thấp hơn nên nước sôi ở nhiệt độ thấp hơn 100°C.",
+   "en": "air pressure"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Kí hiệu hoá học của oxygen là gì?",
+   "a": [
+    "Ox",
+    "Oi",
+    "X",
+    "O"
+   ],
+   "c": 3,
+   "why": "Oxygen có kí hiệu là một chữ cái in hoa O.",
+   "en": "oxygen"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Kim loại nào ở thể lỏng ở nhiệt độ phòng?",
+   "a": [
+    "Thuỷ ngân",
+    "Sắt",
+    "Đồng",
+    "Nhôm"
+   ],
+   "c": 0,
+   "why": "Thuỷ ngân là kim loại duy nhất ở thể lỏng ở nhiệt độ phòng; nó rất độc, không được chạm vào.",
+   "en": "mercury"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Fe là kí hiệu của nguyên tố nào?",
+   "a": [
+    "Vàng",
+    "Sắt",
+    "Bạc",
+    "Đồng"
+   ],
+   "c": 1,
+   "why": "Fe lấy từ tên Latin ferrum, nghĩa là sắt. Vàng là Au, bạc là Ag, đồng là Cu.",
+   "en": "iron"
+  },
+  {
+   "tp": 1,
+   "lv": 1,
+   "q": "Mọi chất đều được tạo nên từ những hạt rất nhỏ gọi là gì?",
+   "a": [
+    "Hạt cát",
+    "Giọt nước",
+    "Nguyên tử",
+    "Hạt bụi"
+   ],
+   "c": 2,
+   "why": "Nguyên tử là hạt cực nhỏ tạo nên mọi chất.",
+   "en": "atom"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Hạt nào trong nguyên tử mang điện tích âm?",
+   "a": [
+    "Proton",
+    "Neutron",
+    "Hạt nhân",
+    "Electron"
+   ],
+   "c": 3,
+   "why": "Electron mang điện âm, proton mang điện dương, neutron không mang điện.",
+   "en": "electron"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Phân tử nước H₂O có mấy nguyên tử hydrogen?",
+   "a": [
+    "2",
+    "1",
+    "3",
+    "4"
+   ],
+   "c": 0,
+   "why": "Chỉ số 2 dưới chân H cho biết có 2 nguyên tử hydrogen, kèm 1 nguyên tử oxygen.",
+   "en": "water molecule"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Ai lập ra bảng tuần hoàn các nguyên tố năm 1869?",
+   "a": [
+    "Newton",
+    "Mendeleev",
+    "Darwin",
+    "Edison"
+   ],
+   "c": 1,
+   "why": "Nhà hoá học Nga Dmitri Mendeleev công bố bảng tuần hoàn năm 1869.",
+   "en": "Mendeleev"
+  },
+  {
+   "tp": 1,
+   "lv": 2,
+   "q": "Số hiệu nguyên tử cho biết số hạt nào trong hạt nhân?",
+   "a": [
+    "Neutron",
+    "Phân tử",
+    "Proton",
+    "Electron tự do"
+   ],
+   "c": 2,
+   "why": "Số hiệu nguyên tử bằng số proton trong hạt nhân, quyết định đó là nguyên tố nào.",
+   "en": "atomic number"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Hai đồng vị của cùng một nguyên tố khác nhau về số hạt nào?",
+   "a": [
+    "Proton",
+    "Tên nguyên tố",
+    "Kí hiệu hoá học",
+    "Neutron"
+   ],
+   "c": 3,
+   "why": "Đồng vị có cùng số proton (cùng nguyên tố) nhưng khác số neutron.",
+   "en": "isotope"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Nguyên tử natri (sodium) nhường 1 electron sẽ trở thành gì?",
+   "a": [
+    "Ion dương Na⁺",
+    "Ion âm Na⁻",
+    "Nguyên tử chlorine",
+    "Một hạt neutron"
+   ],
+   "c": 0,
+   "why": "Mất 1 electron mang điện âm thì nguyên tử thừa điện dương, thành ion Na⁺.",
+   "en": "ion"
+  },
+  {
+   "tp": 1,
+   "lv": 3,
+   "q": "Các nguyên tố cùng một nhóm (cột) trong bảng tuần hoàn thường thế nào?",
+   "a": [
+    "Có cùng khối lượng",
+    "Có tính chất hoá học giống nhau",
+    "Đều là chất khí",
+    "Có cùng số proton"
+   ],
+   "c": 1,
+   "why": "Các nguyên tố cùng nhóm có cấu tạo lớp electron ngoài cùng giống nhau nên tính chất hoá học tương tự.",
+   "en": "group"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Hiện tượng nào là biến đổi hoá học?",
+   "a": [
+    "Nước đá tan",
+    "Xé giấy thành mảnh vụn",
+    "Đốt cháy tờ giấy",
+    "Hoà đường vào nước"
+   ],
+   "c": 2,
+   "why": "Đốt giấy tạo ra chất mới là tro và khói, nên là biến đổi hoá học.",
+   "en": "chemical change"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Đồ bằng sắt để ngoài mưa lâu ngày sẽ bị gì?",
+   "a": [
+    "Biến thành vàng",
+    "Tan hết vào nước mưa",
+    "Biến thành nhựa",
+    "Bị gỉ"
+   ],
+   "c": 3,
+   "why": "Sắt phản ứng với oxygen và nước tạo ra gỉ sắt màu nâu đỏ.",
+   "en": "rust"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Sự cháy cần khí nào trong không khí?",
+   "a": [
+    "Oxygen",
+    "Nitrogen",
+    "Helium",
+    "Hơi nước"
+   ],
+   "c": 0,
+   "why": "Sự cháy là phản ứng của chất cháy với oxygen.",
+   "en": "combustion"
+  },
+  {
+   "tp": 2,
+   "lv": 1,
+   "q": "Dấu hiệu nào cho thấy có thể đã xảy ra phản ứng hoá học?",
+   "a": [
+    "Rót nước sang cốc khác",
+    "Sủi bọt khí và đổi màu",
+    "Đập vỡ cục đá",
+    "Gấp đôi tờ giấy"
+   ],
+   "c": 1,
+   "why": "Sủi bọt khí và đổi màu thường cho thấy có chất mới được tạo thành.",
+   "en": "chemical reaction"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Giấm trộn với muối nở (baking soda) sinh ra khí gì?",
+   "a": [
+    "Oxygen",
+    "Hydrogen",
+    "Carbon dioxide",
+    "Chlorine"
+   ],
+   "c": 2,
+   "why": "Axit trong giấm phản ứng với muối nở tạo ra khí carbon dioxide làm sủi bọt.",
+   "en": "carbon dioxide"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Theo định luật bảo toàn khối lượng, trong phản ứng hoá học thì sao?",
+   "a": [
+    "Khối lượng luôn tăng gấp đôi",
+    "Khối lượng luôn mất hết",
+    "Nguyên tử bị phá huỷ",
+    "Tổng khối lượng các chất không đổi"
+   ],
+   "c": 3,
+   "why": "Các nguyên tử chỉ sắp xếp lại nên tổng khối lượng chất tham gia bằng tổng khối lượng sản phẩm.",
+   "en": "conservation of mass"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Khi quang hợp, cây xanh thải ra khí gì?",
+   "a": [
+    "Oxygen",
+    "Carbon dioxide",
+    "Nitrogen",
+    "Hydrogen"
+   ],
+   "c": 0,
+   "why": "Cây dùng carbon dioxide và nước, nhờ ánh sáng tạo ra glucose và thải ra oxygen.",
+   "en": "photosynthesis"
+  },
+  {
+   "tp": 2,
+   "lv": 2,
+   "q": "Phản ứng đốt cháy than là loại phản ứng nào?",
+   "a": [
+    "Thu nhiệt",
+    "Toả nhiệt",
+    "Không trao đổi nhiệt",
+    "Làm lạnh xung quanh"
+   ],
+   "c": 1,
+   "why": "Than cháy giải phóng nhiều nhiệt ra môi trường nên là phản ứng toả nhiệt.",
+   "en": "exothermic"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Chất xúc tác có vai trò gì trong phản ứng?",
+   "a": [
+    "Luôn bị tiêu hao hết",
+    "Làm sản phẩm nặng hơn",
+    "Làm phản ứng xảy ra nhanh hơn",
+    "Ngăn mọi phản ứng xảy ra"
+   ],
+   "c": 2,
+   "why": "Chất xúc tác làm tăng tốc độ phản ứng và không bị tiêu hao sau phản ứng.",
+   "en": "catalyst"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Vì sao than dạng bột cháy nhanh hơn than cục?",
+   "a": [
+    "Than bột nặng hơn than cục",
+    "Than bột không chứa carbon",
+    "Than cục không thể cháy",
+    "Diện tích tiếp xúc với oxygen lớn hơn"
+   ],
+   "c": 3,
+   "why": "Chia nhỏ chất rắn làm tăng diện tích bề mặt tiếp xúc nên phản ứng nhanh hơn.",
+   "en": "surface area"
+  },
+  {
+   "tp": 2,
+   "lv": 3,
+   "q": "Trong 2H₂ + O₂ → 2H₂O, 2 phân tử H₂ phản ứng với mấy phân tử O₂?",
+   "a": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "c": 0,
+   "why": "Hệ số trước O₂ là 1 (không viết), nên 2 phân tử H₂ phản ứng với 1 phân tử O₂.",
+   "en": "chemical equation"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Chất nào KHÔNG tan trong nước?",
+   "a": [
+    "Đường",
+    "Cát",
+    "Muối ăn",
+    "Giấm"
+   ],
+   "c": 1,
+   "why": "Cát không tan nên lắng xuống đáy; đường, muối và giấm đều tan trong nước.",
+   "en": "insoluble"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Mây được tạo thành chủ yếu từ gì?",
+   "a": [
+    "Khói bụi",
+    "Bông gòn",
+    "Giọt nước và tinh thể băng nhỏ",
+    "Khí oxygen"
+   ],
+   "c": 2,
+   "why": "Hơi nước ngưng tụ trên cao thành những giọt nước hoặc tinh thể băng rất nhỏ tạo thành mây.",
+   "en": "cloud"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Cách đơn giản để diệt vi khuẩn trong nước uống là gì?",
+   "a": [
+    "Thả đá lạnh vào",
+    "Khuấy thật lâu",
+    "Để nước trong bóng râm",
+    "Đun sôi nước"
+   ],
+   "c": 3,
+   "why": "Nhiệt độ sôi diệt được phần lớn vi khuẩn trong nước.",
+   "en": "boiling water"
+  },
+  {
+   "tp": 3,
+   "lv": 1,
+   "q": "Nước bao phủ khoảng bao nhiêu phần bề mặt Trái Đất?",
+   "a": [
+    "Khoảng 70%",
+    "Khoảng 10%",
+    "Khoảng 30%",
+    "100%"
+   ],
+   "c": 0,
+   "why": "Đại dương, biển, hồ, sông và băng phủ khoảng 70% bề mặt Trái Đất.",
+   "en": "ocean"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Trong cốc nước đường, chất nào là dung môi?",
+   "a": [
+    "Đường",
+    "Nước",
+    "Cái cốc",
+    "Không khí"
+   ],
+   "c": 1,
+   "why": "Nước là chất hoà tan đường nên là dung môi; đường là chất tan.",
+   "en": "solvent"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Dung dịch bão hoà là dung dịch như thế nào?",
+   "a": [
+    "Hoàn toàn không có chất tan",
+    "Luôn có màu xanh",
+    "Không hoà tan thêm được chất tan",
+    "Luôn ở thể rắn"
+   ],
+   "c": 2,
+   "why": "Ở nhiệt độ đó, dung dịch bão hoà đã chứa lượng chất tan tối đa.",
+   "en": "saturated"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Người ta làm muối từ nước biển bằng cách nào?",
+   "a": [
+    "Đem đông thành đá",
+    "Lọc qua giấy lọc",
+    "Thêm đường vào",
+    "Phơi nắng cho nước bay hơi"
+   ],
+   "c": 3,
+   "why": "Nắng và gió làm nước bay hơi, muối còn lại kết tinh trên ruộng muối.",
+   "en": "sea salt"
+  },
+  {
+   "tp": 3,
+   "lv": 2,
+   "q": "Phèn chua thường được dùng để làm gì với nước đục?",
+   "a": [
+    "Làm cặn lắng xuống nhanh",
+    "Tạo màu cho nước",
+    "Làm nước ngọt hơn",
+    "Làm nước sôi nhanh hơn"
+   ],
+   "c": 0,
+   "why": "Phèn chua giúp các hạt bẩn kết lại và lắng xuống, làm nước trong hơn.",
+   "en": "water treatment"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Hoà tan 10 g muối vào 90 g nước, nồng độ phần trăm là bao nhiêu?",
+   "a": [
+    "9%",
+    "10%",
+    "11%",
+    "90%"
+   ],
+   "c": 1,
+   "why": "Khối lượng dung dịch là 10 + 90 = 100 g, nên C% = 10 : 100 × 100% = 10%.",
+   "en": "concentration"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Vì sao mở chai nước có ga lại thấy sủi bọt?",
+   "a": [
+    "Nước trong chai bị sôi",
+    "Khí oxygen bị đốt cháy",
+    "Áp suất giảm, khí CO₂ thoát ra",
+    "Đường biến thành khí"
+   ],
+   "c": 2,
+   "why": "Khí carbon dioxide được nén trong chai; mở nắp làm áp suất giảm nên khí thoát ra thành bọt.",
+   "en": "carbonation"
+  },
+  {
+   "tp": 3,
+   "lv": 3,
+   "q": "Cặn trắng trong ấm đun nước lâu ngày chủ yếu là chất gì?",
+   "a": [
+    "Muối ăn",
+    "Đường",
+    "Gỉ sắt",
+    "Calcium carbonate"
+   ],
+   "c": 3,
+   "why": "Nước cứng chứa ion calcium; khi đun tạo cặn calcium carbonate bám đáy ấm.",
+   "en": "limescale"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Vì sao quả chanh có vị chua?",
+   "a": [
+    "Vì chứa axit",
+    "Vì chứa muối ăn",
+    "Vì chứa nhiều đường",
+    "Vì chứa sắt"
+   ],
+   "c": 0,
+   "why": "Chanh chứa axit citric nên có vị chua.",
+   "en": "citric acid"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Có nên nếm một chất lạ để biết nó là axit hay bazơ?",
+   "a": [
+    "Có, chỉ nếm một chút",
+    "Không, vì rất nguy hiểm",
+    "Có, nếu chất đó màu đẹp",
+    "Có, nếu bạn bè rủ"
+   ],
+   "c": 1,
+   "why": "Chất lạ có thể độc hoặc ăn mòn; hãy dùng chất chỉ thị và hỏi người lớn.",
+   "en": "lab safety"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Nước bắp cải tím chuyển sang màu gì khi gặp giấm?",
+   "a": [
+    "Xanh lục",
+    "Đen",
+    "Đỏ hồng",
+    "Trắng đục"
+   ],
+   "c": 2,
+   "why": "Giấm có axit, làm chất màu trong bắp cải tím chuyển sang đỏ hồng.",
+   "en": "indicator"
+  },
+  {
+   "tp": 4,
+   "lv": 1,
+   "q": "Axit trong dạ dày giúp ích gì cho cơ thể?",
+   "a": [
+    "Làm xương cứng hơn",
+    "Giúp mắt nhìn rõ hơn",
+    "Làm tóc mọc nhanh hơn",
+    "Tiêu hoá thức ăn, diệt vi khuẩn"
+   ],
+   "c": 3,
+   "why": "Axit hydrochloric trong dịch vị giúp tiêu hoá thức ăn và diệt nhiều vi khuẩn có hại.",
+   "en": "stomach acid"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Dung dịch có pH bằng 7 là dung dịch gì?",
+   "a": [
+    "Trung tính",
+    "Axit mạnh",
+    "Bazơ mạnh",
+    "Chắc chắn là nước muối đặc"
+   ],
+   "c": 0,
+   "why": "pH bằng 7 là trung tính; nhỏ hơn 7 là axit, lớn hơn 7 là bazơ.",
+   "en": "neutral"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Dung dịch axit làm quỳ tím chuyển sang màu gì?",
+   "a": [
+    "Xanh",
+    "Đỏ",
+    "Vàng",
+    "Đen"
+   ],
+   "c": 1,
+   "why": "Axit làm quỳ tím hoá đỏ, còn bazơ làm quỳ tím hoá xanh.",
+   "en": "litmus"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Axit phản ứng với bazơ tạo ra những chất gì?",
+   "a": [
+    "Chỉ có khí oxygen",
+    "Kim loại và khí helium",
+    "Muối và nước",
+    "Đường và dầu"
+   ],
+   "c": 2,
+   "why": "Đó là phản ứng trung hoà: axit + bazơ → muối + nước.",
+   "en": "neutralization"
+  },
+  {
+   "tp": 4,
+   "lv": 2,
+   "q": "Dung dịch nào có pH lớn hơn 7?",
+   "a": [
+    "Nước chanh",
+    "Giấm",
+    "Nước cất",
+    "Nước xà phòng"
+   ],
+   "c": 3,
+   "why": "Nước xà phòng có tính bazơ nên pH lớn hơn 7; chanh và giấm là axit, nước cất trung tính.",
+   "en": "alkaline"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Khi pha loãng axit sulfuric đặc, phải làm thế nào?",
+   "a": [
+    "Rót từ từ axit vào nước",
+    "Rót nhanh nước vào axit",
+    "Đổ cả hai thật nhanh cùng lúc",
+    "Đun sôi axit trước khi pha"
+   ],
+   "c": 0,
+   "why": "Pha loãng toả nhiệt rất mạnh; rót từ từ axit vào nước để tránh axit sôi bắn ra.",
+   "en": "dilution"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Nông dân bón vôi cho ruộng để làm gì?",
+   "a": [
+    "Tăng độ chua của đất",
+    "Giảm độ chua của đất",
+    "Làm đất mặn hơn",
+    "Thay cho nước tưới"
+   ],
+   "c": 1,
+   "why": "Vôi có tính bazơ, trung hoà bớt axit trong đất chua.",
+   "en": "soil pH"
+  },
+  {
+   "tp": 4,
+   "lv": 3,
+   "q": "Mưa axit chủ yếu do những khí nào gây ra?",
+   "a": [
+    "Oxygen và helium",
+    "Hơi nước tinh khiết",
+    "Sulfur dioxide và nitrogen oxide",
+    "Khí argon"
+   ],
+   "c": 2,
+   "why": "Sulfur dioxide và các nitrogen oxide từ việc đốt nhiên liệu tan vào nước mưa tạo mưa axit.",
+   "en": "acid rain"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Hình đầu lâu xương chéo trên chai hoá chất nghĩa là gì?",
+   "a": [
+    "Đồ ăn ngon",
+    "Đồ chơi an toàn",
+    "Nước uống được",
+    "Chất độc"
+   ],
+   "c": 3,
+   "why": "Đầu lâu xương chéo là kí hiệu cảnh báo chất độc, không được chạm hay nếm.",
+   "en": "toxic"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Thấy một chai hoá chất lạ ở nhà, em nên làm gì?",
+   "a": [
+    "Không mở, báo người lớn",
+    "Mở ra ngửi thử",
+    "Nếm thử một chút",
+    "Đổ vào cốc để uống"
+   ],
+   "c": 0,
+   "why": "Hoá chất lạ có thể độc; an toàn nhất là để nguyên và báo người lớn.",
+   "en": "chemical safety"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Pin cũ đã hết nên xử lí thế nào?",
+   "a": [
+    "Vứt xuống ao",
+    "Mang đến điểm thu gom pin",
+    "Đốt đi",
+    "Chôn ngoài vườn"
+   ],
+   "c": 1,
+   "why": "Pin chứa kim loại có thể gây ô nhiễm đất và nước nên cần thu gom riêng.",
+   "en": "battery recycling"
+  },
+  {
+   "tp": 5,
+   "lv": 1,
+   "q": "Lòng trắng trứng đông lại khi luộc là biến đổi gì?",
+   "a": [
+    "Biến đổi vật lí",
+    "Sự bay hơi",
+    "Biến đổi hoá học",
+    "Sự thăng hoa"
+   ],
+   "c": 2,
+   "why": "Lòng trắng chín đã biến đổi thành chất khác và không trở lại như cũ được.",
+   "en": "cooking"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Vì sao không được đốt than sưởi trong phòng kín?",
+   "a": [
+    "Làm phòng lạnh hơn",
+    "Than biến thành nước",
+    "Sinh ra quá nhiều oxygen",
+    "Sinh ra khí CO rất độc"
+   ],
+   "c": 3,
+   "why": "Than cháy thiếu không khí sinh khí CO không màu, không mùi, gây ngộ độc.",
+   "en": "carbon monoxide"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Thép là hợp kim của sắt với chủ yếu nguyên tố nào?",
+   "a": [
+    "Carbon",
+    "Vàng",
+    "Helium",
+    "Neon"
+   ],
+   "c": 0,
+   "why": "Thép gồm sắt và một lượng nhỏ carbon, cứng và bền hơn sắt.",
+   "en": "steel"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Trống đồng Đông Sơn được đúc chủ yếu từ hợp kim nào?",
+   "a": [
+    "Thép không gỉ",
+    "Đồng thiếc (đồng và thiếc)",
+    "Nhôm",
+    "Nhựa"
+   ],
+   "c": 1,
+   "why": "Người Việt cổ đúc trống đồng từ đồng thiếc, hợp kim của đồng và thiếc.",
+   "en": "bronze"
+  },
+  {
+   "tp": 5,
+   "lv": 2,
+   "q": "Phần lớn nhựa được sản xuất từ nguồn nguyên liệu nào?",
+   "a": [
+    "Cát biển",
+    "Sữa bò",
+    "Dầu mỏ",
+    "Nước mưa"
+   ],
+   "c": 2,
+   "why": "Phần lớn nhựa được làm từ dầu mỏ và khí thiên nhiên.",
+   "en": "plastic"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Tầng ozone bảo vệ Trái Đất khỏi điều gì?",
+   "a": [
+    "Mưa rào",
+    "Gió bão",
+    "Động đất",
+    "Tia cực tím từ Mặt Trời"
+   ],
+   "c": 3,
+   "why": "Tầng ozone hấp thụ phần lớn tia cực tím có hại từ Mặt Trời.",
+   "en": "ozone layer"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Khí nhà kính nào tăng mạnh do đốt than, dầu, khí đốt?",
+   "a": [
+    "Carbon dioxide",
+    "Helium",
+    "Neon",
+    "Argon"
+   ],
+   "c": 0,
+   "why": "Đốt nhiên liệu hoá thạch thải ra nhiều carbon dioxide, giữ nhiệt trong khí quyển.",
+   "en": "greenhouse gas"
+  },
+  {
+   "tp": 5,
+   "lv": 3,
+   "q": "Phân bón N–P–K cung cấp ba nguyên tố nào?",
+   "a": [
+    "Neon, chì, kẽm",
+    "Nitrogen, phosphorus, potassium",
+    "Natri, bạc, vàng",
+    "Nickel, platinum, krypton"
+   ],
+   "c": 1,
+   "why": "N là nitrogen, P là phosphorus, K là potassium – ba nguyên tố cây cần nhiều.",
+   "en": "fertilizer"
+  }
+ ],
+ "stories": [
+  {
+   "t": "Lavoisier và chiếc cân kì diệu",
+   "vi": "Vào thế kỉ 18, nhà hoá học Pháp Antoine Lavoisier rất thích cân đo. Ông làm thí nghiệm trong bình kín và cân thật cẩn thận trước và sau phản ứng. Kết quả: tổng khối lượng không hề thay đổi! Từ đó ra đời định luật bảo toàn khối lượng. Vợ ông, bà Marie-Anne, giúp ghi chép và vẽ hình minh hoạ cho các thí nghiệm. Lavoisier còn đặt tên cho hai nguyên tố oxygen và hydrogen.",
+   "en": [
+    "Lavoisier",
+    "conservation of mass"
+   ]
+  },
+  {
+   "t": "Mendeleev và những ô trống bí ẩn",
+   "vi": "Năm 1869, Dmitri Mendeleev xếp các nguyên tố đã biết thành một bảng. Điều đặc biệt là ông dám chừa lại những ô trống. Ông nói: sẽ có nguyên tố chưa ai tìm ra nằm ở đây! Ông còn đoán trước tính chất của chúng. Trong những năm sau đó (1875 và 1886), gallium và germanium được tìm thấy, khớp với dự đoán của ông. Cả thế giới khâm phục bảng tuần hoàn.",
+   "en": [
+    "Mendeleev",
+    "periodic table"
+   ]
+  },
+  {
+   "t": "Marie Curie – hai lần đoạt giải Nobel",
+   "vi": "Marie Curie sinh ra ở Ba Lan và làm việc ở Pháp. Bà cùng chồng là Pierre Curie tìm ra hai nguyên tố mới là polonium và radium. Tên polonium được đặt để nhớ về quê hương Ba Lan của bà. Marie Curie là người đầu tiên đoạt hai giải Nobel ở hai lĩnh vực: Vật lí năm 1903 và Hoá học năm 1911. Bà làm việc rất chăm chỉ dù điều kiện phòng thí nghiệm rất khó khăn.",
+   "en": [
+    "Marie Curie",
+    "radium"
+   ]
+  },
+  {
+   "t": "John Dalton và những viên bi nguyên tử",
+   "vi": "Đầu thế kỉ 19, thầy giáo người Anh John Dalton đưa ra thuyết nguyên tử. Ông cho rằng mọi chất được tạo nên từ những hạt nhỏ gọi là nguyên tử. Nguyên tử của cùng một nguyên tố thì giống nhau. Dalton còn bị mù màu và là một trong những người đầu tiên nghiên cứu khoa học về tật mù màu. Ngày nay ta biết nguyên tử phức tạp hơn, nhưng ý tưởng của ông là bước khởi đầu quan trọng.",
+   "en": [
+    "Dalton",
+    "atomic theory"
+   ]
+  },
+  {
+   "t": "Rutherford và lá vàng mỏng",
+   "vi": "Khoảng năm 1909–1911, nhóm của nhà khoa học Ernest Rutherford bắn những hạt rất nhỏ vào một lá vàng mỏng. Hầu hết các hạt bay xuyên qua dễ dàng. Nhưng thỉnh thoảng có hạt bật ngược trở lại! Rutherford rất ngạc nhiên. Ông kết luận nguyên tử phần lớn là khoảng trống, ở giữa có một hạt nhân rất nhỏ và đặc. Đó là cách con người phát hiện ra hạt nhân nguyên tử.",
+   "en": [
+    "Rutherford",
+    "nucleus"
+   ]
+  },
+  {
+   "t": "Priestley và chiếc cốc sủi bọt",
+   "vi": "Joseph Priestley là nhà khoa học người Anh ở thế kỉ 18. Ông sống gần một nhà máy bia và tò mò về loại khí bay ra từ thùng ủ. Ông tìm cách cho khí carbon dioxide hoà vào nước, tạo ra nước có ga đầu tiên. Năm 1774, Priestley còn tách được một chất khí làm ngọn nến cháy sáng rực, sau này gọi là oxygen. Nhà hoá học Scheele ở Thuỵ Điển cũng tìm ra oxygen độc lập.",
+   "en": [
+    "Priestley",
+    "oxygen"
+   ]
+  },
+  {
+   "t": "Humphry Davy và chiếc đèn an toàn",
+   "vi": "Humphry Davy là nhà hoá học người Anh. Năm 1807, ông dùng dòng điện tách được hai kim loại mới là sodium và potassium. Ông còn giúp những người thợ mỏ than. Trong hầm mỏ có khí dễ cháy, ngọn đèn thường có thể gây nổ. Năm 1815, Davy chế tạo đèn có lưới kim loại bao quanh ngọn lửa, giúp thợ mỏ làm việc an toàn hơn.",
+   "en": [
+    "Humphry Davy",
+    "safety lamp"
+   ]
+  },
+  {
+   "t": "Bí mật của trống đồng Đông Sơn",
+   "vi": "Hơn 2000 năm trước, người Việt cổ ở văn hoá Đông Sơn đã đúc được những chiếc trống đồng tuyệt đẹp. Họ trộn đồng với thiếc để tạo ra đồng thiếc, cứng và bền hơn đồng nguyên chất. Kim loại được nung chảy rồi rót vào khuôn. Mặt trống có hình ngôi sao, chim bay, người nhảy múa. Đó là một thành tựu luyện kim đáng tự hào của tổ tiên.",
+   "en": [
+    "bronze",
+    "Dong Son drum"
+   ]
+  },
+  {
+   "t": "Thomson tìm ra electron",
+   "vi": "Năm 1897, nhà vật lí người Anh J. J. Thomson nghiên cứu những tia sáng lạ trong ống thuỷ tinh đã hút gần hết không khí. Ông thấy các tia này bị lệch về phía cực dương của điện trường. Ông kết luận tia đó gồm những hạt rất nhỏ mang điện âm, nhẹ hơn nhiều so với nguyên tử. Hạt đó được gọi là electron. Lần đầu tiên con người biết nguyên tử còn có những hạt nhỏ hơn bên trong.",
+   "en": [
+    "Thomson",
+    "electron"
+   ]
+  }
+ ],
+ "lessons": [
+  {
+   "t": "Bài học hôm nay: Nước có ba thể",
+   "vi": "Nước có thể là rắn, lỏng hoặc khí. Khi làm lạnh, nước đông thành đá. Khi làm nóng, đá tan ra và nước bay hơi. Nước vẫn là nước, chỉ đổi thể thôi.",
+   "try": "Đặt một viên nước đá lên đĩa, quan sát nó tan dần, rồi cho nước vào ngăn đá xem nó đông lại."
+  },
+  {
+   "t": "Bài học hôm nay: Nắng giúp nước bay hơi",
+   "vi": "Bay hơi xảy ra nhanh hơn khi trời nóng, có gió và mặt thoáng rộng. Đó là lí do quần áo phơi nắng mau khô. Hơi nước bay lên rồi góp phần tạo thành mây.",
+   "try": "Dùng khăn ướt lau hai vệt nước trên mặt bàn: một chỗ có nắng, một chỗ trong bóng râm, xem chỗ nào khô trước."
+  },
+  {
+   "t": "Bài học hôm nay: Hơi nước ngưng tụ",
+   "vi": "Trong không khí luôn có hơi nước mà ta không nhìn thấy. Khi gặp vật lạnh, hơi nước ngưng tụ thành giọt nước. Sương sớm trên lá cũng hình thành theo cách này.",
+   "try": "Cho vài viên đá vào cốc thuỷ tinh khô, đợi vài phút và sờ thấy những giọt nước bên ngoài cốc."
+  },
+  {
+   "t": "Bài học hôm nay: Nước ấm hoà tan nhanh hơn",
+   "vi": "Đường tan trong nước tạo thành dung dịch. Trong nước ấm, các hạt chuyển động nhanh hơn nên đường tan nhanh hơn. Khuấy đều cũng giúp đường tan nhanh.",
+   "try": "Nhờ bố mẹ chuẩn bị một cốc nước ấm và một cốc nước lạnh, cho vào mỗi cốc một thìa đường và xem cốc nào tan trước."
+  },
+  {
+   "t": "Bài học hôm nay: Chất chỉ thị từ bắp cải tím",
+   "vi": "Một số chất màu tự nhiên đổi màu khi gặp axit hoặc bazơ. Nước bắp cải tím hoá đỏ hồng khi gặp giấm và hoá xanh lục khi gặp nước pha muối nở. Nhà khoa học gọi đó là chất chỉ thị.",
+   "try": "Nhờ bố mẹ ngâm bắp cải tím thái nhỏ trong nước ấm rồi lọc lấy nước, sau đó nhỏ vài giọt giấm hoặc nước pha muối nở vào để xem màu đổi."
+  },
+  {
+   "t": "Bài học hôm nay: Khí sinh ra từ phản ứng",
+   "vi": "Giấm phản ứng với muối nở tạo ra khí carbon dioxide. Khí này làm sủi bọt và có thể thổi phồng một quả bóng bay. Đây là phản ứng hoá học vì có chất mới tạo thành.",
+   "try": "Cùng bố mẹ cho hai thìa muối nở vào bóng bay, đổ ít giấm vào chai nhựa, chụp bóng lên miệng chai rồi dựng bóng cho muối nở rơi xuống."
+  },
+  {
+   "t": "Bài học hôm nay: Vì sao sắt bị gỉ?",
+   "vi": "Sắt bị gỉ khi gặp cả oxygen và nước. Nếu thiếu nước hoặc thiếu không khí, sắt gỉ rất chậm. Vì thế người ta sơn hoặc bôi dầu để bảo vệ đồ sắt.",
+   "try": "Đặt một chiếc đinh sắt vào cốc nước và một chiếc vào hộp khô, quan sát và so sánh sau vài ngày (nhờ bố mẹ đưa đinh)."
+  },
+  {
+   "t": "Bài học hôm nay: Lọc nước đục",
+   "vi": "Lọc giúp giữ lại các hạt bẩn không tan. Các lớp sỏi, cát và bông giữ lại cặn từ to đến nhỏ. Nhưng lọc không diệt được vi khuẩn, nên nước lọc xong chưa được uống.",
+   "try": "Nhờ bố mẹ cắt đôi một chai nhựa, xếp lớp bông, cát, sỏi vào phần đầu chai rồi đổ nước đục qua để xem nước trong hơn."
+  },
+  {
+   "t": "Bài học hôm nay: Màu mực có nhiều màu",
+   "vi": "Mực của một chiếc bút có thể là hỗn hợp của nhiều chất màu. Khi nước thấm lên giấy, mỗi chất màu đi xa khác nhau và tách ra. Cách tách này gọi là sắc kí.",
+   "try": "Chấm một chấm bút dạ tan trong nước gần mép một mảnh giấy ăn, nhúng mép giấy vào chút nước và xem các màu tách ra."
+  },
+  {
+   "t": "Bài học hôm nay: Đọc nhãn cảnh báo",
+   "vi": "Nhãn cảnh báo cho biết hoá chất có thể dễ cháy, độc hoặc ăn mòn. Hoá chất trong nhà cần để nơi cao, xa tầm tay em nhỏ. Không bao giờ đựng hoá chất trong chai nước uống.",
+   "try": "Cùng bố mẹ tìm các biểu tượng cảnh báo trên chai nước tẩy rửa trong nhà (không mở nắp) và nói xem mỗi hình có nghĩa gì."
+  },
+  {
+   "t": "Bài học hôm nay: Khối lượng không mất đi",
+   "vi": "Khi muối tan trong nước, ta không còn thấy muối nhưng muối vẫn còn đó. Tổng khối lượng nước và muối không thay đổi. Trong phản ứng hoá học cũng vậy, nguyên tử chỉ sắp xếp lại.",
+   "try": "Nhờ bố mẹ dùng cân nhà bếp cân một cốc nước cùng một thìa muối để bên cạnh, rồi hoà muối vào nước và cân lại xem số cân có đổi không."
+  },
+  {
+   "t": "Bài học hôm nay: Phân loại rác tái chế",
+   "vi": "Giấy, nhựa, lon nhôm có thể được tái chế. Pin cũ cần mang đến điểm thu gom riêng. Phân loại rác giúp tiết kiệm tài nguyên và giữ môi trường sạch.",
+   "try": "Làm ba hộp nhỏ ghi chữ Giấy, Nhựa, Kim loại và cùng gia đình phân loại rác trong một tuần."
+  }
+ ]
+}
