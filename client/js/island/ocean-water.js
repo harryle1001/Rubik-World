@@ -24,7 +24,7 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
     uH: { value: null }, uMin: { value: new THREE.Vector2(WORLD.x0, WORLD.z0) }, uSize: { value: new THREE.Vector2(SX, SZ) },
     uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 },
     uSunW: { value: new THREE.Vector3(0, 1, 0) }, uSunC: { value: new THREE.Color('#fff') }, uSkyH: { value: new THREE.Color('#bfe6f6') },   // ambience.js nối với bầu trời
-    uSkyT: { value: new THREE.Color('#5a9fe6') }, uMoon: { value: new THREE.Vector3(0, -1, 0) }, uNight: { value: 0 },
+    uSkyT: { value: new THREE.Color('#5a9fe6') }, uSeaTint: { value: new THREE.Color('#1f7fa8') }, uMoon: { value: new THREE.Vector3(0, -1, 0) }, uNight: { value: 0 },
     uPlayer: { value: null }, uWaveN: { value: state.waveN }, uAmp: { value: 1 },
     uWA: { value: wa }, uWB: { value: wb },
   }]);
@@ -55,7 +55,7 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
 #include <fog_vertex>
       }`,
     fragmentShader: `${DEPTH}
-      uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uSkyT, uPlayer, uMoon; uniform float uLight, uNight; uniform highp float uTime;
+      uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uSkyT, uPlayer, uMoon, uSeaTint; uniform float uLight, uNight; uniform highp float uTime;
       varying highp vec3 vW; varying vec3 vN; varying float vCrest;
 #include <fog_pars_fragment>
       void main(){
@@ -82,6 +82,7 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
           vec3 c = mix(tir, sky, win) + vec3(0.25, 0.35, 0.35) * sh * (0.4 + 0.6 * win);
           gl_FragColor = vec4(c * uLight, 0.92);
         }
+#include <fog_fragment>
 #else
         float NdV = clamp(dot(N, V), 0., 1.);
         vec3 c = mix(uShallow, uDeep, smoothstep(0.3, 5., depth));
@@ -134,8 +135,15 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
         float alpha = mix(0.4, 0.96, smoothstep(0., 3.4, depth));            // nước nông trong: thấy cát đáy
         alpha = max(mix(alpha, 1., fres * 0.6), foam * 0.92);
         gl_FragColor = vec4(c, alpha);
+#ifdef USE_FOG
+        {   // biển xa: tan vào màu biển-sương (khớp phần biển vẽ trên vòm trời, sky.js) thay vì xám nhạt; vệt nắng lấp lánh vẫn hiện tới chân trời
+          float ff = smoothstep(fogNear, fogFar, vFogDepth);
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, mix(fogColor, uSeaTint, 0.382), ff);
+          if (sunUp > 0.) { float sd = max(dot(R, uSunW), 0.), tw = step(0.93, sin(q.x * 0.73 + t * 1.9) * sin(q.y * 0.61 - t * 1.6));
+            gl_FragColor.rgb += uSunC * pow(sd, 9.) * (0.12 + tw * 0.9) * ff * sunUp * uLight; }
+        }
 #endif
-#include <fog_fragment>
+#endif
       }`,
   });
   U.uH.value = hTex; U.uTime = WIND.uTime; U.uPlayer = WIND.uPlayer;
