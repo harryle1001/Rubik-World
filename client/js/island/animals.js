@@ -27,9 +27,9 @@ export function createAnimals(ctx) {
   // TẢI LƯỜI: thú sống ở rừng đền/bãi biển, xa chỗ vào game → chỉ nạp (~1,2 MB model) sau khi trường đã sẵn sàng
   // (hoặc sau 13 s) để băng thông lúc mở game dành cho phần nhìn thấy ngay
   let loadT = 0, loading = false;
-  const loadAll = () => { loading = true; for (const S of SPECIES) loadAnimated(S.id).then(g0 => {
+  const loadAll = () => { loading = true; for (const S of SPECIES) loadAnimated(S.id, true).then(g0 => {
     if (!g0) return;
-    for (let i = 0; i < S.n; i++) (i === 0 ? Promise.resolve(g0) : loadAnimated(S.id)).then(g => {
+    for (let i = 0; i < S.n; i++) (i === 0 ? Promise.resolve(g0) : loadAnimated(S.id, true)).then(g => {
       const root = new THREE.Group(), model = g.scene; root.add(model);
       model.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(model); const h = box.max.y - box.min.y || 1; model.scale.setScalar(S.size / h); model.position.y = -box.min.y * S.size / h;
       model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.userData.animal = S; } });

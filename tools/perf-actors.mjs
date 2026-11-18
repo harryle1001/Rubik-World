@@ -1,7 +1,7 @@
 // tools/perf-actors.mjs — Đo hiệu năng NHÂN VẬT ở chế độ điện thoại (390×844, DPR 2, UA iPhone → CFG.isMobile), mức chất lượng 1.
 // Chạy: node server/index.js &  rồi  node tools/perf-actors.mjs [--out=docs/perf/actors/buoc] [--n=89] [--only=dam-dong-co-dinh,rung-thu]
 // 5 điểm: quảng trường · sân trường giờ ra chơi (đặt đồng hồ trường 9h05 thứ Ba) · rừng đền có thú · biển (rạn san hô)
-// · đám đông cố định (dừng mô phỏng, 21 người xếp trước camera, cách 3 → 34 m: so sánh trước/sau chính xác, không phụ thuộc người đi lại).
+// · thú cố định (14 con trước camera, không bỏ chạy) · đám đông cố định (dừng mô phỏng, 21 người xếp trước camera, cách 3 → 34 m: so sánh trước/sau chính xác, không phụ thuộc người đi lại).
 // Mỗi điểm (trung bình n khung): draw call, tam giác, số SkinnedMesh được vẽ (lượt chính), số mixer.update, ms JS/khung của
 // các phần nhân vật (player · net · animals · school(people) · ambience(yard) · sealife) và riêng AnimationMixer.update.
 import { createRequire } from 'module';
@@ -46,13 +46,18 @@ const spots = [
   ['san-truong-ra-choi', L.yard, 0.6, 0.35, 11, 545],
   ['rung-thu', [L.temple[0] + 20, L.temple[1] + 20], 2.4, 0.3, 11, 600],
   ['bien-ran-san-ho', L.reef, 0, 0.2, 6, 600, true],
+  ['thu-co-dinh', [L.temple[0] + 20, L.temple[1] + 20], 2.4, 0.3, 11, 600, false, 'animals'],   // 14 thú xếp trước camera 3 → 30 m
   ['dam-dong-co-dinh', L.field, 0.6, 0.35, 11, 545, false, true],   // sân bóng: bãi trống
 ];
 const ONLY = arg('only'), rows = [];
 for (const [name, [x, z], yaw, pitch, dist, clk, dive, fixed] of spots) {
   if (ONLY && !ONLY.split(',').includes(name)) continue;
   await setClock(clk);
-  if (fixed) {   // đám đông cố định: dừng mô phỏng trường, 21 người (theo id) đứng trong hình nêm trước camera, cách 3 → 34 m
+  if (fixed === 'animals') {
+    await page.waitForFunction(() => __island.animals.list.length >= 14, null, { timeout: 120000 });
+    await page.evaluate(([x, z, yaw]) => { const c = __island, p = c.player, fx = -Math.sin(yaw), fz = -Math.cos(yaw); p.teleport(x, z);
+      c.animals.list.forEach((A, i) => { const r = 3 + i * 27 / 13, s = (i % 2 ? 1 : -1) * r * 0.382 * ((i * 0.618) % 1); A.root.position.set(x + fx * r - fz * s, 0, z + fz * r + fx * s); A.target = null; A.wait = 99; A.S = Object.assign({}, A.S, { shy: 0 }); }); }, [x, z, yaw]);
+  } else if (fixed) {   // đám đông cố định: dừng mô phỏng trường, 21 người (theo id) đứng trong hình nêm trước camera, cách 3 → 34 m
     const pts = await page.evaluate(async ([x, z, yaw]) => { const l = await import('/js/island/layout.js'), out = [], fx = -Math.sin(yaw), fz = -Math.cos(yaw);
       for (let i = 0; i < 21; i++) { const r = 3 + i * 31 / 20, s = (i % 2 ? 1 : -1) * r * 0.382 * ((i * 0.618) % 1); out.push(l.to2(x + fx * r - fz * s, z + fz * r + fx * s)); } return out; }, [x, z, yaw]);
     await fr.evaluate(pts => { paused = true; const A = RS.agents.filter(a => a.visible && !a.inSub).sort((a, b) => String(a.id).localeCompare(String(b.id)));

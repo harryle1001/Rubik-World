@@ -1,0 +1,22 @@
+[
+ {
+  "name": "thu-co-dinh",
+  "calls": 173,
+  "tris": 399614,
+  "skinDraw": 23,
+  "skinShadow": 9,
+  "mixPerF": 9.5,
+  "mixMs": 0.21,
+  "actorJs": 0.83,
+  "player": 0.21,
+  "net": 0.01,
+  "animals": 0.28,
+  "school": 0.29,
+  "ambience": 0.04,
+  "sealife": 0.01,
+  "people": 0,
+  "full": 0,
+  "peopleMs": 0.1,
+  "renderMs": 5.2
+ }
+]
