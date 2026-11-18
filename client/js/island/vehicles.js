@@ -200,7 +200,7 @@ export function createVehicles(ctx) {
   // phím tắt + nút
   addEventListener('keydown', e => {
     if (e.repeat || ctx.freeCam || document.body.classList.contains('rs-modal')) return;
-    if (e.code === 'KeyB') toggleBike(); else if (e.code === 'KeyF') toggleBalloon(); else if (e.code === 'KeyR') ring();
+    if (e.code === 'KeyB') toggleBike(); else if (e.code === 'KeyH') toggleBalloon();   // F dành cho đũa phép (academy/magic.js) else if (e.code === 'KeyR') ring();
   });
   const tap = (id, fn) => ui(id).addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); fn(); });
   tap('bBike', toggleBike); tap('bBalloon', toggleBalloon); tap('bBell', ring);

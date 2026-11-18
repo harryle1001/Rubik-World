@@ -11,6 +11,9 @@ import { BASE_Y as BASE, C, F, S, R_BOUND, heightAt as acadH, toWorld, toLocal, 
 import { buildIsland, plantIsland } from './island.js';
 import { createFar } from './far.js';
 import { createFerry } from './ferry.js';
+import { createMagic, WOODS, CORES } from './magic.js';
+import { createSpells } from './spells.js';
+import { L as CL } from './castle.js';
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 
@@ -74,15 +77,34 @@ export function createAcademy(ctx) {
   const prevZone = ctx.zoneAt;
   ctx.zoneAt = (x, z) => { const [u, v] = toLocal(x, z); return isleDist(u, v) < 13 ? ACADEMY.name : prevZone ? prevZone(x, z) : null; };
 
+  // ---------- đũa phép: Tiệm Đũa Pha Lê cạnh cầu tàu đảo chính ----------
+  const magic = ctx.magic = createMagic(ctx);
+  const spells = createSpells(ctx, magic, { toWorld, L: CL, Y: BASE });
+  const shop = pw(pr0 - 5, -7), shopY = base(shop[0], shop[1]);
+  {
+    const b = new Batch(), wood = '#a8744a', woodD = '#6e4a30';
+    b.box(-2.1, 2.1, 0, 1.05, -0.6, 0.6, woodD); b.box(-2.2, 2.2, 1.05, 1.15, -0.7, 0.7, wood);                 // quầy 4,2 m
+    for (const x of [-2, 2]) for (const z of [-1.3, 0.5]) b.cyl(x, 0, z, 0.08, 2.6, woodD, 6);
+    b.gable(-2.5, 2.5, -1.7, 0.9, 2.6, 1.2, '#4f6f66');
+    const glow = new Batch();
+    WOODS.forEach((w, i) => { b.add(new THREE.CylinderGeometry(0.012, 0.02, 0.36, 5), w.col, -1.6 + i * 0.8, 1.33, 0, 0, 0, Math.PI / 2.4); glow.add(new THREE.OctahedronGeometry(0.035), CORES[i].col, -1.6 + i * 0.8 + 0.16, 1.39, 0); });
+    const kg = new THREE.Group(); kg.position.set(shop[0], shopY, shop[1]); kg.rotation.y = Math.atan2(D[0], D[1]) + Math.PI / 2; kg.name = 'academy-wand-shop';
+    const m1 = new THREE.Mesh(b.build(), matV()); m1.castShadow = true; kg.add(m1, new THREE.Mesh(glow.build(), new THREE.MeshBasicMaterial({ vertexColors: true })));
+    const c = document.createElement('canvas'); c.width = 512; c.height = 96; const k = c.getContext('2d');
+    k.font = 'bold 42px system-ui'; k.fillStyle = 'rgba(27,22,38,.8)'; k.beginPath(); k.roundRect(16, 12, 480, 72, 30); k.fill(); k.fillStyle = '#ffe3a0'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText('🪄 Tiệm Đũa Pha Lê', 256, 49, 460);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false })); sp.scale.set(5.3, 1, 1); sp.position.set(0, 4.7, -0.4); kg.add(sp);
+    scene.add(kg); ctx.colliders.push({ x: shop[0], z: shop[1], r: 1.6 });
+  }
+
   // ---------- tải / dỡ theo khoảng cách ----------
   const far = createFar(ctx);
   let isle = null, planted = false; const boxes = ctx.boxes = ctx.boxes || [];
-  const P = new THREE.Vector3();
+  const P = new THREE.Vector3(); let hallHi = false;
   function stream() {
     const p = ferry.riding || (ctx.aircraft && ctx.aircraft.flying) ? ctx.camera.position : player.pos;
     const [u, v] = toLocal(p.x, p.z), d = Math.max(0, isleDist(u, v));
-    if (!isle && d < LOAD) { isle = buildIsland(ctx); boxes.push(...isle.castle.boxes); if (!planted) { plantIsland(ctx); planted = true; } }
-    else if (isle && d > UNLOAD) { for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
+    if (!isle && d < LOAD) { isle = buildIsland(ctx); boxes.push(...isle.castle.boxes); spells.build(isle.group); if (!planted) { plantIsland(ctx); planted = true; } }
+    else if (isle && d > UNLOAD) { spells.unbuild(); for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
     far.moundOn = !isle;
     if (isle) isle.castle.group.visible = far.dist < 296 + 89;
   }
@@ -91,8 +113,10 @@ export function createAcademy(ctx) {
     ferry.update(dt);
     stream(); far.update();
     if (isle) isle.castle.update(dt, performance.now() / 1000, player.pos);
+    magic.update(dt); spells.update(dt);
     if (ferry.riding || player.vehicle) return;
     const pp = player.pos;
+    if (Math.hypot(pp.x - shop[0], pp.z - shop[1]) < 4.2) ctx.offer(magic.hasWand ? '🪄 Đổi đũa phép' : '🪄 Chọn đũa phép (miễn phí)', () => magic.chooseWand(!magic.hasWand), 9);
     if (Math.hypot(pp.x - pierEnd[0], pp.z - pierEnd[1]) < 8 && ferry.idle === 'A') ctx.offer('⛵ Đi thuyền tới Học viện Pha Lê', () => ferry.start(1), 8);
     else if (Math.hypot(pp.x - pierEnd[0], pp.z - pierEnd[1]) < 8) ctx.offer('⛵ Gọi thuyền đèn lồng', () => ferry.start(1), 8);
     const [qu, qv] = toLocal(pp.x, pp.z);
@@ -101,7 +125,13 @@ export function createAcademy(ctx) {
       if (da < A.r + 3 && pp.y < BASE + 3) ctx.offer('🪜 Lên ban công tháp thiên văn', () => { const [x, z] = toWorld(A.u + A.r2 + 2.5, A.v); player.teleport(x, z, BASE + A.h1); }, 8);
       else if (da < A.deck && pp.y > BASE + A.h1 - 1) ctx.offer('🪜 Xuống sân', () => { const [x, z] = toWorld(A.u + A.r + 2.5, A.v); player.teleport(x, z, BASE); }, 8);
     }
+    if (isle && !magic.hasWand) {   // lần đầu vào đại sảnh: thầy cô tặng đũa
+      const Hh = CL.hall; if (qu > Hh.u0 && qu < Hh.u1 + 3 && Math.abs(qv) < Hh.v1 && pp.y < BASE + 3) {
+        if (!hallHi) { hallHi = true; ctx.toast('🏰 Chào mừng tới <b>Đại sảnh</b>! Mỗi học sinh được tặng một cây đũa phép — hãy chọn cây của em.', 5000); }
+        ctx.offer('🪄 Nhận đũa phép', () => magic.chooseWand(true), 9);
+      }
+    }
     if (qu > QUAY.u0 - 2 && qu < QUAY.u0 + QUAY.w + 4 && qv > -3 && qv < QUAY.v1 + 3 && Math.abs(pp.y - QUAY.y) < 2) ctx.offer('⛵ Đi thuyền về đảo Rubik', () => ferry.start(-1), 8);
   }
-  return { update, far, ferry, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) } };
+  return { update, far, ferry, magic, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) }, shop };
 }

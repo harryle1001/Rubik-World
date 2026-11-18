@@ -95,8 +95,22 @@ function layout(B, far = false) {
     for (const v of [Hh.v0 + t, Hh.v1 - t]) for (let u = Hh.u0 + 5; u < Hh.u1 - 3; u += 5.5) glow.box(v - 0.08, v + 0.08, Y + 6, Y + 15, u - 0.9, u + 0.9, '#ffe3a0');   // cửa sổ cao (ánh vàng)
   }
   // --- thư viện 13 × 34 × 21 ---
-  const Lb = L.library;
-  range(Lb.u0, Lb.u1, Lb.v0, Lb.v1, Lb.h, 8, far ? [] : [[69, 75]], 6);
+  const Lb = L.library, lt = 1.2, lc = (Lb.v0 + Lb.v1) / 2;
+  // thư viện rỗng (vào được, trong tối — nơi luyện phép "Sáng lên"): tường 1,2 m, cửa 5 × 6 m ở mặt trước
+  for (const [a0, a1, b0, b1] of [[Lb.u0, Lb.u0 + lt, Lb.v0, Lb.v1], [Lb.u0, Lb.u1, Lb.v0, Lb.v0 + lt], [Lb.u0, Lb.u1, Lb.v1 - lt, Lb.v1], [Lb.u1 - lt, Lb.u1, Lb.v0, lc - 2.5], [Lb.u1 - lt, Lb.u1, lc + 2.5, Lb.v1]]) {
+    wall.box(b0, b1, Y, Y + Lb.h, a0, a1, C_WALL); if (!far) solid(a0, a1, b0, b1, Y + Lb.h);
+  }
+  wall.box(lc - 2.5, lc + 2.5, Y + 6, Y + Lb.h, Lb.u1 - lt, Lb.u1, C_WALL);
+  roof.gable(Lb.v0 - 0.6, Lb.v1 + 0.6, Lb.u0 - 0.6, Lb.u1 + 0.6, Y + Lb.h, 8, C_ROOF);
+  if (!far) {
+    wall.box(Lb.v0 + lt, Lb.v1 - lt, Y + Lb.h - 1, Y + Lb.h - 0.8, Lb.u0 + lt, Lb.u1 - lt, C_WOOD);              // trần gỗ (giữ bóng tối bên trong)
+    for (const [v0, v1] of [[Lb.v0 + lt, Lb.v0 + lt + 0.8], [Lb.v1 - lt - 0.8, Lb.v1 - lt]]) {                   // kệ sách 2 bên
+      wall.box(v0, v1, Y, Y + 5, Lb.u0 + 2, Lb.u1 - 2, C_WOOD);
+      for (let y = 0.8; y < 5; y += 1.05) wall.box(v0 - 0.02, v1 + 0.02, Y + y, Y + y + 0.6, Lb.u0 + 2.2, Lb.u1 - 2.2, ['#7a3b2e', '#2e5a4a', '#3d4f7a', '#8a6a2e'][Math.round(y) % 4]);
+      solid(Lb.u0 + 2, Lb.u1 - 2, v0, v1, Y + 5);
+    }
+    wall.box(Lb.v0 + 3, Lb.v1 - 3, Y, Y + 3.4, Lb.u0 + lt, Lb.u0 + lt + 0.8, C_WOOD); solid(Lb.u0 + lt, Lb.u0 + lt + 0.8, Lb.v0 + 3, Lb.v1 - 3, Y + 3.4);
+  }
   if (!far) for (let v = Lb.v0 + 3; v < Lb.v1 - 2; v += 4) glow.box(v - 0.8, v + 0.8, Y + 7, Y + 16, Lb.u1 + 0.02, Lb.u1 + 0.1, '#ffe3a0');
   // --- nhà kính 21 × 13: tường thấp + vòm kính bán trụ ---
   const G = L.green, gc = (G.v0 + G.v1) / 2, gr = (G.v1 - G.v0) / 2;
