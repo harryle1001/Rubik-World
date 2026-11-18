@@ -1,4 +1,4 @@
-// town-people.js — Người trong thị trấn trường (đọc từ mô phỏng 2D qua RS.agents / RS.npcs):
+// town-people.js — Người trong thị trấn trường (đọc từ lớp dữ liệu riêng data/people.js qua RS.agents / RS.npcs):
 //   - Học sinh: đồng phục áo trắng, khăn quàng đỏ, cặp theo màu của từng bạn.
 //   - Thầy cô: áo dài / váy / sơ mi màu riêng, cầm sách; bảo vệ & nhân viên: mũ, bảng kẹp, máy quay…
 //   - Người dân, khách du lịch (NPC): đồ thường theo màu shirt/pants của NPC, vật dụng theo việc (cần câu, mũ cói…).

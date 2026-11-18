@@ -1,8 +1,8 @@
 // school-town.js — THỊ TRẤN TRƯỜNG RUBIK trong thế giới 3D (giai đoạn greybox: khối đơn giản để kiểm tra tỷ lệ, lối đi).
-// Toàn bộ trường Rubik (client/school/) chạy ngầm trong 1 iframe: giờ học, 21 bạn & thầy cô, NPC, mọi mini game, cửa hàng,
-// Coach Ru, nhiệm vụ… Module này đọc dữ liệu qua window.RS của iframe rồi dựng lại bằng 3D:
+// Chạy ĐỘC LẬP (không còn iframe game 2D): bản đồ, giờ học, 21 bạn & thầy cô, NPC lấy từ lớp dữ liệu riêng island/data/
+// (docs/3d-standalone.md). Module này dựng lại bằng 3D:
 //   - Nền theo vùng (sân trường, sân bóng, bãi biển, nông trại…), tường các lớp có chừa cửa, nhà ở → buildGreybox()
-//   - Cửa vào (77 cửa): đứng gần bấm E/nút → mở đúng mini game/bảng của trường → doors
+//   - Cửa vào (77 cửa): đứng gần bấm E/nút → mở mini game 3D (mg/host.js); cửa chưa có bản 3D → "Sắp mở" → doors
 //   - Học sinh, thầy cô, khách du lịch đi lại theo thời khóa biểu → updatePeople()
 //   - Cầu nối đảo ↔ trường; nút "🏫 Đến trường"; giờ trong ngày theo đồng hồ của trường
 // Toạ độ: 2D (x, y) pixel → 3D qua layout.js (bản đồ 2D cắt thành khối, đặt quanh đảo; cổng trường ở giữa thế giới).
@@ -12,6 +12,7 @@ import { createTownPeople } from './town-people.js';
 import { S, TOWN_Y, BLOCKS, LAND, to3, to2, GATE3, SPAWN, rectDist, setHouses, onFlat, roadDist, ROAD_W, HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1 } from './layout.js';
 import { buildTownArchitecture } from './town-buildings.js';
 import { doorKey } from './mg/host.js';
+import { createSchoolData } from './data/index.js';
 export { S, TOWN_Y };
 export const Y_MIN = -600, Y_MAX = 1010;                    // phần đất liền của bản đồ 2D (đã cắt thành các khối trong layout.js)
 const P = (x, y, hx) => to3(x, y, hx);               // 2D → 3D theo bố cục mới
@@ -24,14 +25,10 @@ export const REGION_COL = {   // nền các khu: dịu, ấm (docs/art-style.md)
 
 export function createSchoolTown(ctx) {
   const { scene, terrain } = ctx; ctx.boxes = ctx.boxes || [];
-  const town = { RS: null, doors: [], ready: false };
-
-  // ---------- Iframe chạy trường Rubik (trong suốt, chỉ hiện khi có bảng mini game) ----------
-  const fr = document.createElement('iframe');
-  fr.src = '/school/index.html?embed=1'; fr.title = 'Trường Rubik';
-  fr.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;z-index:25;background:transparent;pointer-events:none;color-scheme:dark';
-  fr.setAttribute('allowtransparency', 'true'); document.body.appendChild(fr);
-  const waitRS = setInterval(() => { const w = fr.contentWindow; if (w && w.RS && w.RS.doors) { clearInterval(waitRS); town.RS = w.RS; town.win = w; w.addEventListener('pointerdown', () => ctx.audio && ctx.audio.start()); build(); } }, 300);
+  // dữ liệu trường (island/data/): bản đồ, đồng hồ, người — town.RS giữ tên cũ cho các module dựng 3D (world-map, zone-*…)
+  const data = createSchoolData(ctx);
+  const town = { RS: data.RS, data, clock: data.clock, doors: [], ready: false };
+  setTimeout(build, 0);   // dựng sau khi ocean.js tạo xong mọi module (âm thanh, mg host…), như lúc chờ iframe trước đây
 
   // ---------- Mặt đất các khu: cao TOWN_Y (địa hình đã được làm phẳng bên dưới, xem terrain.js) ----------
   ctx.decks = ctx.decks || [];   // sàn gỗ/bến nổi: {x0,x1,z0,z1,y}
@@ -90,7 +87,7 @@ export function createSchoolTown(ctx) {
     for (const L of HOUSE_LOTS) if (L.house) for (const u of [-HOUSE_W / 4, HOUSE_W / 4]) { const [x, z] = lotToWorld(L, u, HOUSE_V1 - HOUSE_D / 2); ctx.colliders.push({ x, z, r: HOUSE_W / 4 + 0.2 }); }
     town.gate = GATE3;
     // kiến trúc (lớp học, cổng, nhà, khu mở, 4 khu mới quanh đảo)
-    const env = { P, S, Y: TOWN_Y, H, T, gap, Y_MIN, Y_MAX, win: town.win };
+    const env = { P, S, Y: TOWN_Y, H, T, gap, Y_MIN, Y_MAX };
     town.arch = buildTownArchitecture(ctx, RS, env); town.info = env.infoBoard;
 
     // cửa vào: vòng sáng nhỏ (InstancedMesh)
@@ -129,17 +126,41 @@ export function createSchoolTown(ctx) {
     town.ready = true; ctx.toast && ctx.toast('🏫 Chào mừng đến Trường Rubik! Các khu vui chơi nằm quanh đảo — đi bộ khám phá nhé');
   }
 
-  // ---------- Mở cửa → bảng mini game của trường (iframe nhận chạm) ----------
-  let modalOpen = false, nearDoor = null, nameTag = null, checkT = 0;
-  const isModal = () => { try { const doc = fr.contentDocument; return !!doc.querySelector('.modal:not([hidden]), #v32Map:not([hidden]), #v40Quiz:not([hidden]), #v40Rep:not([hidden]), #v43J:not([hidden]), #lvlUp:not([hidden])') || !!(doc.querySelector('#v40Coach') && doc.querySelector('#v40Coach').offsetParent); } catch (e) { return false; } };
-  town.enter = q => { if (!town.RS) return; ctx.sfx && ctx.sfx('ok'); const k = doorKey(ctx, q.d); if (k && ctx.mg && ctx.miniGames[k] && ctx.mg.start(k, q)) return; town.RS.enterDoor(q.d); checkT = 0; };   // có bản 3D (mg/host.js) → mở 3D, không thì bảng 2D
-  town.menu = () => { if (!town.RS) { ctx.toast('Trường Rubik đang tải…'); return; } town.RS.btn2D('hMenu'); checkT = 0; };
+  // ---------- Mở cửa → mini game 3D (mg/host.js); chưa có bản 3D → "Sắp mở" (không mở game 2D nữa) ----------
+  let nearDoor = null, nameTag = null;
+  const title = d => d.n.replace(/^Nói chuyện với /, '').split('·')[0].trim();
+  town.enter = q => {
+    const k = doorKey(ctx, q.d);
+    if (k && ctx.mg && ctx.miniGames && ctx.miniGames[k] && ctx.mg.start(k, q)) { ctx.sfx && ctx.sfx('ok'); return; }
+    ctx.toast(`🚧 <b>${q.d.n}</b><br>Sắp mở — bản 3D đang được xây. Ghé lại sau nhé!`, 3500);
+  };
+  // 📚 Menu trường (3D): các mini game 3D đã mở → bấm để tới cửa & vào chơi
+  let menuEl = null;
+  town.menu = () => {
+    if (!town.ready) { ctx.toast('Trường Rubik đang dựng…'); return; }
+    if (menuEl && !menuEl.hidden) { menuEl.hidden = true; ctx.player.frozen = false; return; }
+    if (!menuEl) {
+      menuEl = document.createElement('div'); menuEl.id = 'schoolMenu'; document.body.appendChild(menuEl);
+      const st = document.createElement('style'); st.textContent = `#schoolMenu{position:fixed;inset:0;z-index:39;display:grid;place-items:center;background:#0a1222b3;padding:13px}
+#schoolMenu .card{width:min(100%,377px);max-height:80vh;overflow:auto;box-sizing:border-box;background:#fff8ec;color:#3a2a1a;border-radius:21px;padding:21px;border-top:8px solid #3d8f4a;font:16px/1.5 system-ui}
+#schoolMenu h3{margin:0 0 8px;font-size:21px}#schoolMenu p{margin:0 0 13px;font-size:13px;opacity:.75}#schoolMenu .g{display:grid;gap:8px}
+#schoolMenu button{padding:12px 13px;border-radius:13px;border:2px solid transparent;background:#efe3cc;color:#3a2a1a;font:700 15px system-ui;text-align:left;cursor:pointer}#schoolMenu button.x{background:#f0a23a;text-align:center;margin-top:13px;width:100%}`;
+      document.head.appendChild(st);
+      menuEl.addEventListener('click', e => { const b = e.target.closest('button'); if (!b && e.target !== menuEl) return; menuEl.hidden = true; ctx.player.frozen = false; if (!b || !b.dataset.k) return;
+        const q = town.doors.find(q => doorKey(ctx, q.d) === b.dataset.k); if (!q) return; ctx.player.teleport(q.x, q.z + 1.5); ctx.player.pos.y = TOWN_Y; setTimeout(() => town.enter(q), 300); });
+    }
+    const G = ctx.miniGames || {}, open = Object.keys(G).filter(k => town.doors.some(q => doorKey(ctx, q.d) === k));
+    const soon = new Set(town.doors.filter(q => !G[doorKey(ctx, q.d)]).map(q => title(q.d)));
+    menuEl.innerHTML = `<div class="card"><h3>📚 Trường Rubik</h3><p>${town.clock.label()} · ${town.clock.periodName()}</p><div class="g">${open.map(k => `<button data-k="${k}">${G[k].name || k}</button>`).join('') || '<p>Chưa có mini game 3D.</p>'}</div>
+      <p style="margin-top:13px">🚧 Sắp mở (${soon.size}): ${[...soon].slice(0, 13).join(', ')}${soon.size > 13 ? '…' : ''}</p><button class="x">Đóng</button></div>`;
+    menuEl.hidden = false; ctx.player.frozen = true;
+  };
   town.goSchool = () => { ctx.player.teleport(SPAWN[0], SPAWN[1]); ctx.player.pos.y = TOWN_Y; ctx.toast('🏫 Chào mừng đến Trường Rubik!'); };
 
   // ---------- Học sinh, thầy cô, khách: lấy vị trí từ mô phỏng của trường ----------
   // (trang phục theo vai trò, pool, hoạt ảnh, tên trên đầu → town-people.js)
   const people = createTownPeople(ctx, { P, Y_MIN, Y_MAX, TOWN_Y, POOL: ctx.lowEnd ? 14 : 24 });
-  function updatePeople(dt) { if (town.RS) people(dt, town.RS); }
+  function updatePeople(dt) { data.update(dt); if (town.ready) people(dt, town.RS); }
 
   // ---------- Bảng thông tin tỷ lệ vàng & số π (quảng trường trước cổng) ----------
   let infoEl = null;
@@ -150,24 +171,17 @@ export function createSchoolTown(ctx) {
   }
 
   // ---------- Mỗi khung hình ----------
-  const hudSchool = document.getElementById('school');
   function update(dt, t) {
     if (town.ring) town.ring.material.opacity = 0.55 + 0.35 * Math.sin(t * 3);
     if (town.arch) town.arch.update(ctx.player.pos, t, dt);
     if (town.labels) { const p = ctx.player.pos; for (const sp of town.labels) sp.visible = Math.abs(sp.position.x - p.x) + Math.abs(sp.position.z - p.z) < 70; }   // nhãn chữ chỉ hiện khi ở gần
-    if (!town.RS) return;
-    // giờ trong ngày theo đồng hồ trường (để giờ học, ngày/đêm khớp nhau)
-    if (ctx.sky && ctx.sky.state.lock == null && typeof town.RS.clock === 'number') ctx.sky.state.hour = ((town.RS.clock / 60) % 24 + 24) % 24;
-    // bảng mini game đang mở? → iframe nhận chạm, nhân vật đứng yên
-    if ((checkT -= dt) <= 0) {
-      checkT = 0.25; const m = isModal();
-      if (m !== modalOpen) { modalOpen = m; fr.style.pointerEvents = m ? 'auto' : 'none'; ctx.player.frozen = m; document.body.classList.toggle('rs-modal', m); if (!m) { fr.blur(); window.focus(); } }
-      try { const d = fr.contentDocument, per = d.getElementById('hudPeriod').textContent; ctx.schoolHours = !/Ngoài giờ|Nghỉ|Tối|Đêm/i.test(per); if (hudSchool) hudSchool.textContent = `${d.getElementById('hudClock').textContent} · ${per}`; } catch (e) {}
-    }
+    // giờ trong ngày theo đồng hồ trường (giờ thật; nút ☀️ khoá giờ → sky tự giữ) — giờ học, ngày/đêm khớp nhau
+    if (ctx.sky && ctx.sky.state.lock == null) ctx.sky.state.hour = ((town.clock.minutes / 60) % 24 + 24) % 24;
+    if (!town.ready) { data.update(dt); return; }
     // cửa gần nhất
     const p = ctx.player.pos; let best = null, bd = 2.2;
     for (const q of town.doors) { const d = Math.abs(q.x - p.x) + Math.abs(q.z - p.z); if (d < bd) { bd = d; best = q; } }
-    if (best) ctx.offer('🚪 ' + best.d.n.split('·')[0].trim(), () => town.enter(best), 2);
+    if (best) { const k = doorKey(ctx, best.d), ok = k && ctx.miniGames && ctx.miniGames[k]; ctx.offer((ok ? '🚪 ' : '🚧 ') + best.d.n.split('·')[0].trim() + (ok ? '' : ' · Sắp mở'), () => town.enter(best), 2); }
     if (town.info && Math.abs(town.info.x - p.x) + Math.abs(town.info.z - p.z) < 5) ctx.offer('📜 Đọc bảng φ & π', showInfo, 1);
     if (best !== nearDoor) { nearDoor = best; if (nameTag) { scene.remove(nameTag); town.labels.splice(town.labels.indexOf(nameTag), 1); nameTag = null; } if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8); }
     updatePeople(dt);

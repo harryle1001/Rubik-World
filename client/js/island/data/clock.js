@@ -37,10 +37,11 @@ export function createClock(ctx) {
   };
   // chip đồng hồ trên HUD (bấm: xem tiết đang học)
   const css = document.createElement('style');
-  css.textContent = `#clockChip{position:fixed;z-index:26;left:max(12px,env(safe-area-inset-left));top:calc(max(12px,env(safe-area-inset-top)) + 47px);padding:5px 13px;border-radius:13px;background:#1b1626aa;border:2px solid #fff5;color:#fff;font:700 13px/1.3 system-ui;max-width:calc(100vw - 110px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+  css.textContent = `#clockChip{padding:5px 13px;border-radius:13px;background:#1b1626aa;border:2px solid #fff5;color:#fff;font:700 13px/1.3 system-ui;max-width:62vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 #clockChip b{color:#ffd36e;font-weight:800}body.rs-modal #clockChip{display:none}`;
   document.head.appendChild(css);
-  const chip = document.createElement('div'); chip.id = 'clockChip'; chip.title = 'Đồng hồ trường (bấm để xem tiết học)'; document.body.appendChild(chip);
+  const row = document.getElementById('chipRow') || (() => { const r = document.createElement('div'); r.id = 'chipRow'; document.body.appendChild(r); const st = document.createElement('style'); st.textContent = `#chipRow{position:fixed;z-index:26;left:max(12px,env(safe-area-inset-left));top:calc(max(12px,env(safe-area-inset-top)) + 47px);display:flex;flex-wrap:wrap;gap:8px;max-width:calc(100vw - 80px);pointer-events:none}#chipRow>*{pointer-events:auto}body.rs-modal #chipRow,body.mg-on #chipRow{display:none}`; document.head.appendChild(st); return r; })();
+  const chip = document.createElement('div'); chip.id = 'clockChip'; chip.style.order = 0; chip.title = 'Đồng hồ trường (bấm để xem tiết học)'; row.appendChild(chip);
   chip.onclick = () => ctx.toast && ctx.toast(`🕰 ${clk.label()} · mùa ${clk.seasonName()}<br>${clk.periodName()}`, 4000);
   let t = 0, last = '';
   clk.update = dt => {

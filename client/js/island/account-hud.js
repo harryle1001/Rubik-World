@@ -6,7 +6,7 @@ import { createAccount } from './data/account.js';
 export function createAccountHud(ctx) {
   const acc = ctx.account = createAccount();
   const css = document.createElement('style');
-  css.textContent = `#accChip{position:fixed;z-index:26;right:max(12px,env(safe-area-inset-right));top:calc(max(12px,env(safe-area-inset-top)) + 47px);padding:5px 13px;border-radius:13px;border:2px solid #fff5;background:#1b1626aa;color:#fff;font:700 13px/1.3 system-ui;cursor:pointer;max-width:42vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  css.textContent = `#accChip{padding:5px 13px;border-radius:13px;border:2px solid #fff5;background:#1b1626aa;color:#fff;font:700 13px/1.3 system-ui;cursor:pointer;max-width:62vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #accChip b{color:#ffd36e}
 #accBox{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:#0a1222b3;padding:13px}
 #accBox .card{width:min(100%,377px);box-sizing:border-box;background:#fff8ec;color:#3a2a1a;border-radius:21px;padding:21px;border-top:8px solid #f0a23a;box-shadow:0 13px 34px #0008;font:16px/1.5 system-ui}
@@ -19,7 +19,8 @@ export function createAccountHud(ctx) {
 #accBox .stat{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0}#accBox .stat div{background:#f3e6cc;border-radius:13px;padding:8px 13px;font:700 13px system-ui}#accBox .stat b{display:block;font-size:21px}
 body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
   document.head.appendChild(css);
-  const chip = document.createElement('div'); chip.id = 'accChip'; chip.setAttribute('role', 'button'); chip.tabIndex = 0; document.body.appendChild(chip);
+  const row = document.getElementById('chipRow') || (() => { const r = document.createElement('div'); r.id = 'chipRow'; document.body.appendChild(r); const st = document.createElement('style'); st.textContent = `#chipRow{position:fixed;z-index:26;left:max(12px,env(safe-area-inset-left));top:calc(max(12px,env(safe-area-inset-top)) + 47px);display:flex;flex-wrap:wrap;gap:8px;max-width:calc(100vw - 80px);pointer-events:none}#chipRow>*{pointer-events:auto}body.rs-modal #chipRow,body.mg-on #chipRow{display:none}`; document.head.appendChild(st); return r; })();
+  const chip = document.createElement('div'); chip.id = 'accChip'; chip.style.order = 1; chip.setAttribute('role', 'button'); chip.tabIndex = 0; row.appendChild(chip);
   const box = document.createElement('div'); box.id = 'accBox'; box.hidden = true; document.body.appendChild(box);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const render = () => {

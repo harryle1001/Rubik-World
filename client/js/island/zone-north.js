@@ -9,7 +9,7 @@ import { placeKit } from './kit.js';
 import { toon, addOutline } from './style.js';
 import { HOUSE_LOTS, lotToWorld, HOUSE_W, HOUSE_D, HOUSE_V1, PHI } from './layout.js';
 
-// Hằng số của bản đồ 2D (client/school/js/core/world.js). Game 2D chạy trong IIFE nên win.eval không đọc được → sao lại ở đây.
+// Hằng số của bản đồ 2D (client/school/js/core/world.js). Sao lại ở đây (lớp dữ liệu chung: data/map.js).
 const LAKE = { cx: 3930, cy: 330, rx: 300, ry: 150 }, LOTUS = { cx: 4540, cy: 325, rx: 150, ry: 100 };
 const GBOARD = { x: 200, y: -470, s: 48 }, POND = { cx: 1300, cy: -290, rx: 210, ry: 120 }, RMON = { x: 820, y: -300 };
 const FOREST_GATES = [2790, 3420, 4060, 4760];

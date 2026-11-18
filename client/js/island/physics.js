@@ -8,6 +8,8 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { CFG } from './config.js';
 import { toon } from './style.js';
 import { SPAWN, to3, TOWN_Y } from './layout.js';
+import { R as MAP_R } from './data/map.js';
+const FIELD = MAP_R.field;
 
 const G = CFG.player.gravity, W = CFG.island.waterLevel, CELL = 8;
 // r: bán kính va chạm · m: khối lượng (kg) · e: độ nảy · f: ma sát lăn/trượt (1/giây) · rho: khối lượng riêng so với nước (<1 thì nổi)
@@ -180,9 +182,9 @@ export function createPhysics(ctx) {
       if (nb < 5 && i % 3 === 0) nb += !!tryAdd('beach', x, z); else if (ns < 8 && i % 3 === 1) ns += !!tryAdd('stone', x, z); else if (nc < 3) nc += !!tryAdd('crate', x, z);
     }
   }
-  // sân bóng đá: chờ dữ liệu trường (iframe) rồi đặt bóng giữa sân
+  // sân bóng đá (data/map.js): chờ thị trấn dựng xong rồi đặt bóng giữa sân
   const waitField = setInterval(() => {
-    const RS = document.querySelector('iframe[title="Trường Rubik"]')?.contentWindow?.RS, f = RS && RS.R && RS.R.field; if (!RS || !RS.R) return; clearInterval(waitField); if (!f) return;
+    if (!(ctx.school && ctx.school.ready)) return; clearInterval(waitField); const f = FIELD;
     const [x, z] = to3(f.x + f.w / 2, f.y + f.h / 2); add('ball', x, z, TOWN_Y); add('ball', x + 4, z + 2, TOWN_Y); add('ball', x - 5, z - 3, TOWN_Y);
     ctx.fieldCenter = [x, z];
   }, 500);
