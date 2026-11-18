@@ -9,16 +9,16 @@ export function createBrightness(ctx) {
 
   const css = document.createElement('style');
   css.textContent = `#bBright{font-size:15px}
-#brightBox{position:fixed;z-index:27;left:max(12px,env(safe-area-inset-left));top:calc(max(12px,env(safe-area-inset-top)) + 46px);
+#brightBox{position:fixed;z-index:27;right:max(12px,env(safe-area-inset-right));top:calc(max(12px,env(safe-area-inset-top)) + 55px);box-sizing:border-box;width:min(calc(100vw - 24px),377px);
  display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;background:#101a2ecc;color:#f2f4ff;font:600 14px system-ui;box-shadow:0 6px 18px #0006}
-#brightBox input{width:min(52vw,220px);accent-color:#ffc23e}#brightBox span{min-width:3.2em;text-align:right;font-variant-numeric:tabular-nums}
+#brightBox input{flex:1;min-width:0;accent-color:#ffc23e}#brightBox span{min-width:3.2em;text-align:right;font-variant-numeric:tabular-nums}
 body.rs-modal #brightBox{display:none}
-@media (max-width:600px){#brightBox{top:calc(max(12px,env(safe-area-inset-top)) + 96px);right:max(12px,env(safe-area-inset-right))}}
+@media (max-height:500px) and (orientation:landscape){#brightBox{right:auto;left:max(12px,env(safe-area-inset-left));top:calc(max(12px,env(safe-area-inset-top)) + 76px)}}
 #brightBox{flex-wrap:wrap}#qMode,#tMode{display:flex;gap:6px;width:100%}#tMode button,#qMode button{flex:1;padding:6px 8px;border-radius:12px;border:1px solid #fff4;background:#ffffff14;color:#f2f4ff;font:600 13px system-ui}
 #tMode button[aria-pressed=true],#qMode button[aria-pressed=true]{background:#ffc23e;color:#231600;border-color:#ffc23e}`;
   document.head.appendChild(css);
-  const btn = document.createElement('button'); btn.id = 'bBright'; btn.title = 'Độ sáng, giờ trong ngày & chất lượng hình ([ ])'; btn.textContent = '☀️ Sáng';
-  (document.querySelector('.topbtns') || document.body).appendChild(btn);
+  const btn = document.createElement('button'); btn.id = 'bBright'; btn.title = 'Độ sáng, giờ trong ngày & chất lượng hình ([ ])'; btn.textContent = '☀️ Ánh sáng & giờ';
+  (document.getElementById('moreMenu') || document.querySelector('.topbtns') || document.body).appendChild(btn);
   const box = document.createElement('div'); box.id = 'brightBox'; box.hidden = true;
   box.innerHTML = `🌙<input id="brightRange" type="range" min="${(1 / PHI).toFixed(3)}" max="${PHI}" step="0.01" aria-label="Độ sáng">☀️<span></span>
   <div id="tMode" role="group" aria-label="Giờ trong ngày"><button data-t="real">⏱ Thật</button><button data-t="8.5">🌅 Sáng</button><button data-t="12.5">☀️ Trưa</button><button data-t="17">🌇 Chiều</button><button data-t="20.5">🌙 Tối</button></div>
@@ -32,7 +32,8 @@ body.rs-modal #brightBox{display:none}
     if (ctx.setQuality) { if (m === 'fast') ctx.setQuality(2, true); else if (m === 'pretty') ctx.setQuality(0, true); else ctx.setQuality(ctx.qualityLevel || 0, false); }
     if (save) try { localStorage.setItem(QK, m); } catch (e) {}
   };
-  box.querySelector('#qMode').addEventListener('click', e => { const m = e.target.dataset && e.target.dataset.q; if (m) setQ(m); });
+  const shut = () => setTimeout(() => { box.hidden = true; }, 377);   // chọn xong tự đóng (sau 0,377 s để thấy nút sáng lên)
+  box.querySelector('#qMode').addEventListener('click', e => { const m = e.target.dataset && e.target.dataset.q; if (m) { setQ(m); shut(); } });
   setTimeout(() => setQ(qmode, false), 0);
   // giờ trong ngày: Thật (theo đồng hồ trường) hoặc khoá Sáng/Trưa/Chiều/Tối
   const TK = 'island.tmode'; let tmode = 'real'; try { tmode = localStorage.getItem(TK) || 'real'; } catch (e) {}
@@ -41,7 +42,7 @@ body.rs-modal #brightBox{display:none}
     if (ctx.sky) ctx.sky.state.lock = m === 'real' ? null : +m;
     if (save) try { localStorage.setItem(TK, m); } catch (e) {}
   };
-  box.querySelector('#tMode').addEventListener('click', e => { const m = e.target.dataset && e.target.dataset.t; if (m) setT(m); });
+  box.querySelector('#tMode').addEventListener('click', e => { const m = e.target.dataset && e.target.dataset.t; if (m) { setT(m); shut(); } });
   setTimeout(() => setT(tmode, false), 0);   // ctx.setQuality được tạo ở cuối ocean.js
 
   const set = (nv, save = true) => {
@@ -51,6 +52,7 @@ body.rs-modal #brightBox{display:none}
   set(v, false);
   range.addEventListener('input', () => set(+range.value));
   btn.onclick = () => { box.hidden = !box.hidden; };
+  addEventListener('pointerdown', e => { if (!box.hidden && !box.contains(e.target) && e.target !== btn) box.hidden = true; }, true);   // chạm ra ngoài → đóng
   addEventListener('keydown', e => {
     if (e.code === 'BracketLeft') { set(v - 0.05); box.hidden = false; }
     else if (e.code === 'BracketRight') { set(v + 0.05); box.hidden = false; }

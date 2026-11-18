@@ -184,7 +184,7 @@ export function createEasterEggs(ctx) {
   const bBook = document.createElement('button'); bBook.id = 'bEggs'; bBook.title = 'Sổ bí mật';
   (document.querySelector('.topbtns') || document.body).appendChild(bBook);
   const count = () => EGGS.filter(e => S.found[e.id]).length;
-  const label = () => { bBook.textContent = `📖 ${count()}/${EGGS.length}`; };
+  const label = () => { bBook.innerHTML = `<i>📖</i><span class="tx"><small>Bí mật</small><b>${count()}/${EGGS.length}</b></span>`; };
   let code = '';
   const close = () => { book.hidden = true; player.frozen = false; };
   function openBook() {

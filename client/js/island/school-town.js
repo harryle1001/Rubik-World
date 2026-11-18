@@ -31,7 +31,16 @@ export function createSchoolTown(ctx) {
   fr.src = '/school/index.html?embed=1'; fr.title = 'Trường Rubik';
   fr.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;z-index:25;background:transparent;pointer-events:none;color-scheme:dark';
   fr.setAttribute('allowtransparency', 'true'); document.body.appendChild(fr);
-  const waitRS = setInterval(() => { const w = fr.contentWindow; if (w && w.RS && w.RS.doors) { clearInterval(waitRS); town.RS = w.RS; town.win = w; w.addEventListener('pointerdown', () => ctx.audio && ctx.audio.start()); build(); } }, 300);
+  const waitRS = setInterval(() => { const w = fr.contentWindow; if (w && w.RS && w.RS.doors) { clearInterval(waitRS); town.RS = w.RS; town.win = w; embedCss(w); w.addEventListener('pointerdown', () => ctx.audio && ctx.audio.start()); build(); } }, 300);
+
+  // banner sự kiện của trường (chữ pixel nhỏ, ở top 56 px đè hàng nút) → chữ to dễ đọc, nằm dưới hàng nút + thanh dưỡng khí (89 px)
+  function embedCss(w) {
+    try {
+      const st = w.document.createElement('style');
+      st.textContent = `html.rs-embed body #stage #toast.toast{top:calc(max(12px,env(safe-area-inset-top)) + 131px)!important;bottom:auto!important;width:max-content!important;font:700 17px/1.45 system-ui,sans-serif!important;padding:8px 21px!important;border-radius:21px!important;max-width:min(calc(100% - 24px),377px)!important;box-shadow:0 5px 13px #0005}`;
+      w.document.head.appendChild(st);
+    } catch (e) {}
+  }
 
   // ---------- Mặt đất các khu: cao TOWN_Y (địa hình đã được làm phẳng bên dưới, xem terrain.js) ----------
   ctx.decks = ctx.decks || [];   // sàn gỗ/bến nổi: {x0,x1,z0,z1,y}
