@@ -43,7 +43,9 @@ async function openPage() {
     const pSeen = new Set(), mProg = new WeakMap();
     const newMats = () => { const out = [], fresh = info.programs.filter(q => !pSeen.has(q)); fresh.forEach(q => pSeen.add(q));
       c.scene.traverse(o => { if (!o.material) return; for (const m of [].concat(o.material)) { const cp = c.renderer.properties.get(m).currentProgram; if (cp && !mProg.has(m)) { mProg.set(m, cp); out.push(label(o) + ':' + (m.name || m.type)); } } });
-      for (const q of fresh) out.push('#' + q.cacheKey.split(',')[0].slice(0, 24) + (q.cacheKey.includes('USE_SHADOWMAP') ? '' : ''));
+      for (const q of fresh) { const t = q.cacheKey.split(','), sib = info.programs.filter(o => o !== q && o.cacheKey.split(',')[0] === t[0]); let best = null, bd = 1e9;
+        for (const o of sib) { const u = o.cacheKey.split(','); let d = 0; for (let i = 0; i < Math.max(t.length, u.length); i++) if (t[i] !== u[i]) d++; if (d < bd) { bd = d; best = u; } }
+        out.push('#' + t[0].slice(0, 16) + (best ? '[' + t.map((v, i) => v !== best[i] ? i + ':' + best[i] + '→' + v : null).filter(Boolean).join(' ').slice(0, 120) + ']' : '[mới hẳn]')); }
       return out; };
     for (const q of info.programs) pSeen.add(q); c.scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) { const cp = c.renderer.properties.get(m).currentProgram; if (cp) mProg.set(m, cp); } });
     c.post.render = function () {
