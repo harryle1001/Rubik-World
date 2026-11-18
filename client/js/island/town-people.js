@@ -84,6 +84,9 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
     imp.count = i + 4;
   }
 
+  // bỏ 1 người khỏi pool: giải phóng texture xương trên GPU (mỗi SkinnedMesh/Skeleton 1 DataTexture) + hoạt ảnh
+  // (trước: chỉ gỡ khỏi cảnh → mỗi lần đổi người rò 1–2 texture, đi vòng đảo vài lần tăng hàng chục texture)
+  const dropHero = h => { scene.remove(h.model); const sk = new Set(); h.model.traverse(o => { if (o.isSkinnedMesh) sk.add(o.skeleton); }); for (const k of sk) k.dispose(); const mx = h.anim && h.anim.mixer; if (mx) { mx.stopAllAction(); mx.uncacheRoot(h.model); } };
   return function updatePeople(dt, RS) {
     const t0 = performance.now(), p = ctx.player.pos;
     const list = []; for (const a of RS.agents) if (a.visible && !a.inSub) list.push(a); for (const n of RS.npcs) if (RS.npcShown(n)) list.push(n);
@@ -97,7 +100,7 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       // dựng LẦN LƯỢT từng người (tối đa 1 người đang dựng): tới khu đông người không còn ~24 người dựng xong cùng 1 khung (giật 40–80 ms)
       if (!e && loading.size) continue;
       if (!e && pool.length + loading.size >= POOL) { // pool đầy: bỏ 1 model rảnh khác kiểu để nạp kiểu mới
-        const i = pool.findIndex(e => !e.a); if (i >= 0) { scene.remove(pool[i].hero.model); pool.splice(i, 1); }
+        const i = pool.findIndex(e => !e.a); if (i >= 0) { dropHero(pool[i].hero); pool.splice(i, 1); }
       }
       if (!e && pool.length + loading.size < POOL) {
         const id = Symbol(); loading.add(id);
