@@ -249,7 +249,7 @@ export function createMiniGameHost(ctx) {
     document.body.classList.add('mg-on', 'rs-modal'); hudEl.hidden = false; camera.far = Math.min(S.saved.far, 233);
     if (ctx.school && ctx.school.labels) for (const l of ctx.school.labels) l.visible = false;
     api.me.place(0, R * 0.5, Math.PI);
-    try { S.game = G.start(ctx, { key, door, api, ...opts }) || {}; }
+    try { S.game = G.start(ctx, { key, door, api, onExit: () => host.exit(), ...opts }) || {}; }   // onExit: game có sân khấu riêng (stage.js, kit.js) bấm Thoát → host cũng thoát
     catch (e) { console.error('[mg] lỗi khởi động', key, e); S.game = {}; host.exit(); return false; }
     S.camNow = null; return true;
   }
