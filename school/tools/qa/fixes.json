@@ -1,0 +1,42 @@
+{
+ "notes": {
+  "↔ bảng #mentor": {
+   "what": "v54q-fix.js: khi đang mở một cửa sổ (Cửa hàng, Hội trường, Đấu trường…), thẻ lời dạy (mentor) tạm ẩn; đóng cửa sổ thì hiện lại — cùng cách v44 đã ẩn thẻ này khi chơi mini game.",
+   "file": "js/ext/v54q-fix.js mục 4 (gốc: css/style.css:704 #mentor.v39m, css/style.css:850)"
+  },
+  "Nút che nhau ở “Nói chuyện với Coach Ru": {
+   "notbug": "bảng Coach Ru là khung trượt phủ lên HUD khi đang chat (lớp trên che hẳn lớp dưới, đúng thiết kế); Robo được chỉnh để không báo nhầm."
+  },
+  "Nút che nhau ở “Trường tin học": {
+   "notbug": "bảng Bài học phủ lên các nút của phòng học khi đang mở (lớp trên che lớp dưới, đúng thiết kế)."
+  },
+  "Chữ nhỏ hơn 16px trong": {
+   "what": "v54q-fix.js: CSS cho máy cảm ứng (body.touchdev) nâng chữ lên 16px ở HUD, nhãn nút cột trái, các bảng/cửa sổ; ẩn chữ gợi ý phím bàn phím trên phím đàn (điện thoại không có bàn phím).",
+   "file": "js/ext/v54q-fix.js:4-18",
+   "why": "chỉ còn trên máy tính 1440×900 — quy tắc ≥16px áp cho điện thoại; xem mục “Cần chủ game quyết định”."
+  },
+  "Nút che nhau": {
+   "what": "v54q-fix.js: dời nút Flycam khi xoay ngang (xuống góc dưới, trái cột nút) và trên máy tính (sang trái bảng Nhật ký); dời thẻ lời dạy sang phải cột nút khi xoay ngang; khi đang mở cửa sổ, thẻ lời dạy không chặn bấm và tự ẩn sau 6 giây.",
+   "file": "js/ext/v54q-fix.js:19-26 (gốc: css/style.css:1525 #v52ldBtn, css/style.css:704 #mentor.v39m)"
+  },
+  "Hai nhãn bản đồ chồng lên nhau": {
+   "why": "lỗi nhẹ, nhãn “Hồ cá Koi & khu cắm trại” và “Khu rừng thông” vốn đứng sát nhau; dời nhãn là đổi bố cục bản đồ nên để chủ game chọn chỗ.",
+   "file": "js/ext/v52w-life.js:207 (mapPlaces)"
+  },
+  "FPS thấp": {
+   "why": "đo trong Chromium headless không có GPU (vẽ bằng CPU) nên số FPS thấp hơn máy thật; chỉ là cảnh báo nhẹ, cần đo lại trên điện thoại thật."
+  }
+ },
+ "owner": [
+  "Chữ < 16px trên MÁY TÍNH (1440×900): quy tắc chỉ bắt buộc ≥16px trên điện thoại. Nâng cả bản máy tính sẽ làm HUD và các bảng to ra — chủ game quyết định có làm không.",
+  "Thẻ lời dạy (mentor) nay tạm ẩn khi có cửa sổ mở (giống lúc chơi mini game). Nếu muốn thẻ vẫn hiện trong cửa sổ, cần chọn chỗ đặt mới không đè nút (vd. thu gọn thành chip nhỏ).",
+  "Hai nhãn bản đồ “Hồ cá Koi & khu cắm trại” và “Khu rừng thông” chồng nhau: chọn dời nhãn nào và dời đi đâu.",
+  "Nhãn nhỏ dưới các nút tròn (Lamp on / Bike / Plane / Flycam) đang là tiếng Anh, nay đã to 16px trên điện thoại: có muốn đổi sang tiếng Việt (Đèn / Xe đạp / Máy bay) không?",
+  "Khu khoá theo Level (Nhà thi đấu, Kart, Vườn bách thảo…): Robo cấp 1 không vào được là đúng thiết kế; nếu muốn, có thể cho “Tự đi tới…” vẫn dẫn đến cổng khu kèm thông báo khoá."
+ ],
+ "manual": [
+  "Máy tính 1440×900: nút Flycam (chỉ chủ game) đè lên bảng Nhật ký ở góc phải — Robo chưa tự bắt được vì bảng nằm sâu trong khung #stage. Đã sửa: dời Flycam sang trái bảng Nhật ký (v54q-fix.js mục 2). Trước/Sau: xem REVIEW_v54_qa.png.",
+  "Lớp Rubik (1440×900): Robo báo nút danh sách công thức chồng hàng nút xoay — thực ra danh sách đang cuộn và phần bị chồng đã bị cắt khuất, người chơi không thấy. Không phải lỗi; Robo đã được chỉnh để tính phần bị cắt.",
+  "Ba khu “Nhà thi đấu thể dục dụng cụ”, “Trường đua Rubik Kart”, “Vườn bách thảo & đài thiên văn” làm nhân vật đứng yên khi “Tự đi tới…”: do khu khoá theo Level (tài khoản thử Level 1), đúng thiết kế. Robo nay tự bỏ qua khu khoá."
+ ]
+}
