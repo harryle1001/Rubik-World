@@ -59,16 +59,14 @@ export function createPerf(ctx) {
     if (!a) { cand.set(o, snap(o, new Float64Array(10))); return; }
     if (!same(o, a)) { snap(o, a); return; }
     cand.delete(o); o.updateMatrix(); o.matrixAutoUpdate = false; ud._fz = 1; frozen.push({ o, a, p: o.parent, v: o.position, q: o.quaternion, s: o.scale });
-    // lá (không có con): three bỏ qua hẳn lời gọi updateMatrixWorld khi cha không đổi (cha đổi → vẫn được tính, force = true)
-    if (o.children.length === 0 && o.parent) { o.updateMatrixWorld(true); o.matrixWorldAutoUpdate = false; }
   }
-  const unfreeze = (i) => { const o = frozen[i].o; o.matrixAutoUpdate = true; o.matrixWorldAutoUpdate = true; o.matrixWorldNeedsUpdate = true; o.userData._fz = 0; frozen[i] = frozen[frozen.length - 1]; frozen.pop(); };
+  const unfreeze = (i) => { const o = frozen[i].o; o.matrixAutoUpdate = true; o.matrixWorldNeedsUpdate = true; o.userData._fz = 0; frozen[i] = frozen[frozen.length - 1]; frozen.pop(); };
   let half = 0;
   function thaw() {   // vật đã đóng băng bị dời/xoay/đổi cỡ (hoặc gỡ khỏi cảnh) → trả về tự cập nhật; mỗi khung xét 1 nửa (chẵn/lẻ) → trễ ≤ 1 khung lúc vật bắt đầu chuyển động
     half ^= 1;
     for (let i = frozen.length - 1 - half; i >= 0; i -= 2) {
       const e = frozen[i], o = e.o;
-      if (o.parent === e.p && still(e) && (o.matrixWorldAutoUpdate || o.children.length === 0)) continue;   // gắn sang cha khác / lá có thêm con → tính lại
+      if (o.parent === e.p && still(e)) continue;   // gắn sang cha khác → tính lại
       unfreeze(i);
     }
   }
