@@ -7,7 +7,7 @@ export const CFG = {
   quality: {
     maxPixelRatio: isMobile ? 1.5 : 2,  // điện thoại tối đa 1,5 (màn 2–3x mà vẽ đủ điểm ảnh rất nặng); máy tính 2
     shadowSize: isMobile ? 1024 : 2048,
-    shadowRange: 40,
+    shadowRange: isMobile ? 34 : 40,   // điện thoại 34 m (Fibonacci): ít vật đổ bóng hơn, bóng nét hơn
     msaa: isMobile ? 2 : 4,             // khử răng cưa MSAA (điện thoại 2x, máy tính 4x) trong render target hậu kỳ (máy yếu: tự giảm 2 → 0)
     bloom: !isMobile, bloomStrength: 0.18, bloomRadius: 0.382, bloomThreshold: 0.92,  // bloom tinh tế: chỉ đèn/mặt trời toả, bán kính 1/φ² (điện thoại tắt cho mượt)
     vignette: 0.146,                    // 1/φ⁴: viền tối rất nhẹ, không làm mờ
