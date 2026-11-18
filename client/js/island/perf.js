@@ -6,8 +6,8 @@
 //  · Người/thú có xương (SkinnedMesh, trước luôn vẽ): cắt theo khung hình bằng hình cầu bao nới rộng φ lần.
 //  · Vật < 1 m không đổ bóng (bóng đổ của vật nhỏ gần như không thấy, nhưng tốn 1 draw call ở pass bóng);
 //    điện thoại: bán kính < 1/φ ≈ 0,62 m (cả InstancedMesh không ghi itemR: lấy cỡ 1 vật từ hình cầu bao lưới × tỉ lệ instance đầu).
-//  · Bay/khinh khí cầu cao (camera cách mặt đất/biển > 21 m, Fibonacci): vật nhỏ ẩn sớm hơn 1/φ lần; điện thoại: sương + mặt cắt xa
-//    kéo gần dần còn 1/√φ (296 → 233 m) — từ trên cao thấy nhiều cảnh hơn hẳn, xa hơn chỉ là vệt mờ trong sương.
+//  · Bay/khinh khí cầu cao (camera cách mặt đất/biển > 21 m, Fibonacci): vật nhỏ ẩn sớm hơn 1/φ lần; điện thoại: sương kéo gần
+//    dần còn 1/√φ (296 → 233 m; cây xa, công trình xa tự ẩn theo sương) — từ trên cao thấy nhiều cảnh hơn hẳn, xa hơn chỉ là vệt mờ trong sương.
 // Ẩn bằng layers (không đụng .visible mà file khác đang điều khiển). Quét cảnh tìm vật mới mỗi 2 s, xét khoảng cách mỗi 0,2 s.
 import * as THREE from 'three';
 import { PHI } from './layout.js';
@@ -64,13 +64,11 @@ export function createPerf(ctx) {
   function fogByAlt(dt) {   // sau weather/dive (ocean.js): weather đặt lại sương mỗi khung → nhân hệ số không bị cộng dồn
     const F = scene.fog; if (!CFG.isMobile || !F || ctx.underwater || document.body.classList.contains('mg-on')) return;
     fogK += ((ctx.high ? FOG_HIGH : 1) - fogK) * Math.min(1, dt * 0.618);   // đổi dần ~1,6 s, không thấy "bật" sương
-    if (fogK < 0.999) { F.near *= fogK; F.far *= fogK; }
-    const far = fogK < 0.999 ? Math.min(CFG.view.far, Math.ceil(F.far + 8)) : CFG.view.far;
-    if (Math.abs(camera.far - far) > 2) { camera.far = far; camera.updateProjectionMatrix(); }
+    if (fogK < 0.999) { F.near *= fogK; F.far *= fogK; }   // mặt cắt xa giữ nguyên: vòm trời (bán kính 400/φ ≈ 247 m) bám người chơi, cắt gần hơn sẽ thủng trời
   }
   function update(dt) {
     if ((tScan += dt) > 2) { tScan = 0; scan(); }
-    // fogByAlt(dt);
+    fogByAlt(dt);
     if ((tCheck += dt) < 0.2) return; tCheck = 0;
     camera.getWorldPosition(cam);
     const g = ctx.terrain ? Math.max(ctx.terrain.heightAt(cam.x, cam.z), CFG.island.waterLevel) : 0;
