@@ -13,7 +13,7 @@ const KEY = 'island.eggs', TAU = Math.PI * 2, GOLD_ANGLE = TAU / (PHI * PHI);   
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } };
 const store = v => { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} };
 
-// ---------- 13 bí mật: tên, gợi ý (chưa tìm), điều học được (đã tìm) ----------
+// ---------- 21 bí mật: tên, gợi ý (chưa tìm), điều học được (đã tìm) ----------
 const EGGS = [
   { id: 'cubes',   icon: '🟨', name: '8 khối Rubik vàng',      hint: 'Có 8 khối Rubik vàng giấu khắp đảo: đồi, rừng, biển, sân bay… cả trên nóc tháp!', learn: 'Khối lập phương có 8 đỉnh, 12 cạnh, 6 mặt: 8 − 12 + 6 = 2 (công thức Euler).' },
   { id: 'temple',  icon: '🌀', name: 'Xoắn ốc vàng ở Đền',     hint: 'Gom đủ 8 khối Rubik vàng rồi mang tới trước cổng Đền Tri Thức.', learn: 'Xoắn ốc vàng: cứ mỗi ¼ vòng lại rộng ra φ ≈ 1,618 lần — giống vỏ ốc anh vũ.' },
@@ -37,6 +37,14 @@ const EGGS = [
   { id: 'bottle',  icon: '🍾', name: 'Chai thông điệp',        hint: 'Sóng đã đánh dạt một chiếc chai vào bãi biển phía Nam.', learn: 'Dòng hải lưu có thể đưa một chiếc chai trôi hàng nghìn km qua đại dương.' },
   { id: 'fossil',  icon: '🐚', name: 'Hoá thạch cúc đá',       hint: 'Trên đỉnh đồi phía Đông Nam (sau Thể thao & Rubik Kart) có hòn đá in hình xoắn ốc.', learn: 'Hoá thạch là dấu vết sinh vật xưa hoá đá qua hàng triệu năm.' },
   { id: 'lantern', icon: '🏮', name: 'Đèn hoa đăng',           hint: 'Ban đêm ra bờ hồ bán nguyệt sau trường thả đèn hoa đăng.', learn: 'Mặt Trăng không tự sáng mà phản chiếu ánh Mặt Trời; một vòng pha trăng dài khoảng 29,5 ngày.' },
+];
+// Huy hiệu ở mốc Fibonacci 3·5·8·13·21 bí mật — mỗi mốc mở 1 món đồ cho nhân vật
+const TIERS = [
+  { n: 3,  icon: '🥉', name: 'Huy hiệu Tò Mò',          gift: '🧢 Mũ thám hiểm',        hat: '#8a5a34' },
+  { n: 5,  icon: '🥈', name: 'Huy hiệu Tinh Mắt',        gift: '🧥 Áo choàng xanh biển', cape: '#2f7fb8' },
+  { n: 8,  icon: '🥇', name: 'Huy hiệu Thám Tử',         gift: '🧢 Mũ vàng φ',           hat: '#e2b33c' },
+  { n: 13, icon: '🏅', name: 'Huy hiệu Nhà Thông Thái',  gift: '🧥 Áo choàng đỏ son',    cape: '#c0392b' },
+  { n: 21, icon: '🏆', name: 'Nhà Thám Hiểm φ',          gift: '👑 Mũ & áo choàng vàng kim', hat: '#ffd54a', cape: '#e2b33c' },
 ];
 const RUBIK_FACTS = [
   'Khối Rubik 3×3 có hơn <b>43 tỷ tỷ</b> cách xáo trộn (4,3 × 10¹⁹)!',
@@ -110,7 +118,7 @@ const place = (list, x, y, z, ry = 0, s = 1) => list.map(g => { g.scale(s, s, s)
 
 export function createEasterEggs(ctx) {
   const { scene, terrain, camera, player } = ctx, mobile = CFG.isMobile;
-  const S = Object.assign({ found: {}, cubes: [], ring: [], tale: 0 }, load()); const save = () => store(S);
+  const S = Object.assign({ found: {}, cubes: [], ring: [], tale: 0 }, load()); const save = () => store(S); let wearInit = false;
   const H = (x, z) => terrain.heightAt(x, z);
   const near = (x, z, r) => Math.hypot(player.pos.x - x, player.pos.z - z) < r;
   const delay = []; const later = (s, fn) => delay.push({ t: s, fn });
@@ -175,6 +183,7 @@ export function createEasterEggs(ctx) {
   css.textContent = `#eggBook{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:#0a1a2acc;padding:13px}#eggBook[hidden]{display:none}
 #eggBook .card{width:min(100%,560px);max-height:min(88vh,720px);overflow:auto;background:#fff8ec;color:#3a2a1a;border-radius:21px;padding:16px 18px;border-top:8px solid #e2b33c;font:15px/1.5 system-ui}
 #eggBook h3{margin:0 0 8px;font-size:21px;text-align:center}#eggBook .bar{height:8px;border-radius:5px;background:#efe3cc;margin:0 0 10px;overflow:hidden}#eggBook .bar i{display:block;height:100%;background:linear-gradient(90deg,#f2c14e,#e2763c)}
+#eggBook .bdg{display:flex;justify-content:space-between;gap:5px;margin:10px 0 4px}#eggBook .bdg span{flex:1;text-align:center;font-size:26px;line-height:1.1;background:#efe3c8;border-radius:13px;padding:5px 0;filter:grayscale(1);opacity:.55}#eggBook .bdg span.on{filter:none;opacity:1;background:#ffeeb0}#eggBook .bdg small{display:block;font:800 11px system-ui}#eggBook .wear{display:flex;gap:8px;margin:6px 0}#eggBook .wear button{flex:1}#eggBook .nx{display:block;text-align:center;opacity:.75;font-size:13px}
 #eggBook li{list-style:none;padding:8px 10px;margin:5px 0;border-radius:13px;background:#f6ecd8}#eggBook li.ok{background:#e4f5dc}#eggBook li small{display:block;opacity:.8;font-size:13px}#eggBook ul{padding:0;margin:0}
 #eggBook .pad{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}#eggBook button{padding:11px 8px;border-radius:13px;border:0;background:#efe3cc;font:700 16px system-ui;color:#3a2a1a}
 #eggBook .code{font:800 21px ui-monospace,monospace;letter-spacing:5px;text-align:center;background:#1b1626;color:#ffe58a;border-radius:13px;padding:8px;margin-top:10px;min-height:1.6em}
@@ -185,11 +194,36 @@ export function createEasterEggs(ctx) {
   (document.querySelector('.topbtns') || document.body).appendChild(bBook);
   const count = () => EGGS.filter(e => S.found[e.id]).length;
   const label = () => { bBook.textContent = `📖 ${count()}/${EGGS.length}`; };
+  // ---- đồ thưởng: mũ + áo choàng, bám theo xương đầu/ngực của nhân vật (đổi màu theo mốc cao nhất đã đạt) ----
+  S.wear = Object.assign({ hat: true, cape: true }, S.wear);
+  const unlocked = () => TIERS.filter(T => count() >= T.n);
+  const pickCol = k => { let c = null; for (const T of unlocked()) if (T[k]) c = T[k]; return c; };
+  const wear = { hat: null, cape: null };
+  function dress() {
+    const root = player.root; if (!root) return;
+    for (const k of ['hat', 'cape']) { const col = S.wear[k] && pickCol(k); if (!col) { if (wear[k]) wear[k].visible = false; continue; }
+      if (!wear[k]) { const g = new THREE.Group(), m = new THREE.MeshToonMaterial({ color: col, gradientMap });
+        if (k === 'hat') { const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.2, 0.17, 12), m), brim = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.03, 16), m), band = new THREE.Mesh(new THREE.CylinderGeometry(0.205, 0.205, 0.045, 12, 1, true), new THREE.MeshToonMaterial({ color: '#1b1626', gradientMap })); crown.position.y = 0.1; band.position.y = 0.04; g.add(crown, brim, band); }
+        else { const cp = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.36, 0.72, 10, 1, true, Math.PI * 0.62, Math.PI * 0.76), m); cp.material.side = THREE.DoubleSide; cp.position.y = -0.36; g.add(cp); }
+        g.traverse(o => { if (o.isMesh) o.castShadow = true; }); root.add(g); wear[k] = g; }
+      wear[k].visible = true; wear[k].traverse(o => { if (o.isMesh && o.material.color && o.material.side === (k === 'cape' ? THREE.DoubleSide : THREE.FrontSide) && !(k === 'hat' && o.material.color.getHexString() === '1b1626')) o.material.color.set(col); });
+    }
+  }
+  const _wv = new THREE.Vector3();
+  function placeWear() {
+    const h = player.hero; if (!h || !player.root) return;
+    const head = h.head, chest = h.model.getObjectByName('chest') || head;
+    if (wear.hat && wear.hat.visible && head) { head.getWorldPosition(_wv); player.root.worldToLocal(_wv); wear.hat.position.set(_wv.x, _wv.y + 0.25 * (h.height || 1.65) / 1.65, _wv.z); }
+    if (wear.cape && wear.cape.visible && chest) { chest.getWorldPosition(_wv); player.root.worldToLocal(_wv); wear.cape.position.set(_wv.x, _wv.y + 0.12, _wv.z); }
+  }
+  const badgesHTML = () => `<div class="bdg">${TIERS.map(T => count() >= T.n ? `<span class="on" title="${T.name}">${T.icon}<small>${T.n}</small></span>` : `<span title="Tìm ${T.n} bí mật">🔒<small>${T.n}</small></span>`).join('')}</div>`
+    + (unlocked().length ? `<div class="wear">${pickCol('hat') ? `<button data-w="hat">${S.wear.hat ? '✅' : '⬜'} Đội mũ</button>` : ''}${pickCol('cape') ? `<button data-w="cape">${S.wear.cape ? '✅' : '⬜'} Áo choàng</button>` : ''}</div>` : '')
+    + `<small class="nx">${(T => T ? `Còn ${T.n - count()} bí mật nữa để nhận ${T.icon} ${T.name} + ${T.gift}` : 'Bạn đã nhận đủ huy hiệu!')(TIERS.find(T => count() < T.n))}</small>`;
   let code = '';
   const close = () => { book.hidden = true; player.frozen = false; };
   function openBook() {
     const n = count(), cubes = S.cubes.filter(Boolean).length;
-    book.innerHTML = `<div class="card"><h3>📖 Sổ bí mật · ${n}/${EGGS.length}</h3><div class="bar"><i style="width:${n / EGGS.length * 100}%"></i></div><ul>${EGGS.map(e => S.found[e.id]
+    book.innerHTML = `<div class="card"><h3>📖 Sổ bí mật · ${n}/${EGGS.length}</h3><div class="bar"><i style="width:${n / EGGS.length * 100}%"></i></div>${badgesHTML()}<ul>${EGGS.map(e => S.found[e.id]
       ? `<li class="ok">${e.icon} <b>${e.name}</b><small>💡 ${e.learn}</small></li>`
       : `<li>❓ <b>???</b>${e.id === 'cubes' ? ` <small>Đã có ${cubes}/8 khối · ${e.hint}</small>` : `<small>Gợi ý: ${e.hint}</small>`}</li>`).join('')}</ul>
       <div class="code" id="eggCode">${code || '🔢 nhập mật mã'}</div><div class="pad">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(d => `<button data-d="${d}">${d}</button>`).join('')}</div>
@@ -197,6 +231,7 @@ export function createEasterEggs(ctx) {
     book.hidden = false; player.frozen = true;
     book.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { digit(b.dataset.d); const c = book.querySelector('#eggCode'); if (c) c.textContent = code; });
     book.querySelector('#eggX').onclick = close;
+    book.querySelectorAll('[data-w]').forEach(b => b.onclick = () => { S.wear[b.dataset.w] = !S.wear[b.dataset.w]; save(); dress(); openBook(); });
   }
   bBook.onclick = () => book.hidden ? openBook() : close();
   addEventListener('keydown', e => { if (e.code === 'Escape' && !book.hidden) close(); });
@@ -205,6 +240,7 @@ export function createEasterEggs(ctx) {
     const e = EGGS.find(q => q.id === id), n = count();
     ctx.toast(`🎉 <b>Bí mật ${n}/${EGGS.length}: ${e.icon} ${e.name}</b>${extra ? '<br>' + extra : ''}<br><small>💡 ${e.learn}</small>`, 7000);
     fanfare(); ctx.player.emote && ctx.player.emote('cheer');
+    const T = TIERS.find(q => q.n === n); if (T) later(7.3, () => { dress(); ctx.toast(`${T.icon} <b>${T.name}!</b> (${n} bí mật — số Fibonacci)<br>Phần thưởng: <b>${T.gift}</b> đã mặc cho nhân vật. Bật/tắt trong 📖 Sổ bí mật.`, 8000); fanfare(); });
     if (n === EGGS.length) later(7.5, () => { ctx.toast(`🏆 <b>Bạn đã tìm đủ ${EGGS.length} bí mật của Đảo Rubik!</b><br>${EGGS.length} cũng là một số Fibonacci. Bạn là <b>Nhà Thám Hiểm φ</b>!`, 9000); fireworks(); });
     return true;
   }
@@ -629,10 +665,26 @@ export function createEasterEggs(ctx) {
 
     updateWhale(dt);
     updateParticles(dt, t);
+    if (!wearInit && player.hero) { wearInit = true; dress(); }
+    placeWear();
   }
 
+  // mốc có vị trí của bí mật — bản đồ dùng để vẽ địa danh và dấu ✔ chỗ đã tìm
+  const spots = () => [
+    { id: 'firefly', n: 'Đồi Hoàng Hôn', ic: '🌄', x: HILL[0], z: HILL[1] }, { id: 'stars', n: 'Kính thiên văn', ic: '🔭', x: SCOPE[0], z: SCOPE[1] + 9 },
+    { id: 'turtle', n: 'Bãi biển Tây Bắc', ic: '🏖️', x: TURTLE[0], z: TURTLE[1] }, { id: 'but', n: 'Cây đa nghìn năm', ic: '🌳', x: BANYAN[0], z: BANYAN[1] },
+    { id: 'stele', n: 'Bia đá chữ Hán', ic: '🪨', x: STELE[0], z: STELE[1] }, { id: 'seed', n: 'Vườn cộng đồng', ic: '🌱', x: SEED[0], z: SEED[1] },
+    { id: 'sundial', n: 'Đồng hồ mặt trời', ic: '☀️', x: SUNDIAL[0], z: SUNDIAL[1] - 6 }, { id: 'cuckoo', n: 'Cột đồng hồ', ic: '🕛', x: CUCKOO[0], z: CUCKOO[1] },
+    { id: 'well', n: 'Giếng cổ', ic: '🪣', x: WELL[0], z: WELL[1] }, { id: 'hanoi', n: 'Đồi Tháp Hà Nội', ic: '🗼', x: HANOI[0], z: HANOI[1] },
+    { id: 'fossil', n: 'Đồi hoá thạch', ic: '🐚', x: FOSSIL[0], z: FOSSIL[1] }, { id: 'bottle', n: 'Bãi biển phía Nam', ic: '🍾', x: BOTTLE[0], z: BOTTLE[1] },
+    { id: 'lantern', n: 'Hồ bán nguyệt', ic: '🏮', x: LAG[0], z: LAG[1] - 8 }, { id: 'temple', n: 'Cổng Đền Tri Thức', ic: '🌀', x: TEMPLE_C[0], z: TEMPLE_C[1], hide: true },
+    ...(cat ? [{ id: 'cat', n: 'Mèo ngủ trên mái', ic: '🐱', x: cat.x, z: cat.z, hide: true }] : []),
+    ...CUBES.map((c, i) => ({ id: 'cube' + i, n: 'Khối Rubik vàng ' + (i + 1), ic: '🟨', x: c[0], z: c[1], hide: true, done: !!S.cubes[i] })),
+    ...RINGS.map((r, i) => ({ id: 'ring' + i, n: 'Vòng mây ' + (i + 1), ic: '☁️', x: r[0], z: r[2], hide: true, done: !!S.ring[i] })),
+  ].map(q => ({ ...q, done: q.done != null ? q.done : !!S.found[q.id] }));
+
   const self = {
-    update, get found() { return S.found; }, give, cubes: CUBES, fireworks, sunflowerBloom, whale: () => whaleJump(true), showStars, openBook,
+    update, spots, tiers: TIERS, dress, get found() { return S.found; }, give, cubes: CUBES, fireworks, sunflowerBloom, whale: () => whaleJump(true), showStars, openBook,
     reset: () => { for (const k of Object.keys(S)) delete S[k]; Object.assign(S, { found: {}, cubes: [], ring: [], tale: 0 }); save(); label(); },
     get particles() { return pTop; }, get cat() { return cat; }, paint, grow: () => { S.seed = Date.now() - GROW * 1000; save(); }, summonBut, meteor, lanterns, hanoiGame,
     meshes: () => [cubes, points, ringMesh, statics, stelePlane, flower, whale, but],

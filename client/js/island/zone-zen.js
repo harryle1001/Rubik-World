@@ -57,6 +57,10 @@ function curve(pts, step) {
 }
 const segDist = (pts, u, v) => { let d = 1e9; for (let i = 1; i < pts.length; i++) { const [ax, az] = pts[i - 1], [bx, bz] = pts[i], dx = bx - ax, dz = bz - az, l2 = dx * dx + dz * dz || 1, t = Math.max(0, Math.min(1, ((u - ax) * dx + (v - az) * dz) / l2)); d = Math.min(d, Math.hypot(u - ax - dx * t, v - az - dz * t)); } return d; };
 
+// chỗ không được rải hoa/nấm/gốc cây ngẫu nhiên (ocean.js): đình nghỉ, hồ sen, vườn đá, chuông — tránh bụi hoa xuyên sàn đình
+export const zenNoPlant = (x, z, m = 0) => { const [u, v] = L(x, z);
+  return Math.hypot(u - PAV.u, v - PAV.v) < PAV.r + 1.5 + m || Math.hypot(u - GARDEN.u, v - GARDEN.v) < GARDEN.r + 1 + m || Math.hypot(u - BELL.u, v - BELL.v) < 2.2 + m
+    || ((u - POND.u) / (POND.ru + 1 + m)) ** 2 + ((v - POND.v) / (POND.rv + 1 + m)) ** 2 < 1; };
 export function buildZen({ ctx, low = false }) {
   const { scene, terrain } = ctx, Hw = (x, z) => terrain.heightAt(x, z), H = (u, v) => Hw(...W(u, v));
   let seed = 233; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;

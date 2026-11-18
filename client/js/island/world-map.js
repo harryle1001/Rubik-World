@@ -18,33 +18,35 @@ const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', s
 const OPT_KEY = 'island.mapOpts';
 
 export function createWorldMap(ctx) {
-  let opts = { places: true, animals: true, people: true, near: false };
+  let opts = { places: true, animals: true, people: true, eggs: true, near: false };
   try { Object.assign(opts, JSON.parse(localStorage.getItem(OPT_KEY) || '{}')); } catch (e) {}
 
   // ---------- Giao diện ----------
   const css = document.createElement('style');
   css.textContent = `#wmap{position:fixed;inset:0;z-index:30;background:#16323a;display:flex;flex-direction:column;touch-action:none;font-family:system-ui,sans-serif}
 #wmap canvas{flex:1;width:100%;min-height:0;display:block;cursor:grab}
-#wmap .bar{position:absolute;left:0;right:0;top:max(10px,env(safe-area-inset-top));display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 56px;pointer-events:none}
+#wmap .bar{position:absolute;left:0;right:0;top:max(13px,env(safe-area-inset-top));display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 62px;pointer-events:none}
+@media (max-width:700px){#wmap .bar{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;right:62px;padding:0 8px 5px 21px;pointer-events:auto}#wmap .bar::-webkit-scrollbar{display:none}#wmap .bar button{flex:none;font-size:13px;padding:6px 10px}}
 #wmap .bar button,#wmap .zoom button,#wmap .x{pointer-events:auto;border:2px solid #7a5a2e;background:#fff3d6;color:#5a3d1a;font:800 14px system-ui;border-radius:20px;padding:7px 12px;box-shadow:0 3px 0 #7a5a2e}
 #wmap .bar button.off{background:#d9cdb3;color:#8a7a62;box-shadow:none;transform:translateY(3px)}
 #wmap .x{position:absolute;right:max(10px,env(safe-area-inset-right));top:max(10px,env(safe-area-inset-top));width:42px;height:42px;padding:0;font-size:18px}
 #wmap .zoom{position:absolute;right:max(10px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px}
 #wmap .zoom button{width:44px;height:44px;padding:0;font-size:20px}
-#wmap .hint{position:absolute;left:12px;bottom:max(12px,env(safe-area-inset-bottom));color:#fff3d6;font:700 12px system-ui;opacity:.8;text-shadow:0 1px 2px #000}
+#wmap .hint{position:absolute;left:34px;bottom:max(34px,calc(env(safe-area-inset-bottom) + 21px));max-width:calc(100% - 130px);background:rgba(58,42,22,.72);color:#fff3d6;font:700 12px/1.35 system-ui;padding:5px 11px;border-radius:13px;pointer-events:none}
+@media (max-width:700px){#wmap .hint .pc{display:none}}@media (min-width:701px){#wmap .hint .ph{display:none}}
 #wmap .dex{position:absolute;left:50%;top:64px;transform:translateX(-50%);width:min(92vw,460px);max-height:calc(100% - 140px);overflow:auto;background:#fff3d6;border:3px solid #7a5a2e;border-radius:16px;padding:10px 14px;color:#4a3218;font:14px system-ui;box-shadow:0 6px 0 #7a5a2e}#wmap .dex h3{margin:4px 0 8px;font-size:16px}#wmap .dex .it{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-top:1px dashed #c9a86a}#wmap .dex .it.no{opacity:.55}#wmap .dex b{font-size:15px}
 #bMap{position:fixed;right:12px;top:58px;width:42px;height:42px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:20px;z-index:26}
 body.rs-modal #bMap{display:none}@media(max-width:560px){#bMap{top:calc(max(12px,env(safe-area-inset-top)) + 89px)}}`;
   document.head.appendChild(css);
   const root = document.createElement('div'); root.id = 'wmap'; root.hidden = true;
   root.innerHTML = `<canvas></canvas><div class="bar">
-<button data-k="places">📍 Địa danh</button><button data-k="animals">🐾 Con vật</button><button data-k="people">🧑 Mọi người</button><button data-d="1">📗 Sổ sinh vật</button><button data-k="near">🔎 Gần tôi</button></div>
+<button data-k="places">📍 Địa danh</button><button data-k="animals">🐾 Con vật</button><button data-k="people">🧑 Mọi người</button><button data-d="1">📗 Sổ sinh vật</button><button data-k="eggs">🔎 Bí mật đã tìm</button><button data-k="near">⭕ Gần tôi</button></div>
 <button class="x" title="Đóng (M)">✕</button><div class="zoom"><button data-z="1.4">＋</button><button data-z="0.7">－</button><button data-z="me" title="Về chỗ tôi">🎯</button></div>
-<div class="hint">M: đóng bản đồ · kéo để xem · bấm biểu tượng để xem tên</div>`;
+<div class="hint"><span class="pc">M: đóng bản đồ · kéo để xem · bấm biểu tượng để xem tên</span><span class="ph">Kéo để xem · chạm biểu tượng để xem tên</span></div>`;
   document.body.appendChild(root);
   const btn = document.createElement('button'); btn.id = 'bMap'; btn.textContent = '🗺️'; btn.title = 'Bản đồ (M)'; document.body.appendChild(btn);
   const cv = root.querySelector('canvas'), g = cv.getContext('2d');
-  const chips = [...root.querySelectorAll('.bar button')];
+  const chips = [...root.querySelectorAll('.bar [data-k]')];
   const syncChips = () => chips.forEach(b => b.classList.toggle('off', !opts[b.dataset.k]));
   chips.forEach(b => b.onclick = () => { opts[b.dataset.k] = !opts[b.dataset.k]; if (b.dataset.k === 'near' && opts.near) focusMe(4); try { localStorage.setItem(OPT_KEY, JSON.stringify(opts)); } catch (e) {} syncChips(); tip = null; });
   syncChips();
@@ -106,6 +108,7 @@ body.rs-modal #bMap{display:none}@media(max-width:560px){#bMap{top:calc(max(12px
     for (const b of BLOCKS) L.push({ n: b.name.toUpperCase(), x: (b.r[0] + b.r[2]) / 2, z: b.r[1] + 6, big: 2 });
     for (const e of EXTRA) L.push({ n: e.name.toUpperCase(), x: (e.r[0] + e.r[2]) / 2, z: (e.r[1] + e.r[3]) / 2, big: 2 });
     for (const t of TEMPLES) L.push({ n: t.name, x: t.x, z: t.z, ic: '⛩️' });
+    if (ctx.eggs && ctx.eggs.spots) for (const q of ctx.eggs.spots()) if (!q.hide) L.push({ n: q.n, x: q.x, z: q.z, ic: q.ic, spot: true });
     const sc = ctx.school; if (!sc) return L;
     if (sc.gate) L.push({ n: 'Cổng trường', x: sc.gate[0], z: sc.gate[1], ic: '🏫' });
     const RS = sc.RS;
@@ -123,10 +126,16 @@ body.rs-modal #bMap{display:none}@media(max-width:560px){#bMap{top:calc(max(12px
   root.querySelector('.zoom').onclick = e => { const z = e.target.dataset.z; if (!z) return; if (z === 'me') focusMe(); else { zoom *= +z; clampView(); } };
   root.querySelector('.x').onclick = () => toggle(false);
   btn.onclick = () => toggle(true);
-  addEventListener('keydown', e => {
-    if (e.code === 'KeyM' && !e.repeat && !document.body.classList.contains('rs-modal')) toggle();
-    else if (e.code === 'Escape' && open) toggle(false);
-  });
+  // Phím M do bản đồ 3D tự bắt (pha capture) ở cửa sổ chính VÀ trong iframe trường 2D (nếu còn) — không để lọt sang bản đồ 2D #v32Map.
+  const typing = el => el && (/INPUT|TEXTAREA|SELECT/.test(el.tagName) || el.isContentEditable);
+  const close2D = w => { try { const d = w.document, m = d.querySelector('#v32Map'); if (m && !m.hidden) (w.v32MapClose ? w.v32MapClose() : (m.hidden = true)); const bm = d.querySelector('#mBigMap'); if (bm && !bm.hidden && w.hideModal) w.hideModal(); } catch (e) {} };
+  const onKey = w => e => {
+    if (e.code === 'KeyM') { if (typing(e.target) || typing(w.document.activeElement)) return; e.preventDefault(); e.stopImmediatePropagation(); if (e.repeat) return; if (w !== window) { close2D(w); try { w.document.activeElement?.blur(); } catch (er) {} window.focus(); } toggle(); }
+    else if (e.code === 'Escape' && open) { e.preventDefault(); e.stopImmediatePropagation(); toggle(false); }
+  };
+  addEventListener('keydown', onKey(window), true);
+  let hooked = null;
+  const hookFrame = () => { const w = ctx.school && ctx.school.win; if (!w || w === hooked) return; try { w.addEventListener('keydown', onKey(w), true); hooked = w; } catch (e) {} };
   // kéo / chụm 2 ngón / lăn chuột
   const pts = new Map(); let pinch = 0, moved = 0;
   cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; pinch = 0; });
@@ -165,9 +174,9 @@ body.rs-modal #bMap{display:none}@media(max-width:560px){#bMap{top:calc(max(12px
   function toggle(v = !open) {
     if (v === open) return; open = v; ctx.mapOpen = v; root.hidden = !v; tip = null;
     if (v) {
-      ctx.sfx && ctx.sfx('ui');
+      ctx.sfx && ctx.sfx('ui'); if (ctx.school && ctx.school.win) close2D(ctx.school.win);
       if (!baseDone || (!baseTown && ctx.school && ctx.school.RS)) buildBase();
-      placeList = places(); focusMe(opts.near ? 4 : zoom); frozenBefore = ctx.player.frozen; ctx.player.frozen = true;
+      placeList = places().sort((a, b) => (b.ic ? 1 : 0) - (a.ic ? 1 : 0));   // biểu tượng giữ chỗ trước, chữ to tự né focusMe(opts.near ? 4 : zoom); frozenBefore = ctx.player.frozen; ctx.player.frozen = true;
     } else ctx.player.frozen = frozenBefore;
   }
 
@@ -182,9 +191,31 @@ body.rs-modal #bMap{display:none}@media(max-width:560px){#bMap{top:calc(max(12px
     g.font = `900 ${size}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
     g.lineWidth = Math.max(3, size / 4); g.strokeStyle = stroke; g.strokeText(t, x, y); g.fillStyle = fill; g.fillText(t, x, y);
   }
+  // ---------- Câu chào riêng khi bước vào từng khu (thay câu "Chào mừng đến Trường Rubik" lặp lại) ----------
+  const GREET = {
+    A: '🏫 <b>Trường Rubik</b> — chào bạn! Bước vào cửa có chấm cam để chơi mini game học tập.',
+    B: '🌲 <b>Đồi thông & Phố Đà Lạt</b> — gió thông reo mát rượi. Gợi ý: trên đồi phía Bắc có cái giếng cổ biết "trả lời".',
+    C: '📚 <b>Thư viện & Phố mua sắm</b> — đọc sách, mua đồ. Gợi ý: trên đồi gần Thư viện có trò xếp đĩa mang tên thủ đô.',
+    D: '🏅 <b>Thể thao & Rubik Kart</b> — vận động cho khoẻ! Gợi ý: đỉnh đồi phía sau có hòn đá in hình xoắn ốc.',
+    E: '🛶 <b>Làng nổi trên biển</b> — nhà sàn trên mặt nước. Nhớ đi trên cầu gỗ cẩn thận nhé!',
+    K: '✈️ <b>Sân bay Cánh Diều</b> — bấm Lái máy bay, thử bay xuyên 3 vòng mây trên trời.',
+    F: '🦒 <b>Công viên Safari</b> — lại gần con vật để ghi vào 📗 Sổ sinh vật.',
+    G: '🌸 <b>Học viện Hoa Phượng</b> — Gợi ý: bên đường vào có tấm bia đá khắc chữ cổ.',
+    H: '🏖️ <b>Resort Biển Xanh</b> — tắm biển, lặn ngắm san hô. Kiên nhẫn ngắm biển, biết đâu cá voi nhảy!',
+    I: '⛩️ <b>Rừng & Đền Tri Thức</b> — nói khẽ thôi nhé. Gợi ý: trong rừng có cây đa nghìn năm tuổi.',
+  };
+  const ZONES = [...BLOCKS, ...EXTRA].filter(z => z.r && GREET[z.id]);
+  let zoneT = 0;
+  function scanZone(dt) { // 2 lần/giây; ra khỏi khu phải cách mép 8 m mới tính là rời (khỏi chào lại khi đi dọc mép)
+    if ((zoneT -= dt) > 0) return; zoneT = 0.5; const p = ctx.player.pos, cur = ZONES.find(z => z.id === ctx.zoneId);
+    const inZ = (z, m) => p.x >= z.r[0] - m && p.x <= z.r[2] + m && p.z >= z.r[1] - m && p.z <= z.r[3] + m;
+    if (cur && inZ(cur, 8)) return; const z = ZONES.find(q => inZ(q, 0)); ctx.zoneId = z ? z.id : null;
+    if (!z || !ctx.school || !ctx.school.ready || ctx.zoneGreeted === z.id || p.y > ctx.terrain.heightAt(p.x, p.z) + 21) return;   // đang bay: aircraft.js tự báo tên khu
+    ctx.zoneGreeted = z.id; ctx.toast && ctx.toast(GREET[z.id], 5500);
+  }
   let lastT = performance.now();
   function update() {
-    const now = performance.now(); scanDex(Math.min(0.1, (now - lastT) / 1000)); lastT = now;
+    hookFrame(); const now = performance.now(); scanDex(Math.min(0.1, (now - lastT) / 1000)); scanZone(Math.min(0.1, (now - lastT) / 1000)); lastT = now;
     if (!open) return;
     const dpr = Math.min(devicePixelRatio, 2), w = W(), h = H();
     if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
@@ -195,13 +226,17 @@ body.rs-modal #bMap{display:none}@media(max-width:560px){#bMap{top:calc(max(12px
     const near = (x, z) => !opts.near || Math.hypot(x - p.x, z - p.z) < NEAR;
     if (opts.near) { g.beginPath(); g.arc(sx(p.x), sy(p.z), NEAR * zoom, 0, 7); g.setLineDash([10, 8]); g.lineWidth = 3; g.strokeStyle = 'rgba(255,243,214,.9)'; g.stroke(); g.setLineDash([]); }
     icons = []; const taken = [];
+    for (const el of root.querySelectorAll('.bar button, .x, .zoom, .hint')) { const r = el.getBoundingClientRect(), o = cv.getBoundingClientRect(); if (r.width) taken.push([r.left - o.left + r.width / 2, r.top - o.top + r.height / 2, r.width / 2 + 3, r.height / 2 + 3]); }
+    taken.push([58, h - 110, 52, 52]);   // la bàn
+    const topSafe = Math.max(30, ...taken.filter(q => q[1] < h / 3).map(q => q[1] + q[3]));
     const free = (x, y, r, rh = r) => { for (const q of taken) if (Math.abs(q[0] - x) < q[2] + r && Math.abs(q[1] - y) < q[3] + rh) return false; taken.push([x, y, r, rh]); return true; }; // chống chồng chữ/biểu tượng
     // địa danh
     if (opts.places) for (const L of placeList) {
       if (!inView(L.x, L.z, 200) || !near(L.x, L.z)) continue; const X = sx(L.x), Y = sy(L.z);
-      if (L.big) { const fs = Math.round(Math.max(13, Math.min(26, zoom * 9))); g.font = `900 ${fs}px system-ui`; if (free(X, Y - (L.ic ? 26 : 0), g.measureText(L.n).width / 2 + 4, fs * 0.7)) text(L.n, X, Y - (L.ic ? 26 : 0), fs, '#fff3d6'); if (L.ic) { bubble(X, Y, L.ic, 15, '#e0a030'); icons.push({ x: X, y: Y, t: L.n }); } continue; }
+      if (L.big) { const fs = Math.round(Math.max(13, Math.min(26, zoom * 9))); g.font = `900 ${fs}px system-ui`; const hw = g.measureText(L.n).width / 2 + 4, Y0 = Math.max(Y, topSafe + fs);   // tên khu sát mép trên → hạ xuống dưới hàng nút
+        for (const k of [0, -1.6, 1.6, -3.2, 3.2, 4.8, 6.4]) { const yy = Y0 + k * fs; if (free(X, yy, hw, fs * 0.7)) { text(L.n, X, yy, fs, '#fff3d6'); break; } } if (L.ic) { bubble(X, Y, L.ic, 15, '#e0a030'); icons.push({ x: X, y: Y, t: L.n }); } continue; }
       if (L.door) { if (zoom < 5) continue; g.beginPath(); g.arc(X, Y, 4, 0, 7); g.fillStyle = '#f0a23a'; g.fill(); if (zoom > 8) { g.font = '900 11px system-ui'; if (free(X, Y - 12, g.measureText(L.n).width / 2 + 3, 8)) text(L.n, X, Y - 12, 11); } icons.push({ x: X, y: Y, t: '🚪 ' + L.n }); continue; }
-      if (L.ic) { bubble(X, Y, L.ic, 14, '#e0a030'); free(X, Y, 14); icons.push({ x: X, y: Y, t: L.n }); if (zoom > 1.6) { g.font = '900 13px system-ui'; if (free(X, Y + 24, g.measureText(L.n).width / 2 + 3, 9)) text(L.n, X, Y + 24, 13); } continue; }
+      if (L.ic) { if (!free(X, Y, 15) && L.spot) continue; bubble(X, Y, L.ic, 14, L.spot ? '#c77dd8' : '#e0a030'); icons.push({ x: X, y: Y, t: L.n }); if (zoom > 1.6) { g.font = '900 13px system-ui'; const hw = g.measureText(L.n).width / 2 + 3; for (const yy of [Y + 24, Y - 24]) if (free(X, yy, hw, 9)) { text(L.n, X, yy, 13); break; } } continue; }
       const ext = (L.ext || 10) * zoom; if (ext < 34) continue;
       const fs = Math.max(11, Math.min(18, ext / 6)), T = L.n.toUpperCase(); g.font = `900 ${fs}px system-ui`; if (free(X, Y, g.measureText(T).width / 2 + 4, fs * 0.7)) text(T, X, Y, fs);
     }
@@ -220,6 +255,13 @@ body.rs-modal #bMap{display:none}@media(max-width:560px){#bMap{top:calc(max(12px
         if (!free(X, Y, 10)) continue; bubble(X, Y, ic, 11, teacher ? '#ffd23f' : a.kind ? '#9ad26e' : '#ff8a8a');
         icons.push({ x: X, y: Y, t: a.kind ? NPC_NAME[a.kind] || 'Người dân' : teacher ? `${a.name} · ${String(a.role || '').split(',')[0]}` : `${a.name} (học sinh)` });
       }
+    }
+    // bí mật đã tìm: dấu ✔ xanh (khối Rubik, vòng mây… cũng hiện khi đã lấy)
+    if (opts.eggs && ctx.eggs && ctx.eggs.spots) for (const q of ctx.eggs.spots()) {
+      if (!q.done || !inView(q.x, q.z) || !near(q.x, q.z)) continue; const X = sx(q.x) + (q.hide ? 0 : 12), Y = sy(q.z) - (q.hide ? 0 : 12);
+      if (q.hide) { bubble(X, Y, q.ic, 11, '#3bb54a'); icons.push({ x: X, y: Y, t: '✔ ' + q.n }); }
+      g.beginPath(); g.arc(X + (q.hide ? 9 : 0), Y - (q.hide ? 9 : 0), 8, 0, 7); g.fillStyle = '#3bb54a'; g.fill(); g.lineWidth = 2; g.strokeStyle = '#fff'; g.stroke();
+      g.font = '900 11px system-ui'; g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('✔', X + (q.hide ? 9 : 0), Y - (q.hide ? 9 : 0) + 1);
     }
     // bạn: mũi tên theo hướng đi
     { const X = sx(p.x), Y = sy(p.z), r = ctx.player.rot; g.save(); g.translate(X, Y); g.rotate(Math.PI - r);

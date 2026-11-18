@@ -129,7 +129,7 @@ export function createSchoolTown(ctx) {
       if (roadDist(x, z) < ROAD_W / 2 && (y == null || y > TOWN_Y - 0.3)) return 'stone';
       return prevSurf(x, z, y);
     };
-    town.ready = true; ctx.toast && ctx.toast('🏫 Chào mừng đến Trường Rubik! Các khu vui chơi nằm quanh đảo — đi bộ khám phá nhé');
+    town.ready = true; if (ctx.toast && (!ctx.zoneId || ctx.zoneId === 'A')) { ctx.zoneGreeted = 'A'; ctx.toast('🏫 Chào mừng đến Trường Rubik! Các khu vui chơi nằm quanh đảo — đi bộ khám phá nhé', 5500); }
   }
 
   // ---------- Mở cửa → mini game 3D (mg/host.js); chưa có bản 3D → "Sắp mở" (không mở game 2D nữa) ----------
@@ -163,7 +163,7 @@ export function createSchoolTown(ctx) {
       <p style="margin-top:13px">🚧 Sắp mở (${soon.size}): ${[...soon].slice(0, 13).join(', ')}${soon.size > 13 ? '…' : ''}</p><button class="x">Đóng</button></div>`;
     menuEl.hidden = false; ctx.player.frozen = true;
   };
-  town.goSchool = () => { ctx.player.teleport(SPAWN[0], SPAWN[1]); ctx.player.pos.y = TOWN_Y; ctx.toast('🏫 Chào mừng đến Trường Rubik!'); };
+  town.goSchool = () => { ctx.player.teleport(SPAWN[0], SPAWN[1]); ctx.player.pos.y = TOWN_Y; ctx.zoneId = ctx.zoneGreeted = 'A'; ctx.toast('🏫 Về lại Trường Rubik!'); };
 
   // ---------- Học sinh, thầy cô, khách: lấy vị trí từ mô phỏng của trường ----------
   // (trang phục theo vai trò, pool, hoạt ảnh, tên trên đầu → town-people.js)
