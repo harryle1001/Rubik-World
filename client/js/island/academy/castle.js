@@ -4,99 +4,44 @@
 // Va chạm: hộp thẳng trục (ctx.boxes); mặt đi trên cao (cầu, ban công): deckY(u, v).
 import * as THREE from 'three';
 import { Batch } from './geo.js';
-import { PLAT, toWorld } from './plan.js';
+import { PLAT, toWorld, heightLocal, CASTLE_L, TOWERS, WATCH, VIA } from './plan.js';
+import { makeKit, deckAt, instMesh, COL, MERLON, ARCH_GEO } from './kit.js';
 import { mat, matV } from '../sample/palette.js';
 import { CFG } from '../config.js';
 import { toon } from '../style.js';
 
 const Y = PLAT.y, PHI = 1.618;
-// ---------- mặt bằng (m) ----------
-export const L = {
-  box: { u0: -106, u1: 38, hv: 116.5 },                     // khung 144 × 233 (233/144 ≈ φ)
-  H: 21, T: 8,                                               // cao dãy nhà, dày dãy
-  gate: 5.5,                                                 // nửa bề rộng cổng chính (11 m)
-  pass: 5,                                                   // nửa bề rộng lối giữa các sân
-  hall: { u0: -89, u1: -55, v0: -10.5, v1: 10.5, h: 21, door: 3 },   // đại sảnh 34 × 21 × 21
-  library: { u0: -98, u1: -85, v0: 55, v1: 89, h: 21 },              // thư viện 13 × 34
-  green: { u0: -21, u1: 0, v0: 68, v1: 81 },                         // nhà kính 21 × 13
-  yard: { u: -8, v: -74, r: 21 },                                    // sân luyện đũa (tròn r 21)
-  astro: { u: -80, v: -74, r: 8, h1: 55, r2: 6, h: 89, roof: 21, deck: 10.5 },   // tháp thiên văn
-  bridge: { u: -55, w: 2.5, v0: -116.5, v1: -205.5, tower: [-55, -211, 6.5] },  // cầu có mái 89 m + Tháp Gió
-};
-// 8 tháp phụ: [u, v, r, cao thân, cao mái] — mái nón nhọn cao r·φ³
-const TW = [
-  [38, -116.5, 6.5, 55], [38, 116.5, 6.5, 55], [-106, -116.5, 6.5, 55], [-106, 116.5, 6.5, 55],
-  [38, -12, 5, 34], [38, 12, 5, 34], [-34, -116.5, 5, 34], [-34, 116.5, 5, 34],
-].map(t => [...t, t[2] * PHI ** 3]);
+export const L = CASTLE_L;   // mặt bằng (m): plan.js
+const C_WALL = COL.wall, C_WALL_D = COL.wallD, C_ROOF = COL.roof, C_ROOF_G = COL.roofG, C_WOOD = COL.wood, C_WOOD_L = COL.woodL, C_FLOOR = COL.floor, C_PAVE = COL.pave;
+const ground = (u, v) => { const [x, z] = toWorld(u, v); return heightLocal(u, v, x, z); };
 
-const C_WALL = '#9f9a92', C_WALL_D = '#7f7a73', C_ROOF = '#3f4a56', C_ROOF_G = '#4f6f66', C_WOOD = '#6e4a30', C_WOOD_L = '#a8744a', C_FLOOR = '#8d857a', C_PAVE = '#b3aca0';
-
-/** Dựng toàn bộ hình lâu đài vào các batch. far = true: chỉ khối ngoài (bóng xa). Trả về danh sách hộp va chạm cục bộ. */
-// ô cửa sổ nhọn Gothic: thân 1,2 × 3 m + chóp tháp 4 mặt; dẹt theo pháp tuyến tường
-const PYR_U = new THREE.ConeGeometry(0.85, 0.95, 4).rotateY(Math.PI / 4).scale(1, 1, 0.14), PYR_V = new THREE.ConeGeometry(0.85, 0.95, 4).rotateY(Math.PI / 4).scale(0.14, 1, 1);
+/** Dựng toàn bộ hình lâu đài vào các batch. far = true: chỉ khối ngoài (bóng xa). Trả về hộp va chạm cục bộ, chóp tháp, mặt cầu, instancing. */
 function layout(B, far = false) {
-  const { wall, roof, glow, glass } = B, win = B.win, det = far ? null : B.det, boxes = [], tips = [], seg = far ? 6 : 10;
-  // cửa sổ trên mặt tường: axis 'u' = mặt vuông góc trục u (tường chạy dọc v)
-  const winAt = (axis, fixed, side, a, y0, w = 1.2, hh = 3) => {
-    if (!win) return; const f = fixed + side * (far ? 0.6 : 0.1);
-    if (axis === 'u') { win.box(a - w / 2, a + w / 2, y0, y0 + hh, f - 0.07, f + 0.07, '#ffffff'); win.add(PYR_U, '#ffffff', a, y0 + hh + 0.47, f); }
-    else { win.box(f - 0.07, f + 0.07, y0, y0 + hh, a - w / 2, a + w / 2, '#ffffff'); win.add(PYR_V, '#ffffff', f, y0 + hh + 0.47, a); }
-  };
-  const solid = (u0, u1, v0, v1, top) => boxes.push({ u0, u1, v0, v1, top });
-  // dãy nhà dọc trục u hoặc v, có các khoảng hở (cửa) [a, b] dọc chiều dài, cao cửa dh
-  const range = (u0, u1, v0, v1, h, rh, gaps = [], dh = 8, outer = 0) => {
-    const alongV = v1 - v0 > u1 - u0, a0 = alongV ? v0 : u0, a1 = alongV ? v1 : u1;
-    // cửa sổ 2 mặt dài: 2 hàng (dãy cao 21 m) / 1 hàng (13 m); cách nhau 4,2 m (máy xa: 8,4 m, 1 hàng)
-    const rows = far ? [Y + 4] : h > 15 ? [Y + 3.4, Y + 11] : [Y + 4.2], stp = far ? 8.4 : 4.2;
-    for (let a = a0 + 8; a <= a1 - 8; a += stp) {
-      if (gaps.some(([g0, g1]) => a > g0 - 1.6 && a < g1 + 1.6)) continue;
-      for (const y of rows) { if (alongV) { winAt('u', u0, -1, a, y); winAt('u', u1, 1, a, y); } else { winAt('v', v0, -1, a, y); winAt('v', v1, 1, a, y); } }
-    }
-    if (det) {
-      det.box(v0 - 0.4, v1 + 0.4, Y - 1, Y + 1.4, u0 - 0.4, u1 + 0.4, '#6f7466');                                   // chân tường rêu
-      if (outer) for (let a = a0 + 6.3; a <= a1 - 6; a += 8.4) {                                                     // trụ chống + tháp nhọn nhỏ
-        if (gaps.some(([g0, g1]) => a > g0 - 1 && a < g1 + 1)) continue;
-        if (alongV) { const f = outer > 0 ? u1 : u0; det.box(a - 0.5, a + 0.5, Y - 2, Y + 15, Math.min(f, f + outer * 1.2), Math.max(f, f + outer * 1.2), C_WALL_D); det.cone(a, Y + 15, f + outer * 0.6, 0.55, 2.6, C_ROOF); }
-        else { const f = outer > 0 ? v1 : v0; det.box(Math.min(f, f + outer * 1.2), Math.max(f, f + outer * 1.2), Y - 2, Y + 15, a - 0.5, a + 0.5, C_WALL_D); det.cone(f + outer * 0.6, Y + 15, a, 0.55, 2.6, C_ROOF); }
-      }
-      const c = alongV ? (u0 + u1) / 2 : (v0 + v1) / 2;                                                              // tháp nhọn dọc nóc mái (34 m/chiếc)
-      for (let a = a0 + 21; a <= a1 - 21; a += 34) {
-        if (gaps.some(([g0, g1]) => a > g0 - 3 && a < g1 + 3)) continue;
-        if (alongV) { det.cyl(a, Y + h - 1, c, 1.3, rh + 2.4, C_WALL, 8); det.cone(a, Y + h + rh + 1.4, c, 1.6, 6.5, C_ROOF, 8); }
-        else { det.cyl(c, Y + h - 1, a, 1.3, rh + 2.4, C_WALL, 8); det.cone(c, Y + h + rh + 1.4, a, 1.6, 6.5, C_ROOF, 8); }
-      }
-    }
-    const seg2 = (a, b, y0, y1) => alongV ? wall.box(a, b, y0, y1, u0, u1, C_WALL) : wall.box(v0, v1, y0, y1, a, b, C_WALL);
-    let s = a0;
-    for (const [g0, g1] of [...gaps].sort((p, q) => p[0] - q[0])) {
-      if (g0 > s) { seg2(s, g0, Y, Y + h); if (!far) solid(...(alongV ? [u0, u1, s, g0] : [s, g0, v0, v1]), Y + h); }
-      seg2(g0, g1, Y + dh, Y + h); s = g1;                                                   // lanh tô trên cửa (không va chạm)
-    }
-    if (a1 > s) { seg2(s, a1, Y, Y + h); if (!far) solid(...(alongV ? [u0, u1, s, a1] : [s, a1, v0, v1]), Y + h); }
-    roof.gable(v0 - 0.6, v1 + 0.6, u0 - 0.6, u1 + 0.6, Y + h, rh, C_ROOF);
-    if (!far) wall.box(v0 - 0.3, v1 + 0.3, Y + h - 0.6, Y + h, u0 - 0.3, u1 + 0.3, C_WALL_D);   // gờ mái
-  };
-  const tower = (u, v, r, h, rh, col = C_ROOF, flag = true) => {
-    wall.cyl(v, Y - 3, u, r, h + 3, C_WALL, seg, r * 0.94);
-    if (!far) for (let y = Y + 8; y < Y + h - 5; y += 8.4) { const R = r * 0.97 + 0.02; winAt('u', u + R, 1, v, y, 1, 2.6); winAt('u', u - R, -1, v, y, 1, 2.6); winAt('v', v + R, 1, u, y, 1, 2.6); winAt('v', v - R, -1, u, y, 1, 2.6); }
-    else winAt('u', u + r, 1, v, Y + h * 0.6, 1.4, 3.4);
-    if (flag) tips.push([v, Y + h + rh, u]);
-    if (det) det.cyl(v, Y + h + rh - 0.4, u, 0.06, 4.2, C_WOOD, 5);                                                   // cột cờ
-    if (!far) wall.cyl(v, Y + h - 1.2, u, r * 1.08, 1.2, C_WALL_D, seg);                           // gờ đỉnh
-    roof.cone(v, Y + h, u, r * 1.12, rh, col, seg);
-    if (!far) solid(u - r, u + r, v - r, v + r, Y + h);
-  };
+  const { glow, glass } = B, wall = B.wall, roof = B.roof, win = B.win, seg = far ? 6 : 10;
+  const K = makeKit(B, { far, Y, ground }), { boxes, tips, solid, winAt, range, tower } = K;
   const { box: X, H, T } = L;
   // --- 4 dãy bao quanh ---
   range(X.u1 - T, X.u1, -X.hv, X.hv, H, 8, [[-L.gate, L.gate]], 13, 1);                              // mặt tiền + cổng 11 × 13 m
-  range(X.u0, X.u0 + T, -X.hv, X.hv, H, 8, [], 8, -1);                                                // dãy sau
+  range(X.u0, X.u0 + T, -X.hv, X.hv, H, 8, [[-L.back, L.back]], 8, -1);                              // dãy sau + cổng sau 8 × 8 m
   range(X.u0, X.u1, -X.hv, -X.hv + T, H, 8, [[L.bridge.u - 3.5, L.bridge.u + 3.5]], 8, -1);          // dãy tây (cửa ra cầu)
   range(X.u0, X.u1, X.hv - T, X.hv, H, 8, [], 8, 1);                                                  // dãy đông
   // --- 2 dãy ngăn 3 sân (lối qua giữa) ---
   range(X.u0 + T, X.u1 - T, -40, -32, 13, 5, [[-L.pass, L.pass]]);
   range(X.u0 + T, X.u1 - T, 32, 40, 13, 5, [[-L.pass, L.pass]]);
   // --- tháp ---
-  for (const [u, v, r, h, rh] of TW) tower(u, v, r, h, rh, h > 40 ? C_ROOF : C_ROOF_G, h > 40 || Math.abs(v) < 20);
+  for (const [u, v, r, h, rh] of TOWERS) tower(u, v, r, h, rh, h > 40 ? C_ROOF : C_ROOF_G, h > 30 || Math.abs(v) < 20);
+  // --- khối mái chồng lớp + tháp góc nhỏ trên nóc → bóng mái nhiều cấp ---
+  for (const m of L.masses) K.mass(...m);
+  for (const t of L.turrets) K.turret(...t);
+  // --- tường thành + 8 tháp canh quanh mép vách ---
+  const Cw = L.curtain, Bg0 = L.bridge;
+  K.curtain(Cw, { front: [[-L.gate, L.gate]], back: [[-L.back, L.back]], west: [[Bg0.u - Bg0.w - 1, Bg0.u + Bg0.w + 1]], east: [] });
+  for (const [u, v] of WATCH.at) K.watch(u, v, WATCH.r, WATCH.h);
+  // --- cầu cạn nhiều nhịp vòm: đường băng → cổng sau (nhánh A dọc v, nhánh B dọc u) ---
+  const vw = VIA.w, yA0 = ground(VIA.uA, VIA.vA0) + 0.3, sl = (Y - yA0) / (-vw - VIA.vA0 + VIA.uB1 - VIA.uA - vw), yC = yA0 + (-vw - VIA.vA0) * sl;
+  K.arcade('v', VIA.vA0, -vw, VIA.uA, yA0, yC, vw);                 // nhánh A
+  K.arcade('v', -vw, vw, VIA.uA, yC, yC, vw);                       // chiếu nghỉ ở góc
+  K.arcade('u', VIA.uA + vw, VIA.uB1 + 1, 0, yC, Y + sl, vw);       // nhánh B → mép vách, cổng sau
   // tháp thiên văn: thân dưới r 8 tới 55 m, ban công r 10,5, thân trên r 6 tới 89 m, mái nón 21 m
   const A = L.astro;
   wall.cyl(A.v, Y - 3, A.u, A.r, A.h1 + 3, C_WALL, seg, A.r * 0.95);
@@ -155,14 +100,12 @@ function layout(B, far = false) {
   const Bg = L.bridge, bu = Bg.u, w = Bg.w;
   wall.box(Bg.v1, Bg.v0, Y - 1.2, Y, bu - w, bu + w, C_WALL);                                                     // mặt cầu
   for (const s of [-1, 1]) wall.box(Bg.v1, Bg.v0, Y, Y + 1.1, bu + s * w - 0.25, bu + s * w + 0.25, C_WALL_D);       // lan can
-  for (let v = Bg.v0 - 8; v > Bg.v1 + 3; v -= 13) {                                                                  // trụ vòm xuống đáy hồ
-    wall.box(v - 1.6, v + 1.6, -4, Y - 1.2, bu - w - 0.6, bu + w + 0.6, C_WALL_D);
-    if (!far) for (const s of [-1, 1]) wall.box(v - 0.3, v + 0.3, Y + 1.1, Y + 5, bu + s * w - 0.3, bu + s * w + 0.3, C_WOOD);   // cột mái
-  }
+  K.arches('v', Bg.v1 + 6.5, Bg.v0, bu, Y, Y, w);                                                                    // nhịp vòm + trụ xuống đáy hồ
+  if (!far) for (let v = Bg.v0 - 8; v > Bg.v1 + 3; v -= 13) for (const s of [-1, 1]) wall.box(v - 0.3, v + 0.3, Y + 1.1, Y + 5, bu + s * w - 0.3, bu + s * w + 0.3, C_WOOD);   // cột mái
   roof.gable(Bg.v1, Bg.v0, bu - w - 0.8, bu + w + 0.8, Y + 5, 3.1, C_ROOF_G);
   if (!far) wall.box(Bg.v1, Bg.v0, Y + 4.85, Y + 5, bu - w - 0.6, bu + w + 0.6, C_WOOD);   // trần gỗ dưới mái
   const [tu, tv, tr] = Bg.tower; tower(tu, tv, tr, 21, tr * PHI ** 3, C_ROOF_G, true);
-  wall.cyl(tv, -4, tu, tr * 1.05, Y + 1, C_WALL_D, seg);                                                                 // chân Tháp Gió từ đất lên
+  wall.cyl(tv, -4, tu, tr * 1.05, Y + 1, C_WALL_D, seg);                                                                 // chân Tháp Gió từ đáy hồ lên
   if (!far) for (const s of [-1, 1]) solid(bu + s * w - 0.25, bu + s * w + 0.25, Bg.v1 + 6, Bg.v0, Y + 1.1);
   // --- sân luyện đũa: vòng lát + 5 bia tập ---
   if (!far) {
@@ -171,7 +114,7 @@ function layout(B, far = false) {
     wall.add(new THREE.CircleGeometry(3.4, 21).rotateX(-Math.PI / 2), '#c9a86a', Yd.v, Y + 0.07, Yd.u);
     for (let k = 0; k < 5; k++) { const a = Math.PI + (k - 2) * 0.5, bv = Yd.v + Math.sin(a) * 13, bu2 = Yd.u + Math.cos(a) * 13; wall.cyl(bv, Y, bu2, 0.12, 1.6, C_WOOD, 6); wall.add(new THREE.CylinderGeometry(0.62, 0.62, 0.12, 13), k % 2 ? '#d8433a' : '#f3efe6', bv, Y + 1.9, bu2, 0, Math.PI / 2); }
   }
-  return { boxes, tips };
+  return { boxes, tips, decks: K.decks, inst: K.inst };
 }
 
 /** Bóng xa: khối (1 geometry tô màu đỉnh) + ô cửa sổ (để sáng ban đêm) */
@@ -221,11 +164,13 @@ export const lookChoice = () => { let v = new URLSearchParams(location.search).g
 /** Lâu đài gần: trả về { group, boxes (thế giới), deckY(u,v), update(dt, t, playerPos) } */
 export function buildCastle(ctx) {
   const B = { wall: new Batch(), roof: null, glow: new Batch(), glass: new Batch(), win: new Batch(), det: new Batch() }; B.roof = B.wall;
-  const { boxes: local, tips } = layout(B), look = lookChoice(), stone = stoneMaterial(look);
+  const { boxes: local, tips, decks, inst } = layout(B), look = lookChoice(), stone = stoneMaterial(look);
   const g = new THREE.Group(); g.name = 'academy-castle';
   const add = (geo, m, shadow) => { const o = new THREE.Mesh(geo, m); o.castShadow = shadow; o.receiveShadow = true; o.matrixAutoUpdate = false; g.add(o); return o; };
   add(B.wall.build(), stone, true);
   const detail = add(B.det.build(), stone, true);
+  const merl = instMesh(MERLON, C_WALL_D, inst.merlon, stone), arch = instMesh(ARCH_GEO, C_WALL, inst.arch, stone);   // răng cưa · nhịp vòm (instancing)
+  g.add(merl, arch);
   add(B.glow.build(), mat('lampGlow'), false);
   const winMat = new THREE.MeshBasicMaterial({ color: '#2a3440' }), DAY = new THREE.Color('#2a3440'), NIGHT = new THREE.Color('#ffd98a');
   add(B.win.build(), winMat, false);
@@ -253,9 +198,9 @@ export function buildCastle(ctx) {
   const boxes = local.map(b => { const [x0, z0] = toWorld(b.u0, b.v0), [x1, z1] = toWorld(b.u1, b.v1); return { x0: Math.min(x0, x1), x1: Math.max(x0, x1), z0: Math.min(z0, z1), z1: Math.max(z0, z1), top: b.top }; });
   const A = L.astro, Bg = L.bridge;
   const deckY = (u, v) => {
-    if (Math.abs(u - Bg.u) < Bg.w && v < Bg.v0 + 1 && v > Bg.v1 - 1) return Y;                       // mặt cầu
+    if (Math.abs(u - Bg.u) < Bg.w && v < Bg.v0 + 1 && v > Bg.v1 - 1) return Y;                       // mặt cầu có mái
     const d = Math.hypot(u - A.u, v - A.v); if (d < A.deck - 0.2 && d > A.r2) return Y + A.h1;         // ban công tháp thiên văn
-    return null;
+    return deckAt(decks, u, v);                                                                        // cầu cạn nhiều nhịp vòm
   };
   const hc = toWorld((Hh.u0 + Hh.u1) / 2, 0), [bx0, bz0] = toWorld(L.box.u0, -L.box.hv), [bx1, bz1] = toWorld(L.box.u1, L.box.hv), cam = ctx.camera.position;
   return {
@@ -263,7 +208,7 @@ export function buildCastle(ctx) {
     update(dt, t, p) {
       const near = Math.hypot(p.x - hc[0], p.z - hc[1]) < 55; wax.visible = flame.visible = near; if (near) placeCandles(t);
       const dBox = Math.hypot(Math.max(bx0 - cam.x, 0, cam.x - bx1), Math.max(bz0 - cam.z, 0, cam.z - bz1));
-      detail.visible = flags.visible = dBox < 144;                                                         // LOD: chi tiết chỉ trong 144 m
+      detail.visible = flags.visible = merl.visible = dBox < 144;                                                         // LOD: chi tiết chỉ trong 144 m
       if (flags.visible) placeFlags(t);
       const n = ctx.sky && ctx.sky.state ? ctx.sky.state.night || 0 : 0; winMat.color.copy(DAY).lerp(NIGHT, Math.min(1, Math.max(0, (n - 0.12) / 0.5)));
     },

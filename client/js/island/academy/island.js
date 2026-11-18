@@ -5,7 +5,7 @@ import { CFG } from '../config.js';
 import { matV, mat } from '../sample/palette.js';
 import { Batch } from './geo.js';
 import { buildCastle } from './castle.js';
-import { ROT, C, ISLE, PLAT, QUAY, RUNWAY, heightLocal, toWorld, plateauDist, isleDist, LAKE } from './plan.js';
+import { ROT, C, ISLE, PLAT, QUAY, RUNWAY, heightLocal, toWorld, plateauDist, isleDist, LAKE, quayY } from './plan.js';
 
 const COL = {
   sand: new THREE.Color('#d9c8a6'), grass: new THREE.Color('#7fbf5e'), grassD: new THREE.Color('#5a9a48'),
@@ -40,23 +40,35 @@ function terrainGeo() {
   g.setIndex(idx); g.computeVertexNormals(); g.computeBoundingSphere(); return g;
 }
 
-// dốc đá + bến + lan can + cột đèn (toạ độ cục bộ x = v, z = u)
-function quayGeo() {
-  const b = new Batch(), u0 = QUAY.u0, u1 = QUAY.u0 + QUAY.w, um = (u0 + u1) / 2, stone = '#9a958c', stoneD = '#7d786f';
-  b.box(0, QUAY.v1, QUAY.y - 1.2, QUAY.y, u0, u1 + 3, stone);                                   // bến cập thuyền (nhô ra hồ 3 m)
-  const L = -QUAY.v0, rise = QUAY.y_top - QUAY.y, len = Math.hypot(L, rise), ang = Math.atan2(rise, L);
-  b.add(new THREE.BoxGeometry(len, 1.2, QUAY.w), stone, -L / 2, (QUAY.y + QUAY.y_top) / 2 - 0.6 / Math.cos(ang), um, 0, 0, -ang);   // dốc đá dài 89 m, dốc 1/φ²
-  // lan can thấp phía hồ (0,9 m) theo dốc
-  b.add(new THREE.BoxGeometry(len, 0.9, 0.4), stoneD, -L / 2, (QUAY.y + QUAY.y_top) / 2 + 0.45, u1 - 0.2, 0, 0, -ang);
-  b.box(0, QUAY.v1, QUAY.y, QUAY.y + 0.9, u1 + 2.8, u1 + 3.2, stoneD);
-  // cọc buộc thuyền + cột đèn lồng 3 m (đèn phát sáng: lampGlow riêng)
-  for (const v of [3, 13, 21]) b.cyl(v - 1, QUAY.y, u1 + 2.3, 0.18, 0.8, '#6e4a30', 6);
-  for (const v of [-55, -21, 2, 19]) { const y = v >= 0 ? QUAY.y : QUAY.y + (QUAY.y_top - QUAY.y) * (-v / L); b.cyl(v, y, u1 - 0.6, 0.09, 3, '#3a3344', 6); }
+// bến + đường mòn gấp khúc lên vách (nhánh 1 men chân vách, chiếu nghỉ, nhánh 2 khắc vào vách) + lan can + cột đèn (x = v, z = u)
+const LAMPS = [[-55, 1], [-21, 1], [2, 1], [19, 1], [-70, 2], [-40, 2]];   // [v, nhánh]
+function quayGeo(boxes) {
+  const Q = QUAY, b = new Batch(), u0 = Q.u0, u1 = Q.u0 + Q.w, stone = '#9a958c', stoneD = '#7d786f';
+  b.box(0, Q.v1, Q.y - 1.2, Q.y, u0, u1 + 3, stone);                                          // bến cập thuyền (nhô ra hồ 3 m)
+  const ramp = (va, vb, ya, yb, ua, ub, rail) => {                                             // dải dốc đều từ (va, ya) tới (vb, yb)
+    const L = Math.abs(vb - va), len = Math.hypot(L, yb - ya), ang = Math.atan2(yb - ya, vb - va), vm = (va + vb) / 2, ym = (ya + yb) / 2;
+    b.add(new THREE.BoxGeometry(len, 1.2, ub - ua), stone, vm, ym - 0.6 / Math.cos(ang), (ua + ub) / 2, 0, 0, ang);
+    if (rail != null) b.add(new THREE.BoxGeometry(len, 0.9, 0.4), stoneD, vm, ym + 0.45, rail, 0, 0, ang);   // lan can 0,9 m phía vực
+  };
+  ramp(0, Q.v0, Q.y, Q.ymid, u0, u1, u1 - 0.2);                                                // nhánh 1: v 0 → −89
+  b.box(Q.v0 - Q.land, Q.v0, -4, Q.ymid, u0, u1, stoneD); b.box(Q.v0 - Q.land, Q.v0, Q.ymid - 1.2, Q.ymid, u0 - Q.w, u0, stone);   // chiếu nghỉ (trụ đá từ đáy hồ)
+  b.box(Q.v0 - Q.land - 0.4, Q.v0 - Q.land, Q.ymid, Q.ymid + 0.9, u0 - Q.w, u1, stoneD); b.box(Q.v0 - Q.land, Q.v0, Q.ymid, Q.ymid + 0.9, u1 - 0.4, u1, stoneD);
+  ramp(Q.v0, Q.v2, Q.ymid, Q.y_top, u0 - Q.w, u0, u0 - 0.2);                                  // nhánh 2 khắc vào vách: v −89 → −13
+  b.box(0, Q.v1, Q.y, Q.y + 0.9, u1 + 2.8, u1 + 3.2, stoneD);
+  const yAt = v => quayY(v < Q.v0 ? u0 : u0 + 1, v), y2 = v => quayY(u0 - 1, v);
+  for (let v = Q.v0; v < Q.v2 - 0.1; v += 8) {                                                // tường chắn đất phía trong nhánh 2 + va chạm lan can
+    const e = Math.min(Q.v2, v + 8), lo = y2(v), hi = y2(e);
+    b.box(v, e, lo - 0.5, PLAT.y + 0.4, u0 - Q.w - 0.8, u0 - Q.w, stoneD);
+    boxes.push({ u0: u0 - 0.4, u1: u0, v0: v, v1: e, top: hi + 0.9 });
+  }
+  for (let v = Q.v0; v < -0.1; v += 8) boxes.push({ u0: u1 - 0.4, u1: u1, v0: v, v1: Math.min(0, v + 8), top: yAt(v) + 0.9 });   // lan can nhánh 1
+  for (const v of [3, 13, 21]) b.cyl(v - 1, Q.y, u1 + 2.3, 0.18, 0.8, '#6e4a30', 6);           // cọc buộc thuyền
+  for (const [v, k] of LAMPS) { const u = k === 1 ? u1 - 0.6 : u0 - 0.6, y = k === 1 ? yAt(v) : y2(v); b.cyl(v, y, u, 0.09, 3, '#3a3344', 6); }   // cột đèn lồng 3 m
   return b.build();
 }
 function lampGeo() {
-  const b = new Batch(), u1 = QUAY.u0 + QUAY.w, L = -QUAY.v0;
-  for (const v of [-55, -21, 2, 19]) { const y = v >= 0 ? QUAY.y : QUAY.y + (QUAY.y_top - QUAY.y) * (-v / L); b.box(v - 0.22, v + 0.22, y + 3, y + 3.5, u1 - 0.82, u1 - 0.38, '#ffe3a0'); }
+  const b = new Batch(), Q = QUAY, u1 = Q.u0 + Q.w;
+  for (const [v, k] of LAMPS) { const u = k === 1 ? u1 - 0.6 : Q.u0 - 0.6, y = quayY(k === 1 ? Q.u0 + 1 : Q.u0 - 1, v); b.box(v - 0.22, v + 0.22, y + 3, y + 3.5, u - 0.22, u + 0.22, '#ffe3a0'); }
   return b.build();
 }
 // đường băng 233 × 13 m: nhựa, vạch giữa, vạch ngưỡng, đèn mép
@@ -72,12 +84,34 @@ function runwayGeo() {
   return b.build();
 }
 
+// mỏm đá lởm chởm dọc chân vách (1 InstancedMesh): vách 55 m nhìn dựng đứng, bóng đổ gãy khúc
+function cragMesh() {
+  const geo = new THREE.IcosahedronGeometry(1, 0), n = geo.attributes.position.count, col = new Float32Array(n * 3), c = new THREE.Color('#6a6660');
+  for (let i = 0; i < n; i++) { const k = 0.85 + 0.15 * Math.sin(i * 2.3); col.set([c.r * k, c.g * k, c.b * k], i * 3); }
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const list = [], o = new THREE.Object3D(); let s = 233; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const P = 2 * (2 * PLAT.hu + 2 * PLAT.hv), N = 144;
+  for (let k = 0; k < N; k++) {
+    let t = (k + rnd() * 0.6) / N * P, u, v;                                                    // chạy quanh chu vi cao nguyên
+    if (t < 2 * PLAT.hv) { u = PLAT.u + PLAT.hu; v = -PLAT.hv + t; } else if ((t -= 2 * PLAT.hv) < 2 * PLAT.hu) { v = PLAT.hv; u = PLAT.u + PLAT.hu - t; }
+    else if ((t -= 2 * PLAT.hu) < 2 * PLAT.hv) { u = PLAT.u - PLAT.hu; v = PLAT.hv - t; } else { t -= 2 * PLAT.hv; v = -PLAT.hv; u = PLAT.u - PLAT.hu + t; }
+    const cu = Math.max(PLAT.u - PLAT.hu + PLAT.r, Math.min(PLAT.u + PLAT.hu - PLAT.r, u)), cv = Math.max(-PLAT.hv + PLAT.r, Math.min(PLAT.hv - PLAT.r, v));
+    const d = Math.hypot(u - cu, v - cv) || 1, nu = (u - cu) / d, nv = (v - cv) / d;                // pháp tuyến ra ngoài (góc bo)
+    if (d > PLAT.r * 0.7 && d < PLAT.r * 1.5) { u = cu + nu * PLAT.r; v = cv + nv * PLAT.r; }
+    if (u > PLAT.u + PLAT.hu - 3 && v > QUAY.v0 - QUAY.land - 5 && v < QUAY.v1 + 21) continue;     // chừa đường mòn + bến + lạch
+    const off = 1.5 + rnd() * 3, h = 13 + rnd() * 34, r = 3 + rnd() * 3.4;
+    o.position.set(v + nv * off, -3 + h * 0.42, u + nu * off); o.rotation.set(rnd() * 0.3, rnd() * 6.28, rnd() * 0.3); o.scale.set(r, h * 0.5, r * 0.8); o.updateMatrix(); list.push(o.matrix.clone());
+  }
+  const m = new THREE.InstancedMesh(geo, matV(), list.length); list.forEach((mx, i) => m.setMatrixAt(i, mx)); m.castShadow = m.receiveShadow = true; m.computeBoundingSphere(); return m;
+}
+
 export function buildIsland(ctx) {
   const group = new THREE.Group(); group.position.set(C[0], 0, C[1]); group.rotation.y = ROT; group.name = 'academy';
   const add = (geo, m, shadow = false) => { const o = new THREE.Mesh(geo, m); o.receiveShadow = true; o.castShadow = shadow; o.matrixAutoUpdate = false; o.updateMatrix(); group.add(o); return o; };
   const land = add(terrainGeo(), matV());
-  add(quayGeo(), matV(), true); add(lampGeo(), mat('lampGlow')); add(runwayGeo(), matV());
-  const castle = buildCastle(ctx); group.add(castle.group);
+  const castle = buildCastle(ctx); group.add(castle.group); group.add(cragMesh());
+  const qb = []; add(quayGeo(qb), matV(), true); add(lampGeo(), mat('lampGlow')); add(runwayGeo(), matV());
+  for (const b of qb) { const [x0, z0] = toWorld(b.u0, b.v0), [x1, z1] = toWorld(b.u1, b.v1); castle.boxes.push({ x0: Math.min(x0, x1), x1: Math.max(x0, x1), z0: Math.min(z0, z1), z1: Math.max(z0, z1), top: b.top }); }
   group.updateMatrixWorld(true); ctx.scene.add(group);
   return {
     group, castle, land,

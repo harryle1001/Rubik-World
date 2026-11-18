@@ -1,7 +1,15 @@
 // academy/plan.js — MẶT BẰNG ĐẢO HỌC VIỆN PHA LÊ (số liệu thuần, không dựng hình).
 // Hệ toạ độ cục bộ của đảo: u = trục nam (+z, mặt tiền lâu đài, lạch + bến thuyền), v = trục đông (+x).
-// Mọi kích thước theo Fibonacci / φ:  đảo 466 × 466 m (bo góc 89) · cao nguyên 178 × 288 m, cao 34 m · hồ rộng 55 m ·
-// lạch vào hồ rộng 34 m · dốc đá lên cao nguyên dài 89 m (dốc 34/89 = 1/φ²) · đường băng 233 × 13 m.
+// Mọi kích thước theo Fibonacci / φ:  đảo 466 × 466 m (bo góc 89) · cao nguyên 178 × 288 m, vách đá dựng đứng 55 m sát hồ ·
+// hồ rộng 55 m · lạch vào hồ rộng 34 m · đường mòn gấp khúc khắc vào vách (2 nhánh 89 + 76 m, dốc ≈ 1/π) · đường băng 233 × 13 m ·
+// cầu cạn nhiều nhịp vòm từ đường băng lên cổng sau (nhịp 13 m, 89 + 77 m).
+//
+// KÍCH THƯỚC CHÍNH LÂU ĐÀI (m) — chi tiết ở CASTLE_L / TOWERS bên dưới:
+//   khung 233 × 144 (233/144 ≈ φ) · dãy bao cao 21, dày 8 · dãy ngăn cao 13 → 3 sân (Luyện Đũa · Đại Sảnh · Thảo Mộc)
+//   tháp chính (thiên văn) 89 + mái 21, ban công 55 · 8 tháp phụ tròn 55 / 34 / 21, mái nón nhọn cao r·φ³
+//   đại sảnh 34 × 21 × 21 (+ mái 13) · thư viện 13 × 34 × 21 · nhà kính vòm 21 × 13 · sân luyện đũa r 21
+//   khối mái chồng lớp: nhà cổng 34, cánh đông 34, dãy sau 34, tháp góc nhỏ 34 · cầu có mái 89 sang Tháp Gió (21)
+//   tường thành cao 5 (răng cưa 1,3 m, cách 2,1 m) quanh mép vách, 8 tháp canh thấp 13 (r 3,4)
 import { ACADEMY, PHI } from '../layout.js';
 import { fbm } from '../terrain.js';
 
@@ -16,15 +24,44 @@ export const toWorld = (u, v) => [C[0] + u * F[0] + v * S[0], C[1] + u * F[1] + 
 export const toLocal = (x, z) => { const dx = x - C[0], dz = z - C[1]; return [dx * F[0] + dz * F[1], dx * S[0] + dz * S[1]]; };
 
 // ---------- số đo chính (m) ----------
-export const PLAT = { u: -34, hu: 89, hv: 144, r: 21, y: 34 };          // cao nguyên đặt lâu đài (hình chữ nhật bo góc)
+export const PLAT = { u: -34, hu: 89, hv: 144, r: 21, y: 55 };          // cao nguyên đặt lâu đài (hình chữ nhật bo góc)
 export const ISLE = { u: -34, hu: 233, hv: 233, r: 89 };                // mép đảo
 export const LAKE = 55;                                                  // hồ bao quanh cao nguyên (bề rộng)
 export const LAKE_Y = -3;                                                // đáy hồ
 export const INLET = 17;                                                 // nửa bề rộng lạch thông ra biển (34 m)
-export const QUAY = { u0: PLAT.u + PLAT.hu, w: 8, v0: -89, v1: 21, y: 1.6, y_top: PLAT.y };   // bến + dốc đá men chân vách (u ∈ [u0, u0+w])
+// bến + đường mòn gấp khúc: nhánh 1 men chân vách (u ∈ [u0, u0+w], v 0 → v0), chiếu nghỉ 8 m, nhánh 2 khắc vào vách (u ∈ [u0−w, u0], v v0 → v2)
+export const QUAY = { u0: PLAT.u + PLAT.hu, w: 8, v0: -89, v1: 21, v2: -13, land: 8, y: 1.6, y_top: PLAT.y };
+QUAY.ymid = QUAY.y + (QUAY.y_top - QUAY.y) * 89 / (89 + QUAY.v2 - QUAY.v0);   // độ cao chiếu nghỉ (2 nhánh cùng dốc)
 export const DOCK = [QUAY.u0 + QUAY.w + 5, 10];                          // chỗ thuyền cập bến (u, v)
 export const RUNWAY = { u: ISLE.u - ISLE.hu + 45, hw: 6.5, hl: 116.5, y: 5 };   // đường băng 233 × 13 m chạy theo trục v, sau lâu đài
 export const CASTLE = { u0: -106, u1: 38, hv: 116.5 };                   // khung lâu đài 144 × 233 m (233/144 ≈ φ)
+// mặt bằng lâu đài (dùng ở castle.js / kit.js)
+export const CASTLE_L = {
+  box: CASTLE, H: 21, T: 8,                                  // cao dãy nhà, dày dãy
+  gate: 5.5, back: 4,                                        // nửa bề rộng cổng chính (11 m) · cổng sau (8 m)
+  pass: 5,                                                   // nửa bề rộng lối giữa các sân
+  hall: { u0: -89, u1: -55, v0: -10.5, v1: 10.5, h: 21, door: 3 },   // đại sảnh 34 × 21 × 21
+  library: { u0: -98, u1: -85, v0: 55, v1: 89, h: 21 },              // thư viện 13 × 34
+  green: { u0: -21, u1: 0, v0: 68, v1: 81 },                         // nhà kính 21 × 13
+  yard: { u: -8, v: -74, r: 21 },                                    // sân luyện đũa (tròn r 21)
+  astro: { u: -80, v: -74, r: 8, h1: 55, r2: 6, h: 89, roof: 21, deck: 10.5 },   // tháp chính (thiên văn)
+  bridge: { u: -55, w: 2.5, v0: -116.5, v1: -205.5, tower: [-55, -211, 6.5] },  // cầu có mái 89 m + Tháp Gió
+  // khối chồng lớp trên dãy nhà [u0, u1, v0, v1, cao đỉnh tường, cao mái]: bóng mái nhiều cấp
+  masses: [[29, 39, -8.5, 8.5, 34, 13], [-63, -21, 108, 117, 34, 8], [-106.5, -97.5, -34, 34, 34, 8], [-106.5, -97.5, 68, 102, 29, 8], [29.5, 38.5, -102, -68, 29, 8]],
+  // tháp góc nhỏ trên nóc: [u, v, r, cao đỉnh]
+  turrets: [[30.5, -34, 2.6, 34], [30.5, 34, 2.6, 34], [-98.5, -36, 2.6, 34], [-98.5, 36, 2.6, 34], [-20, 116.5, 2.1, 29], [-64, 116.5, 2.1, 29], [8, -116.5, 2.1, 29]],
+  // tường thành quanh mép vách (thụt 8 m): u ∈ [u0, u1], v ∈ ±hv; cổng trước |v| < 5,5, cổng sau |v| < 4, khe cầu có mái
+  curtain: { u0: -115, u1: 46, hv: 136, h: 5, t: 1.5 },
+};
+// 8 tháp phụ: [u, v, r, cao thân] — 55 / 34 / 21 (Fibonacci), mái nón nhọn cao r·φ³
+export const TOWERS = [
+  [38, -116.5, 6.5, 55], [38, 116.5, 6.5, 55], [-106, 116.5, 6.5, 55], [-106, -116.5, 5.5, 34],
+  [-34, -116.5, 5, 34], [38, -12, 4.2, 21], [38, 12, 4.2, 21], [-34, 116.5, 4.2, 21],
+].map(t => [...t, t[2] * PHI ** 3]);
+// 8 tháp canh thấp trên tường thành: [u, v]
+export const WATCH = { r: 3.4, h: 13, at: [[46, -136], [46, 136], [-115, -136], [-115, 136], [46, -10], [46, 10], [-115, -8], [-115, 8]] };
+// cầu cạn nhiều nhịp vòm: đường băng → cổng sau. Nhánh A dọc v tại u = VIA.uA (v vA0 → 0), nhánh B dọc u tại v = 0 (u uA → mép vách)
+export const VIA = { uA: -200, vA0: -89, uB1: PLAT.u - PLAT.hu, w: 2.5, span: 13 };
 
 const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -39,8 +76,11 @@ export const R_BOUND = Math.hypot(ISLE.hu + Math.abs(ISLE.u), ISLE.hv) + 21;   /
 
 // Dốc đá + bến: độ cao mặt đi (null nếu ngoài dải)
 export function quayY(u, v) {
-  if (u < QUAY.u0 - 0.2 || u > QUAY.u0 + QUAY.w || v < QUAY.v0 || v > QUAY.v1) return null;
-  return v >= 0 ? QUAY.y : lerp(QUAY.y, PLAT.y, -v / -QUAY.v0);
+  const Q = QUAY;
+  if (u >= Q.u0 - 0.2 && u <= Q.u0 + Q.w && v >= Q.v0 && v <= Q.v1) return v >= 0 ? Q.y : lerp(Q.y, Q.ymid, v / Q.v0);        // nhánh 1
+  if (u >= Q.u0 - Q.w && u <= Q.u0 + Q.w && v >= Q.v0 - Q.land && v < Q.v0) return Q.ymid;                                       // chiếu nghỉ
+  if (u >= Q.u0 - Q.w && u < Q.u0 - 0.2 && v >= Q.v0 && v <= Q.v2) return lerp(Q.ymid, Q.y_top, (v - Q.v0) / (Q.v2 - Q.v0));   // nhánh 2 (khắc vào vách)
+  return null;
 }
 
 // Độ cao địa hình theo toạ độ cục bộ (u, v); x, z thế giới chỉ dùng cho nhiễu
