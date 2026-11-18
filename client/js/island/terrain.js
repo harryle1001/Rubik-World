@@ -79,7 +79,9 @@ export function createTerrain(scene) {
   const g = new THREE.PlaneGeometry(SX, SZ, NX, NZ); g.rotateX(-Math.PI / 2); g.translate(CX, 0, CZ);
   const pos = g.attributes.position, col = new Float32Array(pos.count * 3);
   // bảng màu docs/art-style.md: cát hồng-kem, cát ướt, cỏ tươi có mảng sáng/tối, đá ấm
-  const cSand = new THREE.Color('#f3d6a8'), cWet = new THREE.Color('#e8c391'), cG1 = new THREE.Color('#63ab50'), cG2 = new THREE.Color('#84c362'), cG3 = new THREE.Color('#4f9a4a'), cMeadow = new THREE.Color('#9fcf6c');
+  // cỏ theo bảng màu docs/style-guide.md (grass #7fbf5e · grassD #5a9a48, bão hoà ≤ 0,62) — kiểu vẽ tay: đỉnh đồi sáng ấm, chân/khe tối mát
+  const cSand = new THREE.Color('#f3d6a8'), cWet = new THREE.Color('#e8c391'), cG1 = new THREE.Color('#72ad58'), cG2 = new THREE.Color('#7fbf5e'), cG3 = new THREE.Color('#5a9a48'), cMeadow = new THREE.Color('#a7c172');
+  const cTop = new THREE.Color('#b9c47e'), cCool = new THREE.Color('#4d8659'), cSoil = new THREE.Color('#a9845c'), cStone = new THREE.Color('#ad9a82');
   const cRock = new THREE.Color('#b3aa9b'), cDeep = new THREE.Color('#e6cc9a'), c = new THREE.Color();
   const cWeed = new THREE.Color('#7f9a4c'), cReef = new THREE.Color('#a89a86'), cAbyss = new THREE.Color('#5f8290');
   for (let i = 0; i < pos.count; i++) {
@@ -88,6 +90,11 @@ export function createTerrain(scene) {
     c.copy(cG1).lerp(cG2, fbm(x * 0.05, z * 0.05));
     const patch = fbm(x * 0.018 + 40, z * 0.018 - 13);
     c.lerp(cG3, smooth(0.55, 0.78, patch) * 0.55).lerp(cMeadow, smooth(0.6, 0.85, 1 - patch) * 0.35);   // mảng cỏ đậm (rừng) / đồng cỏ sáng
+    { // địa thế: cao độ (đỉnh sáng ấm) + lồi/lõm so với xung quanh ~8 m (sống đồi sáng, khe/chân dốc tối mát)
+      const rel = h - (heightAt(x + 8, z) + heightAt(x - 8, z) + heightAt(x, z + 8) + heightAt(x, z - 8)) / 4, th = smooth(FLAT + 1.5, 19, h);
+      c.lerp(cTop, Math.min(0.62, th * 0.5 + smooth(0.15, 1.6, rel) * 0.3));
+      c.lerp(cCool, Math.min(0.5, smooth(-0.15, -1.6, rel) * 0.42 + (1 - th) * smooth(FLAT + 0.6, FLAT + 4, h) * 0.12));
+    }
     if (!(flatDist(x, z) < 3 && lagoonDist(x, z) > 4)) {   // thị trấn & đường: cỏ, không phải cát
       c.lerp(cSand, 1 - smooth(W + 0.7, W + 1.7, h));
       c.lerp(cWet, 1 - smooth(W + 0.05, W + 0.6, h));      // dải cát ướt sát mép nước
@@ -99,7 +106,11 @@ export function createTerrain(scene) {
       c.lerp(cReef, smooth(0.62, 0.8, fbm(x * 0.08 - 20, z * 0.08 + 50)) * smooth(0.5, 1.6, d) * 0.6);
       c.lerp(cAbyss, smooth(2.6, 6.5, d) * 0.7);
     }
-    c.lerp(cRock, smooth(0.9, 1.5, slopeAt(x, z)) * 0.85);
+    { // mép đồi dốc: đất nâu ấm → đá kem ấm (không còn mảng xám lộ)
+      const sl = slopeAt(x, z), n = fbm(x * 0.09 - 11, z * 0.09 + 23);
+      c.lerp(h < W - 0.05 ? cRock : cSoil, smooth(0.7, 1.15, sl) * (0.55 + 0.3 * n));
+      if (h >= W - 0.05) c.lerp(cStone, smooth(1.15, 1.7, sl) * (0.45 + 0.4 * (1 - n)));
+    }
     col.set([c.r, c.g, c.b], i * 3);
   }
   g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.computeVertexNormals();
@@ -110,6 +121,16 @@ export function createTerrain(scene) {
     sh.vertexShader = 'varying highp vec3 vWp;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vWp = (modelMatrix * vec4(transformed, 1.)).xyz;');
     sh.fragmentShader = 'uniform highp float uTime; varying highp vec3 vWp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
       float sd = ${W.toFixed(2)} - vWp.y;
+      if (sd < -0.3) {   // đất liền: nét cọ dài theo 2 hướng + mảng màu lớn ngả vàng ấm/lam mát (pN của style.js, toạ độ highp)
+        highp vec2 q = vPaintW.xz;
+        float st1 = pN(vec3(dot(q, vec2(0.83, 0.55)) * 0.32, dot(q, vec2(-0.55, 0.83)) * 1.9, 3.1));
+        float st2 = pN(vec3(dot(q, vec2(0.26, -0.97)) * 0.5, dot(q, vec2(0.97, 0.26)) * 2.6, 8.7));
+        float gm = smoothstep(0.015, 0.08, diffuseColor.g - max(diffuseColor.r, diffuseColor.b));   // chỉ vùng cỏ
+        float pat = pN(vec3(q * 0.045, 1.7)) * 0.7 + pN(vec3(q * 0.13, 5.3)) * 0.3;
+        diffuseColor.rgb *= 1. + gm * (0.16 * (st1 - 0.5) + 0.1 * (st2 - 0.5));
+        diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.1, 1.02, 0.78), gm * smoothstep(0.5, 0.8, pat) * 0.6);
+        diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.86, 0.95, 1.08), gm * (1. - smoothstep(0.2, 0.48, pat)) * 0.5);
+      }
       if (sd > 0.03) {
         vec2 q = vWp.xz;
         float rip = sin(dot(q, vec2(0.62, 0.79)) * 4.2 + sin(dot(q, vec2(-0.79, 0.62)) * 0.7) * 1.8);
@@ -121,7 +142,7 @@ export function createTerrain(scene) {
         diffuseColor.rgb += vec3(0.32, 0.36, 0.3) * cs * smoothstep(0.05, 0.5, sd) * (1. - smoothstep(1.5, 5., sd));
       }`);
   };
-  groundMat.customProgramCacheKey = () => 'seabed';
+  groundMat.customProgramCacheKey = () => 'seabed-paint';
   // chia thành ô 89×89 mắt lưới (Fibonacci, ~196 m; ô to hơn → ít draw call hơn) (dùng chung thuộc tính đỉnh, chỉ khác chỉ mục) → camera loại bỏ (frustum culling) phần ngoài khung hình;
   // trước đây 1 mesh ~190k tam giác luôn được vẽ toàn bộ
   const ground = new THREE.Group(); ground.name = 'ground'; scene.add(ground);
@@ -230,7 +251,7 @@ export function createTerrain(scene) {
   const grass = [];
   for (const list of chunks.values()) {
     const m = new THREE.InstancedMesh(blade, grassMat, list.length); let cx = 0, cz = 0;
-    list.forEach(([x, y, z], i) => { o.position.set(x, y - 0.02, z); o.rotation.set(0, rand() * 6.28, 0); const s = 0.8 + rand() * 0.7; o.scale.set(s, s * (0.7 + rand() * 0.6), s); o.updateMatrix(); m.setMatrixAt(i, o.matrix); m.setColorAt(i, tint.setHSL(0.25 + rand() * 0.06, 0.5, 0.52 + rand() * 0.2)); cx += x; cz += z; });
+    list.forEach(([x, y, z], i) => { o.position.set(x, y - 0.02, z); o.rotation.set(0, rand() * 6.28, 0); const s = 0.8 + rand() * 0.7; o.scale.set(s, s * (0.7 + rand() * 0.6), s); o.updateMatrix(); m.setMatrixAt(i, o.matrix); m.setColorAt(i, tint.setHSL(0.24 + rand() * 0.06, 0.42, 0.46 + rand() * 0.16)); /* hợp màu cỏ mới (bão hoà ≤ 0,62) */ cx += x; cz += z; });
     m.computeBoundingSphere(); m.receiveShadow = true; scene.add(m); grass.push({ m, x: cx / list.length, z: cz / list.length });
   }
 
