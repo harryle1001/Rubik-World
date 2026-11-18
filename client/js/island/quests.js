@@ -116,10 +116,12 @@ body.rs-modal #questHud,body.mg-on #questHud{display:none}`;
   render();
   setTimeout(() => { if (!S.claimed && doneCount() === 0) ctx.toast('📋 Có <b>nhiệm vụ hôm nay</b> ở góc trái! Chạm vào (phím L) để xem chi tiết.', 5000); }, 8000);
 
-  let zT = 0, t = 0;
+  let zT = 0, t = 0, zT2 = 0;
   return {
     update(dt) {
       t += dt; const p = ctx.player.pos;
+      // ô nhiệm vụ nằm ngay dưới hàng chip (đồng hồ · tài khoản · FPS — account-hud.js), hàng chip có thể xuống dòng trên điện thoại
+      if ((zT2 -= dt) <= 0) { zT2 = 1; const r = document.getElementById('chipRow'), b = r && r.offsetHeight ? Math.round(r.getBoundingClientRect().bottom + 8) + 'px' : ''; if (el.style.top !== b) el.style.top = b; }
       // pha lê: xoay 1/φ vòng/s, nhấp nhô; tới gần (≤ 1,6 m) là nhặt
       for (let i = 0; i < GEMS_N; i++) {
         const live = gemLeft(i);
