@@ -7,7 +7,7 @@ const VPS = {phone:{w:390, h:844, touch:true}, land:{w:844, h:390, touch:true}, 
 const tag = process.argv[2] || 'before', pick = process.argv[3] || 'all', max = +process.argv[4] || 0, only = process.argv[5] ? process.argv[5].split(',') : null;
 
 (async () => {
-  const b = await chromium.launch();
+  const b = await chromium.launch(process.env.HTTPS_PROXY ? {proxy:{server:process.env.HTTPS_PROXY, bypass:'localhost,127.0.0.1'}} : {});
   const list = pick === 'all' ? Object.keys(VPS) : pick.split(',');
   for(const k of list){
     const vp = VPS[k], dir = path.join(__dirname, 'out', tag, k); fs.mkdirSync(dir, {recursive:true});

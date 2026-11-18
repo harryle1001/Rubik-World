@@ -5,7 +5,7 @@ const URL = process.env.QA_URL || 'http://localhost:8754/index.html';
 async function openGame(vp, opts = {}){
   const b = opts.browser || await chromium.launch();
   const touch = !!vp.touch;
-  const ctx = await b.newContext({viewport:{width:vp.w, height:vp.h}, hasTouch:touch, isMobile:touch, deviceScaleFactor:1});
+  const ctx = await b.newContext({viewport:{width:vp.w, height:vp.h}, hasTouch:touch, isMobile:touch, deviceScaleFactor:1, ignoreHTTPSErrors:true});
   const p = await ctx.newPage();
   const logs = [];
   p.on('console', m => { const t = m.type(); if(t === 'warning' || t === 'error'){ const s = m.text(); if(!/AudioContext was not allowed/.test(s)) logs.push({t, s:s.slice(0, 400)}); } });
