@@ -5,6 +5,7 @@ set -e
 R=$(cd "$(dirname "$0")/.." && pwd); B=$1; CDN=https://cdn.jsdelivr.net/npm/three@0.169.0
 rm -rf $B; mkdir -p $B/js && cp -r $R/client/js/island $R/client/js/ocean.js $B/js/ && cp -r $R/client/assets $R/client/school $B/ && cp $R/client/ocean.html $B/index.html
 cd $B
+sed -i "/rel=\"preload\" href=\"\/assets\/models\//d" index.html
 sed -i "s#\"/lib/three/build/three.module.js\"#\"$CDN/build/three.module.js\"#; s#\"/lib/three/examples/jsm/\"#\"$CDN/examples/jsm/\"#; s#src=\"/js/ocean.js\"#src=\"js/ocean.js\"#" index.html
 sed -i "s#'/lib/three/examples/jsm/libs/draco/gltf/'#'$CDN/examples/jsm/libs/draco/gltf/'#" js/island/models.js
 # Gộp mọi model .glb thành vài gói ≤ 14 MB (artifact giới hạn số file và không phục vụ .glb), models.js đọc theo chỉ mục
