@@ -424,18 +424,21 @@ export function buildExtraZones(ctx, k) {
     }
   }
 
+  // cây/bụi/dừa của 4 khu → hệ thiên nhiên chung (terrain.nature: model CC0 Quaternius, LOD, lọc theo hướng camera); k = đổi tỷ lệ model cũ → mới
+  const NAT = { tree_fat: ['fat', 1], tree_oak: ['oak', 1], bush_large: ['bush', 1], bush: ['bush', 1], plant_palm_straight: ['palm', 2.6], plant_palm_bend: ['palmB', 2.6] }, nat = {};
+  for (let i = kits.length - 1; i >= 0; i--) { const [name, t] = kits[i], m = NAT[name]; if (!m) continue; (nat[m[0]] ||= []).push([t[0], t[1], t[2], t[3] * m[1], t[4]]); kits.splice(i, 1); }
   const byName = new Map();
   for (const [name, t, sh] of kits) { const key = name + (sh ? '|s' : ''); if (!byName.has(key)) byName.set(key, []); byName.get(key).push(t); }
   return {
     boats,
-    place: scene => Promise.all([...byName].map(([key, list]) => placeKitCells(scene, key.split('|')[0], list, 70, { shadow: key.endsWith('|s') }))),
+    place: scene => { for (const k of Object.keys(nat)) ctx.terrain.nature.add(k, nat[k]); return Promise.all([...byName].map(([key, list]) => placeKitCells(scene, key.split('|')[0], list, 70, { shadow: key.endsWith('|s') }))); },
   };
 }
 
-// Cây dừa: model kit dừa thẳng/nghiêng xen kẽ (chia ô 70 m)
-export function placePalms(scene, palms) {
-  const L = [[], []]; palms.forEach((q, i) => L[i % 3 === 0 ? 0 : 1].push([q.x, q.y, q.z, q.s * 1.3, q.ry]));
-  return Promise.all([placeKitCells(scene, 'plant_palm_straight', L[0]), placeKitCells(scene, 'plant_palm_bend', L[1])]);
+// Cây dừa: model CC0 Quaternius (2 dáng) qua terrain.nature — instancing + LOD gần/xa + lọc theo hướng camera; cao ~4,4 m × s (trước ~5,5 m, quá to)
+export function placePalms(terrain, palms) {
+  const L = [[], []]; palms.forEach((q, i) => L[i % 3 === 0 ? 0 : 1].push([q.x, q.y, q.z, q.s * 3.2, q.ry]));
+  terrain.nature.add('palm', L[0]); terrain.nature.add('palmB', L[1]);
 }
 
 // Thuyền neo (model kit): nhấp nhô + lắc nhẹ bằng cách cập nhật ma trận instance mỗi khung

@@ -169,16 +169,16 @@ export function buildTownArchitecture(ctx, RS, env) {
   {
     const okTree = (x, z) => !lotAt(x, z, 1.5) && landDist(x, z) > 2 && lagoonDist(x, z) > 3 && roadDist(x, z) > ROAD_W / 2 + 1.2 && pathDist(x, z) > PATH_W / 2 + 1.5;
     const nRing = 42;   // 2π·R / 42 ≈ 13 m
-    for (const [rr, kind] of [[RING_ROAD_R - ROAD_W / 2 - 2.2, 'phuong'], [RING_ROAD_R + ROAD_W / 2 + 2.2, 'leaf']]) for (let i = 0; i < nRing; i++) {
+    for (const [rr, kind] of [[RING_ROAD_R - ROAD_W / 2 - 2.2, 'phuong'], [RING_ROAD_R + ROAD_W / 2 + 2.2, 'leaf']]) for (let i = 0; i < nRing; i++) {   // phượng đỏ chỉ là điểm nhấn: 1/3 cây hàng trong
       const a = (i + 0.5) / nRing * Math.PI * 2, x = Math.cos(a) * rr, z = Math.sin(a) * rr;
       if (RADIALS.some(R => Math.abs(Math.atan2(Math.sin(a - R.a), Math.cos(a - R.a))) * rr < 7)) continue;
-      if (okTree(x, z)) trees.push([x, z, kind, 0.95 + rnd() * 0.15]);
+      if (okTree(x, z)) trees.push([x, z, kind === 'phuong' && i % 3 ? 'leaf' : kind, 0.95 + rnd() * 0.15]);
     }
     for (const R of RADIALS) {
       const px = -R.s, pz = R.c, off = ROAD_W / 2 + 2.2;
       for (let t = R.r0 + 6, k = 0; t < R.r1 - 6; t += 13, k++) {
         if (Math.abs(t - RING_ROAD_R) < 9) continue;
-        for (const sd of [-1, 1]) { const x = R.c * t + px * sd * off, z = R.s * t + pz * sd * off; if (okTree(x, z)) trees.push([x, z, k % 2 ? 'leaf' : 'phuong', 0.95 + rnd() * 0.15]); }
+        for (const sd of [-1, 1]) { const x = R.c * t + px * sd * off, z = R.s * t + pz * sd * off; if (okTree(x, z)) trees.push([x, z, k % 3 ? 'leaf' : 'phuong', 0.95 + rnd() * 0.15]); }
         if (k % 2 === 0 && t > RING_ROAD_R + 12) { const sd = k % 4 ? 1 : -1, x = R.c * (t + 6.5) + px * sd * (ROAD_W / 2 + 0.8), z = R.s * (t + 6.5) + pz * sd * (ROAD_W / 2 + 0.8); if (lagoonDist(x, z) > 2 && landDist(x, z) > 2) lamp(B.parks, x, z); }
       }
     }
@@ -252,7 +252,7 @@ export function buildTownArchitecture(ctx, RS, env) {
     return im;
   };
   const set = (x, y, z, s, ry = 0) => (q, o) => { o.position.set(x, y, z); o.rotation.set(0, ry, 0); o.scale.set(s, s, s); };
-  const LEAF = ['#7cc35e', '#6fb85a', '#8fcf6a', '#5faa4e'], PHUONG = ['#e8553f', '#f06a3b', '#e24a3a'], PINE = ['#3f8f55', '#4a9a5a', '#367f4c'];
+  const LEAF = ['#6aae55', '#5a9f4c', '#7cb860', '#86c066'], PHUONG = ['#e0503e', '#e8653f', '#d8463a'], PINE = ['#3f8a55', '#4a9a5a', '#357a4c'];   // palette.js leaf/flowerRed
   // lọc lần cuối: cây/hoa không bao giờ mọc trong nhà, tường, nền công trình, mặt đường (bán kính tán/thân)
   const plantR = k => k === 'pine' ? 1.0 : k === 'fruit' ? 0.7 : 1.1;
   const nT = trees.length; for (let i = trees.length - 1; i >= 0; i--) { const [x, z, k, s] = trees[i]; if (isBuilt(x, z, plantR(k) * s)) trees.splice(i, 1); }
@@ -261,11 +261,11 @@ export function buildTownArchitecture(ctx, RS, env) {
   if (env.debug !== false) console.info('[town-buildings] bỏ cây/dừa/hoa trùng công trình:', nT - trees.length, nP - palms.length, nF - fl.length);
   const T2 = trees.map(([x, z, k, s]) => ({ x, z, k, s, ry: rnd() * 6.28, col: (k === 'pine' ? PINE : k === 'phuong' ? PHUONG : LEAF)[Math.floor(rnd() * 3)] }));
   // cây của thị trấn: model kit CC0 (tán tròn / phượng đỏ / thông) qua terrain.nature — instancing + LOD gần/xa dùng chung với cây đảo
-  { const T = { oak: [], fat: [], round: [], pine: [], pineTall: [] };
+  { const T = { oak: [], fat: [], phuong: [], pine: [], pineTall: [] };
     for (const q of T2) {
       const it = [q.x, Y - 0.05, q.z, 0, q.ry, q.col];
       if (q.k === 'pine') { it[3] = q.s * 3.2; (rnd() < 0.5 ? T.pine : T.pineTall).push(it); }
-      else if (q.k === 'phuong') { it[3] = q.s * 2.4; T.round.push(it); }
+      else if (q.k === 'phuong') { it[3] = q.s * 3.0; T.phuong.push(it); }   // phượng tán xoè ~3,7 m
       else { it[3] = q.s * 3.1; (rnd() < 0.6 ? T.oak : T.fat).push(it); }
     }
     for (const k of Object.keys(T)) if (T[k].length) ctx.terrain.nature.add(k, T[k]);
@@ -275,7 +275,7 @@ export function buildTownArchitecture(ctx, RS, env) {
   inst(new THREE.ConeGeometry(0.16, 0.42, 4).translate(0, 0.21, 0), toon('#ffffff'), fl.map(([x, z, col]) => ({ x, z, col })), q => set(q.x, Y, q.z, 1, q.x), false, false);
 
   // cây dừa (model kit, chia ô 70 m) + model kit của 4 khu ven biển; thuyền neo (model kit, nhấp nhô)
-  placePalms(scene, palms); extra.place(scene);
+  placePalms(ctx.terrain, palms); extra.place(scene);
   const boats = buildBoats(scene, [...boatsDeco.map(([x, z, ry]) => [x, z, ry, 'boat_sail_a', 1.3]), ...extra.boats]);
   // ẩn công trình ở quá xa (sau sương mù) để giữ FPS
   const far = out.filter(m => m.isMesh && m.geometry && !m.isInstancedMesh).map(m => { if (!m.geometry.boundingSphere) m.geometry.computeBoundingSphere(); const c = m.geometry.boundingSphere.center.clone().applyMatrix4(m.matrixWorld); return { m, c, r: m.geometry.boundingSphere.radius }; });

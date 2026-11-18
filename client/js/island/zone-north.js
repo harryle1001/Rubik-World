@@ -455,6 +455,9 @@ export function buildNorth(k) {
   const SHADOW = { tree_oak: 1, tree_autumn: 1, tree_palm: 1, tent: 1, tractor: 1 }, _kc = new THREE.Color();
   // lọc lại lần cuối: nhà/vật cản đăng ký SAU khi trồng (vd. nhà nông trại) → bỏ cây/bụi trùng
   for (const [name, list] of Object.entries(kit)) { const m = /^tree/.test(name) ? 1.2 : /^bush/.test(name) ? 0.9 : 0.4; for (let i = list.length - 1; i >= 0; i--) if (built(list[i][0], list[i][2], m)) list.splice(i, 1); }
+  // cây/bụi → hệ thiên nhiên chung (terrain.nature: model CC0 Quaternius, 3 sắc, LOD gần/xa, lọc theo hướng camera); k: đổi tỷ lệ model cũ → mới
+  const NAT = { tree_oak: ['oak', 1], tree_fat: ['fat', 1], tree_autumn: ['autumn', 1.22], tree_pine: ['pine', 1], tree_pine_tall: ['pineTall', 0.96], tree_palm: ['palm', 1], bush_large: ['bush', 1], bush: ['bush', 1] };
+  for (const [name, m] of Object.entries(NAT)) if (kit[name]) { ctx.terrain.nature.add(m[0], kit[name].map(t => [t[0], t[1], t[2], t[3] * m[1], t[4]])); delete kit[name]; }
   for (const [name, list] of Object.entries(kit)) {
     const cells = new Map(); for (const t of list) { const key = Math.floor(t[0] / 160) + ',' + Math.floor(t[2] / 160); (cells.get(key) || cells.set(key, []).get(key)).push(t); }
     for (const l of cells.values()) placeKit(scene, name, l, { shadow: !!SHADOW[name] }).then(ims => { for (const im of ims) {   // tô lại màu kit theo bảng màu docs/art-style.md

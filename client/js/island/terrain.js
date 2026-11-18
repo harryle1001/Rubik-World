@@ -170,30 +170,41 @@ export function createTerrain(scene) {
   const plants = [];   // [x, z, bán kính, loại] — để kiểm tra không mọc trùng kiến trúc
   const colliders = [];
   const o = new THREE.Object3D(), tint = new THREE.Color();
-  // ---------- Thiên nhiên bằng model kit CC0 (cây, bụi, đá, hoa, nấm, gốc cây, khúc gỗ) ----------
-  // Mỗi loại = 1 InstancedMesh "gần" (đổ bóng nếu là cây) + tuỳ chọn 1 InstancedMesh "xa" (không đổ bóng).
-  // Cứ 0.4 giây (khi người chơi đi > 3 m) chia lại vật nào gần/xa/ẩn; số draw call không đổi.
+  // ---------- Thiên nhiên bằng model CC0 (Quaternius Ultimate Nature: cây, bụi, đá, hoa, dương xỉ, cỏ cụm, gốc cây, khúc gỗ) ----------
+  // Mỗi loại = 1 InstancedMesh "gần" (model đủ chi tiết, đổ bóng nếu là cây) + 1 InstancedMesh "xa" (bản LOD ít tam giác, không đổ bóng).
+  // Chia lại gần/xa/ẩn khi người chơi đi > 3 m hoặc camera quay > 0,21 rad: chỉ giữ vật trong hình nón nhìn của camera
+  // (+ vòng 13 m quanh người chơi cho bóng đổ) → không vẽ cây sau lưng, kể cả ở pass bóng; số draw call không đổi.
   const lodSets = [], KS = {};
   const pick = a => a[Math.floor(rand() * a.length)];
+  const view = { x: 0, z: 0, dx: 0, dz: -1, cos: -2, yaw: 0, on: false };   // hình nón nhìn (mặt phẳng XZ), cos < -1 → tắt lọc
   function kitSet(kind, items = []) {
     const def = NATURE[kind], mat = natureMat(def.wind || 0, def.push || 0);
     const set = { kind, items, near: null, far: null, cap: 0, at: new THREE.Vector3(1e9, 0, 0), last: new THREE.Vector3(0, 0, 10) };
-    const mk = (geo, shadow) => { const m = new THREE.InstancedMesh(geo, mat, set.cap); m.castShadow = shadow; m.receiveShadow = true; m.frustumCulled = false; m.name = 'nature-' + kind; scene.add(m); return m; };
+    const mk = (geo, shadow) => { const m = new THREE.InstancedMesh(geo, mat, set.cap); m.castShadow = shadow; m.receiveShadow = true; m.name = 'nature-' + kind; scene.add(m); return m; };
     set.build = () => {
       if (!set.geo || !items.length) return;
       if (set.cap >= items.length) return set.relayout(set.last);
       for (const m of [set.near, set.far]) if (m) { scene.remove(m); m.dispose(); }
-      set.cap = Math.ceil(items.length * 1.1); set.near = mk(set.geo, !!def.shadow); set.far = def.far ? mk(set.geo, false) : null; set.relayout(set.last);
+      set.cap = Math.ceil(items.length * 1.1); set.near = mk(set.geo, !!def.shadow); set.far = def.far ? mk(set.lod || set.geo, false) : null; set.relayout(set.last);
     };
-    const fill = (m, idx) => { idx.forEach((k, j) => { m.setMatrixAt(j, items[k].m); m.setColorAt(j, items[k].c); }); m.count = idx.length; m.visible = idx.length > 0; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; };
+    const fill = (m, idx) => {
+      idx.forEach((k, j) => { m.setMatrixAt(j, items[k].m); m.setColorAt(j, items[k].c); }); m.count = idx.length; m.visible = idx.length > 0;
+      m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true;
+      if (idx.length) m.computeBoundingSphere();   // hình cầu bao của các vật đang hiện → camera tự cắt cả mesh khi ra ngoài khung hình
+    };
     set.relayout = p => {
       set.last.copy(p); if (!set.near) return;
       const dNear = def.dist === 'tree' ? state.treeDist : def.dist === 'grass' ? state.grassDist : def.dist, dFar = scene.fog ? scene.fog.far + 20 : 400, a = [], b = [];
       // tắt bóng đổ (chất lượng 3) → gần/xa như nhau: gộp hết vào 1 mesh, đỡ 1 draw call mỗi loại
-      const one = !state.shadows; items.forEach((q, k) => { const d = Math.hypot(q.m.elements[12] - p.x, q.m.elements[14] - p.z); if (d < dNear) a.push(k); else if (set.far && d < dFar) (one ? a : b).push(k); });
+      const one = !state.shadows, V = view, r0 = def.r * 8 + 13;
+      items.forEach((q, k) => {
+        const x = q.m.elements[12], z = q.m.elements[14], d = Math.hypot(x - p.x, z - p.z);
+        if (d > r0 && V.cos > -1) { const ex = x - V.x, ez = z - V.z, L = Math.hypot(ex, ez) || 1; if ((ex * V.dx + ez * V.dz) / L < V.cos) return; }   // ngoài hình nón nhìn
+        if (d < dNear) a.push(k); else if (set.far && d < dFar) (one ? a : b).push(k);
+      });
       fill(set.near, a); if (set.far) fill(set.far, b);
     };
-    kitGeo(kind).then(g => { set.geo = g; set.build(); });
+    Promise.all([kitGeo(kind), def.lod ? kitGeo(kind, true) : null]).then(([g, l]) => { set.geo = g; set.lod = l; set.build(); });
     lodSets.push(set); KS[kind] = set; return set;
   }
   // thêm vật: [x, y, z, tỷ lệ, xoay, màu (tô lên phần lá/hoa/đá)] — dùng được từ file khác qua terrain.nature.add()
@@ -202,17 +213,34 @@ export function createTerrain(scene) {
     for (const [x, y, z, s, ry, col] of list) { if (def.wind && /tree|pine|palm/.test(def.type)) trunks.push([x, y, z, s]); o.position.set(x, y, z); o.rotation.set(0, ry ?? rand() * 6.28, 0); o.scale.setScalar(s); o.updateMatrix(); set.items.push({ m: o.matrix.clone(), c: new THREE.Color(col || pick(def.tints)).offsetHSL(0, 0, (rand() - 0.5) * 0.06) }); }
     set.build(); return set;
   }
-  const plant = (kind, n, sMin, sMax, colR, minH, m = 4) => { const list = []; for (let i = 0; i < n; i++) { const p = spot(minH, m); if (!p) continue; const s = sMin + rand() * (sMax - sMin); if (colR) colliders.push({ x: p[0], z: p[2], r: colR * s }); plants.push([p[0], p[2], NATURE[kind].r * s, NATURE[kind].type]); list.push([p[0], p[1] - 0.08, p[2], s]); } addNature(kind, list); };
-  // cây tán tròn (3 kiểu) và cây thông (2 kiểu) — tỷ lệ theo kích thước model kit (~1.2–1.6 m gốc)
+  // cây 3 cỡ (nhỏ · vừa · lớn, lệch nhau ≈ φ^½) + lệch ngẫu nhiên nhẹ; 34% cây có tầng thấp (dương xỉ/bụi/cỏ cụm) quanh gốc → mép rừng tự nhiên
+  const under = { fern: [], bush: [], tuft: [] }, TIER = [0.1, 0.5, 0.9];
+  const plant = (kind, n, sMin, sMax, colR, minH, m = 4) => {
+    const list = [], tall = /tree|pine|palm/.test(NATURE[kind].type);
+    for (let i = 0; i < n; i++) {
+      const p = spot(minH, m); if (!p) continue;
+      const s = tall ? sMin * 0.85 + (sMax * 1.12 - sMin * 0.85) * Math.min(1, Math.max(0, pick(TIER) + (rand() - 0.5) * 0.16)) : sMin + rand() * (sMax - sMin);
+      if (colR) colliders.push({ x: p[0], z: p[2], r: colR * s }); plants.push([p[0], p[2], NATURE[kind].r * s, NATURE[kind].type]); list.push([p[0], p[1] - 0.08, p[2], s]);
+      if (tall && rand() < 0.34) for (let k = 0; k < 1 + (rand() < 0.5); k++) {
+        const a = rand() * 6.283, d = 1.6 + rand() * 1.8, x = p[0] + Math.cos(a) * d, z = p[2] + Math.sin(a) * d, h = heightAt(x, z);
+        if (h > W + 1 && clear(x, z, 1)) { const u = rand(); (u < 0.45 ? under.fern : u < 0.7 ? under.bush : under.tuft).push([x, h - 0.05, z, u < 0.7 ? 2.2 + rand() * 1.4 : 2.0 + rand()]); }
+      }
+    }
+    addNature(kind, list);
+  };
+  // cây tán tròn/xum xuê (3 kiểu) + bạch dương, ít cây lá cam làm điểm nhấn; thông 2 kiểu — tỷ lệ = cỡ model cũ (~1.2–1.6 m gốc)
   const nT = CFG.counts.trees, nP = CFG.counts.pines;
-  plant('oak', Math.round(nT * 0.3), 4.0, 5.6, 0.1); plant('fat', Math.round(nT * 0.35), 4.2, 5.6, 0.1); plant('round', Math.round(nT * 0.35), 3.4, 4.6, 0.1);
-  plant('pine', Math.round(nP * 0.6), 3.4, 4.8, 0.1); plant('pineTall', Math.round(nP * 0.4), 3.6, 5.0, 0.08);
+  plant('oak', Math.round(nT * 0.27), 4.0, 5.6, 0.1); plant('fat', Math.round(nT * 0.27), 4.2, 5.6, 0.1); plant('round', Math.round(nT * 0.24), 3.0, 4.0, 0.1);
+  plant('birch', Math.round(nT * 0.16), 3.0, 4.2, 0.08); plant('autumn', Math.round(nT * 0.04), 3.2, 4.2, 0.1);
+  plant('pine', Math.round(nP * 0.55), 3.2, 4.6, 0.1); plant('pineTall', Math.round(nP * 0.45), 3.4, 4.8, 0.08);
   // đá: to (có va chạm), dựng đứng, sỏi ven bờ
   plant('rockL', Math.round(CFG.counts.rocks * 0.45), 1.6, 3.6, 0.45, W - 0.3, 2); plant('rockT', Math.round(CFG.counts.rocks * 0.2), 1.4, 2.6, 0.4, W - 0.2, 2);
   plant('pebbles', Math.round(CFG.counts.rocks * 0.6), 2.0, 3.5, 0, W - 0.4, 2);
-  // tầng thấp: bụi, cụm hoa, nấm, gốc cây, khúc gỗ (không đổ bóng, chỉ hiện gần)
-  plant('bush', CFG.isMobile ? 260 : 420, 2.4, 4.2, 0); plant('flowers', CFG.isMobile ? 360 : 600, 1.8, 2.6, 0); plant('mushrooms', 90, 2.2, 3.2, 0);
+  // tầng thấp: bụi, bụi quả, cụm hoa, dương xỉ, cỏ cụm, nấm, gốc cây, khúc gỗ (không đổ bóng, chỉ hiện gần) — lấp khoảng trống giữa các khu
+  plant('bush', CFG.isMobile ? 260 : 420, 2.4, 4.2, 0); plant('berry', CFG.isMobile ? 40 : 70, 2.4, 3.4, 0); plant('flowers', CFG.isMobile ? 360 : 600, 1.8, 2.6, 0);
+  plant('fern', CFG.isMobile ? 160 : 280, 2.2, 3.4, 0); plant('tuft', CFG.isMobile ? 380 : 700, 2.0, 3.2, 0); plant('mushrooms', 90, 2.2, 3.2, 0);
   plant('stump', 40, 2.4, 3.2, 0.3); plant('log', 28, 2.0, 2.8, 0.5);
+  for (const k of Object.keys(under)) addNature(k, under[k]);
 
   // ---------- Cỏ: chia ô, ô xa thì ẩn (LOD) ----------
   const blade = (() => { const geos = []; for (let i = 0; i < 3; i++) { const b = new THREE.BufferGeometry(); b.setAttribute('position', new THREE.Float32BufferAttribute([-0.07, 0, 0, 0.07, 0, 0, 0, 0.55, 0], 3)); b.setAttribute('color', new THREE.Float32BufferAttribute([0.25, 0.5, 0.2, 0.25, 0.5, 0.2, 0.75, 0.95, 0.45], 3)); b.rotateY(i * 1.05); b.translate((i - 1) * 0.06, 0, 0); geos.push(b); } const m = mergeGeos(geos); m.computeVertexNormals(); return m; })();
@@ -230,10 +258,22 @@ export function createTerrain(scene) {
     m.computeBoundingSphere(); m.receiveShadow = true; scene.add(m); grass.push({ m, x: cx / list.length, z: cz / list.length });
   }
 
-  let lodT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 40 : 55, shadows: true };
+  let lodT = 0, viewT = 0; const state = { grassDist: CFG.isMobile ? 45 : 65, treeDist: CFG.isMobile ? 34 : 44, shadows: true, camera: null };
+  const _d = new THREE.Vector3();
+  // hình nón nhìn từ camera (ocean.js gán state.camera); nhìn gần thẳng đứng / bay cao → tắt lọc
+  function aim(player) {
+    const cam = state.camera; if (!cam) return false;
+    cam.getWorldDirection(_d); const L = Math.hypot(_d.x, _d.z), was = view.cos;
+    if (Math.abs(_d.y) > 0.8 || L < 0.3 || cam.position.y - player.y > 34) { view.cos = -2; return was > -1; }
+    const half = Math.atan(Math.tan(cam.fov * Math.PI / 360) * cam.aspect) + 0.55, yaw = Math.atan2(_d.x, _d.z);
+    const turned = was < -1 || Math.abs(Math.atan2(Math.sin(yaw - view.yaw), Math.cos(yaw - view.yaw))) > 0.21;
+    if (!turned) return false;
+    view.dx = _d.x / L; view.dz = _d.z / L; view.x = cam.position.x - view.dx * 5; view.z = cam.position.z - view.dz * 5; view.yaw = yaw; view.cos = Math.cos(Math.min(half, Math.PI)); return true;
+  }
   function update(dt, t, player) {
     WIND.uTime.value = t; ocean.update();
     if (player) WIND.uPlayer.value.copy(player);
+    if (player && (viewT += dt) > 0.1) { viewT = 0; if (aim(player)) { for (const L of lodSets) { L.at.copy(player); L.relayout(player); } lodT = 0; } }
     if ((lodT += dt) > 0.4 && player) {
       lodT = 0; for (const c of grass) c.m.visible = Math.hypot(c.x - player.x, c.z - player.z) < state.grassDist;
       for (const L of lodSets) if (L.at.distanceToSquared(player) > 9) { L.at.copy(player); L.relayout(player, state.treeDist); }
@@ -253,35 +293,50 @@ export function mergeGeos(list) {
   return out;
 }
 
-// ---------- Model kit cho thiên nhiên (client/assets/models/kit, CC0 — xem CREDITS.txt) ----------
-// parts: vai trò từng phần của model (theo thứ tự trong file .glb) → màu nền + có nhận màu riêng từng cây (tint) không
-const ROLE = {
-  leaf: ['#ffffff', 1], wood: ['#8a5a34', 0], woodIn: ['#e2c59a', 0], stone: ['#ffffff', 1], moss: ['#7fb85a', 0], stoneLt: ['#efe8da', 0],
-  stem: ['#5aa04a', 0], petal: ['#ffffff', 1], cap: ['#ffffff', 1], stalk: ['#fbf1de', 0],
+// ---------- Model CC0 cho thiên nhiên (client/assets/models/kit/qn_*.glb — Quaternius Ultimate Nature, xem CREDITS.txt) ----------
+// Vai trò từng phần theo TÊN vật liệu trong .glb → màu nền + có nhận màu riêng từng bản sao (tint) không.
+// Lá/đá/cánh hoa để trắng (tint 1) → màu lấy từ bảng tints (3 sắc, theo sample/palette.js); thân/gỗ giữ màu gỗ.
+const MATROLE = {
+  Green: ['#ffffff', 1], DarkGreen: ['#c9d8c2', 1], Rock: ['#ffffff', 1], Wood: ['#8a5a34', 0], LightWood: ['#c49a6c', 0],
+  White: ['#efe6d6', 0], Black: ['#4a3a3f', 0], Berry: ['#e0503e', 0], Coconuts: ['#8a6a3a', 0],
+  Yellow: ['#f2c443', 0], Cyan: ['#ffffff', 1], Pink: ['#ffffff', 1], Mushroom_Top: ['#e0503e', 0], Mushroom_Bottom: ['#f3ead6', 0],
+  // model cũ (kit Kenney) — nấm
+  default: ['#ffffff', 1],
 };
-const LEAF = ['#7cc35e', '#6fb85a', '#8fcf6a', '#5faa4e'], PINE = ['#3f8f55', '#4a9a5a', '#367f4c'];
+const ROLE = { cap: ['#ffffff', 1], stalk: ['#fbf1de', 0] };
+// 3 sắc mỗi loại (palette.js: leaf #4f9a4a · leafD #357040 · grass #7fbf5e · flowerRed #e0503e …), cây đỏ chỉ dùng làm điểm nhấn
+const LEAF = ['#6aae55', '#5a9f4c', '#7cb860'], PINE = ['#3f8a55', '#4a9a5a', '#357a4c'];
+// h: chiều cao (m) của model ở tỷ lệ 1 → giữ nguyên ý nghĩa tham số tỷ lệ mà các file khu đang truyền vào (model cũ cao bao nhiêu thì model mới cao bấy nhiêu).
+// w: thay cho h — khớp theo bề ngang lớn nhất (đá, khúc gỗ). lod: bản ít tam giác cho vùng xa.
 export const NATURE = {
-  oak:      { type: 'tree', r: 0.35, model: 'tree_oak', parts: ['leaf', 'wood'], tints: LEAF, wind: 0.035, shadow: true, far: true, dist: 'tree' },
-  fat:      { type: 'tree', r: 0.35, model: 'tree_fat', parts: ['leaf', 'wood'], tints: ['#7cc35e', '#8fcf6a', '#6fb85a'], wind: 0.03, shadow: true, far: true, dist: 'tree' },
-  round:    { type: 'tree', r: 0.35, model: 'tree_dark', parts: ['wood', 'leaf'], tints: ['#5faa4e', '#4f9a4a', '#6fb85a'], wind: 0.03, shadow: true, far: true, dist: 'tree' },
-  pine:     { type: 'pine', r: 0.3, model: 'tree_pine', parts: ['leaf', 'wood'], tints: PINE, wind: 0.02, shadow: true, far: true, dist: 'tree' },
-  pineTall: { type: 'pine', r: 0.25, model: 'tree_pine_tall', parts: ['wood', 'leaf'], tints: PINE, wind: 0.02, shadow: true, far: true, dist: 'tree' },
-  palm:     { type: 'palm', r: 0.15, model: 'tree_palm', parts: ['leaf', 'wood'], tints: ['#5cbf4a', '#4fae47', '#6cc456'], wind: 0.04, shadow: true, far: true, dist: 'tree' },
-  rockL:    { type: 'rock', r: 0.45, model: 'rock_large', parts: ['stone', 'moss'], tints: ['#b9b0a1', '#aaa293', '#c2b9aa'], shadow: true, far: true, dist: 'tree' },
-  rockT:    { type: 'rock', r: 0.45, model: 'rock_tall', parts: ['stone', 'moss', 'stoneLt'], tints: ['#b9b0a1', '#a9a297'], shadow: true, far: true, dist: 'tree' },
-  pebbles:  { type: 'rock', r: 0.3, model: 'rock_small', parts: ['moss', 'stone'], tints: ['#c2b9aa', '#a9a297', '#d0c7b8'], copies: 4, spread: 0.35, dist: 55 },
-  bush:     { type: 'bush', r: 0.3, model: 'bush_large', parts: ['leaf'], tints: ['#6fb85a', '#5faa4e', '#7cc35e', '#4f9a4a'], copies: 2, spread: 0.25, wind: 0.05, push: 0.5, dist: 70 },
-  flowers:  { type: 'flower', r: 0.3, model: 'flower_red', parts: ['stem', 'petal'], tints: ['#ff8fa8', '#ffd35a', '#ffffff', '#c9a3ff', '#ff7a5c'], copies: 6, spread: 0.45, wind: 0.12, push: 1, dist: 'grass' },
-  mushrooms:{ type: 'plant', r: 0.2, model: 'mushroom_red', parts: ['cap', 'stalk'], tints: ['#e8453c', '#f07a3a', '#c9864f'], copies: 3, spread: 0.25, dist: 45 },
-  stump:    { type: 'plant', r: 0.25, model: 'stump', parts: ['wood', 'woodIn'], tints: ['#ffffff'], dist: 60 },
-  log:      { type: 'plant', r: 0.5, model: 'log', parts: ['wood', 'woodIn'], tints: ['#ffffff'], dist: 60 },
+  oak:      { type: 'tree', r: 0.35, model: 'qn_tree_d', lod: 'qn_tree_d_lod', h: 1.23, tints: LEAF, wind: 0.035, shadow: true, far: true, dist: 'tree' },
+  fat:      { type: 'tree', r: 0.35, model: 'qn_tree_b', lod: 'qn_tree_b_lod', h: 1.15, tints: ['#7cb860', '#6aae55', '#86c066'], wind: 0.03, shadow: true, far: true, dist: 'tree' },
+  round:    { type: 'tree', r: 0.35, model: 'qn_tree_c', lod: 'qn_tree_c_lod', h: 1.5, tints: ['#5a9f4c', '#4f9a4a', '#6aae55'], wind: 0.03, shadow: true, far: true, dist: 'tree' },
+  phuong:   { type: 'tree', r: 0.35, model: 'qn_tree_a', lod: 'qn_tree_a_lod', h: 1.25, tints: ['#e0503e', '#e8653f', '#d8463a'], wind: 0.035, shadow: true, far: true, dist: 'tree' },
+  autumn:   { type: 'tree', r: 0.35, model: 'qn_tree_a', lod: 'qn_tree_a_lod', h: 1.4, tints: ['#e8963a', '#f2b443', '#d9763a'], wind: 0.035, shadow: true, far: true, dist: 'tree' },
+  birch:    { type: 'tree', r: 0.3, model: 'qn_birch_a', lod: 'qn_birch_a_lod', h: 1.5, tints: ['#8fbf5e', '#7cb860', '#9ccb6a'], wind: 0.04, shadow: true, far: true, dist: 'tree' },
+  pine:     { type: 'pine', r: 0.3, model: 'qn_pine_a', lod: 'qn_pine_a_lod', h: 1.55, tints: PINE, wind: 0.02, shadow: true, far: true, dist: 'tree' },
+  pineTall: { type: 'pine', r: 0.25, model: 'qn_pine_c', lod: 'qn_pine_c_lod', h: 1.6, tints: PINE, wind: 0.02, shadow: true, far: true, dist: 'tree' },
+  palm:     { type: 'palm', r: 0.15, model: 'qn_palm_c', h: 1.36, tints: ['#5aa64a', '#4f9a45', '#66b052'], wind: 0.04, shadow: true, far: true, dist: 'tree' },
+  palmB:    { type: 'palm', r: 0.15, model: 'qn_palm_a', h: 1.36, tints: ['#5aa64a', '#4f9a45', '#66b052'], wind: 0.04, shadow: true, far: true, dist: 'tree' },
+  rockL:    { type: 'rock', r: 0.45, model: 'qn_rock_moss_f', w: 1.0, sy: 0.55, tints: ['#b9b0a1', '#aaa293', '#c2b9aa'], shadow: true, far: true, dist: 'tree' },
+  rockT:    { type: 'rock', r: 0.45, model: 'qn_rock_a', h: 1.0, tints: ['#b9b0a1', '#a9a297'], shadow: true, far: true, dist: 'tree' },
+  pebbles:  { type: 'rock', r: 0.3, model: 'qn_rock_c', w: 0.3, sy: 0.6, tints: ['#c2b9aa', '#a9a297', '#d0c7b8'], copies: 4, spread: 0.35, dist: 55 },
+  bush:     { type: 'bush', r: 0.3, model: 'qn_bush_a', w: 0.4, tints: ['#5a9f4c', '#4f9a4a', '#6aae55', '#357a4c'], copies: 2, spread: 0.25, wind: 0.05, push: 0.5, dist: 55 },
+  berry:    { type: 'bush', r: 0.3, model: 'qn_bush_berry', w: 0.4, tints: ['#5a9f4c', '#4f9a4a'], wind: 0.05, push: 0.5, dist: 60 },
+  flowers:  { type: 'flower', r: 0.3, model: 'qn_flowers', h: 0.3, tints: ['#ee93a8', '#f2c443', '#f6f1e6', '#c9a3ff', '#e0503e'], copies: 5, spread: 0.4, wind: 0.12, push: 1, dist: 'grass' },
+  fern:     { type: 'plant', r: 0.3, model: 'qn_plant_a', h: 0.32, tints: ['#5a9f4c', '#6aae55', '#4f9a4a'], copies: 3, spread: 0.35, wind: 0.08, push: 0.8, dist: 'grass' },
+  tuft:     { type: 'plant', r: 0.25, model: 'qn_grass_b', h: 0.3, tints: ['#7fbf5e', '#6aae55', '#8cc66a'], copies: 4, spread: 0.3, wind: 0.14, push: 1, dist: 'grass' },
+  mushrooms:{ type: 'plant', r: 0.2, model: 'mushroom_red', parts: ['cap', 'stalk'], tints: ['#e0503e', '#f07a3a', '#c9864f'], copies: 3, spread: 0.25, dist: 45 },
+  stump:    { type: 'plant', r: 0.25, model: 'qn_stump', w: 0.37, tints: ['#6aae55'], dist: 60 },
+  log:      { type: 'plant', r: 0.5, model: 'qn_log', w: 1.0, tints: ['#6aae55'], dist: 60 },
 };
 const geoCache = new Map();
 // Gộp các phần của model thành 1 geometry có màu theo đỉnh + thuộc tính 'tint' (phần nào nhận màu riêng của từng bản sao)
-export function kitGeo(kind) {
-  if (geoCache.has(kind)) return geoCache.get(kind);
+export function kitGeo(kind, lod = false) {
+  const ck = kind + (lod ? ':lod' : ''); if (geoCache.has(ck)) return geoCache.get(ck);
   const def = NATURE[kind];
-  const p = loadModel('kit/' + def.model).then(src => {
+  const p = loadModel('kit/' + (lod ? def.lod : def.model)).then(src => {
     if (!src) return null;
     src.updateMatrixWorld(true); const parts = []; let i = 0; const c = new THREE.Color();
     src.traverse(m => {
@@ -293,13 +348,17 @@ export function kitGeo(kind) {
         g.setAttribute(k, new THREE.BufferAttribute(f, 3));
       }
       g.applyMatrix4(m.matrixWorld);
-      const [hex, t] = ROLE[def.parts[i++] || 'stone'] || ROLE.stone; c.set(hex); const n = g.attributes.position.count;
+      const [hex, t] = def.parts ? (ROLE[def.parts[i++]] || MATROLE.default) : (MATROLE[m.material.name] || MATROLE.default); c.set(hex); const n = g.attributes.position.count;
       g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(n * 3).map((_, j) => [c.r, c.g, c.b][j % 3]), 3));
       g.setAttribute('tint', new THREE.BufferAttribute(new Float32Array(n).fill(t), 1));
       parts.push(g);
     });
     let geo = mergeGeometries(parts);
-    if (def.copies) {   // cụm nhiều bản nhỏ (hoa, sỏi, bụi, nấm): 1 bản sao = cả cụm → ít draw call
+    if (def.h || def.w) {   // khớp cỡ model mới với cỡ model cũ (cùng tham số tỷ lệ)
+      geo.computeBoundingBox(); const s = new THREE.Vector3(); geo.boundingBox.getSize(s);
+      const k = def.h ? def.h / s.y : def.w / Math.max(s.x, s.z); geo.scale(k, k * (def.sy || 1), k);
+    }
+    if (def.copies) {   // cụm nhiều bản nhỏ (hoa, sỏi, bụi, cỏ): 1 bản sao = cả cụm → ít draw call
       const list = [], m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3(); let r = 1;
       const rr = () => (r = (r * 16807) % 2147483647) / 2147483647;
       for (let k = 0; k < def.copies; k++) {
@@ -311,7 +370,7 @@ export function kitGeo(kind) {
     }
     geo.computeBoundingSphere(); return geo;
   });
-  geoCache.set(kind, p); return p;
+  geoCache.set(ck, p); return p;
 }
 // Vật liệu toon dùng màu theo đỉnh; màu riêng từng bản sao chỉ tô lên phần 'tint' (lá, hoa, đá) — thân cây giữ màu gỗ.
 // wind: lay theo gió (tăng theo độ cao); push: rẽ ra khi người chơi đi qua (hoa, cỏ)

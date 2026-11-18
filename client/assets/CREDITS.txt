@@ -88,3 +88,9 @@ models/kit/ đợt 3 (furn_*, school_*, chess_*, music_*, play_*, house_city_*, 
     prop_umbrella_cute "Cute umbrella" https://opengameart.org/content/cute-umbrella · prop_inner_tube "Inner tube" https://opengameart.org/content/inner-tube
   Tự dựng bằng tools/kit/make_props.py (CC0 của dự án): sport_hoop, sport_net, sport_goal_mini, play_seesaw, prop_beach_umbrella, prop_swim_ring
   house_suburb_*_warm: bản đổi màu mái (ngói cam) của Kenney City Kit Suburban.
+
+models/kit/qn_*.glb (cây tán, bạch dương, thông, dừa, bụi, bụi quả, hoa, dương xỉ, cỏ cụm, đá, gốc cây, khúc gỗ + bản LOD *_lod) — đợt đồ hoạ CC0 1
+  Quaternius — Ultimate Nature Pack (Jun 2019), CC0 1.0 — https://opengameart.org/content/low-poly-nature-pack-1
+  (License.txt trong gói: "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"). Tải từ OpenGameArt (quaternius.com chỉ dẫn link Google Drive).
+  Đã chuyển OBJ → GLB bằng tools/kit/obj2glb.mjs: giản lược meshopt (cây ≤ 260 tam giác, LOD ≤ 140, bụi/hoa/cỏ ≤ 90), pháp tuyến phẳng, nén Meshopt.
+  Không tải được (bị chặn mạng trong môi trường làm việc): kenney.nl, poly.pizza, github.com (trang web/API) — KayKit lấy qua cdn.jsdelivr.net/gh.
