@@ -127,7 +127,7 @@ export function makeKit(B, { far = false, Y, ground }) {
       }
       merlons(axis, a0, a1, outer, Y + h, gs);
       const fo = side > 0 ? f1 : f0;
-      for (let a = a0 + 4.2; a < a1 - 3; a += 8.4) { if (gs.some(([g0, g1]) => a > g0 - 2 && a < g1 + 2)) continue; winAt(axis === 'v' ? 'u' : 'v', fo, side, a, Y + 1.8, 0.45, 1.6); }   // khe bắn tên
+      for (let a = a0 + 4.2; a < a1 - 3; a += 8.4) { if (gs.some(([g0, g1]) => a > g0 - 2 && a < g1 + 2)) continue; if (win) { const f = fo + side * 0.1; if (axis === 'v') win.box(a - 0.17, a + 0.17, Y + 1.6, Y + 3.7, f - 0.07, f + 0.07, '#ffffff'); else win.box(f - 0.07, f + 0.07, Y + 1.6, Y + 3.7, a - 0.17, a + 0.17, '#ffffff'); } }   // khe bắn tên thẳng đứng
       if (det) { if (axis === 'v') det.box(a0, a1, Y - 1, Y + 0.9, Math.min(f0, f1) - 0.35, Math.max(f0, f1) + 0.35, '#6f7466'); else det.box(Math.min(f0, f1) - 0.35, Math.max(f0, f1) + 0.35, Y - 1, Y + 0.9, a0, a1, '#6f7466'); }   // chân tường rêu
       if (!far) for (const [g0, g1] of gs) for (const g of [g0, g1]) if (axis === 'v') wall.box(g - 0.6, g + 0.6, Y - 1, Y + h + 2.1, f0 - 0.4, f1 + 0.4, COL.wall); else wall.box(f0 - 0.4, f1 + 0.4, Y - 1, Y + h + 2.1, g - 0.6, g + 0.6, COL.wall);   // trụ cổng
     };
