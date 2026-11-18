@@ -37,11 +37,14 @@ async function openPage() {
     for (const k of subs) { const o = c[k]; if (!o || typeof o.update !== 'function' || o.update._pf) continue; const f = o.update;
       o.update = function () { if (k === 'player' && F.drive) F.drive(); const s = performance.now(); const r = f.apply(this, arguments); const d = performance.now() - s; F.cur[k] = (F.cur[k] || 0) + d; F.js += d; return r; }; o.update._pf = 1; }
     const info = c.renderer.info, r = c.post.render;
-    let prog = 0, geo = 0, tex = 0;
+    let prog = 0, geo = 0, tex = 0; const seen = new Set();
+    const label = o => { let n = o.name, q = o.parent; while (!n && q) { n = q.name; q = q.parent; } return n || o.type; };
+    const newMats = () => { const out = []; c.scene.traverse(o => { if (!o.material) return; for (const m of [].concat(o.material)) { if (seen.has(m)) continue; const pr = c.renderer.properties.get(m); if (pr.currentProgram) { seen.add(m); out.push(label(o) + ':' + (m.name || m.type)); } } }); return out.length ? out : ['(bóng đổ/nội bộ)']; };
+    c.scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) if (c.renderer.properties.get(m).currentProgram) seen.add(m); });
     c.post.render = function () {
       info.reset(); const s = performance.now(); r.apply(this, arguments); const rd = performance.now() - s;
       const np = info.programs.length, ng = info.memory.geometries, nt = info.memory.textures;
-      if (F.on) F.frames.push({ js: F.js, rd, iv: F.last ? s - F.last : 0, calls: info.render.calls, tris: info.render.triangles, prog: np - prog, pn: np > prog ? info.programs.slice(prog).map(q => q.name + (q.cacheKey.includes('isShadow') || /depth|distance/i.test(q.name) ? '' : '')) : null, geo: ng - geo, tex: nt - tex, cur: F.cur, y: c.camera.position.y, far: c.camera.far });
+      if (F.on) F.frames.push({ js: F.js, rd, iv: F.last ? s - F.last : 0, calls: info.render.calls, tris: info.render.triangles, prog: np - prog, pn: np > prog ? newMats() : null, geo: ng - geo, tex: nt - tex, cur: F.cur, y: c.camera.position.y, far: c.camera.far });
       prog = np; geo = ng; tex = nt; F.cur = {}; F.js = 0; F.last = s;
     };
     // phím ảo
