@@ -1,0 +1,124 @@
+{
+ "res": {
+  "frames": 167,
+  "avgMs": 384.9,
+  "p95Ms": 500,
+  "maxMs": 950,
+  "over50": 167,
+  "over100": 167,
+  "gcMinor": 8,
+  "gcMajor": 7,
+  "gcTraceMs": 148,
+  "gcProfMs": 74,
+  "jsFrame": {
+   "p95": 54.9,
+   "max": 183,
+   "over50": 15,
+   "over100": 2
+  },
+  "jsMs": 29,
+  "matrixMs": 4.81,
+  "heapMB": [
+   149.7,
+   149.7
+  ],
+  "msPerFrame": {
+   "frameJs": 35.11,
+   "render": 24.97,
+   "school": 2.49,
+   "perf": 1.74,
+   "ambience": 1.44,
+   "player": 1.11,
+   "aircraft": 0.52,
+   "weather": 0.42,
+   "audio": 0.28,
+   "animals": 0.2,
+   "net": 0.18,
+   "living": 0.17,
+   "sky": 0.13,
+   "treasure": 0.13,
+   "dive": 0.12,
+   "physics": 0.11,
+   "eggs": 0.11,
+   "vehicles": 0.08,
+   "terrain": 0.07,
+   "worldMap": 0.06,
+   "skyshow": 0.06,
+   "sealife": 0.05,
+   "brightness": 0.02,
+   "zen": 0.01,
+   "mg": 0
+  },
+  "spikes": [
+   {
+    "ms": 183,
+    "prog": 195,
+    "tex": 28,
+    "geo": 186,
+    "aircraft": 38,
+    "weather": 28,
+    "ambience": 18,
+    "render": 90
+   },
+   {
+    "ms": 172,
+    "prog": 195,
+    "tex": 29,
+    "geo": 189,
+    "render": 161
+   }
+  ]
+ },
+ "top": [
+  {
+   "fn": "updateMatrixWorld http://localhost:3000/lib/three/build/three.module.js:7772",
+   "ms": 627,
+   "pct": 1
+  },
+  {
+   "fn": "V https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 473,
+   "pct": 0.8
+  },
+  {
+   "fn": "projectObject http://localhost:3000/lib/three/build/three.module.js:30038",
+   "ms": 309,
+   "pct": 0.5
+  },
+  {
+   "fn": "er https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 234,
+   "pct": 0.4
+  },
+  {
+   "fn": "renderObject http://localhost:3000/lib/three/build/three.module.js:22551",
+   "ms": 169,
+   "pct": 0.3
+  },
+  {
+   "fn": "Z https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js:1",
+   "ms": 160,
+   "pct": 0.3
+  },
+  {
+   "fn": "texSubImage2D :0",
+   "ms": 151,
+   "pct": 0.2
+  },
+  {
+   "fn": "bindVertexArray :0",
+   "ms": 147,
+   "pct": 0.2
+  },
+  {
+   "fn": "still island/perf.js:65",
+   "ms": 128,
+   "pct": 0.2
+  },
+  {
+   "fn": "setProgram http://localhost:3000/lib/three/build/three.module.js:30501",
+   "ms": 128,
+   "pct": 0.2
+  }
+ ]
+}

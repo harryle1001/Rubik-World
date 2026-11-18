@@ -128,7 +128,7 @@ export function createSky(scene) {
     }
     // mây nhuộm hồng cam lúc mặt trời thấp, xanh tím ban đêm
     state.low = Math.max(0, 1 - Math.abs(el - 0.05) / 0.3);
-    state.cloudTint.set('#fff').lerp(_w.copy(sun.color).lerp(pink, 0.35), state.low * 0.8).lerp(nightCloud, state.night * 0.7);
+    state.cloudTint.setRGB(1, 1, 1).lerp(_w.copy(sun.color).lerp(pink, 0.35), state.low * 0.8).lerp(nightCloud, state.night * 0.7);
     cm.emissive.copy(state.cloudTint); cm.emissiveIntensity = 0.1 + 0.3 * (1 - state.night);
   }
   apply();
