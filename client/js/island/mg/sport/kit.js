@@ -104,7 +104,16 @@ export function sfx(ctx) {
 }
 
 // ---------- Sân khấu 3D riêng: mượn RenderPass của hậu kỳ (giữ màu/tone mapping chung của game) ----------
-export function arena(ctx, { sky = ['#7cc6ff', '#dff1ff'], fog = [60, 260], sun = [30, 55, 20], shadow = 60 } = {}) {
+// api (mg/host.js): có host → sân đặt NGAY TRONG thế giới: scene = nhóm con của api.root (dời center về tâm khu chơi), bầu trời/đèn/sương
+// của thế giới, camera riêng (cục bộ) được host đổi sang camera thế giới. Không host → sân khấu riêng như cũ.
+export function arena(ctx, { sky = ['#7cc6ff', '#dff1ff'], fog = [60, 260], sun = [30, 55, 20], shadow = 60, api = null, center = [0, 0] } = {}) {
+  if (api) {
+    const scene = new THREE.Group(), cam = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 700); scene.position.set(-center[0], 0, -center[1]); api.root.add(scene);
+    api.useCamera(cam, scene); api.hidePlayer();
+    const resize = () => { cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); }; addEventListener('resize', resize);
+    const dl = new THREE.Object3D(); dl.target = new THREE.Object3D();
+    return { scene, cam, sun: dl, dome: new THREE.Object3D(), inWorld: true, follow() {}, begin(hook) { this._hook = hook; }, end() {}, dispose() { removeEventListener('resize', resize); scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) if (m === vmat) m.userData.shared = true; }); } };
+  }
   const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 700);
   scene.fog = new THREE.Fog(sky[1], fog[0], fog[1]);
   // bầu trời: bán cầu màu chuyển (không ảnh hưởng sương mù)
@@ -167,6 +176,7 @@ const CSS = `
 #mgS .msg{position:absolute;left:50%;top:21%;transform:translate(-50%,-50%);font:900 clamp(26px,6.5vw,42px) system-ui;text-align:center;text-shadow:0 3px 0 #3d2b3f,0 0 13px #0008;opacity:0;transition:opacity .25s;white-space:pre-line;width:92%}
 #mgS .tip{position:absolute;left:50%;bottom:calc(max(13px,env(safe-area-inset-bottom)) + 8px);transform:translateX(-50%);background:#1b1626c8;border-radius:13px;padding:8px 13px;font:600 14px system-ui;text-align:center;width:min(92%,520px);line-height:1.38}
 #mgS .tip:empty{display:none}
+#mgS.inw{z-index:29}#mgS.inw .msg{top:28%}
 #mgS .bar{position:absolute;left:50%;transform:translateX(-50%);width:min(70%,340px);height:13px;border-radius:8px;background:#0006;border:2px solid #fff9;overflow:hidden}
 #mgS .bar i{display:block;height:100%;width:0;background:#ffd27a;border-radius:6px}
 #mgS .act{position:absolute;right:max(16px,env(safe-area-inset-right));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 55px);display:flex;flex-direction:column;gap:8px;align-items:flex-end}
@@ -180,19 +190,22 @@ const CSS = `
 #mgS .card button.go{background:#f0a23a;color:#fff}#mgS .card button.ok{background:#c9efc9;border-color:#3fa36b}#mgS .card button.no{background:#ffd0c8;border-color:#d2553f}
 #mgS .card .wide{grid-column:1/-1}
 @media(max-width:380px){#mgS .card .grid{grid-template-columns:1fr}}
+@media(max-width:600px){#mgS .act{bottom:calc(max(18px,env(safe-area-inset-bottom)) + 89px)}}
 body.mg-on #bAct,body.mg-on .btns,body.mg-on .topbtns,body.mg-on #joy,body.mg-on #bSound,body.mg-on #inv,body.mg-on .vbtns,body.mg-on #bMap,body.mg-on #brightBox,body.mg-on #hud,body.mg-on #info{display:none!important}`;
-export function hud(title, onExit) {
+// api (mg/host.js): có host → dùng thanh trên của host (tên, điểm, ✕ Thoát, Esc) — HUD này chỉ còn lời nhắc, nút lớn, bảng chọn
+export function hud(title, onExit, api = null) {
   if (!document.getElementById('mgSCss')) { const s = document.createElement('style'); s.id = 'mgSCss'; s.textContent = CSS; document.head.appendChild(s); }
   const root = document.createElement('div'); root.id = 'mgS';
   root.innerHTML = `<div class="top"><button class="x">✕ Thoát</button><div class="ttl"></div><div class="sc"></div></div><div class="msg"></div><div class="tip"></div><div class="act"></div>`;
+  if (api) { root.classList.add('inw'); root.querySelector('.top').remove(); api.hud.title(title); }
   document.body.appendChild(root);
   const $ = s => root.querySelector(s), msgEl = $('.msg'); let mt = 0;
-  $('.ttl').textContent = title; $('.x').onclick = () => onExit && onExit();
-  const esc = e => { if (e.code === 'Escape') { e.preventDefault(); onExit && onExit(); } }; addEventListener('keydown', esc);
+  if (!api) { $('.ttl').textContent = title; $('.x').onclick = () => onExit && onExit(); }
+  const esc = e => { if (e.code === 'Escape') { e.preventDefault(); onExit && onExit(); } }; if (!api) addEventListener('keydown', esc);   // có host: Esc do host xử lý
   const h = {
     root,
-    title: t => $('.ttl').textContent = t,
-    score: t => $('.sc').innerHTML = t,
+    title: t => api ? api.hud.title(t) : $('.ttl').textContent = t,
+    score: t => api ? api.hud.info(t) : $('.sc').innerHTML = t,
     tip: t => $('.tip').innerHTML = t || '',
     msg(t, ms = 1300) { msgEl.textContent = t; msgEl.style.opacity = 1; clearTimeout(mt); if (ms) mt = setTimeout(() => msgEl.style.opacity = 0, ms); },
     bar(top = '58px', color = '#ffd27a') { const b = document.createElement('div'); b.className = 'bar'; b.style.top = top; b.innerHTML = '<i></i>'; b.firstChild.style.background = color; root.appendChild(b); return { el: b, set: v => b.firstChild.style.width = (clamp(v, 0, 1) * 100).toFixed(1) + '%', color: c => b.firstChild.style.background = c, show: v => b.style.display = v ? '' : 'none' }; },

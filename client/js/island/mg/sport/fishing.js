@@ -14,7 +14,7 @@ const POND = new THREE.Color('#3fa2d4'), CREEK = [new THREE.Color('#5fc8d8'), ne
 function start(ctx, opts = {}) {
   const { scene, terrain, camera } = ctx, pl = ctx.player, S = sfx(ctx), wantBoat = !!opts.boat;
   const quit = () => (opts.onExit || opts.exit || opts.close || (() => self.dispose()))();
-  const H = hud('🎣 Câu cá', quit), inp = tapper(document.body), unlock = lockWorld(ctx);
+  const H = hud('🎣 Câu cá', quit, opts.api), inp = tapper(document.body), unlock = lockWorld(ctx);
   const book = store.get(BOOK, { f: {}, eco: 0, trash: 0, n: 0 });
   const saveBook = () => store.set(BOOK, book);
   const group = new THREE.Group(); scene.add(group);
@@ -304,6 +304,6 @@ function start(ctx, opts = {}) {
 }
 
 export const fishing = {
-  fishing: { name: 'Câu cá', start: (ctx, o = {}) => start(ctx, o) },
-  'fishing-boat': { name: 'Câu cá trên thuyền', start: (ctx, o = {}) => start(ctx, Object.assign({ boat: true }, o)) },
+  fishing: { name: '🎣 Câu cá', inPlace: true, start: (ctx, o = {}) => start(ctx, o) },
+  'fishing-boat': { name: '🎣 Câu cá trên thuyền', inPlace: true, start: (ctx, o = {}) => start(ctx, Object.assign({ boat: true }, o)) },
 };
