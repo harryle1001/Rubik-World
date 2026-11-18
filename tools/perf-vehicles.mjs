@@ -49,7 +49,7 @@ async function openPage() {
       info.reset(); const s = performance.now(); r.apply(this, arguments); const rd = performance.now() - s;
       const np = info.programs.length, ng = info.memory.geometries, nt = info.memory.textures;
       if (F.on) F.frames.push({ js: F.js, rd, iv: F.last ? s - F.last : 0, calls: info.render.calls, tris: info.render.triangles, prog: np - prog, pn: np > prog ? newMats() : null, geo: ng - geo, tex: nt - tex, cur: F.cur, y: c.camera.position.y, far: c.camera.far });
-      prog = np; geo = ng; tex = nt; F.cur = {}; F.js = 0; F.last = s;
+      F.stable = np === prog ? (F.stable || 0) + 1 : 0; prog = np; geo = ng; tex = nt; F.cur = {}; F.js = 0; F.last = s;
     };
     // phím ảo
     const held = new Set();
@@ -59,6 +59,7 @@ async function openPage() {
 
   L = await page.evaluate(async () => { const l = await import('/js/island/layout.js'); const e = l.EXTRA.find(e => e.id === 'K').r; return { spawn: l.SPAWN, air: e, R: l.ISLAND_R }; });
 
+  await page.waitForFunction(() => __pf.stable > 34, null, { timeout: 300000 }).catch(() => {});   // chờ hết biên dịch lại do khoá giờ 13h (đổi số đèn)
   return page;
 }
 let L;
