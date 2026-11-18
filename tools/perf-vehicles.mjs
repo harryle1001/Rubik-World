@@ -37,7 +37,7 @@ async function openPage() {
     for (const k of subs) { const o = c[k]; if (!o || typeof o.update !== 'function' || o.update._pf) continue; const f = o.update;
       o.update = function () { if (k === 'player' && F.drive) F.drive(); const s = performance.now(); const r = f.apply(this, arguments); const d = performance.now() - s; F.cur[k] = (F.cur[k] || 0) + d; F.js += d; return r; }; o.update._pf = 1; }
     const info = c.renderer.info, r = c.post.render;
-    F.links = []; { const gl = c.renderer.getContext(), lp = gl.linkProgram.bind(gl); gl.linkProgram = p => { if (F.on) F.links.push((new Error().stack.split('\n').filter(l => /island|ocean\.js/.test(l)).slice(0, 3).map(l => l.replace(/.*\/js\//, '').replace(/\)$/, '')).join(' < ')) || '(three)'); return lp(p); }; }
+    Error.stackTraceLimit = 80; F.links = []; { const gl = c.renderer.getContext(), lp = gl.linkProgram.bind(gl); gl.linkProgram = p => { if (F.on) F.links.push((new Error().stack.split('\n').filter(l => /island|ocean\.js/.test(l)).slice(0, 3).map(l => l.replace(/.*\/js\//, '').replace(/\)$/, '')).join(' < ')) || '(three)'); return lp(p); }; }
     let prog = 0, geo = 0, tex = 0; const seen = new Set();
     const label = o => { let n = o.name, q = o.parent; while (!n && q) { n = q.name; q = q.parent; } return n || o.type; };
     const pSeen = new Set(), mProg = new WeakMap();
