@@ -16,12 +16,14 @@ export function runner(ctx, api, C) {
   C = Object.assign({ goal: 610, topic: 'math', speed: 8, boost: 5, jump: true, mode: 'lane', ground: '#9aa3ad', side: '#7fbf6a', line: '#ffffff',
     obst: 'cone', obstColor: '#ff8a3d', decor: [], ride: null, rideSize: 1, sit: false, rivals: 2, fact: '', title: '' }, C);
   const { root, hud, me } = api, sfx = api.sfx, M = api.mat;
-  const world = new THREE.Group(); root.add(world);
-  // ---------- Đường (1 khối gộp) + vạch làn trôi (InstancedMesh) ----------
-  { const b = batch(), W = LANE * 3 + 1;
-    b.add(new THREE.PlaneGeometry(W, NEAR - FAR + 21).rotateX(-Math.PI / 2), C.ground, 0, 0.03, (NEAR + FAR) / 2 - 8);
-    for (const s of [-1, 1]) { b.add(new THREE.PlaneGeometry(21, NEAR - FAR + 21).rotateX(-Math.PI / 2), C.side, s * (W / 2 + 10.5), 0.02, (NEAR + FAR) / 2 - 8); b.box(0.3, 0.25, NEAR - FAR + 21, s * W / 2, 0, (NEAR + FAR) / 2 - 8, C.line); }
-    // vạch đích ở xa (hiện khi gần đích)
+  // Đường đua đặt trên CẦU CẠN cao H = 13 m (Fibonacci): đường dài 68 m không bao giờ đè lên nhà/cây của thế giới mở, khu chơi dưới đất chỉ cần bán kính 13 m
+  const H = C.lift ?? 13, world = new THREE.Group(); world.position.y = H; root.add(world);
+  // ---------- Đường + lề + dầm cầu + trụ (1 khối gộp) + vạch làn trôi (InstancedMesh) ----------
+  { const b = batch(), W = LANE * 3 + 1, L = NEAR - FAR + 21, zc = (NEAR + FAR) / 2 - 8, SW = 6.8;
+    b.add(new THREE.PlaneGeometry(W, L).rotateX(-Math.PI / 2), C.ground, 0, 0.03, zc);
+    for (const s of [-1, 1]) { b.add(new THREE.PlaneGeometry(SW, L).rotateX(-Math.PI / 2), C.side, s * (W / 2 + SW / 2), 0.02, zc); b.box(0.3, 0.25, L, s * W / 2, 0, zc, C.line); b.box(0.2, 0.9, L, s * (W / 2 + SW), 0, zc, '#e8e2d4'); }
+    b.box(W + SW * 2 + 0.4, 0.9, L, 0, -0.9, zc, '#b9b2a6');
+    for (const z of [NEAR - 2, -8, FAR + 21]) for (const s of [-1, 1]) b.add(new THREE.CylinderGeometry(0.8, 1.1, H, 10), '#cfc8bb', s * (W / 2 + 2), -H / 2 - 0.9, z);
     world.add(b.mesh()); }
   const stripes = new THREE.InstancedMesh(new THREE.BoxGeometry(0.16, 0.02, 1.6), new THREE.MeshBasicMaterial({ color: C.line }), 2 * 21);
   { const o = new THREE.Object3D(); let k = 0; for (const x of [-LANE / 2, LANE / 2]) for (let i = 0; i < 21; i++) { o.position.set(x, 0.05, NEAR - i * 4); o.updateMatrix(); stripes.setMatrixAt(k++, o.matrix); } }
@@ -52,17 +54,17 @@ export function runner(ctx, api, C) {
   let ride = null, rideA = null;
   if (C.ride && /^animal-/.test(C.ride)) anim(world, C.ride, C.rideSize).then(r => { if (!r || !S.live) return; ride = r.obj; rideA = r.anim; rideA.play('Gallop'); });
   else if (C.ride === 'ski') { const b = batch(); for (const x of [-0.16, 0.16]) b.box(0.1, 0.05, 1.7, x, 0, 0, '#e8453c'); ride = b.mesh(); world.add(ride); }
-  else if (C.ride) prop(world, C.ride, { size: C.rideSize }).then(r => { if (r && S.live) ride = r; });
+  else if (C.ride) prop(world, C.ride, { size: C.rideSize, skip: C.skip }).then(r => { if (r && S.live) ride = r; });
   const rivals = [];
   for (let i = 0; i < C.rivals; i++) {
     const R = { lane: i === 0 ? 0 : 2, d: 0, v: 0, base: C.speed * [0.97, 1.03][i % 2], a: null, ride: null, rideA: null, name: ['Nam', 'Lan', 'Minh'][i] }, rr = C.rivalRides ? C.rivalRides[i] : C.ride;
     rivals.push(R);
-    api.actor(KIDS[i], { name: R.name, look: { role: 'student', shirt: ['#e8453c', '#3fa36b'][i], pants: '#2a2f4a' } }).then(a => { if (!a || !S.live) return; R.a = a; a.place(laneX(R.lane), 0, Math.PI); if (C.sit) a.sit('sit'); a.say(pick(['Đua nào!', 'Cố lên!', 'Tớ sẽ thắng!']), 2000); });
+    api.actor(KIDS[i], { name: R.name, look: { role: 'student', shirt: ['#e8453c', '#3fa36b'][i], pants: '#2a2f4a' } }).then(a => { if (!a || !S.live) return; R.a = a; a.place(laneX(R.lane), 0, Math.PI); a.pos.y = H; if (C.sit) a.sit('sit'); a.say(pick(['Đua nào!', 'Cố lên!', 'Tớ sẽ thắng!']), 2000); });
     if (rr && /^animal-/.test(rr)) anim(world, rr, C.rideSize).then(r => { if (!r || !S.live) return; R.ride = r.obj; R.rideA = r.anim; r.anim.play('Gallop'); });
     else if (rr === 'ski') { const b = batch(); for (const x of [-0.16, 0.16]) b.box(0.1, 0.05, 1.7, x, 0, 0, '#3d8fd9'); R.ride = b.mesh(); world.add(R.ride); }
-    else if (rr) prop(world, rr, { size: C.rideSize }).then(r => { if (r && S.live) R.ride = r; });
+    else if (rr) prop(world, rr, { size: C.rideSize, skip: C.skip }).then(r => { if (r && S.live) R.ride = r; });
   }
-  api.cam.x = 0; api.cam.y = 1.6; api.cam.z = -3.4; api.cam.yaw = 0; api.cam.pitch = 0.48; api.cam.dist = 11;
+  api.cam.x = 0; api.cam.y = H + 1.6; api.cam.z = -3.4; api.cam.yaw = 0; api.cam.pitch = 0.48; api.cam.dist = 11;
 
   // ---------- Điều khiển ----------
   const steer = k => { if (S.over || C.mode !== 'lane') return; S.lane = clamp(S.lane + k, 0, 2); sfx('ui'); };
@@ -130,7 +132,7 @@ export function runner(ctx, api, C) {
       // nhảy
       if (S.y > 0 || S.vy > 0) { S.vy -= 21 * dt; S.y = Math.max(0, S.y + S.vy * dt); if (S.y === 0) S.vy = 0; }
       S.x += (laneX(S.lane) - S.x) * (1 - Math.exp(-dt * 13));
-      me.pos.set(S.x, S.y + (C.sit ? C.seat || 0.25 : C.rideH || 0), 0); me.yaw = Math.PI - (laneX(S.lane) - S.x) * 0.12; me.faceTo = null;
+      me.pos.set(S.x, H + S.y + (C.sit ? C.seat || 0.25 : C.rideH || 0), 0); me.yaw = Math.PI - (laneX(S.lane) - S.x) * 0.12; me.faceTo = null;
       if (ride) { ride.position.set(S.x, S.y, 0); ride.rotation.y = me.yaw; }
       // trôi đường
       scroll.position.z = S.d % 4; deco.position.z = S.d % 34;
@@ -138,7 +140,7 @@ export function runner(ctx, api, C) {
       for (const R of rivals) {
         if (!S.over || R.d < C.goal) { const gap = S.d - R.d, w = S.count > 0 ? 0 : R.base * (1 + clamp(gap / 89, -0.12, 0.16)); R.v += (w - R.v) * (1 - Math.exp(-dt * 1.5)); R.d += R.v * dt; }
         const z = -(R.d - S.d), x = laneX(R.lane), vis = z < NEAR + 4 && z > FAR;
-        if (R.a) { R.a.pos.set(x, C.sit ? C.seat || 0.25 : C.rideH || 0, z); R.a.yaw = Math.PI; R.a.model.visible = vis; }
+        if (R.a) { R.a.pos.set(x, H + (C.sit ? C.seat || 0.25 : C.rideH || 0), z); R.a.yaw = Math.PI; R.a.model.visible = vis; }
         if (R.ride) { R.ride.position.set(x, 0, z); R.ride.rotation.y = Math.PI; R.ride.visible = vis; }
       }
       if (S.over) return;

@@ -152,6 +152,7 @@ export function createMiniGameHost(ctx) {
   }
   const spotCache = new Map();
 
+
   // ---------- Nhân vật (người chơi + NPC) ----------
   function makeActor(root, getHero, isPlayer) {
     const st = {}, A = { pos: new THREE.Vector3(), yaw: 0, model: root, target: null, speed: 0, sitting: false, _st: st, bubble: null, bt: 0 };
@@ -179,7 +180,7 @@ export function createMiniGameHost(ctx) {
       root.position.set(A.pos.x, A.pos.y, A.pos.z); root.rotation.set(0, A.yaw, 0);
       const h = getHero();
       if (h) { if (isPlayer) { h.model.position.set(0, 0, 0); h.model.rotation.set(0, 0, 0); } driveHero(h, { speed: A.speed, grounded: true, walk: 5.5, oneShot: st.oneShot, sitting: A.sitting }); h.anim.update(dt); }
-      if (A.bubble && A.bt > 0) { A.bt -= dt; A.bubble.position.set(A.pos.x, (h ? h.height : 1.4) + 0.8, A.pos.z); A.bubble.material.opacity = Math.min(1, A.bt * 3); if (A.bt <= 0) A.bubble.visible = false; }
+      if (A.bubble && A.bt > 0) { A.bt -= dt; A.bubble.position.set(A.pos.x, A.pos.y + (h ? h.height : 1.4) + 0.8, A.pos.z); A.bubble.material.opacity = Math.min(1, A.bt * 3); if (A.bt <= 0) A.bubble.visible = false; }
     };
     return A;
   }

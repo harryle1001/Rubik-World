@@ -6,8 +6,9 @@ import { loadModel, loadAnimated, animator } from '../models.js';
 import { KIT } from '../kit.js';
 
 const share = o => { o.traverse(m => { if (m.geometry) m.geometry.userData.shared = true; for (const x of [].concat(m.material || [])) x.userData.shared = true; }); return o; };
-export async function prop(parent, name, { size = 1, x = 0, y = 0, z = 0, ry = 0, fit = 'max', shadow = true } = {}) {
+export async function prop(parent, name, { size = 1, x = 0, y = 0, z = 0, ry = 0, fit = 'max', shadow = true, skip = null } = {}) {
   const m = await loadModel(KIT + name); if (!m) return null;
+  if (skip) { const rm = []; m.traverse(o => o.isMesh && skip.test(o.name) && rm.push(o)); for (const o of rm) o.removeFromParent(); }   // bỏ phần thừa (vd người lái có sẵn trong xe kart)
   const b = new THREE.Box3().setFromObject(m), s = b.getSize(new THREE.Vector3());
   const k = size / Math.max(fit === 'h' ? s.y : Math.max(s.x, s.y, s.z), 1e-3); m.scale.multiplyScalar(k);
   const g = new THREE.Group(); m.position.y -= b.min.y * k; g.add(m); g.position.set(x, y, z); g.rotation.y = ry;
