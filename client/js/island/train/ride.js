@@ -70,9 +70,10 @@ export function createRide(ctx, { consist }) {
     blink(() => {
       if (cabin.state.walking) { cabin.sit(V); btns.walk.textContent = '🚶 Đứng dậy'; }
       st.aboard = false; st.phase = 'wait'; player.vehicle = null; showUI(false); director.reset();
-      const P = PARK[st.at], c = seatCar(), p = at(c.s), lat = P.side * (EDGE + 1.8);
+      const P = PARK[st.at], c = seatCar(), p = at(st.at === 'B' ? S_B1 - 5 : c.s), lat = P.side * (EDGE + 1.8);   // ga Học viện: cuối sân ga, ngoài mái chờ (camera không kẹt mái)
       player.teleport(p.x - p.tz * lat, p.z + p.tx * lat, P.top); player.root.quaternion.identity();
-      const vx = p.tx * st.dir * -1 - p.tz * P.side * 0.6, vz = p.tz * st.dir * -1 + p.tx * P.side * 0.6;   // nhìn dọc sân ga (về phía cuối tàu), chếch ra ngoài
+      const f = st.at === 'B' ? 1 : -1;   // ga Học viện: nhìn về cuối sân ga (cửa tây lâu đài); ga đảo Rubik: về phía cuối tàu
+      const vx = p.tx * st.dir * f - p.tz * P.side * 0.6, vz = p.tz * st.dir * f + p.tx * P.side * 0.6;   // chếch ra phía sân ga
       player.cam.yaw = Math.atan2(-vx, -vz); player.snapCamera && player.snapCamera();
       ctx.toast(st.at === 'B' ? '🏰 Ga <b>Học viện Pha Lê</b>. Đi tới cuối sân ga, rẽ phải vào <b>cửa tây lâu đài</b> (cầu có mái). Bến thuyền ⚓ ở cổng trước, đường băng ✈ ở cổng sau.' : '🏝️ Ga <b>đảo Rubik</b>. Chúc bạn một ngày vui!', 5000);
     });
