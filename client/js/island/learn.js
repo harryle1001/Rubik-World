@@ -169,6 +169,7 @@ export function createLearn(ctx) {
         c.innerHTML = `<div class="hd">${o.ava || SUBJ[x.s].i}<span><b>${esc(o.title || 'Câu hỏi')}</b> · ${SUBJ[x.s].n}${x.review ? ' <i class="rv">🔁 ôn lại</i>' : ''}</span><button class="gr" data-gr>Lớp ${grade() || '?'} ✎</button></div>
           ${n > 1 ? `<div class="dots">${Array.from({ length: n }, (_, k) => k < i ? '●' : k === i ? '◉' : '○').join('')} · cần đúng ${need}/${n}</div>` : ''}
           <h3>${esc(x.q)}</h3><div class="ch">${sh.ch.map((t, k) => `<button data-k="${k}">${k + 1}. ${esc(t)}</button>`).join('')}</div>`;
+        c.dataset.a = sh.a;   // (kiểm thử tự động)
         c.querySelector('[data-gr]').onclick = () => chooseGrade(step);
         const answer = k => {
           if (c.dataset.done) return; c.dataset.done = 1; const ok = k === sh.a; if (ok) right++;
@@ -184,5 +185,5 @@ export function createLearn(ctx) {
   }
   const ask = o => askSet(Object.assign({ n: 1, need: 1 }, o)).then(r => r.ok);
   function stats() { const D = L(), out = {}; for (const s in SUBJ) { const b = D.sb[s] || [0, 0]; out[s] = { n: b[0], ok: b[1], acc: acc(s), lv: target(s) }; } out.review = Object.values(D.st).filter(r => r[0] === 0).length; out.known = Object.values(D.st).filter(r => r[0] >= 3).length; return out; }
-  return ctx.learn = { pick, record, ask, askSet, chooseGrade, stats, SUBJ, ready, get grade() { return grade(); }, set grade(g) { setGrade(g); }, update() { if (card && !ctx.player.frozen) ctx.player.frozen = true; } };
+  return ctx.learn = { pick, record, ask, askSet, chooseGrade: f => chooseGrade(() => { close(); f && f(); }), stats, SUBJ, ready, get grade() { return grade(); }, set grade(g) { setGrade(g); }, update() { if (card && !ctx.player.frozen) ctx.player.frozen = true; } };
 }
