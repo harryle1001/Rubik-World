@@ -7,8 +7,8 @@ Danh sách đầy đủ: [species.md](species.md) · số đo: [perf.md](perf.md
 ## Chơi thế nào
 | Việc | Cách làm |
 |---|---|
-| Gặp loài mới | Lại gần (≈ 8–13 m), nhìn qua 🔭 ống nhòm hoặc 📷 chụp ảnh → loài được ghi vào 📔 Sổ tay (nút 📔 hoặc phím **X**) |
-| 🔭 Ống nhòm | Nút 🔭 / phím **Z**: góc nhìn thứ nhất, zoom 3× · 5× · 8×; đưa dấu ＋ vào con vật để nhận dạng từ xa mà không làm nó sợ |
+| Gặp loài mới | Lại gần (≈ 8–13 m), nhìn qua 🔭 ống nhòm hoặc 📷 chụp ảnh → loài được ghi vào 📔 Sổ tay (nút 📔 hoặc phím **.** (dấu chấm)) |
+| 🔭 Ống nhòm | Nút 🔭 / phím **,** (dấu phẩy): góc nhìn thứ nhất, zoom 3× · 5× · 8×; đưa dấu ＋ vào con vật để nhận dạng từ xa mà không làm nó sợ |
 | 📷 Chụp ảnh | Nút hành động "📷 Chụp ảnh …" (khi ở gần hoặc đang dùng ống nhòm) → ảnh 96 px lưu vào trang của loài |
 | 🥕 Cho ăn | Tới sát thú nuôi / thú hiền (bò, ngựa, dê, thỏ, sóc, bồ câu…) → "🥕 Cho … ăn": đàn đó quen hơi, không còn sợ |
 | 🛖 Chòi / lều quan sát | Chòi Safari + 3 lều (rừng đền, đầm sen, đồi núi): đứng trong đó thú không bỏ chạy |
@@ -38,7 +38,7 @@ Nông trại · rừng (quanh Đền Tri Thức + đất tự nhiên cao, xa ph�
 - Chim nhỏ, côn trùng, đàn cá: **InstancedMesh nướng 2 tư thế** của animation (`flocks.js`) → 2 draw call/đàn, không tính xương.
 - Chỉ sinh nhóm trong 46 m (điện thoại) / 60 m (máy tính) quanh người chơi, huỷ khi ra xa hơn 13 m nữa; nhóm gần nhất được ưu tiên.
 - **Tối đa 21 con có xương cùng lúc trên điện thoại** (34 trên máy tính), tính cả thú của `animals.js` đang hiện; tối đa 5 (8) đàn instanced.
-- Điện thoại (390×844, đo sau khi ghép nhánh chính): **nhiều nhất 224 draw call** (rừng đền ban đêm; giới hạn 233), JS của hệ ≤ 0,45 ms/khung; thú wild trên điện thoại không vẽ viền, thú nhỏ không đổ bóng.
+- Điện thoại (390×844, đo sau khi ghép nhánh chính): **nhiều nhất 229 draw call** (rừng đền ban đêm, đo lại sau lần ghép cuối; giới hạn 233), JS của hệ ≤ 0,45 ms/khung; thú wild trên điện thoại không vẽ viền, thú nhỏ không đổ bóng.
 - Số đo từng sinh cảnh: xem [perf.md](perf.md) (cột "trước" đo ở lần chạy khác nên lệch theo trạng thái LOD/cây cỏ; bảng máy tính đo trước khi ghép nhánh chính). Tắt hệ để so sánh: thêm `?nowild` vào URL.
 
 ## Tự kiểm tra

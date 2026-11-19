@@ -1,6 +1,6 @@
 // wild/naturalist.js — QUAN SÁT THIÊN NHIÊN cho "nhà sinh vật học nhí":
 //   📔 Sổ tay thiên nhiên: mỗi loài 1 trang (tên Việt + tên khoa học, lớp, thức ăn, nơi sống, tập tính, mức bảo tồn IUCN, câu đố nhỏ, ảnh tự chụp)
-//   🔭 Ống nhòm (phím Z): góc nhìn thứ nhất, zoom 3× / 5× / 8× (dãy Fibonacci), tâm ngắm nhận ra loài → ghi sổ từ xa mà không làm thú sợ
+//   🔭 Ống nhòm (phím ,): góc nhìn thứ nhất, zoom 3× / 5× / 8× (dãy Fibonacci), tâm ngắm nhận ra loài → ghi sổ từ xa mà không làm thú sợ
 //   📷 Chụp ảnh: lưu ảnh nhỏ 96 px vào trang của loài (localStorage)
 //   🧭 Nhiệm vụ: tìm đủ 8 loài chim · theo dấu chân · đếm đàn · chụp 13 loài · cho 5 loài ăn · quan sát 8 tập tính
 // Dữ liệu loài: species.js · thú đang hiện: wildlife.js (wild.each) + thú cũ (ctx.animals) · lưu: localStorage 'island.nature'
@@ -56,8 +56,8 @@ export function createNaturalist(ctx) {
   const flash = mk('div', 'natFlash'); document.body.appendChild(flash);
   // máy tính: hàng nút trên · điện thoại (hẹp, hàng trên đã kín chỗ): trong menu ☰ như các sổ khác
   const narrow = innerWidth < 700 && !!document.getElementById('moreMenu'), bar = (narrow && document.getElementById('moreMenu')) || document.querySelector('.topbtns') || document.body;
-  const bNat = mk('button', 'bNat'); bNat.title = 'Sổ tay thiên nhiên (X)'; bar.appendChild(bNat);
-  const bBino = mk('button', 'bBino', narrow ? '🔭 Ống nhòm' : '<i>🔭</i>'); bBino.title = 'Ống nhòm (Z)'; bar.appendChild(bBino);
+  const bNat = mk('button', 'bNat'); bNat.title = 'Sổ tay thiên nhiên (phím .)'; bar.appendChild(bNat);
+  const bBino = mk('button', 'bBino', narrow ? '🔭 Ống nhòm' : '<i>🔭</i>'); bBino.title = 'Ống nhòm (phím ,)'; bar.appendChild(bBino);
   const total = SPECIES.length, seenN = () => SPECIES.reduce((n, S) => n + (D.seen[S.id] ? 1 : 0), 0);
   const label = () => { bNat.innerHTML = narrow ? `📔 Sổ tay thiên nhiên ${seenN()}/${total}` : `<i>📔</i><b>${seenN()}/${total}</b>`; };
   label();
@@ -137,7 +137,7 @@ export function createNaturalist(ctx) {
   }
   bBino.onclick = () => setBino(binoOn ? 0 : 5);
   bino.querySelector('.zm').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setBino(+b.dataset.z); });
-  addEventListener('keydown', e => { if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return; if (e.code === 'KeyZ' && !ctx.mapOpen && !ctx.photoMode && book.hidden) setBino(binoOn ? 0 : 5); else if (e.code === 'KeyX' && (!pl.frozen || !book.hidden)) book.hidden ? open() : close(); else if (e.code === 'Escape') { if (!book.hidden) close(); else if (binoOn) setBino(0); } });
+  addEventListener('keydown', e => { if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return; if (e.code === 'Comma' && !ctx.mapOpen && !ctx.photoMode && book.hidden) setBino(binoOn ? 0 : 5); else if (e.code === 'Period' && (!pl.frozen || !book.hidden)) book.hidden ? open() : close(); else if (e.code === 'Escape') { if (!book.hidden) close(); else if (binoOn) setBino(0); } });
   // tìm con vật gần tâm màn hình nhất (trong nón ngắm) — cả thú của wild lẫn thú cũ
   function pickAim(maxNdc, maxDist) {
     let best = null, bs = 1e9; const cp = camera.position;
