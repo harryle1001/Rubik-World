@@ -14,6 +14,7 @@
 
 ## Bản đồ dự án
 - `client/` website + game 2D (Phaser) + đảo 3D (`ocean.html`, `js/island/`).
+- `client/js/island/sea/` thế giới đại dương: đội tàu thuyền theo tuyến (`fleet.js`), Làng chài Vịnh Én (`village.js`), ngư dân & câu cá (`folk.js`), lái buồm/ca nô/đi phà (`pilot.js`), cá heo – cá voi – sương – giông (`wild.js`); số liệu bố cục ở `site.js`.
 - `server/index.js` Express + Socket.io (namespace `/island` cho đảo 3D).
 - `client/assets/` model .glb, âm thanh; nguồn ghi trong `client/assets/CREDITS.txt` (chỉ dùng tài nguyên CC0).
 - `.claude/skills/` skill dùng chung: `lowpoly-style`, `open-world-lowpoly` (giới hạn tam giác, instancing, fog, chunk).

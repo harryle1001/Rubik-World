@@ -37,14 +37,15 @@ export function createPilot(ctx, { fleet }) {
 
   // ---------- HUD la bàn gió ----------
   const hud = document.createElement('div');
-  hud.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:calc(max(12px,env(safe-area-inset-top)) + 96px);z-index:26;display:none;align-items:center;gap:8px;padding:5px 13px 5px 5px;border-radius:34px;background:#0f2a3ad9;color:#fff3d6;font:700 13px/1.25 system-ui;pointer-events:none;max-width:94vw';
+  const TOP = () => `calc(max(12px,env(safe-area-inset-top)) + ${MOB || innerWidth < 610 ? 204 : 96}px)`;   // điện thoại dọc: nằm dưới bảng nhiệm vụ
+  hud.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:0;z-index:26;display:none;align-items:center;gap:8px;padding:5px 13px 5px 5px;border-radius:34px;background:#0f2a3ad9;color:#fff3d6;font:700 13px/1.25 system-ui;pointer-events:none;max-width:94vw';
   hud.innerHTML = `<svg width="55" height="55" viewBox="-28 -28 56 56" style="flex:none"><circle r="26" fill="#17384a" stroke="#fff3d6" stroke-width="1.6"/>
 <g fill="#fff3d6" font-size="8" font-weight="800" text-anchor="middle"><text y="-16">B</text><text x="19" y="3">Đ</text><text y="22">N</text><text x="-19" y="3">T</text></g>
 <g id="swBoat"><path d="M0 -13 L5 7 L0 4 L-5 7 Z" fill="#ffd23f"/></g><g id="swWind"><path d="M0 -25 L0 -9 M-4 -14 L0 -8 L4 -14" stroke="#7fe0ff" stroke-width="2.6" fill="none" stroke-linecap="round"/></g></svg><div id="swTxt"></div>`;
   document.body.appendChild(hud);
   const gBoat = hud.querySelector('#swBoat'), gWind = hud.querySelector('#swWind'), txt = hud.querySelector('#swTxt');
   let hudT = 0, hudOn = false;
-  const showHud = on => { if (hudOn !== on) { hudOn = on; hud.style.display = on ? 'flex' : 'none'; } };
+  const showHud = on => { if (hudOn !== on) { hudOn = on; hud.style.display = on ? 'flex' : 'none'; hud.style.top = TOP(); } };
 
   // ---------- thuyền lái được ----------
   const boats = [];
@@ -120,7 +121,7 @@ export function createPilot(ctx, { fleet }) {
 
   // ---------- đi phà ----------
   const F = fleet.ferry; let aboard = false, deckY = 1.0, factI = 0, factT = 21, measured = false;
-  const fh = document.createElement('div'); fh.style.cssText = hud.style.cssText.replace('display:none', 'display:none').replace('padding:5px 13px 5px 5px', 'padding:6px 13px'); document.body.appendChild(fh);
+  const fh = document.createElement('div'); fh.style.cssText = hud.style.cssText.replace('padding:5px 13px 5px 5px', 'padding:6px 13px;text-align:center;width:max-content').replace('border-radius:34px', 'border-radius:16px').replace('align-items:center;', ''); document.body.appendChild(fh);
   const btns = document.querySelector('.btns'), bSkip = document.createElement('button'); bSkip.textContent = '⏭ Tới bến'; bSkip.hidden = true; bSkip.style.background = '#2c6455cc'; bSkip.onclick = () => { if (aboard && F.state === 'sail') F.warp = 8; else if (aboard) F.dwell = 0; }; btns && btns.appendChild(bSkip);
   const _p = new THREE.Vector3(), _q = new THREE.Quaternion(), _e = new THREE.Euler(0, 0, 0, 'YXZ');
   function measureDeck() {   // cao độ boong (m): bắn tia xuống lưới model ở nửa trước của phà
@@ -132,7 +133,7 @@ export function createPilot(ctx, { fleet }) {
   function board() {
     if (aboard || pl.vehicle || pl.frozen) return; aboard = true; F.warp = 1;
     pl.vehicle = { speed: 0, turn: 0, accel: 4, fly: true, lift: 0, maxAlt: 999, anim: 'idle', seat: 0, seatZ: 0, camAdd: 8, ferry: true };
-    bSkip.hidden = false; fh.style.display = 'flex'; for (const id of ['bRun', 'bJump']) { const b = document.getElementById(id); if (b) b.hidden = true; }
+    bSkip.hidden = false; fh.style.display = 'block'; fh.style.top = TOP(); for (const id of ['bRun', 'bJump']) { const b = document.getElementById(id); if (b) b.hidden = true; }
     ctx.sfx && ctx.sfx('splash'); ctx.toast(`⛴️ Lên phà! Bến kế: <b>${nextName()}</b>. Đứng trên boong ngắm biển nhé — tới bến bấm <b>E</b> để xuống.`, 5000); factT = 21;
   }
   function leave(stop) {
@@ -151,14 +152,14 @@ export function createPilot(ctx, { fleet }) {
     // phà
     const p = pl.pos;
     if (!aboard) {
-      if (F.state === 'dock' && !pl.vehicle && !pl.frozen) { const s = F.at || STOPS[0], d = Math.hypot(p.x - s.land[0], p.z - s.land[1]); if (d < 8) ctx.offer(`⛴️ Lên phà đi ${nextName()}`, board, 6); }
+      if (F.state === 'dock' && !pl.vehicle && !pl.frozen) { const s = F.at || STOPS[0], d = Math.hypot(p.x - s.land[0], p.z - s.land[1]); if (d < 7) ctx.offer(`⛴️ Lên phà đi ${nextName()}`, board, 2.2); }   // ưu tiên thấp hơn nói chuyện / câu cá với người đứng cạnh
       else if (!pl.vehicle && !pl.frozen) for (const s of STOPS) if (Math.hypot(p.x - s.land[0], p.z - s.land[1]) < 6) { once('wait' + s.id, `⛴️ <b>Bến phà ${s.name}</b> — phà chạy vòng 3 bến: Làng chài · Làng nổi · Resort. Chờ phà cập bến rồi lên nhé!`, 5000); }
       return;
     }
     // đứng trên boong: vị trí theo thân phà (nhấp nhô theo sóng)
     fleet.deckPoint(F, 0, deckY - F.K.dy, 3.2, _p); pl.pos.copy(_p); pl.root.position.copy(_p); _e.set(F.pitch, F.h, F.roll); pl.root.quaternion.setFromEuler(_e); void _q;
     let rem = F.stops[F.k].s - F.s; if (rem < -1) rem += F.path.L;
-    fh.innerHTML = F.state === 'dock' ? `⛴️ Phà đang đậu ở <b>&nbsp;${F.at.name}</b>&nbsp;· rời bến sau ${Math.max(0, Math.ceil(F.dwell))} s` : `⛴️ Phà → <b>&nbsp;${F.at.name}</b>&nbsp;· còn ${Math.round(rem)} m · ${(F.sp / KNOT).toFixed(0)} hải lý/giờ`;
+    fh.innerHTML = F.state === 'dock' ? `⛴️ Phà đang đậu ở <b>${F.at.name}</b> · rời bến sau ${Math.max(0, Math.ceil(F.dwell))} s` : `⛴️ Phà → <b>${F.at.name}</b> · còn ${Math.round(rem)} m · ${(F.sp / KNOT).toFixed(0)} hải lý/giờ`;
     if (F.state === 'dock') ctx.offer(`🏝️ Xuống phà ở ${F.at.name}`, () => leave(F.at), 6);
     else if ((factT -= dt) <= 0 && F.warp === 1) { factT = 34; ctx.toast(FERRY_FACTS[factI++ % FERRY_FACTS.length], 7000); }
   }

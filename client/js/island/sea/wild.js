@@ -87,8 +87,8 @@ export function createWild(ctx, { fleet, pilot, village }) {
     if (stormy && !stormTold && Math.hypot(p.x, p.z) > 200) { stormTold = true; ctx.toast(FACT.storm, 6000); } if (!stormy) stormTold = false;
 
     // ----- cá heo -----
-    const sp = aboard ? fleet.ferry.sp : pl.speed, hx = aboard ? Math.sin(fleet.ferry.h) : Math.sin(pl.rot), hz = aboard ? Math.cos(fleet.ferry.h) : Math.cos(pl.rot);
-    const can = (onBoat || aboard) && depth > 4 && sp > 3 && !stormy && S.night < 0.7;
+    const bsp = aboard ? fleet.ferry.sp : pl.speed, hx = aboard ? Math.sin(fleet.ferry.h) : Math.sin(pl.rot), hz = aboard ? Math.cos(fleet.ferry.h) : Math.cos(pl.rot);
+    const can = (onBoat || aboard) && depth > 4 && bsp > 3 && !stormy && S.night < 0.7;
     sailT = can ? sailT + dt : Math.max(0, sailT - dt * 2);
     if (can && sailT > podT) podK = Math.min(1, podK + dt * 0.5); else if (!can || sailT < 1) podK = Math.max(0, podK - dt * 0.4);
     if (podK <= 0 && dol.visible) { dol.visible = false; podT = 8 + Math.random() * 21; }
@@ -110,8 +110,8 @@ export function createWild(ctx, { fleet, pilot, village }) {
       if ((W.wait -= dt) <= 0) {
         W.wait = 55 + Math.random() * 89;
         const out = Math.hypot(p.x, p.z) > 225 && S.night < 0.6 && !stormy && !ctx.underwater;
-        if (out) for (let k = 0; k < 21; k++) {   // chọn điểm ngoài khơi, trong tầm sương, trước mặt camera
-          const a = Math.atan2(camera.position.x - p.x, camera.position.z - p.z) + Math.PI + (Math.random() - 0.5) * (k < 8 ? 1.6 : 6.28),   // ưu tiên trước mặt camera; không có biển thì thử quanh d = Math.min(far * 0.72, 150 + Math.random() * 60), x = p.x + Math.sin(a) * d, z = p.z + Math.cos(a) * d;
+        if (out) for (let k = 0; k < 21; k++) {   // chọn điểm ngoài khơi, trong tầm sương: ưu tiên trước mặt camera, không có biển thì thử quanh
+          const a = Math.atan2(camera.position.x - p.x, camera.position.z - p.z) + Math.PI + (Math.random() - 0.5) * (k < 8 ? 1.6 : 6.28), d = Math.min(far * 0.72, 150 + Math.random() * 60), x = p.x + Math.sin(a) * d, z = p.z + Math.cos(a) * d;
           if (terrain.heightAt(x, z) < -5 && Math.hypot(x, z) > 390 && Math.hypot(x - 286, z - 286) > 110) { Object.assign(W, { on: true, t: 0, x, z, h: a + Math.PI / 2, blow: 0 }); whale.visible = spout.visible = true; break; }
         }
       }
@@ -163,6 +163,6 @@ export function createWild(ctx, { fleet, pilot, village }) {
     if (hr > 17.3 && hr < 18.4 && vd < 60 && !stormy) once('sunset');
   }
   const _v2 = new THREE.Vector2(), _c = new THREE.Color();
-  return { update, dol, whale, gulls, mist, turtles, debug: { whale: () => { W.wait = 0; }, pod: () => { podT = 0; sailT = 99; } } };
+  return { update, dol, whale, gulls, mist, turtles, debug: { W, whale: () => { W.wait = 0; }, pod: () => { podT = 0; sailT = 99; } } };
 }
 export { PHI, ZERO };

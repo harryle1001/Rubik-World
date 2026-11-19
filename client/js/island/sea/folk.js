@@ -64,13 +64,13 @@ const NPCS = () => {
     { id: 'tu', kind: 0, look: { role: 'adult', old: true, shirt: '#8a6a4a', pants: '#3a3a44', hat: '#e8c873', hatStyle: 'nonla' } },
     { id: 'ba', kind: 1, look: { role: 'adult', shirt: '#c9566a', pants: '#2a2a33', hat: '#e8c873', hatStyle: 'nonla' } },
     { id: 'nam', kind: 4, look: { role: 'adult', old: true, shirt: '#e8e2d0', pants: '#4a4a55' } },
-    { id: 'bay', kind: 2, look: { role: 'adult', shirt: '#3d7a5a', pants: '#3a3a44', hat: '#e8c873', hatStyle: 'nonla', prop: 'rod' }, angler: { u: PIER_U1 - 0.6, v: PIER_V - HEAD_W / 2 + 0.6, ry: Math.PI / 4 } },
+    { id: 'bay', kind: 2, look: { role: 'adult', shirt: '#3d7a5a', pants: '#3a3a44', hat: '#e8c873', hatStyle: 'nonla', prop: 'rod' }, angler: { u: PIER_U1 - 2.6, v: PIER_V - HEAD_W / 2 + 0.55, ry: Math.PI / 2 } },
     { id: 'sau', kind: 6, look: { role: 'adult', tee: true, stripe: '#2b6cb0', shirt: '#f4efe2', shorts: true, pants: '#3a4a66' } },
     { id: 'da', kind: 8, look: { role: 'adult', old: true, shirt: '#6a7a8a', pants: '#3a3a44', hat: '#e8c873', hatStyle: 'nonla', prop: 'rod' }, angler: 'rock' },
     { id: 'hai', kind: 10, look: { role: 'adult', tee: true, shirt: '#e8a23a', shorts: true, pants: '#2a4a66' } },
     { id: 'thung', kind: 2, look: { role: 'adult', shirt: '#7a5a8a', pants: '#3a3a44', hat: '#e8c873', hatStyle: 'nonla', prop: 'rod' }, angler: 'thung' },
     { id: 'hoa', kind: 3, look: { role: 'adult', shirt: '#5a9fc9', pants: '#2a2a33', hat: '#e8c873', hatStyle: 'nonla' }, desk: true },
-    { id: 'muoi', kind: 5, look: { role: 'adult', shirt: '#d98a5a', pants: '#2a2a33', prop: 'rod' }, angler: { u: PIER_U1 - 0.6, v: PIER_V + HEAD_W / 2 - 0.6, ry: -Math.PI / 4 }, desk: true },
+    { id: 'muoi', kind: 5, look: { role: 'adult', shirt: '#d98a5a', pants: '#2a2a33', prop: 'rod' }, angler: { u: PIER_U1 - 1.2, v: PIER_V + HEAD_W / 2 - 0.55, ry: -Math.PI / 2 }, desk: true },
   ].filter(q => !(MOB && q.desk));
 };
 
@@ -91,8 +91,8 @@ export function createFolk(ctx, { village, fleet }) {
     tu: h => h >= 5.5 && h < 18 ? S(R0.u + 1.5, R0.v + 0.8, Math.PI, 'mend') : h < 21.5 && h >= 18 ? home(0) : null,
     ba: h => village.market ? S(ST[0].u - 1.15, ST[0].v, 0, 'sell') : h >= 8.5 && h < 16.5 ? S(D0.u - 1.5, D0.v + 0.5, 0, 'work') : h >= 16.5 && h < 21.5 ? home(3) : null,
     hoa: h => village.market ? S(ST[1].u - 1.15, ST[1].v, 0, 'sell') : h >= 8.5 && h < 16.5 ? S(D1.u - 1.5, D1.v - 0.4, 0, 'work') : h >= 16.5 && h < 21.5 ? home(4) : null,
-    sau: h => village.market ? walk(S(26, PIER_V + 0.5, Math.PI), S(M[1].u + 1.6, M[1].v - 0.3, Math.PI), 34) : h >= 8.5 && h < 16.3 ? S(CAGES.u + 1.2, CAGES.v + 0.4, Math.PI / 2, 'work', 0.5) : h >= 16.3 && h < 18.4 ? S(village.shoreU(-20) - 1.2, -20.5, 0, 'pull') : h < 21.5 && h >= 18.4 ? home(1) : null,
-    hai: h => h >= 15.8 && h < 18.4 ? S(village.shoreU(-22) - 1.4, -22.4, 0, 'pull') : village.market ? S(M[0].u - 1.3, M[0].v, 0, 'sell') : h >= 18.4 && h < 21.5 ? home(2) : null,
+    sau: h => village.market ? walk(S(26, PIER_V + 0.5, Math.PI), S(M[1].u + 1.6, M[1].v - 0.3, Math.PI), 34) : h >= 8.5 && h < 16.3 ? S(CAGES.u + 1.2, CAGES.v + 0.4, Math.PI / 2, 'work', 0.5) : h >= 16.3 && h < 18.4 ? S(village.shoreU(25.6) - 1.0, 25.6, 0, 'pull') : h < 21.5 && h >= 18.4 ? home(1) : null,
+    hai: h => h >= 15.8 && h < 18.4 ? S(village.shoreU(22.6) - 1.0, 22.6, 0, 'pull') : village.market ? S(M[0].u - 1.3, M[0].v, 0, 'sell') : h >= 18.4 && h < 21.5 ? home(2) : null,
     nam: h => h >= 5.2 && h < 19.5 ? S(PIER_U1 - HEAD_D + 1.12, PIER_V + 6.2, 0, 'sit', DECK_Y) : null,
   };
   const anglerHours = h => h >= 5.3 && h < 18.6 && !fleet.stormy;
@@ -116,7 +116,7 @@ export function createFolk(ctx, { village, fleet }) {
   let fishModel = null; loadModel('kit/fish').then(m => { if (!m) return; m.visible = false; m.scale.setScalar(0.75); scene.add(m); fishModel = m; });
 
   // ---- thi câu ----
-  const hud = document.createElement('div'); hud.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:calc(max(12px,env(safe-area-inset-top)) + 96px);z-index:27;padding:6px 13px;border-radius:16px;background:#0f2a3acc;color:#fff3d6;font:700 13px system-ui;white-space:nowrap;display:none;pointer-events:none'; document.body.appendChild(hud);
+  const hud = document.createElement('div'); hud.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:calc(max(12px,env(safe-area-inset-top)) + ' + (MOB ? 204 : 96) + 'px);z-index:27;padding:6px 13px;border-radius:16px;background:#0f2a3acc;color:#fff3d6;font:700 13px system-ui;white-space:nowrap;display:none;pointer-events:none'; document.body.appendChild(hud);
   const bookN = () => { try { return (JSON.parse(localStorage.getItem('mg.sport.fishbook') || '{}').n) || 0; } catch (e) { return 0; } };
   let contest = null;
   function startContest(f) {

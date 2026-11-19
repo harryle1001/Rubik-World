@@ -103,7 +103,7 @@ export function createVillage(ctx) {
   const mats = [[-6.5, -12.5], [-6.2, -7], [-6.4, -1.5]];
   for (const [du, v] of mats) { const u = shoreU(v) + du, gy = H(...toW(u, v)); b.add(new THREE.BoxGeometry(2.2, 0.04, 1.5), '#d9c48a', -v, gy + 0.05, u, 0.2); b.add(new THREE.CylinderGeometry(0.62, 0.55, 0.14, 10), BAMBOO, -v + 0.3, gy + 0.12, u); for (let k = 0; k < 4; k++) fresh.push([u - 0.1 + (k % 2) * 0.25, v - 0.55 + k * 0.12, 0.2, 0.8 + k]); }
   for (const [du, v, s] of [[-8, -11.5, 2.6], [-8.6, -2.6, 2.4], [-4.5, -19.5, 2.5], [-4, -13.2, 2.2]]) K('barrels', shoreU(v) + du, v, s, v);
-  for (const [u, dv] of [[30, 1], [31.2, -1.1], [PIER_U1 - 1.2, 6], [PIER_U1 - 1.4, -7.5]]) { const [x, z] = toW(u, PIER_V + dv); (kits.barrel = kits.barrel || []).push([x, DECK_Y, z, 4.2, u]); }
+  for (const [u, dv, c] of [[30.6, 1, '#3d8fd9'], [31.5, -1.05, '#8a5a3c'], [PIER_U1 - 1.2, 2.2, '#3d8fd9'], [PIER_U1 - 1.4, -7.5, '#8a5a3c']]) { b.cyl(-(PIER_V + dv), DECK_Y, u, 0.34, 0.78, c, 8); b.cyl(-(PIER_V + dv), DECK_Y + 0.78, u, 0.36, 0.05, '#2b2f36', 8); }   // thùng phuy, thùng gỗ trên cầu
   for (const [u, dv] of [[32.5, 0.9], [PIER_U1 - 2.6, 7.2]]) b.cyl(-(PIER_V + dv), DECK_Y, u, 0.45, 0.5, BAMBOO, 9, 0.52);   // sọt tre trên cầu
   for (const name in kits) placeKit(scene, name, kits[name], { shadow: false });
   let freshIM = [];
@@ -164,6 +164,15 @@ export function createVillage(ctx) {
     const jm = new THREE.Mesh(jb.build(), matV()); jm.castShadow = true; jm.receiveShadow = true; jm.name = 'sea-jetty'; scene.add(jm); scene.add(new THREE.Mesh(jg.build(), mat('lampGlow')));
   }
 
+  // ---------- lưới rùng (kéo lúc chiều): dây phao chữ U từ 2 người kéo trên bãi vòng ra biển 13 m ----------
+  const seine = new THREE.Group(); seine.visible = false; root.add(seine);
+  { const sb = new Batch(), v0 = 22.6, v1 = 25.6, n = 21, su0 = shoreU(24);
+    let prev = null; for (let i = 0; i <= n; i++) { const t = i / n, a = t * Math.PI, u = su0 - 0.6 + Math.sin(a) * 13.6, v = v0 + (v1 - v0) * t + (t - 0.5) * 9 * Math.sin(a), y = Math.max(0.03, H(...toW(u, v)) + 0.05);
+      sb.add(new THREE.SphereGeometry(0.17, 6, 4), i % 2 ? '#f4efe2' : '#e8642a', -v, y + 0.05, u);
+      if (prev) { const du = u - prev[0], dv = v - prev[1], L = Math.hypot(du, dv); sb.add(new THREE.BoxGeometry(0.05, 0.05, L), '#2f6b4a', -(v + prev[1]) / 2, (y + prev[2]) / 2, (u + prev[0]) / 2, Math.atan2(-dv, du)); }
+      prev = [u, v, y]; }
+    seine.add(new THREE.Mesh(sb.build(), matV())); }
+
   // ---------- gom mesh tĩnh ----------
   const mesh = new THREE.Mesh(b.build(), matV()); mesh.castShadow = true; mesh.receiveShadow = true; mesh.name = 'sea-village-wood'; root.add(mesh);
   const lampMesh = new THREE.Mesh(glow.build(), mat('lampGlow')); root.add(lampMesh);
@@ -195,7 +204,7 @@ export function createVillage(ctx) {
     if (want !== vis) { vis = want; root.visible = cage.visible = weed.visible = want; }
     if (!vis) return;
     const hr = ctx.sky.state.hour, market = hr >= 4.9 && hr < 8.5;
-    if ((tick -= dt) <= 0) { tick = 0.5; for (const m of freshIM) if (m.visible !== market) m.visible = market; }
+    if ((tick -= dt) <= 0) { tick = 0.5; for (const m of freshIM) if (m.visible !== market) m.visible = market; const pull = hr >= 15.8 && hr < 18.4; if (seine.visible !== pull) seine.visible = pull; }
     if (d < 233) { const cy = terrain.waveHeight(cage.position.x, cage.position.z) * 0.5; cage.position.y += (cy - cage.position.y) * Math.min(1, dt * 3); cage.rotation.z = Math.sin(t * 0.8) * 0.012; weed.position.y = terrain.waveHeight(weed.position.x, weed.position.z) * 0.8; }
   }
   return { update, root, decks, shoreU, hutPos, racks, dry, stalls, mats: mats.map(([du, v]) => ({ u: shoreU(v) + du, v })), cage, weed, get market() { const h = ctx.sky.state.hour; return h >= 4.9 && h < 8.5; } };
