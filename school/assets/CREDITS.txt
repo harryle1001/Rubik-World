@@ -70,3 +70,11 @@ Cá dùng lại hình vẽ bằng code sẵn có (drawSea2, EXT12); âm thanh d�
 v62k · 10 thầy cô giáo sư (Cô Phi Lam, Thầy Lực Quang, Cô Ngọc Tố, Cô Lục Diệp, Thầy Đăng Sử, Cô Hải Đồ, Thầy Nghiên Văn, Cô Linh Ngữ, Thầy Minh Bit, Cô Cầm Hoạ):
   nhân vật gốc, tên tự đặt; sprite pixel vẽ bằng code trong js/ext/v62k-core.js (v62kPaint), không dùng ảnh ngoài.
   Kho kiến thức js/data/v62k/kb-*.txt soạn mới cho game (nguồn JSON: tools/teachers-kb/*.json).
+
+v64 · Bộ đồ hoạ CC0 dùng để làm lại khu trường (thư mục assets/cc0/)
+  assets/cc0/ninja-adventure/ – "Ninja Adventure Asset Pack" của Pixel-boy & AAA (itch.io/pixel-boy). License: CC0 1.0 (LICENSE.txt kèm theo).
+    Lấy phần Backgrounds, Items, FX, HUD, Actor/Characters, Actor/Animals (không lấy nhạc/âm thanh).
+  assets/cc0/tiny-swords/ – "Tiny Swords" (bản cũ, tác giả ghi "old version CC0 Licensed") của Pixel Frog. Chỉ lấy đảo/đất/nước/cầu, cây, cừu,
+    đồ trang trí và nhà/tháp/lâu đài; KHÔNG dùng lính, vũ khí, cháy nổ (game trẻ em).
+  assets/cc0/puny-world/ – "Puny World overworld tileset" của Shade (OpenGameArt). License: CC0.
+  assets/cc0/planets/ – "2D Planet Pack" 1 & 2 của Screaming Brain Studios (OpenGameArt). License: CC0.
