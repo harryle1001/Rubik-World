@@ -267,8 +267,7 @@ export function createAircraft(ctx) {
   const btns = document.querySelector('.btns'), vbtns = document.querySelector('.vbtns');
   const bBoost = document.createElement('button'); bBoost.id = 'bBoost'; bBoost.textContent = '🚀 Tăng tốc'; bBoost.hidden = true; bBoost.style.background = '#d8632acc'; btns && btns.appendChild(bBoost);
   let boostHeld = false; bBoost.addEventListener('pointerdown', e => { e.preventDefault(); boostHeld = true; }); for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) bBoost.addEventListener(ev, () => boostHeld = false);
-  // HUD bay nằm DƯỚI hàng nút trên (cao nút ≈ 34 px + lề 13 px), không đè nút
-  const hud = document.createElement('div'); hud.style.cssText = `position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + ${mobile ? 89 : 47}px);left:50%;transform:translateX(-50%);z-index:26;padding:5px 13px;border-radius:16px;background:#0f1a2acc;color:#f7ecd0;font:700 ${mobile ? 13 : 14}px system-ui;display:none;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis;pointer-events:none`;
+  const hud = document.createElement('div'); hud.style.cssText = 'position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 89px);left:50%;transform:translateX(-50%);z-index:26;padding:6px 14px;border-radius:16px;background:#0f1a2acc;color:#f7ecd0;font:700 14px system-ui;display:none;white-space:normal;text-align:center;max-width:min(calc(100vw - 24px),377px);box-sizing:border-box;pointer-events:none';
   document.body.appendChild(hud);
   const PRESS = mobile ? 'bấm nút cam' : 'bấm <b>E</b>';       // điện thoại không có phím E
 

@@ -156,9 +156,9 @@ export function createTreasure(ctx) {
   }
   function nearest() { let best = null, bd = 1e9; const p = ctx.player.pos; for (const c of C) if (!S.open[c.i]) { const d = Math.hypot(c.s.x - p.x, c.s.z - p.z); if (d < bd) { bd = d; best = c; } } return best && { c: best, d: bd }; }
   function label() {
-    let t = `🧰 ${opened()}/${N}`; const nr = S.map && nearest();
-    if (nr && nr.d > 3 && nr.d < 233) t += ` · 🧭 ${dirName(nr.c.s.x - ctx.player.pos.x, nr.c.s.z - ctx.player.pos.z)} ${Math.round(nr.d)} m`;
-    if (hud.textContent !== t) hud.textContent = t;
+    let t = `<i>🧰</i><span class="tx"><small>Kho báu</small><b>${opened()}/${N}</b></span>`; const nr = S.map && nearest();
+    if (nr && nr.d > 3 && nr.d < 233) t += `<em class="cmp">🧭 ${dirName(nr.c.s.x - ctx.player.pos.x, nr.c.s.z - ctx.player.pos.z)} ${Math.round(nr.d)} m</em>`;
+    if (hud._t !== t) hud.innerHTML = hud._t = t;
   }
   function openBook() {
     const sp = sea.SPECIES, f = sea.found, nf = sp.filter(s => f[s.id]).length;
@@ -167,7 +167,7 @@ export function createTreasure(ctx) {
       ${S.map ? '' : '<p><small>💡 Tìm <b>mảnh bản đồ</b> trên bãi cát cạnh vịnh nông phía nam trường để biết rương đầu tiên ở đâu.</small></p>'}
       <p><small>🫧 Dưỡng khí: ×${(O2_STEP ** o2Level()).toFixed(2)} (mở rương thứ 3, 5, 8, 13 để tăng)</small></p>
       <b>📘 Bách khoa biển ${nf}/${sp.length}</b><div class="bar"><i style="width:${nf / sp.length * 100}%"></i></div>
-      <ul>${sp.map(s => f[s.id] ? `<li class="ok">${s.icon} <b>${s.name}</b><small>${s.fact}</small></li>` : `<li>❓ <b>???</b><small>Lặn tới gần sinh vật biển rồi bấm E để khám phá.</small></li>`).join('')}</ul>
+      <ul>${sp.map(s => f[s.id] ? `<li class="ok">${s.icon} <b>${s.name}</b><small>${s.fact}</small></li>` : `<li>❓ <b>???</b><small>Lặn tới gần sinh vật biển rồi chạm nút ✋ (phím E) để khám phá.</small></li>`).join('')}</ul>
       <button class="x">Đóng sổ</button></div>`;
     book.hidden = false; freeze(true); book.querySelector('.x').onclick = () => { book.hidden = true; freeze(false); };
   }

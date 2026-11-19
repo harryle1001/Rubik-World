@@ -35,8 +35,8 @@ export function createWorldMap(ctx) {
 #wmap .hint{position:absolute;left:34px;bottom:max(34px,calc(env(safe-area-inset-bottom) + 21px));max-width:calc(100% - 130px);background:rgba(58,42,22,.72);color:#fff3d6;font:700 12px/1.35 system-ui;padding:5px 11px;border-radius:13px;pointer-events:none}
 @media (max-width:700px){#wmap .hint .pc{display:none}}@media (min-width:701px){#wmap .hint .ph{display:none}}
 #wmap .dex{position:absolute;left:50%;top:64px;transform:translateX(-50%);width:min(92vw,460px);max-height:calc(100% - 140px);overflow:auto;background:#fff3d6;border:3px solid #7a5a2e;border-radius:16px;padding:10px 14px;color:#4a3218;font:14px system-ui;box-shadow:0 6px 0 #7a5a2e}#wmap .dex h3{margin:4px 0 8px;font-size:16px}#wmap .dex .it{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-top:1px dashed #c9a86a}#wmap .dex .it.no{opacity:.55}#wmap .dex b{font-size:15px}
-#bMap{position:fixed;right:12px;top:58px;width:42px;height:42px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:20px;z-index:26}
-body.rs-modal #bMap{display:none}@media(max-width:560px){#bMap{top:calc(max(12px,env(safe-area-inset-top)) + 89px)}}`;
+#bMap{position:fixed;right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));width:42px;padding:0;font-size:20px;z-index:26}
+body.rs-modal #bMap{display:none}`;
   document.head.appendChild(css);
   const root = document.createElement('div'); root.id = 'wmap'; root.hidden = true;
   root.innerHTML = `<canvas></canvas><div class="bar">

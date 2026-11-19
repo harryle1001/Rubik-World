@@ -193,7 +193,7 @@ export function createEasterEggs(ctx) {
   const bBook = document.createElement('button'); bBook.id = 'bEggs'; bBook.title = 'Sổ bí mật';
   (document.querySelector('.topbtns') || document.body).appendChild(bBook);
   const count = () => EGGS.filter(e => S.found[e.id]).length;
-  const label = () => { bBook.textContent = `📖 ${count()}/${EGGS.length}`; };
+  const label = () => { bBook.innerHTML = `<i>📖</i><span class="tx"><small>Bí mật</small><b>${count()}/${EGGS.length}</b></span>`; };
   // ---- đồ thưởng: mũ + áo choàng, bám theo xương đầu/ngực của nhân vật (đổi màu theo mốc cao nhất đã đạt) ----
   S.wear = Object.assign({ hat: true, cape: true }, S.wear);
   const unlocked = () => TIERS.filter(T => count() >= T.n);

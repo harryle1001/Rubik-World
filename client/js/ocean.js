@@ -72,7 +72,10 @@ const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders, lo
   addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
 }
 // thông báo ngắn
-ctx.toast = (t, ms = 3000) => { const el = document.getElementById('info'); el.innerHTML = t; el.style.opacity = 1; clearTimeout(ctx._tt); ctx._tt = setTimeout(() => el.style.opacity = 0, ms); };
+// đủ lâu cho học sinh lớp 1 đọc (≥ 5 s), luôn có biểu tượng; trên điện thoại "bấm E" → "chạm nút ✋"
+const TOUCH = matchMedia('(pointer:coarse)').matches, HAS_ICON = /^\s*(<[^>]+>\s*)*\p{Extended_Pictographic}/u;
+const touchText = t => TOUCH ? t.replace(/([Bb])ấm\s*(<b>)?E(<\/b>)?(?![\wÀ-ỹ])/g, (m, b) => (b === 'B' ? 'Chạm' : 'chạm') + ' nút <b>✋</b>').replace(/<b>E<\/b>/g, '<b>✋</b>') : t;
+ctx.toast = (t, ms = 3000) => { const el = document.getElementById('info'); t = touchText(String(t)); if (!HAS_ICON.test(t)) t = '💬 ' + t; ms = Math.max(ms, 5000); el.innerHTML = t; el.style.opacity = 1; clearTimeout(ctx._tt); ctx._tt = setTimeout(() => el.style.opacity = 0, ms); };
 // tên & màu áo người chơi (lưu trên máy)
 ctx.playerName = localStorage.getItem('island.name') || ('Bạn nhỏ ' + Math.floor(100 + Math.random() * 900)); localStorage.setItem('island.name', ctx.playerName);
 ctx.hue = +(localStorage.getItem('island.hue') || Math.floor(Math.random() * 360)); localStorage.setItem('island.hue', ctx.hue);
@@ -125,6 +128,14 @@ const mounts = createMounts(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
+// menu ☰ (góc phải trên, cạnh 🗺️): Menu trường + ☀️ Ánh sáng; chọn xong hoặc chạm ra ngoài thì tự đóng
+{
+  const more = document.getElementById('bMore'), menu = document.getElementById('moreMenu');
+  const show = on => { menu.hidden = !on; more.setAttribute('aria-expanded', on); };
+  more.onclick = () => show(menu.hidden);
+  menu.addEventListener('click', e => { if (e.target.closest('button')) show(false); });
+  addEventListener('pointerdown', e => { if (!menu.hidden && !menu.contains(e.target) && e.target !== more) show(false); }, true);
+}
 document.getElementById('bMenu').onclick = () => school.menu();
 
 // Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại, hoa, nấm, gốc cây, pha lê quanh đền (khu I rừng & đền, layout.js)
