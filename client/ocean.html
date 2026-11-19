@@ -2,6 +2,8 @@
 <html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>Đảo Rubik 3D</title>
+<meta name="theme-color" content="#2a3a74"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icons/icon-192.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Đảo Rubik">
 <style>html,body{margin:0;height:100%;overflow:hidden;background:#2a3a74;font-family:system-ui,sans-serif}
 #hud{position:fixed;left:12px;top:12px;color:#d8f6ff;font-size:14px;text-shadow:0 1px 3px #000;pointer-events:none}
 #joy{position:fixed;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;background:#fff2;border:2px solid #fff6;opacity:0;pointer-events:none;transition:opacity .15s}
@@ -59,7 +61,7 @@ body.rs-modal #bMore,body.rs-modal #moreMenu{display:none}
 <link rel="preload" href="/assets/models/hero-rogue.glb" as="fetch" crossorigin="anonymous"><!-- xương + animation nhân vật: tải trước tiên -->
 <script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script>
 </head><body>
-<div class="topbtns"><button id="bSchool" title="Đến trường"><i>🏫</i><span class="lb">Đến trường</span></button></div><button id="bMore" aria-expanded="false" aria-controls="moreMenu" title="Thêm: Menu trường, Ánh sáng">☰</button><div id="moreMenu" hidden><button id="bMenu">📚 Menu trường</button></div><div id="info"></div>
+<div class="topbtns"><button id="bSchool" title="Dịch chuyển tới cổng Trường Rubik"><i>🏫</i><span class="lb">Đến trường</span></button></div><button id="bMore" aria-expanded="false" aria-controls="moreMenu" title="Thêm: Mini game, Ánh sáng">☰</button><div id="moreMenu" hidden><button id="bMenu">🎮 Mini game</button></div><div id="info"></div>
 <button id="bAct" hidden></button>
 <div id="o2"><i><b id="o2f"></b></i></div>
 <div id="joy"><div id="knob"></div></div>
