@@ -3,7 +3,7 @@
 // - Vườn 13 × 8 m (≈ φ): 5 luống (Fibonacci) cà rốt, ngô, cà chua, rau xanh; hàng rào gỗ thấp, bảng "Vườn trường", xô tưới, xẻng.
 //   Tưới rau (nút ✋/E): mỗi ngày 1 lần, rau lớn dần qua 3 lần tưới (3 ngày) → thu hoạch +1 ⭐ kèm 1 điều về cây xanh.
 //   2 bạn học sinh chăm vườn (ngồi xổm nhổ cỏ, đứng tưới) — chỉ chạy animation khi người chơi ở gần (≤ 34 m).
-// - Nhà xe đạp: mái tôn trên cột thép, 8 xe đạp CC0 (Kenney Car Kit) dựng theo giá.
+// - Nhà xe đạp: mái tôn trên cột thép, 8 xe đạp CC0 (OpenGameArt "32 low poly models") dựng theo giá.
 // Model CC0 có sẵn: kit/farm_*, prop_*, fence_picket_low, vehicle_bicycle (CREDITS.txt). Dựng sau khi trường xong (không chậm lúc vào game).
 import * as THREE from 'three';
 import { Batch } from './decor.js';
@@ -26,7 +26,8 @@ const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; 
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 
 export function createSchoolYard(ctx) {
-  const { scene } = ctx; ctx.boxes = ctx.boxes || [];
+  ctx.boxes = ctx.boxes || [];
+  const scene = new THREE.Group(); scene.name = 'school-yard-root'; ctx.scene.add(scene);   // cả vườn + nhà xe 1 nhóm: xa > 89 m thì ẩn hết (0 draw call)
   let built = false, crops = [], kids = [], growK = -1;
   const st = () => load(KEY, { n: 0, day: '' });
 
@@ -92,6 +93,7 @@ export function createSchoolYard(ctx) {
   function update(dt) {
     if (!built) { if (ctx.school && ctx.school.ready) build(); return; }
     const p = ctx.player.pos, dx = p.x - (G.x0 + G.w / 2), dz = p.z - (G.z0 + G.d / 2), far = Math.abs(dx) > 34 || Math.abs(dz) > 34;
+    scene.visible = Math.abs(dx) < 89 && Math.abs(dz) < 89;
     if (Math.abs(dx) < G.w / 2 + 1.6 && Math.abs(dz) < G.d / 2 + 1.6 && !ctx.player.vehicle) ctx.offer && ctx.offer(st().day === new Date().toDateString() ? '🌱 Vườn trường (đã tưới hôm nay)' : '💧 Tưới rau vườn trường', water, 1);
     for (const k of kids) {
       k.h.model.visible = !far; if (far) continue;

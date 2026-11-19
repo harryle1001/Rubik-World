@@ -4,7 +4,7 @@
 // - 3 tầng (cao φ²+φ⁻¹ ≈ 3,4 m/tầng), mỗi tầng 52 × 21 m: hành lang giữa rộng 5 m, phòng 13 × 8 m (13/8 ≈ φ) hai bên.
 // - Cầu thang gấp khúc ở cuối hành lang: vế lên (làn A) tới chiếu nghỉ +1,7 m, bước sang làn B là sang tầng trên (đổi vị trí
 //   liền mạch, cùng độ cao) — mỗi tầng là 1 bản riêng đặt cách nhau 144 m (Fibonacci), không cần va chạm theo độ cao.
-// - Đồ đạc: model CC0 có sẵn (KayKit Furniture Bits, Kenney School/Furniture, Kenney Music/Sport — CREDITS.txt) qua placeKit
+// - Đồ đạc: model CC0 có sẵn trong kit/ (KayKit Furniture Bits; bàn ghế học sinh, nhạc cụ, xe đạp từ OpenGameArt CC0 — CREDITS.txt) qua placeKit
 //   (1 draw call/loại/tầng); khối tự dựng (bục, giường, quầy, máy tính…) gộp vào 1 Batch/tầng; mọi chữ/bản đồ/tranh: 1 atlas/tầng.
 // - Tường "cắt" quanh nhân vật (shader bỏ phần tường giữa camera và người chơi) → nhìn xuyên vào phòng như nhà búp bê, không trần.
 // - Tiết học (lessons.js): roomAt()/boardOf() cho phòng trong toà; thầy cô đứng bảng, 13 bạn ngồi bàn khi đến tiết của phòng đó.
@@ -12,7 +12,7 @@ import * as THREE from 'three';
 import { Batch } from './decor.js';
 import { toon, gradientMap } from './style.js';
 import { placeKit } from './kit.js';
-import { loadHero, driveHero, STUDENTS } from './characters.js';
+import { loadHero, driveHero, STUDENTS, actorLod, stepAnim } from './characters.js';
 import { PHI, TOWN_Y, to3 } from './layout.js';
 import { PAL, shade } from './sample/palette.js';
 import { LESSON } from './data/talk.js';
@@ -403,20 +403,28 @@ export function createSchoolInterior(ctx) {
     }
   }
   const DV = { speed: 0, grounded: true, sitting: false };
-  function updateCrew(dt) {
-    for (const e of crew.heroes) if (e.h.model.visible) { DV.sitting = e.sit ? 'sit' : false; driveHero(e.h, DV); e.h.anim.update(dt); }
+  function updateCrew(dt) {   // LOD như người ngoài thị trấn: viền/bóng/animation thưa dần theo khoảng cách (characters.js)
+    const p = ctx.player.pos;
+    for (const e of crew.heroes) if (e.h.model.visible) {
+      const m = e.h.model, dist = Math.hypot(m.position.x - p.x, m.position.z - p.z);
+      DV.sitting = e.sit ? 'sit' : false; driveHero(e.h, DV); stepAnim(e.h.anim, e.an || (e.an = {}), dist, dt); actorLod(e.h, m, dist);
+    }
   }
 
   // ===================== VÀO / RA / ĐỔI TẦNG =====================
-  function build() {
-    if (built) return; built = true;
-    const t0 = performance.now(); for (let f = 0; f < NF; f++) floors.push(buildFloor(f));
-    console.info('[SI] dựng toà học tập', Math.round(performance.now() - t0), 'ms');
+  // dựng TỪNG TẦNG khi cần (bước qua cửa: tầng 1; các tầng còn lại dựng sẵn lúc rảnh, mỗi tầng 1 lượt → không khựng khi lên thang)
+  function ensure(f) {
+    if (floors[f]) return floors[f];
+    const t0 = performance.now(); floors[f] = buildFloor(f); built = true;
+    console.info('[SI] dựng tầng', f + 1, Math.round(performance.now() - t0), 'ms'); return floors[f];
   }
-  function show(f) { cur = f; floors.forEach((F, i) => { F.g.visible = i === f; }); ctx.indoor = f >= 0 ? { name: 'Toà học tập', floor: f } : null; }
+  const idle = fn => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 600));
+  function prebuild() { for (let f = 0; f < NF; f++) if (!floors[f]) { idle(() => { ensure(f); prebuild(); }); return; } }
+  function show(f) { if (f >= 0) ensure(f); cur = f; floors.forEach((F, i) => { if (F) F.g.visible = i === f; }); ctx.indoor = f >= 0 ? { name: 'Toà học tập', floor: f } : null; }
   function enter() {
-    build(); const p = ctx.player; entry = doorOut();
+    ensure(0); const p = ctx.player; entry = doorOut();
     p.teleport(fx(0) - 1.5, OZ + MIDZ, fy(0)); p.cam.yaw = -Math.PI / 2; p.cam.pitch = Math.max(p.cam.pitch, 0.62); show(0);
+    prebuild();
     ctx.toast && ctx.toast('🏫 <b>Toà học tập</b> · ' + FLOOR_NAME[0] + '<br><small>Cầu thang cuối hành lang lên tầng 2, 3.</small>', 3500); ctx.sfx && ctx.sfx('open');
   }
   function exit() {
@@ -431,7 +439,7 @@ export function createSchoolInterior(ctx) {
     for (const r of ROOMS) if (r.f === f && lx > r.x0 && lx < r.x1 && lz > r.z0 && lz < r.z1) return r.id;
     return 'corridor';
   }
-  function boardOf(id) { const r = ROOMS.find(q => q.id === id); if (!r) return null; build(); const b = r.board || [r.x0 + 0.5, 2.3, (r.z0 + r.z1) / 2]; return new THREE.Vector3(fx(r.f) + b[0], fy(r.f) + b[1], OZ + b[2]); }
+  function boardOf(id) { const r = ROOMS.find(q => q.id === id); if (!r) return null; const b = r.board || [r.x0 + 0.5, 2.3, (r.z0 + r.z1) / 2]; return new THREE.Vector3(fx(r.f) + b[0], fy(r.f) + b[1], OZ + b[2]); }
 
   let tick = 0, wantN = 0;
   function update(dt) {
