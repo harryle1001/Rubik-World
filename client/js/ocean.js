@@ -41,6 +41,7 @@ import { createTeacherQuiz } from './island/teacher-quiz.js';
 import { createQuests } from './island/quests.js';
 import { createLessons } from './island/lessons.js';
 import { createSchoolInterior } from './island/school-interior.js';
+import { createSchoolYard } from './island/school-yard.js';
 import { createAcademy } from './island/academy/index.js';
 import { createTrain } from './island/train/index.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
@@ -124,6 +125,7 @@ const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây r
 const quests = ctx.questsMod = createQuests(ctx); // bảng nhiệm vụ hằng ngày 📋: 3 khu · 3 câu đố · 5 pha lê → thưởng (quests.js)
 const teacherQuiz = createTeacherQuiz(ctx); // nói chuyện với 21 bạn & thầy cô, nhiệm vụ nhỏ, chủ trò mini game — bong bóng 3D (teacher-quiz.js, data/talk.js)
 const schoolInterior = ctx.schoolInterior = createSchoolInterior(ctx); // Toà học tập 3 tầng: vào qua cửa Văn phòng, lớp học/phòng chức năng, tiết học có thầy cô & bạn (school-interior.js)
+const schoolYard = createSchoolYard(ctx); // sân trường: vườn rau học sinh trồng (tưới → thu hoạch ⭐), nhà xe đạp (school-yard.js)
 const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + tiết học ngay trong lớp + chip giờ học góc HUD (lessons.js)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
@@ -193,6 +195,7 @@ renderer.setAnimationLoop(() => {
   treasure.update(dt);
   teacherQuiz.update(dt);
   schoolInterior.update(dt);
+  schoolYard.update(dt);
   lessons.update(dt);
   quests.update(dt);
   ctx.flushOffer();
