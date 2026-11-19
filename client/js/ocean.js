@@ -17,6 +17,7 @@ import { createTutorial } from './island/tutorial.js';
 import { SPAWN, landDist, blocked, ISLAND_R, TEMPLE_C } from './island/layout.js';
 import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
+import { createParachute } from './island/parachute.js';
 import { createMounts } from './island/mounts.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
@@ -111,6 +112,7 @@ const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ 
 const academy = ctx.academy = createAcademy(ctx); // Học viện Pha Lê: đảo riêng, bến thuyền đèn lồng, đường băng, bóng lâu đài trong sương
 const train = ctx.train = createTrain(ctx); // Tàu Pha Lê: tàu hơi nước từ ga bờ tây bắc qua đảo Đồi Thông, hầm, cầu cạn vòm đá tới cao nguyên Học viện
 const regions = ctx.regions = createRegions(ctx); // 4 vùng mới: Núi Tuyết (cầu), Làng Cổ (cầu), Quần đảo San Hô (thuyền), Thành phố Tương lai (thuyền + đường băng) — tải theo chunk
+const chute = ctx.chute = createParachute(ctx); // 🪂 thả dù từ máy bay, máy bay tự lái về đường băng, nhảy dù trúng đích ⭐
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
@@ -182,6 +184,7 @@ renderer.setAnimationLoop(() => {
   school.update(dt, clock.elapsedTime);
   vehicles.update(dt);
   aircraft.update(dt, clock.elapsedTime);
+  chute.update(dt); // sau aircraft: điều khiển người rơi + camera
   mounts.update(dt);
   academy.update(dt);
   train.update(dt);

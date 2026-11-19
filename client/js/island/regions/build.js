@@ -221,7 +221,7 @@ function future(R) {
       if (h < Y - 0.2) return sandOrSea(c, h) || c.set('#9aa3ad');
       if (Math.abs(v - FUT_RW.v) < FUT_RW.hw + 5 && Math.abs(u) < FUT_RW.hl + 8) return c.set('#9aa3ad');
       if (Math.hypot(u + 21, v - 89) < 21 || Math.hypot(u - 55, v + 34) < 13) return c.set('#7fbf5e');   // công viên xanh
-      c.set(((Math.floor(u / 8) + Math.floor(v / 8)) & 1) ? '#d6dbe0' : '#c9cfd6');
+      c.set(((Math.floor(u / 8) + Math.floor(v / 8)) & 1) ? '#d6ccbb' : '#cbc2b0');
     }));
     // đường băng 233 × 13 m + vạch sơn
     const rv = FUT_RW.v; b.box(-FUT_RW.hl, FUT_RW.hl, Y, Y + 0.05, rv - FUT_RW.hw, rv + FUT_RW.hw, '#4a4e57');
