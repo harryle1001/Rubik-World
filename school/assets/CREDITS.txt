@@ -78,3 +78,10 @@ v64 · Bộ đồ hoạ CC0 dùng để làm lại khu trường (thư mục ass
     đồ trang trí và nhà/tháp/lâu đài; KHÔNG dùng lính, vũ khí, cháy nổ (game trẻ em).
   assets/cc0/puny-world/ – "Puny World overworld tileset" của Shade (OpenGameArt). License: CC0.
   assets/cc0/planets/ – "2D Planet Pack" 1 & 2 của Screaming Brain Studios (OpenGameArt). License: CC0.
+
+v64p · Hành tinh + biển/đảo + mây pixel (js/ext/v64p-sea.js, js/ext/v64p-sky.js)
+  Góc nhìn hành tinh: trăng = planets/Solid/Airless_01, hành tinh xa = planets/Gaseous/OrgangeGiant_02 và planets/Solid/Icy_02
+    ("2D Planet Pack", Screaming Brain Studios, CC0). Các ảnh hành tinh khác không dùng đã xoá cho nhẹ repo.
+  Biển và đảo nhỏ: tiny-swords Terrain (Water màu nước, Foam, Rocks, Ground Grass/Sand/Elevation, Bridge), Resources/Trees,
+    Buildings/House (Blue/Red/Yellow), Deco 03/06/09 (Pixel Frog, CC0). Không dùng lính, vũ khí, cháy nổ.
+  Mây pixel: ninja-adventure/FX/Particle/Clouds.png (Pixel-boy & AAA, CC0), tô màu và ghép hình bằng code.
