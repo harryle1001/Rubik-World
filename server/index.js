@@ -8,10 +8,20 @@ const { ZONES, CATALOG, CROPS, PLOT_PRICE, PLOT_COUNT } = require('../client/js/
 
 const PORT = process.env.PORT || 3000;
 const ROOT = path.join(__dirname, '..');
-const DATA = path.join(ROOT, 'data', 'players.json');
-const WORLD_FILE = path.join(ROOT, 'data', 'world.json');
-const ADMIN_FILE = path.join(ROOT, 'data', 'admin.json');
+const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');   // Railway/Fly: gắn volume vào đây để dữ liệu không mất khi deploy lại
+try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
+const DATA = path.join(DATA_DIR, 'players.json');
+const WORLD_FILE = path.join(DATA_DIR, 'world.json');
+const ADMIN_FILE = path.join(DATA_DIR, 'admin.json');
+const helmet = require('helmet');
+const { rateLimit } = require('express-rate-limit');
 const app = express();
+app.set('trust proxy', 1);   // Render/Railway/Fly đứng sau proxy HTTPS → lấy đúng IP cho giới hạn tốc độ
+app.disable('x-powered-by');
+// tiêu đề bảo mật (CSP tắt vì game dùng importmap + script nội tuyến; vẫn có HSTS, nosniff, chống nhúng iframe lạ…)
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+if (process.env.FORCE_HTTPS === '1') app.use((req, res, next) => (req.secure || req.path === '/api/health' ? next() : res.redirect(301, 'https://' + req.headers.host + req.originalUrl)));
+app.get('/teacher', (req, res) => res.sendFile(path.join(ROOT, 'client', 'teacher.html')));
 app.get('/sw.js', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'sw.js')); });
 app.get('/manifest.webmanifest', (req, res) => { res.type('application/manifest+json'); res.sendFile(path.join(ROOT, 'client', 'manifest.webmanifest')); });
 // Nén brotli/gzip (zlib có sẵn của Node, không thêm thư viện): JS, HTML, model .glb (meshopt được thiết kế để nén tiếp),
@@ -40,11 +50,13 @@ function compressed(dir, prefix = '') {
   };
 }
 app.use(compressed(path.join(ROOT, 'client')));
-app.use(express.static(path.join(ROOT, 'client')));
+const LONG = /\.(glb|gltf|png|jpe?g|webp|ktx2|mp3|ogg|wav|m4a|hdr|woff2?)$/i;
+const setCache = (res, f) => res.setHeader('Cache-Control', LONG.test(f) ? 'public, max-age=604800' : 'public, max-age=0, must-revalidate');
+app.use(express.static(path.join(ROOT, 'client'), { setHeaders: setCache }));
 app.use('/assets', express.static(path.join(ROOT, 'public', 'assets')));
 app.get('/lib/phaser.min.js', (req, res, next) => { req.url = '/phaser.min.js'; compressed(path.join(ROOT, 'node_modules', 'phaser', 'dist'))(req, res, () => res.sendFile(path.join(ROOT, 'node_modules', 'phaser', 'dist', 'phaser.min.js'))); });
 app.use('/lib/three', compressed(path.join(ROOT, 'node_modules', 'three')));
-app.use('/lib/three', express.static(path.join(ROOT, 'node_modules', 'three')));
+app.use('/lib/three', express.static(path.join(ROOT, 'node_modules', 'three'), { maxAge: '7d' }));
 app.get('/lib/chess.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'chess.js', 'chess.js')));
 const server = http.createServer(app);
 // cho phép app Capacitor (iOS: capacitor://localhost, Android: https://localhost) kết nối multiplayer
@@ -206,25 +218,8 @@ io.on('connection', socket => {
     if (!p) return; persist(p); players.delete(socket.id); io.to(p.zone).emit('left', p.id); io.emit('system', `${p.name} đã rời game.`);
   });
 });
-// ---------- Đảo Rubik 3D (ocean.html): namespace riêng /island, chỉ đồng bộ vị trí người chơi ----------
-const island = io.of('/island'), islanders = new Map();
-const num = (v, lo, hi) => (Number.isFinite(+v) ? Math.max(lo, Math.min(hi, +v)) : 0);
-island.on('connection', socket => {
-  let me = null, last = 0;
-  socket.on('join', d => {
-    if (me) return;
-    me = { id: socket.id, name: clean(d && d.name, 18) || 'Bạn mới', hue: num(d && d.hue, 0, 360), x: 0, y: 0, z: 10, r: 0, s: 0 };
-    islanders.set(socket.id, me);
-    socket.emit('players', [...islanders.values()].filter(p => p.id !== socket.id));
-    socket.broadcast.emit('joined', me);
-  });
-  socket.on('m', d => {
-    const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
-    me.x = num(d.x, -150, 150); me.y = num(d.y, -20, 60); me.z = num(d.z, -150, 150); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);
-    socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
-  });
-  socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
-});
+// ---------- Đảo Rubik 3D (ocean.html): namespace /island + API tài khoản/lớp/sự kiện → server/online.js ----------
+const ready = require('./online')(app, io, { ADMIN_KEY, express, rateLimit });
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
-server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); });
+ready.then(() => server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); })).catch(e => { console.error('Không mở được kho dữ liệu:', e); process.exit(1); });
