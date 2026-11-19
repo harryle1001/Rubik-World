@@ -113,3 +113,8 @@ models/kit/ đợt đồ hoạ CC0 3 — Sân bay (air_hangar, air_hangar_b, air
 models/kit/prop_bin.glb (thùng rác) — đợt đồ hoạ CC0 4
   Kenney Furniture Kit, CC0 1.0 (License.txt: "Creative Commons Zero, CC0") — https://opengameart.org/content/furniture-kit
   Chuyển OBJ → GLB bằng tools/kit/obj2glb.mjs. Đợt 4 dùng thêm model đã có: prop_bench, prop_planter, prop_stall_red/green, prop_crate_*, prop_signpost (Kenney, CC0).
+
+Toà học tập 3 tầng & sân trường (client/js/island/school-interior.js, school-yard.js) — chỉ dùng lại model CC0 đã có ở trên, không tải thêm:
+  furn_* (KayKit Furniture Bits), school_desk/school_chair/school_chalkboard, music_*, vehicle_bicycle (OpenGameArt CC0),
+  sport_hoop/sport_bench/sport_ball_basket, farm_carrot/farm_corn, prop_crate_tomatoes, prop_bucket/prop_shovel/prop_bench, fence_picket_low (Kenney/Quaternius CC0).
+  Bản đồ Việt Nam, bảng phấn, tranh học sinh, biển tên: vẽ bằng canvas trong code.
