@@ -12,7 +12,7 @@ import { matV } from '../../sample/palette.js';
 import { label, PHI } from './common.js';
 import { startLight } from './light.js';
 import { startBrew } from './brew.js';
-//import { startShape } from './shape.js';
+import { startShape } from './shape.js';
 //import { startAstro } from './astro.js';
 //import { startCreature } from './creature.js';
 //import { startHerb, domeStatus } from './herb.js';
@@ -21,7 +21,7 @@ const startAstro = null, startHerb = null, domeStatus = null;   // (tạm) lớp
 // lớp: [khoá, tên, tâm phòng (u, v), cửa (u, v, pháp tuyến nu, nv), hàm chơi]
 const ROOMS = [
   ['cls-light', '✨ Lớp Bùa Chú Ánh Sáng', [-30, -20], [-30, -31.8, 0, 1], startLight],
-  //['cls-shape', '🔷 Lớp Biến Hình', [-30, 20], [-30, 31.8, 0, -1], startShape],
+  ['cls-shape', '🔷 Lớp Biến Hình', [-30, 20], [-30, 31.8, 0, -1], startShape],
   ['cls-brew', '🧪 Lớp Pha Chế', [-52, 54], [-52, 40.2, 0, 1], startBrew],
   //['cls-creature', '🦊 Lớp Sinh Vật Phép Thuật', [-45, -54], [-45, -40.2, 0, -1], startCreature],
 ];
