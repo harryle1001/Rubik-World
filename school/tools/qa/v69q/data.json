@@ -1,0 +1,274 @@
+{
+ "intro": "Kiểm tra bằng Playwright (Chromium) ở 3 cỡ: 📱 390×844 và 📱↔ 844×390 (điện thoại, chỉ chạm) và 🖥 1440×900. Tập trung các phần mới v65–v68 (đồ hoạ 41 khu + nội thất, nhân vật kiểu cũ v66c, Cây thần kỳ, Lương của em, TTTM tầng 3), rồi chơi lướt toàn bộ game (Robo Thám Tử 267 bước × 3 cỡ). Lỗi console/pageerror: trước 0 · sau 0 (chỉ còn cảnh báo GPU của Chromium chạy ẩn).",
+ "bugs": [
+  {
+   "id": "L1",
+   "sev": "nang",
+   "st": "fixed",
+   "t": "Nhân vật mới (v66c) có thể tự tắt cả phiên, mọi người đổi về hình cũ",
+   "where": "Toàn game — mọi học sinh, thầy cô, nhân vật của em (js/ext/v66c-chars.js, hàm v66cExtras)",
+   "what": "Khi game vẽ một nhân vật không có thông tin \"việc đang làm\" (ví dụ ô xem trước trang phục, nhân vật phụ ở cảnh lặn biển), code đọc chữ của việc đó bị lỗi. v66c bắt lỗi rồi TẮT hẳn nhân vật mới cho đến khi tải lại trang → tất cả nhân vật đổi về kiểu cũ thô, không còn mắt, má hồng, cổ áo. Robo đi 267 bước chưa gặp trường hợp này, nhưng chỉ cần một lần là hỏng cả phiên.",
+   "fix": "v69q-fix.js: tự thêm \"việc đang làm\" rỗng khi thiếu nên không còn lỗi; nếu có lỗi lạ khác thì chỉ bỏ qua lần vẽ đó và tự bật lại nhân vật mới (không tắt vĩnh viễn).",
+   "img": [
+    [
+     "L1.jpg",
+     "Trước: sau nhân vật số 3 (thiếu dữ liệu) thì mọi nhân vật đều về hình cũ"
+    ],
+    [
+     "L1b.jpg",
+     "Sau khi sửa: tất cả vẫn là nhân vật mới"
+    ]
+   ]
+  },
+  {
+   "id": "L2",
+   "sev": "vua",
+   "st": "fixed",
+   "t": "Biển \"Bạn đã đến VÙNG VEN BỜ\" hiện sai khi đang ở trên đảo",
+   "where": "Nông trại, Khu picnic, Hồ bơi, Nhà thi đấu, Học viện, Vườn bách thảo… (js/ext/v26-performance.js, v26AreaName)",
+   "what": "Hàm đặt tên vùng còn dùng toạ độ bản đồ cũ: đứng ở bất kỳ đâu trên đảo mới cũng bị tính là ngoài biển → chữ to \"VÙNG VEN BỜ\" hiện giữa màn hình, che nhân vật và sai nội dung.",
+   "fix": "Trên đảo: hiện đúng tên khu (vd. \"Nông trại\", \"Góc họa sĩ\"); đi trên đường giữa các khu thì không hiện; ra biển thật vẫn hiện tên vùng biển như cũ.",
+   "img": [
+    [
+     "L2.jpg",
+     "Trước: đứng ở Nông trại mà báo \"Vùng ven bờ\""
+    ],
+    [
+     "L2b.jpg",
+     "Sau: không còn biển sai"
+    ]
+   ]
+  },
+  {
+   "id": "L3",
+   "sev": "vua",
+   "st": "fixed",
+   "t": "Phiếu lương bị tràn mép phải trên điện thoại — cột tiền bị cắt",
+   "where": "💰 Lương của em → Nhận lương → Phiếu lương, 📱 390×844 (js/ext/v67l-ui.js)",
+   "what": "Bảng trong phiếu rộng hơn tờ giấy 24px: số tiền $24, $144… dính sát/khuất mép phải, phải vuốt ngang mới thấy.",
+   "fix": "Trên màn hẹp: lề giấy gọn lại, cột \"8 công × $3\" không xuống dòng. Phiếu vừa khít 354/354px, vẫn chữ 16px.",
+   "img": [
+    [
+     "L3.jpg",
+     "Trước: cột tiền sát/khuất mép"
+    ],
+    [
+     "L3b.jpg",
+     "Sau: đủ cột, không tràn"
+    ]
+   ]
+  },
+  {
+   "id": "L5",
+   "sev": "vua",
+   "st": "fixed",
+   "t": "Nhiệm vụ \"Ngắm sinh vật biển phát sáng vào ban đêm\" tự hoàn thành khi đứng trên đảo (+$10, +EXP sai)",
+   "where": "Ban đêm ở nửa nam đảo, khi thu nhỏ bản đồ (vd. trước Tháp Rubik 81) — js/ui/ui-music-missions.js",
+   "what": "Điều kiện \"ở biển\" dùng toạ độ cũ (y > 950) nên ban đêm đứng trên đất liền cũng được tính đã ngắm sinh vật biển → nhận tiền và EXP không đúng.",
+   "fix": "Chỉ tính khi tâm màn hình hoặc nhân vật thật sự ở ngoài biển. Đã thử: trên đảo không còn tự xong; ra biển ban đêm vẫn hoàn thành bình thường.",
+   "img": [
+    [
+     "L5.jpg",
+     "Trước: đứng trước Tháp Rubik 81 mà báo hoàn thành nhiệm vụ biển"
+    ],
+    [
+     "L5b.jpg",
+     "Sau: không còn tự hoàn thành"
+    ]
+   ]
+  },
+  {
+   "id": "L4",
+   "sev": "nhe",
+   "st": "fixed",
+   "t": "Robo báo nhầm nút mời \"🎤 Diễn văn nghệ\" là cửa sổ không đóng được",
+   "where": "Gần cửa Hội trường lớn và gốc Cây thần kỳ (844×390)",
+   "what": "Đứng gần cửa Hội trường lớn thì nút mời hiện là đúng thiết kế; Robo tưởng là cửa sổ còn mở. Nút không che cửa sổ nào. Trên 390×844 nút sát mép trên thẻ lời dạy.",
+   "fix": "Dạy Robo bỏ qua nút mời (v54q-core.js) + thêm quy tắc nút mời tự ẩn khi đang mở cửa sổ, bảng quầy TTTM hoặc cảnh toàn màn hình (giống nút \"Vào …\" của v63f).",
+   "img": [
+    [
+     "L4.jpg",
+     "Nút mời Diễn văn nghệ (📱 390×844)"
+    ]
+   ]
+  },
+  {
+   "id": "L6",
+   "sev": "nhe",
+   "st": "fixed",
+   "t": "Nhãn \"MỚI\" trên thẻ hàng TTTM tầng 3 chỉ 14px",
+   "where": "Quầy Cần Câu Vui / Xe Đạp Gió / Thuyền Du Lịch (js/ext/v68m-ui.js)",
+   "what": "Nhỏ hơn quy định 16px.",
+   "fix": "Nâng lên 16px.",
+   "img": [
+    [
+     "L6.jpg",
+     "Nhãn MỚI 14px"
+    ],
+    [
+     "L6b.jpg",
+     "Sau: 16px"
+    ]
+   ]
+  },
+  {
+   "id": "L7",
+   "sev": "nhe",
+   "st": "fixed",
+   "t": "Nút ✕ của thẻ \"Người Thầy Ánh Sáng\" quá nhỏ để chạm (22×22px, chữ 12px)",
+   "where": "Thẻ lời dạy góc dưới, điện thoại",
+   "what": "Trẻ em khó bấm trúng nút đóng.",
+   "fix": "Chữ ✕ 16px; trên điện thoại vùng chạm mở rộng thành 44×44px (hình nút giữ nguyên).",
+   "img": [
+    [
+     "L7.jpg",
+     "Nút ✕ nhỏ"
+    ]
+   ]
+  },
+  {
+   "id": "L8",
+   "sev": "nhe",
+   "st": "fixed",
+   "t": "Chip \"−$… chi tiêu\" đè lên tiêu đề bảng quầy TTTM",
+   "where": "TTTM tầng 3 khi mua đồ, rõ nhất 844×390",
+   "what": "Chip trừ tiền (v62f) hiện 3,6 giây ngay dưới ô tiền, đè chữ \"Thuyền Du Lịch\" và \"Bạn có $…\".",
+   "fix": "Khi bảng quầy đang mở thì không hiện chip (bảng đã ghi số tiền còn lại).",
+   "img": [
+    [
+     "L8.jpg",
+     "Chip đè tiêu đề bảng"
+    ],
+    [
+     "L8b.jpg",
+     "Sau: không còn đè"
+    ]
+   ]
+  },
+  {
+   "id": "N1",
+   "sev": "nhe",
+   "st": "owner",
+   "t": "Máy tính: hàng nút trên cùng bị cắt ở nút \"Âm thanh\"",
+   "where": "🖥 1440×900, hàng ☰ Menu … Online | Âm…",
+   "what": "Hàng nút cuộn ngang được nhưng không có dấu hiệu để biết còn nút phía sau (Âm thanh, Sáng/Trưa/Chiều).",
+   "fix": "Chưa sửa vì đổi bố cục HUD — xem mục chủ game quyết.",
+   "img": [
+    [
+     "N1.jpg",
+     "Nút Âm thanh bị cắt"
+    ]
+   ]
+  },
+  {
+   "id": "N2",
+   "sev": "nhe",
+   "st": "owner",
+   "t": "Menu ☰ trên điện thoại: chữ tiếng Việt chỉ 11,5px",
+   "where": "📱 Menu ☰ (v32): \"Trò chơi\", \"Bản đồ\", \"Cửa hàng\"…",
+   "what": "Chữ chính là tiếng Anh, tiếng Việt nằm dòng phụ rất nhỏ — học sinh nhỏ khó đọc.",
+   "fix": "Chưa sửa vì đổi thiết kế menu đã duyệt — xem mục chủ game quyết.",
+   "img": [
+    [
+     "N2.jpg",
+     "Dòng tiếng Việt 11,5px"
+    ]
+   ]
+  },
+  {
+   "id": "N3",
+   "sev": "nhe",
+   "st": "owner",
+   "t": "Thông báo vàng che nút Nhiệm vụ / Sổ tay góc phải trên (điện thoại)",
+   "where": "📱 390×844, mọi thông báo dài",
+   "what": "Thông báo nằm đè lên 2 nút tròn bên phải khoảng 3–4 giây (vẫn bấm được nút khác).",
+   "fix": "Chưa sửa vì cần chọn chỗ đặt thông báo mới — xem mục chủ game quyết.",
+   "img": [
+    [
+     "N3.jpg",
+     "Thông báo đè nút góc phải"
+    ]
+   ]
+  }
+ ],
+ "ask": [
+  {
+   "t": "Cần câu Kho Báu Đại Dương (v68m)",
+   "d": "35% lần câu được đồ quý bán $12–$55 (rương $30 + 1 ngọc trai $25), không giới hạn mỗi ngày — vượt quy tắc thưởng $1–20/lần của mini game. Đề xuất: tối đa 5 đồ quý/ngày, hoặc giảm giá bán. Chưa đổi."
+  },
+  {
+   "t": "Lương của em & Cây thần kỳ tính \"ngày\" theo ngày thật",
+   "d": "Trần 8 công/ngày và quà cây đổi theo lịch thật, còn giờ phát lương (sau 16:00) theo đồng hồ trong game. Giữ như vậy (chống spam) hay đổi theo ngày trong game?"
+  },
+  {
+   "t": "Menu ☰ điện thoại (N2)",
+   "d": "Đổi thành tiếng Việt là chữ chính 16px, tiếng Anh dòng phụ?"
+  },
+  {
+   "t": "Hàng nút máy tính (N1)",
+   "d": "Thêm mũi tên ‹ › cuộn, hay xếp 2 hàng, hay chuyển Sáng/Trưa/Chiều vào menu?"
+  },
+  {
+   "t": "Chỗ đặt thông báo trên điện thoại (N3)",
+   "d": "Dời thông báo xuống giữa màn hình (dưới HUD) để không che nút góc phải?"
+  },
+  {
+   "t": "Như báo cáo v54 (vẫn còn)",
+   "d": "Chữ <16px trên MÁY TÍNH (HUD, Nhiệm vụ, Nhật ký, các bảng cũ); nhãn tiếng Anh dưới nút tròn (Lamp on / Bike / Plane)."
+  }
+ ],
+ "fps": [
+  [
+   "📱 390×844",
+   "Robo 60 (trước 59) · đi bộ 60 · ?bundle 60",
+   "Robo thấp nhất 40 (trước 26); 0 lỗi"
+  ],
+  [
+   "📱↔ 844×390",
+   "Robo 60 (trước 59) · đi bộ 60 · ?bundle 60",
+   "Robo thấp nhất 27 (trước 19) lúc đổi mùa/giờ (vẽ lại nền một lần)"
+  ],
+  [
+   "🖥 1440×900",
+   "Robo 52 (trước 48*) · đi bộ 59 · ?bundle 60",
+   "*lượt trước chạy song song với kiểm tra khác. Khựng ngắn khi đổi Giờ Tối (TB 30)"
+  ]
+ ],
+ "checks": [
+  [
+   "Đăng nhập, tạo tài khoản, lưu/tải lại",
+   "3 cỡ, có và không ?bundle",
+   "Tiền, đồ đã mua, trang bị, lương, cây thần kỳ giữ nguyên sau tải lại"
+  ],
+  [
+   "v65 đồ hoạ 41 khu + nội thất",
+   "Dịch chuyển tới từng khu (844×390), ảnh từng khu",
+   "Không hình vỡ; Tháp Rubik 81 giữ thiết kế cũ, đèn sáng ban đêm"
+  ],
+  [
+   "v66c nhân vật",
+   "Đi 6 khung, đứng, bơi, quay trái, váy, tóc dài, kính, áo dài, mũ, đồ cầm tay, 9 trang phục cửa hàng, sư tử; đạp xe, thuyền, máy bay, lớp học",
+   "Rõ nét; ngoài lỗi L1 không thấy lỗi khác"
+  ],
+  [
+   "v66t Cây thần kỳ",
+   "Đi thẳng vào thân, ra sau cây, mở bảng, ước + quà, tải lại, Tự đi tới",
+   "Va chạm đúng, cây mờ khi đi sau, quà +$9 +28 EXP một lần/ngày, Tự đi tới tới gốc cây sau ~36 giây"
+  ],
+  [
+   "v67l Lương của em",
+   "6 nguồn × 10 lần, nhận trước/sau 16:00, phiếu lương, diễn văn nghệ (chơi đúng nhịp), sửa 4 máy, mang đồ cho thầy cô",
+   "Trần 8 công đúng; trước 16:00 không nhận được; 48 công × $3 + $30 = $174 đúng"
+  ],
+  [
+   "v68m TTTM tầng 3",
+   "Mua 6 loại đồ, tốc độ xe 110 → 500 (+15 yên gel), phụ kiện, thuyền, túi đồ, tải lại",
+   "Đúng giá, đúng tốc độ, trang bị giữ sau tải lại"
+  ],
+  [
+   "Toàn game",
+   "Robo Thám Tử 267 bước/cỡ: khu, cửa, mini game, phương tiện, ngày/đêm, 4 mùa; menu, bản đồ lớn, vuốt di chuyển, đêm + mưa, hành tinh",
+   "0 lỗi console; không chữ undefined/NaN"
+  ]
+ ]
+}

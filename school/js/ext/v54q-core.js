@@ -138,7 +138,7 @@ function v54qSig(){
   const W = innerWidth, H = innerHeight, seen = new Set();
   document.querySelectorAll('body > *, .app > *, #stage > *').forEach(e => { if(!e.id || /^(v54q|toast|world)/.test(e.id) || !v54qVis(e)) return; const st = getComputedStyle(e); if(st.position !== 'fixed') return;
     const r = e.getBoundingClientRect(); if(r.width*r.height > W*H*.12) a.push('f:' + e.id); });
-  [[.5, .5], [.3, .5], [.7, .5], [.5, .32], [.5, .7]].forEach(([fx, fy]) => { const e = document.elementFromPoint(W*fx, H*fy); if(!e || e.closest('#v54qPanel, #toast, #v53cEnter')) return;
+  [[.5, .5], [.3, .5], [.7, .5], [.5, .32], [.5, .7]].forEach(([fx, fy]) => { const e = document.elementFromPoint(W*fx, H*fy); if(!e || e.closest('#v54qPanel, #toast, #v53cEnter, #v67lGoStage, #v66tGo')) return;
     if(e.id === 'world' || e.tagName === 'CANVAS' && e.closest('.stage, #stage')) return; const r = v54qRoot(e); const k = r === document.body ? '' : (r.id || r.className || r.tagName).toString().slice(0, 24); if(k && !seen.has(k)){ seen.add(k); a.push('p:' + k); } });
   return a.sort().join(',');
 }
