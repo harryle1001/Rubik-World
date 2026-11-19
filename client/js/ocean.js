@@ -61,6 +61,7 @@ const sky = createSky(scene);
 const post = createPost(renderer, scene, camera);
 
 const terrain = createTerrain(scene);
+terrain.state.camera = camera;   // cây/đá chỉ dựng trong hình nón nhìn (terrain.js)
 const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders, loading };
 // Nút hành động dùng chung (E hoặc nút giữa màn hình): mỗi khung hình các phần gọi ctx.offer(nhãn, hàm, độ ưu tiên)
 {

@@ -186,8 +186,13 @@ export function buildNorth(k) {
   const FCOL = ['#e8453c', '#f5c518', '#e85d8a', '#9b6bd0', '#ffffff', '#ff8a2b'];
 
   // ---------- 1. NHÀ Ở HỌC SINH: mỗi nhà 1 lô quanh đường vòng (layout.js), nền HOUSE_W × HOUSE_D, tầng cao 1,9·φ^½ ----------
+  // nhà hộp hiện đại → nhà CC0 (Kenney City Kit Suburban, docs/kit-catalog.md); mặt tiền vẫn ở HOUSE_V1, tâm nền giữa lô, quay ra đường như cũ
+  const CC0_HOUSE = { nhakinh: ['house_suburb_p', 1.24, 1.0], villa: ['house_suburb_q', 1.24, 0.88], resort: ['house_suburb_n_warm', 1.78, 1.38] };
   for (const L of HOUSE_LOTS) {
-    const h = L.house; if (!h) continue; const o = Object.assign({ k: h.k, fh: 1.9 * Math.sqrt(PHI) }, KIND[h.k] || KIND.nhago), [fx, fz] = lotToWorld(L, 0, HOUSE_V1);
+    const h = L.house; if (!h) continue;
+    const cc = CC0_HOUSE[h.k];
+    if (cc) { const [x, z] = lotToWorld(L, 0, HOUSE_V1 - HOUSE_D / 2), s = Math.min(HOUSE_W * 0.9 / cc[1], HOUSE_D * 1.04 / cc[2]); (kit[cc[0]] ||= []).push([x, Y, z, s, L.ry]); continue; }
+    const o = Object.assign({ k: h.k, fh: 1.9 * Math.sqrt(PHI) }, KIND[h.k] || KIND.nhago), [fx, fz] = lotToWorld(L, 0, HOUSE_V1);
     measure(B.homes, h.k, () => B.homes.group(fx, Y, fz, L.ry, () => house(B.homes, HOUSE_W, HOUSE_D, o)));
   }
 
@@ -452,9 +457,12 @@ export function buildNorth(k) {
 
   if (typeof location !== 'undefined' && /debug/.test(location.search)) console.info('[zone-north] tam giác:', JSON.stringify(nb), 'kit:', Object.entries(kit).map(([n, l]) => n + ' ' + l.length).join(', '), '| hoa:', fl.length);
   // ---------- dựng instanced: model kit chia ô 80 m, hoa đồng (1 InstancedMesh / ô) ----------
-  const SHADOW = { tree_oak: 1, tree_autumn: 1, tree_palm: 1, tent: 1, tractor: 1 }, _kc = new THREE.Color();
+  const SHADOW = { tree_oak: 1, tree_autumn: 1, tree_palm: 1, tent: 1, tractor: 1, house_suburb_p: 1, house_suburb_q: 1, house_suburb_n_warm: 1 }, _kc = new THREE.Color();
   // lọc lại lần cuối: nhà/vật cản đăng ký SAU khi trồng (vd. nhà nông trại) → bỏ cây/bụi trùng
-  for (const [name, list] of Object.entries(kit)) { const m = /^tree/.test(name) ? 1.2 : /^bush/.test(name) ? 0.9 : 0.4; for (let i = list.length - 1; i >= 0; i--) if (built(list[i][0], list[i][2], m)) list.splice(i, 1); }
+  for (const [name, list] of Object.entries(kit)) { if (/^house_suburb/.test(name)) continue; const m = /^tree/.test(name) ? 1.2 : /^bush/.test(name) ? 0.9 : 0.4; for (let i = list.length - 1; i >= 0; i--) if (built(list[i][0], list[i][2], m)) list.splice(i, 1); }
+  // cây/bụi → hệ thiên nhiên chung (terrain.nature: model CC0 Quaternius, 3 sắc, LOD gần/xa, lọc theo hướng camera); k: đổi tỷ lệ model cũ → mới
+  const NAT = { tree_oak: ['oak', 1], tree_fat: ['fat', 1], tree_autumn: ['autumn', 1.22], tree_pine: ['pine', 1], tree_pine_tall: ['pineTall', 0.96], tree_palm: ['palm', 1], bush_large: ['bush', 1], bush: ['bush', 1] };
+  for (const [name, m] of Object.entries(NAT)) if (kit[name]) { ctx.terrain.nature.add(m[0], kit[name].map(t => [t[0], t[1], t[2], t[3] * m[1], t[4]])); delete kit[name]; }
   for (const [name, list] of Object.entries(kit)) {
     const cells = new Map(); for (const t of list) { const key = Math.floor(t[0] / 160) + ',' + Math.floor(t[2] / 160); (cells.get(key) || cells.set(key, []).get(key)).push(t); }
     for (const l of cells.values()) placeKit(scene, name, l, { shadow: !!SHADOW[name] }).then(ims => { for (const im of ims) {   // tô lại màu kit theo bảng màu docs/art-style.md
