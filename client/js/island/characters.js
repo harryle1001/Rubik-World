@@ -66,8 +66,11 @@ export async function loadHero(kind, height = 1.65, look = null) {
       parts.body.material.userData.blink.value = o;
     };
   }
+  if (npcHook) npcHook(hero, kind, look, height);   // vrm/vrm-npc.js: người gần → nhân vật anime
   return hero;
 }
+let npcHook = null;
+export const setNpcHook = f => { npcHook = f; };
 // Bộ KayKit gốc (hiệp sĩ, phù thuỷ…): ẩn vũ khí
 const KAYKIT = { 'hero-knight': 'Knight', 'hero-rogue': 'Rogue', 'hero-mage': 'Mage', 'hero-barbarian': 'Barbarian' };
 async function loadKayKit(kind, height) {

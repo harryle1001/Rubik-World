@@ -7,6 +7,7 @@ const SERVER = process.env.ISLAND_SERVER || 'https://truong-rubik.onrender.com';
 fs.rmSync(OUT, { recursive: true, force: true });
 const copy = (from, to) => fs.cpSync(path.join(ROOT, from), path.join(OUT, to), { recursive: true });
 copy('client', '');
+for (const f of ['school', 'world-2d.html']) fs.rmSync(path.join(OUT, f), { recursive: true, force: true });   // game 2D chỉ lưu trữ trong repo, không vào app
 for (const f of ['build/three.module.js', 'examples/jsm/postprocessing', 'examples/jsm/shaders', 'examples/jsm/loaders/GLTFLoader.js', 'examples/jsm/loaders/DRACOLoader.js', 'examples/jsm/libs/meshopt_decoder.module.js', 'examples/jsm/libs/draco/gltf', 'examples/jsm/utils/BufferGeometryUtils.js'])
   copy(path.join('node_modules/three', f), path.join('lib/three', f));
 copy('node_modules/socket.io/client-dist/socket.io.min.js', 'lib/socket.io.min.js');

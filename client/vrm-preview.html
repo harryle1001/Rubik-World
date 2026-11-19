@@ -1,0 +1,110 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Xem thử nhân vật anime</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>html,body{margin:0;height:100%;background:#bfe3f5;overflow:hidden;font:14px system-ui}
+#info{position:fixed;left:8px;top:6px;right:8px;color:#123;background:#fffb;padding:5px 9px;border-radius:8px;max-width:620px}
+#bar{position:fixed;left:8px;bottom:8px;display:flex;gap:6px;flex-wrap:wrap}#bar button{font:13px system-ui;padding:6px 10px;border:0;border-radius:13px;background:#fffd}</style>
+<script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/",
+"@pixiv/three-vrm":"https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.5.5/lib/three-vrm.module.min.js"}}</script></head><body>
+<div id="info">Đang nạp…</div><div id="bar"></div>
+<script type="module">
+// Trang DUYỆT nhân vật anime (VRM, MToon toon) — chưa gắn vào game. Nguồn/giấy phép: docs/vrm-preview/LICENSES.md
+// /vrm-preview.html?set=full|mobile&anim=idle|walk&only=<id>&view=front|face&compare=1&light=game|soft
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
+import { loadHero } from './js/island/characters.js';
+
+const PHI = 1.618033988749895, Q = new URLSearchParams(location.search);
+const SET = Q.get('set') || 'full', ANIM = Q.get('anim') || 'idle', ONLY = Q.get('only'), VIEW = Q.get('view') || 'line';
+const MODELS = [   // id, tên, vai gợi ý
+  ['shino', 'Sendagaya Shino', 'nữ'], ['shibu', 'Sendagaya Shibu', 'nữ'], ['vita', 'Vita', 'nữ'], ['vivi', 'Vivi', 'nữ'],
+  ['hair-f', 'HairSample Female', 'nữ'], ['sample-a', 'AvatarSample A', 'nữ'], ['fumiriya', 'Sakurada Fumiriya', 'nam'],
+  ['hair-m', 'HairSample Male', 'nam'], ['seed-san', 'Seed-san', 'trung tính'], ['olivia', '100Avatars Olivia', 'nữ (low-poly)'],
+];
+
+// --- Cảnh: góc sân trường greybox, ánh sáng giống sky.js của đảo (hemi + nắng, ACES) ---
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+r.setPixelRatio(Math.min(devicePixelRatio, 2)); r.setSize(innerWidth, innerHeight); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+if (Q.get('light') !== 'soft') { r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.15; }
+document.body.appendChild(r.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#bfe3f5'); scene.fog = new THREE.Fog('#bfe3f5', 21, 55);
+scene.add(new THREE.HemisphereLight('#d6ecff', '#c2ad7e', Q.get('light') === 'soft' ? 1.6 : 1.0));
+const sun = new THREE.DirectionalLight('#fff0d2', 2.2); sun.position.set(-5, 8, 8); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 8, bottom: -3 }); sun.shadow.bias = -0.0004; scene.add(sun);
+const toon = c => new THREE.MeshLambertMaterial({ color: c });
+const box = (w, h, d, c, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), toon(c)); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; scene.add(m); return m; };
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 40), toon('#d9cfb8')); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+for (let i = -8; i <= 8; i++) box(0.04, 0.005, 12, '#c6baa0', i * PHI, 0.003, -1);            // vạch lát sân, nhịp φ
+box(26, 5.5, 0.6, '#f3e6cc', 0, 2.75, -6); box(26, 0.5, 0.8, '#b5523b', 0, 5.6, -6);          // tường lớp học + mái
+for (let i = -4; i <= 4; i++) { box(1.3, 1.3 * PHI, 0.1, '#7fb6d8', i * 2.6, 2.4, -5.66); box(1.5, 0.12, 0.25, '#ffffff', i * 2.6, 1.3, -5.6); }
+box(26, 0.4, 0.3, '#8fbf6a', 0, 0.2, -5.4);                                                    // bồn cỏ chân tường
+for (const x of [-10.5, 10.5]) { box(0.3, 2.2, 0.3, '#7a5a3a', x, 1.1, -3.5); const t = new THREE.Mesh(new THREE.IcosahedronGeometry(1.4, 0), toon('#6aae4a')); t.position.set(x, 3, -3.5); t.castShadow = true; scene.add(t); }
+
+// --- Nạp VRM ---
+const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder); loader.register(p => new VRMLoaderPlugin(p));
+const list = ONLY ? MODELS.filter(m => m[0] === ONLY) : MODELS, compare = Q.get('compare') === '1';
+const slots = list.length + (compare ? 1 : 0), gap = 0.7 * PHI;   // khoảng cách 1,13 m
+const actors = [], stats = [];
+const countTris = o => { let t = 0; o.traverse(m => { if (m.isMesh) { const g = m.geometry; t += (g.index ? g.index.count : g.attributes.position.count) / 3; } }); return Math.round(t); };
+let slot = 0;
+if (compare) {   // nhân vật chibi hiện tại để so sánh
+  const h = await loadHero('student-female-a', 1.6); const x = (slot++ - (slots - 1) / 2) * gap; h.model.position.set(x, 0, 0); scene.add(h.model);
+  h.anim.play(ANIM === 'walk' ? 'Walking_A' : 'Idle', 0); actors.push({ kay: h }); stats.push({ id: 'kaykit', name: 'KayKit chibi (hiện tại)', tris: h.tris, x, headY: 1.25 });
+}
+for (const [id, name] of list) {
+  const url = `assets/vrm/${SET}/${id}.vrm`, t0 = performance.now();
+  const g = await loader.loadAsync(url), vrm = g.userData.vrm;
+  VRMUtils.removeUnnecessaryVertices(g.scene); VRMUtils.combineSkeletons(g.scene); VRMUtils.rotateVRM0(vrm);
+  vrm.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; } });
+  const x = (slot++ - (slots - 1) / 2) * gap; vrm.scene.position.set(x, 0, 0); scene.add(vrm.scene);
+  const kb = Math.round(+(await fetch(url, { method: 'HEAD' })).headers.get('content-length') / 1024);
+  const head = vrm.humanoid.getNormalizedBoneNode('head'); vrm.update(0);
+  const hp = head.getWorldPosition(new THREE.Vector3());
+  actors.push({ vrm, id, phase: actors.length * 0.37 }); stats.push({ id, name, tris: countTris(vrm.scene), kb, ms: Math.round(performance.now() - t0), height: +(hp.y + 0.12).toFixed(2), headY: hp.y, x });
+}
+
+// --- Chuyển động thủ tục trên xương chuẩn hoá VRM (không cần file animation; giữ nguyên cho mọi mẫu) ---
+const B = (v, n) => v.humanoid.getNormalizedBoneNode(n);
+function pose(a, t) {
+  const v = a.vrm, s = Math.sin, w = ANIM === 'walk', f = w ? 2 * Math.PI * 0.9 : 2 * Math.PI / (PHI * 2), p = t * f + a.phase;
+  const set = (n, x, y, z) => { const b = B(v, n); if (b) b.rotation.set(x, y, z); };
+  const k1 = v.meta.metaVersion === '0' ? 1 : -1, sw = w ? 0.5 : 0, br = w ? 0 : s(p) * 0.02;
+  set('leftUpperArm', s(p) * sw * 0.7, 0, k1 * (1.3 - br)); set('rightUpperArm', -s(p) * sw * 0.7, 0, -k1 * (1.3 - br));
+  set('leftLowerArm', 0, k1 * (0.25 + (w ? 0.2 : 0)), 0); set('rightLowerArm', 0, -k1 * (0.25 + (w ? 0.2 : 0)), 0);
+  set('leftUpperLeg', -s(p) * sw, 0, 0); set('rightUpperLeg', s(p) * sw, 0, 0);
+  set('leftLowerLeg', w ? Math.max(0, -s(p + 1.2)) * 0.9 : 0, 0, 0); set('rightLowerLeg', w ? Math.max(0, s(p + 1.2)) * 0.9 : 0, 0, 0);
+  set('spine', w ? 0.05 : s(p) * 0.012, w ? s(p) * 0.08 : 0, 0); set('neck', 0, 0, 0);
+  set('head', w ? 0 : s(p * 0.5) * 0.03, w ? -s(p) * 0.05 : s(p * 0.31) * 0.08, 0);
+  const hips = B(v, 'hips'); if (hips) hips.position.y = (hips.userData.y0 ??= hips.position.y) + (w ? Math.abs(s(p)) * 0.04 - 0.02 : s(p * 2) * 0.004);
+  const e = v.expressionManager; if (e) { const k = (t + a.phase * 3) % 3.7; e.setValue('blink', k < 0.12 ? 1 : 0); e.setValue('happy', Q.get('smile') ? 0.6 : 0); }
+}
+
+// --- Camera / chế độ chụp ---
+const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.05, 120), ctl = new OrbitControls(cam, r.domElement);
+window.frame = (mode, i = 0) => {   // mode: line | front | face
+  const s = stats[i] || stats[0];
+  for (const a of actors) (a.kay ? a.kay.model : a.vrm.scene).visible = mode === 'line' || mode === 'compare' || (a.kay ? 'kaykit' : a.id) === s.id;
+  if (mode === 'line') { const W = slots * gap; cam.position.set(0, 1.7, (W / 2 + 0.6) / (Math.tan(Math.PI / 12) * cam.aspect) + 0.8); ctl.target.set(0, 0.72, 0); }
+  else if (mode === 'compare') { const xs = stats.slice(0, 3).map(s => s.x), cx = (xs[0] + xs[2]) / 2; cam.position.set(cx, 1.0, 5.2); ctl.target.set(cx, 0.8, 0); }
+  else if (mode === 'front') { cam.position.set(s.x, 0.95, 3.5); ctl.target.set(s.x, 0.82, 0); }
+  else { const a = 0.6, d = 1.1; cam.position.set(s.x + Math.sin(a) * d, s.headY + 0.04, Math.cos(a) * d); ctl.target.set(s.x, s.headY - 0.02, 0); }
+  ctl.update();
+};
+window.frame(VIEW === 'line' ? 'line' : VIEW);
+const bar = document.getElementById('bar');
+[['Hàng', () => frame('line')], ...stats.flatMap((s, i) => [[s.id, () => frame('front', i)], ['mặt', () => frame('face', i)]])]
+  .forEach(([t, fn]) => { const b = document.createElement('button'); b.textContent = t; b.onclick = fn; bar.appendChild(b); });
+if (Q.get('ui') === '0') bar.style.display = 'none';
+document.getElementById('info').textContent = `Bộ ${SET} · ${ANIM} · ${stats.map(s => `${s.id}: ${s.tris}▲${s.kb ? ' ' + s.kb + 'KB' : ''}`).join(' · ')}`;
+if (Q.get('ui') === '0') document.getElementById('info').hidden = true;
+window.stats = stats;
+
+const clock = new THREE.Clock(); let T = +(Q.get('t') || 0);
+window.step = (n, dt = 1 / 30) => { for (let k = 0; k < n; k++) tick(dt); r.render(scene, cam); };   // chụp ảnh tất định
+function tick(dt) { T += dt; for (const a of actors) { if (a.kay) a.kay.anim.update(dt); else { pose(a, T); a.vrm.update(dt); } } }
+addEventListener('resize', () => { cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); r.setSize(innerWidth, innerHeight); });
+if (Q.get('still') !== '1') r.setAnimationLoop(() => { tick(Math.min(clock.getDelta(), 0.05)); ctl.update(); r.render(scene, cam); });
+window.ready = true;
+</script></body></html>

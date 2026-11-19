@@ -1,0 +1,120 @@
+// story/data.js — CỐT TRUYỆN CHÍNH "KHỐI RUBIK PHA LÊ" (chỉ dữ liệu, nguyên bản).
+// Bà Mù Màu (phản diện hài, không đáng sợ) lỡ tay làm vỡ Khối Rubik Pha Lê — viên ngọc giữ màu của cả thế giới — 8 mảnh văng khắp nơi,
+// thế giới nhạt dần. Em cùng Coach Ru (rồi Cú Thần) đi qua 8 vùng, mỗi chương 1 mảnh. Nhiệm vụ làm lần lượt (luôn biết việc tiếp theo).
+// Số nhiệm vụ 3 → 5, số câu hỏi 2 · 3 · 3 · 5 · 3 · 5 · 5 · 8, thưởng XP theo Fibonacci 21 → 610 (tiến dần).
+// task: talk (nói chuyện) · quiz (thử thách kiến thức, learn.askSet) · collect (nhặt n vật) · goto (tới nơi) · cond (kỹ năng game: lặn, bay, phép, mini game…) · cast (niệm phép lên n mục tiêu)
+// at: [x, z] hoặc (ctx) → [x, z]; r: bán kính tới nơi (m). Mảnh pha lê hiện ở shard sau khi xong mọi nhiệm vụ.
+import { toWorld, FOREST, QUAY, CASTLE_L } from '../academy/plan.js';
+
+export const WHO = {
+  ru: { n: 'Coach Ru', i: '🧢' }, cu: { n: 'Cú Thần Pha Lê', i: '🦉' }, mu: { n: 'Bà Mù Màu', i: '👵' }, me: { n: 'Em', i: '🙂' },
+  thu: { n: 'Bà Thủ Thư', i: '📚' }, rua: { n: 'Bà Rùa Biển', i: '🐢' }, rong: { n: 'Rồng Mây', i: '🐉' }, su: { n: 'Sư Đền Tri Thức', i: '⛩️' },
+};
+export const VALLEY = [-80, 207];                          // Thung lũng Rồng: đồi giữa Safari và Học viện Hoa Phượng
+const HALL = c => toWorld((CASTLE_L.hall.u0 + CASTLE_L.hall.u1) / 2, 0);
+const YARD = c => toWorld(CASTLE_L.hall.u1 + 13, 0);      // sân trước đại sảnh
+const QUAYP = c => toWorld(QUAY.u0 + 2.5, 10);
+const FGATE = c => toWorld(FOREST.gate[0], FOREST.gate[1]);
+const FLAKE = c => toWorld(FOREST.lake.u, FOREST.lake.v + FOREST.lake.ring + 3);
+const PIER = c => (c.academy && c.academy.pier ? c.academy.pier.end : [-203, -203]);
+const near = (c, at, r) => { const p = c.player.pos; return Math.hypot(p.x - at[0], p.z - at[1]) < r; };
+
+export const CHAPTERS = [
+  { id: 1, name: 'Mảnh Trắng', region: 'Trường Rubik', icon: '🏫', col: '#f4f6ff', subj: 'Toán', xp: 21, sao: 5, title: 'Học trò Rubik',
+    intro: [['ru', 'Chào em! Tôi là Coach Ru, huấn luyện viên Rubik của trường.'], ['mu', 'Hí hí! Khối Rubik Pha Lê đẹp quá, cho bà mượn ngắm tí… Ối! Rơi mất rồi!'], ['ru', 'Khối Pha Lê giữ màu cho cả thế giới. Nó vỡ thành 8 mảnh — mọi thứ đang nhạt dần kìa!'], ['ru', 'Đi nào! Mảnh đầu tiên ở ngay quảng trường cổng trường. Cứ theo mũi tên vàng nhé.']],
+    tasks: [
+      { type: 'talk', who: 'ru', at: [-62, 13], r: 4, text: 'Gặp Coach Ru ở cổng trường', lines: [['ru', 'Muốn ghép lại khối Rubik, mình phải giỏi đếm, giỏi tính.'], ['ru', 'Tới tượng Rubik, giải đố toán của tôi nhé!']] },
+      { type: 'quiz', who: 'ru', at: [-68, 4], s: ['toan'], n: 2, need: 1, text: 'Giải đố Toán của Coach Ru ở tượng Rubik' },
+      { type: 'collect', at: [-75, 9], n: 3, spread: 15, icon: '💧', col: '#9ad8ff', text: 'Nhặt 3 giọt màu quanh quảng trường' },
+    ],
+    shard: [-86, 9], outro: [['ru', 'Mảnh Trắng đây rồi! Màu trắng là tổng của mọi màu ánh sáng đấy.'], ['mu', 'Hừm… để bà xem các em tìm được mấy mảnh nào! Bà trốn ở thị trấn đây!'], ['ru', 'Mảnh tiếp theo ở phố. Đi thôi!']] },
+
+  { id: 2, name: 'Mảnh Vàng', region: 'Thị trấn', icon: '🏘️', col: '#ffd23f', subj: 'Tiếng Việt', xp: 34, sao: 8, title: 'Nhà thám hiểm phố',
+    intro: [['ru', 'Bà Mù Màu đi qua Phố Đà Lạt, các chữ cái trên biển hiệu rơi hết!'], ['ru', 'Tìm lại 3 chữ cái màu, rồi tới Thư viện nhờ Bà Thủ Thư.']],
+    tasks: [
+      { type: 'collect', at: [0, -223], n: 3, spread: 21, icon: '🔤', labels: ['M', 'À', 'U'], col: '#ffd23f', text: 'Tìm 3 chữ cái M · À · U ở Phố Đà Lạt' },
+      { type: 'quiz', who: 'thu', at: [158, -158], s: ['tv'], n: 3, need: 2, text: 'Giải câu đố Tiếng Việt ở Thư viện', lines: [['thu', 'Ghép được chữ “MÀU” rồi à? Giỏi quá! Giờ đến câu đố chữ nghĩa của bà.']] },
+      { type: 'cond', at: [223, 0], r: 0, text: 'Chơi 1 mini game ở khu Thể thao (gặp chủ trò, bấm E)', test: c => !!c.mgActive, hint: 'Mini game nào cũng được: đá bóng, bắn bóng rổ, đua xe…' },
+    ],
+    shard: [205, -12], outro: [['ru', 'Mảnh Vàng — màu của nắng!'], ['mu', 'Bà chỉ muốn thế giới… bớt chói mắt thôi mà! Bà ra biển hóng gió đây.'], ['ru', 'Ra biển phía tây! Nhớ hít thật sâu trước khi lặn.']] },
+
+  { id: 3, name: 'Mảnh Lam', region: 'Biển Xanh', icon: '🌊', col: '#3aa0ff', subj: 'Khoa học', xp: 55, sao: 13, title: 'Thợ lặn nhí',
+    intro: [['ru', 'Mảnh Lam rơi xuống đáy biển gần Resort Biển Xanh.'], ['rua', 'Ta là Bà Rùa Biển. Muốn xuống biển sâu, cháu phải hiểu biển đã!']],
+    tasks: [
+      { type: 'quiz', who: 'rua', at: [-170, 8], s: ['kh'], tag: 'bien', n: 3, need: 2, text: 'Trả lời câu đố biển của Bà Rùa' },
+      { type: 'cond', at: [-318, 0], r: 0, text: 'Bơi ra biển và lặn sâu 2 m (nút lặn / phím Q)', test: c => !!(c.dive && c.dive.diving && c.dive.depth > 2), hint: 'Đi xuống nước, bấm lặn. Để ý thanh dưỡng khí!' },
+    ],
+    shard: [-322, 8], underwater: true, outro: [['rua', 'Cháu lặn giỏi lắm! Mảnh Lam là màu của biển và bầu trời.'], ['mu', 'Bà… bà sang Học viện Pha Lê học phép tàng hình đây! Không ai thấy bà đâu!'], ['ru', 'Học viện ở đảo xa phía tây bắc. Ra bến đi thuyền đèn lồng nhé!']] },
+
+  { id: 4, name: 'Mảnh Tím', region: 'Học viện Pha Lê', icon: '🏰', col: '#a78bfa', subj: 'Tiếng Anh', xp: 89, sao: 13, title: 'Pháp sư tập sự',
+    intro: [['ru', 'Từ đây Cú Thần Pha Lê sẽ dẫn đường cho em. Tôi chờ ở trường nhé!'], ['cu', 'Hoo-hoo! Welcome! Ở Học viện, câu thần chú nào cũng có tiếng Anh đấy.']],
+    tasks: [
+      { type: 'goto', at: PIER, r: 8, text: 'Ra bến thuyền đèn lồng (bờ tây bắc)' },
+      { type: 'goto', at: QUAYP, r: 21, text: 'Đi thuyền tới Học viện Pha Lê' },
+      { type: 'cond', at: HALL, r: 0, text: 'Nhận đũa phép trong Đại sảnh', test: c => !!(c.magic && c.magic.hasWand), hint: 'Leo đường mòn lên lâu đài, vào Đại sảnh bấm E.' },
+      { type: 'quiz', who: 'cu', at: YARD, s: ['ta'], n: 5, need: 3, text: 'Thi tiếng Anh với Cú Thần', lines: [['cu', 'Spell = thần chú, wand = đũa phép. Ready? Let’s go!']] },
+      { type: 'cond', at: YARD, r: 0, text: 'Niệm thử 1 phép (nút ✨ / phím F)', test: (c, S) => S.castN > 0, hint: 'Hết năng lượng thì bấm 📚 để nạp.' },
+    ],
+    shard: YARD, shardOff: [5, 5], outro: [['cu', 'Excellent! Mảnh Tím — màu của phép thuật!'], ['mu', 'Bà chưa học được tàng hình… nên bà trốn vào Rừng Phép Thuật!'], ['cu', 'Rừng ở thuỳ đất phía tây đảo. Ta sẽ dạy em một phép mới.']] },
+
+  { id: 5, name: 'Mảnh Lục', region: 'Rừng Phép Thuật', icon: '🌲', col: '#4cd964', subj: 'Khoa học', xp: 144, sao: 21, title: 'Bạn của Rừng',
+    intro: [['cu', 'Cây rừng bị mất màu rồi, lá xám như tro!'], ['cu', 'Phép Cầu Vồng 🌈 tách ánh sáng trắng thành 7 màu — dùng nó trả màu cho cây.']],
+    tasks: [
+      { type: 'goto', at: FGATE, r: 13, text: 'Tới cổng đá Rừng Phép Thuật' },
+      { type: 'talk', who: 'cu', at: FGATE, r: 8, text: 'Học phép Cầu Vồng 🌈 với Cú Thần', give: 'rainbow', lines: [['cu', 'Ánh sáng trắng = đỏ, cam, vàng, lục, lam, chàm, tím.'], ['cu', 'Chọn phép 🌈 rồi niệm vào cây xám. Thử nào!']] },
+      { type: 'cast', at: c => toWorld(FOREST.gate[0], FOREST.gate[1] - 34), n: 3, spread: 13, spell: 'rainbow', text: 'Niệm 🌈 trả màu cho 3 cây pha lê xám' },
+      { type: 'quiz', who: 'cu', at: FLAKE, s: ['kh'], tag: 'cay', n: 3, need: 2, text: 'Câu đố cây cối bên hồ rừng' },
+      { type: 'goto', at: FLAKE, r: 8, text: 'Đứng bên hồ chờ mảnh pha lê hiện ra' },
+    ],
+    shard: FLAKE, shardOff: [3, -3], outro: [['cu', 'Mảnh Lục — màu của lá cây!'], ['mu', 'Ối, cây xanh trở lại rồi… Bà sẽ nhờ Rồng Mây giữ mảnh Đỏ!'], ['cu', 'Rồng Mây ngủ ở Thung lũng Rồng trên đảo Rubik, phía nam. Bay qua đó nhé!']] },
+
+  { id: 6, name: 'Mảnh Đỏ', region: 'Thung lũng Rồng', icon: '🐉', col: '#ff5a4e', subj: 'Sử – Địa', xp: 233, sao: 21, title: 'Người kể chuyện Rồng',
+    intro: [['cu', 'Người Việt tự hào là “Con Rồng cháu Tiên”.'], ['cu', 'Rồng Mây hiền lắm, chỉ hơi… ngủ nhiều. Hãy bay ngang qua cho rồng thức dậy!']],
+    tasks: [
+      { type: 'cond', at: VALLEY, r: 0, text: 'Bay (máy bay ✈️ hoặc khinh khí cầu 🎈) qua Thung lũng Rồng', test: c => (!!(c.aircraft && c.aircraft.flying) || !!(c.player.vehicle && c.player.vehicle.fly)) && near(c, VALLEY, 89), hint: 'Máy bay ở Sân bay Cánh Diều; khinh khí cầu: nút 🎈.' },
+      { type: 'talk', who: 'rong', at: VALLEY, r: 8, text: 'Đánh thức Rồng Mây', lines: [['rong', 'Oáp… ai vừa bay qua đầu ta thế? Ta mơ đang ăn bánh chưng…'], ['rong', 'Mảnh Đỏ hả? Trả lời đúng chuyện ngày xưa thì ta trả!']] },
+      { type: 'quiz', who: 'rong', at: VALLEY, s: ['lsdl'], tag: 'rong', n: 5, need: 3, text: 'Kể chuyện Rồng – Tiên với Rồng Mây' },
+      { type: 'collect', at: VALLEY, n: 3, spread: 21, icon: '🔴', col: '#ff6b5a', text: 'Nhặt 3 vảy rồng màu quanh thung lũng' },
+    ],
+    shard: VALLEY, shardOff: [6, 0], outro: [['rong', 'Hay quá! Mảnh Đỏ — màu cờ, màu lửa ấm áp. Cầm lấy!'], ['mu', 'Rồng cũng đứng về phía các em à… Bà lên Đền Tri Thức vậy!'], ['cu', 'Đền ở khu rừng phía tây bắc đảo Rubik. Ở đó toàn câu đố hay!']] },
+
+  { id: 7, name: 'Mảnh Cam', region: 'Đền Tri Thức', icon: '⛩️', col: '#ff9f43', subj: 'Toán', xp: 377, sao: 34, title: 'Nhà toán học Đền',
+    intro: [['su', 'Đền Tri Thức giữ bí mật của số φ, số π và dãy Fibonacci.'], ['su', '1, 1, 2, 3, 5, 8… mỗi số bằng tổng hai số trước. Hạt hướng dương cũng xếp như thế!']],
+    tasks: [
+      { type: 'goto', at: [-150, -150], r: 13, text: 'Tới Đền Tri Thức' },
+      { type: 'collect', at: [-158, -158], n: 5, spread: 34, icon: '🌻', col: '#ffb020', text: 'Nhặt 5 hạt hướng dương Fibonacci quanh đền' },
+      { type: 'quiz', who: 'su', at: [-150, -150], s: ['toan'], n: 5, need: 3, text: 'Thử thách Toán của Sư Đền' },
+      { type: 'cond', at: [-150, -150], r: 0, text: 'Tìm thêm 1 bí mật trên đảo (📖 Sổ bí mật có gợi ý)', test: (c, S) => eggCount() > (S.eggs0 ?? 99) || eggCount() >= 21, hint: 'Mở 📖 Bí mật xem gợi ý: gõ số π, tìm khối Rubik vàng…' },
+    ],
+    shard: [-150, -150], shardOff: [6, 6], outro: [['su', 'Mảnh Cam — màu hoàng hôn trên đền.'], ['mu', 'Thôi được rồi! Mảnh cuối ở chỗ bà. Lên Tháp Thiên Văn ở Học viện mà lấy!'], ['cu', 'Trận cuối: không phải đánh nhau, mà là… thi kiến thức! Hoo-hoo!']] },
+
+  { id: 8, name: 'Mảnh Cầu Vồng', region: 'Tháp Thiên Văn', icon: '🔭', col: '#ff6fae', subj: 'Tổng hợp', xp: 610, sao: 55, title: 'Người Giữ Màu',
+    intro: [['cu', 'Bà Mù Màu đang chờ ở sân lâu đài Học viện.'], ['cu', 'Nhớ lại những câu em từng sai — ôn kỹ là thắng!']],
+    tasks: [
+      { type: 'goto', at: QUAYP, r: 21, text: 'Trở lại Học viện Pha Lê (thuyền hoặc máy bay)' },
+      { type: 'talk', who: 'mu', at: YARD, r: 8, text: 'Gặp Bà Mù Màu ở sân lâu đài', boss: true, lines: [['mu', 'Bà nói thật nhé… mắt bà nhìn mọi thứ chỉ thấy xám thôi.'], ['mu', 'Thấy thế giới nhiều màu, bà ghen tị, nên mới mượn khối Rubik…'], ['me', 'Bà ơi, cháu sẽ cho bà thấy màu sắc!']] },
+      { type: 'quiz', who: 'mu', at: YARD, s: ['toan', 'tv', 'kh', 'lsdl', 'ta'], n: 8, need: 5, text: 'Thử thách cuối: 8 câu ôn tập (cần 5)' },
+      { type: 'cast', at: YARD, n: 1, spread: 0, spell: 'rainbow', boss: true, text: 'Niệm 🌈 Cầu Vồng tặng Bà Mù Màu' },
+      { type: 'talk', who: 'mu', at: YARD, r: 8, text: 'Nghe Bà Mù Màu nói', lines: [['mu', 'Ôi… đỏ, cam, vàng, lục, lam, chàm, tím! Đẹp quá!'], ['mu', 'Bà xin lỗi. Mảnh cuối đây — cháu ghép lại khối Rubik đi!']] },
+    ],
+    shard: YARD, shardOff: [0, 5], outro: [['cu', 'Khối Rubik Pha Lê đã liền lại! Thế giới rực rỡ trở lại rồi!'], ['mu', 'Từ nay bà làm… hướng dẫn viên ngắm cầu vồng!'], ['ru', 'Em là Người Giữ Màu của đảo Rubik. Học tiếp, chơi tiếp nhé — còn nhiều bí mật lắm!']] },
+];
+
+let EGG = () => 0;
+export const setEggCounter = f => { EGG = f; };
+const eggCount = () => EGG();
+
+// Kỹ năng: 1 điểm / lần lên cấp. Mỗi kỹ năng 3 bậc, cần cấp tối thiểu (Fibonacci 2 · 3 · 5).
+export const SKILLS = [
+  { id: 'run', i: '🏃', n: 'Chân Gió', d: t => `Chạy nhanh hơn ${[0, 8, 13, 21][t]} %` },
+  { id: 'glide', i: '🪶', n: 'Lướt Gió', d: t => t ? `Giữ nút Nhảy trên không để lướt lâu hơn (×${[1, 1.6, 2.6, 4.2][t]})` : 'Giữ Nhảy để bay lướt' },
+  { id: 'lung', i: '🐬', n: 'Phổi Cá Heo', d: t => `Lặn lâu ${[21, 34, 55, 89][t]} giây` },
+  { id: 'mana', i: '✨', n: 'Pha Lê Phép', d: t => `Trả lời đúng: +${[0, 8, 13, 21][t]} năng lượng phép` },
+  { id: 'ride', i: '🚲', n: 'Tay Lái Gió', d: t => `Xe, ngựa, thuyền nhỏ nhanh hơn ${[0, 8, 13, 21][t]} %` },
+];
+export const SKILL_LV = [2, 3, 5];
+export const TITLES_EXTRA = [
+  { id: 'mem', n: 'Siêu trí nhớ', d: 'Nhớ chắc 13 câu (ôn đúng nhiều lần)', test: L => L.known >= 13 },
+  { id: 'rev', n: 'Chăm ôn bài', d: 'Ôn lại đúng 5 câu từng sai', test: (L, P) => (P.revOk | 0) >= 5 },
+  { id: 'all', n: 'Ham học 5 môn', d: 'Trả lời đúng ít nhất 1 câu mỗi môn', test: L => ['toan', 'tv', 'kh', 'lsdl', 'ta'].every(s => L[s].ok > 0) },
+];

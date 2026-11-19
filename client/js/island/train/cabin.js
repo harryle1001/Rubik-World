@@ -1,112 +1,119 @@
-// train/cabin.js — TRONG TOA: đứng dậy đi lại dọc lối đi qua cả 4 toa (cửa thông giữa các toa), xe quà vặt ở cuối
-// toa cuối (chọn món → ăn → học 1 điều thú vị), vài bạn học sinh ngồi sẵn trên tàu.
-// Toạ độ "dọc tàu" u: 0 = đầu toa khách thứ nhất, tăng về phía cuối tàu (4 toa × 8 m + 3 khe nối 0,8 m).
+// train/cabin.js — TRONG TÀU: đi lại qua 6 toa khách (cửa thông giữa các toa), tham quan buồng lái, chọn ghế trống để ngồi / đứng dậy.
+// Vị trí người chơi lưu theo toạ độ CỤC BỘ của toa (car, x, z) → tàu chạy, vào cua vẫn đứng vững, không trễ.
+// Va chạm: tâm người phải nằm trong hợp các hình chữ nhật "đi được" của toa (coaches.js) — thử trượt từng trục khi vướng.
+// Camera: cần máy sau lưng (2,2 m), co lại khi chạm vách/ghế (dò theo vùng "trống" của toa) → không kẹt trong tường; kéo màn hình để xoay.
 import * as THREE from 'three';
-import { Batch } from '../academy/geo.js';
-import { matV } from '../sample/palette.js';
-import { loadHero } from '../characters.js';
-import { CARS, FLOOR, GAP, WIN } from './consist.js';
+import { CARS, FLOOR, GAP, CL } from './consist.js';
+import { layout, inRects, GAPZ, CAB } from './coaches.js';
 
-const C0 = CARS.findIndex(c => c.kind === 'coach'), NC = CARS.length - C0, CL = 8;
-export const U_LEN = NC * CL + (NC - 1) * GAP;
-const AISLE = 0.32, DOOR = 0.34, CAM_BACK = 2.6;
-// u → (toa, z cục bộ); khe nối thuộc toa phía trước (z vượt quá −4 một chút)
-export function carAt(u) { const k = Math.min(NC - 1, Math.max(0, Math.floor(u / (CL + GAP)))), lu = u - k * (CL + GAP); return { car: C0 + k, z: CL / 2 - lu }; }
-const SNACKS = [
-  { e: '🥥', n: 'Kẹo dừa', f: 'Nước dừa chứa nhiều <b>kali</b> — chất điện giải giúp cơ thể giữ nước và cơ bắp hoạt động.' },
-  { e: '🍠', n: 'Khoai lang nướng', f: 'Ruột khoai lang cam có nhiều <b>beta-carotene</b> — cơ thể đổi thành vitamin A, tốt cho mắt.' },
-  { e: '🥖', n: 'Bánh mì que', f: 'Bột nở nhờ <b>nấm men</b>: men ăn đường và thải khí CO₂, bọt khí làm bánh xốp.' },
-  { e: '🥛', n: 'Sữa đậu nành', f: 'Hạt đậu nành nhiều <b>đạm thực vật</b> — 1 cốc sữa đậu nành có khoảng 7 g đạm.' },
-  { e: '🍊', n: 'Quýt', f: 'Quýt giàu <b>vitamin C</b>, giúp vết thương mau lành và tăng sức đề kháng.' },
-];
-const TROLLEY_U = U_LEN - 1.3;                             // xe quà vặt: cuối toa cuối
+const BOOM = 2.2, EYE = 1.62, HEAD = 1.32;
+// tâm toa cách đầu tàu (m) — dùng đổi toạ độ khi bước qua khe nối
+const OFF = CARS.map(c => c.off);
 
-function trolleyGeo() {   // xe đẩy gỗ 0,6 × 1,0 × 1,0 m, 2 tầng khay đầy bánh kẹo
-  const b = new Batch(), W = '#a8744a', D = '#6e4a30';
-  b.box(-0.3, 0.3, 0.12, 0.18, -0.5, 0.5, W); b.box(-0.3, 0.3, 0.62, 0.68, -0.5, 0.5, W); b.box(-0.32, 0.32, 0.98, 1.02, -0.52, 0.52, D);
-  for (const x of [-0.27, 0.27]) for (const z of [-0.47, 0.47]) b.box(x - 0.03, x + 0.03, 0.06, 1.0, z - 0.03, z + 0.03, D);
-  for (const x of [-0.18, 0.18]) for (const z of [-0.47, 0.47]) b.cyl(x, 0, z, 0.06, 0.12, '#2a2630', 6);
-  b.box(-0.04, 0.04, 1.0, 1.25, 0.5, 0.56, '#d4a24a'); b.box(-0.3, 0.3, 1.2, 1.26, 0.5, 0.56, '#d4a24a');   // tay đẩy đồng
-  const goods = ['#f2c443', '#e0503e', '#efe3c8', '#ee93a8', '#7fbf5e', '#c8763a'];
-  let k = 0; for (const y of [0.18, 0.68, 1.02]) for (let i = 0; i < 6; i++) { const c = goods[k++ % 6], x = -0.2 + (i % 3) * 0.2, z = -0.3 + Math.floor(i / 3) * 0.55; b.box(x - 0.08, x + 0.08, y, y + (y > 1 ? 0.1 : 0.16), z - 0.1, z + 0.1, c); }
-  return b.build();
-}
-
-export function createCabin(ctx, consist) {
-  const { player, camera } = ctx;
-  const cars = consist.cars;
-  // xe quà vặt (con của toa cuối → đi cùng toa)
-  const tr = carAt(TROLLEY_U), trolley = new THREE.Mesh(trolleyGeo(), matV()); trolley.position.set(0, FLOOR, tr.z); trolley.castShadow = true;
-  cars[tr.car].o.add(trolley);
-  // bạn học sinh ngồi sẵn (hàng ghế, bên, kiểu)
-  const RIDERS = [[C0, 1, 1, 'student-female-b', '#ff8a2b'], [C0 + 1, 3, 1, 'student-male-c', '#2b6cb0'], [C0 + 2, 0, -1, 'student-female-d', '#ffd23f'], [C0 + 2, 2, 1, 'student-male-e', '#e0564a']];
-  const riders = [];
-  for (const [ci, row, side, kind, bag] of RIDERS) loadHero(kind, 1.5, { role: 'student', bag }).then(h => {
-    if (!h) return; h.model.position.set(side * 0.8, FLOOR + 0.02, WIN.z(row) - 0.09); cars[ci].o.add(h.model); h.anim.play('sit', 0); riders.push(h);
-  });
-  const vendorP = loadHero('student-female-a', 1.62, { role: 'adult', shirt: '#2c6455', pants: '#3a3344', hat: null }).then(h => {
-    if (!h) return null; h.model.position.set(0.0, FLOOR, tr.z - 0.85); h.model.rotation.y = Math.PI; cars[tr.car].o.add(h.model); h.anim.play('idle', 0); return h;
-  });
-
-  // ---------- bảng chọn món ----------
-  const menu = document.createElement('div'); menu.hidden = true;
-  menu.style.cssText = 'position:fixed;inset:0;z-index:35;display:grid;place-items:center;background:#0a1220aa;padding:13px';
-  menu.innerHTML = `<div style="width:min(100%,377px);background:#fff8ec;color:#3a2a1a;border-radius:21px;padding:16px 16px 13px;border-top:8px solid #2c6455;font:15px system-ui">
-    <div style="font:800 18px system-ui;margin-bottom:4px">🛒 Xe quà vặt Tàu Pha Lê</div><div style="opacity:.7;font-size:13px;margin-bottom:10px">Chọn một món — miễn phí cho học sinh!</div>
-    <div id="snk" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
-    <button id="snkX" style="margin-top:10px;width:100%;padding:10px;border:0;border-radius:13px;background:#efe3cc;font:700 15px system-ui">Đóng</button></div>`;
-  document.body.appendChild(menu);
-  const grid = menu.querySelector('#snk');
-  for (const s of SNACKS) { const b = document.createElement('button'); b.innerHTML = `<div style="font-size:30px">${s.e}</div>${s.n}`; b.style.cssText = 'padding:10px 6px;border:2px solid #e6d6b8;border-radius:13px;background:#fff;font:700 14px system-ui;color:#3a2a1a;cursor:pointer'; b.onclick = () => eat(s); grid.appendChild(b); }
-  const close = () => { menu.hidden = true; player.frozen = false; };
-  menu.querySelector('#snkX').onclick = close; menu.onclick = e => { if (e.target === menu) close(); };
-  let eaten = +(localStorage.getItem('island.snacks') || 0);
-  function eat(s) {
-    close(); eaten++; try { localStorage.setItem('island.snacks', eaten); } catch (e) {}
-    player.emote && player.emote('use'); ctx.sfx && ctx.sfx('ok');
-    vendorP.then(h => h && h.anim.play('Interact', 0.2, true));
-    ctx.toast(`${s.e} <b>${s.n}</b> — ngon quá! 😋<br><small>${s.f}</small>${eaten === 5 ? '<br>🏅 <b>Sành ăn Tàu Pha Lê</b>: đã thử 5 món!' : ''}`, 7000);
+export function createCabin(ctx, consist, interior) {
+  const { player, camera } = ctx, cars = consist.cars;
+  const rectsOf = car => car === 0 ? CAB : layout(cars[car].type);
+  const floorOf = car => car === 0 ? CAB.floor : FLOOR;
+  const st = { mode: 'off', car: 2, x: 0, z: 0, seat: null, yawL: 0, lastYaw: 0, speed: 0, back: null, taken: () => false };
+  const P = new THREE.Vector3(), cp = new THREE.Vector3(), cl = new THREE.Vector3(), Q = new THREE.Quaternion(), dl = new THREE.Vector3(), E = new THREE.Euler();
+  const worldOf = (car, x, y, z, out) => out.set(x, y, z).applyMatrix4(cars[car].o.matrixWorld);
+  const carYaw = car => cars[car].o.rotation.y;
+  // khe nối: đổi sang toa kế bên theo khoảng cách tới đầu tàu
+  function hop() {
+    if (st.car === 0 || Math.abs(st.z) <= GAPZ) return;
+    const d = OFF[st.car] - st.z, nc = st.z > 0 ? st.car - 1 : st.car + 1;
+    if (nc < 2 || nc >= cars.length) { st.z = Math.sign(st.z) * GAPZ; return; }
+    st.yawL += carYaw(st.car) - carYaw(nc); st.car = nc; st.z = OFF[nc] - d;
   }
-
-  // ---------- đứng dậy / đi lại ----------
-  const st = { walking: false, u: 0, x: 0, face: -1, camU: 0, last: new THREE.Vector3(), t: 0 };
-  const P = new THREE.Vector3(), cp = new THREE.Vector3(), cl = new THREE.Vector3(), Q = new THREE.Quaternion(), dl = new THREE.Vector3();
-  const worldOf = (u, x, y, out) => { const c = carAt(u), o = cars[c.car].o; o.updateMatrixWorld(); return out.set(x, y, c.z).applyMatrix4(o.matrixWorld); };
-  function stand(V, seatU) {
-    st.walking = true; st.u = seatU; st.x = -AISLE; st.face = -1; st.camU = seatU + CAM_BACK; st.snap = true;
-    Object.assign(V, { speed: 1.9, turn: 10, accel: 9, anim: 'idle' });
-    worldOf(st.u, st.x, FLOOR, st.last); player.pos.copy(st.last); player.root.quaternion.identity();
+  // va chạm: chỉ nhận bước nếu tâm còn trong vùng đi được; vật cản tròn (xe đẩy…): st.block = [{ car, x, z, r }]
+  const ok = (x, z) => inRects(rectsOf(st.car).walk, x, z) && !(st.block || []).some(b => b.car === st.car && (x - b.x) ** 2 + (z - b.z) ** 2 < b.r * b.r);
+  function move(dx, dz) {
+    const n = Math.max(1, Math.ceil(Math.hypot(dx, dz) / 0.1));
+    for (let i = 0; i < n; i++) {
+      const x = st.x + dx / n, z = st.z + dz / n;
+      if (ok(x, z)) { st.x = x; st.z = z; } else if (ok(x, st.z)) st.x = x; else if (ok(st.x, z)) st.z = z;
+      hop();
+    }
   }
-  function sit(V) { st.walking = false; Object.assign(V, { speed: 0, turn: 0, accel: 4, anim: 'sit' }); menu.hidden = true; }
-  // gọi sau player.update: lấy độ dời do cần điều khiển, đổi sang hệ toa, giới hạn trong lối đi
-  function update(dt, V) {
-    if (!st.walking) return false;
-    const c = carAt(st.u), o = cars[c.car].o;
-    dl.subVectors(player.pos, st.last); dl.y = 0;
-    Q.copy(o.quaternion).invert(); dl.applyQuaternion(Q);
-    st.u = Math.min(U_LEN - 0.35, Math.max(0.35, st.u - dl.z)); st.x += dl.x;
-    const nc = carAt(st.u), inGap = nc.z < -CL / 2 + 0.05 || nc.z > CL / 2 - 0.05, lim = inGap ? 0.05 : Math.abs(nc.z) > CL / 2 - 0.45 ? DOOR : AISLE;
-    st.x = Math.max(-lim, Math.min(lim, st.x));
-    if (Math.abs(st.u - TROLLEY_U) < 0.75) st.u = Math.min(st.u, TROLLEY_U - 0.75);   // xe đẩy chắn lối
-    if (Math.abs(dl.z) > 0.004) st.face = dl.z > 0 ? -1 : 1;   // -1: đang đi về phía đầu tàu
-    worldOf(st.u, st.x, FLOOR, P); player.pos.copy(P); player.root.position.copy(P); st.last.copy(P);
-    V.anim = player.speed > 0.4 ? 'walk' : 'idle';
-    // camera sau lưng 2,6 m, cao 1,85 m, giữa lối đi; làm mượt theo toạ độ dọc tàu (không trễ khi tàu chạy)
-    const cuT = Math.min(U_LEN - 0.2, Math.max(0.2, st.u - st.face * CAM_BACK));
-    st.camU = st.snap ? cuT : st.camU + (cuT - st.camU) * Math.min(1, dt * 3); st.snap = false;
-    const sg = Math.sign(st.u - st.camU) || -st.face;
-    worldOf(st.camU, 0, FLOOR + 1.85, cp); worldOf(st.u + sg * 1.6, 0, FLOOR + 1.1, cl);
-    camera.position.copy(cp); camera.lookAt(cl); const cu = st.camU;
-    player.cam.yaw = Math.atan2(cp.x - cl.x, cp.z - cl.z);
-    // xe quà vặt
-    if (Math.abs(st.u - (TROLLEY_U - 0.75)) < 0.9 && menu.hidden) ctx.offer('🛒 Mua quà vặt', () => { menu.hidden = false; player.frozen = true; }, 10);
-    return carAt(cu).car - C0;   // toa có camera (ẩn kính sáng toa đó)
+  // ---------- chế độ ----------
+  const V = () => player.vehicle;
+  function walkMode(car, x, z, faceL) {
+    st.mode = car === 0 ? 'cab' : 'walk'; st.car = car; st.x = x; st.z = z; st.seat = null;
+    if (faceL !== undefined) { st.yawL = faceL + Math.PI; player.setRot(carYaw(car) + faceL); }
+    Object.assign(V(), { speed: 1.9, turn: 10, accel: 9, anim: 'idle' });
+    place(true);
   }
-  // hoạt hình người trên tàu (chỉ khi camera ở gần đoàn tàu)
-  const lp = new THREE.Vector3();
-  function animate(dt) {
-    cars[tr.car].o.getWorldPosition(lp); if (lp.distanceToSquared(camera.position) > 55 * 55) return;
-    for (const h of riders) h.anim.update(dt); vendorP.then(h => h && h.anim.update(dt));
+  function sit(seat) {
+    if (!seat || st.taken(seat.id)) return false;
+    st.mode = 'seat'; st.seat = seat; st.car = seat.car; st.x = seat.x; st.z = seat.z; st.yawL = seat.ry;   // camera trước mặt, nhìn lại người ngồi
+    Object.assign(V(), { speed: 0, turn: 0, accel: 4, anim: 'sit' });
+    place(true); ctx.sfx && ctx.sfx('ui'); st.onSit && st.onSit(seat); return true;
   }
-  return { update, stand, sit, animate, state: st, uOfSeat: (car, z) => (car - C0) * (CL + GAP) + CL / 2 - z };
+  // điểm đứng ở lối đi gần ghế nhất (khi đứng dậy)
+  function standUp() {
+    const s = st.seat; if (!s) return; const R = layout(cars[s.car].type).walk;
+    let best = null; for (let k = 0; k <= 13; k++) for (const sgn of [1, -1]) { const t = k * 0.12 * sgn; for (const [x, z] of [[s.x + t, s.z], [s.x, s.z + t], [s.x + t, s.z + t]]) if (!best && inRects(R, x, z)) best = [x, z]; }
+    if (!best) best = [0, s.z]; st.seat = null; st.onStand && st.onStand(); walkMode(s.car, best[0], best[1]);
+  }
+  // ---------- đặt người + camera ----------
+  function place(snap) {
+    const car = st.car, o = cars[car].o; o.updateMatrixWorld();
+    if (st.mode === 'seat') {
+      const s = st.seat; worldOf(car, s.x, FLOOR + 0.02 + (s.y || 0), s.z, P);
+      player.pos.copy(P); player.root.position.copy(P);
+      Q.setFromEuler(E.set(0, s.ry, 0)); player.root.quaternion.copy(o.quaternion).multiply(Q); player.setRot(carYaw(car) + s.ry);
+    } else { worldOf(car, st.x, floorOf(car), st.z, P); player.pos.copy(P); player.root.position.copy(P); }
+    st.last = P.clone();
+    if (snap) { st.lastYaw = player.cam.yaw = carYaw(car) + st.yawL; }
+  }
+  // cần máy: lùi dần tới khi chạm biên vùng trống (lề 0,18 m)
+  function boom(dirX, dirZ, len) {
+    const A = rectsOf(st.car).air; let d = 0.3;
+    while (d < len && inRects(A, st.x + dirX * (d + 0.18), st.z + dirZ * (d + 0.18))) d += 0.08;
+    return Math.max(0.3, Math.min(len, d));
+  }
+  function camUpdate(dt) {
+    const car = st.car, f = floorOf(car), seated = st.mode === 'seat';
+    // xoay do người chơi kéo màn hình (player.js cộng vào cam.yaw) → cộng vào góc cục bộ
+    const dy = player.cam.yaw - st.lastYaw; st.yawL += Math.atan2(Math.sin(dy), Math.cos(dy));
+    // đang đi: camera tự xoay dần ra sau lưng hướng đi
+    if (!seated && player.speed > 0.4 && st.move) { const want = Math.atan2(-st.move.x, -st.move.z), d = Math.atan2(Math.sin(want - st.yawL), Math.cos(want - st.yawL)); st.yawL += d * Math.min(1, dt * 2.6); }
+    if (!Number.isFinite(st.yawL)) st.yawL = seated ? st.seat.ry : 0;
+    const pitch = seated ? 0.3 : Math.min(0.7, Math.max(0.05, player.cam.pitch)), cx = Math.sin(st.yawL), cz = Math.cos(st.yawL);
+    const ox = seated ? st.seat.x : st.x, oz = seated ? st.seat.z : st.z;
+    const len = boom(cx, cz, seated ? 1.5 : BOOM), hy = Math.min(2.3, (seated ? 0.95 : HEAD) + Math.sin(pitch) * len * 0.6 + 0.25);
+    worldOf(car, ox + cx * len, f + hy, oz + cz * len, cp); worldOf(car, ox - cx * 0.6, f + (seated ? 0.82 : HEAD), oz - cz * 0.6, cl);
+    camera.position.copy(cp); camera.lookAt(cl);
+    player.cam.yaw = st.lastYaw = carYaw(car) + st.yawL;
+    if (player.hero) player.hero.model.visible = len > 0.55;   // camera sát đầu → ẩn thân mình (không thấy trong đầu)
+  }
+  // ---------- mỗi khung hình (sau player.update) ----------
+  function update(dt) {
+    if (st.mode === 'off') return false;
+    if (st.mode !== 'seat') {
+      dl.subVectors(player.pos, st.last); dl.y = 0;
+      Q.copy(cars[st.car].o.quaternion).invert(); dl.applyQuaternion(Q);
+      st.move = dl.lengthSq() > 1e-6 ? { x: dl.x, z: dl.z } : null;
+      move(dl.x, dl.z);
+      V().anim = player.speed > 0.4 ? 'walk' : 'idle';
+    }
+    place(false); camUpdate(dt);
+    offers();
+    return st.mode === 'seat' ? 'seat' : 'walk';
+  }
+  // ---------- ✋ gần ghế: ngồi; ghế có người: báo ----------
+  function nearestSeat() {
+    let best = null, bd = 1.1 * 1.1;
+    for (const s of interior.seats) if (s.car === st.car && (!s.room || inRects([s.room], st.x, st.z))) { const d = (s.x - st.x) ** 2 + (s.z - st.z) ** 2; if (d < bd) { bd = d; best = s; } }
+    return best;
+  }
+  function offers() {
+    if (st.mode === 'seat') { ctx.offer('🚶 Đứng dậy', standUp, 9); return; }
+    if (st.mode === 'cab') { if (st.z > -3.4) return; ctx.offer('↩ Về toa khách', () => st.back && st.back(), 9); return; }
+    if (st.car === 2 && st.z > 5.5 && st.toCab) { ctx.offer('🚂 Thăm buồng lái', st.toCab, 8); return; }
+    const s = nearestSeat();
+    if (s) { if (st.taken(s.id)) ctx.offer('🚫 Ghế có người rồi', () => ctx.toast('🪑 Ghế này có bạn ngồi rồi — tìm ghế trống khác nhé!', 2600), 5); else ctx.offer('🪑 Ngồi ghế này', () => sit(s), 9); }
+  }
+  function stop() { st.mode = 'off'; st.seat = null; if (player.hero) player.hero.model.visible = true; }
+  return { update, walkMode, sit, standUp, stop, state: st, nearestSeat, get mode() { return st.mode; } };
 }

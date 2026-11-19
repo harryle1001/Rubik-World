@@ -1,9 +1,13 @@
 // net.js — Multiplayer: nối đảo vào Socket.io của server (namespace /island), đồng bộ vị trí người chơi.
-// Gửi vị trí 10 lần/giây; người khác được nội suy mượt và có bảng tên trên đầu. Không có chat (an toàn cho trẻ em).
+// Gửi vị trí 10 lần/giây; người khác được nội suy mượt và có bảng tên trên đầu. Không có chat tự do (an toàn cho trẻ em):
+// chỉ biểu cảm + câu nói có sẵn (server gửi danh sách, ta chỉ gửi số thứ tự) hiện thành bong bóng trên đầu (social.js dùng net.on / net.emit).
+// Đăng nhập tài khoản server → token gửi kèm khi kết nối; đổi tài khoản → kết nối lại.
 import * as THREE from 'three';
 import { makeHero } from './player.js';
 import { loadHero, driveHero, KINDS, actorLod, stepAnim } from './characters.js';
 import { T, dampV3, dampAngle } from './motion.js';
+import { dressHero } from './academy/wear.js';
+import { getToken } from './data/account.js';
 
 function nameTag(text) {
   const c = document.createElement('canvas'); c.width = 256; c.height = 64; const g = c.getContext('2d');
@@ -13,21 +17,45 @@ function nameTag(text) {
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false })); s.scale.set(2, 0.5, 1); s.position.y = 2.8; return s;
 }
 
+// bong bóng biểu cảm / câu nói mẫu trên đầu: canvas 512×128 (tỉ lệ 4:1), bo góc 34, chữ 34/55 px; hiện 3,4 s rồi mờ dần
+function bubble(text, big) {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 128; const g = c.getContext('2d');
+  g.font = `bold ${big ? 76 : 36}px system-ui`; const w = Math.min(500, g.measureText(text).width + 55);
+  g.fillStyle = '#fff8ecee'; g.strokeStyle = '#f0a23a'; g.lineWidth = 5; g.beginPath(); g.roundRect((512 - w) / 2, 8, w, 96, 34); g.fill(); g.stroke();
+  g.beginPath(); g.moveTo(236, 102); g.lineTo(256, 124); g.lineTo(276, 102); g.fill();
+  g.fillStyle = '#3a2a1a'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 256, 58);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false, transparent: true })); s.scale.set(3.2, 0.8, 1); s.position.y = 3.5; s.renderOrder = 9; return s;
+}
+
 export function createNet(ctx) {
-  const others = new Map(); let sock = null;
+  const others = new Map(); let sock = null; const subs = {};   // subs: mô-đun khác nghe sự kiện (spellbook.js: phép, áo choàng…)
+  const fire = (ev, d) => { for (const f of subs[ev] || []) { try { f(d); } catch (e) { console.warn(e); } } };
+  const on = (ev, fn) => { (subs[ev] = subs[ev] || []).push(fn); if (sock && !['connect', 'disconnect'].includes(ev) && subs[ev].length === 1) sock.on(ev, d => fire(ev, d)); };   // sau ghép: không dùng hasListeners — sự kiện net.js đã tự nghe (look, mg, hello…) vẫn tới được mô-đun khác
+  const bubbles = [];
+  const net = { others, info: null, on, get sock() { return sock; } };
+  // hiện bong bóng trên đầu người (id = socket id; id của mình → nhân vật của mình)
+  net.bubble = (id, text, big) => {
+    const root = sock && id === sock.id ? ctx.player.root : others.get(id) && others.get(id).h.root; if (!root) return;
+    for (const b of bubbles) if (b.root === root) b.t = 99;
+    const s = bubble(text, big); root.add(s); bubbles.push({ s, root, t: 0 });
+  };
   const status = document.getElementById('online');
-  const setStatus = () => { if (status) status.textContent = sock && sock.connected ? `👥 ${others.size + 1} người trên đảo` : '⚪ Chơi một mình'; };
+  const setStatus = () => { if (status) status.textContent = sock && sock.connected ? `👥 ${[...others.values()].filter(o => !o.cloak).length + 1} người trên đảo` : '⚪ Chơi một mình'; };
 
   function add(p) {
     if (others.has(p.id)) return;
     const h = makeHero(p.hue), tag = nameTag(p.name); h.root.add(tag); ctx.scene.add(h.root);
-    const o = { h, name: p.name, from: new THREE.Vector3(p.x, p.y, p.z), to: new THREE.Vector3(p.x, p.y, p.z), r: p.r, s: 0, t: 1, phase: 0, vel: new THREE.Vector3(), pv: new THREE.Vector3(), pred: new THREE.Vector3(), kr: { v: 0 }, age: 0, recv: 0, tag };
-    h.root.position.copy(o.to); others.set(p.id, o); setStatus();
+    const o = { h, name: p.name, cloak: !!p.cloak, liftOk: !!p.liftOk, from: new THREE.Vector3(p.x, p.y, p.z), to: new THREE.Vector3(p.x, p.y, p.z), r: p.r, s: 0, t: 1, phase: 0, vel: new THREE.Vector3(), pv: new THREE.Vector3(), pred: new THREE.Vector3(), kr: { v: 0 }, age: 0, recv: 0, tag };
+    h.root.position.copy(o.to); others.set(p.id, o); setStatus(); if (p.mg) setMg(o, p.mg);
     // bộ đồ KayKit theo màu áo người đó chọn (hiệp sĩ / đạo tặc / pháp sư / chiến binh)
-    loadHero(KINDS[Math.floor((p.hue || 0) / 30) % KINDS.length]).then(r => { if (!r || !others.has(p.id)) return; o.hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
+    loadHero(KINDS[Math.floor((p.hue || 0) / 30) % KINDS.length]).then(r => { if (!r || !others.has(p.id)) return; o.hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); if (o.look) dress(o); });
+    o.look = p.look || null;
   }
   // người rời đảo: giải phóng texture bảng tên + hình khối riêng của người đó (trước chỉ gỡ khỏi cảnh → rò rỉ bộ nhớ GPU mỗi lượt vào/ra;
   // lưới nhân vật KayKit dùng chung bộ nhớ đệm nên không dispose)
+  async function dress(o) { if (!o.hero) return; o.worn = await dressHero(o.hero, o.look, o.worn || []); }   // mũ/áo choàng người kia mua ở Phố Phép Thuật
+  // bạn đang chơi mini game: bảng tên thêm dòng "🎮 tên game" để người qua đường thấy (mg/meta.js gửi 'mg')
+  function setMg(o, st) { o.mg = st || null; const t = nameTag(st ? `${o.name} · 🎮 ${st.t}` : o.name); t.scale.x = st ? 3.2 : 2; o.h.root.remove(o.tag); o.tag.material.map.dispose(); o.tag.material.dispose(); o.tag = t; o.h.root.add(t); }
   function remove(id) { const o = others.get(id); if (!o) return; ctx.scene.remove(o.h.root); others.delete(id); setStatus();
     o.tag.material.map.dispose(); o.tag.material.dispose(); o.h.body.traverse(m => { if (m.isMesh) m.geometry.dispose(); }); if (o.hero) o.hero.anim.mixer?.stopAllAction?.(); }
 
@@ -36,28 +64,45 @@ export function createNet(ctx) {
   const server = window.ISLAND_SERVER || '';
   const s = document.createElement('script'); s.src = server ? '/lib/socket.io.min.js' : '/socket.io/socket.io.js';
   s.onload = () => {
-    sock = window.io(server + '/island', { transports: ['websocket', 'polling'] });
-    sock.on('connect', () => { for (const id of [...others.keys()]) remove(id); sock.emit('join', { name: ctx.playerName, hue: ctx.hue }); setStatus(); });
-    sock.on('disconnect', setStatus);
+    sock = window.io(server + '/island', { transports: ['websocket', 'polling'], auth: cb => cb({ token: getToken() }) });
+    sock.on('connect', () => { for (const id of [...others.keys()]) remove(id); sock.emit('join', { name: ctx.playerName, hue: ctx.hue, adminKey: net.adminKey || undefined }); sendLook(); if (lastMg) sock.emit('mg', lastMg); setStatus(); fire('connect'); });   // nối lại: báo lại game đang chơi
+    sock.on('disconnect', () => { setStatus(); fire('disconnect'); });
+    for (const ev in subs) if (!['connect', 'disconnect'].includes(ev)) sock.on(ev, d => fire(ev, d));
+    sock.on('pstate', d => { const o = d && others.get(d.id); if (!o) return; if ('cloak' in d) o.cloak = !!d.cloak; if ('liftOk' in d) o.liftOk = !!d.liftOk; setStatus(); });   // áo choàng tàng hình / cho bạn nâng
+    sock.on('hello', d => { net.info = d; d.players.forEach(add); for (const f of net._hello || []) f(d); });
     sock.on('players', list => list.forEach(add));
+
     sock.on('joined', add);
     sock.on('left', remove);
-    sock.on('m', ([id, x, y, z, r, sp]) => { // ước lượng vận tốc từ 2 gói liên tiếp để dự đoán giữa các gói (gói trễ không làm khựng)
+    sock.on('mg', ([id, st]) => { const o = others.get(id); if (o) setMg(o, st); });
+    sock.on('look', ([id, look]) => { const o = others.get(id); if (o) { o.look = look; dress(o); } });
+    sock.on('m', ([id, x, y, z, r, sp, tc = -1, tx = 0, tz = 0, tst = -1]) => { // ước lượng vận tốc từ 2 gói liên tiếp để dự đoán giữa các gói (gói trễ không làm khựng)
       const o = others.get(id); if (!o) return; const now = performance.now() / 1000, gap = Math.min(0.5, Math.max(0.05, now - o.recv));
       o.from.copy(o.to); const vx = (x - o.to.x) / gap, vz = (z - o.to.z) / gap; if (vx * vx + vz * vz > 400) o.vel.set(0, 0, 0); else { o.vel.x += (vx - o.vel.x) * 0.382; o.vel.z += (vz - o.vel.z) * 0.382; } // lọc nhiễu (1/φ²)
-      o.to.set(x, y, z); o.r = r; o.s = sp; o.t = 0; o.age = 0; o.recv = now; });
+      o.to.set(x, y, z); o.r = r; o.s = sp; o.t = 0; o.age = 0; o.recv = now;
+      o.tr = tc >= 0 && tc !== undefined ? { c: tc, x: tx, z: tz, st: tst } : null; });   // đang trên Tàu Pha Lê: toạ độ cục bộ toa
   };
   s.onerror = setStatus; document.head.appendChild(s); setStatus();
+  net.reconnect = () => { if (!sock) return; sock.disconnect(); sock.connect(); };
+  net.onHello = f => { (net._hello = net._hello || []).push(f); if (net.info) f(net.info); };
 
-  let sendT = 0; const lastSent = new THREE.Vector3(1e9, 0, 0);
+  function sendLook() { const eq = ctx.wear && ctx.wear.eq; if (sock && sock.connected && eq) sock.emit('look', { cape: eq.cape || null, hat: eq.hat || null }); }
+  let sendT = 0; const lastSent = new THREE.Vector3(1e9, 0, 0), _w = new THREE.Vector3();
   function update(dt) {
     const p = ctx.player;
     if (sock && sock.connected && (sendT += dt) > 0.1) {
       sendT = 0;
-      if (lastSent.distanceToSquared(p.pos) > 0.0004 || p.speed > 0.05) { sock.emit('m', { x: p.pos.x, y: p.pos.y, z: p.pos.z, r: p.rot, s: p.speed }); lastSent.copy(p.pos); }
+      const tp = ctx.train && ctx.train.netPose && ctx.train.netPose();   // trên tàu: gửi kèm toa + toạ độ cục bộ + ghế
+      const w = ctx.mgActive && p.root.parent !== ctx.scene ? p.root.getWorldPosition(_w) : p.pos;   // đang chơi mini game: nhân vật nằm trong khu chơi (mg/host.js), gửi vị trí thật
+      if (tp || lastSent.distanceToSquared(w) > 0.0004 || p.speed > 0.05) { sock.emit('m', tp ? { x: w.x, y: w.y, z: w.z, r: tp.r, s: p.speed, c: tp.c, lx: tp.x, lz: tp.z, st: tp.st } : { x: w.x, y: w.y, z: w.z, r: p.rot, s: p.speed }); lastSent.copy(w); }
+    }
+    for (let i = bubbles.length - 1; i >= 0; i--) {   // bong bóng: nổi lên nhẹ, 3,4 s rồi mờ trong 0,6 s
+      const b = bubbles[i]; b.t += dt; b.s.position.y = 3.5 + Math.min(b.t, 0.3) * 0.6; b.s.material.opacity = Math.max(0, Math.min(1, (4 - b.t) / 0.6));
+      if (b.t > 4) { b.root.remove(b.s); b.s.material.map.dispose(); b.s.material.dispose(); bubbles.splice(i, 1); }
     }
     for (const o of others.values()) {
       o.t = Math.min(1, o.t + dt / 0.1); o.age += dt; const root = o.h.root;
+      if (o.tr && ctx.train && ctx.train.placeOther && ctx.train.placeOther(o, dt)) continue;   // trên tàu: train/sync.js đặt theo toa (đứng/ngồi)
       // vị trí dự đoán = gói mới nhất + vận tốc × thời gian từ gói (tối đa 1/φ³ s), hiển thị bám theo bằng lò xo; lệch > 8 m thì đặt lại
       o.pred.copy(o.vel).multiplyScalar(Math.min(o.age, 1 / 1.618 ** 3)).add(o.to);
       if (root.position.distanceToSquared(o.pred) > 64) { root.position.copy(o.pred); o.pv.set(0, 0, 0); } else dampV3(root.position, o.pred, o.pv, T.soft, dt);
@@ -70,5 +115,9 @@ export function createNet(ctx) {
       o.h.legL.rotation.x = Math.sin(o.phase) * a; o.h.legR.rotation.x = -Math.sin(o.phase) * a; o.h.armL.rotation.x = -Math.sin(o.phase) * a; o.h.armR.rotation.x = Math.sin(o.phase) * a;
     }
   }
-  return { update, others, get connected() { return !!(sock && sock.connected); } };
+  let lastMg = null;
+  const send = (ev, d) => { if (ev === 'mg') lastMg = d; if (sock && sock.connected) { sock.emit(ev, d); return true; } return false; };
+  Object.assign(net, { update, send, emit: send, sendLook });
+  Object.defineProperty(net, 'connected', { get: () => !!(sock && sock.connected) }); Object.defineProperty(net, 'id', { get: () => sock && sock.id });
+  return net;
 }

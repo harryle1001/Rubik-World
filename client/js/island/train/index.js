@@ -1,11 +1,15 @@
 // train/index.js — TÀU PHA LÊ: nối tuyến tàu hơi nước vào thế giới (sau academy: cần độ cao đảo Học viện).
 // - Độ cao: bọc terrain.heightAt thêm đảo Đồi Thông; mặt đi thêm: sân ga / nền ga (ctx.groundExtra).
 // - Dựng 1 lần: tuyến chia khúc 144 m (LOD tà vẹt), 2 ga, đoàn tàu; rừng thông dùng instancing chung.
+import * as THREE from 'three';
 import { ISLET, ISLET_BOUND, isletHeight, nearest, at, S_A, S_B } from './route.js';
 import { buildTrack, plantIslet } from './track.js';
 import { buildStations, stationGround } from './stations.js';
 import { createConsist } from './consist.js';
 import { createRide } from './ride.js';
+import { createInterior } from './interior.js';
+import { createTrainSync } from './sync.js';
+import { createCrew } from './crew.js';
 
 export function createTrain(ctx) {
   const { terrain, player } = ctx;
@@ -21,16 +25,30 @@ export function createTrain(ctx) {
   plantIslet(ctx, nearest);
   const stations = buildStations(ctx);
   const consist = createConsist(ctx);
-  const ride = createRide(ctx, { consist });
+  const interior = createInterior(ctx, consist);
+  const ride = createRide(ctx, { consist, interior });
+  const sync = createTrainSync(ctx, { ride, consist, interior });
+  const crew = createCrew(ctx, { consist, interior, cabin: ride.cabin, ride });
+  ride.cabin.state.onSit = seat => ride.net && ride.net.emit({ op: 'sit', id: seat.id });
+  ride.cabin.state.onStand = () => ride.net && ride.net.emit({ op: 'stand' });
   const pA = at(S_A), pB = at(S_B);
   let relT = 0, lastPhase = '';
+  // sau ghép: các lưới instancing của đoàn tàu tắt frustumCulled → tự xét: không ở trên tàu và tàu ngoài khung nhìn / xa hơn 377 m thì không vẽ
+  const _fr = new THREE.Frustum(), _pm = new THREE.Matrix4(), _sp = new THREE.Sphere(), _e = new THREE.Vector3();
+  function cull() {
+    const C = consist.cars, cam = ctx.camera; if (ride.state.aboard) { consist.group.visible = true; return; }
+    C[0].o.getWorldPosition(_sp.center); C[C.length - 1].o.getWorldPosition(_e); _sp.radius = _sp.center.distanceTo(_e) / 2 + 21; _sp.center.add(_e).multiplyScalar(0.5);
+    _fr.setFromProjectionMatrix(_pm.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse));
+    consist.group.visible = _sp.center.distanceTo(cam.position) < 377 + _sp.radius && _fr.intersectsSphere(_sp);
+  }
   function update(dt) {
-    ride.update(dt); track.update(); stations.update(dt);
+    ride.update(dt); cull(); crew.update(dt); track.update(); stations.update(dt);
+    const cs = ride.cabin.state; interior.update(dt, cs.mode === 'walk' ? [cs] : []);   // sau khi camera đã đặt: toa có camera ± 1 vẽ nội thất
     if (ride.state.phase !== lastPhase) { if (ride.state.phase === 'run') stations.cheer(); lastPhase = ride.state.phase; }   // học sinh trên sân ga vẫy chào
     if ((relT += dt) > 1) {   // tàu về ga gần người chơi (cả 2 ga đều ngoài tầm mắt: ga gần > 200 m, ga xa > 377 m)
       relT = 0; const p = player.pos, dA = Math.hypot(p.x - pA.x, p.z - pA.z), dB = Math.hypot(p.x - pB.x, p.z - pB.z);
       if (Math.min(dA, dB) > 200 && Math.max(dA, dB) > 377) ride.relocate(dA < dB ? 'A' : 'B');
     }
   }
-  return { update, ride, consist, track, stations };
+  return { update, ride, consist, track, stations, interior, crew, netPose: sync.netPose, placeOther: sync.placeOther };
 }

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Trường Rubik · Giáo viên & Phụ huynh</title>
+<meta name="robots" content="noindex">
+<style>
+/* tỉ lệ vàng: chữ 13/16/21/34, khoảng 8/13/21/34, bo 13/21, cột chính 610 px ≈ 377·φ */
+:root{--bg:#f6f0e4;--card:#fff;--ink:#2e2418;--mute:#7a6a58;--line:#e6dccb;--pri:#3fb8a8;--acc:#f0a23a;--bad:#c8502c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.618 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#1b1626;color:#fff;padding:13px 21px;display:flex;align-items:center;gap:13px;white-space:nowrap}@media(max-width:520px){header>span:not(#who){display:none}#who{overflow:hidden;text-overflow:ellipsis}}header b{font-size:21px}header span{opacity:.7;font-size:13px}header .sp{flex:1}
+header button{background:#fff2;color:#fff;border:0;border-radius:13px;padding:8px 13px;font:700 13px system-ui;cursor:pointer}
+main{max-width:987px;margin:0 auto;padding:21px 16px 55px}
+.card{background:var(--card);border-radius:21px;padding:21px;margin-bottom:21px;box-shadow:0 2px 13px #0000000d}
+h2{font-size:21px;margin:0 0 13px}h3{font-size:16px;margin:21px 0 8px}p{margin:0 0 13px}small,.mute{color:var(--mute);font-size:13px}
+.tabs{display:flex;gap:8px;margin-bottom:21px}.tabs button{flex:1;padding:13px;border-radius:13px;border:2px solid var(--line);background:#fff;font:800 16px system-ui;cursor:pointer;color:var(--ink)}.tabs button.on{background:var(--pri);border-color:var(--pri);color:#fff}
+label{display:block;font:700 13px system-ui;margin:8px 0 3px}
+input,select{width:100%;padding:13px;border-radius:13px;border:2px solid var(--line);font:600 16px system-ui;background:#fff;color:var(--ink)}
+.row{display:flex;gap:13px;flex-wrap:wrap;align-items:flex-end}.row>*{flex:1 1 144px}
+button.b{padding:13px 21px;border-radius:13px;border:0;background:var(--pri);color:#fff;font:800 16px system-ui;cursor:pointer}button.b.sec{background:#efe3cc;color:var(--ink)}button.b.red{background:#f3c7bd;color:#6a1a0a}button.sm{padding:5px 13px;font-size:13px}
+.msg{min-height:21px;color:var(--bad);font:700 13px system-ui;margin-top:8px}
+.code{font:900 34px/1.2 ui-monospace,monospace;letter-spacing:8px;color:#1b1626;background:#fff8ec;border-radius:13px;padding:8px 21px;display:inline-block}
+.cls{display:flex;gap:13px;flex-wrap:wrap}.cls button{padding:13px 21px;border-radius:13px;border:2px solid var(--line);background:#fff;font:700 16px system-ui;cursor:pointer}.cls button.on{border-color:var(--pri);background:#e6f6f3}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;white-space:nowrap}th{color:var(--mute);font-weight:700}
+.bar{height:8px;border-radius:5px;background:#efe3cc;overflow:hidden;min-width:55px;margin-top:3px}.bar i{display:block;height:100%;background:var(--pri)}
+.pill{display:inline-block;padding:0 8px;border-radius:8px;background:#efe3cc;margin:0 3px 3px 0}
+.hid{display:none!important}
+</style></head><body>
+<header><b>🏫 Trường Rubik</b><span>Giáo viên · Phụ huynh</span><div class="sp"></div><span id="who"></span><button id="out" class="hid">Đăng xuất</button></header>
+<main>
+  <div class="tabs"><button data-m="t" class="on">👩‍🏫 Giáo viên</button><button data-m="p">👪 Phụ huynh</button></div>
+  <section id="login" class="card">
+    <h2 id="lgTitle">Đăng nhập giáo viên</h2>
+    <p class="mute" id="lgHint">Tài khoản giáo viên dùng để tạo lớp, giao nhiệm vụ học và xem tiến độ học sinh.</p>
+    <div class="row"><div><label for="nm">Tên đăng nhập</label><input id="nm" autocomplete="username" maxlength="20"></div><div><label for="pw">Mật khẩu</label><input id="pw" type="password" autocomplete="current-password" maxlength="64"></div></div>
+    <div id="tcRow"><label for="tc">Mã giáo viên <small>(chỉ khi tạo tài khoản mới — hỏi chủ game)</small></label><input id="tc" autocomplete="off"></div>
+    <div class="row" style="margin-top:13px"><button class="b" id="bIn">Đăng nhập</button><button class="b sec" id="bNew">Tạo tài khoản giáo viên</button></div>
+    <div class="msg" id="lgMsg"></div>
+  </section>
+  <section id="teach" class="hid">
+    <div class="card"><h2>📘 Lớp của tôi</h2><div class="cls" id="clsList"></div>
+      <div class="row" style="margin-top:13px"><div><label for="cName">Tên lớp mới</label><input id="cName" maxlength="40" placeholder="VD: 4A – Toán"></div><div style="flex:0 0 auto"><button class="b" id="bCls">+ Tạo lớp</button></div></div><div class="msg" id="cMsg"></div></div>
+    <div class="card hid" id="clsCard">
+      <div class="row" style="align-items:center"><div><h2 id="cTitle" style="margin:0"></h2><small>Học sinh vào game → 👥 → 🏫 Lớp → nhập mã:</small></div><div style="flex:0 0 auto"><span class="code" id="cCode"></span></div></div>
+      <h3>🎯 Giao nhiệm vụ học</h3>
+      <div class="row"><div><label for="tTitle">Tên nhiệm vụ</label><input id="tTitle" maxlength="60" placeholder="VD: Luyện bảng nhân"></div>
+        <div><label for="tSub">Môn</label><select id="tSub"><option value="*">Mọi môn</option></select></div>
+        <div><label for="tKind">Yêu cầu</label><select id="tKind"><option value="n">Làm … câu</option><option value="ok">Trả lời đúng … câu</option></select></div>
+        <div style="flex:0 1 89px"><label for="tN">Số câu</label><input id="tN" type="number" min="1" max="200" value="13"></div>
+        <div style="flex:0 0 auto"><button class="b" id="bTask">Giao</button></div></div>
+      <div id="taskList" style="margin-top:13px"></div>
+      <h3>📊 Tiến độ học sinh</h3><div class="tw"><table id="stu"></table></div>
+      <p class="mute" style="margin-top:13px">Chỉ hiện tên đăng nhập do học sinh tự đặt — hệ thống không lưu họ tên thật, email hay số điện thoại.</p>
+      <div style="text-align:right"><button class="b red sm" id="bDelCls">Xoá lớp</button></div>
+    </div>
+  </section>
+  <section id="parent" class="hid">
+    <div class="card"><h2 id="pTitle">👪 Tài khoản của con</h2>
+      <p>Hôm nay con đã chơi <b id="pUsed">0</b> phút.</p>
+      <h3>⏰ Giới hạn thời gian chơi mỗi ngày</h3>
+      <div class="row"><div><label for="pLim">Số phút / ngày (0 = không giới hạn)</label><input id="pLim" type="number" min="0" max="600" step="5"></div>
+        <div><label for="pPin" id="pPinL">Mã PIN phụ huynh</label><input id="pPin" type="password" inputmode="numeric" maxlength="8" autocomplete="off"></div>
+        <div id="pNewW"><label for="pNew">Đặt / đổi PIN (4–8 số)</label><input id="pNew" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password"></div>
+        <div style="flex:0 0 auto"><button class="b" id="bLim">Lưu</button></div></div>
+      <div class="msg" id="pMsg"></div>
+      <p class="mute">Khi hết giờ, game hiện "Hết giờ chơi hôm nay" và tự thoát. Con không đổi được giới hạn nếu không biết mã PIN.</p>
+      <h3>📚 Con học gì</h3><div id="pSub"></div>
+      <h3>📅 14 ngày gần đây (phút)</h3><div id="pDays"></div>
+      <h3>🗑️ Xoá tài khoản</h3><p class="mute">Xoá vĩnh viễn tài khoản và toàn bộ tiến độ của con trên máy chủ.</p><button class="b red sm" id="bDel">Xoá tài khoản này</button>
+    </div>
+  </section>
+</main>
+<script type="module" src="/js/teacher.js"></script>
+</body></html>

@@ -17,12 +17,13 @@ const page = await browser.newPage(MOBILE ? { viewport: { width: 390, height: 84
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
 await page.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); } catch (e) {} });
-await page.goto('http://localhost:3000/ocean.html');
+await page.goto(`http://localhost:${(process.argv.find(a => a.startsWith('--port=')) || '--port=3000').split('=')[1]}/ocean.html`);
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready, null, { timeout: 300000 });
 const fr = page.frames().find(f => f.url().includes('/school/'));
 if (fr) await fr.waitForSelector('#mLogin:not([hidden])', { timeout: 60000 }).catch(() => {});
 if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count()) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
 { const g = page.locator('button[data-a="guest"]'); await g.first().click({ timeout: 8000 }).catch(() => {}); }
+for (let i = 0; i < 20; i++) { const g = page.getByText('Chơi khách', { exact: true }); if (await g.count() && await g.first().isVisible()) { await g.first().click().catch(() => {}); break; } await page.waitForTimeout(500); }
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
 await page.waitForTimeout(1500); { const k = page.getByText('Bỏ qua', { exact: true }); if (await k.count()) await k.first().click({ timeout: 3000 }).catch(() => {}); }
 await page.evaluate(() => {

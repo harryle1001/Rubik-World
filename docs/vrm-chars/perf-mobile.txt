@@ -1,0 +1,25 @@
+# tools/perf-mobile.mjs --wait-vrm (390×844, DPR 2, UA iPhone, SwiftShader) — TRƯỚC: ?novrm
+Nhân vật anime người chơi sẵn sàng sau 0.5 s (nạp 0 ms)
+Khung 3D đầu tiên 2.2 s · trường sẵn sàng 2.3 s · {"files":250,"transferKB":3371,"decodedKB":8338,"glbKB":3890} · pixelRatio lúc tải=0.85
+┌─────────┬────────────────┬───────┬────────┬──────────┬────┬─────┬───────┬─────┬─────┐
+│ (index) │ name           │ calls │ tris   │ renderMs │ n  │ fps │ black │ sd  │ vrm │
+├─────────┼────────────────┼───────┼────────┼──────────┼────┼─────┼───────┼─────┼─────┤
+│ 0       │ 'cong-truong'  │ 158   │ 585232 │ 4        │ 89 │ 3.4 │ 0.005 │ 171 │ 0   │
+│ 1       │ 'quang-truong' │ 136   │ 418937 │ 4.6      │ 89 │ 4.6 │ 0.032 │ 164 │ 0   │
+│ 2       │ 'san-bay'      │ 115   │ 294659 │ 3.5      │ 89 │ 5.7 │ 0.003 │ 198 │ 0   │
+└─────────┴────────────────┴───────┴────────┴──────────┴────┴─────┴───────┴─────┴─────┘
+Không lỗi console
+
+# SAU: mặc định (người chơi VRM full + NPC VRM gần)
+Nhân vật anime người chơi sẵn sàng sau 1.0 s (nạp 5658 ms)
+Khung 3D đầu tiên 2.5 s · trường sẵn sàng 2.7 s · {"files":250,"transferKB":3371,"decodedKB":8338,"glbKB":3890} · pixelRatio lúc tải=1
+┌─────────┬────────────────┬───────┬────────┬──────────┬────┬─────┬───────┬─────┬─────┐
+│ (index) │ name           │ calls │ tris   │ renderMs │ n  │ fps │ black │ sd  │ vrm │
+├─────────┼────────────────┼───────┼────────┼──────────┼────┼─────┼───────┼─────┼─────┤
+│ 0       │ 'cong-truong'  │ 195   │ 650562 │ 7.4      │ 89 │ 2.9 │ 0.006 │ 169 │ 5   │
+│ 1       │ 'quang-truong' │ 184   │ 509501 │ 6.7      │ 89 │ 4.1 │ 0.033 │ 167 │ 5   │
+│ 2       │ 'san-bay'      │ 140   │ 348956 │ 5        │ 89 │ 5.1 │ 0.002 │ 198 │ 0   │
+└─────────┴────────────────┴───────┴────────┴──────────┴────┴─────┴───────┴─────┴─────┘
+Không lỗi console
+
+# 1 nhân vật (vrm-chars.html, không bóng): full có viền nam 24 / nữ 26 draw call; NPC mobile lite nam 14 / nữ 16 draw call (16,5–19,4 k▲)

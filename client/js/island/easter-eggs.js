@@ -84,6 +84,7 @@ const TURTLE_TALES = [
   'Năm <b>1070</b> Văn Miếu được xây ở Thăng Long; năm 1076 có <b>Quốc Tử Giám</b>, trường đại học đầu tiên của nước ta.',
   'Truyền thuyết kể: <b>Rùa Vàng</b> đòi lại gươm thần của vua Lê Lợi, nên hồ ấy mang tên <b>Hồ Hoàn Kiếm</b>.',
   'Rùa mẹ bơi hàng nghìn km rồi quay về <b>đúng bãi biển nơi mình nở ra</b> để đẻ trứng. Đừng xả rác xuống biển nhé!',
+  'Câu đố của ta: <b>“Mười ba viên đá nổi giữa lạch, rèm dây leo che cửa đá.”</b> Sau lưng ta có khu rừng <b>không có trên bản đồ</b>. Đêm xuống, cứ theo đom đóm…',
 ];
 const RIDDLES = [
   { q: 'Cái gì càng lấy đi lại càng to ra?', c: ['Cái hố', 'Quả bóng', 'Cái bánh'], a: 0, ex: 'Càng đào (lấy đất đi) thì cái hố càng to!' },
@@ -213,6 +214,7 @@ export function createEasterEggs(ctx) {
   function placeWear() {
     const h = player.hero; if (!h || !player.root) return;
     const head = h.head, chest = h.model.getObjectByName('chest') || head;
+    if (h.isVrm && wear.cape) wear.cape.visible = false;   // nhân vật anime đã có áo choàng đồng phục
     if (wear.hat && wear.hat.visible && head) { head.getWorldPosition(_wv); player.root.worldToLocal(_wv); wear.hat.position.set(_wv.x, _wv.y + 0.25 * (h.height || 1.65) / 1.65, _wv.z); }
     if (wear.cape && wear.cape.visible && chest) { chest.getWorldPosition(_wv); player.root.worldToLocal(_wv); wear.cape.position.set(_wv.x, _wv.y + 0.12, _wv.z); }
   }

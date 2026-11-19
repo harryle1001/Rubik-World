@@ -34,6 +34,11 @@ export const QUAY = { u0: PLAT.u + PLAT.hu, w: 8, v0: -89, v1: 21, v2: -13, land
 QUAY.ymid = QUAY.y + (QUAY.y_top - QUAY.y) * 89 / (89 + QUAY.v2 - QUAY.v0);   // độ cao chiếu nghỉ (2 nhánh cùng dốc)
 export const DOCK = [QUAY.u0 + QUAY.w + 5, 10];                          // chỗ thuyền cập bến (u, v)
 export const RUNWAY = { u: ISLE.u - ISLE.hu + 45, hw: 6.5, hl: 116.5, y: 5 };   // đường băng 233 × 13 m chạy theo trục v, sau lâu đài
+// LÀNG PHÙ THUỶ NHỎ (village.js): 5 lô đất xây nhà bằng phép "Dựng Lên!" ở góc đông nam, giữa hồ và mép đảo.
+// lô 6 × 10 ô, ô 3,4 m (= ô module Kenney ở Phố Phép Thuật) → 20,4 × 34 m (34/21 ≈ φ); lối giữa 2 lô 5,6 m; nền phẳng cao 5 m
+export const VILLAGE = { u0: 143, v0: 34, ni: 6, nj: 10, S: 3.4, n: 5, gap: 5.6, y: 5, pad: 5, blend: 13 };
+VILLAGE.lw = VILLAGE.ni * VILLAGE.S; VILLAGE.ll = VILLAGE.nj * VILLAGE.S; VILLAGE.u1 = VILLAGE.u0 + VILLAGE.ll; VILLAGE.v1 = VILLAGE.v0 + VILLAGE.n * (VILLAGE.lw + VILLAGE.gap) - VILLAGE.gap;
+export const villageDist = (u, v) => { const V = VILLAGE, du = Math.max(V.u0 - V.pad - u, u - V.u1 - V.pad, 0), dv = Math.max(V.v0 - V.pad - v, v - V.v1 - V.pad, 0); return Math.hypot(du, dv); };
 export const CASTLE = { u0: -106, u1: 38, hv: 116.5 };                   // khung lâu đài 144 × 233 m (233/144 ≈ φ)
 // mặt bằng lâu đài (dùng ở castle.js / kit.js)
 export const CASTLE_L = {
@@ -80,7 +85,21 @@ const FL = FOREST.lake;
 export const lakeAt = (th, r) => [FL.u + Math.cos(th) * r, FL.v + Math.sin(th) * r];
 export const CLIFF = { th: -Math.PI / 2, r: 58, top: 21, cr: 11 };                 // vách thác nước: đỉnh 21 m, mép vách cách tâm hồ 47 m
 export const forestDist = (u, v) => Math.hypot(u - FOREST.u, v - FOREST.v) - FOREST.r;
-export const isleDist = (u, v) => Math.min(isleDist0(u, v), forestDist(u, v));
+// ---------- THUNG LŨNG RỒNG: lòng chảo r 55 cạnh bìa bắc Rừng Phép Thuật, vách đá cao 34 m (r 55–89), cửa thung lũng mở về phía rừng ----------
+export const VALLEY = { u: -215, v: -345, r: 55, rim: 89, top: 34, gap: 0.42 };   // gap: nửa góc cửa (rad), hướng về tâm rừng
+export const VALLEY_GATE = Math.atan2(FOREST.v - VALLEY.v, FOREST.u - VALLEY.u);   // góc hướng cửa (θ = atan2(dv, du))
+export const valleyDist = (u, v) => Math.hypot(u - VALLEY.u, v - VALLEY.v) - VALLEY.rim;
+export function valleyH(u, v, x, z) {
+  const r = Math.hypot(u - VALLEY.u, v - VALLEY.v); if (r > VALLEY.rim + 34) return -99;
+  const n = fbm(x * 0.03, z * 0.03), th = Math.atan2(v - VALLEY.v, u - VALLEY.u);
+  let da = Math.abs(th - VALLEY_GATE); if (da > Math.PI) da = 2 * Math.PI - da;
+  const open = 1 - smooth(VALLEY.gap * 0.6, VALLEY.gap, da);                                 // 1 ở giữa cửa
+  const wall = smooth(VALLEY.r - 2, VALLEY.r + 8, r) * (1 - smooth(VALLEY.rim - 8, VALLEY.rim + 21, r));
+  const floor = 3.4 + n * 2.2, out = (1 - smooth(VALLEY.rim, VALLEY.rim + 34, r)) * 5 - 3;
+  let h = r < VALLEY.r + 8 ? floor : lerp(floor, out, smooth(VALLEY.rim - 8, VALLEY.rim + 34, r));
+  return Math.max(h, (VALLEY.top + n * 5) * wall * (1 - open));
+}
+export const isleDist = (u, v) => Math.min(isleDist0(u, v), forestDist(u, v), valleyDist(u, v));
 export const R_BOUND = Math.hypot(FOREST.u - ISLE.u, FOREST.v) + FOREST.r + 21;   // bán kính bao (để lọc nhanh) — tính cả thuỳ rừng
 // độ cao thuỳ rừng (−99 nếu ngoài)
 export function forestH(u, v, x, z) {
@@ -108,7 +127,7 @@ export function quayY(u, v) {
 
 // Độ cao địa hình theo toạ độ cục bộ (u, v); x, z thế giới chỉ dùng cho nhiễu
 export function heightLocal(u, v, x, z) {
-  const hF = v < -144 ? forestH(u, v, x, z) : -99;
+  const hF = v < -144 ? Math.max(forestH(u, v, x, z), valleyH(u, v, x, z)) : -99;
   const dI = isleDist0(u, v);
   if (dI > 34) return Math.max(-6, hF);
   const n = fbm(x * 0.021, z * 0.021), n2 = fbm(x * 0.008 + 7, z * 0.008 - 3);
@@ -126,6 +145,7 @@ export function heightLocal(u, v, x, z) {
     if (u > PLAT.u + PLAT.hu && ch > 0) h = lerp(h, LAKE_Y, ch);
     if (dP < 5) h = lerp(PLAT.y + n * 0.6, LAKE_Y, smooth(0, 5, dP));
   } else if (u > 0 && Math.abs(v) < INLET + 8) h = lerp(h, LAKE_Y - 2, 1 - smooth(INLET, INLET + 8, Math.abs(v)));
+  const dV = villageDist(u, v); if (dV < VILLAGE.blend) h = lerp(VILLAGE.y, h, smooth(0, VILLAGE.blend, dV));   // nền làng phẳng
   const q = quayY(u, v); if (q !== null) h = q - 0.3;                    // dốc/bến: mặt đá riêng (groundExtra), đất thấp hơn 0,3 m
   return Math.max(h, hF);
 }

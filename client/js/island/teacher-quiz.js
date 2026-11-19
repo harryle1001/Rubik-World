@@ -56,7 +56,7 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
   };
   ctx.stars = () => load(INV, {}).sao?.n || 0;
   ctx.book = () => load(BOOK, []);
-  const logQ = (subj, ok) => { const b = load(BOOK, []), d = today(), last = b[b.length - 1]; if (last && last.d === d && last.s === subj) { last.k++; last.ok += ok ? 1 : 0; } else b.push({ t: Date.now(), d, s: subj, k: 1, ok: ok ? 1 : 0, note: (bank?.subjects[subj]?.name || subj) }); while (b.length > 89) b.shift(); save(BOOK, b); };
+  const logQ = (subj, ok) => { dispatchEvent(new CustomEvent('rw-learn', { detail: { s: (bank?.subjects?.[subj]?.name || subj), ok } })); const b = load(BOOK, []), d = today(), last = b[b.length - 1]; if (last && last.d === d && last.s === subj) { last.k++; last.ok += ok ? 1 : 0; } else b.push({ t: Date.now(), d, s: subj, k: 1, ok: ok ? 1 : 0, note: (bank?.subjects[subj]?.name || subj) }); while (b.length > 89) b.shift(); save(BOOK, b); };
 
   addEventListener('keydown', e => {
     if (el.hidden || e.repeat) return;
@@ -67,7 +67,9 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
   });
 
   const subjName = (s, g) => { const S = bank.subjects[s]; return (g <= 3 && S.name13) || (g >= 6 && S.name69) || S.name; };
+  let lq = null;   // câu đang hỏi từ ngân hàng chung (learn.js) → ghi kết quả cho học thích ứng
   function pick(g, s) {   // câu chưa hỏi của lớp g môn s; hết thì xoá dấu đã hỏi của nhóm đó
+    if (ctx.learn) { lq = ctx.learn.pick(s, { grade: ctx.learn.grade ? 0 : g }); const o = [0, 1, 2, 3].slice(0, lq.c.length).sort(() => Math.random() - 0.5); return { q: lq.q, c: o.map(k => lq.c[k]), a: o.indexOf(0), e: lq.e }; }
     const list = bank.grades[g]?.[s] || [], seen = load(SEEN, {}), key = g + s; let used = seen[key] || [];
     let idx = list.map((_, i) => i).filter(i => !used.includes(i)); if (!idx.length) { used = []; idx = list.map((_, i) => i); }
     const i = idx[(Math.random() * idx.length) | 0]; used.push(i); seen[key] = used; save(SEEN, seen);
@@ -117,7 +119,7 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
     who.grade = true; who.redo = () => quiz(subj);
     const g = load(GRADE, 0); if (!g) return chooseGrade(() => quiz(subj));
     const S = bank.subjects[subj], chip = `${S.icon} ${subjName(subj, g)}`;
-    askQ(pick(g, subj), chip, ok => { logQ(subj, ok); streak = ok ? streak + 1 : 0; if (!ok) return; const bonus = streak % 3 === 0; ctx.reward(bonus ? 2 : 1, bonus ? `Chuỗi ${streak} câu đúng` : undefined); ctx.questEvent && ctx.questEvent('quiz'); return { prize: bonus ? `+2 ⭐ 🔥 Chuỗi ${streak} câu đúng liền!` : `+1 ⭐${streak > 1 ? ` · chuỗi ${streak}` : ''}` }; },
+    askQ(pick(g, subj), chip, ok => { logQ(subj, ok); if (lq && ctx.learn) { ctx.learn.record(lq, ok); lq = null; } streak = ok ? streak + 1 : 0; if (!ok) return; const bonus = streak % 3 === 0; ctx.reward(bonus ? 2 : 1, bonus ? `Chuỗi ${streak} câu đúng` : undefined); ctx.questEvent && ctx.questEvent('quiz'); return { prize: bonus ? `+2 ⭐ 🔥 Chuỗi ${streak} câu đúng liền!` : `+1 ⭐${streak > 1 ? ` · chuỗi ${streak}` : ''}` }; },
       ['❓ Câu khác', '👋 Tạm biệt', () => quiz(subj)]);
   }
   const markDone = id => { const d = load(DONE, {}); if (d.day !== today()) { d.day = today(); d.ids = []; } if (!d.ids.includes(id)) d.ids.push(id); save(DONE, d); };

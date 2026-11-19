@@ -23,6 +23,7 @@ await page.goto(URL);
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready, null, { timeout: 300000 });
 const fr = page.frames().find(f => f.url().includes('/school/'));
 if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count().catch(() => 0)) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
+for (let k = 0; k < 20; k++) { const busy = await page.evaluate(() => { const g = document.querySelector('#accBox:not([hidden]) [data-a="guest"]'); if (g) g.click(); const s = document.querySelector('[data-s]'); if (s && s.offsetParent) s.click(); const n = document.querySelector('#stSay button.nx'); if (n && n.offsetParent) n.click(); return !!g || document.body.classList.contains('st-cut') || __island.player.frozen; }); if (!busy) break; await page.waitForTimeout(700); }   // Chơi khách · bỏ qua dẫn chuyện
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
 const P = await page.evaluate(async () => { const p = await import('/js/island/sample/plaza.js'); return [p.PLAZA.x, p.PLAZA.z]; });
 // khoá chất lượng mức 1 + giờ 13h (số đo không đổi theo FPS/giờ thật); đặt người chơi ở mép quảng trường

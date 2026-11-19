@@ -1,13 +1,13 @@
 // tools/smoke-test.mjs — Kiểm tra nhanh Đảo Rubik 3D bằng Playwright (Chromium có sẵn).
-// Chạy: node server/index.js &  rồi  node tools/smoke-test.mjs [--mobile] [--shot=duong/dan.png] [--url=http://localhost:3000/ocean.html]
-// Kiểm tra: tải game, đóng bảng đăng nhập trường, đi bộ 5 giây, không lỗi console, nhân vật có di chuyển,
+// Chạy: node server/index.js &  rồi  node tools/smoke-test.mjs [--mobile] [--shot=duong/dan.png] [--url=http://localhost:3000/]
+// Kiểm tra: tải game (đảo 3D là game duy nhất, mở ở "/"), đóng bảng tài khoản 3D nếu có, đi bộ 5 giây, không lỗi console, nhân vật có di chuyển,
 // màn hình không đơn sắc (lấy mẫu pixel), in draw call / tam giác / thời gian JS mỗi khung (từng module).
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { chromium, devices } = require('playwright');
 const arg = k => (process.argv.find(a => a.startsWith('--' + k + '=')) || '').split('=')[1];
 const MOBILE = process.argv.includes('--mobile');
-const URL = arg('url') || 'http://localhost:3000/ocean.html';
+const URL = arg('url') || 'http://localhost:3000/';
 const SHOT = arg('shot');
 const WALK = +(arg('walk') || 5);
 const fails = [], errors = [];
@@ -19,10 +19,12 @@ const t0 = Date.now();
 await page.goto(URL);
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready, null, { timeout: 240000 });
 console.log(`Tải xong sau ${((Date.now() - t0) / 1000).toFixed(1)}s`);
-// đóng bảng đăng nhập trong iframe trường
-const fr = page.frames().find(f => f.url().includes('/school/'));
-if (fr) await fr.waitForSelector('#mLogin:not([hidden])', { timeout: 60000 }).catch(() => {});   // bảng đăng nhập hiện trễ sau khi trường khởi động
-if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count()) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
+// bảng tài khoản 3D (account-hud.js) nếu hiện → "Chơi khách"
+const acc = page.locator('#accBox:not([hidden])');
+await acc.waitFor({ timeout: 13000 }).catch(() => {});   // bảng hiện trễ sau khi đảo dựng xong
+if (await acc.count()) { const b = acc.getByText(/Chơi khách/); if (await b.count()) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
+await page.evaluate(() => { const g = document.querySelector('#accBox:not([hidden]) [data-a="guest"]'); if (g) g.click(); });   // dự phòng: click Playwright có thể treo khi GPU giả lập ~1 s/khung
+for (let k = 0, calm = 0; k < 40 && calm < 8; k++) { await page.waitForTimeout(700); const busy = await page.evaluate(() => { const s = document.querySelector('[data-s]'); if (s && s.offsetParent) s.click(); const n = document.querySelector('#stSay button.nx'); if (n && n.offsetParent) n.click(); return document.body.classList.contains('st-cut') || !!__island.freeCam || __island.player.frozen; }); calm = busy ? 0 : calm + 1; }   // bỏ qua đoạn dẫn chuyện mở đầu (story/: camera điện ảnh)
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => fails.push('nhân vật vẫn bị khoá (player.frozen) 30 s sau khi đóng bảng đăng nhập'));
 await page.waitForTimeout(500);
 // bọc đo: thời gian JS từng module + renderer.info mỗi khung

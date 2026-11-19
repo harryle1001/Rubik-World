@@ -1,11 +1,12 @@
 // academy/island.js — DỰNG ĐẢO HỌC VIỆN (greybox): địa hình (đồi, vách, hồ, lạch), dốc đá + bến, đường băng, khối lâu đài.
 // Chỉ gọi khi người chơi lại gần (index.js); dispose() trả lại bộ nhớ khi đi xa.
 import * as THREE from 'three';
+import { BUILD_SITE } from './build.js';
 import { CFG } from '../config.js';
 import { matV, mat } from '../sample/palette.js';
 import { Batch } from './geo.js';
 import { buildCastle } from './castle.js';
-import { ROT, C, ISLE, PLAT, QUAY, RUNWAY, heightLocal, toWorld, plateauDist, isleDist, forestDist, LAKE, quayY } from './plan.js';
+import { ROT, C, ISLE, PLAT, QUAY, RUNWAY, heightLocal, toWorld, plateauDist, isleDist, forestDist, LAKE, quayY, villageDist } from './plan.js';
 
 const COL = {
   sand: new THREE.Color('#d9c8a6'), grass: new THREE.Color('#7fbf5e'), grassD: new THREE.Color('#5a9a48'),
@@ -133,9 +134,10 @@ export function plantIsland(ctx) {
   const N = CFG.isMobile ? 144 : 233;
   for (let k = 0; k < N * 8 && pines.length + tall.length < N; k++) {
     const u = ISLE.u + (rnd() * 2 - 1) * ISLE.hu, v = (rnd() * 2 - 1) * ISLE.hv;
-    if (isleDist(u, v) > -13 || plateauDist(u, v) < LAKE + 13) continue;
+    if (isleDist(u, v) > -13 || plateauDist(u, v) < LAKE + 13 || villageDist(u, v) < 8) continue;
     if (Math.abs(u - RUNWAY.u) < RUNWAY.hw + 21 && Math.abs(v) < RUNWAY.hl + 21) continue;
     if (u > PLAT.u + PLAT.hu && Math.abs(v) < 34) continue;
+    if (u > BUILD_SITE.u0 && u < BUILD_SITE.u1 && v > BUILD_SITE.v0 && v < BUILD_SITE.v1) continue;   // Đồng Pha Lê (build.js)
     const [x, z] = toWorld(u, v), h = terrain.heightAt(x, z); if (h < 2.6) continue;
     const big = 3.6 + rnd() * 1.6; (rnd() < 0.4 ? tall : pines).push([x, h - 0.2, z, big, rnd() * 6.28]);
   }

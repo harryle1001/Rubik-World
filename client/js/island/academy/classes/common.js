@@ -68,7 +68,7 @@ export function ask(api, q) {
   return new Promise(res => {
     box.onclick = e => {
       const bt = e.target.closest('button'); if (!bt || box.dataset.done) return; e.stopPropagation(); box.dataset.done = 1;
-      const ok = +bt.dataset.i === q.a; bt.classList.add(ok ? 'ok' : 'no'); if (!ok) box.querySelector(`[data-i="${q.a}"]`).classList.add('ok');
+      const ok = +bt.dataset.i === q.a; dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject || 'Học viện', ok } })); bt.classList.add(ok ? 'ok' : 'no'); if (!ok) box.querySelector(`[data-i="${q.a}"]`).classList.add('ok');
       api.sfx(ok ? 'win' : 'ui'); if (q.explain) box.insertAdjacentHTML('beforeend', `<div class="ex">${ok ? '✅' : '💡'} ${q.explain}</div>`);
       setTimeout(() => { box.remove(); res(ok); }, q.explain ? 3400 : 1300);
     };

@@ -225,7 +225,7 @@ export function createAmbience(ctx) {
   let A = null;
   function snd() {
     const Lst = ctx.audio && ctx.audio.listener; if (!Lst || Lst.context.state !== 'running' || !ctx.audio.on) return null; if (A) return A;
-    const ac = Lst.context, out = Lst.getInput();
+    const ac = Lst.context, out = (ctx.audio.bus || {}).sfx || Lst.getInput();
     const pan = (x, y, z, ref = 8) => { const p = ac.createPanner(); p.panningModel = 'equalpower'; p.distanceModel = 'inverse'; p.refDistance = ref; p.rolloffFactor = 1.4; p.maxDistance = 400; p.positionX.value = x; p.positionY.value = y; p.positionZ.value = z; p.connect(out); return p; };
     const nb = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate), nd = nb.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
     // ve sầu: nhiễu lọc dải cao, rung biên độ ~45 Hz, lặp — to nhỏ theo giờ trưa

@@ -273,7 +273,10 @@ export function createVehicles(ctx) {
       if (!M.fly || (pl.grounded && sup(p.x, p.z, p.y) > W)) ctx.offer(cur.bye || '🚶 Xuống', dismount, M.fly ? 4 : 0.5);
     }
   }
-  const self = { update, all, register, get current() { return cur; }, get riding() { return cur && cur.type; }, mount, dismount, toggleBike, toggleBalloon, nextStyle, sup, setUI, keys, held,
+  // xuống ngay (dịch chuyển 🏫): để phương tiện tại chỗ (bay → hạ xuống mặt đất/nước bên dưới), không kiểm tra đã chạm đất
+  function forceOff() { if (!cur) return; const v = cur, g = v.group, p = pl.pos; cur = null; pl.root.remove(g); pl.root.rotation.z = pl.root.rotation.x = 0; pl.vehicle = null; rideReset(pl.hero);
+    g.rotation.set(0, pl.rot, 0); g.position.set(p.x, v.type === 'boat' ? waterY(p.x, p.z) : Math.max(supB(p.x, p.z, p.y), W), p.z); scene.add(g); v.onDismount && v.onDismount(); setUI(); }
+  const self = { update, all, register, get current() { return cur; }, get riding() { return cur && cur.type; }, mount, dismount, forceOff, toggleBike, toggleBalloon, nextStyle, sup, setUI, keys, held,
     get tris() { return { bike: BIKES.map((b, i) => makeBike(i).tris), boat: makeBoat('#fff').tris, balloon: makeBalloon().tris }; } };
   ctx.vehicles = self;
   setUI();

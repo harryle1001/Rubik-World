@@ -12,7 +12,7 @@ const mergeParts = p => mergeGeos(p);
 
 // ---------- Thú 4 chân dựng bằng khối ----------
 // o: len (dài thân), leg (chiều cao chân), bw/bh (rộng/cao thân), neck [dài, góc], head [rộng, cao, dài], col, col2 (bờm/móng)
-function quad(o) {
+export function quad(o) {
   const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
   const y0 = o.leg, parts = [];
   parts.push(box(o.bw, o.bh, o.len, o.col, 0, y0 + o.bh / 2, 0));
@@ -53,7 +53,7 @@ function ostrich() {
   return { group: g, body, legs, back: 1.62, saddleZ: -0.05, biped: true };
 }
 // Phượng hoàng: cánh vỗ, đuôi lông dài, phát sáng nhẹ
-function phoenix() {
+export function phoenix() {
   const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
   const mat = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap, emissive: '#ff4a10', emissiveIntensity: 0.28 });
   const sph = new THREE.SphereGeometry(0.6, 9, 7); sph.scale(0.9, 0.8, 1.6);
@@ -270,7 +270,7 @@ export function createMounts(ctx) {
       } else if (!v.call.wait) { v.call.wait = true; v.waitT = 40; ctx.toast(`${v.emoji} <b>${v.name}</b> đã đến! Bấm <b>E</b> để cưỡi.`, 2500); }
       else { let dr = Math.atan2(pl.pos.x - g.position.x, pl.pos.z - g.position.z) - g.rotation.y; dr = Math.atan2(Math.sin(dr), Math.cos(dr)); g.rotation.y += dr * Math.min(1, dt * 2); if ((v.waitT -= dt) <= 0 || far > 30) { v.call = null; release(v); if (v.home) v.home = [g.position.x, g.position.z]; continue; } }
       const gy = sup(g.position.x, g.position.z);
-      if (v.fly) { const want = v.call.wait || L < 6 ? gy : Math.max(gy, pl.pos.y) + Math.min(14, L * 0.4); g.position.y += (want - g.position.y) * Math.min(1, dt * 2.5); const air = g.position.y > gy + 0.3; ph.phase += dt * (air ? 8 : 2); flapPose(air, 0.6, sp); if (air && Math.random() < 0.5) ember(g.position, g.rotation.y); }
+      if (v.fly) { const want = v.call.wait || L < 6 ? gy : Math.max(gy, pl.pos.y) + Math.min(14, L * 0.4); g.position.y += (want - g.position.y) * Math.min(1, dt * 2.5); const air = g.position.y > gy + 0.3; if (v.flap) v.flap(air, sp, dt); else { ph.phase += dt * (air ? 8 : 2); flapPose(air, 0.6, sp); } if (air && !v.flap && Math.random() < 0.5) ember(g.position, g.rotation.y); }
       else g.position.y = gy;
       if (v.m) gait(v, dt, sp); else if (v.A) { v.A.anim.play(sp > 4 ? v.A.S.run : sp > 0.3 ? v.A.S.walk : v.A.S.idle[0], 0.2); v.A.anim.update(dt); }
     }

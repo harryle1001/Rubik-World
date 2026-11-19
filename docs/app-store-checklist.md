@@ -35,7 +35,7 @@ npm run app:ios        # mở Xcode (cần máy Mac)
 ## 4. Kiểm duyệt chat và tương tác giữa người chơi
 - [x] **Đảo 3D hiện không có chat.** Người chơi chỉ thấy nhau di chuyển và thấy biệt danh. Đây là cách an toàn nhất cho Kids Category.
 - [ ] Biệt danh: hiện là "Bạn nhỏ + số" ngẫu nhiên. Nếu cho trẻ tự đặt tên thì phải: lọc từ cấm (tiếng Việt và tiếng Anh), giới hạn 18 ký tự, không cho nhập số điện thoại hay địa chỉ. Tốt nhất là chọn tên ghép từ danh sách có sẵn.
-- [ ] Game 2D (`client/index.html`) **có chat tự do**, nên **không đưa vào app trẻ em** khi chưa có các biện pháp sau:
+- [ ] Game 2D lưu trữ (`client/world-2d.html`, không còn liên kết) **có chat tự do**, nên **không đưa vào app trẻ em** khi chưa có các biện pháp sau:
   - chỉ dùng câu chat soạn sẵn ("Chào bạn!", "Cùng giải đố nhé!"), hoặc
   - bộ lọc từ cấm ở server, nút báo cáo và chặn, giới hạn tần suất (server đã giới hạn), lưu nhật ký để người lớn xem lại, và
   - có người kiểm duyệt cùng quy trình xử lý báo cáo trong 24 giờ.

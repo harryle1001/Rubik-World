@@ -64,7 +64,7 @@ body.rs-modal #bMap{display:none}`;
       if (p2) { let reg = 'north'; try { reg = RS.regionAt(p2[0], p2[1]); } catch (e) {} c = hex(REGION_COL[reg] || '#d8cdb5'); land[i] = 1; }
       else if (ex) { c = hex(EXTRA_COL[ex.id] || '#e6d6a8'); land[i] = 1; }
       else {
-        const h = ctx.terrain.heightAt(x, z);
+        const h = ctx.destiny && ctx.destiny.mapHide(x, z) ? -6 : ctx.terrain.heightAt(x, z);   // Rừng Thiên Định: chưa tìm ra thì chỉ là biển
         if (h < 0.15) { const t = Math.min(1, Math.max(0, -h / 6)); c = lerp([116, 214, 205], [52, 160, 168], t); }
         else if (h < 1.1 && !(flatDist(x, z) < 3 && lagoonDist(x, z) > 4)) { c = [244, 221, 156]; land[i] = 1; }
         else { const t = Math.min(1, (h - 1.1) / 12); c = h > 13 ? [205, 186, 140] : lerp([166, 216, 115], [96, 158, 72], t); land[i] = 1; }
@@ -98,7 +98,7 @@ body.rs-modal #bMap{display:none}`;
     for (const r of ctx.boxes || []) b.fillRect((r.x0 - B.x0) * PPM, (r.z0 - B.z0) * PPM, Math.max(1.5, (r.x1 - r.x0) * PPM), Math.max(1.5, (r.z1 - r.z0) * PPM));
     // sàn gỗ, bến nổi (làng nổi trên biển)
     b.fillStyle = '#b07f4e'; b.strokeStyle = '#6b4a2b'; b.lineWidth = 1;
-    for (const k of ctx.decks || []) { const r = [(k.x0 - B.x0) * PPM, (k.z0 - B.z0) * PPM, (k.x1 - k.x0) * PPM, (k.z1 - k.z0) * PPM]; b.fillRect(...r); b.strokeRect(...r); }
+    for (const k of ctx.decks || []) { if (ctx.destiny && ctx.destiny.mapHide(k.x0, k.z0, 1)) continue; const r = [(k.x0 - B.x0) * PPM, (k.z0 - B.z0) * PPM, (k.x1 - k.x0) * PPM, (k.z1 - k.z0) * PPM]; b.fillRect(...r); b.strokeRect(...r); }
     baseTown = !!RS; baseDone = true;
   }
 
@@ -108,12 +108,15 @@ body.rs-modal #bMap{display:none}`;
     for (const b of BLOCKS) L.push({ n: b.name.toUpperCase(), x: (b.r[0] + b.r[2]) / 2, z: b.r[1] + 6, big: 2 });
     for (const e of EXTRA) L.push({ n: e.name.toUpperCase(), x: (e.r[0] + e.r[2]) / 2, z: (e.r[1] + e.r[3]) / 2, big: 2 });
     for (const t of TEMPLES) L.push({ n: t.name, x: t.x, z: t.z, ic: '⛩️' });
+    if (ctx.destiny) L.push(...ctx.destiny.places());
     if (ctx.eggs && ctx.eggs.spots) for (const q of ctx.eggs.spots()) if (!q.hide) L.push({ n: q.n, x: q.x, z: q.z, ic: q.ic, spot: true });
+    { const t = ctx.story && ctx.story.state().started && ctx.story.target(); if (t) L.push({ n: '🧩 Nhiệm vụ cốt truyện', x: t[0], z: t[1], ic: '🧩' }); }   // story/: điểm cần tới tiếp theo
     const sc = ctx.school; if (!sc) return L;
     if (sc.gate) L.push({ n: 'Cổng trường', x: sc.gate[0], z: sc.gate[1], ic: '🏫' });
     const RS = sc.RS;
     if (RS && RS.R) for (const k in RS.R) { const r = RS.R[k]; if (!r || !r.name || r.w == null || r.y + r.h / 2 < Y_MIN || r.y + r.h / 2 > Y_MAX) continue; const [cx, cz] = to3(r.x + r.w / 2, r.y + r.h / 2); L.push({ n: r.name, x: cx, z: cz, ext: Math.min(r.w, r.h, 2400) * 0.05 }); }
     for (const q of sc.doors || []) L.push({ n: q.d.n.split('·')[0].trim(), x: q.x, z: q.z, door: true });
+    for (const g of ctx.mgSigns || []) L.push({ n: '🎮 ' + g.n, x: g.x, z: g.z, ic: '🎮' });   // mini game 3D (mg/signs.js)
     return L;
   }
 
@@ -121,21 +124,18 @@ body.rs-modal #bMap{display:none}`;
   let open = false, cx = 0, cz = 0, zoom = 3, tip = null, frozenBefore = false, placeList = [];
   const W = () => cv.clientWidth, H = () => cv.clientHeight;
   const sx = x => (x - cx) * zoom + W() / 2, sy = z => (z - cz) * zoom + H() / 2;
-  const clampView = () => { cx = Math.max(B.x0, Math.min(B.x1, cx)); cz = Math.max(B.z0, Math.min(B.z1, cz)); zoom = Math.max(0.8, Math.min(14, zoom)); };
+  const clampView = () => { const V = ctx.mapBounds || B; cx = Math.max(V.x0, Math.min(V.x1, cx)); cz = Math.max(V.z0, Math.min(V.z1, cz)); zoom = Math.max(ctx.mapBounds ? 0.3 : 0.8, Math.min(14, zoom)); };   // ctx.mapBounds: vùng ngoài khơi (regions/index.js)
   const focusMe = z => { const p = ctx.player.pos; cx = p.x; cz = p.z; if (z) zoom = z; clampView(); };
   root.querySelector('.zoom').onclick = e => { const z = e.target.dataset.z; if (!z) return; if (z === 'me') focusMe(); else { zoom *= +z; clampView(); } };
   root.querySelector('.x').onclick = () => toggle(false);
   btn.onclick = () => toggle(true);
-  // Phím M do bản đồ 3D tự bắt (pha capture) ở cửa sổ chính VÀ trong iframe trường 2D (nếu còn) — không để lọt sang bản đồ 2D #v32Map.
+  // Phím M mở/đóng bản đồ 3D (pha capture)
   const typing = el => el && (/INPUT|TEXTAREA|SELECT/.test(el.tagName) || el.isContentEditable);
-  const close2D = w => { try { const d = w.document, m = d.querySelector('#v32Map'); if (m && !m.hidden) (w.v32MapClose ? w.v32MapClose() : (m.hidden = true)); const bm = d.querySelector('#mBigMap'); if (bm && !bm.hidden && w.hideModal) w.hideModal(); } catch (e) {} };
   const onKey = w => e => {
-    if (e.code === 'KeyM') { if (typing(e.target) || typing(w.document.activeElement)) return; e.preventDefault(); e.stopImmediatePropagation(); if (e.repeat) return; if (w !== window) { close2D(w); try { w.document.activeElement?.blur(); } catch (er) {} window.focus(); } toggle(); }
+    if (e.code === 'KeyM') { if (typing(e.target) || typing(w.document.activeElement)) return; e.preventDefault(); e.stopImmediatePropagation(); if (e.repeat) return; toggle(); }
     else if (e.code === 'Escape' && open) { e.preventDefault(); e.stopImmediatePropagation(); toggle(false); }
   };
   addEventListener('keydown', onKey(window), true);
-  let hooked = null;
-  const hookFrame = () => { const w = ctx.school && ctx.school.win; if (!w || w === hooked) return; try { w.addEventListener('keydown', onKey(w), true); hooked = w; } catch (e) {} };
   // kéo / chụm 2 ngón / lăn chuột
   const pts = new Map(); let pinch = 0, moved = 0;
   cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; pinch = 0; });
@@ -173,9 +173,10 @@ body.rs-modal #bMap{display:none}`;
   }
 
   function toggle(v = !open) {
+    if (v && !open && ctx.mapHook && ctx.mapHook()) return;   // nơi khác (vd. nội thất Học viện) tự mở bản đồ riêng
     if (v === open) return; open = v; ctx.mapOpen = v; root.hidden = !v; tip = null;
     if (v) {
-      ctx.sfx && ctx.sfx('ui'); if (ctx.school && ctx.school.win) close2D(ctx.school.win);
+      ctx.sfx && ctx.sfx('ui');
       if (!baseDone || (!baseTown && ctx.school && ctx.school.RS)) buildBase();
       placeList = places().sort((a, b) => (b.ic ? 1 : 0) - (a.ic ? 1 : 0));   // biểu tượng giữ chỗ trước, chữ to tự né focusMe(opts.near ? 4 : zoom); frozenBefore = ctx.player.frozen; ctx.player.frozen = true;
     } else ctx.player.frozen = frozenBefore;
@@ -216,7 +217,7 @@ body.rs-modal #bMap{display:none}`;
   }
   let lastT = performance.now();
   function update() {
-    hookFrame(); const now = performance.now(); scanDex(Math.min(0.1, (now - lastT) / 1000)); scanZone(Math.min(0.1, (now - lastT) / 1000)); lastT = now;
+    const now = performance.now(); scanDex(Math.min(0.1, (now - lastT) / 1000)); scanZone(Math.min(0.1, (now - lastT) / 1000)); lastT = now;
     if (!open) return;
     const dpr = Math.min(devicePixelRatio, 2), w = W(), h = H();
     if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
@@ -231,6 +232,7 @@ body.rs-modal #bMap{display:none}`;
     taken.push([58, h - 110, 52, 52]);   // la bàn
     const topSafe = Math.max(30, ...taken.filter(q => q[1] < h / 3).map(q => q[1] + q[3]));
     const free = (x, y, r, rh = r) => { for (const q of taken) if (Math.abs(q[0] - x) < q[2] + r && Math.abs(q[1] - y) < q[3] + rh) return false; taken.push([x, y, r, rh]); return true; }; // chống chồng chữ/biểu tượng
+    for (const f of ctx.mapLayers || []) f({ g, sx, sy, zoom, text, bubble, icons, free });   // lớp thêm: vùng ngoài khơi (regions/index.js)
     // địa danh
     if (opts.places) for (const L of placeList) {
       if (!inView(L.x, L.z, 200) || !near(L.x, L.z)) continue; const X = sx(L.x), Y = sy(L.z);
@@ -287,5 +289,5 @@ body.rs-modal #bMap{display:none}`;
     g.restore(); text('B', X, Y - 40, 13, '#fff3d6'); text('Đ', X + 40, Y, 12); text('N', X, Y + 40, 12); text('T', X - 40, Y, 12);
   }
 
-  return { update, toggle, get open() { return open; } };
+  return { update, toggle, get open() { return open; }, redraw() { baseDone = false; } };
 }

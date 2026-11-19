@@ -62,10 +62,14 @@ export const SUBJECTS = {
   // Ví dụ thêm môn: tienganh: { name: 'Tiếng Anh', icon: '🔤', questions: [ { q: '"Apple" nghĩa là gì?', choices: ['Quả táo', 'Con mèo', 'Ngôi nhà', 'Cái cây'], a: 0, explain: 'apple = quả táo' } ] },
 };
 
+// Ngân hàng chung + học thích ứng (learn.js) đăng ký provider: môn nào provider trả câu thì dùng câu đó (có q.done(ok) để ghi kết quả)
+let provider = null;
+export const setProvider = f => { provider = f; };
 // Lấy n câu ngẫu nhiên từ các môn được chọn
 export function pickQuestions(subjects, n) {
   const out = [];
   for (let i = 0; i < n; i++) {
+    const P = provider && provider(subjects[i % subjects.length]); if (P) { out.push(P); continue; }
     const S = SUBJECTS[subjects[i % subjects.length]];
     const pool = S.questions.filter(q => !out.includes(q));
     const q = S.make && (!pool.length || Math.random() < 0.5) ? S.make() : pool[Math.floor(Math.random() * pool.length)];

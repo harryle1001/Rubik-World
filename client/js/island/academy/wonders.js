@@ -113,7 +113,7 @@ export function create(ctx, magic, { toWorld, L, Y }) {
             #include <colorspace_fragment>
           }`,
       })));
-      ceil.position.set(0, Y + Hh.h - 0.15, (Hh.u0 + Hh.u1) / 2); ceil.frustumCulled = false; hall.add(ceil);
+      ceil.position.set(0, Y + Hh.h - 0.15, (Hh.u0 + Hh.u1) / 2); ceil.frustumCulled = false; ceil.name = 'hall-sky-ceiling'; hall.add(ceil);
     }
 
     // ---------- 🛡️ áo giáp: thân (1 call) + mũ (1 call) ----------
@@ -260,7 +260,7 @@ export function create(ctx, magic, { toWorld, L, Y }) {
       const now = performance.now() / 1000; DOORS[k].force = DOORS[k + 1].force = now + 13; ctx.sfx && ctx.sfx('door'); api.burst(Wp(d.u, room === 'hall' ? 0 : lc, Y + 2.5), up, '#ffd34d', 21, 3, 1);
       api.toast(`🔓 Cánh cửa ${room === 'hall' ? 'đại sảnh' : 'thư viện'} kẽo kẹt <b>tự mở</b> theo phép! 🔬 Bản lề giúp cánh cửa quay quanh một trục — như kim đồng hồ quay quanh tâm.`, 4500);
     } })); }
-    // 🪶 Nhấc lên → 3 thùng gỗ + 2 thùng phuy trong sân bay lơ lửng 13 s rồi hạ xuống
+    // 🪶 Bay lên → 3 thùng gỗ + 2 thùng phuy trong sân bay lơ lửng 13 s rồi hạ xuống
     const LF = [[-30, -24, 0], [-28, -25.5, 0], [-22, 24, 0], [6, -24, 1], [8, 25, 1]].map(([u, v, k]) => ({ u, v, k, t: -99 }));
     const crate = new Batch(); crate.box(-0.45, 0.45, 0, 0.9, -0.45, 0.45, '#a8744a'); crate.box(-0.47, 0.47, 0.38, 0.52, -0.47, 0.47, '#6e4a30');
     const barrel = new Batch(); barrel.cyl(0, 0, 0, 0.4, 1.1, '#8a5a35', 10, 0.4); for (const y of [0.15, 0.85]) barrel.cyl(0, y, 0, 0.42, 0.08, '#4a4a52', 10);

@@ -68,7 +68,7 @@ export function dragonHead() {
   b.add(new THREE.ConeGeometry(0.4, 1.6, 4), '#d9542e', 0, 0.75, -1.5, 0, -1.2);
   return b.build();
 }
-function birdBody() {   // chim Lạc: mình thon, cổ dài, mỏ dài, mào, đuôi 3 dải dài
+export function birdBody() {   // chim Lạc: mình thon, cổ dài, mỏ dài, mào, đuôi 3 dải dài
   const b = new Batch(), W = '#efe6d2', B = '#b8863b';
   b.add(new THREE.OctahedronGeometry(0.5, 0), W, 0, 0, 0, 0, 0, 0, 0.75, 0.7, 1.7);
   b.add(new THREE.CylinderGeometry(0.08, 0.13, 1.0, 5), W, 0, 0.42, 0.95, 0, 0.75);
@@ -79,7 +79,7 @@ function birdBody() {   // chim Lạc: mình thon, cổ dài, mỏ dài, mào, �
   for (const s of [-1, 1]) b.add(new THREE.CylinderGeometry(0.035, 0.035, 1.25, 4), '#8a6a3a', s * 0.15, -0.88, -0.38, 0, 0.3);   // chân ngả sau
   return b.build();
 }
-function birdWing() {   // cánh: gốc trắng, đầu cánh đồng thau
+export function birdWing() {   // cánh: gốc trắng, đầu cánh đồng thau
   const b = new Batch();
   b.add(tris([[0, 0, 0.45], [1.3, 0, 0.35], [0, 0, -0.5], [1.3, 0, 0.35], [1.3, 0, -0.55], [0, 0, -0.5]]), '#f3ead8');
   b.add(tris([[1.3, 0, 0.35], [2.5, 0, -0.1], [1.3, 0, -0.55]]), '#b8863b');

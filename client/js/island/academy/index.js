@@ -23,6 +23,9 @@ import { create as createCommons } from './commons.js';       // 4 lối vào b�
 import { create as createClasses } from './classes/index.js'; // lớp học phép thuật (mini game) + nhà kính
 import { create as createWonders } from './wonders.js';       // phép thuật khắp nơi: trần trời, giáp, sách bay, ma, cú, tượng, cửa, nhạc nước
 import { create as createAlley } from './alley.js';           // Phố Phép Thuật (hẻm mua sắm)
+import { create as createVillage } from './village.js';       // Làng Phù Thuỷ Nhỏ: lô đất xây nhà bằng phép "Dựng Lên!"
+import { create as createPitch } from './pitch.js';           // Sân Bay Chổi trên hồ phía đông + môn Săn Cầu Vàng + luyện bay vòng
+import { create as createBuild } from './build.js';           // Đồng Pha Lê (xếp khối pha lê)
 import { createWear } from './wear.js';                        // đồ mua ở Phố Phép Thuật: áo choàng, mũ, chổi, thú cưng
 import { L as CL } from './castle.js';
 import { createInterior } from './interior/index.js';   // nội thất 7 tầng (không gian phép trên cao)
@@ -30,6 +33,20 @@ import { createForest } from './forest.js';                // rừng phép thu�
 import { createLake } from './forest-lake.js';             // hồ trong rừng
 import { createLife } from './forest-life.js';             // sinh vật phép thuật
 import { createSecrets } from './forest-secrets.js';       // 13 bí mật, Bà Gạo kể cổ tích, nguyên liệu Pha Chế, bản đồ rừng
+import { createDragons } from './dragons.js';              // Thung Lũng Rồng: rồng hiền, trứng rồng, rồng con thú cưng
+import { createBestiary } from './bestiary.js';            // 📖 Bách khoa sinh vật (thần thoại + động vật thật)
+import { createFlyers } from './flyers.js';                // thú bay cưỡi được: Ngựa có cánh, Chim Lạc, Phượng Hoàng, Rồng Lửa lớn
+import { createGuide } from './guide.js';                 // biển chỉ đường + bản đồ nội thất (phím M)
+import { createExterior } from './exterior.js';           // ngoại thất v2: máng xối rồng, đuốc, cờ, cầu kéo, cổng sắt, lối đi tường thành, vườn tượng, đồng hồ mặt trời
+import { createBroom } from './broom.js';                 // Sân Bay Chổi + mini game bay qua vòng (câu hỏi)
+import { createLife as createAcademyLife } from './life.js';// sự kiện theo giờ, lễ hội theo mùa, Thần Bếp
+import { createNorth } from './north.js';                 // v3: Sân Bắc nổi sau lâu đài — Cánh Bắc, Tháp Cú, đàn cú
+import { createStairs } from './stairs.js';               // v3: Tháp Cầu Thang Phép — 4 nhịp thang tự xoay
+import { createPractice } from './practice.js';           // v3: lớp thực hành phép ngoài trời ở Sân Bắc
+import { createPho2 } from './pho2.js';                   // v3: Phố Phép Thuật Mới (nửa đông Sân Bắc)
+import { createSeats } from './seats.js';                 // v4: ngồi mọi ghế (đọc, ăn, viết bài, thư cú) + bàn giáo viên
+import { createPhoLife } from './pho-life.js';            // v4: khách dạo phố ở cả 2 Phố Phép Thuật
+import { createHallMagic } from './hall-magic.js';        // v4: Đại sảnh phép cao 210 m, kính màu, nắng màu
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 const CLASS_AT = [['class0', 'cls-light'], ['class1', 'cls-shape'], ['class1b', 'cls-creature'], ['potion', 'cls-brew']];   // điểm neo lớp (interior/plan.js) → lớp phép thuật (classes/index.js)
@@ -99,7 +116,7 @@ export function createAcademy(ctx) {
   const magic = ctx.magic = createMagic(ctx);
   const wear = ctx.wear = createWear(ctx);
   const spells = createSpells(ctx, magic, { toWorld, L: CL, Y: BASE }), content = createContent(ctx, magic, { toWorld, L: CL, Y: BASE });
-  const extras = [createPaintings, createCreatures, createTree, createHouses, createCommons, createClasses, createWonders, createAlley].map(f => f(ctx, magic, { toWorld, toLocal, L: CL, Y: BASE }));   // mỗi mô-đun 1 file riêng
+  const extras = [createPaintings, createCreatures, createTree, createHouses, createCommons, createClasses, createWonders, createAlley, createVillage, createPitch, createBuild].map(f => f(ctx, magic, { toWorld, toLocal, L: CL, Y: BASE }));   // mỗi mô-đun 1 file riêng
   const shop = pw(pr0 - 5, -7), shopY = base(shop[0], shop[1]);
   {
     const b = new Batch(), wood = '#a8744a', woodD = '#6e4a30';
@@ -123,6 +140,8 @@ export function createAcademy(ctx) {
     gate: [CL.box.u1 - CL.T - 0.05, -14, BASE, -1, 0], balcony: [A0.u + A0.r2 + 0.05, A0.v, BASE + A0.h1, 1, 0],
   };
   const interior = createInterior(ctx, { OX: C[0] - 44.5, OZ: C[1] - 27.5, exitTo: id => { const d = DOORS[id]; if (!d) return null; const [x, z] = toWorld(d[0] + d[3] * 2.4, d[1] + d[4] * 2.4); return [x, z, d[2], face(d[3], d[4]) + Math.PI]; } });
+  const guide = createGuide(ctx, { toWorld, Y: BASE, interior }), ext = createExterior(ctx, { Y: BASE, toLocal }), broom = ctx.broomPitch = createBroom(ctx, magic, { Y: BASE, toWorld, toLocal }), life = ctx.academyLife = createAcademyLife(ctx, magic, { Y: BASE, toWorld, toLocal, interior, L: CL });
+  const north = ctx.academyNorth = createNorth(ctx, magic, { Y: BASE, toWorld, toLocal }), v3 = [north, createStairs(ctx, { Y: BASE, toWorld, toLocal }), createPractice(ctx, magic, { Y: BASE, toWorld, toLocal }), createPho2(ctx, magic, { Y: BASE, toWorld, toLocal }), createSeats(ctx, magic, { Y: BASE, toWorld, toLocal, interior, L: CL }), createPhoLife(ctx, { Y: BASE, toWorld }), createHallMagic(ctx, { Y: BASE, toWorld, toLocal, L: CL, getCastle: () => isle && isle.castle })];   // mô-đun mở rộng v3: build / unbuild / update
   let doorG = null;
   const buildDoors = () => {
     const b = new Batch(), gl = new Batch();
@@ -142,6 +161,9 @@ export function createAcademy(ctx) {
   forest.plug(ctx.forestLake = createLake(ctx, forest));
   forest.plug(ctx.forestLife = createLife(ctx, forest, magic));
   forest.plug(ctx.forestSecrets = createSecrets(ctx, forest, magic));
+  ctx.bestiary = createBestiary(ctx);
+  const dragons = ctx.dragons = createDragons(ctx, magic);
+  const flyers = ctx.flyers = createFlyers(ctx, magic);
 
   // ---------- tải / dỡ theo khoảng cách ----------
   const far = createFar(ctx);
@@ -150,8 +172,8 @@ export function createAcademy(ctx) {
   function stream() {
     const p = ferry.riding || (ctx.aircraft && ctx.aircraft.flying) ? ctx.camera.position : player.pos;
     const [u, v] = toLocal(p.x, p.z), d = Math.max(0, isleDist(u, v));
-    if (!isle && d < LOAD) { isle = buildIsland(ctx); isle.atmos = createAtmos(ctx, isle.group); boxes.push(...isle.castle.boxes); spells.build(isle.group); content.build(); for (const x of extras) x.build(); if (!planted) { plantIsland(ctx); planted = true; } }
-    else if (isle && d > UNLOAD) { spells.unbuild(); content.unbuild(); for (const x of extras) x.unbuild(); for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
+    if (!isle && d < LOAD) { isle = buildIsland(ctx); isle.atmos = createAtmos(ctx, isle.group); boxes.push(...isle.castle.boxes); spells.build(isle.group); content.build(); for (const x of extras) x.build(); guide.build(); ext.build(); broom.build(); life.build(); for (const x of v3) x.build(); if (!planted) { plantIsland(ctx); planted = true; } }
+    else if (isle && d > UNLOAD) { spells.unbuild(); content.unbuild(); for (const x of extras) x.unbuild(); guide.unbuild(); ext.unbuild(); broom.unbuild(); life.unbuild(); for (const x of v3) x.unbuild(); for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
     far.moundOn = !isle;
     if (isle) isle.castle.group.visible = far.dist < 296 + 89;
     if (isle && !doorG) doorG = buildDoors(); if (doorG) doorG.visible = !!isle;
@@ -160,9 +182,11 @@ export function createAcademy(ctx) {
   function update(dt) {
     ferry.update(dt);
     stream(); far.update();
-    if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); for (const x of extras) x.update(dt, t); }
+    if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); for (const x of extras) x.update(dt, t); ext.update(dt, t); broom.update(dt, t); for (const x of v3) x.update(dt, t); }
+    life.update(dt, performance.now() / 1000);
     forest.update(dt, performance.now() / 1000);
-    magic.update(dt); wear.update(dt); spells.update(dt); content.update(dt, performance.now() / 1000); interior.update(dt);
+    dragons.update(dt, performance.now() / 1000); flyers.update(dt);
+    magic.update(dt); wear.update(dt); spells.update(dt); content.update(dt, performance.now() / 1000); interior.update(dt); guide.update();
     if (ferry.riding || player.vehicle) return;
     const pp = player.pos;
     if (Math.hypot(pp.x - shop[0], pp.z - shop[1]) < 4.2) ctx.offer(magic.hasWand ? '🪄 Đổi đũa phép' : '🪄 Chọn đũa phép (miễn phí)', () => magic.chooseWand(!magic.hasWand), 9);
@@ -187,5 +211,5 @@ export function createAcademy(ctx) {
     if (isle && !interior.inside) for (const [id, [u, v, y]] of Object.entries(DOORS)) if (Math.hypot(qu - u, qv - v) < 3.2 && Math.abs(pp.y - y) < 2.5) ctx.offer(id === 'balcony' ? '🚪 Vào Tháp Chính (cầu thang xoắn xuống các tầng)' : '🚪 Vào trong lâu đài (7 tầng)', () => interior.enter(id), 8.5);
     if (qu > QUAY.u0 - 2 && qu < QUAY.u0 + QUAY.w + 4 && qv > -3 && qv < QUAY.v1 + 3 && Math.abs(pp.y - QUAY.y) < 2) ctx.offer('⛵ Đi thuyền về đảo Rubik', () => ferry.start(-1), 8);
   }
-  return { update, far, ferry, magic, interior, anchors: interior.anchors, forest, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) }, shop };
+  return { update, far, ferry, magic, interior, toWorld, toLocal, L: CL, Y: BASE, anchors: interior.anchors, forest, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) }, shop };
 }

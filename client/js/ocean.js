@@ -17,7 +17,9 @@ import { createTutorial } from './island/tutorial.js';
 import { SPAWN, landDist, blocked, ISLAND_R, TEMPLE_C } from './island/layout.js';
 import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
+import { createParachute } from './island/parachute.js';
 import { createMounts } from './island/mounts.js';
+import { createBrooms } from './island/brooms.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
@@ -34,22 +36,35 @@ import { createLiving } from './island/living.js';
 import { createSkyshow } from './island/skyshow.js';
 import { createDive } from './island/dive.js';
 import { createPerf } from './island/perf.js';
+import { createFeel } from './island/feel.js';
+import { createPhoto } from './island/photo.js';
 import { createAutoQ, SK } from './island/autoq.js';
 import { createMiniGameHost } from './island/mg/host.js';
 import { createAccountHud } from './island/account-hud.js';
+import { createSocial } from './island/social.js';
+import { createEvents } from './island/events.js';
 import { createLoader } from './island/loader.js';
 import { createStats } from './island/stats.js';
 import { createTeacherQuiz } from './island/teacher-quiz.js';
 import { createQuests } from './island/quests.js';
+import { createLearn } from './island/learn.js';
+import { createStory } from './island/story/index.js';
 import { createLessons } from './island/lessons.js';
 import { createSchoolInterior } from './island/school-interior.js';
 import { createSchoolYard } from './island/school-yard.js';
 import { createAcademy } from './island/academy/index.js';
+import { createSpellbook } from './island/spellbook.js';
 import { createTrain } from './island/train/index.js';
+import { createRegions } from './island/regions/index.js';
+import { createDestiny } from './island/zone-destiny.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
+import { createVrmNpc } from './island/vrm/vrm-npc.js';
+import { createPlayerVrm } from './island/vrm/player-vrm.js';
+import { createCreator } from './island/vrm/creator.js';
 import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
 import { register as registerSport } from './island/mg/sport/index.js';
+import { register as registerVisit } from './island/mg/visit/index.js';
 
 // chỉ báo tải (Rubik xoay góc trái dưới) + màn che lúc vào game: tạo đầu tiên để bắt mọi lượt tải model/âm thanh
 const loading = createLoader();
@@ -110,14 +125,26 @@ const worldMap = ctx.worldMap = createWorldMap(ctx); // bản đồ: phím M / n
 const vehicles = createVehicles(ctx);
 const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
 const academy = ctx.academy = createAcademy(ctx); // Học viện Pha Lê: đảo riêng, bến thuyền đèn lồng, đường băng, bóng lâu đài trong sương
+const spells = ctx.spells = createSpellbook(ctx, academy.magic); // đũa phép dùng khắp thế giới: hô thần chú, phép mới, đồng bộ mạng, áo choàng chủ game
 const train = ctx.train = createTrain(ctx); // Tàu Pha Lê: tàu hơi nước từ ga bờ tây bắc qua đảo Đồi Thông, hầm, cầu cạn vòm đá tới cao nguyên Học viện
+const regions = ctx.regions = createRegions(ctx); // 4 vùng mới: Núi Tuyết (cầu), Làng Cổ (cầu), Quần đảo San Hô (thuyền), Thành phố Tương lai (thuyền + đường băng) — tải theo chunk
+const chute = ctx.chute = createParachute(ctx); // 🪂 thả dù từ máy bay, máy bay tự lái về đường băng, nhảy dù trúng đích ⭐
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
 const accountHud = createAccountHud(ctx);
+const social = ctx.social = createSocial(ctx);
+const events = ctx.events = createEvents(ctx); if (/[?&]test\b/.test(location.search)) window.__ctx = ctx;   // kiểm thử tự động
+ // 🧰 săn kho báu thứ Bảy, 🧹 giải bay chổi Chủ nhật (events.js, lịch do server)
+// ↑ social.js: 👥 bạn bè mã 6 ký tự, 😊 biểu cảm + câu mẫu (không chat tự do), nhóm, lời mời, chặn/báo cáo, sự kiện, lớp (social.js)
+const destiny = createDestiny(ctx); // Rừng Thiên Định: khu rừng ẩn ngoài vịnh bắc, lối mòn bí mật, cây ước nguyện (zone-destiny.js)
 const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms, draw call, tam giác, bộ nhớ… // 👤 đăng nhập / khách / Lưu đăng nhập, xu & vật phẩm (data/account.js)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
-const tutorial = ctx.tutorial = createTutorial(ctx); // hướng dẫn chơi lần đầu: 3 bước, bỏ qua được (tutorial.js)
+const tutorial = ctx.tutorial = createTutorial(ctx); // ❓ hướng dẫn chơi: chỉ mở khi bấm (menu ☰), không tự bật (tutorial.js)
+// 🎬 clip mở đầu (lần đầu vào game, sau đăng nhập): tải lười intro.js; xem lại ở menu ☰. ?test bỏ qua (thêm &intro để thử)
+ctx.intro = { open: false, tick: null, play: (o = {}) => ctx.intro.open ? null : document.body.classList.contains('st-cut') || ctx.mgActive ? ctx.toast('🎬 Xem lại clip sau khi xong đoạn hội thoại / trò chơi nhé!') : import('./island/intro.js').then(m => m.playIntro(ctx, o)).catch(e => { console.warn('intro', e); ctx.intro.open = false; }) };
+{ const Q = location.search, iv = setInterval(() => { if (loading.veil || !ctx.warmed) return; const a = ctx.account, box = document.getElementById('accBox'); if (!a || !a.profile || (box && !box.hidden) || document.body.classList.contains('rs-modal')) return; clearInterval(iv);
+  let seen = !!a.profile.introSeen; try { seen = seen || localStorage.getItem('island.intro') === '1'; } catch (e) {} if ((!seen && !/[?&]test\b/.test(Q)) || /[?&]intro\b/.test(Q)) ctx.intro.play({ first: true }); }, 300); }
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 const sealife = ctx.sealife = createSealife(ctx); // thế giới biển: san hô, đàn cá, sứa, rùa, cá đuối, cá heo, Bách khoa biển
@@ -126,18 +153,25 @@ const naturalist = ctx.naturalist = createNaturalist(ctx); // 📔 Sổ tay thi�
 const treasure = ctx.treasure = createTreasure(ctx); // 13 rương kho báu dưới đáy biển + câu đố biển + mảnh bản đồ (HUD 🧰)
 const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao băng, mây ti, chế độ ngắm trời ⭐ (skyshow.js)
 const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
+const learn = createLearn(ctx); // ngân hàng câu hỏi chung + học thích ứng (lớp, tỉ lệ đúng, ôn câu sai) — dùng cho mọi nơi (learn.js)
 const quests = ctx.questsMod = createQuests(ctx); // bảng nhiệm vụ hằng ngày 📋: 3 khu · 3 câu đố · 5 pha lê → thưởng (quests.js)
 const teacherQuiz = createTeacherQuiz(ctx); // nói chuyện với 21 bạn & thầy cô, nhiệm vụ nhỏ, chủ trò mini game — bong bóng 3D (teacher-quiz.js, data/talk.js)
 const schoolInterior = ctx.schoolInterior = createSchoolInterior(ctx); // Toà học tập 3 tầng: vào qua cửa Văn phòng, lớp học/phòng chức năng, tiết học có thầy cô & bạn (school-interior.js)
 const schoolYard = createSchoolYard(ctx); // sân trường: vườn rau học sinh trồng (tưới → thu hoạch ⭐), nhà xe đạp (school-yard.js)
 const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + tiết học ngay trong lớp + chip giờ học góc HUD (lessons.js)
+const story = createStory(ctx); // cốt truyện 8 chương "Khối Rubik Pha Lê": nhiệm vụ, dẫn đường, đoạn dẫn chuyện, sổ tay, cấp độ, kỹ năng (story/)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
-const mounts = createMounts(ctx);
+registerVisit(ctx); // mini game 3D ghé thăm: Tham quan nhà, BBQ, Trung tâm thương mại, Coach Ru (mg/visit/) — sau registerArts (gắn cửa Nông trại vào garden)
+const mounts = ctx.mounts = createMounts(ctx);
+const vrmNpc = ctx.vrmNpc = createVrmNpc(ctx); ctx.playerVrm = createPlayerVrm(ctx); ctx.creator = createCreator(ctx); // nhân vật anime VRM: NPC gần (LOD), người chơi (nạp sau), 🎨 trình tạo nhân vật (vrm/)
+const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp đảo (nút 🧹 / phím J), giá chổi ở Sân Đại Sảnh Học viện
+const photo = createPhoto(ctx); // 📷 chế độ chụp ảnh: dừng thời gian, camera tự do, bộ lọc, lưu ảnh có khung logo (photo.js)
+const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, xu bay vào HUD, màn chuyển, tên vùng điện ảnh (feel.js)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
-// menu ☰ (góc phải trên, cạnh 🗺️): Menu trường + ☀️ Ánh sáng; chọn xong hoặc chạm ra ngoài thì tự đóng
+// menu ☰ (góc phải trên, cạnh 🗺️): 🎮 Mini game + ☀️ Ánh sáng; chọn xong hoặc chạm ra ngoài thì tự đóng
 {
   const more = document.getElementById('bMore'), menu = document.getElementById('moreMenu');
   const show = on => { menu.hidden = !on; more.setAttribute('aria-expanded', on); };
@@ -146,6 +180,8 @@ player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2);
   addEventListener('pointerdown', e => { if (!menu.hidden && !menu.contains(e.target) && e.target !== more) show(false); }, true);
 }
 document.getElementById('bMenu').onclick = () => school.menu();
+{ const m = document.getElementById('moreMenu'), add = (id, t, fn) => { const b = document.createElement('button'); b.id = id; b.textContent = t; b.onclick = fn; m.appendChild(b); };
+  add('bHelp', '❓ Hướng dẫn', () => tutorial.show()); add('bIntro', '🎬 Xem lại clip mở đầu', () => ctx.intro.play()); }
 
 // Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại, hoa, nấm, gốc cây, pha lê quanh đền (khu I rừng & đền, layout.js)
 {
@@ -174,19 +210,25 @@ const perf = ctx.perf = createPerf(ctx); // cắt vật nhỏ ở xa, viền, ng
 window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
   const dt = stepDt(clock.getDelta()); // dt ổn định (motion.js): làm mượt khi FPS dao động, giới hạn bước
+  if (ctx.photoMode) { photo.update(dt); post.render(); stats.frame(); return; }   // 📷 chụp ảnh: thế giới đứng yên, chỉ camera tự do
   if (!ctx.freeCam) player.update(dt); // freeCam: camera tự do để gỡ lỗi
   physics.update(dt);
   terrain.update(dt, clock.elapsedTime, player.pos);
   temples.update(dt, clock.elapsedTime);
   audio.update(dt, { night: sky.state.night, school: !!ctx.schoolHours });
-  net.update(dt);
+  net.update(dt); events.update(dt);
   animals.update(dt);
   school.update(dt, clock.elapsedTime);
   vehicles.update(dt);
   aircraft.update(dt, clock.elapsedTime);
+  chute.update(dt); // sau aircraft: điều khiển người rơi + camera
   mounts.update(dt);
+  vrmNpc.update(dt);
+  brooms.update(dt);
   academy.update(dt);
+  spells.update(dt); // sau thị trấn/học viện: Bay Lên cộng độ cao lên người đã đặt vị trí
   train.update(dt);
+  regions.update(dt);
   sky.update(dt, camera, player.pos);
   weather.update(dt, clock.elapsedTime);
   eggs.update(dt, clock.elapsedTime);
@@ -194,6 +236,7 @@ renderer.setAnimationLoop(() => {
   living.update(dt);
   skyshow.update(dt); // sau player/sky: chế độ ngắm trời đặt lại camera
   dive.update(dt); // sau ambience: ghi đè sương/màu khi dưới nước
+  destiny.update(dt, clock.elapsedTime); // sau weather/ambience: sương đặc trong bãi sương
   mg.update(dt, clock.elapsedTime);
   sealife.update(dt);
   wild.update(dt);
@@ -204,9 +247,13 @@ renderer.setAnimationLoop(() => {
   lessons.update(dt);
   quests.update(dt);
   naturalist.update(dt); // sau player/skyshow: ống nhòm đặt lại camera
+  feel.update(dt);
+  learn.update();
+  story.update(dt);
   ctx.flushOffer();
   brightness.update();
   tutorial.update(dt);
+  if (ctx.intro.tick) ctx.intro.tick();   // 🎬 clip mở đầu: camera điện ảnh (sau mọi cập nhật, trước khi vẽ)
   perf.update(dt);
   unfreezeGuard(dt);
   // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong
@@ -215,9 +262,11 @@ renderer.setAnimationLoop(() => {
   // biên dịch ĐÚNG biến thể: cảnh vẽ vào render target hậu kỳ (warm()). Sau đó: mỗi 5 s, nếu cảnh có vật mới (khu/model nạp thêm,
   // đèn đêm bật…) → biên dịch trước phần mới.
   if (!ctx.warmed && school.ready && (player.hero || player.heroFailed) && (ctx.warmT = (ctx.warmT || 0) + dt) > 0.382) { ctx.warmed = true; ctx.warmT = 0; const wj = loading.begin('Chuẩn bị hình ảnh'); loading.end(bootJob); warm().finally(() => { loading.end(wj); requestAnimationFrame(() => requestAnimationFrame(() => loading.lift())); }); setTimeout(() => loading.lift(), 8000); }   // máy chậm: tối đa 8 s rồi mở màn che
-  else if (ctx.warmed && (ctx.warmT += dt) > 5) { ctx.warmT = 0; const sig = scene.children.length + ':' + perf.list.length + ':' + (sky.state.night > 0.5); if (sig !== ctx.warmSig) { ctx.warmSig = sig; warm(); } }
+  else if (ctx.warmed && (ctx.warmT += dt) > 5) { ctx.warmT = 0; const sig = scene.children.length + ':' + perf.list.length + ':' + (sky.state.night > 0.5); if (sig !== ctx.warmSig && !ctx.mgActive) { ctx.warmSig = sig; warm(); } }   // đang chơi mini game: không biên dịch đồ của game (thoát game dispose vật liệu giữa lúc compileAsync → lỗi isReady)
   // bóng đổ thưa (điện thoại): vẽ lại bản đồ bóng mỗi 2 khung (cây/nhà đứng yên; người/xe ở 30 Hz vẫn mượt) → pass bóng tốn ½
-  if (CFG.isMobile) { renderer.shadowMap.autoUpdate = false; if ((ctx.shF = (ctx.shF || 0) + 1) % 2 === 1) renderer.shadowMap.needsUpdate = true; }
+  if (ctx.shadowHold) renderer.shadowMap.autoUpdate = false;   // trong không gian kín (Đại sảnh phép): giữ nguyên bóng, không vẽ lại cả thế giới
+  else if (CFG.isMobile) { renderer.shadowMap.autoUpdate = false; if ((ctx.shF = (ctx.shF || 0) + 1) % 2 === 1) renderer.shadowMap.needsUpdate = true; }
+  else renderer.shadowMap.autoUpdate = true;
   if (!worldMap.open && !loading.veil) post.render(); // bản đồ / màn che lúc vào game phủ kín → không vẽ 3D (dồn CPU cho nạp nhân vật, dựng thị trấn)
   worldMap.update();
   quality(dt);
@@ -231,12 +280,12 @@ let frzT = 0;
 function unfreezeGuard(dt) {
   if (!player.frozen) { frzT = 0; return; }
   if ((frzT += dt) < 1) return; frzT = 0;
-  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden]), #accBox:not([hidden]), #schoolMenu:not([hidden])')) player.frozen = false;
+  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#dstWish, #dstBreath, #quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden]), #accBox:not([hidden]), #schoolMenu:not([hidden])')) player.frozen = false;
 }
 
 // ---------- Chất lượng tự động: mức (0..3) + độ phân giải động (logic trong autoq.js) ----------
 // mức 0: đầy đủ · 1: tắt bloom, giảm độ phân giải · 2: không MSAA, cỏ/cây chi tiết gần hơn, bóng nhỏ · 3: tắt bóng đổ
-const AQ = createAutoQ({ low: CFG.quality.lowFps, high: CFG.quality.highFps, prl: [pr, Math.min(pr, 1.15), 1.0, 0.85] }), Q = AQ.q;
+const AQ = createAutoQ({ low: CFG.quality.lowFps, high: CFG.quality.highFps, prl: [pr, Math.min(pr, 1.15), 1.0, 0.85], step: CFG.isMobile ? 2 : 1, crit: CFG.isMobile ? 1.618 : 2.618 }), Q = AQ.q;
 let qLock = false, appliedL = -1; const cheapMSAA = renderer.extensions.has('WEBGL_multisampled_render_to_texture');
 const base = { grass: terrain.state.grassDist, tree: terrain.state.treeDist };
 function applyQuality() {
@@ -274,5 +323,5 @@ else Q.level = CFG.isMobile ? 1 : 0; // điện thoại: bắt đầu ở mức 
 applyQuality();
 
 // ---------- Cache để mở nhanh/offline ----------
-// đăng ký SAU khi trường sẵn sàng + 5 s: lúc cài, service worker tải sẵn ~2 MB (trường 2D, thú, âm thanh) — không tranh băng thông lúc vào game
+// đăng ký SAU khi trường sẵn sàng + 5 s: lúc cài, service worker tải sẵn ~2 MB (đảo 3D, thú, âm thanh) — không tranh băng thông lúc vào game
 if ('serviceWorker' in navigator && !window.ISLAND_SERVER) { const sw = setInterval(() => { if (!school.ready) return; clearInterval(sw); setTimeout(() => navigator.serviceWorker.register('/sw.js').catch(() => {}), 5000); }, 1000); }

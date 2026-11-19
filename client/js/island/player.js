@@ -39,7 +39,7 @@ export function createPlayer(ctx) {
   const fitFov = () => { const a = innerWidth / innerHeight; camera.fov = a >= 1 ? CAM.fov : Math.min(72, 2 * THREE.MathUtils.radToDeg(Math.atan(Math.tan(THREE.MathUtils.degToRad(CAM.fov / 2)) / a ** (1 / PHI)))); camera.updateProjectionMatrix(); };
   camera.far = CFG.view.far; fitFov(); addEventListener('resize', fitFov);   // cắt xa = nơi sương đặc hẳn
   const h = makeHero(ctx.hue); h.body.visible = false; scene.add(h.root);   // khối tạm chỉ hiện nếu nạp nhân vật học sinh lỗi (không còn cảnh đổi nhân vật lúc vào game)
-  const pos = new THREE.Vector3(0, 0, 10); pos.y = terrain.heightAt(pos.x, pos.z);
+  const pos = new THREE.Vector3(0, 0, 10); pos.y = terrain.heightAt(pos.x, pos.z); const safe = pos.clone();   // safe: chỗ đứng vững trên đất liền gần nhất
   const vel = new THREE.Vector3(); let vy = 0, grounded = true, rot = Math.PI, phase = 0;
   const cam = { yaw: 0, pitch: CAM.pitch, dist: CAM.dist, drag: -9, yawV: 0, pitchV: 0 }; // yawV/pitchV: quán tính sau khi thả tay kéo
   const keys = new Set(), input = { x: 0, z: 0, run: false, jump: false };
@@ -50,8 +50,14 @@ export function createPlayer(ctx) {
   // ---- Joystick (nửa trái) + xoay camera (nửa phải / chuột) ----
   const el = renderer.domElement, joy = document.getElementById('joy'), knob = document.getElementById('knob');
   let jid = null, jx = 0, jy = 0; const drags = new Map();
+  // nhả joystick + xoay camera: gọi khi mất ngón tay (huỷ chạm, mất capture, đổi tab/app, không còn ngón nào trên màn hình)
+  const joyReset = () => { jid = null; input.x = input.z = 0; input.run = false; joy.style.opacity = 0; knob.style.transform = ''; };
+  const allUp = () => { joyReset(); drags.clear(); keys.clear(); };
   el.addEventListener('pointerdown', e => {
-    if (e.pointerType === 'touch' && e.clientX < innerWidth * 0.45 && jid === null) { jid = e.pointerId; jx = e.clientX; jy = e.clientY; joy.style.cssText = `left:${jx}px;top:${jy}px;opacity:1`; return; }
+    // ngón đầu tiên chạm (isPrimary = không còn ngón nào khác) mà joystick vẫn giữ id cũ → id cũ đã mất pointerup (iOS/thông báo hệ thống) → nhả
+    if (e.pointerType === 'touch' && e.isPrimary && jid !== null) { joyReset(); drags.clear(); }
+    if (e.pointerType === 'touch' && e.clientX < innerWidth * 0.45 && jid === null) { jid = e.pointerId; jx = e.clientX; jy = e.clientY; joy.style.cssText = `left:${jx}px;top:${jy}px;opacity:1`; try { el.setPointerCapture(e.pointerId); } catch (_) {} return; }
+    try { el.setPointerCapture(e.pointerId); } catch (_) {}
     drags.set(e.pointerId, { x: e.clientX, y: e.clientY, t: e.timeStamp }); cam.yawV = cam.pitchV = 0;
   });
   el.addEventListener('pointermove', e => {
@@ -66,7 +72,10 @@ export function createPlayer(ctx) {
     const d = drags.get(e.pointerId); if (d && e.timeStamp - d.t < 80) { cam.yawV = clamp(d.vy || 0, -6, 6); cam.pitchV = clamp(d.vp || 0, -3, 3); } // vuốt nhanh rồi thả → camera trôi tiếp
     drags.delete(e.pointerId);
   };
-  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);
+  // lưới an toàn: hết ngón trên màn hình / huỷ chạm / ẩn trang / mất focus → joystick về giữa, không bị "kẹt" đi mãi hoặc không nhận chạm
+  addEventListener('touchend', e => { if (!e.touches.length) allUp(); }, { passive: true }); addEventListener('touchcancel', e => { if (!e.touches.length) allUp(); }, { passive: true });
+  addEventListener('blur', allUp); addEventListener('pagehide', allUp); document.addEventListener('visibilitychange', () => { if (document.hidden) allUp(); });
   el.addEventListener('wheel', e => { cam.dist = clamp(cam.dist + e.deltaY * 0.01, CAM.min, CAM.max); }, { passive: true });
   const hold = (id, k) => { const b = document.getElementById(id); if (!b) return; b.addEventListener('pointerdown', e => { e.preventDefault(); input[k] = true; }); for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) b.addEventListener(ev, () => { if (k === 'run') input.run = false; }); };
   hold('bJump', 'jump'); hold('bRun', 'run');
@@ -86,6 +95,7 @@ export function createPlayer(ctx) {
   let hero = null; const animState = {};
   self.ready = loadHero(ctx.heroKind || 'student-male-a').then(r => { if (!r) { h.body.visible = true; self.heroFailed = true; return; } hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
   self.emote = name => { if (hero) emote(hero, animState, name); };
+  self.setHero = r => { if (!r || r === hero) return; if (hero) hero.model.removeFromParent(); hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); };   // đổi nhân vật (vrm/player-vrm.js)
   let stepT = 0, stepPh = 1, jumpBuf = 0, coyote = 0;
   // trạng thái chuyển động mượt (tạo 1 lần, không cấp phát mỗi khung hình)
   const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3(), pivot = new THREE.Vector3(), pivV = new THREE.Vector3(), ZERO = new THREE.Vector3();
@@ -171,6 +181,7 @@ export function createPlayer(ctx) {
       vy += (V.lift - vy) * Math.min(1, dt * 1.5); pos.y = Math.min(V.maxAlt, pos.y + vy * dt);
       const floor = Math.max(g, CFG.island.waterLevel + 0.6); if (pos.y <= floor) { pos.y = floor; vy = Math.max(0, vy); grounded = g >= floor - 0.01; } else grounded = false;
     } else if (D && D.step(dt, g)) { vy = 0; grounded = true; }   // đang bơi/lặn: dive.js lo độ cao
+    else if (self.hover != null) { pos.y = Math.max(g, self.hover); vy = 0; grounded = pos.y <= g + 0.01; }   // phép Nâng Bạn (spellbook.js): độ cao do phép điều khiển, không rơi
     else {
     vy -= P.gravity * dt; pos.y += vy * dt;
     if (pos.y <= g) {
@@ -180,6 +191,11 @@ export function createPlayer(ctx) {
     } else if (pos.y > g + (grounded && vy <= 0 ? 0.45 : 0.3)) grounded = false;
     else if (grounded && vy <= 0) { pos.y = g; vy = 0; } // xuống dốc/bậc: bám mặt đất, không "bay" lơ lửng
     }
+    // LƯỚI AN TOÀN vị trí: NaN/vô cực, ra ngoài thế giới (±3 km), lọt dưới mặt đất > 3 m (không phải đang lặn/đi xe)
+    // → đặt về điểm an toàn gần nhất trên đất liền (vị trí đứng vững gần nhất); không bao giờ ra biển
+    if (!Number.isFinite(pos.x + pos.y + pos.z) || Math.abs(pos.x) > 2900 || Math.abs(pos.z) > 2900 || pos.y < -50 || (!V && !(D && (D.swimming || D.diving)) && self.hover == null && pos.y < g - 3)) {
+      pos.copy(safe); pos.y = Math.max(safe.y, sup(safe.x, safe.z, safe.y + 1)); vel.set(0, 0, 0); vy = 0; grounded = true; slide.set(0, 0, 0); prevY = pos.y; snapCam = true; self.rescued = (self.rescued || 0) + 1;
+    } else if (grounded && !V && !self.frozen && !(D && D.swimming) && g > CFG.island.waterLevel + 0.3) safe.copy(pos);
     // trượt dốc: đứng trên địa hình dốc hơn SLOPE → trượt xuống theo hướng dốc (tốc độ tăng dần theo độ dốc, mượt)
     { let tx = 0, tz = 0;
       if (grounded && !fly && !(V && V.water) && !(D && D.swimming) && onTerrain(pos.x, pos.z, pos.y) && pos.y <= hT(pos.x, pos.z) + 0.05) {
@@ -270,6 +286,8 @@ export function createPlayer(ctx) {
   };
   // dịch chuyển gần (lên/xuống xe, thuyền, máy bay): nhân vật trượt mượt tới chỗ mới; dịch chuyển xa: camera đặt lại ngay
   self.teleport = (x, z, y) => {
+    if (!Number.isFinite(x) || !Number.isFinite(z)) { console.warn('[player] bỏ qua dịch chuyển lỗi', x, z, y); return; }   // toạ độ lỗi (dữ liệu chưa nạp): không dịch chuyển
+    if (y != null && !Number.isFinite(y)) y = undefined;
     const ny = y ?? terrain.heightAt(x, z); tmp2.set(x - pos.x, ny - pos.y, z - pos.z);
     if (tmp2.lengthSq() < 36) visOff.sub(tmp2); else { visOff.set(0, 0, 0); visV.set(0, 0, 0); snapCam = true; }
     pos.set(x, ny, z); vel.set(0, 0, 0); vy = 0; prevY = ny; prevDy = 0;

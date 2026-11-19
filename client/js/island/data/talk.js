@@ -3,7 +3,7 @@
 // Dùng bởi teacher-quiz.js (bong bóng thoại) và lessons.js (tiết học). Khoá theo id người của trường (state-agents 2D = data/people.js 3D).
 //
 // NGUỒN DỮ LIỆU NGƯỜI/BẢN ĐỒ: schoolSource(ctx) — ưu tiên lớp dữ liệu 3D riêng (ctx.schoolData.RS, nhánh claude/up-standalone:
-// client/js/island/data/index.js → createSchoolData), nếu chưa có thì đọc window.RS của iframe trường 2D (ctx.school.RS).
+// client/js/island/data/index.js → createSchoolData), nếu chưa có thì đọc ctx.school.RS (cũng là lớp dữ liệu 3D đó, do school-town.js giữ).
 // Hai nguồn cùng hình dạng (agents, npcs, R, regionAt, doors) → chuyển nguồn chỉ cần gán ctx.schoolData, không sửa module khác.
 export const schoolSource = ctx => (ctx.schoolData && ctx.schoolData.RS) || (ctx.school && ctx.school.RS) || null;
 

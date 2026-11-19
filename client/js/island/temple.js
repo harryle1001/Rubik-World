@@ -101,7 +101,7 @@ function buildUI() {
       const q = qs[i];
       el.innerHTML = `<div class="card"><p class="sub">${T.name} · ${q.icon} ${q.subject} · Câu ${i + 1}/${qs.length}</p><h3>${q.q}</h3><div class="ch">${q.choices.map((c, k) => `<button data-k="${k}">${c}</button>`).join('')}</div><p class="ex"></p></div>`;
       el.querySelectorAll('.ch button').forEach(b => b.onclick = () => {
-        const k = +b.dataset.k, ok = k === q.a; if (ok) right++;
+        const k = +b.dataset.k, ok = k === q.a; if (ok) right++; q.done && q.done(ok); dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject, ok } })); 
         el.querySelectorAll('.ch button').forEach((x, j) => { x.disabled = true; if (j === q.a) x.className = 'ok'; else if (j === k) x.className = 'bad'; });
         el.querySelector('.ex').innerHTML = `${ok ? '✅ Chính xác!' : '💡 Chưa đúng.'} ${q.explain}<br><button id="qNext">Tiếp</button>`;
         el.querySelector('#qNext').onclick = () => { i++; show(); };
