@@ -35,6 +35,7 @@ import { createPerf } from './island/perf.js';
 import { createAutoQ, SK } from './island/autoq.js';
 import { createMiniGameHost } from './island/mg/host.js';
 import { createAccountHud } from './island/account-hud.js';
+import { createPremium } from './island/premium.js';
 import { createSocial } from './island/social.js';
 import { createEvents } from './island/events.js';
 import { createLoader } from './island/loader.js';
@@ -116,6 +117,7 @@ const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông,
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
 const accountHud = createAccountHud(ctx);
 const social = ctx.social = createSocial(ctx);
+ctx.premium = createPremium(ctx); // Gói Phụ huynh: khoá nhẹ nhàng + cổng phụ huynh (premium.js; quyền do server/billing.js)
 const events = ctx.events = createEvents(ctx); if (/[?&]test\b/.test(location.search)) window.__ctx = ctx;   // kiểm thử tự động
  // 🧰 săn kho báu thứ Bảy, 🧹 giải bay chổi Chủ nhật (events.js, lịch do server)
 // ↑ social.js: 👥 bạn bè mã 6 ký tự, 😊 biểu cảm + câu mẫu (không chat tự do), nhóm, lời mời, chặn/báo cáo, sự kiện, lớp (social.js)

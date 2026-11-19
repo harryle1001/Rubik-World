@@ -118,6 +118,7 @@ export function createMounts(ctx) {
   function beast(v, key, id) {
     Object.assign(v, { key, id, emoji: EMOJI[key] || '🐾', tune: TUNES[key] || [0, 5, 9] });
     v.offer = () => {
+      if (key === 'phoenix' && ctx.premium && !ctx.premium.on()) return ctx.offer(`${v.emoji} ${v.name} 🔒`, () => ctx.premium.allow('dragon'), 3);   // thú bay huyền thoại: Gói Phụ huynh
       if (tamed.has(v.id)) return ctx.offer(`${v.emoji} Cưỡi ${v.name}`, () => { v.call = null; V.mount(v); }, 3);
       if (v.cool > clock) return ctx.offer(`⏳ ${v.name} đang làm quen với bạn…`, () => ctx.toast(`Đợi một chút rồi thử lại nhé, ${v.name} sẽ tin bạn thôi! 🙂`, 2000), 3);
       ctx.offer(`🤝 Thuần phục ${v.name}`, () => tame(v), 3);

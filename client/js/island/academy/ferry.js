@@ -72,6 +72,7 @@ export function createFerry(ctx, { pierA, dockB, pathAB, toAcademy, toMain }) {
 
   function start(dir) {
     if (ride || player.vehicle || (ctx.aircraft && ctx.aircraft.flying)) return;
+    if (dir > 0 && ctx.premium && !ctx.premium.allow('academy')) return;   // Gói Phụ huynh
     ride = { dir, t: 0, fact: 0 }; idle = null;
     player.vehicle = { speed: 0, turn: 0, accel: 4, fly: true, lift: 0, maxAlt: 999, anim: 'sit', seat: 0, seatZ: 0, camAdd: 0, ferry: true };
     camPos.copy(camera.position); camV.set(0, 0, 0); lookV.set(0, 0, 0); camLook.copy(g.position);

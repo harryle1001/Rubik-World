@@ -168,6 +168,7 @@ export function createMagic(ctx) {
   let cd = 0;
   function cast() {
     if (!st.wand || cd > 0 || player.vehicle) return; const s = cur(); if (!s) return;
+    if (ctx.premium && !ctx.premium.allow('magic')) return;
     if (st.mana < COST) { ctx.toast('🔋 Hết năng lượng phép! Bấm <b>📚 +34</b> và trả lời đúng 1 câu để nạp.', 3500); return; }
     cd = 0.6; player.emote && player.emote('interact');
     ctx.camera.getWorldDirection(fw); fw.y = 0; fw.normalize();   // ngắm theo hướng camera (điện thoại: xoay màn hình là ngắm)
