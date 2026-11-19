@@ -50,8 +50,14 @@ export function createPlayer(ctx) {
   // ---- Joystick (nửa trái) + xoay camera (nửa phải / chuột) ----
   const el = renderer.domElement, joy = document.getElementById('joy'), knob = document.getElementById('knob');
   let jid = null, jx = 0, jy = 0; const drags = new Map();
+  // nhả joystick + xoay camera: gọi khi mất ngón tay (huỷ chạm, mất capture, đổi tab/app, không còn ngón nào trên màn hình)
+  const joyReset = () => { jid = null; input.x = input.z = 0; input.run = false; joy.style.opacity = 0; knob.style.transform = ''; };
+  const allUp = () => { joyReset(); drags.clear(); keys.clear(); };
   el.addEventListener('pointerdown', e => {
-    if (e.pointerType === 'touch' && e.clientX < innerWidth * 0.45 && jid === null) { jid = e.pointerId; jx = e.clientX; jy = e.clientY; joy.style.cssText = `left:${jx}px;top:${jy}px;opacity:1`; return; }
+    // ngón đầu tiên chạm (isPrimary = không còn ngón nào khác) mà joystick vẫn giữ id cũ → id cũ đã mất pointerup (iOS/thông báo hệ thống) → nhả
+    if (e.pointerType === 'touch' && e.isPrimary && jid !== null) { joyReset(); drags.clear(); }
+    if (e.pointerType === 'touch' && e.clientX < innerWidth * 0.45 && jid === null) { jid = e.pointerId; jx = e.clientX; jy = e.clientY; joy.style.cssText = `left:${jx}px;top:${jy}px;opacity:1`; try { el.setPointerCapture(e.pointerId); } catch (_) {} return; }
+    try { el.setPointerCapture(e.pointerId); } catch (_) {}
     drags.set(e.pointerId, { x: e.clientX, y: e.clientY, t: e.timeStamp }); cam.yawV = cam.pitchV = 0;
   });
   el.addEventListener('pointermove', e => {
@@ -66,7 +72,10 @@ export function createPlayer(ctx) {
     const d = drags.get(e.pointerId); if (d && e.timeStamp - d.t < 80) { cam.yawV = clamp(d.vy || 0, -6, 6); cam.pitchV = clamp(d.vp || 0, -3, 3); } // vuốt nhanh rồi thả → camera trôi tiếp
     drags.delete(e.pointerId);
   };
-  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);
+  // lưới an toàn: hết ngón trên màn hình / huỷ chạm / ẩn trang / mất focus → joystick về giữa, không bị "kẹt" đi mãi hoặc không nhận chạm
+  addEventListener('touchend', e => { if (!e.touches.length) allUp(); }, { passive: true }); addEventListener('touchcancel', e => { if (!e.touches.length) allUp(); }, { passive: true });
+  addEventListener('blur', allUp); addEventListener('pagehide', allUp); document.addEventListener('visibilitychange', () => { if (document.hidden) allUp(); });
   el.addEventListener('wheel', e => { cam.dist = clamp(cam.dist + e.deltaY * 0.01, CAM.min, CAM.max); }, { passive: true });
   const hold = (id, k) => { const b = document.getElementById(id); if (!b) return; b.addEventListener('pointerdown', e => { e.preventDefault(); input[k] = true; }); for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) b.addEventListener(ev, () => { if (k === 'run') input.run = false; }); };
   hold('bJump', 'jump'); hold('bRun', 'run');
