@@ -20,6 +20,7 @@ import { createAircraft } from './island/aircraft.js';
 import { createParachute } from './island/parachute.js';
 import { createMounts } from './island/mounts.js';
 import { createBrooms } from './island/brooms.js';
+import { createSilverBoard } from './island/silver-board.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
@@ -56,6 +57,7 @@ import { createTrain } from './island/train/index.js';
 import { createRegions } from './island/regions/index.js';
 import { createDestiny } from './island/zone-destiny.js';
 import { createSea } from './island/sea/index.js';
+import { createLighthouse } from './island/lighthouse/index.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { createVrmNpc } from './island/vrm/vrm-npc.js';
 import { createPlayerVrm } from './island/vrm/player-vrm.js';
@@ -128,6 +130,7 @@ const spells = ctx.spells = createSpellbook(ctx, academy.magic); // đũa phép 
 const train = ctx.train = createTrain(ctx); // Tàu Pha Lê: tàu hơi nước từ ga bờ tây bắc qua đảo Đồi Thông, hầm, cầu cạn vòm đá tới cao nguyên Học viện
 const regions = ctx.regions = createRegions(ctx); // 4 vùng mới: Núi Tuyết (cầu), Làng Cổ (cầu), Quần đảo San Hô (thuyền), Thành phố Tương lai (thuyền + đường băng) — tải theo chunk
 const chute = ctx.chute = createParachute(ctx); // 🪂 thả dù từ máy bay, máy bay tự lái về đường băng, nhảy dù trúng đích ⭐
+const lighthouse = ctx.lighthouse = createLighthouse(ctx); // Hải đăng Mũi Sóng: đảo đá tây nam 233 m ngoài khơi, tháp 34 m đi vào được (144 bậc), chùm sáng quét đêm, ông Bảy gác đèn
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
@@ -166,6 +169,7 @@ const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp
 const photo = createPhoto(ctx); // 📷 chế độ chụp ảnh: dừng thời gian, camera tự do, bộ lọc, lưu ảnh có khung logo (photo.js)
 const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, xu bay vào HUD, màn chuyển, tên vùng điện ảnh (feel.js)
 const sea = ctx.sea = createSea(ctx); // thế giới đại dương: đội tàu thuyền theo tuyến, làng chài, ngư dân, lái thuyền buồm/ca nô, phà, cá heo/cá voi (sea/)
+const silverBoard = ctx.silverBoard = createSilverBoard(ctx); // 🏄 Ván bạc bay (phím U) + đua ván (mg/sport/board-race.js)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -223,10 +227,12 @@ renderer.setAnimationLoop(() => {
   mounts.update(dt);
   vrmNpc.update(dt);
   brooms.update(dt);
+  silverBoard.update(dt);
   academy.update(dt);
   spells.update(dt); // sau thị trấn/học viện: Bay Lên cộng độ cao lên người đã đặt vị trí
   train.update(dt);
   regions.update(dt);
+  lighthouse.update(dt);
   sky.update(dt, camera, player.pos);
   weather.update(dt, clock.elapsedTime);
   eggs.update(dt, clock.elapsedTime);

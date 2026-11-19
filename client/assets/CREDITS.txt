@@ -206,3 +206,8 @@ models/kit/boat_cargo.glb (tàu chở hàng container), models/kit/boat_ferry.gl
   Dùng lại model đã có: boat_liner, boat_sail_a/b, boat_speed_a/e, prop_buoy, prop_buoy_flag, dock_hut, prop_stall_red/green, barrel, barrels, fish (Kenney, CC0), rua.glb (tự tạo).
   Thuyền thúng, ghe đánh cá có mắt thuyền, cá heo, cá voi, hải âu, cầu tàu, nhà sàn, lưới, giàn phơi, lồng bè: dựng khối trong code (không có model CC0 phù hợp);
   còi tàu tổng hợp bằng Web Audio; ngư dân dùng bộ người có sẵn (characters.js).
+Hải đăng Mũi Sóng (client/js/island/lighthouse/): chỉ dùng lại model CC0 đã có — kit/rock_shore_a·b·c, rock_wide, house_suburb_a_warm,
+  boat_row, boat_row_small, boat_fishing, barrels, crate, chest, prop_buoy, prop_lantern, prop_lantern_hanging, prop_crate_carrots,
+  prop_crate_tomatoes, plant_bush_small, plant_beach_grass, furn_table_small, furn_chair_wood, furn_cabinet, furn_table_round,
+  furn_bookshelf_full (Kenney / KayKit / Quaternius, CC0 — xem trên) và models/rua.glb (rùa biển). Tháp, cầu thang, thấu kính, bọt sóng,
+  hải âu, chùm sáng dựng bằng code (không có model CC0 đi vào được); còi sương mù tổng hợp bằng WebAudio. Không tải thêm tài nguyên mới.

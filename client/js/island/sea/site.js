@@ -49,8 +49,8 @@ const iB1 = 7, iC = 18, iB2 = iC + 14;
 export const FERRY_STOPS = [{ i: 0, stop: 0 }, { i: iB1, stop: 1 }, { i: iC, stop: 2 }, { i: iB2, stop: 1 }];   // thứ tự ghé bến trên vòng
 
 // ----- Luồng tàu lớn: đường hở từ khơi đông bắc (giữa Núi Tuyết và Thành phố Tương lai) → đông → nam → khơi tây nam
-//       (giữa Quần đảo San Hô và Làng Cổ); đi 2 chiều, lệch bán kính 34 m. Không cắt cầu, không vào 4 vùng ngoài khơi. -----
-const LANE = [[790, 316], [600, 318], [470, 322], [432, 334], [426, 348], [430, 4], [462, 22], [530, 37], [538, 52], [470, 68], [432, 86], [424, 106], [440, 122], [520, 131], [640, 135], [790, 137]];
+//       (giữa Quần đảo San Hô và Hải đăng Mũi Sóng); đi 2 chiều, lệch bán kính 34 m. Không cắt cầu, không vào 4 vùng ngoài khơi. -----
+const LANE = [[790, 316], [600, 318], [470, 322], [432, 334], [426, 348], [430, 4], [462, 22], [530, 37], [538, 52], [470, 68], [432, 86], [424, 104], [452, 113], [560, 116], [790, 117]];   // ra khơi giữa Quần đảo San Hô (nam) và Hải đăng Mũi Sóng (tây nam, tia 132,5°)
 export const lane = (dr = 0) => LANE.map(([r, a]) => polar(r + dr, a));
 
 // ----- Ngư trường của ghe (ngoài khơi phía đông, bắc tuyến phà) & vòng lượn của thuyền buồm, ca nô -----
