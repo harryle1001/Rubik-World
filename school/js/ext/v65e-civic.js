@@ -185,9 +185,7 @@ function v65eCivicInit(){
   if(typeof v53cFireSpr === 'function'){
     const f0 = v53cFireSpr; v53cFireSpr = function(se){ return V65E.ok ? v65eFireSpr(se) : f0(se); };
     const p0 = v53cPoliceSpr; v53cPoliceSpr = function(se){ return V65E.ok ? v65ePoliceSpr(se) : p0(se); };
-    const t0 = v53cTowerSpr; v53cTowerSpr = function(se){ return V65E.ok ? v65eTowerSpr(se) : t0(se); };
-    const tg0 = v53cTowerGlow; v53cTowerGlow = function(){ return V65E.ok ? v65eTowerGlow() : tg0(); };
-    const tc0 = v53cTowerCols; v53cTowerCols = function(){ return V65E.ok ? [] : tc0(); };   // dải LED dọc cột không còn (tháp mới không có cột)
-    const g0 = v53cGround; v53cGround = function(g, id, thumb){ if(!V65E.ok) return g0(g, id, thumb); try { v65eCivicGround(g, id, thumb); } catch(e){ console.warn('v65e civic ground', e); g0(g, id, thumb); } };
+    // Tháp Rubik 81: chủ game muốn giữ thiết kế cũ (đèn sáng như cũ) → không bọc sprite/đèn/nền của tháp
+    const g0 = v53cGround; v53cGround = function(g, id, thumb){ if(!V65E.ok || id === 'tower81') return g0(g, id, thumb); try { v65eCivicGround(g, id, thumb); } catch(e){ console.warn('v65e civic ground', e); g0(g, id, thumb); } };
   }
 }
