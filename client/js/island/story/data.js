@@ -87,6 +87,17 @@ export const CHAPTERS = [
       { type: 'cond', at: [-150, -150], r: 0, text: 'Tìm thêm 1 bí mật trên đảo (📖 Sổ bí mật có gợi ý)', test: (c, S) => eggCount() > (S.eggs0 ?? 99) || eggCount() >= 21, hint: 'Mở 📖 Bí mật xem gợi ý: gõ số π, tìm khối Rubik vàng…' },
     ],
     shard: [-150, -150], shardOff: [6, 6], outro: [['su', 'Mảnh Cam — màu hoàng hôn trên đền.'], ['mu', 'Thôi được rồi! Mảnh cuối ở chỗ bà. Lên Tháp Thiên Văn ở Học viện mà lấy!'], ['cu', 'Trận cuối: không phải đánh nhau, mà là… thi kiến thức! Hoo-hoo!']] },
+
+  { id: 8, name: 'Mảnh Cầu Vồng', region: 'Tháp Thiên Văn', icon: '🔭', col: '#ff6fae', subj: 'Tổng hợp', xp: 610, sao: 55, title: 'Người Giữ Màu',
+    intro: [['cu', 'Bà Mù Màu đang chờ ở sân lâu đài Học viện.'], ['cu', 'Nhớ lại những câu em từng sai — ôn kỹ là thắng!']],
+    tasks: [
+      { type: 'goto', at: QUAYP, r: 21, text: 'Trở lại Học viện Pha Lê (thuyền hoặc máy bay)' },
+      { type: 'talk', who: 'mu', at: YARD, r: 8, text: 'Gặp Bà Mù Màu ở sân lâu đài', boss: true, lines: [['mu', 'Bà nói thật nhé… mắt bà nhìn mọi thứ chỉ thấy xám thôi.'], ['mu', 'Thấy thế giới nhiều màu, bà ghen tị, nên mới mượn khối Rubik…'], ['me', 'Bà ơi, cháu sẽ cho bà thấy màu sắc!']] },
+      { type: 'quiz', who: 'mu', at: YARD, s: ['toan', 'tv', 'kh', 'lsdl', 'ta'], n: 8, need: 5, text: 'Thử thách cuối: 8 câu ôn tập (cần 5)' },
+      { type: 'cast', at: YARD, n: 1, spread: 0, spell: 'rainbow', boss: true, text: 'Niệm 🌈 Cầu Vồng tặng Bà Mù Màu' },
+      { type: 'talk', who: 'mu', at: YARD, r: 8, text: 'Nghe Bà Mù Màu nói', lines: [['mu', 'Ôi… đỏ, cam, vàng, lục, lam, chàm, tím! Đẹp quá!'], ['mu', 'Bà xin lỗi. Mảnh cuối đây — cháu ghép lại khối Rubik đi!']] },
+    ],
+    shard: YARD, shardOff: [0, 5], outro: [['cu', 'Khối Rubik Pha Lê đã liền lại! Thế giới rực rỡ trở lại rồi!'], ['mu', 'Từ nay bà làm… hướng dẫn viên ngắm cầu vồng!'], ['ru', 'Em là Người Giữ Màu của đảo Rubik. Học tiếp, chơi tiếp nhé — còn nhiều bí mật lắm!']] },
 ];
 
 let EGG = () => 0;
