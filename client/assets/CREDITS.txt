@@ -184,3 +184,7 @@ models/kit/qn_dragon.glb  Quaternius – LowPoly Animated Monsters (Dragon), CC0
 models/kit/qn_eagle.glb   Quaternius – Animal Pack Vol.2 (Eagle), CC0 — https://opengameart.org/content/animated-animales-low-poly — linh vật Nhà Phụng (tô màu nhà)
 models/kit/qn_stag_statue.glb  bản tĩnh (bỏ xương/animation) của kit/stag.glb (Quaternius, CC0 — xem trên) — linh vật Nhà Lân (kỳ lân Việt có gạc)
 Còn lại dựng khối trong code: cầu kéo, xích, khung cổng sắt, bậc tường thành, đồng hồ mặt trời, sân bay chổi, vòng bay, cột cờ, đèn ông sao, đèn lồng.
+Vùng mới ngoài khơi (client/js/island/regions/, 2026-11): dùng lại model CC0 đã có trong models/kit/ (qn_pine_a, tree_pine_tall, rock_large,
+tree_fat, farm_hay_round, plant_lily, qn_tree_c, fence_wood, plant_palm_tall/bend, prop_beach_umbrella, fish, plant_tree_town,
+prop_streetlight, sedan, prop_bench_park, boat_sail_a, boat_speed_a) + models/san-ho.glb, rua.glb. Công trình (đình, giếng, đài khí tượng,
+hải đăng, tuabin gió…) và dù lượn: khối greybox dựng bằng code (CC0 của dự án).
