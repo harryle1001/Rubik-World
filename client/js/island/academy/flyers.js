@@ -3,6 +3,7 @@
 // Làm quen: 🙇 cúi chào → thú chào lại → 🍎 chọn đúng thức ăn (kiến thức động vật thật) → thành bạn (lưu máy).
 // Cưỡi: điều khiển như phượng hoàng/chổi (vehicles.js mode.fly): Space/⬆ lên · C/⬇ xuống · Shift lao nhanh; tay cầm cương,
 // cánh vỗ nhanh khi lên/tăng tốc, xoè lượn khi hạ; bay vòng quanh lâu đài → "wow" + thưởng.
+// Gọi: huýt sáo H (mounts.js — thú bay tự bay tới), nút 🪽 trong cột phương tiện, phép "Gọi Bạn Bay!" (nếu có ctx.spells).
 // Hiệu năng: ẩn khi cách người chơi > 377 m (trừ khi đang được gọi/cưỡi); hoạt ảnh đứng yên 1/3 khung khi > 89 m.
 import * as THREE from 'three';
 import { Batch } from './geo.js';
@@ -55,7 +56,7 @@ export function createFlyers(ctx, magic) {
   const { player: pl, terrain } = ctx, V = ctx.vehicles, sup = V.sup;
   let st; try { st = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { st = {}; } st.bond = st.bond || []; st.wow = st.wow || 0;
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
-  const castle = toWorld(PLAT.u, 0); let clock = 0;
+  const castle = toWorld(PLAT.u, 0); let clock = 0, linked = false;
   const list = Object.entries(DEF).map(([key, D], i) => {
     const m = D.make(), th = VALLEY_GATE + (i - 1.5) * 0.3, [x, z] = toWorld(VALLEY.u + Math.cos(th) * 42, VALLEY.v + Math.sin(th) * 42);
     m.group.position.set(x, terrain.heightAt(x, z), z); m.group.rotation.y = VALLEY_GATE + PI;
@@ -129,17 +130,37 @@ export function createFlyers(ctx, magic) {
       card.insertAdjacentHTML('beforeend', `<div style="margin-top:6px">${c.ok ? '✅ Ngon quá! ' : '💡 '}${F.D.why}</div>`); ctx.sfx && ctx.sfx(c.ok ? 'coin' : 'no');
       setTimeout(() => {
         card.remove();
-        if (c.ok) { st.bond.push(F.key); save(); ctx.whistle && ctx.whistle(F.tune); ctx.sfx && ctx.sfx('win'); pl.emote && pl.emote('cheer'); ctx.toast(`🎉 <b>${F.name}</b> đã là bạn bay của em! Bấm <b>E</b> để cưỡi.`, 6500); }
+        if (c.ok) { st.bond.push(F.key); save(); link(); ctx.whistle && ctx.whistle(F.tune); ctx.sfx && ctx.sfx('win'); pl.emote && pl.emote('cheer'); ctx.toast(`🎉 <b>${F.name}</b> đã là bạn bay của em! Bấm <b>E</b> để cưỡi.<br>Ở xa thì <b>huýt sáo (H)</b> hoặc bấm nút <b>🪽</b> để gọi — đây là giai điệu riêng của bạn ấy.`, 6500); }
         else { F.cool = clock + 8; }
       }, c.ok ? 1500 : 3200);
     };
   }
 
+  // ---------- gọi: nối vào huýt sáo của mounts.js + nút 🪽 + phép ----------
+  function link() {
+    const Mo = ctx.mounts; if (!Mo) return; linked = true;
+    for (const F of list) { if (!Mo.beasts.includes(F)) Mo.beasts.push(F); if (bonded(F)) Mo.tamed.add(F.id); }
+  }
+  function callMenu() {
+    const mine = list.filter(bonded), el = document.getElementById('whistle');
+    if (!mine.length) return ctx.toast('🪽 Em chưa có bạn bay nào. Tới <b>Bãi Thú Bay</b> ở cửa <b>Thung Lũng Rồng</b> (cạnh Rừng Phép Thuật, đảo Học viện) để làm quen nhé!', 5000);
+    if (!ctx.mounts) return;
+    if (mine.length === 1) return ctx.mounts.call(mine[0]);
+    el.innerHTML = '<div>🪽 Gọi bạn bay…</div>' + mine.map((F, i) => `<button data-i="${i}"><span>${F.emoji}</span>${F.name}</button>`).join('');
+    el.querySelectorAll('button').forEach(b => b.onclick = e => { e.stopPropagation(); ctx.mounts.call(mine[+b.dataset.i]); });
+    el.hidden = false;
+  }
+  { const bar = document.querySelector('.vbtns'), w = document.getElementById('bWhistle');
+    if (bar) { const b = document.createElement('button'); b.id = 'bFlyer'; b.title = 'Gọi bạn bay (thú bay đã làm quen)'; b.textContent = '🪽'; b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); callMenu(); }); bar.insertBefore(b, w ? w.nextSibling : null); } }
+  const spell = { id: 'goi-ban-bay', name: 'Gọi Bạn Bay!', icon: '🪽', desc: 'Gọi thú bay đã làm quen bay tới', cast: callMenu };
+  let spelled = false;
 
   // ---------- mỗi khung ----------
   let skip = 0;
   function update(dt) {
     clock += dt;
+    if (!linked && ctx.mounts) link();
+    if (!spelled && ctx.spells) { const r = ctx.spells.register || ctx.spells.add; if (typeof r === 'function') { spelled = true; try { r.call(ctx.spells, spell); } catch (e) {} } }   // nhánh spells-core: phép "Gọi Bạn Bay!"
     const cur = V.current, far = (skip = (skip + 1) % 3) !== 0;
     for (const F of list) {
       if (F === cur) continue;
@@ -151,5 +172,5 @@ export function createFlyers(ctx, magic) {
       g.position.y = sup(g.position.x, g.position.z);
     }
   }
-  return { update, list, state: st };
+  return { update, list, callMenu, spell, state: st };
 }

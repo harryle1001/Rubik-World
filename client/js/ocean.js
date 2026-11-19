@@ -129,7 +129,7 @@ const schoolYard = createSchoolYard(ctx); // sân trường: vườn rau học s
 const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + tiết học ngay trong lớp + chip giờ học góc HUD (lessons.js)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
-const mounts = createMounts(ctx);
+const mounts = ctx.mounts = createMounts(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
