@@ -35,6 +35,10 @@ input,select,textarea{width:100%;padding:8px 13px;border-radius:13px;border:2px 
   <div class="card"><h2>🗓️ Gán vị trí & lịch chạy</h2>
     <div class="row"><div><label>Vị trí</label><select id="bSlot"></select></div><div><label>Nhà tài trợ</label><select id="bSp"></select></div><div style="flex:0 1 160px"><label>Từ ngày</label><input type="date" id="bFrom"></div><div style="flex:0 1 160px"><label>Đến ngày</label><input type="date" id="bTo"></div><div style="flex:0 0 auto"><button class="b" id="bBook">Gán</button></div></div><div class="msg" id="bMsg"></div>
     <div class="tw"><table id="tBook"></table></div><p class="mute">Chỉ nhà tài trợ <b>đã duyệt</b> mới hiện trên đảo; mỗi vị trí 1 nhà tài trợ trong cùng thời gian. Đảo đọc lại cấu hình mỗi lần mở game.</p></div>
+  <div class="card"><h2>📊 Báo cáo cho nhà tài trợ</h2>
+    <div class="row"><div><label>Nhà tài trợ</label><select id="rSp"></select></div><div style="flex:0 1 160px"><label>Từ ngày</label><input type="date" id="rFrom"></div><div style="flex:0 1 160px"><label>Đến ngày</label><input type="date" id="rTo"></div><div style="flex:0 0 auto"><button class="b" id="bRep">Xem</button></div><div style="flex:0 0 auto"><button class="b sec" id="bCsv">⬇ CSV</button></div><div style="flex:0 0 auto"><button class="b sec" id="bPdf">🖨 PDF</button></div></div>
+    <div class="kpi" id="rKpi" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(144px,1fr));gap:13px;margin-top:13px"></div><div class="tw"><table id="rTab"></table></div>
+    <p class="mute">Số đếm <b>gộp, ẩn danh</b>: không có tên, tài khoản, IP hay mã thiết bị của học sinh. <b>Hiển thị</b> = biển nằm trong khung nhìn ≥ 1 giây (mỗi vị trí tối đa 1 lần/phút/người chơi); <b>ghé</b> = lại gần ≤ 8 m (1 lần/5 phút); nhiệm vụ = bắt đầu / hoàn thành lần đầu.</p></div>
 </section></main>
 <script>
 const $ = s => document.querySelector(s), esc = s => String(s ?? '').replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';'), money = n => (n || 0).toLocaleString('vi-VN') + ' đ';
@@ -55,6 +59,7 @@ function render(r) {
     <div class="row" style="margin-top:8px;gap:5px"><button class="b sm sec" data-ed="${sp.id}">Sửa</button>${sp.status !== 'approved' ? `<button class="b sm" data-st="approved" data-id="${sp.id}">Duyệt</button>` : `<button class="b sm sec" data-st="paused" data-id="${sp.id}">Tạm dừng</button>`}${sp.status === 'pending' ? `<button class="b sm sec" data-st="rejected" data-id="${sp.id}">Từ chối</button>` : ''}<button class="b sm bad" data-del="${sp.id}">Xoá</button></div></div>`).join('') || '<p class="mute">Chưa có nhà tài trợ nào.</p>';
   $('#bSlot').innerHTML = S.slots.map(s => `<option value="${s.id}">${esc(s.name)} — ${money(s.price)}</option>`).join('');
   $('#bSp').innerHTML = S.sponsors.map(sp => `<option value="${sp.id}">${esc(sp.name)} (${ST[sp.status]})</option>`).join('');
+  if ($('#rSp').options.length !== S.sponsors.length + 1) $('#rSp').innerHTML = '<option value="">— Tất cả —</option>' + S.sponsors.map(sp => `<option value="${sp.id}">${esc(sp.name)}</option>`).join('');
   const t = S.today; $('#tBook').innerHTML = '<tr><th>Vị trí</th><th>Nhà tài trợ</th><th>Từ</th><th>Đến</th><th>Giá</th><th>Trạng thái</th><th></th></tr>' + S.book.map(b => { const sp = spOf(b.sp), s = S.slots.find(x => x.id === b.slot); const k = b.to < t ? 'Hết hạn' : b.from > t ? 'Sắp tới' : sp && sp.status === 'approved' ? '▶ Đang chạy' : 'Chờ duyệt nội dung'; return `<tr><td>${esc(s ? s.name : b.slot)}</td><td>${esc(sp ? sp.name : '?')}</td><td>${b.from}</td><td>${b.to}</td><td>${money(b.price)}</td><td>${k}</td><td><button class="b sm bad" data-unbook="${b.id}">Xoá</button></td></tr>`; }).join('');
 }
 function quests(q = []) { $('#fQuest').innerHTML = [0, 1, 2].map(i => { const x = q[i] || { q: '', a: ['', '', '', ''], c: 0, s: '', explain: '' }; return `<div class="q"><label>Câu ${i + 1}</label><input data-q="${i}" value="${esc(x.q)}" maxlength="144" placeholder="Câu hỏi kiến thức, phù hợp lứa tuổi tiểu học"><div class="row">${[0, 1, 2, 3].map(k => `<div><label><input type="radio" name="c${i}" value="${k}" ${x.c === k ? 'checked' : ''} style="width:auto"> Đáp án ${'ABCD'[k]}${k === 0 ? ' (chọn ô tròn = đúng)' : ''}</label><input data-a="${i}-${k}" value="${esc(x.a[k] || '')}" maxlength="55"></div>`).join('')}</div><div class="row"><div style="flex:0 1 160px"><label>Môn</label><input data-s="${i}" value="${esc(x.s || '')}" placeholder="Khoa học"></div><div><label>Giải thích khi sai</label><input data-x="${i}" value="${esc(x.explain || '')}" maxlength="144"></div></div></div>`; }).join(''); }
@@ -76,7 +81,28 @@ document.addEventListener('click', async e => {
   else if (b.dataset.unbook) render(await call('/book/' + b.dataset.unbook, null, 'DELETE'));
 });
 $('#bBook').onclick = async () => { const r = await call('/book', { slot: $('#bSlot').value, sp: $('#bSp').value, from: $('#bFrom').value, to: $('#bTo').value }); if (r.error) return say($('#bMsg'), r.error); render(r); say($('#bMsg'), '✅ Đã gán.', true); };
-{ const d = new Date(Date.now() + 7 * 3600e3); $('#bFrom').value = d.toISOString().slice(0, 10); $('#bTo').value = new Date(d.getTime() + 29 * 864e5).toISOString().slice(0, 10); }
+{ const d = new Date(Date.now() + 7 * 3600e3); $('#rTo').value = d.toISOString().slice(0, 10); $('#rFrom').value = new Date(d.getTime() - 29 * 864e5).toISOString().slice(0, 10); $('#bFrom').value = d.toISOString().slice(0, 10); $('#bTo').value = new Date(d.getTime() + 29 * 864e5).toISOString().slice(0, 10); }
+// ---------- báo cáo ----------
+const COLS = [['i', 'Hiển thị'], ['v', 'Ghé'], ['o', 'Mở thẻ'], ['qs', 'Bắt đầu NV'], ['qd', 'Xong NV']];
+const rq = () => `?sp=${encodeURIComponent($('#rSp').value)}&from=${$('#rFrom').value}&to=${$('#rTo').value}`;
+let R = null;
+async function rep() {
+  R = await call('/report' + rq()); if (R.error) return;
+  $('#rKpi').innerHTML = COLS.map(([k, n]) => `<div style="background:#faf5ea;border-radius:13px;padding:13px;font:700 13px system-ui;color:var(--mute)">${n}<b style="display:block;font-size:21px;color:var(--ink)">${(R.tot[k] || 0).toLocaleString('vi-VN')}</b></div>`).join('');
+  $('#rTab').innerHTML = '<tr><th>Vị trí</th>' + COLS.map(c => `<th>${c[1]}</th>`).join('') + '</tr>' + Object.entries(R.bySlot).map(([id, v]) => `<tr><td>${esc(R.slotNames[id] || id)}</td>${COLS.map(([k]) => `<td>${v[k]}</td>`).join('')}</tr>`).join('') || '<tr><td class="mute">Chưa có số liệu trong khoảng này.</td></tr>';
+}
+$('#bRep').onclick = rep;
+$('#bCsv').onclick = async () => { const r = await fetch('/api/sp/admin/report' + rq() + '&fmt=csv', { headers: { 'x-admin-key': key } }); const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(await r.blob()), download: (r.headers.get('Content-Disposition') || '').split('filename="')[1]?.replace('"', '') || 'bao-cao.csv' }); a.click(); };
+$('#bPdf').onclick = async () => {   // trang in gọn → "Lưu thành PDF" của trình duyệt (không cần thư viện)
+  await rep(); const w = open('', '_blank'); if (!w) return alert('Trình duyệt chặn cửa sổ mới.'); const days = Object.entries(R.byDay);
+  w.document.write(`<!doctype html><meta charset="utf-8"><title>Báo cáo tài trợ ${esc(R.sp ? R.sp.name : '')}</title><style>body{font:14px/1.618 system-ui;color:#2e2418;margin:34px}h1{font-size:26px;margin:0}table{border-collapse:collapse;width:100%;margin:13px 0}th,td{border-bottom:1px solid #ddd;padding:5px 8px;text-align:left}th{color:#7a6a58}.k{display:flex;gap:13px}.k div{flex:1;background:#faf5ea;border-radius:13px;padding:8px 13px}.k b{display:block;font-size:21px}small{color:#7a6a58}</style>
+    <h1>🏝️ Đảo Rubik — Báo cáo nhà tài trợ</h1><p><b>${esc(R.sp ? R.sp.name : 'Tất cả nhà tài trợ')}</b> · ${R.from} → ${R.to}</p>
+    <div class="k">${COLS.map(([k, n]) => `<div>${n}<b>${(R.tot[k] || 0).toLocaleString('vi-VN')}</b></div>`).join('')}</div>
+    <h3>Theo vị trí</h3><table><tr><th>Vị trí</th>${COLS.map(c => `<th>${c[1]}</th>`).join('')}</tr>${Object.entries(R.bySlot).map(([id, v]) => `<tr><td>${esc(R.slotNames[id] || id)}</td>${COLS.map(([k]) => `<td>${v[k]}</td>`).join('')}</tr>`).join('')}</table>
+    <h3>Theo ngày</h3><table><tr><th>Ngày</th>${COLS.map(c => `<th>${c[1]}</th>`).join('')}</tr>${days.map(([d, v]) => `<tr><td>${d}</td>${COLS.map(([k]) => `<td>${v[k]}</td>`).join('')}</tr>`).join('')}</table>
+    <p><small>Số đếm gộp, ẩn danh — Đảo Rubik không thu thập hay chia sẻ dữ liệu cá nhân của trẻ em (Luật Trẻ em 2016, Nghị định 13/2023). Hiển thị = biển trong khung nhìn ≥ 1 giây.</small></p>`);
+  w.document.close(); setTimeout(() => w.print(), 300);
+};
 $('#bKey').onclick = () => { key = $('#key').value.trim(); load(); }; $('#key').onkeydown = e => { if (e.key === 'Enter') $('#bKey').click(); };
 $('#bOut').onclick = () => { sessionStorage.removeItem('rubik.adminKey'); location.reload(); };
 form(); if (key) load();

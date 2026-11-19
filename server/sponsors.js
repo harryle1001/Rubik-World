@@ -51,6 +51,26 @@ module.exports = function sponsors(app, { db, express, rateLimit, ADMIN_KEY, ROO
     res.set('Cache-Control', 'public, max-age=604800, immutable'); res.set('X-Content-Type-Options', 'nosniff'); res.type(L.type).send(Buffer.from(L.b64, 'base64'));
   });
 
+  // ---------- đếm gộp ẩn danh từ đảo: chỉ số theo ngày × nhà tài trợ × vị trí (không IP, không id người chơi) ----------
+  const K = { i: 21, v: 8, o: 8, qs: 5, qd: 3 };   // trần mỗi lô / vị trí (chống thổi phồng)
+  app.post('/api/sp/hit', rateLimit({ windowMs: 60e3, limit: 13, standardHeaders: 'draft-7', legacyHeaders: false }), express.json({ limit: '4kb' }), (req, res) => {
+    const b = req.body && typeof req.body.b === 'object' ? req.body.b : null; if (!b) return res.status(400).end();
+    const day = vnDay(), L = new Map(live(day).list.map(x => [x.slot, x.sp]));
+    for (const [slot, c] of Object.entries(b).slice(0, 16)) {
+      const sp = L.get(slot); if (!sp || !c || typeof c !== 'object') continue;
+      const id = `${day}|${sp}|${slot}`, row = db.get('sp_stats', id) || { day, sp, slot, i: 0, v: 0, o: 0, qs: 0, qd: 0 };
+      let any = false; for (const k in K) { const n = Math.min(K[k], Math.max(0, c[k] | 0)); if (n) { row[k] += n; any = true; } }
+      if (any) db.put('sp_stats', id, row);
+    }
+    res.status(204).end();
+  });
+  function report(sp, from, to) {
+    const rows = db.all('sp_stats').filter(r => (!sp || r.sp === sp) && r.day >= from && r.day <= to).sort((a, b) => a.day.localeCompare(b.day) || a.slot.localeCompare(b.slot));
+    const tot = { i: 0, v: 0, o: 0, qs: 0, qd: 0 }, bySlot = {}, byDay = {};
+    for (const r of rows) for (const k in tot) { tot[k] += r[k]; (bySlot[r.slot] = bySlot[r.slot] || { i: 0, v: 0, o: 0, qs: 0, qd: 0 })[k] += r[k]; (byDay[r.day] = byDay[r.day] || { i: 0, v: 0, o: 0, qs: 0, qd: 0 })[k] += r[k]; }
+    return { rows, tot, bySlot, byDay };
+  }
+
   // ---------- quản trị (x-admin-key) ----------
   const adm = express.Router();
   adm.use(express.json({ limit: '400kb' }), rateLimit({ windowMs: 15 * 60e3, limit: 377, standardHeaders: 'draft-7', legacyHeaders: false }));
@@ -90,7 +110,17 @@ module.exports = function sponsors(app, { db, express, rateLimit, ADMIN_KEY, ROO
     db.put('sp_book', id, { id, slot: slot.id, sp: sp.id, from, to, price: Math.round(slot.price * days / 30 / 1000) * 1000, at: Date.now() }); res.json({ ok: true, ...state() });
   });
   adm.delete('/book/:id', (req, res) => { db.del('sp_book', String(req.params.id)); res.json({ ok: true, ...state() }); });
+  adm.get('/report', (req, res) => {
+    const d = s => /^\d{4}-\d{2}-\d{2}$/.test(s || '') ? s : null, to = d(req.query.to) || vnDay(), from = d(req.query.from) || vnDay(Date.parse(to) - 29 * DAY), spId = clean(req.query.sp, 21);
+    const sp = spId && db.get('sp_sponsors', spId), R = report(spId, from, to), name = id => (slotOf(id) || {}).name || id;
+    if (req.query.fmt !== 'csv') return res.json({ from, to, sp: sp ? { id: sp.id, name: sp.name } : null, ...R, slotNames: Object.fromEntries(SLOTS.map(s => [s.id, s.name])) });
+    const q = v => `"${String(v).replace(/"/g, '""')}"`, spName = id => (db.get('sp_sponsors', id) || {}).name || id;
+    const lines = [['Ngày', 'Nhà tài trợ', 'Vị trí', 'Lượt hiển thị (≥1 s)', 'Lượt ghé (≤8 m)', 'Mở thẻ thông tin', 'Bắt đầu nhiệm vụ', 'Hoàn thành nhiệm vụ'].map(q).join(',')];
+    for (const r of R.rows) lines.push([r.day, spName(r.sp), name(r.slot), r.i, r.v, r.o, r.qs, r.qd].map(q).join(','));
+    lines.push(['Tổng', sp ? sp.name : 'Tất cả', '', R.tot.i, R.tot.v, R.tot.o, R.tot.qs, R.tot.qd].map(q).join(','));
+    res.set('Content-Disposition', `attachment; filename="bao-cao-tai-tro-${spId || 'tat-ca'}-${from}-${to}.csv"`); res.type('text/csv; charset=utf-8').send('\ufeff' + lines.join('\r\n'));
+  });
   app.use('/api/sp/admin', adm);
   app.get('/admin/sponsors', (req, res) => res.sendFile(path.join(ROOT, 'client', 'admin-sponsors.html')));
-  return { live, SLOTS, CATS, adm, state };
+  return { live, SLOTS, CATS, adm, state, report };
 };

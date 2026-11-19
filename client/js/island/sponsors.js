@@ -44,7 +44,7 @@ export function createSponsors(ctx) {
   const { scene } = ctx, H = (x, z) => Math.max(ctx.terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, 999) : -99);
   const st = { cfg: null, slots: [], night: false, open: null };
   const cvs = document.createElement('canvas'); cvs.width = CW * COLS; cvs.height = CH * 4; const g = cvs.getContext('2d');
-  const tex = new THREE.CanvasTexture(cvs); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  st.atlas = cvs; const tex = new THREE.CanvasTexture(cvs); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
   const pMat = new THREE.MeshLambertMaterial({ map: tex, emissiveMap: tex, emissive: '#ffffff', emissiveIntensity: 0, side: THREE.DoubleSide });
   const logos = new Map();   // url → Image (đã tải)
   const loadImg = url => url ? logos.get(url) || (logos.set(url, new Promise(r => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => r(im); im.onerror = () => r(null); im.src = url; })), logos.get(url)) : Promise.resolve(null);
@@ -59,13 +59,15 @@ export function createSponsors(ctx) {
     const ink = night ? '#fff3dc' : '#3a2a1a', pad = 21, top = slot.kind === 'quest' || slot.kind === 'plate' ? 55 : sp ? 34 : 21;
     if (sp) { g.font = '700 16px system-ui'; const t = 'Nhà tài trợ', tw = g.measureText(t).width + 21; g.fillStyle = night ? '#d4a24a' : '#3a2a1a'; g.beginPath(); g.roundRect(lw - tw - 16, 16, tw, 24, 12); g.fill(); g.fillStyle = night ? '#2a1d12' : '#fff'; g.textBaseline = 'middle'; g.fillText(t, lw - tw - 5.5, 28.5); }
     if (slot.kind === 'quest' || slot.kind === 'plate') { g.fillStyle = ink; g.font = '800 26px system-ui'; g.textBaseline = 'top'; g.fillText(slot.kind === 'quest' ? '❓ Nhiệm vụ tài trợ' : 'Thư viện Tri Thức', pad, 21); }
-    const box = Math.min(lh - top - pad, lw * 0.3), tx = im ? pad + box + 21 : pad, avail = lw - tx - pad - 5;
-    if (im) { const k = Math.min(box / im.width, box / im.height); g.drawImage(im, pad + (box - im.width * k) / 2, top + (lh - top - pad - im.height * k) / 2, im.width * k, im.height * k); }
-    const wrap = (t, px, wt, max) => { g.font = `${wt} ${px}px system-ui`; const L = []; let cur = ''; for (const w of String(t).split(' ')) { const n = cur ? cur + ' ' + w : w; if (g.measureText(n).width > avail && cur) { L.push(cur); cur = w; } else cur = n; } L.push(cur); return L.slice(0, max); };
-    const name = slot.kind === 'plate' && sp ? 'tài trợ bởi ' + s.name : s.name, big = slot.kind === 'banner' ? 55 : 40, n1 = wrap(name, big, 800, 2), n2 = s.msg && lh > 160 ? wrap(s.msg, 26, 600, 2) : [];
-    const lhN = big * 1.15, lhM = 26 * 1.3, tot = n1.length * lhN + (n2.length ? 8 + n2.length * lhM : 0); let y = top + (lh - top - pad - tot) / 2 + big * 0.9;
+    const ban = slot.kind === 'banner', P = ban ? 13 : pad, T = ban ? 13 : top, box = Math.min(lh - T - P, lw * 0.3), tx = im ? P + box + 21 : P, avail = lw - tx - P - 13 - (ban && sp ? 110 : 0);
+    if (im) { const k = Math.min(box / im.width, box / im.height); g.drawImage(im, P + (box - im.width * k) / 2, T + (lh - T - P - im.height * k) / 2, im.width * k, im.height * k); }
+    const wrap = (t, px, wt) => { g.font = `${wt} ${px}px system-ui`; const L = []; let cur = ''; for (const w of String(t).split(' ')) { const n = cur ? cur + ' ' + w : w; if (g.measureText(n).width > avail && cur) { L.push(cur); cur = w; } else cur = n; } L.push(cur); return L; };
+    const name = slot.kind === 'plate' && sp ? 'tài trợ bởi ' + s.name : s.name, room = lh - T - P;
+    let big = 40, n1; for (const [f, max] of ban ? [[34, 1], [28, 1], [22, 1], [18, 1]] : [[40, 2], [34, 2], [30, 3], [26, 3]]) { big = f; n1 = wrap(name, f, 800); if (n1.length <= max && n1.length * f * 1.15 <= room) break; }
+    n1 = n1.slice(0, ban ? 1 : 3); const n2 = s.msg && !ban && lh > 160 && n1.length < 3 ? wrap(s.msg, 24, 600).slice(0, 2) : [];
+    const lhN = big * 1.15, lhM = 24 * 1.3, tot = n1.length * lhN + (n2.length ? 8 + n2.length * lhM : 0); let y = T + (room - tot) / 2 + big * 0.9;
     g.fillStyle = ink; g.textBaseline = 'alphabetic'; g.font = `800 ${big}px system-ui`; for (const l of n1) { g.fillText(l, tx, y); y += lhN; }
-    if (n2.length) { y += 8 - lhN + lhM; g.font = '600 26px system-ui'; g.globalAlpha = 0.8; for (const l of n2) { g.fillText(l, tx, y); y += lhM; } g.globalAlpha = 1; }
+    if (n2.length) { y += 8 - lhN + lhM; g.font = '600 24px system-ui'; g.globalAlpha = 0.8; for (const l of n2) { g.fillText(l, tx, y); y += lhM; } g.globalAlpha = 1; }
     g.restore(); tex.needsUpdate = true;
   }
   const repaint = () => Promise.all(st.slots.map((s, i) => paint(i, s)));
@@ -142,7 +144,7 @@ export function createSponsors(ctx) {
   const show = (sp, html) => { box.style.setProperty('--c', sp.color || GOLD); box.innerHTML = `<div class="card">${html}</div>`; box.hidden = false; ctx.player && (ctx.player.frozen = true); };
   const done = () => { try { return JSON.parse(localStorage.getItem('island.spQuest') || '{}'); } catch (e) { return {}; } };
   function card(s) {
-    const sp = s.sp; st.open = s; ctx.sfx && ctx.sfx('ui'); hit(s, 'visit');
+    const sp = s.sp; st.open = s; ctx.sfx && ctx.sfx('ui'); hit(s, 'o');
     show(sp, `<span class="tag">Nhà tài trợ</span>${sp.logo ? `<img src="${esc(sp.logo)}" alt="">` : ''}<h3>${esc(sp.name)}</h3><p>${esc(sp.msg)}</p>${sp.about ? `<p><small>${esc(sp.about)}</small></p>` : ''}
       <p><small>Cảm ơn ${esc(sp.name)} đã giúp Đảo Rubik miễn phí cho mọi bạn nhỏ 💛</small></p>
       ${sp.quest && sp.quest.length ? `<button class="pri" data-a="q">❓ Nhiệm vụ: ${sp.quest.length} câu đố${done()[sp.id] ? ' ✅' : ''}</button>` : ''}${sp.link ? '<button data-a="p">👪 Dành cho bố mẹ</button>' : ''}<button data-a="x">Đóng</button>`);
@@ -180,17 +182,34 @@ export function createSponsors(ctx) {
     ask();
   }
 
-  // ---------- đếm gộp ẩn danh (phần báo cáo gửi server: hit) ----------
-  const hit = (s, k) => { if (st.onHit) st.onHit(s, k); };
-  let tt = 0;
+  // ---------- đếm gộp ẩn danh: hiển thị (vào khung nhìn ≥ 1 s), ghé (lại gần ≤ 8 m), mở thẻ, bắt đầu / xong nhiệm vụ ----------
+  // chỉ số đếm theo vị trí, KHÔNG id người chơi / thiết bị; gửi gộp 34 s một lần (và khi rời trang) — chỉ khi có server
+  const acc = {}, hit = (s, k) => { if (!s || !s.sp || !st.server) return; const a = acc[s.id] = acc[s.id] || {}; a[k] = (a[k] || 0) + 1; };
+  const flush = beacon => { if (!Object.keys(acc).length) return; const body = JSON.stringify({ b: acc }); for (const k in acc) delete acc[k];
+    if (beacon && navigator.sendBeacon) navigator.sendBeacon('/api/sp/hit', new Blob([body], { type: 'application/json' })); else fetch('/api/sp/hit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {}); };
+  setInterval(() => flush(false), 34e3); addEventListener('pagehide', () => flush(true)); document.addEventListener('visibilitychange', () => { if (document.hidden) flush(true); });
+  const fr = new THREE.Frustum(), pm = new THREE.Matrix4(), wp = new THREE.Vector3(), cv = new THREE.Vector3();
+  let tt = 0, lastW = 0;
+  function watch(dt) {
+    const cam = ctx.camera, p = ctx.player.pos, now = performance.now(); pm.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse); fr.setFromProjectionMatrix(pm);
+    for (const s of st.slots) {
+      if (!s.sp) continue; const c = s.car ? counterM.getWorldPosition(wp) : s.c; if (!c) continue;
+      const d = c.distanceTo(cam.position), front = !s.n || ['flag', 'banner', 'balloon'].includes(s.kind) || cv.subVectors(cam.position, c).dot(s.n) > 0;
+      const seen = d < (s.kind === 'balloon' ? 144 : s.car ? 13 : 55) && front && fr.containsPoint(c);
+      if (seen) { s.vt = (s.vt || 0) + dt; s.gone = 0; if (s.vt >= 1 && !s.shown && now - (s.lastImp || -1e9) > 60e3) { s.shown = true; s.lastImp = now; hit(s, 'i'); } }
+      else { s.vt = 0; if ((s.gone = (s.gone || 0) + dt) > 5) s.shown = false; }
+      if (!s.car && s.ip && s.ip.distanceToSquared(p) < 64 && now - (s.lastVisit || -1e9) > 300e3) { s.lastVisit = now; hit(s, 'v'); }
+    }
+  }
   function update(dt) {
     if (!st.slots.length) return;
     const night = !!(ctx.sky && ctx.sky.state.night > 0.5); if (night !== st.night) { st.night = night; repaint(); }
     pMat.emissiveIntensity = ctx.sky ? ctx.sky.state.night * 0.55 : 0;   // đêm: biển được đèn lồng soi sáng nhẹ
+    const nowW = performance.now(); if (nowW - lastW >= 250) { watch(Math.min((nowW - lastW) / 1000, 0.5)); lastW = nowW; }   // giờ thật (không theo dt game)
     if (ctx.player.frozen || (tt += dt) < 0.1) return; tt = 0;
     const p = ctx.player.pos; let best = null, bd = 9;
     for (const s of st.slots) { if (!s.sp || !s.ip || s.car) continue; const d = s.ip.distanceToSquared(p); if (d < bd) { bd = d; best = s; } }
     if (best) ctx.offer(`🏷️ ${esc(best.kind === 'quest' ? 'Nhiệm vụ tài trợ' : best.sp.name)}`, () => card(best), 2);
   }
-  return { update, state: st, reload: load, card };
+  return { update, state: st, reload: load, card, flush };
 }
