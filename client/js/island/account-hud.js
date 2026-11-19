@@ -2,6 +2,7 @@
 // Chip góc phải trên: 👤 tên · Lv · 🪙 xu → bấm mở bảng: Đăng nhập / Tạo tài khoản / Chơi khách, ô "Lưu đăng nhập".
 // Đã lưu đăng nhập → vào thẳng. Kích thước theo φ: bo góc 13/21, đệm 13/21, chữ 13/16/21.
 import { createAccount } from './data/account.js';
+import { CREDIT } from './loader.js';
 
 export function createAccountHud(ctx) {
   const acc = ctx.account = createAccount();
@@ -10,7 +11,7 @@ export function createAccountHud(ctx) {
 #accChip b{color:#ffd36e}
 #accBox{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:#0a1222b3;padding:13px}
 #accBox .card{width:min(100%,377px);box-sizing:border-box;background:#fff8ec;color:#3a2a1a;border-radius:21px;padding:21px;border-top:8px solid #f0a23a;box-shadow:0 13px 34px #0008;font:16px/1.5 system-ui}
-#accBox h3{margin:0 0 8px;font-size:21px}#accBox p{margin:0 0 13px;font-size:13px;opacity:.75}
+#accBox h3{margin:0 0 8px;font-size:21px}#accBox h3.brand{display:flex;align-items:center;gap:13px}#accBox h3.brand img{width:34px;height:34px;border-radius:8px;box-shadow:0 3px 8px #0003}#accBox p{margin:0 0 13px;font-size:13px;opacity:.75}
 #accBox label{display:block;font:700 13px system-ui;margin:8px 0 3px}
 #accBox input[type=text],#accBox input[type=password]{width:100%;box-sizing:border-box;padding:10px 13px;border-radius:13px;border:2px solid #d9c6a3;background:#fff;font:600 16px system-ui;color:#3a2a1a}
 #accBox .rem{display:flex;gap:8px;align-items:center;margin:13px 0;font:600 13px system-ui;cursor:pointer}
@@ -38,13 +39,13 @@ body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
         <div class="stat"><div>Cấp độ<b>${p.level}</b></div><div>Xu<b>🪙 ${p.money | 0}</b></div><div>Kinh nghiệm<b>${p.exp | 0}/${acc.needExp(p.level)}</b></div><div>Vật phẩm<b>🎒 ${items}</b></div></div>
         <div class="row"><button class="pri" data-a="close">Chơi tiếp</button><button data-a="out">Đăng xuất</button></div></div>`;
     } else {
-      box.innerHTML = `<div class="card"><h3>🏝️ Đảo Rubik</h3><p>Đăng nhập để lưu cấp độ, xu và đồ của bạn. Đừng dùng mật khẩu thật ở nơi khác nhé.</p>
+      box.innerHTML = `<div class="card"><h3 class="brand"><img src="/icons/logo.svg" alt="">Đảo Rubik</h3><p>Đăng nhập để lưu cấp độ, xu và đồ của bạn. Đừng dùng mật khẩu thật ở nơi khác nhé.</p>
         <form id="accForm" autocomplete="on" onsubmit="return false"><label for="accName">Tên đăng nhập</label><input type="text" id="accName" name="username" maxlength="20" autocomplete="username" value="${esc(acc.lastName())}">
         <label for="accPass">Mật khẩu</label><input type="password" id="accPass" name="password" maxlength="40" autocomplete="current-password">
         <label class="rem"><input type="checkbox" id="accKeep" ${acc.nameRemembered() ? 'checked' : ''}> Nhớ tên đăng nhập (lần sau không phải gõ lại)</label>
         <label class="rem" style="margin-top:-5px"><input type="checkbox" id="accRem" checked> Lưu đăng nhập (lần sau vào thẳng, không cần mật khẩu)</label></form>
         <div class="row"><button class="pri" data-a="in">Đăng nhập</button><button data-a="new">Tạo tài khoản</button><button data-a="guest">Chơi khách</button></div>
-        <div class="msg" aria-live="polite"></div></div>`;
+        <div class="msg" aria-live="polite"></div></div>${CREDIT}`;
       setTimeout(() => { const n = box.querySelector('#accName'); (n.value ? box.querySelector('#accPass') : n).focus(); }, 50);
     }
     box.hidden = false; ctx.player && (ctx.player.frozen = true);
