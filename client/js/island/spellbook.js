@@ -186,13 +186,13 @@ export function createSpellbook(ctx, magic) {
   // ---------- 🤝 NÂNG BẠN: được nâng lên cao vài giây rồi hạ xuống nhẹ nhàng ----------
   let lifted = null;   // { t, y }
   function getLifted(by) {
-    if (lifted || player.vehicle) return; lifted = { t: 0, y: 0, dur: 5.5 }; ctx.toast(`🤝 <b>${by || 'Một bạn'}</b> niệm <b>Nâng Bạn!</b> — em bay lên nhẹ nhàng rồi sẽ hạ xuống an toàn.`, 4000);
+    if (lifted || player.vehicle) return; lifted = { t: 0, y: 0, dur: 5.5, y0: player.pos.y }; ctx.toast(`🤝 <b>${by || 'Một bạn'}</b> niệm <b>Nâng Bạn!</b> — em bay lên nhẹ nhàng rồi sẽ hạ xuống an toàn.`, 4000);
     magic.burst(player.pos.clone().setY(player.pos.y + 0.5), UP, '#ffe3a0', 21, 3, 1);
   }
   function updLifted(dt) {
-    if (!lifted) return; lifted.t += dt; const L = lifted, g = ground(player.pos.x, player.pos.z, player.pos.y + 0.5);
+    if (!lifted) return; lifted.t += dt; const L = lifted, g = ground(player.pos.x, player.pos.z, L.y0 + 0.5);   // mặt đỡ tra theo độ cao lúc bắt đầu (không "leo" lên mái nhà khi đang bay)
     const goal = L.t < L.dur ? 3.4 + Math.sin(L.t * 2.6) * 0.15 : 0; L.y += (goal - L.y) * Math.min(1, dt * (L.t < L.dur ? 1.6 : 1.3));
-    if (player.vehicle || (L.t > L.dur && L.y < 0.04)) { player.hover = null; lifted = null; return; }
+    if (player.vehicle || (L.t > L.dur && L.y < 0.05) || L.t > L.dur + 8) { player.hover = null; lifted = null; return; }
     player.hover = g + L.y; if (Math.random() < dt * 5) magic.burst(tmp.copy(player.pos), UP, '#ffe3a0', 2, 1, 1);
   }
 
