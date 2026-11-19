@@ -39,7 +39,7 @@ export function createPlayer(ctx) {
   const fitFov = () => { const a = innerWidth / innerHeight; camera.fov = a >= 1 ? CAM.fov : Math.min(72, 2 * THREE.MathUtils.radToDeg(Math.atan(Math.tan(THREE.MathUtils.degToRad(CAM.fov / 2)) / a ** (1 / PHI)))); camera.updateProjectionMatrix(); };
   camera.far = CFG.view.far; fitFov(); addEventListener('resize', fitFov);   // cắt xa = nơi sương đặc hẳn
   const h = makeHero(ctx.hue); h.body.visible = false; scene.add(h.root);   // khối tạm chỉ hiện nếu nạp nhân vật học sinh lỗi (không còn cảnh đổi nhân vật lúc vào game)
-  const pos = new THREE.Vector3(0, 0, 10); pos.y = terrain.heightAt(pos.x, pos.z);
+  const pos = new THREE.Vector3(0, 0, 10); pos.y = terrain.heightAt(pos.x, pos.z); const safe = pos.clone();   // safe: chỗ đứng vững trên đất liền gần nhất
   const vel = new THREE.Vector3(); let vy = 0, grounded = true, rot = Math.PI, phase = 0;
   const cam = { yaw: 0, pitch: CAM.pitch, dist: CAM.dist, drag: -9, yawV: 0, pitchV: 0 }; // yawV/pitchV: quán tính sau khi thả tay kéo
   const keys = new Set(), input = { x: 0, z: 0, run: false, jump: false };
@@ -182,6 +182,11 @@ export function createPlayer(ctx) {
     } else if (pos.y > g + (grounded && vy <= 0 ? 0.45 : 0.3)) grounded = false;
     else if (grounded && vy <= 0) { pos.y = g; vy = 0; } // xuống dốc/bậc: bám mặt đất, không "bay" lơ lửng
     }
+    // LƯỚI AN TOÀN vị trí: NaN/vô cực, ra ngoài thế giới (±3 km), lọt dưới mặt đất > 3 m (không phải đang lặn/đi xe)
+    // → đặt về điểm an toàn gần nhất trên đất liền (vị trí đứng vững gần nhất); không bao giờ ra biển
+    if (!Number.isFinite(pos.x + pos.y + pos.z) || Math.abs(pos.x) > 2900 || Math.abs(pos.z) > 2900 || pos.y < -50 || (!V && !(D && (D.swimming || D.diving)) && self.hover == null && pos.y < g - 3)) {
+      pos.copy(safe); pos.y = Math.max(safe.y, sup(safe.x, safe.z, safe.y + 1)); vel.set(0, 0, 0); vy = 0; grounded = true; slide.set(0, 0, 0); prevY = pos.y; snapCam = true; self.rescued = (self.rescued || 0) + 1;
+    } else if (grounded && !V && !self.frozen && !(D && D.swimming) && g > CFG.island.waterLevel + 0.3) safe.copy(pos);
     // trượt dốc: đứng trên địa hình dốc hơn SLOPE → trượt xuống theo hướng dốc (tốc độ tăng dần theo độ dốc, mượt)
     { let tx = 0, tz = 0;
       if (grounded && !fly && !(V && V.water) && !(D && D.swimming) && onTerrain(pos.x, pos.z, pos.y) && pos.y <= hT(pos.x, pos.z) + 0.05) {
@@ -272,6 +277,8 @@ export function createPlayer(ctx) {
   };
   // dịch chuyển gần (lên/xuống xe, thuyền, máy bay): nhân vật trượt mượt tới chỗ mới; dịch chuyển xa: camera đặt lại ngay
   self.teleport = (x, z, y) => {
+    if (!Number.isFinite(x) || !Number.isFinite(z)) { console.warn('[player] bỏ qua dịch chuyển lỗi', x, z, y); return; }   // toạ độ lỗi (dữ liệu chưa nạp): không dịch chuyển
+    if (y != null && !Number.isFinite(y)) y = undefined;
     const ny = y ?? terrain.heightAt(x, z); tmp2.set(x - pos.x, ny - pos.y, z - pos.z);
     if (tmp2.lengthSq() < 36) visOff.sub(tmp2); else { visOff.set(0, 0, 0); visV.set(0, 0, 0); snapCam = true; }
     pos.set(x, ny, z); vel.set(0, 0, 0); vy = 0; prevY = ny; prevDy = 0;
