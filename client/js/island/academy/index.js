@@ -38,6 +38,7 @@ import { createNorth } from './north.js';                 // v3: Sân Bắc nổ
 import { createStairs } from './stairs.js';               // v3: Tháp Cầu Thang Phép — 4 nhịp thang tự xoay
 import { createPractice } from './practice.js';           // v3: lớp thực hành phép ngoài trời ở Sân Bắc
 import { createPho2 } from './pho2.js';                   // v3: Phố Phép Thuật Mới (nửa đông Sân Bắc)
+import { createSeats } from './seats.js';                 // v4: ngồi mọi ghế (đọc, ăn, viết bài, thư cú) + bàn giáo viên
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 const CLASS_AT = [['class0', 'cls-light'], ['class1', 'cls-shape'], ['class1b', 'cls-creature'], ['potion', 'cls-brew']];   // điểm neo lớp (interior/plan.js) → lớp phép thuật (classes/index.js)
@@ -132,7 +133,7 @@ export function createAcademy(ctx) {
   };
   const interior = createInterior(ctx, { OX: C[0] - 44.5, OZ: C[1] - 27.5, exitTo: id => { const d = DOORS[id]; if (!d) return null; const [x, z] = toWorld(d[0] + d[3] * 2.4, d[1] + d[4] * 2.4); return [x, z, d[2], face(d[3], d[4]) + Math.PI]; } });
   const guide = createGuide(ctx, { toWorld, Y: BASE, interior }), ext = createExterior(ctx, { Y: BASE, toLocal }), broom = ctx.broomPitch = createBroom(ctx, magic, { Y: BASE, toWorld, toLocal }), life = ctx.academyLife = createAcademyLife(ctx, magic, { Y: BASE, toWorld, toLocal, interior, L: CL });
-  const north = ctx.academyNorth = createNorth(ctx, magic, { Y: BASE, toWorld, toLocal }), v3 = [north, createStairs(ctx, { Y: BASE, toWorld, toLocal }), createPractice(ctx, magic, { Y: BASE, toWorld, toLocal }), createPho2(ctx, magic, { Y: BASE, toWorld, toLocal })];   // mô-đun mở rộng v3: build / unbuild / update
+  const north = ctx.academyNorth = createNorth(ctx, magic, { Y: BASE, toWorld, toLocal }), v3 = [north, createStairs(ctx, { Y: BASE, toWorld, toLocal }), createPractice(ctx, magic, { Y: BASE, toWorld, toLocal }), createPho2(ctx, magic, { Y: BASE, toWorld, toLocal }), createSeats(ctx, magic, { Y: BASE, toWorld, toLocal, interior, L: CL })];   // mô-đun mở rộng v3: build / unbuild / update
   let doorG = null;
   const buildDoors = () => {
     const b = new Batch(), gl = new Batch();
