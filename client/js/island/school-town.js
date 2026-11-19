@@ -189,7 +189,7 @@ export function createSchoolTown(ctx) {
     // cửa gần nhất
     const p = ctx.player.pos; let best = null, bd = 2.2;
     for (const q of town.doors) { const d = Math.abs(q.x - p.x) + Math.abs(q.z - p.z); if (d < bd) { bd = d; best = q; } }
-    if (best) { const k = doorKey(ctx, best.d), ok = k && ctx.miniGames && ctx.miniGames[k]; ctx.offer((ok ? '🚪 ' : '🚧 ') + best.d.n.split('·')[0].trim() + (ok ? '' : ' · Sắp mở'), () => town.enter(best), 2); }
+    if (best) { const k = doorKey(ctx, best.d), ok = k && ctx.miniGames && ctx.miniGames[k]; ctx.offer((ok ? '✋ Chơi ' + (ctx.miniGames[k].name || '').replace(/^\P{L}+/u, '') : '🚧 ' + best.d.n.split('·')[0].trim() + ' · Sắp mở'), () => town.enter(best), 2); }
     if (town.info && Math.abs(town.info.x - p.x) + Math.abs(town.info.z - p.z) < 5) ctx.offer('📜 Đọc bảng φ & π', showInfo, 1);
     // nhãn tên cửa: 1 sprite dùng lại (trước: mỗi cửa mới tạo canvas + texture + vật liệu, không giải phóng → giật + rò bộ nhớ GPU)
     if (best !== nearDoor) { nearDoor = best; if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8, nameTag); else if (nameTag) nameTag.visible = false; }

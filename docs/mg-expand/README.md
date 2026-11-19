@@ -48,3 +48,8 @@ Số đo sau khi gắn lớp mở rộng (đi bộ 362 draw call máy tính / 30
 mg.update lúc chơi 0,03–1,6 ms/khung; lần vào đầu có 1 khung ~96 ms (tính hình cầu bao lần đầu), các lần sau không khung nào > 8 ms (ẩn vật thế giới bỏ qua cụm instancing ngoài khu, chạy lại 4 thay vì 6 lần).
 Model của game vẫn tải lười (props.js nạp khi vào game, không nạp sẵn). Ảnh: `expand-after.jpg`.
 
+## 3. Biển báo & bản đồ (mg/signs.js)
+
+- Biển gỗ "🎮 tên game" cạnh cửa mỗi mini game (24 biển), lệch khỏi cửa theo pháp tuyến tường, mặt chữ quay ra đường. Gộp 2 draw call cho mọi biển (khối gỗ màu theo đỉnh + 1 atlas chữ 1024²), ẩn khi đang chơi.
+- Lại gần biển / cửa: nút **✋ Chơi <tên game>** (trước: "🚪 tên cửa").
+- Bản đồ M: biểu tượng 🎮 + tên từng mini game.

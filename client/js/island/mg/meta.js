@@ -7,6 +7,7 @@
 //   Câu hỏi học tập theo lớp 1–9: quiz.js / quick-quiz.js đọc QZ (lớp từ 'island.grade', cấp độ đẩy ±1 lớp).
 // φ: 13 huy hiệu, 3 nhiệm vụ, thưởng 3·5·8·13·21, bán kính mời chơi 8 m, thẻ bo 21/13.
 import { QZ } from './quiz.js';
+import { createSigns } from './signs.js';
 
 const LV = ['easy', 'medium', 'hard'], LVN = ['🟢 Dễ', '🟡 Vừa', '🔴 Khó'], OWN_LV = new Set(['chess', 'caro', 'go']);
 const load = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } };
@@ -188,6 +189,8 @@ export function createMeta(ctx, host, $) {
     },
     // ngoài khu chơi: lại gần bạn đang chơi → nút "✋ Chơi cùng"
     update(dt) {
+      if (signs === undefined && ctx.school && ctx.school.ready && ctx.terrain) { signs = null; try { signs = createSigns(ctx, host); } catch (e) { console.warn('[mg] biển', e); } }
+      if (signs) signs.update(dt);
       if (ctx.mgActive) return;
       if ((offerT -= dt) <= 0) { offerT = 0.25; near = null; const n = net(); if (n && n.others) { hookNet(); const p = ctx.player.pos;   // dò bạn đang chơi trong 8 m (nhịp 1/4 s)
         for (const [id, o] of n.others) { if (!o.mg) continue; const r = o.h.root.position; if (Math.hypot(r.x - p.x, r.z - p.z) <= 8) { near = { id, o, label: `✋ Chơi cùng ${o.name} · ${o.mg.t}` }; break; } } } }
