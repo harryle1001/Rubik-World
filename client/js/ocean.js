@@ -138,7 +138,7 @@ const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms,
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
 const tutorial = ctx.tutorial = createTutorial(ctx); // ❓ hướng dẫn chơi: chỉ mở khi bấm (menu ☰), không tự bật (tutorial.js)
 // 🎬 clip mở đầu (lần đầu vào game, sau đăng nhập): tải lười intro.js; xem lại ở menu ☰. ?test bỏ qua (thêm &intro để thử)
-ctx.intro = { open: false, tick: null, play: (o = {}) => ctx.intro.open ? null : import('./island/intro.js').then(m => m.playIntro(ctx, o)).catch(e => { console.warn('intro', e); ctx.intro.open = false; }) };
+ctx.intro = { open: false, tick: null, play: (o = {}) => ctx.intro.open ? null : document.body.classList.contains('st-cut') || ctx.mgActive ? ctx.toast('🎬 Xem lại clip sau khi xong đoạn hội thoại / trò chơi nhé!') : import('./island/intro.js').then(m => m.playIntro(ctx, o)).catch(e => { console.warn('intro', e); ctx.intro.open = false; }) };
 { const Q = location.search, iv = setInterval(() => { if (loading.veil || !ctx.warmed) return; const a = ctx.account, box = document.getElementById('accBox'); if (!a || !a.profile || (box && !box.hidden) || document.body.classList.contains('rs-modal')) return; clearInterval(iv);
   let seen = !!a.profile.introSeen; try { seen = seen || localStorage.getItem('island.intro') === '1'; } catch (e) {} if ((!seen && !/[?&]test\b/.test(Q)) || /[?&]intro\b/.test(Q)) ctx.intro.play({ first: true }); }, 300); }
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)

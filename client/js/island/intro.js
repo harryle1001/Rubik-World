@@ -44,7 +44,7 @@ export async function playIntro(ctx, { first = false } = {}) {
   vo.onclick = () => { voice = !voice; try { localStorage.setItem('island.voice', voice ? '1' : '0'); } catch (e) {} vSet(); if (!voice && window.speechSynthesis) speechSynthesis.cancel(); };
   const speak = (t, vol = 1, rate = 1) => { if (!voice || !window.speechSynthesis) return; try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g, '')); u.lang = 'vi-VN'; const v = speechSynthesis.getVoices().find(v => /^vi/i.test(v.lang)); if (v) u.voice = v; u.volume = vol; u.rate = rate; speechSynthesis.speak(u); } catch (e) {} };
   let done = false, t = -1, built = false; $('.sk').onclick = () => finish(true);
-  const keySkip = e => { if (e.code === 'Escape' || e.code === 'Space' || e.code === 'Enter') finish(true); }; addEventListener('keydown', keySkip);
+  const keySkip = e => { if (e.code === 'Escape' || e.code === 'Space' || e.code === 'Enter') { e.stopImmediatePropagation(); finish(true); } }; addEventListener('keydown', keySkip, true);
 
   // ---------- nhạc CC0 (assets/audio, CREDITS.txt) ----------
   const soundOn = !ctx.audio || ctx.audio.on, music = soundOn ? new Audio('/assets/audio/bgm-school.mp3') : null;
@@ -115,7 +115,7 @@ export async function playIntro(ctx, { first = false } = {}) {
   const bent = new Map(), unbend = () => { for (const [b, q] of bent) b.quaternion.copy(q); bent.clear(); };   // khôi phục xương trước khung sau (VRM không tự ghi đè)
   const bend = (b, a, axis) => { if (!b || !a) return; if (!bent.has(b)) bent.set(b, b.quaternion.clone()); b.parent.getWorldQuaternion(qp); ax.copy(axis).applyQuaternion(qp.invert()); qa.setFromAxisAngle(ax, a); b.quaternion.premultiply(qa); b.updateMatrixWorld(true); };
   const bones = () => { const h = hero(); if (!h) return null; if (h._ib) return h._ib; const H = h.vrm && h.vrm.humanoid, n = k => H ? H.getRawBoneNode(k) : null, o = k => h.model.getObjectByName(k);
-    return (h._ib = { spine: n('spine'), chest: n('upperChest') || n('chest') || o('chest'), neck: n('neck'), head: n('head') || o('head'), armL: n('leftUpperArm') || o('upperarml'), armR: n('rightUpperArm') || o('upperarmr'), foreL: n('leftLowerArm') || o('lowerarml'), foreR: n('rightLowerArm') || o('lowerarmr') }); };
+    return (h._ib = { spine: n('spine'), chest: n('upperChest') || n('chest') || o('chest') || o('torso'), neck: n('neck'), head: n('head') || o('head'), armL: n('leftUpperArm') || o('upperarml') || o('arm-left'), armR: n('rightUpperArm') || o('upperarmr') || o('arm-right'), foreL: n('leftLowerArm') || o('lowerarml'), foreR: n('rightLowerArm') || o('lowerarmr') }); };
   const RIGHT = new THREE.Vector3(0, 0, 1), FWD = new THREE.Vector3(-1, 0, 0);   // em nhìn về −x (bảng): trục ngang = z
   let sleepK = 1;
   function pose() {
@@ -200,7 +200,7 @@ export async function playIntro(ctx, { first = false } = {}) {
   }
   // ---------- kết thúc / bỏ qua: dọn sạch, trả quyền điều khiển ----------
   async function finish(skip) {
-    if (done) return; done = true; ctx.intro.tick = null; removeEventListener('keydown', keySkip);
+    if (done) return; done = true; ctx.intro.tick = null; removeEventListener('keydown', keySkip, true);
     if (window.speechSynthesis) speechSynthesis.cancel();
     blk.style.opacity = 1; await tmo(skip ? 300 : 618);
     if (built && !G.userData.moved) { SI.stage(null); if (teacher) teacher.model.removeFromParent(); if (ctx.sky) ctx.sky.state.lock = save.lock; if (S) { P.teleport(wake[0], wake[1]); P.pos.y = Math.max(P.pos.y, 1.2); } }
