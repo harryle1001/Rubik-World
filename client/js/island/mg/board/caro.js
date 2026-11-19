@@ -79,10 +79,17 @@ export function startCaro(ctx, { api }) {
     over = true; if (cells) showWin(cells); const t = Math.round(performance.now() / 1000 - t0);
     if (win) { me.emote('cheer'); lan && lan.emote('no'); lan && lan.say('Em giỏi quá!'); } else if (win === false) { lan && lan.emote('cheer'); me.emote('no'); }
     setTimeout(() => api.end(win ? { score: Math.max(13, 200 - moves * 3) + ({ medium: 55, hard: 144 }[level] || 0), title: '🎉 5 quân liền — Em thắng!', text: `Thắng sau ${Math.ceil(moves / 2)} nước, ${Math.floor(t / 60)} phút ${t % 60} giây. Mẹo: luôn chặn khi đối thủ có 3 quân mở hai đầu!` }
-      : win === false ? { score: null, save: false, title: 'Bạn Nhi thắng ván này', text: 'Không sao! Hãy để ý: khi đối thủ có 3 quân liền mà hai đầu còn trống, phải chặn ngay — nếu để thành 4 mở thì không chặn kịp.' }
+      : win === false ? { score: null, save: false, title: `${duo ? duo.name : 'Bạn Nhi'} thắng ván này`, text: 'Không sao! Hãy để ý: khi đối thủ có 3 quân liền mà hai đầu còn trống, phải chặn ngay — nếu để thành 4 mở thì không chặn kịp.' }
         : { score: 34, title: '🤝 Hoà cờ', text: 'Bàn đã kín mà chưa ai có 5 quân. Hoà cũng đẹp!' }), 1600);
   }
+  // 🤝 2 người (mg/meta.js → api.peer): chủ khu cầm X đi trước, bạn vào sau cầm O; nước đi gửi qua mạng, Nhi làm trọng tài
+  let duo = null;
+  function recv(i, j) { const o = duo.mine === 'x' ? 'o' : 'x'; if (over || !B[i] || B[i][j]) return; put(i, j, o); const w = fiveFrom(B, i, j, o); if (w) return finish(false, w); if (moves >= N * N) return finish(null); turn = duo.mine; hud.msg('Đến lượt em!', 1200); }
+  api.onPeer = p => { duo = { mine: p.host ? 'x' : 'o', name: p.name }; p.on(d => { if (d && d.m) recv(d.m[0], d.m[1]); else if (d && d.reset) reset(); }); reset(); if (p.host) p.send({ reset: 1 });
+    setTimeout(() => hud.msg(`🤝 Đấu với <b>${p.name}</b>: em cầm ${duo.mine === 'x' ? '<b>X đỏ</b>, đi trước' : '<b>O xanh</b>, đi sau'}`, 4000), 50); lan && lan.say('Mình làm trọng tài nhé!', 2600); };
   function play(i, j) {
+    if (duo) { if (over || turn !== duo.mine || B[i][j]) return; put(i, j, duo.mine); me.emote('interact'); api.peer && api.peer.send({ m: [i, j] });
+      const w = fiveFrom(B, i, j, duo.mine); if (w) return finish(true, w); if (moves >= N * N) return finish(null); turn = duo.mine === 'x' ? 'o' : 'x'; hud.msg(`Lượt của <b>${duo.name}</b>…`, 1500); return; }
     if (over || busy || turn !== 'x' || B[i][j]) return;
     put(i, j, 'x'); me.emote('interact');
     const w = fiveFrom(B, i, j, 'x'); if (w) return finish(true, w);
@@ -109,7 +116,7 @@ export function startCaro(ctx, { api }) {
   // ---------- HUD ----------
   [['easy', '🙂 Dễ'], ['medium', '🤔 Vừa'], ['hard', '🔥 Khó']].forEach(([lv, t]) => { const b = hud.button(t, () => { if (level === lv) return; level = lv; try { localStorage.setItem('mg.caro.level', lv); } catch (e) {} api.restart(); }); b.classList.toggle('on', level === lv); });
   hud.button('💡 Gợi ý', async () => {
-    if (over || busy || turn !== 'x') return; busy = true; const ok = await quickQuiz(api, ['toan'], '💡 Trả lời đúng để mở gợi ý'); busy = false; if (!ok || over) return; const m = bestMove(B, 'x', 'o', 0); const [x, z] = cellPos(m.i, m.j); hintM.position.set(x, TOP + 0.03, z); hintM.visible = true;
+    const mi = duo ? duo.mine : 'x'; if (over || busy || turn !== mi) return; busy = true; const ok = await quickQuiz(api, ['toan'], '💡 Trả lời đúng để mở gợi ý'); busy = false; if (!ok || over) return; const m = bestMove(B, mi, mi === 'x' ? 'o' : 'x', 0); const [x, z] = cellPos(m.i, m.j); hintM.position.set(x, TOP + 0.03, z); hintM.visible = true;
     hud.msg(m.def >= 5e4 ? '💡 Nhi sắp có 5 — <b>chặn ngay</b> ô sáng xanh!' : m.atk >= 5e4 ? '💡 Đi ô sáng xanh là em có <b>4 mở</b> — gần thắng rồi!' : m.def >= 4e3 ? '💡 Chặn hàng 3 mở của Nhi ở ô sáng xanh.' : m.atk >= 4e3 ? '💡 Ô sáng xanh tạo <b>3 mở hai đầu</b> cho em.' : '💡 Đi gần quân của mình để nối dài hàng.', 3500);
   });
   hud.button('🔁 Ván mới', () => api.restart());
@@ -119,7 +126,7 @@ export function startCaro(ctx, { api }) {
   api.actor('student-female-b', { name: 'Nhi', look: { role: 'student', shirt: '#3d8fd9', pants: '#2a2f4a' } }).then(a => { if (!a) return; lan = a; a.place(0, -H - 1.6, 0); a.face(0, 0); a.say('Chơi caro với mình nhé!', 2600); });
   const port = innerWidth < innerHeight;
   api.cam.x = 0; api.cam.y = 0; api.cam.z = port ? 0 : 1.5; api.cam.yaw = 0; api.cam.pitch = port ? 1.25 : 1.0; api.cam.dist = port ? 22 : 21; api.orbit = true;
-  reset();
+  reset(); if (api.peer) api.onPeer(api.peer);   // vào khu theo lời mời: đã có bạn chơi cùng
   return {
     tap(e) { const c = cellAt(e); if (c) play(c[0], c[1]); },
     update(dt) {

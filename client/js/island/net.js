@@ -14,7 +14,7 @@ function nameTag(text) {
 }
 
 export function createNet(ctx) {
-  const others = new Map(); let sock = null;
+  const others = new Map(); let sock = null; const hs = [];   // hs: sự kiện mini game (mg/meta.js) đăng ký trước khi socket sẵn sàng
   const status = document.getElementById('online');
   const setStatus = () => { if (status) status.textContent = sock && sock.connected ? `👥 ${others.size + 1} người trên đảo` : '⚪ Chơi một mình'; };
 
@@ -22,12 +22,14 @@ export function createNet(ctx) {
     if (others.has(p.id)) return;
     const h = makeHero(p.hue), tag = nameTag(p.name); h.root.add(tag); ctx.scene.add(h.root);
     const o = { h, name: p.name, from: new THREE.Vector3(p.x, p.y, p.z), to: new THREE.Vector3(p.x, p.y, p.z), r: p.r, s: 0, t: 1, phase: 0, vel: new THREE.Vector3(), pv: new THREE.Vector3(), pred: new THREE.Vector3(), kr: { v: 0 }, age: 0, recv: 0, tag };
-    h.root.position.copy(o.to); others.set(p.id, o); setStatus();
+    h.root.position.copy(o.to); others.set(p.id, o); setStatus(); if (p.mg) setMg(o, p.mg);
     // bộ đồ KayKit theo màu áo người đó chọn (hiệp sĩ / đạo tặc / pháp sư / chiến binh)
     loadHero(KINDS[Math.floor((p.hue || 0) / 30) % KINDS.length]).then(r => { if (!r || !others.has(p.id)) return; o.hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
   }
   // người rời đảo: giải phóng texture bảng tên + hình khối riêng của người đó (trước chỉ gỡ khỏi cảnh → rò rỉ bộ nhớ GPU mỗi lượt vào/ra;
   // lưới nhân vật KayKit dùng chung bộ nhớ đệm nên không dispose)
+  // bạn đang chơi mini game: bảng tên thêm dòng "🎮 tên game" để người qua đường thấy (mg/meta.js gửi 'mg')
+  function setMg(o, st) { o.mg = st || null; const t = nameTag(st ? `${o.name} · 🎮 ${st.t}` : o.name); t.scale.x = st ? 3.2 : 2; o.h.root.remove(o.tag); o.tag.material.map.dispose(); o.tag.material.dispose(); o.tag = t; o.h.root.add(t); }
   function remove(id) { const o = others.get(id); if (!o) return; ctx.scene.remove(o.h.root); others.delete(id); setStatus();
     o.tag.material.map.dispose(); o.tag.material.dispose(); o.h.body.traverse(m => { if (m.isMesh) m.geometry.dispose(); }); if (o.hero) o.hero.anim.mixer?.stopAllAction?.(); }
 
@@ -37,11 +39,13 @@ export function createNet(ctx) {
   const s = document.createElement('script'); s.src = server ? '/lib/socket.io.min.js' : '/socket.io/socket.io.js';
   s.onload = () => {
     sock = window.io(server + '/island', { transports: ['websocket', 'polling'] });
-    sock.on('connect', () => { for (const id of [...others.keys()]) remove(id); sock.emit('join', { name: ctx.playerName, hue: ctx.hue }); setStatus(); });
+    sock.on('connect', () => { for (const id of [...others.keys()]) remove(id); sock.emit('join', { name: ctx.playerName, hue: ctx.hue }); if (lastMg) sock.emit('mg', lastMg); setStatus(); });   // nối lại: báo lại game đang chơi
     sock.on('disconnect', setStatus);
     sock.on('players', list => list.forEach(add));
     sock.on('joined', add);
     sock.on('left', remove);
+    sock.on('mg', ([id, st]) => { const o = others.get(id); if (o) setMg(o, st); });
+    for (const [e, f] of hs) sock.on(e, f);
     sock.on('m', ([id, x, y, z, r, sp]) => { // ước lượng vận tốc từ 2 gói liên tiếp để dự đoán giữa các gói (gói trễ không làm khựng)
       const o = others.get(id); if (!o) return; const now = performance.now() / 1000, gap = Math.min(0.5, Math.max(0.05, now - o.recv));
       o.from.copy(o.to); const vx = (x - o.to.x) / gap, vz = (z - o.to.z) / gap; if (vx * vx + vz * vz > 400) o.vel.set(0, 0, 0); else { o.vel.x += (vx - o.vel.x) * 0.382; o.vel.z += (vz - o.vel.z) * 0.382; } // lọc nhiễu (1/φ²)
@@ -49,12 +53,13 @@ export function createNet(ctx) {
   };
   s.onerror = setStatus; document.head.appendChild(s); setStatus();
 
-  let sendT = 0; const lastSent = new THREE.Vector3(1e9, 0, 0);
+  let sendT = 0; const lastSent = new THREE.Vector3(1e9, 0, 0), _w = new THREE.Vector3();
   function update(dt) {
     const p = ctx.player;
     if (sock && sock.connected && (sendT += dt) > 0.1) {
       sendT = 0;
-      if (lastSent.distanceToSquared(p.pos) > 0.0004 || p.speed > 0.05) { sock.emit('m', { x: p.pos.x, y: p.pos.y, z: p.pos.z, r: p.rot, s: p.speed }); lastSent.copy(p.pos); }
+      const w = ctx.mgActive && p.root.parent !== ctx.scene ? p.root.getWorldPosition(_w) : p.pos;   // đang chơi mini game: nhân vật nằm trong khu chơi (mg/host.js), gửi vị trí thật
+      if (lastSent.distanceToSquared(w) > 0.0004 || p.speed > 0.05) { sock.emit('m', { x: w.x, y: w.y, z: w.z, r: p.rot, s: p.speed }); lastSent.copy(w); }
     }
     for (const o of others.values()) {
       o.t = Math.min(1, o.t + dt / 0.1); o.age += dt; const root = o.h.root;
@@ -70,5 +75,8 @@ export function createNet(ctx) {
       o.h.legL.rotation.x = Math.sin(o.phase) * a; o.h.legR.rotation.x = -Math.sin(o.phase) * a; o.h.armL.rotation.x = -Math.sin(o.phase) * a; o.h.armR.rotation.x = Math.sin(o.phase) * a;
     }
   }
-  return { update, others, get connected() { return !!(sock && sock.connected); } };
+  let lastMg = null;
+  const emit = (e, d) => { if (e === 'mg') lastMg = d; if (sock && sock.connected) sock.emit(e, d); };
+  const on = (e, f) => { hs.push([e, f]); if (sock) sock.on(e, f); };
+  return { update, others, emit, on, get connected() { return !!(sock && sock.connected); } };
 }

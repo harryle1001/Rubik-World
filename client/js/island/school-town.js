@@ -159,7 +159,7 @@ export function createSchoolTown(ctx) {
     }
     const G = ctx.miniGames || {}, open = Object.keys(G).filter(k => town.doors.some(q => doorKey(ctx, q.d) === k));
     const soon = new Set(town.doors.filter(q => !G[doorKey(ctx, q.d)]).map(q => title(q.d)));
-    menuEl.innerHTML = `<div class="card"><h3>📚 Trường Rubik</h3><p>${town.clock.label()} · ${town.clock.periodName()}</p><div class="g">${open.map(k => `<button data-k="${k}">${G[k].name || k}</button>`).join('') || '<p>Chưa có mini game 3D.</p>'}</div>
+    menuEl.innerHTML = `<div class="card"><h3>📚 Trường Rubik</h3><p>${town.clock.label()} · ${town.clock.periodName()}</p>${ctx.mgMeta ? ctx.mgMeta.menuHtml() : ''}<div class="g">${open.map(k => `<button data-k="${k}">${G[k].name || k}</button>`).join('') || '<p>Chưa có mini game 3D.</p>'}</div>
       <p style="margin-top:13px">🚧 Sắp mở (${soon.size}): ${[...soon].slice(0, 13).join(', ')}${soon.size > 13 ? '…' : ''}</p><button class="x">Đóng</button></div>`;
     menuEl.hidden = false; ctx.player.frozen = true;
   };

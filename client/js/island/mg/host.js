@@ -82,6 +82,7 @@ import * as THREE from 'three';
 import { PHI, TOWN_Y } from '../layout.js';
 import { gradientMap } from '../style.js';
 import { DetailGrid } from '../decor.js';
+import { createMeta } from './meta.js';
 import { loadHero, driveHero, emote as emoteHero } from '../characters.js';
 
 const CSS = `
@@ -121,6 +122,7 @@ export function createMiniGameHost(ctx) {
   const host = { active: null, key: null };
   const G0 = k => ((ctx.miniGames[k] && ctx.miniGames[k].name) || k).replace(/^\P{L}+/u, '');
   let S = null;   // trạng thái phiên chơi hiện tại
+  const meta = createMeta(ctx, host, $);   // cấp độ, xếp hạng, huy hiệu, nhiệm vụ ngày, xu + điểm nhà, 2 người (meta.js)
 
   // ---------- Tìm chỗ đặt khu chơi: đất phẳng, không đè nhà/cây, xoắn ốc theo góc vàng (2π/φ²) quanh cửa ----------
   const groundAt = (x, z) => Math.max(ctx.terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, 99) : -99);
@@ -138,18 +140,18 @@ export function createMiniGameHost(ctx) {
           for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); m4.premultiply(o.matrixWorld); v3.setFromMatrixPosition(m4); if (Math.hypot(v3.x - x, v3.z - z) < 89 + R) tallInst.push([v3.x, v3.z, Math.max(bb.max.x - bb.min.x, bb.max.z - bb.min.z) * 0.5 * m4.getMaxScaleOnAxis()]); } return; }   /* cỏ (rất nhiều bản sao, thấp): bỏ qua */ if (o.isInstancedMesh) { if (!o.boundingSphere) o.computeBoundingSphere(); sp.copy(o.boundingSphere); } else { if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere); } sp.applyMatrix4(o.matrixWorld); if (Math.hypot(sp.center.x - x, sp.center.z - z) < sp.radius + 89) rayObjs.push(o); });
     }
     for (const c of tallInst) { const dx = c[0] - x, dz = c[1] - z, r = R + c[2]; if (dx * dx + dz * dz < r * r) return false; }   // cây trồng bằng instancing (cọ, thông…)
-    for (let k = 0; k < 55; k++) {   // 55 tia (Fibonacci) phủ tới 1,15 R (khu chơi vuông có góc vượt ra ngoài R); dày để không lọt thân cây/tre mảnh
-      const r = R * 1.15 * Math.sqrt((k + 0.5) / 55), a = k * 2 * Math.PI / (PHI * PHI); _o.set(x + Math.cos(a) * r, y0 + 21, z + Math.sin(a) * r); _rc.set(_o, _dn); _rc.far = 20.5;
-      const h = _rc.intersectObjects(rayObjs, false); if (h.length && h[0].point.y > y0 + 0.35) return false;
-    }
     // vật mảnh trong khối gộp của thị trấn (cột đèn, khung thành… tia dễ lọt): lưới 4 m các đỉnh hình → có đỉnh cao 0,35–8 m trong vòng chơi là loại
     if (!tallPts) { tallPts = new Map(); const v = new THREE.Vector3();
       for (const o of rayObjs) { const p = !o.isInstancedMesh && o.geometry.attributes.position; if (!p || p.count > 300000) continue;
-        for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i).applyMatrix4(o.matrixWorld); const k = Math.floor(v.x / 4) * 4096 + Math.floor(v.z / 4); let a = tallPts.get(k); if (!a) tallPts.set(k, a = []); a.push(v.x, v.y, v.z); } } }
+        for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i).applyMatrix4(o.matrixWorld); if (v.y < TOWN_Y + 0.3 || v.y > 89) continue; const k = Math.floor(v.x / 4) * 4096 + Math.floor(v.z / 4); let a = tallPts.get(k); if (!a) tallPts.set(k, a = []); a.push(v.x, v.y, v.z); } } }
     const RV = R * 1.3, R2 = RV * RV;   // khu chơi vuông: góc bàn vượt bán kính
     for (let gx = Math.floor((x - RV) / 4); gx <= Math.floor((x + RV) / 4); gx++) for (let gz = Math.floor((z - RV) / 4); gz <= Math.floor((z + RV) / 4); gz++) {
       const a = tallPts.get(gx * 4096 + gz); if (!a) continue;
       for (let i = 0; i < a.length; i += 3) { const dx = a[i] - x, dz = a[i + 2] - z, y = a[i + 1]; if (y > y0 + 0.35 && y < y0 + 8 && dx * dx + dz * dz < R2) return false; }
+    }
+    for (let k = 0; k < 55; k++) {   // 55 tia (Fibonacci) phủ tới 1,15 R (khu chơi vuông có góc vượt ra ngoài R); dày để không lọt thân cây/tre mảnh
+      const r = R * 1.15 * Math.sqrt((k + 0.5) / 55), a = k * 2 * Math.PI / (PHI * PHI); _o.set(x + Math.cos(a) * r, y0 + 21, z + Math.sin(a) * r); _rc.set(_o, _dn); _rc.far = 20.5;
+      const h = _rc.intersectObjects(rayObjs, false); if (h.length && h[0].point.y > y0 + 0.35) return false;
     }
     return true;
   }
@@ -199,6 +201,7 @@ export function createMiniGameHost(ctx) {
     A.emote = name => { const h = getHero(); if (h) emoteHero(h, st, name); };
     A.sit = s => { A.sitting = s; };
     A.say = (text, ms = 2600) => {
+      if (!S || !S.api) return;
       if (!A.bubble) { const c = document.createElement('canvas'); c.width = 512; c.height = 128; A.bubble = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false, depthTest: false, transparent: true })); A.bubble.renderOrder = 9; A.bubble.scale.set(3.2, 0.8, 1); S.api.root.add(A.bubble); }
       const c = A.bubble.material.map.image, k = c.getContext('2d'); k.clearRect(0, 0, 512, 128); k.font = 'bold 40px system-ui'; const w = Math.min(500, k.measureText(text).width + 48);
       k.fillStyle = '#fffdf5'; k.strokeStyle = '#3b2a1e'; k.lineWidth = 5; k.beginPath(); k.roundRect((512 - w) / 2, 10, w, 92, 34); k.fill(); k.stroke();
@@ -262,6 +265,7 @@ export function createMiniGameHost(ctx) {
       const out = document.createElement('button'); out.textContent = '✕ Thoát'; out.onclick = () => host.exit();
       card.append(again, out); card.hidden = false; ctx.sfx && ctx.sfx(nb ? 'win' : 'open');
       if (ctx.reward && !S.rewarded) { S.rewarded = true; ctx.reward(nb ? 2 : 1, `Chơi ${G0(key)}${nb ? ' · kỷ lục mới' : ''}`); card.querySelector('p').insertAdjacentHTML('beforeend', `<br>⭐ +${nb ? 2 : 1} sao · ghi vào 📒 Sổ học tập`); }   // thưởng sao thay tiền, 1 lần mỗi lượt vào
+      meta.end(api, { score: save ? score : null, lowerBetter, nb, card });
     };
     api.restart = () => host.restart(); api.exit = () => host.exit();
     // nhân vật
@@ -270,7 +274,7 @@ export function createMiniGameHost(ctx) {
     if (!inPlace) root.add(pr);
     api.me = makeActor(pr, () => ctx.player.hero, true); api.actors.push(api.me);
     api.actor = async (kind, o = {}) => {
-      const h = await loadHero(kind, o.height || 1.25, o.look || null); if (!h || S.api !== api) return null;
+      const h = await loadHero(kind, o.height || 1.25, o.look || null); if (!h || !S || S.api !== api) return null;   // thoát trước khi NPC nạp xong
       h.npc = true; const g = new THREE.Group(); g.add(h.model); root.add(g); const A = makeActor(g, () => h, false); A.name = o.name; api.actors.push(A); return A;
     };
     return api;
@@ -281,11 +285,11 @@ export function createMiniGameHost(ctx) {
     const G = ctx.miniGames[key]; if (!G) return false;
     if (host.active) host.exit(true);
     const P = ctx.player, R = G.radius || 13, dx = door ? door.x : P.pos.x, dz = door ? door.z : P.pos.z;
-    let sp = G.inPlace ? [P.pos.x, P.pos.z, 0] : spotCache.get(key + ':' + Math.round(dx) + ':' + Math.round(dz));   // inPlace: game tự dùng thế giới quanh nhân vật (câu cá)
+    let sp = opts.spot ? opts.spot.slice() : G.inPlace ? [P.pos.x, P.pos.z, 0] : spotCache.get(key + ':' + Math.round(dx) + ':' + Math.round(dz));   // inPlace: game tự dùng thế giới quanh nhân vật (câu cá)
     if (!sp) { sp = (G.spot && G.spot(ctx, door)) || (G.rect && findRect(dx, dz, G.rect)) || null; if (!sp) { const [x, z] = findSpot(dx, dz, R); sp = [x, z, Math.atan2(dx - x, dz - z)]; } spotCache.set(key + ':' + Math.round(dx) + ':' + Math.round(dz), sp); }
     const anchor = [sp[0], sp[1], sp[2] || 0, G.inPlace ? P.pos.y : sp[3] != null ? sp[3] : groundAt(sp[0], sp[1])];
     S = S && S.restarting ? S : { saved: { pos: P.pos.clone(), yaw: P.cam.yaw, pitch: P.cam.pitch, far: camera.far, fov: camera.fov, rot: P.rot }, cam0: { p: camera.position.clone(), q: camera.quaternion.clone() }, blend: 0 };
-    S.restarting = false; S.key = key; S.door = door; S.anchorR = R; S.inPlace = !!G.inPlace; S.zone = G.rect && sp[3] != null ? G.rect : null;
+    S.restarting = false; S.key = key; S.door = door; S.opts = opts; S.anchorR = R; S.inPlace = !!G.inPlace; S.zone = G.rect && sp[3] != null ? G.rect : null;   // opts.spot = [x, z, yaw, y] khu chơi của bạn (meta.js, 2 người)
     const api = S.api = makeApi(key, door, anchor, !!G.inPlace); api.camFree = !!G.inPlace; api.onGround = !!S.zone;   // onGround: game dài (đường đua) đặt sát đất trong hành lang trống   // camFree: game tự điều khiển camera thế giới
     api.hud.clearBar(); $('.mg-card').hidden = true; api.hud.msg(''); api.hud.info(''); api.hud.score(null); api.hud.time(null); api.showBest(G.lowerBetter);
     $('.mg-name').textContent = G.name || key;
@@ -295,9 +299,10 @@ export function createMiniGameHost(ctx) {
     if (ctx.school && ctx.school.labels) for (const l of ctx.school.labels) l.visible = false;
     // vật nhỏ của thế giới lọt vào khu chơi (cột đèn, khung thành, ghế…): ẩn tạm, thoát thì hiện lại
     for (const o of S.hidden || []) o.visible = true; S.hidden = []; for (const [o, list] of S.hiddenInst || []) { for (const [i, m] of list) o.setMatrixAt(i, m); o.instanceMatrix.needsUpdate = true; } S.hiddenInst = [];
-    if (!G.inPlace) { hideWorld(api, anchor, R); S.rehide = [0.6, 1.6, 2.6, 4.2, 6.8, 8.9]; S.rehideT = 0; }   // chunk thế giới nạp muộn quanh khu chơi → ẩn lại vài lần
+    if (!G.inPlace) { hideWorld(api, anchor, R); S.rehide = [0.6, 1.6, 4.2, 8.9]; S.rehideT = 0; }   // chunk thế giới nạp muộn quanh khu chơi → ẩn lại vài lần
     if (!G.inPlace) api.me.place(0, R * 0.5, Math.PI);
     natureSkip(!G.inPlace);
+    meta.start(api, G);
     try { const ex = () => host.exit(); S.game = G.start(ctx, { ...opts, key, door, api, onExit: ex, exit: ex }) || {}; }   // mọi nút Thoát của game (stage.js, kit.js) gọi về host.exit
     catch (e) { console.error('[mg] lỗi khởi động', key, e); S.game = {}; host.exit(); return false; }
     S.camNow = null; S.occD = null; return true;
@@ -309,6 +314,7 @@ export function createMiniGameHost(ctx) {
       // cây, tre, bụi trồng bằng instancing trong khu chơi: thu nhỏ về 0 tạm thời, thoát thì trả lại ma trận cũ
       const m4 = new THREE.Matrix4(), v3 = new THREE.Vector3(), Z = new THREE.Matrix4().makeScale(0, 0, 0);
       scene.traverse(o => { if (!o.isInstancedMesh || !o.visible) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
+        if (o.boundingSphere && !S.zone) { sp.copy(o.boundingSphere).applyMatrix4(o.matrixWorld); if (Math.hypot(sp.center.x - c.x, sp.center.z - c.z) > sp.radius + RR + 2) return; }   // cả cụm ở ngoài khu chơi: khỏi duyệt từng bản sao
         const saved = []; for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); if (m4.elements[0] === 0 && m4.elements[5] === 0) continue; v3.setFromMatrixPosition(m4).applyMatrix4(o.matrixWorld); if (inZone(v3.x, v3.z, 1, 1.15) && v3.y < c.y + 8 && v3.y > c.y - 3) { saved.push([i, m4.clone()]); o.setMatrixAt(i, Z); } }
         if (saved.length) { o.instanceMatrix.needsUpdate = true; S.hiddenInst.push([o, saved]); } }); }
   function teardown() {
@@ -332,10 +338,10 @@ export function createMiniGameHost(ctx) {
   Object.defineProperty(host, 'api', { get: () => S && S.api });   // (kiểm thử) bộ công cụ của phiên đang chơi   // game tự chọn chỗ (vd cờ vua cạnh công viên cờ)
   host.start = (key, door, opts) => begin(key, door, opts);
   host.skipFly = () => { if (S) { S.blend = 1; S.rehideT = 99; } };   // (kiểm thử) bỏ đoạn camera bay vào
-  host.restart = () => { if (!S || !S.api) return; const { key, door } = S; teardown(); S.restarting = true; begin(key, door); };
+  host.restart = () => { if (!S || !S.api) return; const { key, door, opts } = S; teardown(); meta.exit(true); S.restarting = true; begin(key, door, opts); };
   host.exit = (silent) => {
     if (!S || !S.api) return;
-    teardown();
+    teardown(); meta.exit(false);
     for (const o of S.hidden || []) o.visible = true;
     for (const [o, list] of S.hiddenInst || []) { for (const [i, m] of list) o.setMatrixAt(i, m); o.instanceMatrix.needsUpdate = true; }
     const P = ctx.player; P.pos.copy(S.saved.pos); P.cam.yaw = S.saved.yaw; P.cam.pitch = S.saved.pitch; P.frozen = false; ctx.freeCam = false;
@@ -408,6 +414,7 @@ export function createMiniGameHost(ctx) {
   }
 
   host.update = (dt, t) => {
+    meta.update(dt);
     if (!S || !S.api) return;
     const api = S.api;
     for (const a of api.actors) a.update(dt);

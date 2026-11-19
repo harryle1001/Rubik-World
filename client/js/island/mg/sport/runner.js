@@ -15,6 +15,7 @@ const LANE = PHI * PHI, GATE = 55, NEAR = 13, FAR = -55, KIDS = ['student-male-b
 export function runner(ctx, api, C) {
   C = Object.assign({ goal: 610, topic: 'math', speed: 8, boost: 5, jump: true, mode: 'lane', ground: '#9aa3ad', side: '#7fbf6a', line: '#ffffff',
     obst: 'cone', obstColor: '#ff8a3d', decor: [], ride: null, rideSize: 1, sit: false, rivals: 2, fact: '', title: '' }, C);
+  C.speed *= [0.85, 1, 1.18][(api.level || 1) - 1] || 1;   // cấp độ (mg/meta.js): Dễ chậm hơn, Khó nhanh hơn
   const { root, hud, me } = api, sfx = api.sfx, M = api.mat;
   // Đường đua đặt trên CẦU CẠN cao H = 13 m (Fibonacci): đường dài 68 m không bao giờ đè lên nhà/cây của thế giới mở, khu chơi dưới đất chỉ cần bán kính 13 m
   // Host tìm được hành lang đất trống (api.onGround, xem host findRect) → đường chạy sát đất trên nền đắp; không có thì lùi về cầu cạn
@@ -90,7 +91,7 @@ export function runner(ctx, api, C) {
   // ---------- Vật cản ----------
   const _o = new THREE.Object3D();
   function spawnOb() {
-    const s = S.nextOb; S.nextOb += rnd(11, 19);
+    const s = S.nextOb; S.nextOb += rnd(11, 19) * [1.3, 1, 0.78][(api.level || 1) - 1];   // Khó: vật cản dày hơn
     if (!om || Math.abs(((s - 34) % GATE + GATE) % GATE) < 7 || s > C.goal - 13) return;   // không đặt sát cổng / đích
     obs.push({ s, lane: Math.floor(rnd(0, 3)), hit: false }); if (Math.random() < 0.3) obs.push({ s: s + 0.01, lane: Math.floor(rnd(0, 3)), hit: false });
   }
