@@ -107,7 +107,7 @@ export function createWeather(ctx) {
   function sound() {
     const L = ctx.audio && ctx.audio.listener; if (!L || L.context.state !== 'running') return null;
     if (snd) return snd;
-    const ac = L.context, out = L.getInput(), len = ac.sampleRate * 3, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+    const ac = L.context, out = (ctx.audio.bus || {}).sfx || L.getInput(), len = ac.sampleRate * 3, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
     let br = 0; for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; br = (br + 0.02 * w) / 1.02; d[i] = w * 0.6 + br * 3; } // trắng + nâu
     const loop = (type, f, q) => { const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = buf; s.loop = true; s.loopStart = 0; fl.type = type; fl.frequency.value = f; fl.Q.value = q; g.gain.value = 0; s.connect(fl).connect(g).connect(out); s.start(0, Math.random() * 2); return { g, fl }; };
     snd = { ac, out, rain: loop('bandpass', 2600, 0.5), rainLow: loop('lowpass', 500, 0.7), wind: loop('lowpass', 380, 4) };

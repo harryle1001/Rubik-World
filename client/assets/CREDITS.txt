@@ -134,3 +134,10 @@ tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — h
 models/alley/wiz-hat.glb, wiz-cape.glb  mũ + áo choàng tách từ models/hero-mage.glb (KayKit Adventurers, CC0 — xem trên), tô màu bằng code
 models/alley/broom.glb  "Medieval Tools Pack" — System G6, OpenGameArt, CC0 — https://opengameart.org/content/medieval-tools-pack (chuyển .blend → .glb bằng bpy)
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
+
+Nhạc thích ứng theo vùng (OpenGameArt, CC0 1.0 — đã cắt ≤ 96 s, MP3 64 kbps):
+audio/bgm-academy.mp3        "Magic Mush" — https://opengameart.org/content/magic-mush (Học viện Pha Lê, ban ngày / khi dùng phép)
+audio/bgm-magic-night.mp3    "Fantasy: Rising Moon" — https://opengameart.org/content/fantasy-rising-moon (Học viện Pha Lê, ban đêm)
+audio/bgm-village.mp3        "Orient: Peace Valley" — https://opengameart.org/content/orient-peace-valley (Làng nổi trên biển)
+audio/bgm-temple-ethnic.mp3  "Asian/Oriental 1" — https://opengameart.org/content/asianoriental1 (Rừng & Đền Tri Thức)
+Lớp nhịp, gió khi bay, chuông trường: tổng hợp bằng Web Audio trong js/island/audio.js (không dùng file).
