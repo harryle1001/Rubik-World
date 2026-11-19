@@ -16,6 +16,10 @@ const SYNTH = {
   bell: (ac, out) => { for (const t0 of [0, 0.16]) for (const [f, v] of [[2350, 0.22], [3480, 0.1], [5900, 0.04]]) { const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + t0; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.004); g.gain.exponentialRampToValueAtTime(0.001, t + 0.8); o.connect(g).connect(out); o.start(t); o.stop(t + 0.85); } },
   splash: (ac, out) => noiseBurst(ac, out, 0.4, 'bandpass', 900 + Math.random() * 400, 0.35, 0.8),
   burner: (ac, out) => noiseBurst(ac, out, 0.9, 'lowpass', 420, 0.45),
+  // phép thuật: chuỗi chuông lấp lánh ngũ cung đi lên · cửa gỗ kẽo kẹt · vút gió
+  magic: (ac, out) => { [0, 2, 4, 7, 9, 12].forEach((s, i) => { const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + i * 0.055; o.type = 'triangle'; o.frequency.value = 1047 * 2 ** (s / 12); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.09, t + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t + 0.6); o.connect(g).connect(out); o.start(t); o.stop(t + 0.65); }); },
+  door: (ac, out) => { const o = ac.createOscillator(), g = ac.createGain(), f = ac.createBiquadFilter(), t = ac.currentTime; o.type = 'sawtooth'; o.frequency.setValueAtTime(95, t); o.frequency.linearRampToValueAtTime(140, t + 0.5); o.frequency.linearRampToValueAtTime(80, t + 0.9); f.type = 'bandpass'; f.frequency.value = 700; f.Q.value = 6; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.12, t + 0.08); g.gain.exponentialRampToValueAtTime(0.001, t + 1); o.connect(f).connect(g).connect(out); o.start(t); o.stop(t + 1.05); },
+  whoosh: (ac, out) => noiseBurst(ac, out, 0.5, 'bandpass', 1400, 0.3, 1.4),
 };
 const VOL = { jump: 0.3, land: 0.5, open: 0.7, win: 0.7, ui: 0.4, ok: 0.5 };
 
@@ -73,7 +77,7 @@ export function createAudio(ctx) {
 
   const make = (b, x, y, z, ref, vol, loop) => { const a = new THREE.PositionalAudio(listener); a.panner.panningModel = 'equalpower'; a.setBuffer(b); a.setLoop(loop); a.setRefDistance(ref); a.setRolloffFactor(1.8); a.setMaxDistance(ACTIVE); a.setVolume(vol); const o = new THREE.Object3D(); o.position.set(x, y, z); o.add(a); scene.add(o); return a; };
 
-  // Hiệu ứng ngắn: ctx.sfx('jump' | 'land' | 'open' | 'win' | 'ui' | 'ok' | 'step' | 'bell' | 'splash' | 'burner')
+  // Hiệu ứng ngắn: ctx.sfx('jump' | 'land' | 'open' | 'win' | 'ui' | 'ok' | 'step' | 'bell' | 'splash' | 'burner' | 'magic' | 'door' | 'whoosh')
   ctx.sfx = async kind => {
     if (!on || listener.context.state !== 'running') return;
     if (SYNTH[kind]) return SYNTH[kind](listener.context, listener.getInput());

@@ -1,5 +1,7 @@
-// academy/paintings.js — TRANH BIẾT CỬ ĐỘNG: 20 khung tranh (16 chân dung nhà khoa học / danh nhân + 4 phong cảnh Việt Nam)
-// treo trong đại sảnh (7), thư viện (5) và hành lang quanh Sân Đại Sảnh (8). Nhân vật chớp mắt, quay đầu nhìn theo em,
+// academy/paintings.js — TRANH BIẾT CỬ ĐỘNG: 25 khung tranh (21 chân dung nhà khoa học / danh nhân + 4 phong cảnh Việt Nam)
+// treo trong đại sảnh (7), thư viện (5), hành lang quanh Sân Đại Sảnh (8) và dọc cầu thang xoắn chân tháp thiên văn (5, cao dần như bậc thang).
+// Nhân vật thỉnh thoảng CHẠY SANG khung bên cạnh thăm bạn (khung cũ để trống), trò chuyện rồi quay về.
+// 2 bức là CỬA BÍ MẬT: trả lời đúng câu đố → tranh bật mở như cánh cửa, lộ lối đi phát sáng (dịch chuyển tới nơi khác). Nhân vật chớp mắt, quay đầu nhìn theo em,
 // vẫy tay, đổi tư thế; phong cảnh có mây trôi, sóng vỗ, thác đổ, sao nhấp nháy. Lại gần ≤ 5 m: tranh "thức dậy", chào,
 // kể 1 điều thú vị và đố 1 câu (Toán · Khoa học · Lịch sử · Địa lý) — đúng +13 năng lượng phép. Đêm: tranh sáng nhẹ.
 // Hiệu năng: 2 draw call (khung gộp 1 mesh + tranh InstancedMesh), 1 texture atlas canvas 2048 × 1144;
@@ -9,7 +11,7 @@ import * as THREE from 'three';
 import { Batch } from './geo.js';
 import { matV } from '../sample/palette.js';
 
-const PHI = 1.618, AW = 2048, AH = 1144;
+const PHI = 1.618, AW = 2048, AH = 1558;   // hàng 3 (y 1144): 5 chân dung cầu thang
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 const Q = (q, choices, explain) => ({ q, choices, a: 0, explain });
@@ -69,6 +71,22 @@ const PEOPLE = [
   { name: 'Alexandre Yersin', yrs: '1863 – 1943', skin: '#f0c6a6', hair: 'short', hc: '#6a5544', beard: ['full'], bc: '#7a6450', cloth: 'lab', cc: '#f2f2ee', tie: 'collar', prop: 'micro', bg: ['#1f3a46', '#4f7a86'],
     hi: 'Chào em! Ta là bác sĩ Yersin, người yêu Nha Trang.', fact: 'Ta tìm ra <b>vi khuẩn gây bệnh dịch hạch</b> (1894) và tìm ra cao nguyên nơi có thành phố Đà Lạt ngày nay.',
     q: Q('🌲 Thành phố Đà Lạt thuộc tỉnh nào?', ['Lâm Đồng', 'Khánh Hoà', 'Đắk Lắk', 'Gia Lai'], 'Đà Lạt thuộc <b>Lâm Đồng</b>, cao khoảng 1 500 m nên mát quanh năm.') },
+  // ---- dọc cầu thang tháp thiên văn ----
+  { name: 'Trần Hưng Đạo', yrs: '1228 – 1300', skin: '#dba67c', hat: 'helm', hc: '#1f1c1c', beard: ['stache', 'long'], bc: '#2a2522', cloth: 'ao', cc: '#8a2a24', trim: '#d4a24a', prop: 'scroll', bg: ['#2a2430', '#5a5070'],
+    hi: 'Chào cháu! Ta là Hưng Đạo Đại Vương Trần Quốc Tuấn.', fact: 'Năm 1288 ta cho cắm <b>cọc gỗ dưới lòng sông Bạch Đằng</b>: nước triều rút, thuyền giặc mắc cọc — ta thắng lớn! Ta còn viết <b>"Hịch tướng sĩ"</b>.',
+    q: Q('🌊 Năm 1288 Trần Hưng Đạo đánh tan giặc Nguyên trên dòng sông nào?', ['Sông Bạch Đằng', 'Sông Hồng', 'Sông Hương', 'Sông Cầu'], 'Trận <b>Bạch Đằng</b> 1288: lợi dụng <b>thuỷ triều lên xuống</b> và bãi cọc gỗ để thắng địch.') },
+  { name: 'Hồ Xuân Hương', yrs: '~1772 – 1822', skin: '#f0c4a0', hair: 'bun', hc: '#1f1c1c', cloth: 'ao', cc: '#8a3a5a', trim: '#e8c060', prop: 'scroll', bg: ['#2a2234', '#6a5478'],
+    hi: 'Chào em! Ta là Hồ Xuân Hương, người làm thơ Nôm.', fact: 'Ta được gọi là <b>"Bà chúa thơ Nôm"</b>. Chữ Nôm là chữ do người Việt sáng tạo để ghi tiếng Việt.',
+    q: Q('🍡 Bánh trôi nước (trong bài thơ nổi tiếng của Hồ Xuân Hương) làm từ bột gì?', ['Bột gạo nếp', 'Bột mì', 'Bột ngô', 'Bột sắn dây'], 'Bánh trôi làm từ <b>bột gạo nếp</b>, nhân đường phên — luộc chín thì nổi lên mặt nước.') },
+  { name: 'Tuệ Tĩnh', yrs: 'thế kỷ 14', skin: '#dcaa82', hair: 'none', hc: '#d8d3ca', beard: ['stache', 'goatee'], bc: '#d8d3ca', cloth: 'ao', cc: '#a8742e', trim: '#6e4a30', prop: 'herb', bg: ['#22382a', '#5f8a52'],
+    hi: 'Chào cháu! Ta là thiền sư, thầy thuốc Tuệ Tĩnh.', fact: 'Ta dạy <b>"Nam dược trị Nam nhân"</b> — cây thuốc nước Nam chữa bệnh cho người Nam, như gừng, sả, tía tô.',
+    q: Q('🫚 Củ gừng thường được dùng để làm gì khi bị cảm lạnh?', ['Làm ấm cơ thể', 'Làm mát lạnh', 'Nhuộm tóc', 'Đánh răng'], 'Gừng có vị cay, tính ấm — nước <b>gừng ấm</b> giúp cơ thể bớt lạnh khi cảm.') },
+  { name: 'Nicolaus Copernicus', yrs: '1473 – 1543', skin: '#f0c8a8', hair: 'side', hc: '#4a3426', cloth: 'coat', cc: '#6a2a2a', tie: 'collar', prop: 'scope', bg: ['#0f1430', '#2c3566'], fx: 'jupiter',
+    hi: 'Chào em! Ta là Copernicus.', fact: 'Ta cho rằng <b>Trái Đất quay quanh Mặt Trời</b>, chứ không phải Mặt Trời quay quanh Trái Đất như người xưa nghĩ.',
+    q: Q('🌍 Trái Đất quay một vòng quanh Mặt Trời mất khoảng bao lâu?', ['1 năm (365 ngày)', '1 ngày', '1 tháng', '1 tuần'], 'Một vòng quanh Mặt Trời ≈ <b>365 ngày</b>; còn tự quay quanh mình mất 1 ngày → ngày và đêm.') },
+  { name: 'Leonardo da Vinci', yrs: '1452 – 1519', skin: '#ecc2a0', hair: 'side', hc: '#cfcac0', beard: ['full'], bc: '#d8d3ca', big: 1, cloth: 'coat', cc: '#3f4a6a', prop: 'card', bg: ['#3a2c1e', '#8a6a46'],
+    hi: 'Buongiorno! Ta là Leonardo — họa sĩ và nhà phát minh.', fact: 'Ta ngắm <b>chim bay</b> rồi vẽ bản phác thảo máy bay, trực thăng xoắn ốc và cả dù nhảy — từ hơn 500 năm trước!',
+    q: Q('🪽 Cánh máy bay được thiết kế dựa trên hình dạng cánh của con vật nào?', ['Chim', 'Cá', 'Rùa', 'Mèo'], 'Cánh cong như <b>cánh chim</b> làm không khí đẩy lên — gọi là <b>lực nâng</b>.') },
 ];
 // ---------- phong cảnh ----------
 const SCENES = [
@@ -107,8 +125,23 @@ function prepScene(s, i) {
 }
 
 // --- chân dung 256 × 414 (khung hình 372, bảng tên 42) ---
-function drawPerson(p, st, t) {
+// fig: null = nhân vật ở nhà · { ox } = đang chạy ra/vào khung (dịch ngang ox px; ox ≥ 256 = vắng mặt)
+// guest: { p, st, x, sc } = bạn từ khung bên sang chơi (vẽ thu nhỏ sc, chân chạm đáy tranh, tâm tại x)
+function drawPerson(p, st, t, fig, guest) {
   k.fillStyle = p.bg[0]; k.fillRect(0, 0, 256, 372); for (const [pts, col] of p.tris) poly(pts, col);
+  drawFx(p, t);
+  k.save(); k.beginPath(); k.rect(0, 0, 256, 372); k.clip();
+  const ox = fig ? fig.ox : 0;
+  if (Math.abs(ox) < 300) { k.save(); k.translate(ox, 0); drawFig(p, st, t); k.restore(); }
+  else { k.globalAlpha = 0.55; k.fillStyle = '#ffe3a0'; k.font = 'italic 17px Georgia, serif'; k.textAlign = 'center'; k.fillText('(đi vắng một lát…)', 128, 300); k.globalAlpha = 1; }
+  if (guest) { const sc = guest.sc; k.save(); k.translate(guest.x - 128 * sc, 372 * (1 - sc)); k.scale(sc, sc); drawFig(guest.p, guest.st, t); k.restore(); }
+  k.restore();
+  // bảng tên
+  k.fillStyle = '#2a1f18'; k.fillRect(0, 372, 256, 42); k.fillStyle = '#c9a24a'; k.fillRect(0, 372, 256, 2);
+  k.textAlign = 'center'; k.fillStyle = '#ffe3a0'; k.font = 'bold 19px Georgia, serif'; k.fillText(p.name, 128, 393, 244);
+  k.font = '12px Georgia, serif'; k.fillStyle = '#d9c49a'; k.fillText(p.yrs, 128, 408);
+}
+function drawFx(p, t) {
   if (p.fx === 'board') {   // bảng đen
     k.fillStyle = '#1c2a22'; k.fillRect(12, 16, 232, 150); k.strokeStyle = '#6e4a30'; k.lineWidth = 6; k.strokeRect(12, 16, 232, 150);
     k.fillStyle = 'rgba(240,240,230,.86)'; k.font = 'bold 34px Georgia, serif'; k.textAlign = 'left'; k.fillText('E = mc²', 22, 58);
@@ -118,6 +151,8 @@ function drawPerson(p, st, t) {
     k.globalAlpha = 1; ell(200, 64, 23, 21, '#d9a46a'); k.fillStyle = '#b07a48'; k.fillRect(178, 58, 44, 4); k.fillRect(180, 70, 40, 3);
     for (let m = 0; m < 4; m++) { const a = t * (0.9 - m * 0.18) + m * 1.7; ell(200 + Math.cos(a) * (32 + m * 10), 64 + Math.sin(a) * 4, 2.6, 2.6, '#f1efe9'); }
   }
+}
+function drawFig(p, st, t) {
   const hx = st.hx, cx = 128 + hx * 5, cy = 150, fx = cx + hx * 10, rx = 46, ry = 57, S = p.sk, Cl = p.cl;
   // tóc phía sau (tóc giả, tóc xoăn)
   if (p.hair === 'wig') for (const s of [-1, 1]) for (let j = 0; j < 4; j++) ell(cx + s * (44 + j * 3) - hx * 4, cy - 6 + j * 24, 21, 17, j % 2 ? shade(p.hc, 0.88) : p.hc);
@@ -144,7 +179,7 @@ function drawPerson(p, st, t) {
   // tóc trước / mũ
   if (p.hair === 'side') { for (const s of [-1, 1]) ell(cx + s * 42 - hx * 3, cy - 12, 12, 22, p.hc); }
   else if (p.hair === 'wild') { const sp = []; for (let i = 0; i <= 12; i++) { const a = Math.PI + i / 12 * Math.PI, rr = (i % 2 ? 62 : 72) + Math.sin(t * 2 + i) * 2; sp.push(cx + Math.cos(a) * rr * 1.08, cy - 14 + Math.sin(a) * rr); } sp.push(cx + 56, cy + 10, cx + 40, cy - 22, cx - 40, cy - 22, cx - 56, cy + 10); poly(sp, p.hc); }
-  else if (p.hair && !p.hat) { k.fillStyle = p.hc; k.beginPath(); k.ellipse(cx + hx * 3, cy - 22, rx + 3, ry * 0.68, 0, Math.PI * 0.98, Math.PI * 2.02); k.fill(); poly([cx - rx - 2, cy - 18, cx - rx + 6, cy + 4, cx - rx + 14, cy - 20], p.hc); poly([cx + rx + 2, cy - 18, cx + rx - 6, cy + 4, cx + rx - 14, cy - 20], p.hc); }
+  else if (p.hair && p.hair !== 'none' && !p.hat) { k.fillStyle = p.hc; k.beginPath(); k.ellipse(cx + hx * 3, cy - 22, rx + 3, ry * 0.68, 0, Math.PI * 0.98, Math.PI * 2.02); k.fill(); poly([cx - rx - 2, cy - 18, cx - rx + 6, cy + 4, cx - rx + 14, cy - 20], p.hc); poly([cx + rx + 2, cy - 18, cx + rx - 6, cy + 4, cx + rx - 14, cy - 20], p.hc); }
   if (p.hair === 'topknot' && !p.hat) ell(cx + hx * 4, cy - 70, 15, 13, shade(p.hc, 0.92));
   if (p.hair === 'bun') ell(cx + hx * 2, cy - 72, 21, 15, shade(p.hc, 0.9));
   if (p.laurel) for (let i = 0; i < 9; i++) { const a = Math.PI * (1.08 + i * 0.105); ell(cx + Math.cos(a) * 46, cy - 26 + Math.sin(a) * 34, 7, 3.6, '#5f8a3e', a + 1.2); }
@@ -153,6 +188,11 @@ function drawPerson(p, st, t) {
     for (const s of [-1, 1]) { k.save(); k.translate(cx + s * 30, cy - 52); k.rotate(s * (0.12 + w)); ell(s * 34, 0, 34, 10, '#1d1b22'); ell(s * 34, -2, 28, 5, '#2e2b36'); k.restore(); }
     k.fillStyle = '#1d1b22'; k.beginPath(); k.ellipse(cx + hx * 2, cy - 40, rx + 4, 42, 0, Math.PI, Math.PI * 2); k.fill(); k.fillRect(cx - rx - 4 + hx * 2, cy - 42, rx * 2 + 8, 12);
     ell(cx + hx * 2, cy - 64, 22, 16, '#26232c'); line([cx - rx - 4 + hx * 2, cy - 32, cx + rx + 4 + hx * 2, cy - 32], '#d4a24a', 3);
+  } else if (p.hat === 'helm') {   // mũ trụ tướng: chóp đồng + tua đỏ + 2 vè che tai
+    k.fillStyle = '#5a4a2e'; k.beginPath(); k.ellipse(cx + hx * 2, cy - 30, rx + 7, 44, 0, Math.PI, Math.PI * 2); k.fill(); k.fillRect(cx - rx - 7 + hx * 2, cy - 34, rx * 2 + 14, 14);
+    line([cx - rx - 7 + hx * 2, cy - 27, cx + rx + 7 + hx * 2, cy - 27], '#d4a24a', 4); poly([cx - 6 + hx * 2, cy - 72, cx + 6 + hx * 2, cy - 72, cx + hx * 2, cy - 98], '#d4a24a');
+    for (let j = 0; j < 5; j++) line([cx + hx * 2, cy - 96, cx + hx * 2 + (j - 2) * 7 + Math.sin(t * 3 + j) * 3, cy - 112 - (j % 2) * 6], '#c8302c', 3);
+    for (const s of [-1, 1]) poly([cx + s * (rx + 7) + hx * 2, cy - 22, cx + s * (rx + 2) + hx * 2, cy + 18, cx + s * (rx - 8) + hx * 2, cy - 20], '#4a3c24');
   } else if (p.hat === 'khan') {   // khăn đóng
     k.fillStyle = '#26232c'; k.beginPath(); k.ellipse(cx + hx * 2, cy - 30, rx + 6, 34, 0, Math.PI, Math.PI * 2); k.fill(); k.fillRect(cx - rx - 6 + hx * 2, cy - 32, rx * 2 + 12, 14);
     for (let j = 0; j < 4; j++) line([cx - rx - 2 + hx * 2, cy - 22 - j * 9, cx + rx + 2 + hx * 2, cy - 30 - j * 9], '#3a3644', 3);
@@ -185,10 +225,6 @@ function drawPerson(p, st, t) {
   drawProp(p, hx2, hy, t, st);
   ell(hx2, hy, 10.5, 10, S[0]); ell(hx2 + 3, hy + 2, 6, 5, S[1]);
   k.lineCap = 'butt';
-  // bảng tên
-  k.fillStyle = '#2a1f18'; k.fillRect(0, 372, 256, 42); k.fillStyle = '#c9a24a'; k.fillRect(0, 372, 256, 2);
-  k.textAlign = 'center'; k.fillStyle = '#ffe3a0'; k.font = 'bold 19px Georgia, serif'; k.fillText(p.name, 128, 393, 244);
-  k.font = '12px Georgia, serif'; k.fillStyle = '#d9c49a'; k.fillText(p.yrs, 128, 408);
 }
 function drawProp(p, x, y, t, st) {
   const pr = p.prop;
@@ -268,25 +304,46 @@ function drawScene(s, t) {
   k.textAlign = 'center'; k.fillStyle = '#ffe3a0'; k.font = 'bold 15px Georgia, serif'; k.fillText(s.name, 207, 250, 400);
 }
 
+// lối bí mật sau tranh (canvas 256 × 414): vòm đá, bậc thang dẫn vào ánh sáng tím
+function passageTex() {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 414; const g = c.getContext('2d');
+  g.fillStyle = '#16121e'; g.fillRect(0, 0, 256, 414);
+  const r = g.createRadialGradient(128, 150, 6, 128, 150, 160); r.addColorStop(0, '#fff2c8'); r.addColorStop(0.18, '#c9a8ff'); r.addColorStop(0.55, '#3a2a6a'); r.addColorStop(1, 'rgba(22,18,30,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 256, 414);
+  for (let i = 0; i < 8; i++) { const y = 400 - i * 30, w = 230 - i * 24; g.fillStyle = `rgb(${70 - i * 6},${62 - i * 5},${84 - i * 4})`; g.fillRect(128 - w / 2, y - 14, w, 14); g.fillStyle = 'rgba(255,240,200,.18)'; g.fillRect(128 - w / 2, y - 14, w, 2); }
+  g.strokeStyle = '#6e6a7a'; g.lineWidth = 14; g.beginPath(); g.moveTo(16, 414); g.lineTo(16, 120); g.arc(128, 120, 112, Math.PI, 0); g.lineTo(240, 414); g.stroke();
+  for (let i = 0; i < 34; i++) { g.globalAlpha = 0.4 + Math.random() * 0.6; g.fillStyle = '#fff6d8'; g.fillRect(40 + Math.random() * 176, 40 + Math.random() * 260, 2, 2); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
 export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   const solved = load('academy.paintings', []);
   PEOPLE.forEach(prepPerson); SCENES.forEach(prepScene);
   const O = toWorld(0, 0), Fu = toWorld(1, 0), Fv = toWorld(0, 1);
   const du = [Fu[0] - O[0], Fu[1] - O[1]], dv = [Fv[0] - O[0], Fv[1] - O[1]];   // hướng u, v trong thế giới
   const CC = toWorld(-34, 0);   // tâm lâu đài
-  let B = null;
+  const A = L.astro, Lb0 = L.library;
+  const DEST = {   // đích của cửa bí mật
+    deck: { name: 'ban công tháp thiên văn (55 m)', at: () => [...toWorld(A.u + A.r2 + 2.5, A.v), Y + A.h1] },
+    lib: { name: 'thư viện', at: () => [...toWorld(Lb0.u1 - 4, (Lb0.v0 + Lb0.v1) / 2), Y] },
+  };
+  let B = null, visit = null, visitT = 8;
 
   // ---------- vị trí treo: [phòng, trục mặt tường, toạ độ mặt tường, hướng pháp tuyến, toạ độ dọc tường, cao tâm, rộng, cao, loại] ----------
   function slots() {
     const Hh = L.hall, ht = 1.6, Lb = L.library, lt = 1.2, X = L.box, fu = X.u1 - L.T, a0 = X.u0 + L.T, S = [];
-    const add = (room, axis, f, n, a, y, w, h, kind, dark = 0) => S.push({ room, axis, f, n, a, y: Y + y, w, h, kind, dark });
+    const add = (room, axis, f, n, a, y, w, h, kind, dark = 0, door = null) => S.push({ room, axis, f, n, a, y: Y + y, w, h, kind, dark, door });
     for (const u of [-80, -72, -64]) { add('hall', 'v', Hh.v0 + ht, 1, u, 3.4, 1.3, 2.1, 'p'); add('hall', 'v', Hh.v1 - ht, -1, u, 3.4, 1.3, 2.1, 'p'); }
     add('hall', 'u', Hh.u0 + ht, 1, 0, 8.1, 5.5, 3.4, 'L');                                         // tranh lớn sau bục giáo viên
     for (const v of [62, 72, 82]) add('lib', 'u', Lb.u0 + lt, 1, v, 5.6, 1.3, 2.1, 'p', 1);         // trên bàn đọc
     add('lib', 'v', Lb.v0 + lt, 1, (Lb.u0 + Lb.u1) / 2, 7.6, 1.3, 2.1, 'p', 1); add('lib', 'v', Lb.v1 - lt, -1, (Lb.u0 + Lb.u1) / 2, 7.6, 1.3, 2.1, 'p', 1);   // trên kệ sách
-    for (const [kk, sg] of [[10, 1], [16, 1], [24, 1], [10, -1], [24, -1]]) add('cor', 'v', -32 * sg, sg, a0 + 10.1 + 4.2 * kk, 2.75, 1.3, 2.1, 'p');   // giữa 2 cửa sổ dãy ngăn
+    for (const [kk, sg] of [[10, 1], [16, 1], [24, 1], [10, -1], [24, -1]]) add('cor', 'v', -32 * sg, sg, a0 + 10.1 + 4.2 * kk, 2.75, 1.3, 2.1, 'p', 0, kk === 16 ? 'lib' : null);   // giữa 2 cửa sổ dãy ngăn (Darwin: cửa bí mật → thư viện)
     add('cor', 'v', 32, -1, a0 + 10.1 + 4.2 * 16, 2.75, 3.4, 2.1, 'l');
     add('cor', 'u', fu, -1, -13.3, 2.45, 2.6, 1.6, 'l'); add('cor', 'u', fu, -1, 13.3, 2.45, 2.6, 1.6, 'l');   // dưới cửa sổ dãy mặt tiền
+    // cầu thang xoắn chân tháp thiên văn: 5 mặt phẳng của thân tháp 10 cạnh, tâm tranh cao dần 2,6 → 5,6 m như bậc thang
+    const ap = A.r * Math.cos(Math.PI / 10) - 0.05;
+    [-90, -54, -18, 18, 54].forEach((deg, i) => { const a = deg * Math.PI / 180, nu = Math.cos(a), nv = Math.sin(a);
+      S.push({ room: 'stair', pos: [A.u + nu * ap, A.v + nv * ap], nrm: [nu, nv], y: Y + 2.6 + i * 0.75, w: 1.3, h: 2.1, kind: 'p', dark: 0, door: i === 0 ? 'deck' : null }); });   // Trần Hưng Đạo: cửa → ban công
     return S;
   }
 
@@ -294,23 +351,26 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     const g = new THREE.Group(); g.name = 'academy-paintings'; ctx.scene.add(g);
     const cv = document.createElement('canvas'); cv.width = AW; cv.height = AH; k = cv.getContext('2d');
     const atlas = new THREE.CanvasTexture(cv); atlas.flipY = false; atlas.colorSpace = THREE.SRGBColorSpace; atlas.generateMipmaps = false; atlas.minFilter = THREE.LinearFilter;
-    const S = slots(), list = [], fb = new Batch();
+    const S = slots(), list = [], fb = new Batch(), doors = [], B0 = {};
     let pi = 0, li = 1, lx = 512;
     for (const s of S) {
       // ô atlas: chân dung 256 × 414 (2 hàng × 8) · tranh lớn 512 × 316 · phong cảnh 414 × 256 (hàng dưới)
       let cell, data, land = s.kind !== 'p';
-      if (!land) { cell = { x: (pi % 8) * 256, y: Math.floor(pi / 8) * 414, w: 256, h: 414 }; data = PEOPLE[pi++]; }
+      if (!land) { cell = { x: (pi % 8) * 256, y: pi < 16 ? Math.floor(pi / 8) * 414 : 1144, w: 256, h: 414 }; data = PEOPLE[pi++]; }
       else if (s.kind === 'L') { cell = { x: 0, y: 828, w: 512, h: 316 }; data = SCENES[0]; }
       else { cell = { x: lx, y: 828, w: 414, h: 256 }; lx += 414; data = SCENES[li++]; }
-      const [ux, uz] = s.axis === 'u' ? du : dv, nx = ux * s.n, nz = uz * s.n;
-      const base = s.axis === 'u' ? toWorld(s.f, s.a) : toWorld(s.a, s.f);
+      let nx, nz, base;
+      if (s.pos) { base = toWorld(s.pos[0], s.pos[1]); nx = du[0] * s.nrm[0] + dv[0] * s.nrm[1]; nz = du[1] * s.nrm[0] + dv[1] * s.nrm[1]; }
+      else { const [ux, uz] = s.axis === 'u' ? du : dv; nx = ux * s.n; nz = uz * s.n; base = s.axis === 'u' ? toWorld(s.f, s.a) : toWorld(s.a, s.f); }
       const ry = Math.atan2(nx, nz);
       const P = { ...s, cell, data, land, id: land ? 'L:' + data.name : data.name, x: base[0] + nx * 0.06, z: base[1] + nz * 0.06, nx, nz, rx: Math.cos(ry), rz: -Math.sin(ry), ry,
         st: { hx: 0, hxT: 0, arm: [160, 322, 210, 326], pose: 'rest', talk: 0, awake: 0, blink: 0 }, next: 0, greetAt: -99, wakeT: -99, poseT: 13 + Math.random() * 21, blinkT: Math.random() * 4, seed: Math.random() * 9 };
       list.push(P);
       // khung: gỗ + gờ đồng thau, viền 13 cm (tranh lớn 21 cm), sâu 12 cm
       const b = s.kind === 'L' ? 0.21 : 0.13, d = 0.12, W2 = s.w / 2, H2 = s.h / 2, wood = list.length % 2 ? '#6e4a30' : '#4a3424', brass = '#c9a24a';
-      const piece = (w, h, dd, x, y, z, col) => fb.add(new THREE.BoxGeometry(w, h, dd).translate(x, y, z), col, base[0], s.y, base[1], ry);
+      // cửa bí mật: khung gộp riêng 1 mesh, gốc toạ độ = bản lề (mép trái) → xoay mở ra ngoài
+      const db = s.door ? new Batch() : null, hx = -W2 - b;
+      const piece = (w, h, dd, x, y, z, col) => db ? db.add(new THREE.BoxGeometry(w, h, dd).translate(x - hx, y, z), col) : fb.add(new THREE.BoxGeometry(w, h, dd).translate(x, y, z), col, base[0], s.y, base[1], ry);
       piece(s.w + 2 * b, b, d, 0, H2 + b / 2, d / 2, wood); piece(s.w + 2 * b, b, d, 0, -H2 - b / 2, d / 2, wood);
       piece(b, s.h, d, -W2 - b / 2, 0, d / 2, wood); piece(b, s.h, d, W2 + b / 2, 0, d / 2, wood);
       const lp = b / PHI / PHI;   // gờ đồng thau trong
@@ -318,6 +378,13 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
       piece(lp, s.h, d + 0.02, -W2 - lp / 2, 0, d / 2, brass); piece(lp, s.h, d + 0.02, W2 + lp / 2, 0, d / 2, brass);
       piece(b * PHI * 2, b * PHI, d * 0.8, 0, H2 + b * 1.3, d / 2, brass);   // chóp trang trí
       piece(s.w, s.h, 0.02, 0, 0, 0.01, '#2a1f18');                          // tấm lưng
+      if (db) {
+        const grp = new THREE.Group(); grp.position.set(base[0] + P.rx * hx, s.y, base[1] + P.rz * hx); grp.rotation.y = ry; g.add(grp);
+        const fm2 = new THREE.Mesh(db.build(), matV()); grp.add(fm2);
+        const pass = new THREE.Mesh(new THREE.PlaneGeometry(s.w, s.h), new THREE.MeshBasicMaterial({ map: B0.pass || (B0.pass = passageTex()) }));
+        pass.position.set(base[0] + nx * 0.03, s.y, base[1] + nz * 0.03); pass.rotation.y = ry; pass.visible = false; g.add(pass);
+        P.door = { key: s.door, grp, fm: fm2, pass, hx, ang: 0, target: solved.includes(P.id) ? 1.25 : 0 }; doors.push(P);
+      }
     }
     // tranh: InstancedMesh 1 tấm phẳng, mỗi bản đọc 1 ô atlas (aRect) + độ sáng tự phát (aGlow)
     const n = list.length, rect = new Float32Array(n * 4), glow = new Float32Array(n);
@@ -332,18 +399,31 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     const im = new THREE.InstancedMesh(geo, m, n), o = new THREE.Object3D();
     list.forEach((P, i) => {
       o.position.set(P.x, P.y, P.z); o.rotation.set(0, P.ry, 0); o.scale.set(P.w, P.h, 1); o.updateMatrix(); im.setMatrixAt(i, o.matrix);
+      if (!P.land) {   // hàng xóm để chạy sang chơi: chân dung gần nhất cùng phòng, cùng hướng, ≤ 10,5 m (không tính tranh-cửa)
+        let nb = null, nd = 10.5; for (const Q of list) { if (Q === P || Q.land || Q.room !== P.room || P.door || Q.door) continue; const d = Math.hypot(Q.x - P.x, Q.z - P.z); if (d < nd && Q.nx * P.nx + Q.nz * P.nz > 0.75 && Math.abs(Q.y - P.y) < 1.6) { nd = d; nb = Q; } }
+        if (nb) { P.nb = nb; P.sP = Math.sign((nb.x - P.x) * P.rx + (nb.z - P.z) * P.rz) || 1; P.sQ = Math.sign((P.x - nb.x) * nb.rx + (P.z - nb.z) * nb.rz) || 1; }
+      }
       rect.set([P.cell.x / AW, P.cell.y / AH, P.cell.w / AW, P.cell.h / AH], i * 4); glow[i] = 0.12; P.i = i;
       drawCell(P, 0);
     });
     im.computeBoundingSphere(); im.name = 'academy-paintings-canvas';
     const fm = new THREE.Mesh(fb.build(), matV()); fm.name = 'academy-paintings-frames';
     g.add(fm, im);
-    B = { g, list, atlas, aGlow, glow, im, fm, cv, box: new THREE.Box2(new THREE.Vector2(), new THREE.Vector2()), pos: new THREE.Vector2(), cur: null };
+    B = { g, list, atlas, aGlow, glow, im, fm, cv, doors, B0, box: new THREE.Box2(new THREE.Vector2(), new THREE.Vector2()), pos: new THREE.Vector2(), cur: null };
+    for (const P of doors) { P.door.ang = P.door.target; swing(P); }
+  }
+  // tranh-cửa: tấm tranh (bản InstancedMesh) bám theo khung đang xoay quanh bản lề
+  const _m = new THREE.Matrix4(), _l = new THREE.Matrix4();
+  function swing(P) {
+    const D = P.door; D.grp.rotation.y = P.ry - D.ang; D.grp.updateMatrix(); D.pass.visible = D.ang > 0.02;
+    _l.makeTranslation(-D.hx, 0, 0.06).scale(new THREE.Vector3(P.w, P.h, 1)); _m.multiplyMatrices(D.grp.matrix, _l);
+    B.im.setMatrixAt(P.i, _m); B.im.instanceMatrix.needsUpdate = true;
   }
 
   function drawCell(P, t) {
     const c = P.cell; k.save(); k.translate(c.x, c.y); k.beginPath(); k.rect(0, 0, c.w, c.h); k.clip();
-    if (P.land) { k.scale(c.w / 414, c.h / 256); drawScene(P.data, t); } else drawPerson(P.data, P.st, t);
+    const v = visit, fig = v && P === v.P ? { ox: v.ox } : null, guest = v && P === v.Q && v.gx != null ? { p: v.P.data, st: v.P.st, x: v.gx, sc: 0.62 } : null;
+    if (P.land) { k.scale(c.w / 414, c.h / 256); drawScene(P.data, t); } else drawPerson(P.data, P.st, t, fig, guest);
     k.restore();
   }
   function upload(P) {
@@ -355,7 +435,8 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
 
   function greet(P, t, again) {
     const s = P.st, D = P.data; P.greetAt = t; P.wakeT = t + 8; s.waveT = t + 2.6; s.talkT = t + 5; P.next = 0;
-    ctx.toast(`🖼️ <b>${D.name}</b>: “${again ? 'Em muốn nghe lại à? Được thôi!' : D.hi}” 💡 ${D.fact}`, 7000);
+    const sec = P.door && !(P.door.target > 0) ? ' 🤫 <i>Nghe đồn sau bức tranh này có lối đi bí mật — trả lời đúng câu đố để mở!</i>' : '';
+    ctx.toast(`🖼️ <b>${D.name}</b>: “${again ? 'Em muốn nghe lại à? Được thôi!' : D.hi}” 💡 ${D.fact}${sec}`, 7000);
     ctx.sfx && ctx.sfx('magic');
   }
 
@@ -380,6 +461,23 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
       if (Math.abs(gT - gi) > 0.005) { B.glow[P.i] = gi + (gT - gi) * Math.min(1, dt * 3); dirty = true; }
     }
     if (dirty) B.aGlow.needsUpdate = true;
+    // ---- chạy sang khung bên: 1 cuộc thăm một lúc, chỉ khi em ở trong 21 m ----
+    if (!visit && t > visitT) {
+      const c = B.list.filter(P => P.nb && P.d < 21 && !P.st.awake && !P.nb.st.awake);
+      if (c.length) { const P = c[Math.floor(Math.random() * c.length)]; visit = { P, Q: P.nb, t0: t, ox: 0, gx: null }; if (P.d < 13) ctx.toast(`🖼️ <b>${P.data.name}</b> chạy sang tranh bên thăm <b>${P.nb.data.name}</b>!`, 4000); }
+      else visitT = t + 5;
+    }
+    if (visit) {
+      const v = visit, e = t - v.t0, sm = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); }, P = v.P, Q = v.Q;
+      v.ox = e < 1.6 ? P.sP * 300 * sm(e / 1.6) : e < 11.2 ? 999 : P.sP * 300 * (1 - sm((e - 11.2) / 1.6));
+      v.gx = e < 1.6 || e >= 11.2 ? null : 128 + Q.sQ * (e < 3.2 ? 220 - 150 * sm((e - 1.6) / 1.6) : e < 9.6 ? 70 : 70 + 150 * sm((e - 9.6) / 1.6));
+      P.st.hxT = e < 9.6 ? -Q.sQ * 0.8 : Q.sQ * 0.8; Q.st.hxT = Q.sQ * 0.8;
+      P.st.talkT = e > 3.2 && e < 6.4 ? t + 0.2 : 0; Q.st.talkT = e > 6.4 && e < 9.6 ? t + 0.2 : Q.st.talkT; if (e > 3.2 && e < 3.4) P.st.waveT = t + 1.6;
+      P.next = Math.min(P.next, t + 0.07); Q.next = Math.min(Q.next, t + 0.07);
+      if (e > 12.8) { visit = null; visitT = t + 21 + Math.random() * 34; P.next = Q.next = 0; }
+    }
+    // ---- tranh-cửa đang mở / đóng ----
+    for (const P of B.doors) { const D = P.door; if (Math.abs(D.target - D.ang) > 0.002) { D.ang += (D.target - D.ang) * Math.min(1, dt * 2.6); swing(P); } }
     // vẽ lại ≤ 2 ô / khung, chỉ tranh trong 21 m
     for (let n = 0; n < 2; n++) {
       let pick = null; for (const P of B.list) if (P.d < 21 && t >= P.next && (!pick || P.next < pick.next)) pick = P;
@@ -387,12 +485,18 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
       const s = pick.st, dd = Math.min(0.3, t - (pick.lastT || t)); pick.lastT = t;
       s.hx += (s.hxT - s.hx) * Math.min(1, dd * 4 + 0.15);
       drawCell(pick, t); upload(pick);
-      pick.next = t + (s.awake ? 0.11 : pick.land ? 0.15 : 0.19);
+      pick.next = t + (visit && (pick === visit.P || pick === visit.Q) ? 0.07 : s.awake ? 0.11 : pick.land ? 0.15 : 0.19);
     }
     // thức dậy + hỏi
     if (ctx.player.vehicle) return;
     if (best !== B.cur) { B.cur = best; if (best && t - best.greetAt > 21) greet(best, t); }
-    if (best) {
+    if (best && best.door && best.door.ang > 0.9) {   // cửa bí mật đã mở → đi qua
+      const P = best, D = DEST[P.door.key];
+      ctx.offer(`🚪 Lối bí mật → ${D.name}`, () => {
+        const [x, z, y] = D.at(); magic.burst(ctx.player.pos.clone().setY(ctx.player.pos.y + 1), new THREE.Vector3(0, 1, 0), '#c9a8ff', 34, 3, 1);
+        ctx.player.teleport(x, z, y); ctx.sfx && ctx.sfx('magic'); ctx.toast(`🚪✨ Em bước qua bức tranh của <b>${P.data.name}</b> và hiện ra ở <b>${D.name}</b>!`, 4500);
+      }, 8);
+    } else if (best) {
       const P = best, done = solved.includes(P.id), short = P.land ? 'bức tranh' : P.data.name;
       ctx.offer(done ? `💬 Nghe ${short} kể chuyện` : `❓ Câu đố của ${short}`, () => {
         if (done) return greet(P, performance.now() / 1000, true);
@@ -400,7 +504,9 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
         magic.ask(P.data.q, () => {
           if (!solved.includes(P.id)) { solved.push(P.id); save('academy.paintings', solved); }
           magic.setMana(magic.mana + 13); const n = performance.now() / 1000; P.st.cheerT = n + 3; P.st.talkT = n + 3; P.wakeT = n + 8; P.next = 0;
-          ctx.toast(`🖼️ <b>${P.data.name}</b> reo lên: “Giỏi lắm!” ✨ +13 năng lượng phép. (Đã giải ${solved.length}/${B.list.length} bức tranh)`, 4500);
+          if (P.door) { P.door.target = 1.25; ctx.sfx && ctx.sfx('open'); magic.burst(new THREE.Vector3(P.x, P.y, P.z), new THREE.Vector3(P.nx, 0.3, P.nz), '#c9a8ff', 34, 4, 0.8);
+            ctx.toast(`🖼️ <b>${P.data.name}</b>: “Giỏi lắm! Mời em đi lối bí mật!” 🚪 Bức tranh bật mở như cánh cửa → <b>${DEST[P.door.key].name}</b>. ✨ +13 năng lượng.`, 6000); }
+          else ctx.toast(`🖼️ <b>${P.data.name}</b> reo lên: “Giỏi lắm!” ✨ +13 năng lượng phép. (Đã giải ${solved.length}/${B.list.length} bức tranh)`, 4500);
         }, `🖼️ ${P.data.name} đố em`);
       }, 7);
     }
@@ -408,8 +514,12 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
 
   function unbuild() {
     if (!B) return; ctx.scene.remove(B.g);
+    for (const P of B.doors) { P.door.fm.geometry.dispose(); P.door.pass.geometry.dispose(); P.door.pass.material.dispose(); }
+    if (B.B0.pass) B.B0.pass.dispose(); visit = null;
     B.fm.geometry.dispose(); B.im.geometry.dispose(); B.im.material.dispose(); B.im.dispose(); B.atlas.dispose(); B.cv.width = B.cv.height = 1;
     B = null; k = null;
   }
+  // gỡ lỗi: __island.paintings.visit() · .open('deck' | 'lib')
+  ctx.paintings = { visit() { visitT = 0; }, open(key) { if (B) for (const P of B.doors) if (!key || P.door.key === key) P.door.target = 1.25; }, get list() { return B && B.list; } };
   return { build, unbuild, update };
 }
