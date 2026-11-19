@@ -139,6 +139,49 @@ Phố Phép Thuật v2 (alley-merge.js gộp draw call): dùng thêm models/kit/
   két rau quả, táo, bí ngô, dưa hấu, thùng, chum, chậu, bồn hoa, hoa, cột đèn khí, đèn lồng treo, bảng phấn, bàn ghế trà, giá sách, sách, nhạc cụ, nấm
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
 
+models/wild/*.glb — ĐỘNG VẬT THẬT của đảo (wild/wildlife.js): 51 model (4,7 MB), TẤT CẢ CC0 1.0, có animation (trừ ghi chú "tĩnh").
+  Đã xử lý lại: xuất GLB bằng Blender/FBX2glTF, gán lại màu vật liệu bị mất khi chuyển từ file .blend cũ, giảm tam giác,
+  texture ≤ 128 px, nén meshopt (gltf-transform). Tải lười theo loài.
+  Quaternius (https://quaternius.com), CC0 — tải từ trang OpenGameArt chính thức của Quaternius:
+    Farm Animals Pack      https://opengameart.org/content/lowpoly-animated-farm-animal-pack   → cow, horse, zebra, llama, pig, sheep
+    Animated Fish Pack     https://opengameart.org/content/animated-fish                       → tuna (Fish1), tang (Fish2), shark, humpback (Whale)
+    Animals Pack           https://opengameart.org/content/5-low-poly-animals                  → bird, chick, bluewhale
+    Animal Pack Vol.2      https://opengameart.org/content/animated-animales-low-poly          → eagle
+    qua gói npm "@netforge/asset-library-files" 0.2.0 (library/lowpoly, NOTICE ghi CC0)        → bat, husky, pug, wolf
+  OpenGameArt — từng trang ghi giấy phép DUY NHẤT là CC0 (đã kiểm ngày 2026-11-19):
+    goat        https://opengameart.org/content/3d-goat-animation-for-game
+    boar        https://opengameart.org/content/boar
+    bear (tĩnh) https://opengameart.org/content/white-bear-low-poly
+    camel (tĩnh) https://opengameart.org/content/camel-basemesh
+    raven       https://opengameart.org/content/raven-0
+    tortoise    https://opengameart.org/content/turtle-0
+    spermwhale  https://opengameart.org/content/whale-lowpoly
+    butterfly   https://opengameart.org/content/butterfly-animated
+    hen         https://opengameart.org/content/chicken-3
+    rooster     https://opengameart.org/content/rooster-animated
+    crocodile   https://opengameart.org/content/crocodile-0
+    reddeer     https://opengameart.org/content/old-deer-male
+    hippo (tĩnh) https://opengameart.org/content/hippo
+    lemur       https://opengameart.org/content/lemur
+    seal (tĩnh) https://opengameart.org/content/seal-low-poly
+    bigcat (tĩnh; hổ, sư tử, báo) https://opengameart.org/content/tiger
+    rhino (tĩnh) https://opengameart.org/content/white-rhinoceros
+    spider      https://opengameart.org/content/spider-2
+    hornet      https://opengameart.org/content/3d-hornetwasp
+    shrike (tĩnh) https://opengameart.org/content/bird-yellow-billed-shrike
+    elephant    https://opengameart.org/content/low-poly-elephant-model
+    rabbit      https://opengameart.org/content/rabbit-0
+    snake       https://opengameart.org/content/snake-low-poly-animated-3d-model
+    treefrog    https://opengameart.org/content/frog-low-poly-animated-3d-model
+    redcrab     https://opengameart.org/content/crab-low-poly-animated-3d-model
+    penguin, squirrel  https://opengameart.org/content/retro-world-64
+    dugong (tĩnh) https://opengameart.org/content/low-poly-manatee-with-hand-painted-textures
+    octopus (tĩnh) https://opengameart.org/content/ocean-trio
+    mallard     https://opengameart.org/content/rigged-duck
+    duckling    https://opengameart.org/content/rigged-duckling
+    bee         https://opengameart.org/content/bee-0
+    hammerhead (tĩnh) https://opengameart.org/content/shark-low-poly
+  Tiếng kêu các loài: tự tổng hợp bằng WebAudio (wild/calls.js, không dùng file) + sfx-dog / sfx-sheep / sfx-chirp (CC0, đã ghi ở trên).
 Nhân vật anime xem thử (client/assets/vrm/, trang client/vrm-preview.html — CHƯA dùng trong game; chi tiết docs/vrm-preview/LICENSES.md):
   pixiv Inc. / VRoid Studio sample models, CC0 (meta VRM: licenseName "CC0"): Sendagaya Shino, Sendagaya Shibu, Sakurada Fumiriya,
     HairSample_Female, HairSample_Male, Vita, Vivi — tải qua bản sao github.com/madjin/vrm-samples.

@@ -30,6 +30,8 @@ import { zenNoPlant } from './island/zone-zen.js';
 import { createDt } from './island/motion.js';
 import { createAmbience } from './island/ambience.js';
 import { createSealife } from './island/sealife.js';
+import { createWildlife } from './island/wild/wildlife.js';
+import { createNaturalist } from './island/wild/naturalist.js';
 import { createTreasure } from './island/treasure.js';
 import { createLiving } from './island/living.js';
 import { createSkyshow } from './island/skyshow.js';
@@ -155,6 +157,8 @@ ctx.intro = { open: false, tick: null, play: (o = {}) => ctx.intro.open ? null :
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 const sealife = ctx.sealife = createSealife(ctx); // thế giới biển: san hô, đàn cá, sứa, rùa, cá đuối, cá heo, Bách khoa biển
+const wild = ctx.wild = createWildlife(ctx); // ~70 loài động vật thật theo sinh cảnh: hành vi theo giờ/mùa/thời tiết (wild/wildlife.js)
+const naturalist = ctx.naturalist = createNaturalist(ctx); // 📔 Sổ tay thiên nhiên, 🔭 ống nhòm, 📷 chụp ảnh, nhiệm vụ nhà sinh vật học nhí (wild/naturalist.js)
 const treasure = ctx.treasure = createTreasure(ctx); // 13 rương kho báu dưới đáy biển + câu đố biển + mảnh bản đồ (HUD 🧰)
 const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao băng, mây ti, chế độ ngắm trời ⭐ (skyshow.js)
 const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
@@ -252,6 +256,7 @@ renderer.setAnimationLoop(() => {
   destiny.update(dt, clock.elapsedTime); // sau weather/ambience: sương đặc trong bãi sương
   mg.update(dt, clock.elapsedTime);
   sealife.update(dt);
+  wild.update(dt);
   treasure.update(dt);
   sea.update(dt, clock.elapsedTime);
   teacherQuiz.update(dt);
@@ -259,6 +264,7 @@ renderer.setAnimationLoop(() => {
   schoolYard.update(dt);
   lessons.update(dt);
   quests.update(dt);
+  naturalist.update(dt); // sau player/skyshow: ống nhòm đặt lại camera
   feel.update(dt);
   learn.update();
   story.update(dt);

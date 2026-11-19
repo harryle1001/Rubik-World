@@ -1,0 +1,333 @@
+[
+ {
+  "name": "farm",
+  "calls": 190,
+  "tris": 622751,
+  "wildMs": 0.08,
+  "frameMs": 427.5,
+  "actors": 1,
+  "flocks": 0,
+  "sp": {
+   "Chó Pug": 1
+  },
+  "q": 1
+ },
+ {
+  "name": "forest",
+  "calls": 224,
+  "tris": 284502,
+  "wildMs": 0.363,
+  "frameMs": 238.2,
+  "actors": 12,
+  "flocks": 3,
+  "sp": {
+   "Rắn ráo": 1,
+   "Báo hoa mai (báo đen)": 1,
+   "Rùa núi vàng": 1,
+   "Gấu ngựa": 1,
+   "Lợn rừng": 4,
+   "Quạ đen": 2,
+   "Nhện vườn": 2,
+   "Chích choè than": 4,
+   "Ong bắp cày": 3
+  },
+  "q": 1
+ },
+ {
+  "name": "hills",
+  "calls": 141,
+  "tris": 265502,
+  "wildMs": 0.229,
+  "frameMs": 249.8,
+  "actors": 5,
+  "flocks": 0,
+  "sp": {
+   "Quạ đen": 1,
+   "Đại bàng đầu trắng": 1,
+   "Sơn dương": 1,
+   "Sói xám": 2
+  },
+  "q": 1
+ },
+ {
+  "name": "grove",
+  "calls": 198,
+  "tris": 334945,
+  "wildMs": 0.447,
+  "frameMs": 312.9,
+  "actors": 17,
+  "flocks": 5,
+  "sp": {
+   "Trâu nước": 1,
+   "Rắn lục đuôi đỏ": 1,
+   "Diều hâu": 1,
+   "Sóc": 1,
+   "Vịt cổ xanh": 6,
+   "Ếch cây": 3,
+   "Cóc nhà": 1,
+   "Chim bách thanh": 3,
+   "Bồ câu": 5,
+   "Chào mào": 3,
+   "Vàng anh": 2,
+   "Bướm phượng xanh": 2
+  },
+  "q": 1
+ },
+ {
+  "name": "wet",
+  "calls": 171,
+  "tris": 334777,
+  "wildMs": 0.293,
+  "frameMs": 311,
+  "actors": 21,
+  "flocks": 5,
+  "sp": {
+   "Trâu nước": 1,
+   "Rắn lục đuôi đỏ": 1,
+   "Sóc": 1,
+   "Vịt cổ xanh": 6,
+   "Ếch cây": 3,
+   "Dê": 2,
+   "Lạc đà không bướu": 1,
+   "Chó Husky": 1,
+   "Ngựa": 2,
+   "Chim bách thanh": 3,
+   "Bồ câu": 5,
+   "Bồng chanh (bói cá)": 2,
+   "Cu gáy": 2,
+   "Bướm phượng xanh": 2
+  },
+  "q": 1
+ },
+ {
+  "name": "meadow",
+  "calls": 179,
+  "tris": 480301,
+  "wildMs": 0.207,
+  "frameMs": 303.5,
+  "actors": 7,
+  "flocks": 3,
+  "sp": {
+   "Rắn lục đuôi đỏ": 1,
+   "Ếch cây": 3,
+   "Thỏ": 3,
+   "Chào mào": 3,
+   "Vành khuyên": 4,
+   "Ong mật": 5
+  },
+  "q": 1
+ },
+ {
+  "name": "town",
+  "calls": 210,
+  "tris": 332798,
+  "wildMs": 0.237,
+  "frameMs": 280.3,
+  "actors": 16,
+  "flocks": 5,
+  "sp": {
+   "Rắn lục đuôi đỏ": 1,
+   "Sóc": 1,
+   "Trâu nước": 1,
+   "Ếch cây": 3,
+   "Vịt cổ xanh": 6,
+   "Cóc nhà": 1,
+   "Chim bách thanh": 3,
+   "Bồ câu": 5,
+   "Chào mào": 3,
+   "Bướm hổ vằn": 3,
+   "Bướm phượng xanh": 2
+  },
+  "q": 1
+ },
+ {
+  "name": "safari",
+  "calls": 121,
+  "tris": 189821,
+  "wildMs": 0.288,
+  "frameMs": 203.9,
+  "actors": 15,
+  "flocks": 1,
+  "sp": {
+   "Sư tử (cái)": 2,
+   "Lạc đà một bướu": 2,
+   "Hà mã": 1,
+   "Cá mập đầu búa": 2,
+   "Cá sấu Xiêm": 1,
+   "Voi châu Phi": 3,
+   "Vượn cáo đuôi vòng": 3,
+   "Bồng chanh (bói cá)": 2
+  },
+  "q": 1
+ },
+ {
+  "name": "safari-hole",
+  "calls": 125,
+  "tris": 197496,
+  "wildMs": 0.156,
+  "frameMs": 210.4,
+  "actors": 12,
+  "flocks": 0,
+  "sp": {
+   "Sư tử (cái)": 2,
+   "Lạc đà một bướu": 2,
+   "Hà mã": 1,
+   "Cá mập đầu búa": 1,
+   "Cá sấu Xiêm": 1,
+   "Vượn cáo đuôi vòng": 3
+  },
+  "q": 1
+ },
+ {
+  "name": "beach",
+  "calls": 101,
+  "tris": 186085,
+  "wildMs": 0.243,
+  "frameMs": 181.9,
+  "actors": 5,
+  "flocks": 0,
+  "sp": {
+   "Cá nhà táng": 1,
+   "Cua đá": 3
+  },
+  "q": 1
+ },
+ {
+  "name": "sea",
+  "calls": 96,
+  "tris": 169570,
+  "wildMs": 0.107,
+  "frameMs": 170.7,
+  "actors": 4,
+  "flocks": 2,
+  "sp": {
+   "Cá mập trắng lớn": 1,
+   "Cá mập đầu búa": 2,
+   "Bạch tuộc": 1,
+   "Cá ngừ vây vàng": 5,
+   "Cá đuôi gai xanh": 5
+  },
+  "q": 1
+ },
+ {
+  "name": "sea-deep",
+  "calls": 90,
+  "tris": 156302,
+  "wildMs": 0.164,
+  "frameMs": 167.6,
+  "actors": 5,
+  "flocks": 0,
+  "sp": {
+   "Cua đá": 3,
+   "Cá nhà táng": 1,
+   "Cá voi xanh": 1
+  },
+  "q": 1
+ },
+ {
+  "name": "polarS",
+  "calls": 108,
+  "tris": 178146,
+  "wildMs": 0.137,
+  "frameMs": 198.3,
+  "actors": 4,
+  "flocks": 0,
+  "sp": {
+   "Chim cánh cụt hoàng đế": 4
+  },
+  "q": 1
+ },
+ {
+  "name": "polarN",
+  "calls": 107,
+  "tris": 149152,
+  "wildMs": 0.125,
+  "frameMs": 168.9,
+  "actors": 5,
+  "flocks": 0,
+  "sp": {
+   "Diều hâu": 1,
+   "Gấu Bắc Cực": 1,
+   "Hải cẩu": 3
+  },
+  "q": 1
+ },
+ {
+  "name": "forest-night",
+  "calls": 224,
+  "tris": 285857,
+  "wildMs": 0.247,
+  "frameMs": 235.3,
+  "actors": 14,
+  "flocks": 1,
+  "sp": {
+   "Lợn rừng": 4,
+   "Quạ đen": 2,
+   "Nhện vườn": 2,
+   "Báo hoa mai (báo đen)": 1,
+   "Rùa núi vàng": 1,
+   "Gấu ngựa": 1,
+   "Rắn ráo": 1,
+   "Dơi quạ": 2,
+   "Ngài (bướm đêm)": 3
+  },
+  "q": 1
+ },
+ {
+  "name": "farm-night",
+  "calls": 158,
+  "tris": 265582,
+  "wildMs": 0.393,
+  "frameMs": 257.7,
+  "actors": 21,
+  "flocks": 0,
+  "sp": {
+   "Dê": 2,
+   "Lạc đà không bướu": 1,
+   "Chó Husky": 1,
+   "Lợn": 3,
+   "Ngựa": 2,
+   "Gà": 2,
+   "Diều hâu": 1,
+   "Bò sữa": 2,
+   "Cừu": 3,
+   "Sóc": 2
+  },
+  "q": 1
+ },
+ {
+  "name": "wet-rain",
+  "calls": 148,
+  "tris": 315692,
+  "wildMs": 0.257,
+  "frameMs": 357.4,
+  "actors": 21,
+  "flocks": 0,
+  "sp": {
+   "Dê": 2,
+   "Lạc đà không bướu": 1,
+   "Chó Husky": 1,
+   "Ngựa": 2,
+   "Vịt cổ xanh": 6,
+   "Rắn lục đuôi đỏ": 1,
+   "Trâu nước": 1,
+   "Sóc": 1,
+   "Ếch cây": 3
+  },
+  "q": 1
+ },
+ {
+  "name": "ui-hole",
+  "calls": 123,
+  "tris": 193883,
+  "wildMs": 0.079,
+  "frameMs": 209.5,
+  "actors": 3,
+  "flocks": 0,
+  "sp": {
+   "Hà mã": 1,
+   "Sư tử (cái)": 2
+  },
+  "q": 1
+ }
+]
