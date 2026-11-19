@@ -25,7 +25,7 @@ const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } cat
 
 const css = `
 #mgk{position:fixed;left:max(12px,env(safe-area-inset-left));top:calc(max(12px,env(safe-area-inset-top)) + 52px);z-index:26;display:flex;gap:6px;align-items:center;font:700 13px system-ui;color:#f7ecd0}
-@media (pointer:coarse){#mgkName,#mgkPick{display:none}}@media (pointer:fine){#mgk{top:auto;bottom:max(13px,env(safe-area-inset-bottom))}}
+@media (pointer:coarse){#mgkName,#mgkPick{display:none}}
 #mgk .bar{width:89px;height:10px;border-radius:6px;background:#0007;overflow:hidden;border:1px solid #fff5}#mgk .bar i{display:block;height:100%;background:linear-gradient(90deg,#7fd3ff,#ffe3a0)}
 #mgk button{border:1px solid #fff6;background:#1b1626cc;color:#fff;border-radius:14px;padding:4px 9px;font:700 13px system-ui}
 #mgCard{position:fixed;left:50%;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 76px);transform:translateX(-50%);z-index:27;width:min(92vw,377px);background:#141022ee;color:#f7ecd0;border:1px solid #ffe3a066;border-radius:16px;padding:12px 14px;font:600 14px/1.45 system-ui;box-shadow:0 8px 30px #0006}
@@ -71,7 +71,8 @@ export function createMagic(ctx) {
   // ---------- hạt sáng (1 draw call) ----------
   const NP = 144, pPos = new Float32Array(NP * 3), pCol = new Float32Array(NP * 3), parts = Array.from({ length: NP }, () => ({ life: 0, v: new THREE.Vector3(), p: new THREE.Vector3() }));
   const pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pPos, 3)); pg.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
-  const pts = new THREE.Points(pg, new THREE.PointsMaterial({ size: 0.26, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
+  const dot = (() => { const c = document.createElement('canvas'); c.width = c.height = 32; const g = c.getContext('2d'), r = g.createRadialGradient(16, 16, 0, 16, 16, 16); r.addColorStop(0, '#fff'); r.addColorStop(0.382, '#ffffffaa'); r.addColorStop(1, '#fff0'); g.fillStyle = r; g.fillRect(0, 0, 32, 32); return new THREE.CanvasTexture(c); })();   // hạt tròn mềm (không còn ô vuông)
+  const pts = new THREE.Points(pg, new THREE.PointsMaterial({ map: dot, size: 0.34, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
   pts.frustumCulled = false; scene.add(pts);
   let pi = 0; const pc = new THREE.Color();
   function burst(from, dir, col, n = 21, speed = 8, spread = 0.35) {
@@ -151,15 +152,16 @@ export function createMagic(ctx) {
 
   // ---------- vòng phép: tối đa 8 nút (nhiều hơn → nút ⋯ sang trang), kéo ngón để chọn, thả để niệm ----------
   let ring = null, page = 0, placeT = 0;
-  function openRing(anchor, { castOnPick = false, a0 = Math.PI, a1 = 0 } = {}) {
+  function openRing(anchor, { castOnPick = false, a0, a1 } = {}) {
     closeRing(); const all = list(); if (!all.length) return;
+    if (a0 === undefined) { const up = anchor.getBoundingClientRect().top > innerHeight / 2; a0 = Math.PI; a1 = up ? 0 : 2 * Math.PI; }   // nút ở nửa dưới: vòng mở lên trên, nửa trên: mở xuống
     const pages = all.length > PAGE ? Math.ceil(all.length / (PAGE - 1)) : 1; page %= pages;
     const items = pages > 1 ? [...all.slice(page * (PAGE - 1), page * (PAGE - 1) + PAGE - 1), { id: '_more', icon: '⋯', name: `trang ${(page + 1) % pages + 1}` }] : all;
     ring = document.createElement('div'); ring.id = 'mgRing'; document.body.appendChild(ring); ring.castOnPick = castOnPick; ring.anchor = anchor; ring.opts = { a0, a1 };
     const r = anchor.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, R = 110;   // 110 ≈ 68·φ
     ring.cx = cx; ring.cy = cy; ring.btns = [];
     const lbl = document.createElement('div'); lbl.className = 'lbl'; lbl.style.left = cx + 'px'; lbl.style.top = cy - R - 47 + 'px'; ring.appendChild(lbl); ring.lbl = lbl;
-    if (a0 === Math.PI && a1 === 0 && cy - R - 47 < 13) lbl.style.top = cy + R + 34 + 'px';
+    if (a1 > Math.PI || cy - R - 47 < 13) lbl.style.top = cy + R + 47 + 'px';
     items.forEach((s, i) => {
       const a = a0 + (items.length > 1 ? i / (items.length - 1) : 0.5) * (a1 - a0), b = document.createElement('button');
       const x = Math.min(innerWidth - 26, Math.max(26, cx + Math.cos(a) * R)), y = Math.min(innerHeight - 26, Math.max(26, cy - Math.sin(a) * R));
@@ -252,7 +254,7 @@ export function createMagic(ctx) {
     placeWand(); updParts(dt); paintRing(); { const c = cur(); bCd.style.setProperty('--cd', c ? (cds[c.id] || 0) / cdOf(c) : 0); }
     for (const s of spells) s.update && s.update(dt);
     const hide = !st.wand || !!player.vehicle || document.body.classList.contains('rs-modal'); if (hud.hidden !== hide) hud.hidden = hide; if (bSpell.hidden !== hide) bSpell.hidden = hide;
-    if (CFG.isMobile && !hide && (placeT -= dt) <= 0) { placeT = 1; const q = document.getElementById('questHud'), b = q && q.getClientRects().length ? q.getBoundingClientRect().bottom : 0; hud.style.top = Math.max(b + 8, 120) + 'px'; }   // điện thoại: ngay dưới bảng nhiệm vụ, không chồng thanh trên
+    if (!hide && (placeT -= dt) <= 0) { placeT = 1; const q = document.getElementById('questHud'), b = q && q.getClientRects().length ? q.getBoundingClientRect().bottom : 0; hud.style.top = Math.max(b + 8, 120) + 'px'; }   // ngay dưới bảng nhiệm vụ (trái trên), không chồng thanh trên / ô Rubik góc dưới
   }
   refresh();
   return {
