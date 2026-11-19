@@ -33,11 +33,11 @@ import { createSecrets } from './forest-secrets.js';       // 13 bí mật, Bà 
 import { createGuide } from './guide.js';                 // biển chỉ đường + bản đồ nội thất (phím M)
 import { createExterior } from './exterior.js';           // ngoại thất v2: máng xối rồng, đuốc, cờ, cầu kéo, cổng sắt, lối đi tường thành, vườn tượng, đồng hồ mặt trời
 import { createBroom } from './broom.js';                 // Sân Bay Chổi + mini game bay qua vòng (câu hỏi)
-import { createLife as createAcademyLife } from './life.js';
-import { createNorth } from './north.js';
-import { createStairs } from './stairs.js';
-import { createPractice } from './practice.js';
-import { createPho2 } from './pho2.js';                   // v3: Phố Phép Thuật Mới (nửa đông Sân Bắc)           // v3: lớp thực hành phép ngoài trời ở Sân Bắc               // v3: Tháp Cầu Thang Phép — 4 nhịp thang tự xoay                 // v3: Sân Bắc nổi sau lâu đài — Cánh Bắc, Tháp Cú, đàn cú   // sự kiện theo giờ, lễ hội theo mùa, Thần Bếp
+import { createLife as createAcademyLife } from './life.js';// sự kiện theo giờ, lễ hội theo mùa, Thần Bếp
+import { createNorth } from './north.js';                 // v3: Sân Bắc nổi sau lâu đài — Cánh Bắc, Tháp Cú, đàn cú
+import { createStairs } from './stairs.js';               // v3: Tháp Cầu Thang Phép — 4 nhịp thang tự xoay
+import { createPractice } from './practice.js';           // v3: lớp thực hành phép ngoài trời ở Sân Bắc
+import { createPho2 } from './pho2.js';                   // v3: Phố Phép Thuật Mới (nửa đông Sân Bắc)
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 const CLASS_AT = [['class0', 'cls-light'], ['class1', 'cls-shape'], ['class1b', 'cls-creature'], ['potion', 'cls-brew']];   // điểm neo lớp (interior/plan.js) → lớp phép thuật (classes/index.js)

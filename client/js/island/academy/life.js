@@ -9,8 +9,10 @@ import * as THREE from 'three';
 import { Batch } from './geo.js';
 import { matV, mat } from '../sample/palette.js';
 import { placeKit } from '../kit.js';
+import { loadModel } from '../models.js';
 import { loadHero, STUDENTS } from '../characters.js';
 import { CFG } from '../config.js';
+import { HALL_HOUSE } from './plan.js';
 import { toon } from '../style.js';
 import { dressWizard } from './practice.js';
 
@@ -36,10 +38,11 @@ const TALES = [
 
 export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
   const { player } = ctx, MOB = CFG.isMobile, H = L.hall;
+  let orbFx = null, feastFx = null, feastT = -99, sortK = -1, myDish = null;
   let G = null, kids = [], flag = null, candles = null, flames = null, plates = [], fest = null, ghost = null, cook = null;
   const POLE = [22, 0];   // cột cờ (u, v) — Sân Đại Sảnh, sau cổng chính
   const hour = () => ctx.sky && ctx.sky.state ? ctx.sky.state.hour : 10;
-  const phase = h => h >= 6.5 && h < 7.5 ? 'flag' : (h >= 7.5 && h < 11.5) || (h >= 13.5 && h < 16.5) ? 'class' : h >= 18 && h < 19.5 ? 'dinner' : h >= 20.5 || h < 5 ? 'night' : 'free';
+  const phase = h => h >= 6.5 && h < 7.5 ? 'flag' : (h >= 7.5 && h < 11.5) || (h >= 13.5 && h < 16.5) ? 'class' : h >= 17 && h < 18 ? 'sorting' : h >= 18 && h < 19.5 ? 'dinner' : h >= 20.5 || h < 5 ? 'night' : 'free';
   const festNow = () => {
     const q = new URLSearchParams(location.search).get('le'); if (q) return q === 'tet' || q === 'trungthu' ? q : null;
     const d = new Date(), m = d.getMonth() + 1, dd = d.getDate();
@@ -73,13 +76,17 @@ export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
     for (const v of [-6.5, -2.2, 2.2, 6.5]) for (let u = H.u0 + 9.5; u < H.u1 - 5; u += 3.4) { const [x, z] = W(u, v); dish[names[k++ % 3]].push([x, Y + 0.8, z, 0.8, k]); }
     for (const [n, l] of Object.entries(dish)) placeKit(G, n, l, { shadow: false }).then(ims => { if (!G) return ims.forEach(im => im.parent && im.parent.remove(im)); for (const im of ims) { im.visible = false; plates.push(im); } });
     buildFest();
+    // v3: quầng sáng Quả cầu Tứ Linh (lễ chọn nhà) + hạt sáng "món ăn hiện ra bằng phép"
+    { const c = document.createElement('canvas'); c.width = c.height = 128; const k = c.getContext('2d'), rg = k.createRadialGradient(64, 64, 4, 64, 64, 64); rg.addColorStop(0, 'rgba(255,255,255,1)'); rg.addColorStop(0.35, 'rgba(255,255,255,.55)'); rg.addColorStop(1, 'rgba(255,255,255,0)'); k.fillStyle = rg; k.fillRect(0, 0, 128, 128);
+      orbFx = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false })); const [ox, oz] = W(...HALL_HOUSE.orb); orbFx.position.set(ox, Y + 2.2, oz); orbFx.visible = false; G.add(orbFx); }
+    feastFx = new THREE.InstancedMesh(new THREE.OctahedronGeometry(0.09), mat('lampGlow'), 55); feastFx.frustumCulled = false; feastFx.visible = false; G.add(feastFx);
     ctx.scene.add(G);
     // học sinh
-    const n = MOB ? 6 : 13;   // v3: đông học sinh hơn, đội mũ phù thủy màu nhà
+    const n = MOB ? 5 : 13;   // v3: đông học sinh hơn, đội mũ phù thủy màu nhà
     for (let i = 0; i < n; i++) {
       const kid = { i, hero: null, pos: new THREE.Vector3(), tgt: null, mode: 'free', yaw: 0, clip: '', seat: null, hide: false, wait: Math.random() * 3 };
       const [x, z] = W(-5 - (i % 4) * 4, -8 + Math.floor(i / 4) * 16); kid.pos.set(x, Y, z); kids.push(kid);
-      loadHero(STUDENTS[(i * 5) % STUDENTS.length], 1.32 + (i % 3) * 0.06).then(h => { if (!G) return; kid.hero = h; h.npc = true; h.model.position.copy(kid.pos); G.add(h.model); play(kid, 'idle'); dressWizard(h, ['#c8302c', '#3a6fc4', '#3f8a4c', '#7a4fb0'][i % 4]); });
+      loadHero(STUDENTS[(i * 5) % STUDENTS.length], 1.32 + (i % 3) * 0.06).then(h => { if (!G) return; kid.hero = h; h.npc = true; h.model.position.copy(kid.pos); G.add(h.model); play(kid, 'idle'); if (!MOB) dressWizard(h, ['#c8302c', '#3a6fc4', '#3f8a4c', '#7a4fb0'][i % 4]); });   // điện thoại: bỏ mũ (đỡ 5 draw call)
     }
     // Ma Cụ Đồ (đêm): người lớn mờ ảo bay lơ lửng cạnh đài phun nước
     loadHero('student-male-a', 1.7, { role: 'old', old: true, shirt: '#cfe6ff', pants: '#a8c4e8' }).then(h => {
@@ -160,9 +167,9 @@ export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
     const h = hour(), ph = phase(h);
     if (ph !== lastPh) {
       const [pu, pv] = toLocal(player.pos.x, player.pos.z), here = Math.hypot(pu + 20, pv) < 89 && !interior.inside;
-      if (lastPh !== null && here) ctx.toast({ flag: '🔔 <b>Giờ chào cờ!</b> Các bạn xếp hàng trước cột cờ ở Sân Đại Sảnh.', class: '📖 <b>Vào giờ học!</b> Các bạn đi vào lớp — em cũng vào học nhé (cửa trong cổng chính).', dinner: '🍽️ <b>Giờ ăn tối</b> ở Đại sảnh! Bàn dài đã dọn món.', night: '🕯️ <b>Đêm xuống</b>: nến bay khắp sân, Ma Cụ Đồ ra kể chuyện cạnh đài phun nước.', free: '🎈 <b>Giờ ra chơi!</b>' }[ph], 5000);
+      if (lastPh !== null && here) ctx.toast({ sorting: '🔮 <b>Lễ chọn nhà Tứ Linh</b> ở Đại sảnh! Các bạn mới lần lượt lên Quả cầu Tứ Linh.', flag: '🔔 <b>Giờ chào cờ!</b> Các bạn xếp hàng trước cột cờ ở Sân Đại Sảnh.', class: '📖 <b>Vào giờ học!</b> Các bạn đi vào lớp — em cũng vào học nhé (cửa trong cổng chính).', dinner: '🍽️ <b>Giờ ăn tối</b> ở Đại sảnh! Bàn dài đã dọn món.', night: '🕯️ <b>Đêm xuống</b>: nến bay khắp sân, Ma Cụ Đồ ra kể chuyện cạnh đài phun nước.', free: '🎈 <b>Giờ ra chơi!</b>' }[ph], 5000);
       lastPh = ph; for (const k of kids) { k.tgt = null; k.hide = false; k.snap = true; }
-      for (const p of plates) p.visible = ph === 'dinner';
+      for (const p of plates) p.visible = false; if (ph === 'dinner') { feastT = t; setTimeout(() => { if (lastPh === 'dinner') for (const p of plates) p.visible = true; }, 2600); }   // món ăn hiện ra bằng phép sau 2,6 s hạt sáng
       candles.visible = flames.visible = ph === 'night'; if (ghost) ghost.model.visible = ph === 'night';
     }
     // cờ: kéo lên 6:30 → 6:45, phấp phới
@@ -174,7 +181,7 @@ export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
     for (const k of kids) {
       if (!k.hero) continue;
       if (!k.tgt) {
-        if (ph === 'flag') k.tgt = lineSpot(k.i); else if (ph === 'dinner') k.tgt = seatSpot(k.i); else if (ph === 'class' || (ph === 'night' && k.i % 3)) k.tgt = doorSpot(k.i);   // vào lớp / đêm: phần lớn về phòng ngủ
+        if (ph === 'flag') k.tgt = lineSpot(k.i); else if (ph === 'sorting') k.tgt = [HALL_HOUSE.orb[0] + 3.4 + Math.floor(k.i / 2) * 1.3, (k.i % 2 ? 1 : -1) * 1.1]; else if (ph === 'dinner') k.tgt = seatSpot(k.i); else if (ph === 'class' || (ph === 'night' && k.i % 3)) k.tgt = doorSpot(k.i);   // vào lớp / đêm: phần lớn về phòng ngủ
         else k.tgt = [-2 - Math.random() * 38, (Math.random() - 0.5) * 40];
         k.wait = 0;
         if (k.snap) { k.snap = false; const [sx, sz] = W(...k.tgt), d0 = Math.hypot(sx - k.pos.x, sz - k.pos.z); if (d0 > 13) { k.pos.x = sx + (k.pos.x - sx) / d0 * 13; k.pos.z = sz + (k.pos.z - sz) / d0 * 13; } }   // đổi giờ: đặt cách đích ≤ 13 m
@@ -201,6 +208,21 @@ export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
     }
     // chào cờ cùng các bạn
     if (ph === 'flag' && !interior.inside && Math.hypot(pu - POLE[0] + 7, pv) < 6) ctx.offer('🇻🇳 Đứng nghiêm chào cờ', () => { ctx.sfx && ctx.sfx('bell'); ctx.toast('🇻🇳 Cả trường đứng nghiêm hát Quốc ca. Lá cờ <b>đỏ sao vàng</b> năm cánh — em biết không, Quốc ca Việt Nam là bài <b>“Tiến quân ca”</b> của nhạc sĩ Văn Cao. +3 điểm nhà!', 7000); ctx.houses && ctx.houses.addPoints(3, 'Chào cờ'); }, 7);
+    // lễ chọn nhà: mỗi 5 s một bạn bước lên quả cầu → quả cầu lóe màu nhà
+    if (ph === 'sorting' && kids.length) {
+      const k = Math.floor(t / 5) % kids.length, kid = kids[k], HN = [['Nhà Long', '#ff5a4a'], ['Nhà Phụng', '#5aa0ff'], ['Nhà Lân', '#5ad070'], ['Nhà Quy', '#b07aff']], hn = HN[(k * 3 + Math.floor(t / 5 / kids.length)) % 4];
+      if (k !== sortK) { sortK = k; if (kid.hero) kid.tgt = [HALL_HOUSE.orb[0] + 1.6, 0]; const prevKid = kids[(k + kids.length - 1) % kids.length]; if (prevKid) prevKid.tgt = seatSpot(prevKid.i);
+        orbFx.material.color.set(hn[1]); if (!interior.inside && pu > H.u0 && pu < H.u1 + 3 && Math.abs(pv) < H.v1) { ctx.sfx && ctx.sfx('magic'); ctx.toast(`🔮 Quả cầu Tứ Linh sáng rực màu… <b style="color:${hn[1]}">${hn[0]}</b>! Cả sảnh vỗ tay chào bạn mới. 👏`, 4000); } }
+      orbFx.visible = true; const f = (t % 5) / 5; orbFx.scale.setScalar(1.5 + Math.sin(f * Math.PI) * 3.4);
+    } else if (orbFx) orbFx.visible = false;
+    // món ăn hiện ra bằng phép: hạt sáng xoáy trên bàn 2,6 s đầu giờ ăn
+    if (feastFx) { const e = t - feastT; feastFx.visible = ph === 'dinner' && e < 3.2; if (feastFx.visible) { for (let i = 0; i < 55; i++) { const tb = [-6.5, -2.2, 2.2, 6.5][i % 4], u = H.u0 + 9.5 + (i * 7 % 21), a = e * 4 + i, [x, z] = W(u + Math.cos(a) * 0.6, tb + Math.sin(a) * 0.4); o3.position.set(x, Y + 0.9 + Math.max(0, 2.2 - e) * 0.8 + Math.sin(a) * 0.2, z); o3.rotation.set(0, 0, 0); o3.scale.setScalar(Math.max(0.2, 1.4 - e * 0.35)); o3.updateMatrix(); feastFx.setMatrixAt(i, o3.matrix); } feastFx.instanceMatrix.needsUpdate = true; } }
+    if (myDish) { const e = t - myDish.t0; myDish.m.scale.setScalar(Math.min(1, e * 2) * 0.9); myDish.m.rotation.y = e * 0.5; if (e > 30) { G.remove(myDish.m); myDish = null; } }
+    if (ph === 'dinner' && !interior.inside && pu > H.u0 + 8 && pu < H.u1 - 4 && Math.abs(pv) < H.v1 && !myDish) ctx.offer('✨ Gọi món bằng phép', () => {
+      const D = [['🍜 Phở bò', 'tinh bột (bánh phở) + đạm (thịt bò) + rau thơm'], ['🍚 Cơm tấm', 'tinh bột + đạm + rau dưa'], ['🥗 Gỏi cuốn', 'rau sống + tôm (đạm) + bún'], ['🍲 Canh chua', 'cá (đạm) + rau + cà chua (vitamin C)'], ['🍉 Dưa hấu', 'nhiều nước và vitamin']], d = D[Math.floor(Math.random() * D.length)];
+      magic.ask('toan', () => loadModel('kit/kk_plate_food_A').then(m => { if (!m || !G) return; const pp = player.pos; m.position.set(pp.x + Math.sin(player.rot || 0) * 1.2, Y + 0.82, pp.z + Math.cos(player.rot || 0) * 1.2); m.scale.setScalar(0.01); G.add(m); myDish = { m, t0: performance.now() / 1000 }; feastT = t; ctx.sfx && ctx.sfx('magic');
+        ctx.toast(`✨ <b>Vút!</b> ${d[0]} hiện ra trước mặt em! Bữa ăn cân bằng: ${d[1]}.`, 6000); }), '✨ Đọc đúng thần chú (giải phép tính) để gọi món');
+    }, 7.5);
     if (ph === 'dinner' && !interior.inside && pu > H.u0 && pu < H.u1 && Math.abs(pv) < H.v1) ctx.offer('🍽️ Ngồi ăn tối cùng các bạn', () => { magic.setMana && magic.setMana((magic.mana || 0) + 21); ctx.toast('🍽️ Cơm canh nóng hổi! Ăn đủ chất: <b>tinh bột</b> cho sức, <b>đạm</b> để lớn, <b>rau</b> có vitamin. +21 năng lượng phép.', 6000); }, 6);
     if (fest && fest.id && !interior.inside && pu > H.u0 && pu < H.u1 && Math.abs(pv) < 3 && pu < H.u0 + 8) ctx.offer(fest.id === 'tet' ? '🧧 Nhận lì xì đầu năm' : '🥮 Phá cỗ Trung Thu', () => magic.ask(fest.id === 'tet' ? COOK[3] : 'khoahoc', () => { ctx.account && ctx.account.addCoins(5); ctx.toast(fest.id === 'tet' ? '🧧 Lì xì <b>+5 🪙</b>! Chúc em năm mới học giỏi.' : '🥮 Bánh nướng, bánh dẻo cho em! <b>+5 🪙</b>', 4000); }, fest.id === 'tet' ? '🧧 Đố vui ngày Tết' : '🏮 Đố vui Trung Thu'), 7);
   }

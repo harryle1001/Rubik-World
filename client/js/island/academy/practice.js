@@ -57,7 +57,7 @@ export function createPractice(ctx, magic, { Y, toWorld, toLocal }) {
   function unbuild() { if (!G) return; ctx.scene.remove(G); G = null; npcs = []; for (let i = ctx.colliders.length - 1; i >= 0; i--) if (ctx.colliders[i].practice) ctx.colliders.splice(i, 1); }
   const o = new THREE.Object3D(), col = new THREE.Color();
   function update(dt, t) {
-    if (!G) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z), near = Math.hypot(cu - A.u, cv - A.v) < 144 && cam.y < 600; G.visible = near; if (!near) return;
+    if (!G) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z), near = Math.hypot(cu - A.u, cv - A.v) < 144 && cam.y < 600 && (cu < -100 || cam.y > Y + 21); G.visible = near; if (!near) return;
     const live = Math.hypot(cu - A.u, cv - A.v) < 55;
     for (const n of npcs) if (n.hero && live) n.hero.anim.update(dt);
     if (!live) return;

@@ -98,7 +98,7 @@ export function createPho2(ctx, magic, { Y, toWorld, toLocal }) {
   function unbuild() { if (!built) return; ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); }); for (const b of built.boxes) { const i = ctx.boxes.indexOf(b); if (i >= 0) ctx.boxes.splice(i, 1); } built = null; }
   let cool = 0;
   function update(dt) {
-    if (!built) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z), vis = Math.hypot(cu + 141, cv - 50) < 110 && cam.y < 600; built.g.visible = vis; if (!vis) return;
+    if (!built) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z), vis = Math.hypot(cu + 141, cv - 50) < 110 && cam.y < 600 && (cu < -108 || cam.y > Y + 21); built.g.visible = vis; if (!vis) return;   // khuất sau lâu đài → không vẽ
     cool -= dt; const p = ctx.player.pos;
     for (const k of built.keepers) {
       if (k.hero && cam.distanceTo(k.p) < 34) k.hero.anim.update(dt);

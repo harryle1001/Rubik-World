@@ -108,7 +108,7 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
     for (let x = -hw + 2.6; x < hw; x += 4.2) b.box(x - 0.2, x + 0.2, Hr - 0.5, Hr, -hd, hd, wood);                                  // xà trần
     b.box(-hw, hw, 3.1, 3.3, -hd + 0.02, -hd + 0.1, h.col); b.box(-hw, hw, 3.1, 3.3, hd - 0.1, hd - 0.02, h.col);                    // đường viền màu nhà
     // lò sưởi ở tường tây
-    b.box(-hw, -hw + 0.9, 0, 3.4, -2.1, -1.3, stone); b.box(-hw, -hw + 0.9, 0, 3.4, 1.3, 2.1, stone); b.box(-hw, -hw + 0.9, 1.8, 3.4, -1.3, 1.3, stone); b.box(-hw, -hw + 0.06, 0, 1.8, -1.3, 1.3, '#1a1210');   // khung lò + hốc lửa b.box(-hw, -hw + 1.2, 3.4, 3.6, -2.6, 2.6, woodL); b.box(-hw, -hw + 0.7, 3.6, Hr, -1.4, 1.4, stone);
+    b.box(-hw, -hw + 0.9, 0, 3.4, -2.1, -1.3, stone); b.box(-hw, -hw + 0.9, 0, 3.4, 1.3, 2.1, stone); b.box(-hw, -hw + 0.9, 1.8, 3.4, -1.3, 1.3, stone); b.box(-hw, -hw + 0.06, 0, 1.8, -1.3, 1.3, '#1a1210'); b.box(-hw, -hw + 1.2, 3.4, 3.6, -2.6, 2.6, woodL); b.box(-hw, -hw + 0.7, 3.6, Hr, -1.4, 1.4, stone);   // khung lò + hốc lửa + bệ + ống khói
     for (let k = -2; k <= 2; k++) gl.add(new THREE.ConeGeometry(0.21 - Math.abs(k) * 0.03, 0.9 - Math.abs(k) * 0.15, 6), k % 2 ? '#ffb347' : '#ff7a2a', -hw + 0.6, 0.6, k * 0.42);
     gl.add(new THREE.BoxGeometry(0.4, 0.1, 2.4), '#ff5a1a', -hw + 0.6, 0.22, 0);
     // ký túc xá: vách ngăn x = 4,5 (lối giữa 2,6 m) + 4 giường có màn

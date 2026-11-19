@@ -64,7 +64,7 @@ export function createStairs(ctx, { Y, toWorld, toLocal }) {
   }
   function unbuild() { if (!G) return; ctx.scene.remove(G); G.traverse(o => { if (o.isMesh && o.geometry) o.geometry.dispose(); }); for (const x of boxes) { const i = ctx.boxes.indexOf(x); if (i >= 0) ctx.boxes.splice(i, 1); } boxes = []; G = null; }
   function update(dt, t) {
-    if (!G) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z); G.visible = Math.hypot(cu - T.u, cv - T.v) < 233 && cam.y < 600; if (!G.visible) return;
+    if (!G) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z); G.visible = Math.hypot(cu - T.u, cv - T.v) < 233 && cam.y < 600 && (cu < -92 || cam.y > Y + 21 || Math.abs(cv) > 150); if (!G.visible) return;
     const p = ctx.player.pos, [u, v] = toLocal(p.x, p.z), du = u - T.u, dv = v - T.v, inside = Math.hypot(du, dv) < T.R && p.y > Y - 1 && p.y < Y + 40;
     for (const f of F) {
       const th = angAt(f, t), d = th - f.th;

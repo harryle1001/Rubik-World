@@ -68,7 +68,7 @@ export function createNorth(ctx, magic, { Y, toWorld, toLocal }) {
   const o3 = new THREE.Object3D(); let mailT = -99;
   function update(dt, t) {
     if (!G) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z);
-    G.visible = Math.hypot(cu + 148, cv) < 233 + 55 && cam.y < 600; if (!G.visible) return;
+    G.visible = Math.hypot(cu + 148, cv) < 233 + 55 && cam.y < 600 && (cu < -92 || cam.y > Y + 21 || Math.abs(cv) > 150); if (!G.visible) return;
     const n = ctx.sky && ctx.sky.state ? ctx.sky.state.night || 0 : 0; G.userData.win.material.color.set('#3a4250').lerp(new THREE.Color('#ffffff'), Math.min(1, Math.max(0, (n - 0.12) / 0.5)));
     if (owls) { ow.forEach((w, i) => { const a = t * w.sp * (i % 2 ? 1 : -1) + w.ph, u = w.c[0] + Math.cos(a) * w.r, v = w.c[1] + Math.sin(a) * w.r; o3.position.set(v, w.y + Math.sin(t * 1.7 + i) * 1.3, u); o3.rotation.set(0, Math.atan2(Math.cos(a), -Math.sin(a)) * (i % 2 ? 1 : -1) + (i % 2 ? 0 : PI), Math.sin(t * 9 + i) * 0.12); o3.scale.set(w.s, w.s * (0.85 + Math.abs(Math.sin(t * 9 + i)) * 0.3), w.s); o3.updateMatrix(); owls.setMatrixAt(i, o3.matrix); }); owls.instanceMatrix.needsUpdate = true; }
     const p = ctx.player.pos, [u, v] = toLocal(p.x, p.z);

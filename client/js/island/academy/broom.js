@@ -66,7 +66,7 @@ export function createBroom(ctx, magic, { Y, toWorld, toLocal }) {
     rings = new THREE.InstancedMesh(new THREE.TorusGeometry(R, 0.22, 6, 21), new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false }), RINGS.length);
     const o = new THREE.Object3D();
     RINGS.forEach(([u, v, h, ry], i) => { o.position.set(v, Y + h, u); o.rotation.set(0, ry, 0); o.updateMatrix(); rings.setMatrixAt(i, o.matrix); });
-    rings.frustumCulled = false; G.add(rings); paint(-1);
+    rings.computeBoundingSphere(); G.add(rings); paint(-1);   // cắt theo khung nhìn
     arrow = new THREE.Mesh(new THREE.ConeGeometry(0.6, 1.6, 4), mat('lampGlow')); arrow.rotation.x = PI; arrow.visible = false; G.add(arrow);
     buildMatch();
     ctx.scene.add(G); (ctx.boxes = ctx.boxes || []).push(...boxes);
@@ -122,7 +122,7 @@ export function createBroom(ctx, magic, { Y, toWorld, toLocal }) {
   }
   function update(dt, t) {
     if (!G) return;
-    const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z); G.visible = Math.hypot(cu - PU, cv - PV) < 233 && cam.y < 600;
+    const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z); G.visible = cam.y < 600 && (Math.hypot(cu - PU, cv - PV) < 77 || (cam.y > Y + 21 && Math.hypot(cu - PU, cv - PV) < 233));   // trong sân lâu đài: tường che → không vẽ
     if (G.visible) matchUpdate(dt, t);
     const p = player.pos, [u, v] = toLocal(p.x, p.z);
     if (!run) { if (G.visible && inPitch(u, v) && Math.abs(p.y - Y) < 2 && !player.vehicle) ctx.offer('🧹 Bay chổi qua 8 vòng sáng', start, 8.5); return; }
@@ -174,7 +174,7 @@ export function createBroom(ctx, magic, { Y, toWorld, toLocal }) {
   const fpos = (f, t, out) => { const a = t * (0.45 + f.i * 0.03) * (f.team ? 1 : -1) + f.ph; return out.set(PV + Math.sin(a) * (AV - 8) * (0.5 + 0.5 * Math.cos(a * 0.5 + f.i)), Y + f.h + Math.sin(t * 0.9 + f.i) * 1.6, PU + Math.cos(a) * (AU - 6) * 0.8); };
   const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3();
   function matchUpdate(dt, t) {
-    if (!M) return; const hr = ctx.sky && ctx.sky.state ? ctx.sky.state.hour : 10, on = !run && ((hr >= 15 && hr < 17.5) || hr >= 8 && hr < 20);
+    if (!M) return; const hr = ctx.sky && ctx.sky.state ? ctx.sky.state.hour : 10, cp = ctx.camera.position, [cu2, cv2] = toLocal(cp.x, cp.z), on = !run && hr >= 8 && hr < 20 && Math.hypot(cu2 - PU, cv2 - PV) < 77;   // ban ngày, chỉ vẽ cầu thủ khi camera trong 77 m
     if (on !== M.on) { M.on = on; for (const f of M.fl) if (f.hero) f.hero.model.visible = on; M.ball.visible = on; for (const s of M.stars) s.visible = on; }
     if (!on) return;
     for (const f of M.fl) { if (!f.hero) continue; fpos(f, t, tmp); fpos(f, t + 0.1, tmp2); f.hero.model.position.copy(tmp); f.hero.model.rotation.y = Math.atan2(tmp2.x - tmp.x, tmp2.z - tmp.z); f.hero.anim.update(dt); }
