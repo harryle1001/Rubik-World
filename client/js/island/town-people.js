@@ -9,7 +9,7 @@ import { CFG } from './config.js';
 import { toon } from './style.js';
 import { T, damp, dampAngle } from './motion.js';
 import { makeBike } from './bikes.js';
-import { ridePose, cadence } from './ride-pose.js';
+import { ridePose, rideReset, cadence } from './ride-pose.js';
 
 const V = 'abcdef', SEAT_Y = 0.56; // mặt ghế đá (town-buildings.js: chân 0.42 + mặt 0.14)
 const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', sun: 'Khách du lịch', bike: 'Người đạp xe', camp: 'Bạn cắm trại', picnic: 'Gia đình dã ngoại', fishing: 'Bác câu cá', walk: 'Người đi dạo', kite: 'Bạn thả diều' };
@@ -150,8 +150,8 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       if (face !== null) e.yaw = dampAngle(e.yaw, face, e.ky, T.soft, dt, 2 * Math.PI); else e.ky.v = 0; // rẽ mềm, quay tối đa 1 vòng/s
       e.px = x; e.pz = z; const m = e.hero.model, gy = groundY(gx, gz); m.position.set(gx, gy + (e.seat ? SEAT_Y : 0), gz); m.rotation.y = e.yaw; m.visible = !(ctx.mgHide && ctx.mgHide(gx, gz));   // khu mini game: ẩn người đi ngang
       // người đạp xe: gắn xe đạp thật dưới người (bù tỉ lệ model), nâng người lên yên; bánh + bàn đạp quay theo tốc độ
-      const bk = sit === 'drive' && !a.boat; if (bk && !e.bike) { e.bike = makeBike([0, 2, 4, 5, 7, 15][(e.tick + pool.indexOf(e)) % 6]); m.add(e.bike.group); }
-      if (e.bike) { const B = e.bike, M = B.mode, s = m.scale.x; B.group.visible = bk; if (bk) { B.group.scale.setScalar(1 / s); B.group.position.set(0, -M.seat / s, -M.seatZ / s); m.position.y += M.seat;
+      const bk = sit === 'drive' && !a.boat; if (bk && !e.bike) { e.bike = makeBike([0, 2, 4, 5, 7, 15][(e.tick + pool.indexOf(e)) % 6]); e.bike.group.name = 'npc-bike'; m.add(e.bike.group); }
+      if (e.bike) { const B = e.bike, M = B.mode, s = m.scale.x; if (B.group.visible && !bk) rideReset(e.hero); B.group.visible = bk; if (bk) { B.group.scale.setScalar(1 / s); B.group.position.set(0, -M.seat / s, -M.seatZ / s); m.position.y += M.seat;
         const v = moving ? e.spd : 0; for (const w of B.wheels) w.m.rotation.x += v * dt / w.r; B.crank.rotation.x += cadence(v, B.wheels[B.ride.drive].r, B.ride.gear) * 2 * Math.PI * dt; } }
       // đứng nói chuyện: 2 người đứng yên cách nhau < 1.8 m (kiểm tra thưa, 0.6 s/lần)
       if (doTalk) {

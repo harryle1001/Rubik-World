@@ -36,6 +36,7 @@ function rigOf(model) {
   const g = n => model.getObjectByName(n), side = s => ({ arm: [g('upperarm' + s), g('lowerarm' + s), g('wrist' + s)], leg: [g('upperleg' + s), g('lowerleg' + s), g('foot' + s)] });
   r = { l: side('l'), r: side('r'), spine: g('spine') };
   r.ok = [...r.l.arm, ...r.l.leg, ...r.r.arm, ...r.r.leg].every(Boolean);
+  r.bones = [r.spine, ...r.l.arm, ...r.l.leg, ...r.r.arm, ...r.r.leg].filter(Boolean); r.pre = r.bones.map(b => b.quaternion.clone()); r.post = r.bones.map(() => new THREE.Quaternion(2, 0, 0, 0));
   RIG.set(model, r); return r;
 }
 
@@ -48,6 +49,8 @@ const T = new THREE.Vector3();
 
 export function ridePose(hero, ref, R) {
   if (!hero || !R) return; const rig = rigOf(hero.model); if (!rig.ok) return;
+  // xương không có track animation (mixer không ghi đè) → trả về tư thế trước khi IK, tránh cộng dồn mỗi khung
+  const B = rig.bones; for (let i = 0; i < B.length; i++) { const q = B[i].quaternion; if (q.equals(rig.post[i])) q.copy(rig.pre[i]); else rig.pre[i].copy(q); }
   ref.updateMatrixWorld(true); ref.getWorldQuaternion(_rq);
   if (R.lean && rig.spine) {   // nghiêng thân quanh trục ngang của xe
     const s = rig.spine; _u.set(1, 0, 0).applyQuaternion(_rq); _q.setFromAxisAngle(_u, R.lean);
@@ -64,6 +67,13 @@ export function ridePose(hero, ref, R) {
       solve(S.arm[0], S.arm[1], S.arm[2], T, _pole.set(ELBOW.x * sg, ELBOW.y, ELBOW.z).applyQuaternion(_rq));
     }
   }
+  for (let i = 0; i < B.length; i++) rig.post[i].copy(B[i].quaternion);
+}
+
+// xuống xe: trả xương không có animation về tư thế cũ (vd. thân hết nghiêng)
+export function rideReset(hero) {
+  const rig = hero && RIG.get(hero.model); if (!rig) return;
+  for (let i = 0; i < rig.bones.length; i++) { const q = rig.bones[i].quaternion; if (q.equals(rig.post[i])) q.copy(rig.pre[i]); rig.post[i].set(2, 0, 0, 0); }
 }
 
 // nhịp đạp (vòng/giây) khớp tốc độ bánh: vòng đạp = quãng đường / (chu vi bánh × tỉ số líp), tối đa ~1,5 vòng/s

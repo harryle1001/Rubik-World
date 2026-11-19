@@ -9,7 +9,7 @@ import { addOutline } from './style.js';
 import { mergeGeos } from './terrain.js';
 import { colorMat, paint, at, tube, mesh, tris, ICON } from './geo.js';
 import { makeBike, BIKES } from './bikes.js';
-import { ridePose, cadence } from './ride-pose.js';
+import { ridePose, rideReset, cadence } from './ride-pose.js';
 import { T, damp, wrapAngle } from './motion.js';
 
 const W = CFG.island.waterLevel, P = CFG.player;
@@ -121,7 +121,7 @@ export function createVehicles(ctx) {
     cur = v; lastRot = null; lastSp = 0; cad = steer = vy = 0; update.py = undefined; lean = roll = pitch = 0; leanSt.v = rollSt.v = pitchSt.v = 0; const g = v.group, x = g.position.x, z = g.position.z, r = g.rotation.y;
     if (v.type === 'boat') pl.teleport(x, z, waterY(x, z));
     else pl.teleport(x, z, v.mode.fly ? Math.max(g.position.y, supB(x, z, g.position.y)) : supB(x, z, g.position.y));   // trên mái: không tụt vào nhà
-    if (g.parent) g.parent.remove(g); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); pl.root.add(g);
+    if (g.parent) g.parent.remove(g); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); g.visible = true; pl.root.add(g);
     pl.vehicle = Object.assign({}, v.mode); pl.setRot(r); lift = 0; takeoff = v.takeoff || 0;
     v.onMount && v.onMount();
     if (v.type === 'balloon') { ctx.sfx('burner'); say(v, `${ICON.balloon} Bay lên ngắm toàn cảnh! <b>Space/⬆</b> lên · <b>C/⬇</b> xuống · chạm đất bấm <b>E</b> để rời`, 4500); }
@@ -133,7 +133,7 @@ export function createVehicles(ctx) {
   function dismount(land) {
     if (!cur) return; const v = cur, g = v.group;
     if (v.mode.fly && !(pl.grounded && sup(pl.pos.x, pl.pos.z, pl.pos.y) > W)) { ctx.toast('Hạ xuống chạm đất rồi mới xuống nhé (C/⬇)', 2200); return; }
-    cur = null; pl.root.remove(g); pl.root.rotation.z = pl.root.rotation.x = 0; pl.vehicle = null;
+    cur = null; pl.root.remove(g); pl.root.rotation.z = pl.root.rotation.x = 0; pl.vehicle = null; rideReset(pl.hero);
     const r = pl.rot, p = pl.pos;
     g.rotation.set(0, r, 0); scene.add(g);
     if (v.type === 'boat') { g.position.set(p.x, waterY(p.x, p.z), p.z); pl.teleport(land[0], land[1], sup(land[0], land[1], 9)); ctx.sfx('splash'); }
