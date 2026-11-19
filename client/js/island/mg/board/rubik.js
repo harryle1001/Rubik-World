@@ -56,7 +56,7 @@ export function startRubik(ctx, { api, door }) {
         m.setPosition(nv.clone().multiplyScalar(0.488)); const s = { i: si++, c, n: nv, color: f, local: m }; c.st.push(s); stickers.push(s); stick.setColorAt(s.i, new THREE.Color(COL[f]));
       }
     }
-    stick.instanceColor.needsUpdate = true; hist.length = 0; draw();
+    stick.instanceColor.needsUpdate = true; hist.length = 0; draw(); body.computeBoundingSphere(); stick.computeBoundingSphere();
   };
   const _m = new THREE.Matrix4(), _m2 = new THREE.Matrix4(), _s = new THREE.Vector3(1, 1, 1), _q = new THREE.Quaternion(), AX = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
   let anim = null;   // { m, t, dur, list }
@@ -66,7 +66,7 @@ export function startRubik(ctx, { api, door }) {
       if (anim && anim.list.has(c)) { _q.setFromAxisAngle(AX[anim.m.ax], anim.m.q * Math.PI / 2 * ease(anim.t / anim.dur)); _m.premultiply(_m2.makeRotationFromQuaternion(_q)); }
       body.setMatrixAt(i, _m); for (const s of c.st) stick.setMatrixAt(s.i, _m2.multiplyMatrices(_m, s.local));
     });
-    body.instanceMatrix.needsUpdate = stick.instanceMatrix.needsUpdate = true; body.computeBoundingSphere(); stick.computeBoundingSphere();
+    body.instanceMatrix.needsUpdate = stick.instanceMatrix.needsUpdate = true;   // khối luôn ở giữa → khung bao tính 1 lần (reset), không tính lại mỗi khung khi xoay
   }
   const ease = t => t < 0.5 ? 2 * t * t : 1 - (2 - 2 * t) ** 2 / 2;
   const inLayer = m => new Set(cubies.filter(c => Math.round(c.pos[m.ax]) === m.layer));
@@ -84,7 +84,7 @@ export function startRubik(ctx, { api, door }) {
   const push = m => { const t = hist[hist.length - 1]; if (t && t.ax === m.ax && t.layer === m.layer) { let q = ((t.q + m.q) % 4 + 4) % 4; if (q === 3) q = -1; if (!q) hist.pop(); else t.q = q; } else hist.push({ ...m }); };
   const doMove = (m, o = {}) => queue.push({ m, dur: o.dur ?? 0.22, user: !!o.user, silent: !!o.silent });
   // ---------- Trạng thái chơi ----------
-  let mode = null, tRun = 0, timing = false, moves = 0, hints = 0, F = null, done = false, emoteT = 0;
+  let secShown = -1, mode = null, tRun = 0, timing = false, moves = 0, hints = 0, F = null, done = false, emoteT = 0;
   const setMoves = v => { moves = v; hud.score(v); };
   function onUserMove(m) {
     const n = toNote(m);
@@ -110,7 +110,8 @@ export function startRubik(ctx, { api, door }) {
     if (mode === 'race' && timing) {
       done = true; timing = false; const t = Math.round((tRun + hints * 5) * 10) / 10;
       me.emote('cheer'); fans.forEach(f => f.emote('cheer')); coach && coach.say('Tuyệt vời!');
-      setTimeout(() => api.end({ score: t, lowerBetter: true, title: '🧊 Giải xong khối Rubik!', text: `${moves} nước xoay${hints ? ` · ${hints} gợi ý (+${hints * 5} giây)` : ''}. Mỗi nước xoay là một phép quay 90° quanh trục — khối có hơn 43 tỉ tỉ trạng thái!` }), 1200);
+      const full = lv >= 4, nl = Math.min(4, lv + 1); if (!full) { lv = nl; try { localStorage.setItem('mg.rubik.lv', lv); } catch (e) {} }
+      setTimeout(() => api.end({ score: full ? t : null, save: full, lowerBetter: true, title: full ? '🧊 Giải xong khối Rubik!' : `🧊 Giải xong! Lên cấp: xáo ${LVN[nl]} nước`, text: `${full ? '' : `Cấp ${LVN[nl - 1]} nước: ${t} giây. `}${moves} nước xoay${hints ? ` · ${hints} gợi ý (+${hints * 5} giây)` : ''}. Mỗi nước xoay là một phép quay 90° quanh trục — khối có hơn 43 tỉ tỉ trạng thái!` }), 1200);
     } else if (mode === 'free' && moves > 0) { hud.msg('🎉 Khối đã hoàn chỉnh!', 2500); me.emote('cheer'); fans.forEach(f => f.emote('cheer')); }
   }
   // ---------- Chế độ ----------
@@ -135,15 +136,16 @@ export function startRubik(ctx, { api, door }) {
     hud.msg(`Công thức <b>${name}</b>: ${ex.join(' ')} — bước đầu: <b>${ex[0]}</b> (${explain(ex[0])})`, 0);
     coach && coach.say(i ? 'Làm theo từng bước nhé!' : 'Học ký hiệu trước nha!');
   }
+  const LVN = [3, 5, 8, 13, 21]; let lv = (() => { try { return Math.min(4, +localStorage.getItem('mg.rubik.lv') || 0); } catch (e) { return 0; } })();   // cấp xáo: Fibonacci, giải xong lên cấp
   function scramble() {
     reset(); let last = ''; const faces = 'URFDLB';
-    for (let i = 0; i < 21; i++) { let f; do f = faces[(Math.random() * 6) | 0]; while (BASE[f][0] === (BASE[last] || [])[0]); last = f; const m = toMove(f + (Math.random() < 0.5 ? "'" : '')); doMove(m, { dur: 0.07 }); }
+    for (let i = 0; i < LVN[lv]; i++) { let f; do f = faces[(Math.random() * 6) | 0]; while (BASE[f][0] === (BASE[last] || [])[0]); last = f; const m = toMove(f + (Math.random() < 0.5 ? "'" : '')); doMove(m, { dur: 0.07 }); }
   }
   function setMode(md) {
     mode = md; done = false; timing = false; tRun = 0; hints = 0; setMoves(0); showPanel(false); F = md === 'formula' ? F : null;
     modeBtns.forEach(b => b.classList.toggle('on', b.dataset.m === md));
     hud.time(md === 'race' ? 0 : null);
-    if (md === 'race') { scramble(); hud.msg('Đang xáo khối… Đồng hồ chạy khi bạn xoay lớp đầu tiên. Vuốt trên khối để xoay lớp, vuốt ra ngoài để xoay camera.', 5000); coach && coach.say('Cố lên nhé!'); api.showBest(true); }
+    if (md === 'race') { scramble(); hud.msg(`Xáo <b>${LVN[lv]} nước</b>${lv < 4 ? ' (giải xong lên cấp)' : ''}. Vuốt trên khối để xoay lớp, vuốt ra ngoài để xoay camera. Kẹt thì bấm 💡.`, 5000); coach && coach.say('Cố lên nhé!'); api.showBest(true); }
     else if (md === 'formula') { pickFormula(F ? FORMULAS.findIndex(f => f[0] === F.name) : 0); }
     else { queue.length = 0; anim = null; reset(); hud.msg('Tự do xoay! Bấm 💡 để xem nước tiếp theo đưa khối về hoàn chỉnh.', 3500); }
   }
@@ -185,7 +187,7 @@ export function startRubik(ctx, { api, door }) {
     key(e) { const f = e.key.toUpperCase(); if ('URFLDBMES'.includes(f) && f.length === 1 && !e.ctrlKey && !e.metaKey && queue.length < 3) doMove(toMove(f + (e.shiftKey ? "'" : '')), { user: true }); },
     update(dt) {
       emoteT -= dt;
-      if (timing) { tRun += dt; hud.time(tRun); }
+      if (timing) { tRun += dt; if ((tRun | 0) !== secShown) hud.time(secShown = tRun | 0); }
       if (!anim && queue.length) { const j = queue.shift(); anim = { m: j.m, t: 0, dur: j.dur, list: inLayer(j.m), user: j.user, silent: j.silent }; if (j.dur > 0.1) api.sfx('ui'); }
       if (anim) {
         anim.t += dt; if (anim.t >= anim.dur) { const a = anim; anim = null; bake(a.m); push(a.m); draw(); if (a.user) onUserMove(a.m); if (!a.silent) finishCheck(); }
