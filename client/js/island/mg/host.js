@@ -328,9 +328,9 @@ export function createMiniGameHost(ctx) {
     api.root.traverse(o => {
       if (o.isSkinnedMesh) {   // nhân vật dùng chung geometry (cache) → không dispose; nhưng xương (bone texture) + vật liệu chi tiết là riêng từng NPC
         if (o.skeleton && !o.skeleton.__gone) { o.skeleton.__gone = true; o.skeleton.dispose(); }
-        if (o.material && !Array.isArray(o.material) && !o.userData.outline && !o.material.userData.shared && o.material.userData.blink) o.material.dispose(); return; }
-      if (o.geometry && !o.geometry.userData.shared) o.geometry.dispose();
-      for (const m of [].concat(o.material || [])) { if (m.userData && m.userData.shared) continue; if (m.map && !m.map.userData.shared) m.map.dispose(); m.dispose(); }
+        for (const m of [].concat(o.material || [])) if (m && !o.userData.outline && !(m.userData && m.userData.shared) && m.userData && m.userData.blink) m.dispose(); return; }   // VRM: material là mảng
+      if (o.geometry && !(o.geometry.userData && o.geometry.userData.shared)) o.geometry.dispose();
+      for (const m of [].concat(o.material || [])) { if (!m || (m.userData && m.userData.shared)) continue; if (m.map && !(m.map.userData && m.map.userData.shared)) m.map.dispose(); m.dispose(); }
     });
     S.lastCam = { ...api.cam }; S.api = null; S.game = null;
   }
@@ -342,7 +342,8 @@ export function createMiniGameHost(ctx) {
   host.restart = () => { if (!S || !S.api) return; const { key, door, opts } = S; teardown(); meta.exit(true); S.restarting = true; begin(key, door, opts); };
   host.exit = (silent) => {
     if (!S || !S.api) return;
-    teardown(); meta.exit(false);
+    try { teardown(); } catch (e) { console.warn('[mg] dọn khu chơi lỗi', e); if (S.api) { scene.remove(S.api.root); S.api = null; S.game = null; } }   // lỗi dọn dẹp không được làm kẹt người chơi (đứng im, joystick không đi)
+    try { meta.exit(false); } catch (e) { console.warn(e); }
     for (const o of S.hidden || []) o.visible = true;
     for (const [o, list] of S.hiddenInst || []) { for (const [i, m] of list) o.setMatrixAt(i, m); o.instanceMatrix.needsUpdate = true; }
     const P = ctx.player; P.pos.copy(S.saved.pos); P.cam.yaw = S.saved.yaw; P.cam.pitch = S.saved.pitch; P.frozen = false; ctx.freeCam = false;

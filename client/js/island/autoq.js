@@ -8,7 +8,8 @@
 //  · chế độ: 'auto' (mức 0–3) · 'fast' ⚡ Mượt (mức 2–3) · 'pretty' ✨ Đẹp (khoá mức 0, đủ độ phân giải). Trả true khi có thay đổi.
 export const SK = Array.from({ length: 9 }, (_, k) => 1.618 ** (-k / 8));
 
-export function createAutoQ({ low = 50, high = 57, prl }) {
+// step: số bậc độ phân giải hạ mỗi lần (điện thoại 2 → chạm đáy sau ~4 s thay vì ~8 s) · crit: FPS < low/crit → hạ mức ngay (điện thoại φ ≈ 31 FPS)
+export function createAutoQ({ low = 50, high = 57, prl, step = 1, crit: CK = 2.618 }) {
   const q = { level: 0, k: 0, mode: 'auto' };
   let bad = 0, upT = 0, upWait = 3, lastUp = -1e9, stableT = 0, settle = 0;
   const pr = () => prl[q.level] * SK[q.k];
@@ -18,11 +19,11 @@ export function createAutoQ({ low = 50, high = 57, prl }) {
     if (q.mode === 'pretty') return false;
     if (settle > 0) { settle--; return false; }   // lần đo ngay sau khi đổi: còn lẫn khung khựng do cấp phát lại
     if (fps < low) {
-      upT = 0; stableT = 0; const crit = fps < low / 2.618;
+      upT = 0; stableT = 0; const crit = fps < low / CK;
       if (++bad < (crit ? 1 : 2)) return false; bad = 0;
       if (t - lastUp < 5) upWait = Math.min(89, upWait * 2);
       if (crit && q.level < 3) setLevel(q.level + 1);
-      else if (q.k < SK.length - 1) q.k++;
+      else if (q.k < SK.length - 1) q.k = Math.min(SK.length - 1, q.k + step);
       else if (q.level < 3) setLevel(q.level + 1);
       else return false;
       settle = 1; return true;

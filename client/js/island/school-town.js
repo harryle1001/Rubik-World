@@ -161,7 +161,17 @@ export function createSchoolTown(ctx) {
       <button class="x">Đóng</button></div>`;
     menuEl.hidden = false; ctx.player.frozen = true;
   };
-  town.goSchool = () => { ctx.player.teleport(SPAWN[0], SPAWN[1]); ctx.player.pos.y = TOWN_Y; ctx.zoneId = ctx.zoneGreeted = 'A'; ctx.toast('🏫 Tới cổng Trường Rubik 3D!'); };   // 🏫: dịch chuyển tới cổng trường
+  // Chuyến đi có lộ trình (thuyền Học viện, thuyền liên vùng, máy bay, dù, tàu) đặt lại vị trí người chơi MỖI KHUNG theo phương tiện
+  // → dịch chuyển giữa chuyến bị kéo ngược ra giữa biển (lỗi "đang đi tới trường thì bay ra biển"). ctx.warpReady(): xuống xe/chổi/thú
+  // (bỏ phương tiện tại chỗ); đang trên chuyến có lộ trình thì báo, không dịch chuyển. Dùng cho 🏫 và "tới chỗ bạn" (social.js).
+  ctx.warpReady = () => {
+    const busy = ctx.ferry && ctx.ferry.riding ? '⛵ thuyền' : ctx.regions && ctx.regions.riding ? '⛵ thuyền' : ctx.aircraft && ctx.aircraft.flying ? '✈️ máy bay'
+      : ctx.chute && ctx.chute.active ? '🪂 dù' : ctx.train && ctx.train.ride && ctx.train.ride.riding ? '🚂 tàu' : null;
+    if (busy) { ctx.toast(`Em đang đi ${busy} — tới nơi rồi bấm lại nhé!`, 3000); return false; }
+    if (ctx.vehicles && ctx.vehicles.riding && ctx.vehicles.forceOff) ctx.vehicles.forceOff();
+    return !ctx.player.vehicle;
+  };
+  town.goSchool = () => { if (!ctx.warpReady()) return; ctx.player.teleport(SPAWN[0], SPAWN[1], TOWN_Y); ctx.player.snapCamera(); ctx.zoneId = ctx.zoneGreeted = 'A'; ctx.toast('🏫 Tới cổng Trường Rubik 3D!'); };   // 🏫: dịch chuyển tới cổng trường
 
   // ---------- Học sinh, thầy cô, khách: lấy vị trí từ mô phỏng của trường ----------
   // (trang phục theo vai trò, pool, hoạt ảnh, tên trên đầu → town-people.js)

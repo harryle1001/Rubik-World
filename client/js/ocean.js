@@ -282,7 +282,7 @@ function unfreezeGuard(dt) {
 
 // ---------- Chất lượng tự động: mức (0..3) + độ phân giải động (logic trong autoq.js) ----------
 // mức 0: đầy đủ · 1: tắt bloom, giảm độ phân giải · 2: không MSAA, cỏ/cây chi tiết gần hơn, bóng nhỏ · 3: tắt bóng đổ
-const AQ = createAutoQ({ low: CFG.quality.lowFps, high: CFG.quality.highFps, prl: [pr, Math.min(pr, 1.15), 1.0, 0.85] }), Q = AQ.q;
+const AQ = createAutoQ({ low: CFG.quality.lowFps, high: CFG.quality.highFps, prl: [pr, Math.min(pr, 1.15), 1.0, 0.85], step: CFG.isMobile ? 2 : 1, crit: CFG.isMobile ? 1.618 : 2.618 }), Q = AQ.q;
 let qLock = false, appliedL = -1; const cheapMSAA = renderer.extensions.has('WEBGL_multisampled_render_to_texture');
 const base = { grass: terrain.state.grassDist, tree: terrain.state.treeDist };
 function applyQuality() {

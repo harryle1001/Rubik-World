@@ -21,6 +21,7 @@ Bản chính: `claude/elegant-archimedes-mdknl3`. Không tạo PR, không force-
 | 14 | online | **nặng nhất**: online chuyển `/island` sang `server/online.js`. Các tính năng đã ghép (phép, làng, Săn Cầu Vàng, trang phục, mini game, Tàu Pha Lê, Đồng Pha Lê) dời sang file mới `server/island-extras.js`, chạy chung namespace qua `hooks` (gói vị trí trên tàu, thông tin công khai). `net.js` gộp thành một đối tượng `net` (on/send/emit/bubble/sendLook/id). |
 | 15 | story | `magic.js`, `quiz.js`, `quick-quiz.js`, `temple.js`, `ocean.js`, `CLAUDE.md` (giữ cả câu theo lớp của mg-expand lẫn học thích ứng `learn.js`) |
 | + | destiny-forest | phiên đó tự ghép vào bản chính; mình ghép lại bản chính trước khi push, gỡ dấu xung đột sót trong CREDITS.txt |
+| + | intro | phiên khác tự ghép vào bản chính (clip mở đầu điện ảnh, bỏ hướng dẫn tự bật); mình ghép lại bản chính trước lần push cuối — sạch. Đã thử: clip bật, Esc bỏ qua được, nhân vật đi lại bình thường, không lỗi console ở cả 2 cỡ màn hình. |
 
 ## Chưa ghép
 - `lighthouse`, `ocean-world`, `animals`, `glider`, `silver-board`: chưa có trên origin lúc kết thúc.
@@ -61,6 +62,7 @@ Bảng phím hiện tại: E tương tác · F đũa · 1–9/0 phép · G ngắ
 - Tam giác ở cổng trường điện thoại ~630–680 nghìn (chưa có ngưỡng được giao, nhưng cao).
 - Trùng tên/khu: có **2 "Sân Bay Chổi"** (`pitch.js` của brooms trên hồ đông, `broom.js` của academy-v2 trên vách đông — không đè nhau) và **2 "Thung Lũng Rồng"** (dragons trên đảo Học viện, `story/valley.js` của Chương 6). Nên gộp hoặc đổi tên.
 - Phím P dùng cho cả phượng hoàng và bảng FPS (có từ trước); M dùng cho bản đồ đảo, bản đồ nội thất, bản đồ rừng (theo ngữ cảnh).
+- Sau khi có clip mở đầu (intro), bộ kiểm thử đầy đủ (tàu, Học viện, máy bay, mini game, draw call) **chưa chạy lại toàn bộ** — chỉ chạy thử khởi động + bỏ qua clip + đi bộ.
 - Đoạn dẫn chuyện mở đầu (story) bật ngay sau hướng dẫn; đã có chặn khi đang mini game / hộp thoại, chưa thử hết với mọi phương tiện.
 - Áo choàng một nguồn và tư thế lái VRM mới kiểm bằng chạy không lỗi + ảnh tổng thể, **chưa soi ảnh cận** từng xe / từng màu áo.
 - Chổi phải hạ chạm đất mới xuống được (thiết kế của vehicles.js) — bấm 🧹 giữa không trung chỉ hiện nhắc.

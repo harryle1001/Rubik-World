@@ -83,7 +83,7 @@ body.rs-modal .soChip,body.mg-on .soChip{display:none}`;
   function goNear(sid, fb) {   // đi cùng: dịch chuyển tới cạnh bạn (vị trí mới nhất nhận qua mạng)
     const o = net.others.get(sid), p = o ? o.h.root.position : fb; if (!p) return toast('Bạn ấy đang ở xa, chưa thấy vị trí.');
     if (ctx.player.vehicle) return toast('🚲 Xuống xe trước rồi mới đến chỗ bạn nhé.');
-    ctx.player.teleport(p.x + 1.3, p.z + 1.3, p.y); ctx.player.snapCamera && ctx.player.snapCamera(); toast(`📍 Đã đến cạnh ${esc(o ? o.name : 'bạn')}!`);
+    if (ctx.warpReady && !ctx.warpReady()) return; ctx.player.teleport(p.x + 1.3, p.z + 1.3, p.y); ctx.player.snapCamera && ctx.player.snapCamera(); toast(`📍 Đã đến cạnh ${esc(o ? o.name : 'bạn')}!`);
   }
 
   // ---------- bảng 👥 ----------
