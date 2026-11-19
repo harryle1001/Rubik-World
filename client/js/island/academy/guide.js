@@ -38,13 +38,14 @@ export function signBoard(list, { w = 2.6, post = true } = {}) {
 
 // biển ngoài lâu đài: [u, v, hướng mặt biển (rad, 0 = nhìn về +u/nam), chữ]
 const OUT = [
-  [52, -8, -Math.PI / 2, '🏰 Cổng chính ➡\n⬇ Dốc đá xuống bến thuyền'],
+  [52, -8, -Math.PI / 2, '🏰 Cổng chính ➡  ·  🧹 Sân Bay Chổi ➡➡\n⬇ Dốc đá xuống bến thuyền'],
   [44, 9, 0, '🚪 Lâu đài 7 tầng: cửa trong cổng, bên trái\n🏛️ Đại sảnh: đi thẳng qua sân'],
-  [44, 40, 0, '🧹 Sân Bay Chổi ⬅ (trên hồ)\n🛍️ Phố Phép Thuật ➡ (cánh đông)'],
-  [44, -40, 0, '🚂 Ga Tàu Pha Lê ➡ (cánh tây)\n🧹 Sân Bay Chổi: cổng phép bên này'],
+  [44, 40, 0, '🛍️ Phố Phép Thuật ➡ (cánh đông)\n🧹 Sân Bay Chổi: ra cổng, đi dọc vách ➡'],
+  [44, -40, 0, '🚂 Ga Tàu Pha Lê ⬅ (cánh tây)\n🧭 Lên tường thành: cầu thang đá'],
   [-18, 8, 0, '⬆ 🏛️ Đại sảnh · cửa vào 7 tầng\n⬅ Sân Luyện Đũa  ·  Nhà Kính ➡'],
   [-8, -46, Math.PI / 2, '🪄 Sân Luyện Đũa · 🔭 Tháp Thiên Văn\n⬆ Cầu có mái → 🌲 Rừng Phép Thuật'],
   [-8, 46, -Math.PI / 2, '🌿 Nhà Kính (lớp Thảo Dược)\n📚 Thư viện tối (phép Sáng lên)'],
+  [52, 66, -Math.PI / 2, '🧹 SÂN BAY CHỔI ➡ qua cầu đá\n8 vòng sáng · vòng tím có câu hỏi'],
   [-52, -104, Math.PI / 2, '🌲 Rừng Phép Thuật ⬅ qua cầu\n🗝️ 13 bí mật đang chờ'],
 ];
 // biển trong lâu đài theo tầng: [x, z, ry, chữ] — 2 đầu hành lang chính + cạnh giếng cầu thang

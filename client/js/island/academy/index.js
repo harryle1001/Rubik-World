@@ -32,6 +32,7 @@ import { createLife } from './forest-life.js';             // sinh vật phép t
 import { createSecrets } from './forest-secrets.js';       // 13 bí mật, Bà Gạo kể cổ tích, nguyên liệu Pha Chế, bản đồ rừng
 import { createGuide } from './guide.js';                 // biển chỉ đường + bản đồ nội thất (phím M)
 import { createExterior } from './exterior.js';           // ngoại thất v2: máng xối rồng, đuốc, cờ, cầu kéo, cổng sắt, lối đi tường thành, vườn tượng, đồng hồ mặt trời
+import { createBroom } from './broom.js';                 // Sân Bay Chổi + mini game bay qua vòng (câu hỏi)
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 const CLASS_AT = [['class0', 'cls-light'], ['class1', 'cls-shape'], ['class1b', 'cls-creature'], ['potion', 'cls-brew']];   // điểm neo lớp (interior/plan.js) → lớp phép thuật (classes/index.js)
@@ -125,7 +126,7 @@ export function createAcademy(ctx) {
     gate: [CL.box.u1 - CL.T - 0.05, -14, BASE, -1, 0], balcony: [A0.u + A0.r2 + 0.05, A0.v, BASE + A0.h1, 1, 0],
   };
   const interior = createInterior(ctx, { OX: C[0] - 44.5, OZ: C[1] - 27.5, exitTo: id => { const d = DOORS[id]; if (!d) return null; const [x, z] = toWorld(d[0] + d[3] * 2.4, d[1] + d[4] * 2.4); return [x, z, d[2], face(d[3], d[4]) + Math.PI]; } });
-  const guide = createGuide(ctx, { toWorld, Y: BASE, interior }), ext = createExterior(ctx, { Y: BASE, toLocal });
+  const guide = createGuide(ctx, { toWorld, Y: BASE, interior }), ext = createExterior(ctx, { Y: BASE, toLocal }), broom = ctx.broomPitch = createBroom(ctx, magic, { Y: BASE, toWorld, toLocal });
   let doorG = null;
   const buildDoors = () => {
     const b = new Batch(), gl = new Batch();
@@ -153,8 +154,8 @@ export function createAcademy(ctx) {
   function stream() {
     const p = ferry.riding || (ctx.aircraft && ctx.aircraft.flying) ? ctx.camera.position : player.pos;
     const [u, v] = toLocal(p.x, p.z), d = Math.max(0, isleDist(u, v));
-    if (!isle && d < LOAD) { isle = buildIsland(ctx); isle.atmos = createAtmos(ctx, isle.group); boxes.push(...isle.castle.boxes); spells.build(isle.group); content.build(); for (const x of extras) x.build(); guide.build(); ext.build(); if (!planted) { plantIsland(ctx); planted = true; } }
-    else if (isle && d > UNLOAD) { spells.unbuild(); content.unbuild(); for (const x of extras) x.unbuild(); guide.unbuild(); ext.unbuild(); for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
+    if (!isle && d < LOAD) { isle = buildIsland(ctx); isle.atmos = createAtmos(ctx, isle.group); boxes.push(...isle.castle.boxes); spells.build(isle.group); content.build(); for (const x of extras) x.build(); guide.build(); ext.build(); broom.build(); if (!planted) { plantIsland(ctx); planted = true; } }
+    else if (isle && d > UNLOAD) { spells.unbuild(); content.unbuild(); for (const x of extras) x.unbuild(); guide.unbuild(); ext.unbuild(); broom.unbuild(); for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
     far.moundOn = !isle;
     if (isle) isle.castle.group.visible = far.dist < 296 + 89;
     if (isle && !doorG) doorG = buildDoors(); if (doorG) doorG.visible = !!isle;
@@ -163,7 +164,7 @@ export function createAcademy(ctx) {
   function update(dt) {
     ferry.update(dt);
     stream(); far.update();
-    if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); for (const x of extras) x.update(dt, t); ext.update(dt, t); }
+    if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); for (const x of extras) x.update(dt, t); ext.update(dt, t); broom.update(dt, t); }
     forest.update(dt, performance.now() / 1000);
     magic.update(dt); wear.update(dt); spells.update(dt); content.update(dt, performance.now() / 1000); interior.update(dt); guide.update();
     if (ferry.riding || player.vehicle) return;
