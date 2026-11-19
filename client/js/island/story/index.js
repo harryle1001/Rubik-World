@@ -318,7 +318,7 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
       else if (T.type === 'quiz' && dd < 8) ctx.offer(`📚 ${esc(T.text)}`, () => doQuiz(T), 9);
       else if (T.type === 'cond') {
         if (/phép/.test(T.text) && ctx.magic) { const m = ctx.magic.mana; if (mana0 != null && m < mana0 - 1) s.castN = (s.castN | 0) + 1; mana0 = m; }
-        if ((slow -= dt) <= 0) { slow = 0.25; try { if (T.test(ctx, s)) advance(); } catch (e) {} }
+        const now = performance.now(); if (now - slow > 250) { slow = now; try { if (T.test(ctx, s)) advance(); } catch (e) {} }
       }
     }
     // HUD: ngay dưới ô nhiệm vụ hằng ngày

@@ -28,6 +28,15 @@ export const CHAPTERS = [
       { type: 'collect', at: [-75, 9], n: 3, spread: 15, icon: '💧', col: '#9ad8ff', text: 'Nhặt 3 giọt màu quanh quảng trường' },
     ],
     shard: [-86, 9], outro: [['ru', 'Mảnh Trắng đây rồi! Màu trắng là tổng của mọi màu ánh sáng đấy.'], ['mu', 'Hừm… để bà xem các em tìm được mấy mảnh nào! Bà trốn ở thị trấn đây!'], ['ru', 'Mảnh tiếp theo ở phố. Đi thôi!']] },
+
+  { id: 2, name: 'Mảnh Vàng', region: 'Thị trấn', icon: '🏘️', col: '#ffd23f', subj: 'Tiếng Việt', xp: 34, sao: 8, title: 'Nhà thám hiểm phố',
+    intro: [['ru', 'Bà Mù Màu đi qua Phố Đà Lạt, các chữ cái trên biển hiệu rơi hết!'], ['ru', 'Tìm lại 3 chữ cái màu, rồi tới Thư viện nhờ Bà Thủ Thư.']],
+    tasks: [
+      { type: 'collect', at: [0, -223], n: 3, spread: 21, icon: '🔤', labels: ['M', 'À', 'U'], col: '#ffd23f', text: 'Tìm 3 chữ cái M · À · U ở Phố Đà Lạt' },
+      { type: 'quiz', who: 'thu', at: [158, -158], s: ['tv'], n: 3, need: 2, text: 'Giải câu đố Tiếng Việt ở Thư viện', lines: [['thu', 'Ghép được chữ “MÀU” rồi à? Giỏi quá! Giờ đến câu đố chữ nghĩa của bà.']] },
+      { type: 'cond', at: [223, 0], r: 0, text: 'Chơi 1 mini game ở khu Thể thao (gặp chủ trò, bấm E)', test: c => !!c.mgActive, hint: 'Mini game nào cũng được: đá bóng, bắn bóng rổ, đua xe…' },
+    ],
+    shard: [205, -12], outro: [['ru', 'Mảnh Vàng — màu của nắng!'], ['mu', 'Bà chỉ muốn thế giới… bớt chói mắt thôi mà! Bà ra biển hóng gió đây.'], ['ru', 'Ra biển phía tây! Nhớ hít thật sâu trước khi lặn.']] },
 ];
 
 let EGG = () => 0;
