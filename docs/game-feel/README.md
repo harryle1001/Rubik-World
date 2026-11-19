@@ -18,3 +18,10 @@ Trước khi sửa: draw call trung vị 214 (mức 3).
 - Màn chuyển tối-mở (~0,4 s) khi camera nhảy xa (vào nhà, lên tầng), vào/ra mini game; tên vùng kiểu điện ảnh (khung đen + chữ serif, hợp âm rải khi vùng mới).
 - Bụi khi chạy (player.js) và nước bắn khi lội (living.js) đã có sẵn — giữ nguyên.
 ![](2-ten-vung-xp.png) ![](2-vet-gio.png)
+
+## 3. Hình ảnh
+- Nước: mây trôi phản chiếu theo tia phản xạ (uniform `uCloudR`, dày theo độ mây của thời tiết) — `ocean-water.js`, `weather.js`.
+- Đã có sẵn, giữ nguyên: bóng mây trôi trên mặt đất (weather.js), cầu vồng sau mưa (weather.js), sao băng ban đêm (easter-eggs.js, skyshow.js), đom đóm (ambience.js).
+- ⚡ Mượt (mức ≥ 2): tắt mây phản chiếu và bóng mây (trước chỉ tắt ở mức 3).
+- Đo ⚡ Mượt tại cổng trường: 213 draw call (trước 214) — 0 draw call thêm.
+![](3-may-phan-chieu.png)

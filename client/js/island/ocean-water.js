@@ -25,7 +25,7 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
     uShallow: { value: new THREE.Color('#46e3c6') }, uDeep: { value: new THREE.Color('#1688b0') }, uLight: { value: 1 },
     uSunW: { value: new THREE.Vector3(0, 1, 0) }, uSunC: { value: new THREE.Color('#fff') }, uSkyH: { value: new THREE.Color('#bfe6f6') },   // ambience.js nối với bầu trời
     uSkyT: { value: new THREE.Color('#5a9fe6') }, uSeaTint: { value: new THREE.Color('#1f7fa8') }, uMoon: { value: new THREE.Vector3(0, -1, 0) }, uNight: { value: 0 },
-    uPlayer: { value: null }, uWaveN: { value: state.waveN }, uAmp: { value: 1 },
+    uPlayer: { value: null }, uCloudR: { value: 0 }, uWaveN: { value: state.waveN }, uAmp: { value: 1 },
     uWA: { value: wa }, uWB: { value: wb },
   }]);
   const DEPTH = `uniform sampler2D uH; uniform vec2 uMin, uSize;
@@ -55,7 +55,7 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
 #include <fog_vertex>
       }`,
     fragmentShader: `${DEPTH}
-      uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uSkyT, uPlayer, uMoon, uSeaTint; uniform float uLight, uNight; uniform highp float uTime;
+      uniform vec3 uShallow, uDeep, uSunW, uSunC, uSkyH, uSkyT, uPlayer, uMoon, uSeaTint; uniform float uLight, uNight, uCloudR; uniform highp float uTime;
       varying highp vec3 vW; varying vec3 vN; varying float vCrest;
 #include <fog_pars_fragment>
       void main(){
@@ -93,6 +93,11 @@ export function createOceanWater(scene, { heightAt, hTex, WORLD, SX, SZ, W, WIND
         // phản chiếu bầu trời (Fresnel Schlick): nhìn xiên thấy trời, nhìn thẳng xuống thấy nước
         vec3 R = reflect(-V, N); R.y = abs(R.y);
         vec3 sky = mix(uSkyH, uSkyT, smoothstep(0.02, 0.6, R.y));
+        if (uCloudR > 0.01) {   // mây trôi phản chiếu trên mặt nước (chiếu theo tia phản xạ lên vòm trời, gió đẩy chậm)
+          vec2 cu = R.xz / (R.y + 0.12) * 0.09 + vec2(t * 0.012, t * 0.005);
+          float cn = sin(cu.x * 2.3 + sin(cu.y * 1.7) * 1.6) * sin(cu.y * 2.9 + sin(cu.x * 1.3) * 2.1) + 0.5 * sin(cu.x * 5.1 - cu.y * 3.7);
+          sky = mix(sky, mix(vec3(1.), uSkyH, 0.35) * (1. - uNight * 0.85), smoothstep(0.15, 0.95, cn) * smoothstep(0.02, 0.2, R.y) * uCloudR);
+        }
         float fres = 0.04 + 0.96 * pow(clamp(1. - NdV, 0., 1.), 5.);   // kẹp: NdV > 1 do sai số → pow(số âm) = NaN
         c = mix(c, sky, min(fres * 0.9, 0.85));
         // bọt: viền sát bờ, dải sóng vỗ chạy dần vào bờ, gợn quanh chân (chỉ tính ở nước nông) · bọt đỉnh sóng (chỉ ở khơi, gần camera)

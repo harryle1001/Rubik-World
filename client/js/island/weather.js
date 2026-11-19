@@ -161,7 +161,8 @@ export function createWeather(ctx) {
     rain.visible = cur.r > 0.01 && !ctx.indoor; RU.uRain.value = cur.r; RU.uTime.value = t; RU.uCam.value.copy(camera.position); RU.uLight.value = 0.45 + 0.55 * day;
     RU.uWind.value.set(WIND.uGust.value.x, WIND.uGust.value.y).multiplyScalar(cur.w * 2.2 * (1 + WIND.uGust.value.z * 0.5)); // hướng gió + cơn giật (living.js)
     rg.setDrawRange(0, DROPS[L] * 2);   // (trước đây dòng này nằm lẫn trong chú thích → luôn vẽ đủ 3200 hạt ở mọi mức)
-    WET.uWet.value = cur.wet; WET.uRainNow.value = cur.r; WET.uCloudSh.value = (ctx.qualityLevel || 0) >= 3 ? 0 : day * (1 - S.state.low * 0.6) * (0.1 + cur.c * 0.22) * (1 - cur.r * 0.8);
+    WET.uWet.value = cur.wet; WET.uRainNow.value = cur.r; { const wm = ctx.terrain.water && ctx.terrain.water.mat; if (wm && wm.uniforms.uCloudR) wm.uniforms.uCloudR.value = (ctx.qualityLevel || 0) >= 2 ? 0 : 0.236 + cur.c * 0.5; }   // ⚡ Mượt (mức ≥ 2): tắt mây phản chiếu, bóng mây
+    WET.uCloudSh.value = (ctx.qualityLevel || 0) >= 2 ? 0 : day * (1 - S.state.low * 0.6) * (0.1 + cur.c * 0.22) * (1 - cur.r * 0.8);
     if ((scanT -= dt) <= 0 && scans < 25) { scanT = 3; scans++; patchGrounds(); } // nền thị trấn dựng sau → quét vài lần
 
     // giông: chớp lóe + sấm đến muộn theo khoảng cách (ánh sáng nhanh hơn âm thanh)
