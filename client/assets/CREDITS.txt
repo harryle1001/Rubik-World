@@ -108,3 +108,6 @@ models/alley/*.glb (tường, cửa, cửa sổ, mái, ống khói, cờ, đèn 
   Kenney – Fantasy Town Kit 2.0, CC0 1.0 — https://opengameart.org/content/fantasy-town-kit (License.txt trong gói: "Creative Commons Zero, CC0")
   Đã nén Meshopt, texture bảng màu 128 px (tools/kit/process.mjs); đổi màu vữa → kem, mái → đá xám, gỗ → gỗ sẫm bằng tools/kit/recolor.mjs.
 tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — https://ambientcg.com/view?id=PavingStones070 (thu 512 px, giảm bão hoà)
+models/alley/wiz-hat.glb, wiz-cape.glb  mũ + áo choàng tách từ models/hero-mage.glb (KayKit Adventurers, CC0 — xem trên), tô màu bằng code
+models/alley/broom.glb  "Medieval Tools Pack" — System G6, OpenGameArt, CC0 — https://opengameart.org/content/medieval-tools-pack (chuyển .blend → .glb bằng bpy)
+Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.

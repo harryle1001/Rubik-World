@@ -8,7 +8,10 @@ import * as THREE from 'three';
 import { loadModel } from '../models.js';
 import { toon } from '../style.js';
 import { heightLocal } from './plan.js';
-
+import { loadHero } from '../characters.js';
+import { WOODS, CORES } from './magic.js';
+import { CAPES, HATS, BROOMS, PETS } from './wear.js';
+import { SHOP_TALK } from './alley-shops.js';
 
 const S = 3.4;                                                   // 1 ô module Kenney = 3,4 m (cửa ≈ 2 m)
 const V_CASTLE = 117, V_WALL = 135.2;                            // mặt ngoài dãy đông lâu đài · mặt trong tường thành
@@ -177,7 +180,7 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
           const n = h.n, X = h.X, sgn = h.side, p = h.front.clone().addScaledVector(X, -sgn * (h.w * S / 2 - 0.9) * 0).addScaledVector(n, -1.25); p.y = h.y0 + S * 1.12;
           const ax = n.clone().negate(); quad(i, p.clone().addScaledVector(X, 0.03), ax, Yv, 1.1, 0.34); quad(i, p.clone().addScaledVector(X, -0.03), ax.clone().negate(), Yv, 1.1, 0.34);
           bracket.setFromUnitVectors(Yv, n.clone().negate());
-          put('pillar-wood', new THREE.Matrix4().compose(h.front.clone().setY(h.y0 + S * 1.12 + 0.42), bracket, new THREE.Vector3(1.6, 2.5, 1.6)), new THREE.Color(0.7, 0.6, 0.55));
+          put('pillar-wood', new THREE.Matrix4().compose(h.front.clone().setY(h.y0 + S * 1.12 + 0.42), bracket, new THREE.Vector3(0.9, 2.5, 0.9)), new THREE.Color(0.7, 0.6, 0.55));
         } else if (h && h.bank) {                                  // ngân hàng: biển phẳng trên cửa
           const p = h.front.clone().addScaledVector(h.n, -0.12); p.y = h.y0 + S * 1.06; quad(i, p, h.X.clone().negate(), Yv, 2.6, 0.82);
         } else if (sh.stall) {                                     // quầy thảo dược: biển trên sạp giữa
@@ -202,22 +205,121 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
       });
     });
     ctx.boxes.push(...boxes);
-    built = { g, boxes, houses, lamps, stalls, meshes };
+    // ---------- chủ tiệm (NPC): đứng trước cửa, quay ra lối ----------
+    const keepers = [];
+    SHOPS.forEach(sh => {
+      const h = houses.find(x => x.shop === sh), T = SHOP_TALK[sh.id];
+      let p, face;
+      if (h) { p = h.front.clone().addScaledVector(h.n, h.bank ? -1.6 : -0.95); face = Math.atan2(-h.n.x, -h.n.z); if (!h.bank) p.addScaledVector(h.X, h.side * 0.9); }
+      else { p = stalls[1].clone().add(new THREE.Vector3(0.95, 0, 0)); face = -Math.PI / 2; }
+      const [u, v] = toLocal(p.x, p.z); p.y = gy(u, v);
+      const k = { sh, p, face, hero: null, line: 0 }; keepers.push(k);
+      loadHero(T.kind, T.h || 1.66, T.look).then(hero => {
+        if (!hero || !built || built.g !== g) return;
+        hero.npc = true; hero.model.position.copy(p); hero.model.rotation.y = face; g.add(hero.model); hero.anim.play(hero.set.idle, 0); k.hero = hero;
+      });
+      ctx.colliders.push({ x: p.x, z: p.z, r: 0.35, alley: true });
+    });
+    built = { g, boxes, houses, lamps, stalls, meshes, keepers };
   }
 
   function unbuild() {
     if (!built) return;
     for (const b of built.boxes) { const k = ctx.boxes.indexOf(b); if (k >= 0) ctx.boxes.splice(k, 1); }
     for (let i = ctx.colliders.length - 1; i >= 0; i--) if (ctx.colliders[i].alley) ctx.colliders.splice(i, 1);
+    shop.close();
     ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); });
     built = null;
   }
 
   const center = () => W((U0 + U1) / 2, vc(-30), Y);
-  function update() {
+  const shop = createShop(ctx, magic);
+  function update(dt) {
     if (!built) return;
-    built.g.visible = ctx.camera.position.distanceTo(center()) < 233;
+    const vis = ctx.camera.position.distanceTo(center()) < 233; built.g.visible = vis; if (!vis) return;
+    const pp = ctx.player.pos;
+    for (const k of built.keepers) {
+      if (!k.hero) continue;
+      const d = Math.hypot(pp.x - k.p.x, pp.z - k.p.z);
+      if (d < 21) k.hero.anim.update(dt);
+      const want = d < 5 ? Math.atan2(pp.x - k.p.x, pp.z - k.p.z) : k.face, r = k.hero.model.rotation;
+      r.y += (((want - r.y + Math.PI * 3) % (Math.PI * 2)) - Math.PI) * Math.min(1, dt * 4);
+      if (d < 3.4 && !ctx.player.vehicle && Math.abs(pp.y - k.p.y) < 2) ctx.offer(`🛍️ ${k.sh.name}`, () => shop.open(k), 8);
+    }
   }
-  return { build, unbuild, update, get built() { return built; } };
+  return (ctx.alley = { build, unbuild, update, shop, get built() { return built; } });
 }
 
+// ---------- CỬA HÀNG: thẻ hàng hoá, mỗi lần mua trả lời 1 câu đố học tập; trả bằng xu tài khoản (ctx.account) ----------
+const CSS = `#alShop{position:fixed;left:50%;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 76px);transform:translateX(-50%);z-index:27;width:min(92vw,420px);max-height:min(62vh,520px);overflow:auto;background:#141022f2;color:#f7ecd0;border:1px solid #ffe3a066;border-radius:16px;padding:13px 14px;font:600 14px/1.45 system-ui;box-shadow:0 8px 34px #0007}
+#alShop h4{margin:0 0 4px;font:800 16px Georgia,serif;color:#ffe3a0}#alShop .say{font-style:italic;color:#e8dcc0;margin:0 0 8px}#alShop .coin{float:right;font:800 13px system-ui;color:#ffd34d}
+#alShop .it{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #ffffff14}#alShop .it i{width:21px;height:21px;border-radius:50%;flex:none;border:1px solid #fff6}#alShop .it span{flex:1}
+#alShop button{border:1px solid #fff4;background:#2a2340;color:#fff;border-radius:10px;padding:7px 10px;font:700 13px system-ui;min-height:34px}#alShop button.buy{background:#5a4a2a;border-color:#ffe3a0aa}#alShop button.on{background:#2c6455}
+#alShop .ft{display:flex;justify-content:space-between;gap:8px;margin-top:8px}`;
+
+function createShop(ctx, magic) {
+  let el = null, cur = null;
+  const coins = () => (ctx.account ? ctx.account.coins : 0);
+  const close = () => { if (el) { el.remove(); el = null; } cur = null; };
+  const dayKey = () => new Date().toISOString().slice(0, 10);
+  const bankLeft = () => { try { const b = JSON.parse(localStorage.getItem('academy.bank')) || {}; return b.d === dayKey() ? 8 - b.n : 8; } catch (e) { return 8; } };
+  const bankUse = () => { const n = 8 - bankLeft() + 1; try { localStorage.setItem('academy.bank', JSON.stringify({ d: dayKey(), n })); } catch (e) {} };
+  const wear = () => ctx.wear;
+  // 1 câu đố: câu riêng của tiệm (xen kẽ) hoặc câu theo môn
+  let qi = 0;
+  const quiz = id => { const T = SHOP_TALK[id]; qi++; return qi % 2 && T.qs.length ? T.qs[(qi >> 1) % T.qs.length] : T.subj; };
+  function buy(id, price, label, grant) {
+    if (!ctx.account) return ctx.toast('Cần đăng nhập hoặc chơi khách để dùng xu.', 3000);
+    if (coins() < price) return ctx.toast(`🪙 Cần <b>${price} xu</b> (em có ${coins()}). Ghé <b>🏦 Ngân Hàng Kho Báu</b> cuối phố giải toán để kiếm thêm xu nhé!`, 5000);
+    const k = cur; close();
+    magic.ask(quiz(id), () => {
+      if (!ctx.account.addCoins(-price)) return ctx.toast('Không đủ xu.', 2500);
+      grant(); ctx.sfx && ctx.sfx('coin'); ctx.toast(`🛍️ Đã mua <b>${label}</b>! −${price} 🪙`, 3500);
+      if (k) setTimeout(() => open(k, true), 900);
+    }, `🛍️ Trả lời đúng để mua <b>${label}</b> (${price} 🪙)`);
+  }
+  // danh sách hàng mỗi tiệm: [{ name, col?, price, state: 'buy' | 'own' | 'on' | 'free', act() }]
+  function items(id) {
+    const W = wear(), eq = W.eq, L = [];
+    const gear = (slot, list, price) => list.forEach(x => L.push({ name: x.name, col: x.col, price, state: eq[slot] === x.id ? 'on' : W.own(x.id) ? 'own' : 'buy', act: st => st === 'buy' ? buy(id, price, x.name, () => W.give(slot, x.id)) : (W.equip(slot, eq[slot] === x.id ? null : x.id), open(cur, true)) }));
+    const use = (name, price, gain, icon) => L.push({ name: `${icon} ${name} (+${gain} năng lượng phép)`, price, state: 'buy', act: () => buy(id, price, name, () => magic.setMana(magic.mana + gain)) });
+    if (id === 'wand') {
+      if (!magic.hasWand) L.push({ name: '🪄 Cây đũa đầu tiên của em', price: 0, state: 'free', act: () => { close(); magic.chooseWand(true); } });
+      else {
+        const w = magic.wand;
+        CORES.forEach(c => L.push({ name: `Lõi pha lê ${c.name}`, col: c.col, price: 13, state: w.core === c.id ? 'on' : 'buy', act: st => st === 'buy' && buy(id, 13, `lõi pha lê ${c.name}`, () => magic.setWand(null, c.id)) }));
+        WOODS.forEach(x => L.push({ name: `Thân gỗ ${x.name}`, col: x.col, price: 8, state: w.wood === x.id ? 'on' : 'buy', act: st => st === 'buy' && buy(id, 8, `thân đũa gỗ ${x.name}`, () => magic.setWand(x.id, null)) }));
+      }
+    } else if (id === 'robe') { gear('cape', CAPES, 21); gear('hat', HATS, 13); }
+    else if (id === 'pet') gear('pet', PETS, 21);
+    else if (id === 'broom') { gear('broom', BROOMS.slice(0, 1), 34); gear('broom', BROOMS.slice(1), 55); }
+    else if (id === 'sweet') { use('Kẹo Nổ Lách Tách', 3, 13, '🍬'); use('Bánh Mây Bồng Bềnh', 5, 21, '🧁'); use('Sô-cô-la Ếch Nhảy', 8, 34, '🍫'); }
+    else if (id === 'herb') { use('Trà bạc hà', 3, 13, '🍵'); use('Bình thuốc lá lốt', 5, 21, '🧪'); use('Mật ong rừng U Minh', 8, 34, '🍯'); }
+    else if (id === 'book') SHOP_TALK.book.books.forEach((b, i) => { const own = W.own('book' + i); L.push({ name: `📖 ${b[0]}`, price: 5, state: own ? 'own' : 'buy', act: st => st === 'buy' ? buy(id, 5, b[0], () => { W.give('book', 'book' + i); setTimeout(() => ctx.toast(`📖 <b>${b[0]}</b><br>${b[1]}`, 9000), 1000); }) : ctx.toast(`📖 <b>${b[0]}</b><br>${b[1]}`, 9000) }); });
+    else if (id === 'bank') {
+      const left = bankLeft();
+      L.push({ name: `🧮 Thử thách kho báu: giải toán nhận +5 🪙 (còn ${left}/8 lượt hôm nay)`, price: 0, state: left > 0 ? 'free' : 'own', act: () => {
+        if (bankLeft() <= 0) return ctx.toast('🏦 Hôm nay hết lượt rồi — mai quay lại nhé!', 3500);
+        const k = cur; close();
+        magic.ask('toan', () => { bankUse(); ctx.account && ctx.account.addCoins(5); ctx.sfx && ctx.sfx('coin'); ctx.toast(`🏦 Kho báu mở! <b>+5 🪙</b> (còn ${bankLeft()} lượt hôm nay)`, 3500); if (k) setTimeout(() => open(k, true), 900); }, '🏦 Thử thách kho báu — giải đúng để nhận xu');
+      } });
+    }
+    return L;
+  }
+  function open(k, again) {
+    if (!k) return;
+    if (!document.getElementById('alShopCss')) { const st = document.createElement('style'); st.id = 'alShopCss'; st.textContent = CSS; document.head.appendChild(st); }
+    close(); cur = k; const T = SHOP_TALK[k.sh.id];
+    if (!again) k.line = (k.line + 1) % T.lines.length;
+    if (k.hero && !again) { k.hero.happyUntil = performance.now() + 1500; const a = k.hero.anim; if (a.has('wave')) { a.play('wave', 0.2, true); setTimeout(() => a.play(k.hero.set.idle, 0.3), 1500); } }
+    const L = items(k.sh.id);
+    el = document.createElement('div'); el.id = 'alShop';
+    el.innerHTML = `<span class="coin">🪙 ${coins()}</span><h4>${k.sh.name}</h4><p class="say">${T.who}: “${T.lines[k.line]}”</p>` +
+      L.map((x, i) => `<div class="it">${x.col ? `<i style="background:${x.col}"></i>` : ''}<span>${x.name}</span><button data-i="${i}" class="${x.state === 'buy' ? 'buy' : x.state === 'on' ? 'on' : ''}">${x.state === 'buy' ? `${x.price} 🪙` : x.state === 'on' ? '✔ Đang dùng' : x.state === 'free' ? 'Nhận' : x.state === 'own' ? (k.sh.id === 'book' ? 'Đọc' : k.sh.id === 'bank' ? 'Hết lượt' : 'Dùng') : ''}</button></div>`).join('') +
+      `<div class="ft"><small>Mỗi món: trả lời đúng 1 câu đố 📚</small><button data-x>Đóng</button></div>`;
+    el.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.x !== undefined) return close(); const x = L[+b.dataset.i]; if (x) { ctx.sfx && ctx.sfx('ui'); x.act(x.state); } };
+    document.body.appendChild(el);
+  }
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  return { open, close, get isOpen() { return !!el; } };
+}
