@@ -172,6 +172,7 @@ export function createPlayer(ctx) {
       vy += (V.lift - vy) * Math.min(1, dt * 1.5); pos.y = Math.min(V.maxAlt, pos.y + vy * dt);
       const floor = Math.max(g, CFG.island.waterLevel + 0.6); if (pos.y <= floor) { pos.y = floor; vy = Math.max(0, vy); grounded = g >= floor - 0.01; } else grounded = false;
     } else if (D && D.step(dt, g)) { vy = 0; grounded = true; }   // đang bơi/lặn: dive.js lo độ cao
+    else if (self.hover != null) { pos.y = Math.max(g, self.hover); vy = 0; grounded = pos.y <= g + 0.01; }   // phép Nâng Bạn (spellbook.js): độ cao do phép điều khiển, không rơi
     else {
     vy -= P.gravity * dt; pos.y += vy * dt;
     if (pos.y <= g) {

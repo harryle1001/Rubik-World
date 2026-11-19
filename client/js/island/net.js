@@ -14,14 +14,16 @@ function nameTag(text) {
 }
 
 export function createNet(ctx) {
-  const others = new Map(); let sock = null;
+  const others = new Map(); let sock = null; const subs = {};   // subs: mô-đun khác nghe sự kiện (spellbook.js: phép, áo choàng…)
+  const fire = (ev, d) => { for (const f of subs[ev] || []) { try { f(d); } catch (e) { console.warn(e); } } };
+  const on = (ev, fn) => { (subs[ev] = subs[ev] || []).push(fn); if (sock && !['connect', 'disconnect'].includes(ev) && !sock.hasListeners(ev)) sock.on(ev, d => fire(ev, d)); };
   const status = document.getElementById('online');
-  const setStatus = () => { if (status) status.textContent = sock && sock.connected ? `👥 ${others.size + 1} người trên đảo` : '⚪ Chơi một mình'; };
+  const setStatus = () => { if (status) status.textContent = sock && sock.connected ? `👥 ${[...others.values()].filter(o => !o.cloak).length + 1} người trên đảo` : '⚪ Chơi một mình'; };
 
   function add(p) {
     if (others.has(p.id)) return;
     const h = makeHero(p.hue), tag = nameTag(p.name); h.root.add(tag); ctx.scene.add(h.root);
-    const o = { h, name: p.name, from: new THREE.Vector3(p.x, p.y, p.z), to: new THREE.Vector3(p.x, p.y, p.z), r: p.r, s: 0, t: 1, phase: 0, vel: new THREE.Vector3(), pv: new THREE.Vector3(), pred: new THREE.Vector3(), kr: { v: 0 }, age: 0, recv: 0, tag };
+    const o = { h, name: p.name, cloak: !!p.cloak, liftOk: !!p.liftOk, from: new THREE.Vector3(p.x, p.y, p.z), to: new THREE.Vector3(p.x, p.y, p.z), r: p.r, s: 0, t: 1, phase: 0, vel: new THREE.Vector3(), pv: new THREE.Vector3(), pred: new THREE.Vector3(), kr: { v: 0 }, age: 0, recv: 0, tag };
     h.root.position.copy(o.to); others.set(p.id, o); setStatus();
     // bộ đồ KayKit theo màu áo người đó chọn (hiệp sĩ / đạo tặc / pháp sư / chiến binh)
     loadHero(KINDS[Math.floor((p.hue || 0) / 30) % KINDS.length]).then(r => { if (!r || !others.has(p.id)) return; o.hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
@@ -37,8 +39,10 @@ export function createNet(ctx) {
   const s = document.createElement('script'); s.src = server ? '/lib/socket.io.min.js' : '/socket.io/socket.io.js';
   s.onload = () => {
     sock = window.io(server + '/island', { transports: ['websocket', 'polling'] });
-    sock.on('connect', () => { for (const id of [...others.keys()]) remove(id); sock.emit('join', { name: ctx.playerName, hue: ctx.hue }); setStatus(); });
-    sock.on('disconnect', setStatus);
+    sock.on('connect', () => { for (const id of [...others.keys()]) remove(id); sock.emit('join', { name: ctx.playerName, hue: ctx.hue }); setStatus(); fire('connect'); });
+    sock.on('disconnect', () => { setStatus(); fire('disconnect'); });
+    for (const ev in subs) if (!['connect', 'disconnect'].includes(ev)) sock.on(ev, d => fire(ev, d));
+    sock.on('pstate', d => { const o = d && others.get(d.id); if (!o) return; if ('cloak' in d) o.cloak = !!d.cloak; if ('liftOk' in d) o.liftOk = !!d.liftOk; setStatus(); });   // áo choàng tàng hình / cho bạn nâng
     sock.on('players', list => list.forEach(add));
     sock.on('joined', add);
     sock.on('left', remove);
@@ -70,5 +74,6 @@ export function createNet(ctx) {
       o.h.legL.rotation.x = Math.sin(o.phase) * a; o.h.legR.rotation.x = -Math.sin(o.phase) * a; o.h.armL.rotation.x = -Math.sin(o.phase) * a; o.h.armR.rotation.x = Math.sin(o.phase) * a;
     }
   }
-  return { update, others, get connected() { return !!(sock && sock.connected); } };
+  const send = (ev, d) => { if (sock && sock.connected) sock.emit(ev, d); };
+  return { update, others, send, on, get connected() { return !!(sock && sock.connected); } };
 }

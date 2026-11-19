@@ -1,6 +1,6 @@
 // academy/spells.js — CÁC PHÉP + mục tiêu đặt trong lâu đài.
 //  ☀️ Sáng lên (Khoa học – ánh sáng): thắp 5 đèn lồng trong thư viện tối; không có đèn gần → quả cầu sáng theo em 21 s.
-//  🪶 Nhấc lên (Vật lý – trọng lực, đòn bẩy): tính đúng tay đòn để nâng tảng đá 2,6 m ở Sân Luyện Đũa → lộ rương năng lượng.
+//  🪶 Bay lên (Vật lý – trọng lực, đòn bẩy): tính đúng tay đòn để nâng tảng đá 2,6 m ở Sân Luyện Đũa → lộ rương năng lượng.
 // Trạng thái lưu localStorage (academy.lit, academy.stone); mục tiêu dựng lại mỗi lần đảo được tải.
 import * as THREE from 'three';
 import { mat } from '../sample/palette.js';
@@ -19,7 +19,7 @@ const LIGHT_FACTS = [
   'Ta <b>nhìn thấy</b> một vật khi có ánh sáng từ vật đó truyền vào mắt.',
 ];
 function leverQ() {
-  if (Math.random() < 0.25) return { q: 'Khi phép "Nhấc lên" hết tác dụng, tảng đá sẽ thế nào?', choices: ['Rơi xuống vì trọng lực', 'Bay mãi lên trời', 'Đứng yên giữa không trung', 'Biến mất'], a: 0, explain: '<b>Trọng lực</b> của Trái Đất kéo mọi vật về phía mặt đất.' };
+  if (Math.random() < 0.25) return { q: 'Khi phép "Bay lên" hết tác dụng, tảng đá sẽ thế nào?', choices: ['Rơi xuống vì trọng lực', 'Bay mãi lên trời', 'Đứng yên giữa không trung', 'Biến mất'], a: 0, explain: '<b>Trọng lực</b> của Trái Đất kéo mọi vật về phía mặt đất.' };
   const F = [10, 15, 20, 30][ri(0, 3)], k = [2, 3, 4][ri(0, 2)], W = F * k;
   return { q: `Tảng đá nặng <b>${W} kg</b>, đặt cách điểm tựa <b>1 m</b>. Em chỉ đẩy được lực bằng <b>${F} kg</b>. Phải đặt tay cách điểm tựa bao nhiêu mét?`, ...shuffle4(k, [k - 1, k + 1, k + 2, 1]), explain: `Đòn bẩy cân bằng khi ${W} × 1 = ${F} × d → d = <b>${k} m</b>. Tay đòn càng dài càng đỡ tốn sức.` };
 }
@@ -43,7 +43,7 @@ export function createSpells(ctx, magic, { toWorld, L, Y }) {
       if (orbT <= 0) orb.visible = false;
     },
   });
-  magic.addSpell({ id: 'lift', name: 'Nhấc lên', icon: '🪶', subjects: ['khoahoc', 'toan'], learn: 'nâng vật nặng nhờ hiểu trọng lực và đòn bẩy.', hint: 'Thử ở tảng đá lớn trong Sân Luyện Đũa.' });
+  magic.addSpell({ id: 'lift', name: 'Bay lên', icon: '🪶', subjects: ['khoahoc', 'toan'], learn: 'nâng vật nặng nhờ hiểu trọng lực và đòn bẩy.', hint: 'Thử ở tảng đá lớn trong Sân Luyện Đũa.' });
 
   // ---------- mục tiêu trong lâu đài (dựng khi đảo tải) ----------
   let built = null;
@@ -80,8 +80,8 @@ export function createSpells(ctx, magic, { toWorld, L, Y }) {
       onCast(api) {
         api.ask(leverQ(), () => {
           stone.lifted = true; save('academy.stone', true); anim = 0.0001; const k = ctx.boxes.indexOf(rbox); if (k >= 0) ctx.boxes.splice(k, 1);
-          api.toast('🪶 <b>Nhấc lên!</b> Tảng đá bay lên nhẹ như lông chim… dưới đó có một chiếc rương!', 4500);
-        }, '🪶 Nhấc lên — tính đúng mới nâng được đá');
+          api.toast('🪶 <b>Bay lên!</b> Tảng đá bay lên nhẹ như lông chim… dưới đó có một chiếc rương!', 4500);
+        }, '🪶 Bay lên — tính đúng mới nâng được đá');
       },
     }));
     ctx.boxes.push(...boxes);

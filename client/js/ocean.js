@@ -43,6 +43,7 @@ import { createLessons } from './island/lessons.js';
 import { createSchoolInterior } from './island/school-interior.js';
 import { createSchoolYard } from './island/school-yard.js';
 import { createAcademy } from './island/academy/index.js';
+import { createSpellbook } from './island/spellbook.js';
 import { createTrain } from './island/train/index.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { createVrmNpc } from './island/vrm/vrm-npc.js';
@@ -112,6 +113,7 @@ const worldMap = ctx.worldMap = createWorldMap(ctx); // bản đồ: phím M / n
 const vehicles = createVehicles(ctx);
 const aircraft = ctx.aircraft = createAircraft(ctx); // sân bay, máy bay cổ điển, đàn chim
 const academy = ctx.academy = createAcademy(ctx); // Học viện Pha Lê: đảo riêng, bến thuyền đèn lồng, đường băng, bóng lâu đài trong sương
+const spells = ctx.spells = createSpellbook(ctx, academy.magic); // đũa phép dùng khắp thế giới: hô thần chú, phép mới, đồng bộ mạng, áo choàng chủ game
 const train = ctx.train = createTrain(ctx); // Tàu Pha Lê: tàu hơi nước từ ga bờ tây bắc qua đảo Đồi Thông, hầm, cầu cạn vòm đá tới cao nguyên Học viện
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
@@ -189,6 +191,7 @@ renderer.setAnimationLoop(() => {
   mounts.update(dt);
   vrmNpc.update(dt);
   academy.update(dt);
+  spells.update(dt); // sau thị trấn/học viện: Bay Lên cộng độ cao lên người đã đặt vị trí
   train.update(dt);
   sky.update(dt, camera, player.pos);
   weather.update(dt, clock.elapsedTime);

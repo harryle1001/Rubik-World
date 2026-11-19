@@ -215,16 +215,31 @@ island.on('connection', socket => {
   let me = null, last = 0;
   socket.on('join', d => {
     if (me) return;
-    me = { id: socket.id, name: clean(d && d.name, 18) || 'Bạn mới', hue: num(d && d.hue, 0, 360), x: 0, y: 0, z: 10, r: 0, s: 0 };
+    me = { id: socket.id, name: clean(d && d.name, 18) || 'Bạn mới', hue: num(d && d.hue, 0, 360), x: 0, y: 0, z: 10, r: 0, s: 0, cloak: false, liftOk: false };
     islanders.set(socket.id, me);
-    socket.emit('players', [...islanders.values()].filter(p => p.id !== socket.id));
-    socket.broadcast.emit('joined', me);
+    const pubP = q => ({ id: q.id, name: q.name, hue: q.hue, x: q.x, y: q.y, z: q.z, r: q.r, s: q.s, cloak: q.cloak, liftOk: q.liftOk });
+    socket.emit('players', [...islanders.values()].filter(p => p.id !== socket.id).map(pubP));
+    socket.broadcast.emit('joined', pubP(me));
   });
   socket.on('m', d => {
     const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
     me.x = num(d.x, -150, 150); me.y = num(d.y, -20, 60); me.z = num(d.z, -150, 150); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);
     socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
   });
+  // ---------- phép thuật (spellbook.js): chỉ chuyển tiếp hiệu ứng, kiểm tra dữ liệu; không có phép gây hại ----------
+  let spT = 0; const pub = () => island.emit('pstate', { id: me.id, cloak: !!me.cloak, liftOk: !!me.liftOk });
+  socket.on('spell', d => {
+    const now = Date.now(); if (!me || !d || now - spT < 250 || !/^[a-z0-9_-]{1,20}$/.test(d.s) || !Array.isArray(d.a) || d.a.length !== 3) return; spT = now;
+    const x = d.x && typeof d.x === 'object' && JSON.stringify(d.x).length <= 300 ? d.x : undefined;
+    socket.broadcast.emit('spell', { id: me.id, s: d.s, a: d.a.map(v => num(v, -2000, 2000)), c: /^#[0-9a-f]{6}$/i.test(d.c) ? d.c : '#ffe3a0', x });
+  });
+  socket.on('perm', d => { if (!me || !d) return; me.liftOk = !!d.liftOk; pub(); });
+  socket.on('liftReq', d => {   // Nâng Bạn: chỉ khi người được nâng đã bật cho phép; 1 lần / 5 giây
+    const t = d && islanders.get(d.to), now = Date.now(); if (!me || !t || !t.liftOk || t.cloak || now - (me.liftT || 0) < 5000) return; me.liftT = now;
+    if (Math.hypot(t.x - me.x, t.z - me.z) > 34) return; island.to(t.id).emit('lifted', { by: me.id, name: me.name });
+  });
+  socket.on('admin', d => { if (!me || !d) return; me.admin = typeof d.key === 'string' && d.key.trim().toUpperCase() === ADMIN_KEY.toUpperCase(); socket.emit('admin', { ok: me.admin, quiet: !!d.quiet }); if (!me.admin && me.cloak) { me.cloak = false; pub(); } });
+  socket.on('cloak', d => { if (!me || !me.admin || !d) return; me.cloak = !!d.on; pub(); });   // áo choàng tàng hình: chỉ chủ game
   socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
 });
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
