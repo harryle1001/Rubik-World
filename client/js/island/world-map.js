@@ -121,7 +121,7 @@ body.rs-modal #bMap{display:none}`;
   let open = false, cx = 0, cz = 0, zoom = 3, tip = null, frozenBefore = false, placeList = [];
   const W = () => cv.clientWidth, H = () => cv.clientHeight;
   const sx = x => (x - cx) * zoom + W() / 2, sy = z => (z - cz) * zoom + H() / 2;
-  const clampView = () => { cx = Math.max(B.x0, Math.min(B.x1, cx)); cz = Math.max(B.z0, Math.min(B.z1, cz)); zoom = Math.max(0.8, Math.min(14, zoom)); };
+  const clampView = () => { const V = ctx.mapBounds || B; cx = Math.max(V.x0, Math.min(V.x1, cx)); cz = Math.max(V.z0, Math.min(V.z1, cz)); zoom = Math.max(ctx.mapBounds ? 0.3 : 0.8, Math.min(14, zoom)); };   // ctx.mapBounds: vùng ngoài khơi (regions/index.js)
   const focusMe = z => { const p = ctx.player.pos; cx = p.x; cz = p.z; if (z) zoom = z; clampView(); };
   root.querySelector('.zoom').onclick = e => { const z = e.target.dataset.z; if (!z) return; if (z === 'me') focusMe(); else { zoom *= +z; clampView(); } };
   root.querySelector('.x').onclick = () => toggle(false);
@@ -231,6 +231,7 @@ body.rs-modal #bMap{display:none}`;
     taken.push([58, h - 110, 52, 52]);   // la bàn
     const topSafe = Math.max(30, ...taken.filter(q => q[1] < h / 3).map(q => q[1] + q[3]));
     const free = (x, y, r, rh = r) => { for (const q of taken) if (Math.abs(q[0] - x) < q[2] + r && Math.abs(q[1] - y) < q[3] + rh) return false; taken.push([x, y, r, rh]); return true; }; // chống chồng chữ/biểu tượng
+    for (const f of ctx.mapLayers || []) f({ g, sx, sy, zoom, text, bubble, icons, free });   // lớp thêm: vùng ngoài khơi (regions/index.js)
     // địa danh
     if (opts.places) for (const L of placeList) {
       if (!inView(L.x, L.z, 200) || !near(L.x, L.z)) continue; const X = sx(L.x), Y = sy(L.z);
