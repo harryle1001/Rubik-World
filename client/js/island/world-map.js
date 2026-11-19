@@ -157,10 +157,11 @@ body.rs-modal #bMap{display:none}`;
   const dexCount = () => ALL.filter(S => dex[S.id]).length;
   const dexLabel = () => { dexBtn.textContent = `📗 Sổ sinh vật ${dexCount()}/${ALL.length}`; };
   const renderDex = () => { dexBox.innerHTML = `<h3>📗 Sổ sinh vật · ${dexCount()}/${ALL.length} loài</h3>` + [...ALL].sort((a, b) => (dex[b.id] ? 1 : 0) - (dex[a.id] ? 1 : 0)).map(S => dex[S.id]
-    ? `<div class="it"><b>${ANIMAL_ICON[S.id] || '🐾'} ${S.name}</b><span>${S.fact}</span></div>` : `<div class="it no"><b>❓ ???</b><span>Chưa gặp — đi khám phá đảo để tìm nhé!</span></div>`).join(''); };
+    ? `<div class="it"><b>${ANIMAL_ICON[S.id] || S.icon || '🐾'} ${S.name}</b><span>${S.fact}</span></div>` : `<div class="it no"><b>❓ ???</b><span>Chưa gặp — đi khám phá đảo để tìm nhé!</span></div>`).join(''); };
   dexBtn.onclick = () => { dexBox.hidden = !dexBox.hidden; if (!dexBox.hidden) renderDex(); };
   ctx.discover = S => { if (!S || !S.id || dex[S.id]) return; dex[S.id] = Date.now(); try { localStorage.setItem(DEX_KEY, JSON.stringify(dex)); } catch (e) {} dexLabel();
-    ctx.toast && ctx.toast(`📗 Loài mới trong Sổ sinh vật: <b>${ANIMAL_ICON[S.id] || ''} ${S.name}</b> (${dexCount()}/${ALL.length})<br>${S.fact}`, 6000); ctx.sfx && ctx.sfx('ok'); };
+    ctx.toast && ctx.toast(`📗 Loài mới trong Sổ sinh vật: <b>${ANIMAL_ICON[S.id] || S.icon || ''} ${S.name}</b> (${dexCount()}/${ALL.length})<br>${S.fact}`, 6000); ctx.sfx && ctx.sfx('ok'); };
+  ctx.dexAdd = list => { for (const S of list) if (!ALL.some(a => a.id === S.id)) ALL.push(S); dexLabel(); };   // thẻ thêm (sinh vật Rừng Phép Thuật…)
   dexLabel();
   let dexT = 0;
   function scanDex(dt) { // 2 lần/giây: con vật nào trong 7 m quanh người chơi

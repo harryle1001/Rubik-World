@@ -135,7 +135,7 @@ export function createForest(ctx) {
     // dây leo rủ từ tán cổ thụ (1 InstancedMesh, đung đưa nhẹ khi ở gần)
     const vb = new Batch(); vb.box(-0.05, 0.05, -1, 0, -0.05, 0.05, '#3f7a45'); for (let k = 0; k < 5; k++) vb.add(new THREE.OctahedronGeometry(0.14, 0), k % 2 ? '#6fbf6a' : '#8fd1a8', (k % 2 ? 0.1 : -0.1), -0.15 - k * 0.19, 0, 0, 0, 0, 1, 1.6, 0.5);
     const vines = [], NV = M ? 34 : 55;
-    for (let k = 0; k < NV && giants.length; k++) { const [x, y, z, h] = giants[k % giants.length], a = k * GA, r = h * (0.13 + rnd() * 0.15); vines.push({ x: x + Math.cos(a) * r, y: y + h * (0.42 + rnd() * 0.12), z: z + Math.sin(a) * r, len: 5 + rnd() * 8, ph: rnd() * 6.28 }); }
+    for (let k = 0; k < NV && giants.length; k++) { const [x, y, z, h] = giants[k % giants.length], a = k * GA, r = h * (0.13 + rnd() * 0.15); vines.push({ x: x + Math.cos(a) * r, y: y + h * (0.42 + rnd() * 0.12), z: z + Math.sin(a) * r, len: 3 + rnd() * 5, ph: rnd() * 6.28 }); }
     const vineM = new THREE.InstancedMesh(vb.build(), toon('#ffffff', { vertexColors: true }), Math.max(1, vines.length)); vineM.count = vines.length; group.add(vineM);
     const o = new THREE.Object3D(), setVines = t => { vines.forEach((q, i) => { o.position.set(q.x, q.y, q.z); o.rotation.set(Math.sin(t * 0.9 + q.ph) * 0.08, q.ph, Math.cos(t * 0.7 + q.ph) * 0.08); o.scale.set(1, q.len, 1); o.updateMatrix(); vineM.setMatrixAt(i, o.matrix); }); vineM.instanceMatrix.needsUpdate = true; };
     setVines(0); vineM.computeBoundingSphere();
