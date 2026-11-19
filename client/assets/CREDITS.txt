@@ -126,3 +126,11 @@ Toà học tập 3 tầng & sân trường (client/js/island/school-interior.js,
 Lớp học phép thuật (client/js/island/academy/classes/): chỉ dùng lại model CC0 đã có trong assets/models/kit (KayKit Furniture/City/Restaurant Bits;
   Kenney City/Furniture/Nature Kit; Quaternius) — school_desk, prop_workbench, prop_crate_bottles, furn_shelf_big, rock_small, fence_wood,
   farm_hay_bale, prop_bucket, deer, fox — và models/animal-frog.glb (Quaternius, CC0). Không tải thêm tài nguyên mới.
+
+Nhân vật anime xem thử (client/assets/vrm/, trang client/vrm-preview.html — CHƯA dùng trong game; chi tiết docs/vrm-preview/LICENSES.md):
+  pixiv Inc. / VRoid Studio sample models, CC0 (meta VRM: licenseName "CC0"): Sendagaya Shino, Sendagaya Shibu, Sakurada Fumiriya,
+    HairSample_Female, HairSample_Male, Vita, Vivi — tải qua bản sao github.com/madjin/vrm-samples.
+  AvatarSample_A — pixiv Inc. / VRoid, điều khoản riêng "VRoid Studio sample model" (cho thương mại, chỉnh sửa; meta: commercial Allow).
+  Seed-san — VirtualCast, Inc., VRM Public License 1.0 (thương mại doanh nghiệp, sửa + phân phối lại; BẮT BUỘC ghi tên) — github.com/vrm-c/vrm-specification.
+  Olivia (100Avatars R1) — Polygonal Mind, CC0 — qua github.com/ToxSam/open-source-avatars (tệp trên arweave.net).
+  Thư viện @pixiv/three-vrm 3.5.5 (MIT). Đã thu nhỏ texture + nén meshopt bằng tools/vrm-slim.mjs.
