@@ -102,3 +102,7 @@ models/kit/qn_*.glb (cây tán, bạch dương, thông, dừa, bụi, bụi qu�
   (License.txt trong gói: "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"). Tải từ OpenGameArt (quaternius.com chỉ dẫn link Google Drive).
   Đã chuyển OBJ → GLB bằng tools/kit/obj2glb.mjs: giản lược meshopt (cây ≤ 260 tam giác, LOD ≤ 140, bụi/hoa/cỏ ≤ 90), pháp tuyến phẳng, nén Meshopt.
   Không tải được (bị chặn mạng trong môi trường làm việc): kenney.nl, poly.pizza, github.com (trang web/API) — KayKit lấy qua cdn.jsdelivr.net/gh.
+
+4 Nhà Tứ Linh của Học viện (academy/houses*.js, commons.js): không thêm tệp mới.
+  Nội thất phòng sinh hoạt chung dùng lại kit/furn_* (Kenney Furniture Kit, CC0) + qn_bush_berry (Quaternius, CC0) đã ghi ở trên, tô màu nhà bằng shader;
+  rùa thần = models/rua.glb (tự tạo); linh vật/cờ vẽ bằng canvas với emoji của phông hệ thống; lối vào, giường, lò sưởi, đồng hồ cát dựng khối trong code.
