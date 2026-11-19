@@ -52,11 +52,22 @@ Thời gian tuyệt đối trên máy thật nhanh hơn nhiều (GPU thật); t�
 - Không lỗi console; chip đồng hồ đúng tiết (☀️ Sáng → 08:30 Tiết 1, đủ 21 người; Chiều → 17:00 Tan học, còn 8 người đang về).
 - Thầy cô / bảo vệ đi tuần, học sinh đi theo tiết; khách NPC theo giờ sáng/tối.
 - Đăng nhập, Chơi khách, Lưu đăng nhập (tải lại vào thẳng), chuyển tài khoản 2D cũ (cấp, xu, đồ còn nguyên).
-- Cửa chưa có bản 3D → “🚧 … Sắp mở”; 📚 Menu trường liệt kê mini game 3D đã có.
+- (cũ) Cửa chưa có bản 3D → “🚧 … Sắp mở” — nay không còn, xem mục “Bỏ hẳn game 2D” bên dưới.
 - Phím M mở bản đồ; lên máy bay cất cánh được.
 
 Ảnh: `docs/img/3d-standalone/` (desk-gate, phone-school, desk-menu, login-phone, desk-map, desk-plane).
 
+## Bỏ hẳn game 2D (nhánh `claude/no-2d`)
+- **Đảo 3D là game duy nhất.** `/` và `/index.html` → server trả `ocean.html`; `client/index.html` chỉ còn trang chuyển hướng (chạy tĩnh).
+  Game Phaser cũ ở gốc chuyển sang `client/world-2d.html` (lưu trữ). `client/school/` giữ nguyên mã nguồn để lưu trữ — **không còn liên kết** nào từ 3D.
+- Sách thư viện: dữ liệu chép sang `client/js/island/data/books.js` (truyện, ngụ ngôn, lời dạy, danh mục) và `data/books-text.js` (toàn văn nén gzip, nạp khi mở sách lớn).
+- Mọi 77 cửa / NPC chủ trò đều mở mini game 3D tại chỗ. 25 cửa trước đây “Sắp mở” có bản 3D đơn giản (`mg/visit/index.js`, model CC0 kit):
+  `house-tour` (13 “Tham quan …” + 8 “Nhà của …”: nhặt 5 khối Rubik, câu hỏi kiến trúc/hình học), `bbq` (Chú Bình: nướng 5 món, an toàn lửa & dinh dưỡng),
+  `mall` (Chị Ngọc: giá Fibonacci, tính tiền thối), `coach` (Coach Ru: 5 trạm Toán/Anh/Khoa học/Địa lý/Tổng hợp); Bác Năm · Nông trại → Khu vườn (`garden`).
+- 🏫 = dịch chuyển tới cổng Trường Rubik 3D; ☰ → 🎮 Mini game = danh sách mini game 3D (bấm để tới cửa và chơi).
+- Dọn: hook phím M trong iframe (`world-map.js`), `ctx.school.win.Chess` (`mg/board/chess.js`), `:not(iframe)` (`mg/arts/stage.js`).
+- Service worker `dao-rubik-v4` chỉ cache phần 3D (bỏ qua `/school/`); `build-artifact.sh` và `build-app.js` không chép game 2D. `tools/smoke-test.mjs` mở `/`, đóng bảng tài khoản 3D (không còn iframe).
+- Ảnh: `docs/img/no-2d/`.
+
 ## Còn lại
-- `mg/arts/books.js` vẫn `fetch` file dữ liệu sách trong `/school/js/…` (chỉ đọc file, không chạy iframe) — để session mini game (nhánh `claude/up-finish`) chuyển, tránh xung đột `mg/*`.
 - Tên trong đa người chơi đổi theo tài khoản từ lần tải trang sau.

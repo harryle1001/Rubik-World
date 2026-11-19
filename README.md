@@ -1,6 +1,11 @@
-# Thế giới Trường Rubik · Multiplayer
+# Đảo Rubik 3D · Multiplayer
 
-Game web nhiều người chơi thời gian thực: **Node.js + Express + Socket.io + Phaser 3**.
+> **Phiên bản này chỉ còn game 3D.** Mở `http://localhost:3000/` là vào thẳng **Đảo Rubik 3D** (`client/ocean.html`, `client/js/island/`).
+> Mọi mini game chơi ngay trong thế giới mở (`client/js/island/mg/`), không có màn hình/iframe riêng.
+> Game 2D cũ **chỉ lưu trữ, không còn liên kết**: `client/school/` (Trường Rubik 2D) và `client/world-2d.html` + `client/js/{main,world,ui,extras,editor,avatar,pwa}.js` (Phaser).
+> Service worker, bản đóng gói Artifact (`scripts/build-artifact.sh`) và app (`scripts/build-app.js`) không chứa các file 2D. Chi tiết: `docs/3d-standalone.md`.
+
+Game web nhiều người chơi thời gian thực: **Node.js + Express + Socket.io + three.js** (phần mô tả 2D bên dưới là của bản lưu trữ).
 
 ```bash
 npm install
