@@ -65,6 +65,6 @@ if (!NORACE) {
 // 7. xuống ván
 await B(() => { const b = __island.silverBoard; b.place(-60, 3, 12, 0); }); await page.waitForTimeout(500);
 if (MOBILE) await page.locator('#sbCtl button[data-k="off"]').tap(); else await page.keyboard.press('KeyL');
-await page.waitForTimeout(2500); log.offOk = await B(() => !__island.silverBoard.riding && !__island.player.vehicle); await shot('14-xuong-van');
+await page.waitForFunction(() => !__island.silverBoard.riding, null, { timeout: 60000 }).catch(() => {}); log.offOk = await B(() => !__island.silverBoard.riding && !__island.player.vehicle); await shot('14-xuong-van');
 console.log(JSON.stringify(log, null, 1)); console.log('LỖI CONSOLE:', errors.length, errors.slice(0, 8));
 await browser.close();

@@ -104,9 +104,10 @@ export function createSilverBoard(ctx) {
     rim.scale.set(1.15, 0.55, 1.05); top.castShadow = true; g.add(rim, top); g.userData.rim = rimMat; return g;
   }
   const trailMat = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide });
-  // vệt nước: 2 mép bọt trắng, giữa trong (ảnh 16×1) → rẽ nước hình chữ V loang dần
-  const wc = document.createElement('canvas'); wc.width = 16; wc.height = 1; { const k = wc.getContext('2d'), g = k.createLinearGradient(0, 0, 16, 0); g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(0.3, 'rgba(255,255,255,.1)'); g.addColorStop(0.5, 'rgba(255,255,255,.16)'); g.addColorStop(0.7, 'rgba(255,255,255,.1)'); g.addColorStop(1, 'rgba(255,255,255,.95)'); k.fillStyle = g; k.fillRect(0, 0, 16, 1); }
-  const wakeMat = new THREE.MeshBasicMaterial({ vertexColors: true, map: new THREE.CanvasTexture(wc), transparent: true, depthWrite: false, side: THREE.DoubleSide });
+  // vệt nước: 2 mép bọt trắng, giữa trong (ảnh 32×1) → rẽ nước hình chữ V loang dần
+  const wc = document.createElement('canvas'); wc.width = 32; wc.height = 1; { const k = wc.getContext('2d'), g = k.createLinearGradient(0, 0, 32, 0); g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(0.13, 'rgba(255,255,255,.12)'); g.addColorStop(0.5, 'rgba(255,255,255,.04)'); g.addColorStop(0.87, 'rgba(255,255,255,.12)'); g.addColorStop(1, 'rgba(255,255,255,.95)'); k.fillStyle = g; k.fillRect(0, 0, 32, 1); }
+  const wakeTex = new THREE.CanvasTexture(wc); wakeTex.generateMipmaps = false; wakeTex.minFilter = THREE.LinearFilter;   // không mipmap: nhìn xa vẫn giữ 2 mép bọt, giữa trong
+  const wakeMat = new THREE.MeshBasicMaterial({ vertexColors: true, map: wakeTex, transparent: true, depthWrite: false, side: THREE.DoubleSide });
   // tư thế lướt sóng (IK sau animation): 2 chân trước–sau dọc ván, 2 tay dang giữ thăng bằng, thân nghiêng theo cua
   const feet = [new THREE.Vector3(0.24, 0.07, 0.02), new THREE.Vector3(-0.24, 0.07, -0.02)], hands = [new THREE.Vector3(0.52, 0.8, 0.14), new THREE.Vector3(-0.5, 0.7, -0.06)];
   function pose(hero, ref, lean = 0.12, sway = 0) {
@@ -124,7 +125,7 @@ export function createSilverBoard(ctx) {
   const NS = 34, sp = new Float32Array(NS * 3).fill(-999), sv = new Float32Array(NS * 3), sl = new Float32Array(NS); let si = 0;
   const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
   const dot = document.createElement('canvas'); dot.width = dot.height = 16; { const k = dot.getContext('2d'), g = k.createRadialGradient(8, 8, 0, 8, 8, 8); g.addColorStop(0, '#fff'); g.addColorStop(0.5, 'rgba(255,255,255,.8)'); g.addColorStop(1, 'rgba(255,255,255,0)'); k.fillStyle = g; k.fillRect(0, 0, 16, 16); }
-  const spray = new THREE.Points(sg, new THREE.PointsMaterial({ color: '#f2faff', size: 0.34, map: new THREE.CanvasTexture(dot), transparent: true, opacity: 0.9, depthWrite: false })); spray.frustumCulled = false; spray.visible = false; scene.add(spray);
+  const spray = new THREE.Points(sg, new THREE.PointsMaterial({ color: '#f2faff', size: 0.18, map: new THREE.CanvasTexture(dot), transparent: true, opacity: 0.8, depthWrite: false })); spray.frustumCulled = false; spray.visible = false; scene.add(spray);
 
   // ---------- màu ----------
   let styleI = Math.min(BOARD_COLORS.length - 1, load('sb.style', 0) | 0); const glow = new THREE.Color(), tc = new THREE.Color(), SILVER = new THREE.Color('#eef8ff');
@@ -152,7 +153,7 @@ export function createSilverBoard(ctx) {
 body.sb-on #sbCtl{display:grid}body.sb-on .btns,body.sb-on .vbtns{display:none!important}@media (pointer:fine){body.sb-on #sbCtl{display:none}}
 #sbHud{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 89px);left:50%;transform:translateX(-50%);z-index:26;padding:6px 13px;border-radius:16px;background:#0f1a2acc;color:#eaf6ff;font:700 13px system-ui;display:none;white-space:nowrap;border:1px solid #bfe6ff55;cursor:pointer}
 body.sb-on #sbHud{display:block}body.mg-on #sbHud{display:none!important}body.mg-on #sbCtl .b,body.mg-on #sbCtl .x{visibility:hidden}
-@media (pointer:coarse){body.sb-on #bAct{bottom:calc(max(16px,env(safe-area-inset-bottom)) + 134px)}#sbHud{left:auto;right:max(12px,env(safe-area-inset-right));transform:none}}`; document.head.appendChild(css);
+@media (pointer:coarse){body.sb-on #bAct{bottom:calc(max(16px,env(safe-area-inset-bottom)) + 134px)}#sbHud{left:auto;right:max(12px,env(safe-area-inset-right));transform:none;top:calc(max(12px,env(safe-area-inset-top)) + 134px)}}`; document.head.appendChild(css);
   const ctl = document.createElement('div'); ctl.id = 'sbCtl';
   ctl.innerHTML = '<button data-k="flip" title="Lộn vòng (Q)">🔄</button><button data-k="spin" title="Xoay 360° (Z)">🌀</button><button data-k="off" class="x" title="Xuống ván (L)">✕🏄</button><button data-k="down" class="d" title="Hạ thấp (C)">⬇</button><button data-k="up" class="u" title="Bay lên (Space)">⬆</button><button data-k="boost" class="b" title="Tăng tốc (Shift)">🚀</button>';
   document.body.appendChild(ctl);
@@ -294,12 +295,12 @@ body.sb-on #sbHud{display:block}body.mg-on #sbHud{display:none!important}body.mg
     const gh = ground(P.x, P.z), skim = gh < W && P.y - W < 2.2, c = glowNow(time), rx = -fz, rz = fx, tx = P.x - fx * 1.15, tz = P.z - fz * 1.15;
     deck.userData.rim.color.copy(c);
     trail.mesh.material = skim ? wakeMat : trailMat;
-    if (skim) trail.feed(tx, W + 0.14, tz, rx, rz, 0.3 + sf * 0.2, SILVER, 0.3 + 0.6 * sf, 1, dt);
+    if (skim) trail.feed(P.x - fx * 0.4, W + 0.14, P.z - fz * 0.4, rx, rz, 0.3 + sf * 0.2, SILVER, 0.3 + 0.6 * sf, 1, dt);
     else trail.feed(tx, P.y + 0.02, tz, rx, rz, 0.22, c, 0.12 + 0.5 * s34, 0, dt);
     if (skim && spd > 5) for (let k = 0; k < 2; k++) { const o = si * 3, s = k ? 1 : -1; sp[o] = tx + rx * s * 0.3; sp[o + 1] = W + 0.15; sp[o + 2] = tz + rz * s * 0.3; sv[o] = rx * s * (1 + Math.random() * 2) - fx * spd * 0.1; sv[o + 1] = 1.5 + Math.random() * 2.5 * sf; sv[o + 2] = rz * s * (1 + Math.random() * 2) - fz * spd * 0.1; sl[si] = 0.6; si = (si + 1) % NS; }
     for (let i = 0; i < NS; i++) if (sl[i] > 0) { const o = i * 3; sl[i] -= dt; sv[o + 1] -= 9 * dt; sp[o] += sv[o] * dt; sp[o + 1] += sv[o + 1] * dt; sp[o + 2] += sv[o + 2] * dt; if (sl[i] <= 0 || sp[o + 1] < W) sp[o + 1] = -999; }
     sg.attributes.position.needsUpdate = true;
-    if ((hudT -= dt) <= 0) { hudT = 0.25; const ht = `🏄 ${Math.round(P.y - Math.max(gh, W))} m · ${Math.round(spd * 3.6)} km/h · 🎨`; if (hud.textContent !== ht) hud.textContent = ht; }
+    if ((hudT -= dt) <= 0) { hudT = 0.25; const ht = `🏄 ${Math.round(P.y - Math.max(gh, W))} m · ${Math.round(spd * 3.6)} km/h${mobile ? '' : ' · 🎨'}`; if (hud.textContent !== ht) hud.textContent = ht; }
     if ((envT -= dt) <= 0) { envT = 5; refreshEnv(); }
   }
   // đặt ván + người lên đúng tư thế (gọi lại được sau khi phần khác ghi đè nhân vật, vd. host mini game)
@@ -323,7 +324,7 @@ body.sb-on #sbHud{display:block}body.mg-on #sbHud{display:none!important}body.mg
   // người chơi khác đang cưỡi ván (server chuyển tiếp 'sb'): gắn 1 tấm ván dưới chân nhân vật của họ
   const remote = new Map();   // id → { on, c, k, p, f, board }
   if (ctx.net && ctx.net.on) ctx.net.on('sb', ([id, d]) => {
-    const r = remote.get(id) || {}; Object.assign(r, d); remote.set(id, r); const o = ctx.net.others.get(id); if (!o) return;
+    const r = remote.get(id) || {}; Object.assign(r, d); r.t = performance.now(); remote.set(id, r); const o = ctx.net.others.get(id); if (!o) return;
     if (r.on && !r.board) { r.board = makeBoard(r.c || '#bfe6ff'); r.board.position.y = 0.02; o.h.root.add(r.board); } else if (r.board) { r.board.visible = !!r.on; if (r.c) r.board.userData.rim.color.set(r.c); }
   });
 

@@ -15,6 +15,7 @@
 ## Bản đồ dự án
 - `client/` website + game 2D (Phaser) + đảo 3D (`ocean.html`, `js/island/`).
 - `server/index.js` Express + Socket.io (namespace `/island` cho đảo 3D).
+- `client/js/island/silver-board.js` 🏄 Ván bạc bay (phím L) · `mg/sport/board-race.js` đua ván 3 đường · kiểm thử: `node tools/board-test.mjs <thư-mục> [--mobile] [--track=coast|canyon|cloud]`.
 - `client/assets/` model .glb, âm thanh; nguồn ghi trong `client/assets/CREDITS.txt` (chỉ dùng tài nguyên CC0).
 - `.claude/skills/` skill dùng chung: `lowpoly-style`, `open-world-lowpoly` (giới hạn tam giác, instancing, fog, chunk).
 - `docs/` quy trình Blender → .glb, checklist App Store.

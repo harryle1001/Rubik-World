@@ -38,7 +38,7 @@ const TRACKS = {
       return out;
     } },
   canyon: { name: '⛰ Hẻm Đá Bạc', hint: 'luồn giữa hai vách đá · 2 vòng', laps: 2, closed: true, wall: 9.5, rock: '#b9bfd6',
-    pts: () => [[-262, 96], [-300, 122], [-350, 110], [-400, 140], [-440, 190], [-420, 245], [-365, 262], [-320, 230], [-335, 185], [-290, 160]].map(([x, z], k) => [x, W + 2.2 + 2.2 * (1 + Math.sin(k * 1.9)), z]) },
+    pts: () => Array.from({ length: 13 }, (_, k) => { const th = k / 13 * 6.2832, r = 84 + 17 * Math.sin(3 * th + 0.6); return [-362 + Math.cos(th) * r, W + 2.2 + 2.2 * (1 + Math.sin(k * 1.9)), 182 + Math.sin(th) * r]; }) },   // vòng 3 thuỳ ngoài biển tây nam (bán kính 67–101 m, cua thoải)
   cloud: { name: '☁️ Vòng Mây Pha Lê', hint: 'quanh Học viện, xoắn lên trên mây', laps: 1, closed: false, clouds: true, rock: '#c3b8ea',
     pts: () => { const [cx, cz] = ACADEMY.c; return [[-15, 2, 200], [-15, 2, 130], [40, 2.5, 95], [140, 3, 88], [180, 3, 40], [180, 3, -70], [140, 4, -150], [0, 4, -156], [-130, 4, -153], [-178, 5, -90], [-178, 8, 40], [-120, 14, 95], [-40, 26, 110], [60, 44, 90], [140, 64, 30], [150, 80, -40], [90, 90, -120], [0, 94, -140], [-90, 92, -120], [-150, 86, -40], [-130, 72, 50], [-60, 50, 110], [-15, 24, 150], [-15, 4, 215]].map(([dx, y, dz]) => [cx + dx, W + y, cz + dz]); } },
 };
@@ -48,7 +48,7 @@ function start(ctx, { api, track: want }) {
   const board = ctx.silverBoard, P = board.pos, mobile = CFG.isMobile, root = api.root; root.position.set(0, 0, 0); root.rotation.set(0, 0, 0);
   if (!board.riding && !board.summon(true)) { setTimeout(() => api.exit(), 0); return { update() {}, dispose() {} }; }
   const home = { x: P.x, y: P.y, z: P.z, yaw: board.yaw };
-  ctx.camera.far = Math.max(ctx.camera.far, 500); ctx.camera.updateProjectionMatrix();   // đua giữa thế giới mở: giữ tầm nhìn đầy đủ (host cắt còn 233 m làm thủng vòm trời)
+  ctx.camera.far = Math.max(ctx.camera.far, CFG.view.far); ctx.camera.updateProjectionMatrix();   // đua giữa thế giới mở: giữ tầm nhìn đầy đủ (host cắt còn 233 m làm thủng vòm trời)
   let state = 'lobby', tr = null, id = '', X, Y, Z, n = 0, L = 0, ds = 3, total = 0, t = 0, cd = 0, loadT = 0, idx = 0, sAbs = 0, prevS = 0, offT = 0, wallT = 0, emitT = 0, hudT = 0, pen = 0, hits = 0, combo = 0, right = 0, place = 1, auto = false, result = null, msgT = 0;
   let gates = [], pads = [], rocks = [], qz = [], qi = 0, curQ = null, rivals = [], rings, padIM, rockIM, wallIM, cloudIM, qIM, labels = [], startG = null;
   const m4 = new THREE.Matrix4(), q4 = new THREE.Quaternion(), v3 = new THREE.Vector3(), s3 = new THREE.Vector3(), e3 = new THREE.Euler(0, 0, 0, 'YXZ'), col = new THREE.Color(), col2 = new THREE.Color('#4ff0ff'), o3 = { x: 0, y: 0, z: 0, yaw: 0, tx: 0, tz: 1 };
@@ -131,7 +131,7 @@ function start(ctx, { api, track: want }) {
     for (let i = 0; i < N; i++) {
       const g = board.makeBoard(NCOL[i]); g.rotation.order = 'YXZ'; const ref = new THREE.Object3D(); ref.rotation.y = STANCE; g.add(ref); root.add(g);
       const tl = board.makeTrail(); root.add(tl.mesh);
-      const r = { name: NAMES[i], col: new THREE.Color(NCOL[i]), g, ref, tl, s: -4 - i * 3.4, lo: (i - (N - 1) / 2) * 3.2, loT: 0, v: 0, base: (20.5 + i) * diff, kick: 0, fin: 0, yaw: 0, roll: 0, actor: null, gi: 0, hold: 0 };
+      const r = { name: NAMES[i], col: new THREE.Color(NCOL[i]), g, ref, tl, s: 1.5 + (i % 2), lo: [-3.4, 3.4, -6.8, 6.8][i] * (tr.wall ? 0.8 : 1), /* xếp hàng ngang hai bên người chơi, nhỉnh hơn 1 chút để thấy đối thủ */ loT: 0, v: 0, base: (20.5 + i) * diff, kick: 0, fin: 0, yaw: 0, roll: 0, actor: null, gi: 0, hold: 0 };
       r.loT = r.lo; rivals.push(r);
       api.actor(kidKinds[(i * 3 + 1) % kidKinds.length], { look: sportLook(i), name: r.name }).then(a => { if (a) r.actor = a; });
     }
@@ -254,7 +254,7 @@ function start(ctx, { api, track: want }) {
     } else if (state === 'race') {
       t += dt; playerUpdate(dt);
       if ((hudT -= dt) <= 0 && state === 'race') {
-        hudT = 0.25; const my = sAbs; place = 1 + rivals.filter(r => r.s > my).length + [...board.remote.values()].filter(r => r.k === id && (r.p || 0) * total > my).length;
+        hudT = 0.25; const my = sAbs; place = 1 + rivals.filter(r => r.s > my).length + [...board.remote.values()].filter(r => r.k === id && performance.now() - r.t < 5000 && (r.p || 0) * total > my).length;   // bạn khác đang đua cùng đường (tin mới ≤ 5 s)
         api.hud.time(t + pen); api.hud.info(`🏁 Hạng <b>${place}</b>/${rivals.length + 1} · ⭕ ${hits}${tr.laps > 1 ? ` · 🔁 ${Math.min(tr.laps, Math.floor(sAbs / L) + 1)}/${tr.laps}` : ''}`);
         // vòng kế tiếp nhấp nháy trắng
         const pulse = 0.5 + 0.5 * Math.sin(t * 8), lap = Math.floor(sAbs / L); let nx = -1, bd = 1e9; const cs = ((sAbs % L) + L) % L;
