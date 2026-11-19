@@ -170,9 +170,10 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
 
   // ---------- khăn quàng + áo choàng màu nhà (1 mesh, gắn vào xương ngực) ----------
   let wearMesh = null, wearFor = null;
+  const capeKey = () => (ctx.wear && ctx.wear.eq && ctx.wear.eq.cape) ? '|' + ctx.wear.eq.cape : '';   // sau ghép: đã mặc áo choàng mua ở Phố Phép Thuật (wear.js) → chỉ quàng khăn nhà
   function wear() {
     if (wearMesh) { wearMesh.removeFromParent(); wearMesh.geometry.dispose(); wearMesh = null; }
-    const id = houseId(), hero = player.hero; wearFor = null; if (!id || !hero) return; wearFor = id;
+    const id = houseId(), hero = player.hero; wearFor = null; if (!id || !hero) return; wearFor = id + capeKey();
     const h = HOUSE[id], root = player.root, head = hero.model.getObjectByName('head'), chest = hero.model.getObjectByName('chest') || hero.model.getObjectByName('torso');
     root.updateMatrixWorld(true);
     const hy = head ? head.getWorldPosition(new THREE.Vector3()).y - root.position.y : 1.3, H0 = hy;   // gốc đầu ≈ cổ
@@ -181,8 +182,8 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     for (let k = 0; k < 3; k++) b.box(0.05, 0.13, H0 - 0.1 - k * 0.09, H0 - 0.02 - k * 0.09, H0 * 0.09, H0 * 0.13, k % 2 ? h.col2 : h.col);   // đuôi khăn sọc 2 màu
     const cw = H0 * 0.34, cl = H0 * 0.52, cape = new THREE.PlaneGeometry(cw, cl, 1, 5).translate(0, -cl / 2, 0);        // áo choàng: rộng dần, cong theo lưng
     const pa = cape.attributes.position; for (let i = 0; i < pa.count; i++) { const y = pa.getY(i), t = -y / cl; pa.setX(i, pa.getX(i) * (1 + t * 0.34)); pa.setZ(i, -t * t * 0.1); }
-    cape.computeVertexNormals(); b.add(cape, h.col, 0, H0 - H0 * 0.06, -H0 * 0.13);
-    b.box(-cw / 2 - 0.01, cw / 2 + 0.01, H0 - H0 * 0.07, H0 - H0 * 0.03, -H0 * 0.15, -H0 * 0.11, h.col2);                 // viền cổ áo
+    cape.computeVertexNormals(); if (!capeKey()) { b.add(cape, h.col, 0, H0 - H0 * 0.06, -H0 * 0.13);
+    b.box(-cw / 2 - 0.01, cw / 2 + 0.01, H0 - H0 * 0.07, H0 - H0 * 0.03, -H0 * 0.15, -H0 * 0.11, h.col2); }                 // viền cổ áo
     wearMesh = new THREE.Mesh(b.build(), new THREE.MeshToonMaterial({ vertexColors: true, side: THREE.DoubleSide })); wearMesh.name = 'house-wear'; wearMesh.castShadow = true; wearMesh.frustumCulled = false;
     root.add(wearMesh); root.updateMatrixWorld(true); if (chest) chest.attach(wearMesh);
   }
@@ -205,7 +206,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   // ---------- mỗi khung ----------
   let hallHi = false;
   function update(dt, t) {
-    if (wearFor !== houseId()) wear();
+    if (wearFor !== (houseId() ? houseId() + capeKey() : null)) wear();
     hookReward();
     if (wearMesh) wearMesh.visible = !player.vehicle;
     if (!g) return;
