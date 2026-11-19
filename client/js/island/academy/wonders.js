@@ -4,6 +4,8 @@
 //  📚 21 cuốn sách bay vỗ bìa quanh thư viện · 🧹 3 cây chổi tự quét Sân Đại Sảnh · 🏮 34 đèn lồng trôi lên trời rồi quay lại
 //  👻 3 hồn ma thân thiện tuần tra hành lang, kể chuyện lịch sử Việt Nam + đố · 🦉 cú đưa thư (mỗi 89 s một lá thư mẹo/kiến thức)
 //  🗿 Tượng Hiền Triết nói tục ngữ, quay đầu nhìn em · 🚪 cửa đại sảnh + thư viện tự mở khi em tới gần
+//  🪄 đũa phép (F / ✨): ☀️ thắp 6 chân nến lối vào đại sảnh · 🔓 mở cửa đại sảnh / thư viện từ xa · 🪶 làm thùng gỗ, thùng phuy bay lơ lửng
+//     (gọi ánh sáng: ☀️ niệm vào chỗ trống → quả cầu sáng, spells.js) — mỗi lần trúng: hạt sáng + âm thanh tổng hợp + 1 điều khoa học
 //  ⛲ đài phun nhạc nước: 13 vòi (xoắn Fibonacci) nhảy theo giai điệu ngũ cung tổng hợp (WebAudio) + cầu vồng trong bụi nước khi nắng
 // Hiệu năng: mỗi loại 1 draw call (InstancedMesh / Batch); sách, chổi, đèn lồng, giọt nước, cú vỗ cánh chạy HOÀN TOÀN trên GPU
 // (1 uniform thời gian chung, 0 JS/khung); JS chỉ cập nhật vài ma trận (giáp, ma, cú, vòi nước, cửa) khi em ở gần. Mỗi khu bật/tắt theo khoảng cách.
@@ -237,7 +239,40 @@ export function create(ctx, magic, { toWorld, L, Y }) {
     const bow = new THREE.Mesh(new THREE.RingGeometry(2.1, 2.65, 34, 1, 0, Math.PI), bowM); bow.position.set(FT.v, Y + 0.6, FT.u); court.add(keep(bow));
     const song = { i: 0, t: 0, amp: 0, told: false };
 
-    W = { G, hall, lib, court, all, AR, armH, placeHelm, ghosts, loop, owl, mail, head, stat, DOORS, doors, placeDoor, JET, jets, DU, bow, bowM, song, CU, statue };
+    // ---------- 🪄 ĐŨA PHÉP TƯƠNG TÁC (F / ✨): mỗi lần trúng đích có hạt sáng + âm thanh ----------
+    const T = [], up = new THREE.Vector3(0, 1, 0), Wp = (u, v, y) => new THREE.Vector3(C0[0] + v, y, C0[1] + u);
+    // ☀️ Sáng lên → thắp 6 chân nến hai bên lối vào đại sảnh (cả 6: +21 năng lượng)
+    const CS = []; for (const u of [-52, -46, -40]) for (const v of [-5, 5]) CS.push({ u, v, lit: 0 });
+    const cb = new Batch(); cb.cyl(0, 0, 0, 0.26, 0.08, '#3a3344', 8); cb.cyl(0, 0.08, 0, 0.05, 1.3, '#3a3344', 6); cb.cyl(0, 1.38, 0, 0.2, 0.06, '#c9a24a', 8); cb.cyl(0, 1.44, 0, 0.07, 0.3, '#f6f1e6', 6);
+    const stands = new THREE.InstancedMesh(cb.build(), toon('#ffffff', { vertexColors: true }), CS.length);
+    const flames = new THREE.InstancedMesh(new THREE.ConeGeometry(0.08, 0.26, 6).translate(0, 0.13, 0), gpu(new THREE.MeshBasicMaterial({ color: '#ffcf6a' }), 'flame', 'transformed.x += sin(uT * 13. + id * 3.) * 0.02 * transformed.y * 6.; transformed.y *= 0.85 + 0.15 * sin(uT * 17. + id);'), CS.length);
+    const placeFlames = () => { CS.forEach((c, i) => { o.position.set(c.v, Y + 1.74, c.u); o.rotation.set(0, 0, 0); o.scale.setScalar(c.lit ? 1.3 : 0.001); o.updateMatrix(); flames.setMatrixAt(i, o.matrix); }); flames.instanceMatrix.needsUpdate = true; };
+    CS.forEach((c, i) => { o.position.set(c.v, Y, c.u); o.rotation.set(0, 0, 0); o.scale.setScalar(1); o.updateMatrix(); stands.setMatrixAt(i, o.matrix); });
+    placeFlames(); flames.frustumCulled = false; court.add(keep(stands), keep(flames));
+    CS.forEach((c, i) => T.push(magic.addTarget({ spell: 'light', pos: Wp(c.u, c.v, Y + 1.6), reach: 13, done: () => c.lit, onCast(api) {
+      c.lit = 1; placeFlames(); api.burst(Wp(c.u, c.v, Y + 1.8), up, '#ffcf6a', 21, 2, 1); ctx.sfx && ctx.sfx('magic');
+      const n = CS.filter(x => x.lit).length;
+      api.toast(`🕯️ Nến ${n}/6 bừng cháy! 🔬 Ngọn lửa cần <b>khí oxi</b> để cháy — úp cốc lên nến, hết oxi thì nến tắt.`, 4500);
+      if (n === CS.length) setTimeout(() => { magic.setMana(magic.mana + 21); api.toast('🕯️✨ <b>Cả 6 ngọn nến đã thắp!</b> Lối vào đại sảnh rực sáng. +21 năng lượng phép.', 5000); }, 1600);
+    } })));
+    // 🔓 Mở khoá → bật mở cửa đại sảnh / thư viện từ xa (13 s)
+    for (const [k, room] of [[0, 'hall'], [2, 'lib']]) { const d = DOORS[k]; T.push(magic.addTarget({ spell: 'unlock', pos: Wp(d.u, room === 'hall' ? 0 : lc, Y + 2), reach: 21, done: () => d.ang > 0.6, onCast(api) {
+      const now = performance.now() / 1000; DOORS[k].force = DOORS[k + 1].force = now + 13; ctx.sfx && ctx.sfx('door'); api.burst(Wp(d.u, room === 'hall' ? 0 : lc, Y + 2.5), up, '#ffd34d', 21, 3, 1);
+      api.toast(`🔓 Cánh cửa ${room === 'hall' ? 'đại sảnh' : 'thư viện'} kẽo kẹt <b>tự mở</b> theo phép! 🔬 Bản lề giúp cánh cửa quay quanh một trục — như kim đồng hồ quay quanh tâm.`, 4500);
+    } })); }
+    // 🪶 Nhấc lên → 3 thùng gỗ + 2 thùng phuy trong sân bay lơ lửng 13 s rồi hạ xuống
+    const LF = [[-30, -24, 0], [-28, -25.5, 0], [-22, 24, 0], [6, -24, 1], [8, 25, 1]].map(([u, v, k]) => ({ u, v, k, t: -99 }));
+    const crate = new Batch(); crate.box(-0.45, 0.45, 0, 0.9, -0.45, 0.45, '#a8744a'); crate.box(-0.47, 0.47, 0.38, 0.52, -0.47, 0.47, '#6e4a30');
+    const barrel = new Batch(); barrel.cyl(0, 0, 0, 0.4, 1.1, '#8a5a35', 10, 0.4); for (const y of [0.15, 0.85]) barrel.cyl(0, y, 0, 0.42, 0.08, '#4a4a52', 10);
+    const lifts = [new THREE.InstancedMesh(crate.build(), toon('#ffffff', { vertexColors: true }), 3), new THREE.InstancedMesh(barrel.build(), toon('#ffffff', { vertexColors: true }), 2)];
+    const placeLift = (t) => { let a = 0, b = 0; for (const L2 of LF) { const e = t - L2.t, f = e < 13 ? sm(0, 1.6, e) * (1 - sm(11, 13, e)) : 0; o.position.set(L2.v, Y + f * (2.6 + Math.sin(t * 1.7 + L2.u) * 0.3), L2.u); o.rotation.set(Math.sin(t * 1.3) * 0.3 * f, t * 0.8 * f + L2.u, 0); o.scale.setScalar(1); o.updateMatrix(); lifts[L2.k].setMatrixAt(L2.k ? b++ : a++, o.matrix); } lifts[0].instanceMatrix.needsUpdate = lifts[1].instanceMatrix.needsUpdate = true; };
+    placeLift(0); for (const m of lifts) { m.frustumCulled = false; court.add(keep(m)); }
+    LF.forEach(L2 => T.push(magic.addTarget({ spell: 'lift', pos: Wp(L2.u, L2.v, Y + 0.6), reach: 13, done: () => performance.now() / 1000 - L2.t < 13, onCast(api) {
+      L2.t = performance.now() / 1000; ctx.sfx && ctx.sfx('whoosh'); api.burst(Wp(L2.u, L2.v, Y + 0.6), up, '#b8e0ff', 21, 3, 1);
+      api.toast(`🪶 ${L2.k ? 'Thùng phuy' : 'Thùng gỗ'} <b>bay lơ lửng</b>! 🔬 Mọi vật đều bị Trái Đất kéo xuống (<b>trọng lực</b>) — muốn nhấc lên phải có lực lớn hơn trọng lượng của vật.`, 4500);
+    } })));
+
+    W = { G, hall, lib, court, all, AR, armH, placeHelm, ghosts, loop, owl, mail, head, stat, DOORS, doors, placeDoor, JET, jets, DU, bow, bowM, song, CU, statue, T, placeLift, LF };
   }
 
   const _v = new THREE.Vector3(), _w = new THREE.Vector3(), o2 = new THREE.Object3D(); o2.rotation.order = 'YXZ';
@@ -316,6 +351,7 @@ export function create(ctx, magic, { toWorld, L, Y }) {
       if (want !== d.target) { d.target = want; if (i % 2 === 0 && ctx.sfx) ctx.sfx('door'); }
       if (Math.abs(d.target - d.ang) > 0.002) { d.ang += (d.target - d.ang) * Math.min(1, dt * 2.2); W.placeDoor(d, i); }
     });
+    if (W.court.visible && W.LF.some(L2 => t - L2.t < 13.5)) W.placeLift(t);
     // cú đưa thư: mỗi 89 s khi em ở trong lâu đài
     const M = W.mail;
     if (!M.t && inCastle && !busy && Math.abs(lu + 34) < 75 && Math.abs(lv) < 120 && t > M.next) { M.t = 0.001; M.p.copy(M.from); if (M.near) { M.p.set(lv + 6, Y + 5, lu - 6); M.near = false; } }
@@ -330,7 +366,7 @@ export function create(ctx, magic, { toWorld, L, Y }) {
   }
 
   function unbuild() {
-    if (!W) return; ctx.scene.remove(W.G);
+    if (!W) return; ctx.scene.remove(W.G); for (const x of W.T) magic.removeTarget(x);
     W.G.traverse(x => { if (x.geometry) x.geometry.dispose(); if (x.material && !x.material.userData.shared) x.material.dispose(); if (x.isInstancedMesh) x.dispose(); });
     W = null;
   }
