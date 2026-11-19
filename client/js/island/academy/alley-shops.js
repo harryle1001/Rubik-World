@@ -127,7 +127,7 @@ export const SHOP_TALK = {
   },
   bank: {
     who: 'Ông Thủ Kho', kind: 'student-male-a', look: adult('#2c4a3e', '#1f2a2a', { hair: '#9a9a9a' }), subj: 'toan',
-    lines: ['Kho báu chỉ mở cho ai giải đúng phép tính. Mỗi ngày 8 lượt, mỗi lượt 5 xu!', 'Tiết kiệm từng xu nhỏ, lâu dần thành kho to — có công mài sắt, có ngày nên kim.', 'Muốn mua đũa, áo choàng hay thú cưng? Giải toán ở đây kiếm xu trước đã nào.'],
+    lines: ['Kho báu chỉ mở cho ai giải đúng phép tính. Mỗi ngày 8 lượt, mỗi lượt 5 đồng vàng!', 'Tiết kiệm từng đồng nhỏ, lâu dần thành kho to — có công mài sắt, có ngày nên kim.', 'Muốn mua đũa, áo choàng hay thú cưng? Giải toán ở đây kiếm đồng vàng trước đã nào.'],
     qs: [],
   },
 };

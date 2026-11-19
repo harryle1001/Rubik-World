@@ -55,7 +55,7 @@ body.rs-modal .soChip,body.mg-on .soChip{display:none}`;
   net.on('friends', f => { friends = f; const n = (f.reqs || []).length; chipF.innerHTML = n ? `👥 <b>${n}</b>` : '👥'; if (!box.hidden && tab === 'f') render(); });
   net.on('party', p => { party = p; if (!box.hidden) render(); });
   net.on('reports', r => { reports = r; if (!box.hidden && tab === 'a') render(); });
-  net.on('reward', r => { if (r.coins) acc.addCoins && acc.addCoins(r.coins); if (r.house) acc.addHousePts && acc.addHousePts(r.house); toast(`🎁 ${esc(r.why)}: +${r.coins} xu${r.house && acc.house ? ` · +${r.house} điểm nhà` : ''}`); ctx.sfx && ctx.sfx('ok'); });
+  net.on('reward', r => { if (r.coins) acc.addCoins && acc.addCoins(r.coins); if (r.house) acc.addHousePts && acc.addHousePts(r.house); toast(`🎁 ${esc(r.why)}: +${r.coins} đồng vàng${r.house && acc.house ? ` · +${r.house} điểm nhà` : ''}`); ctx.sfx && ctx.sfx('ok'); });
   net.on('goGate', () => { toast('🏝️ Chủ game đưa em về cổng trường.'); document.getElementById('bSchool')?.click(); });
   const day = () => new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 10);
   function lock(html) { let el = document.getElementById('soLock'); if (!el) { el = document.createElement('div'); el.id = 'soLock'; document.body.appendChild(el); } el.innerHTML = html; ctx.player.frozen = true; }

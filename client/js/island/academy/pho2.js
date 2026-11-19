@@ -19,7 +19,7 @@ const TINT = [[1, 1, 1], [1, 0.9, 0.78], [0.9, 0.96, 1], [1, 0.86, 0.9], [0.9, 1
 export const PHO2 = { v0: 9, v1: 80, streets: [-131.2, -150], hw: 2.6, plaza: [80, 95] };
 const ROWS = [{ f: -128.6, n: 1 }, { f: -133.8, n: -1 }, { f: -147.4, n: 1 }, { f: -152.6, n: -1 }];   // mép mặt tiền + hướng vào nhà
 const Q = (q, choices, explain) => ({ q, choices, a: 0, explain });
-// việc của từng tiệm (v4): buy = mua (xu → năng lượng) · quiz = câu đố riêng · look/music/toy = trải nghiệm + điều khoa học
+// việc của từng tiệm (v4): buy = mua (đồng vàng → năng lượng) · quiz = câu đố riêng · look/music/toy = trải nghiệm + điều khoa học
 const JOB = {
   '🍦 Kem Tuyết Phép': { act: '🍦 Mua kem tuyết (2 🪙)', buy: [2, 13, 'Que kem tuyết mát lạnh, toả khói lạnh li ti'] },
   '🎨 Màu Vẽ Biết Bay': { act: '🎨 Pha màu', quiz: Q('Trộn màu vàng với màu xanh lam được màu gì?', ['Xanh lá', 'Tím', 'Cam', 'Nâu'], 'Vàng + xanh lam = <b>xanh lá</b>. Đỏ + xanh lam = tím, đỏ + vàng = cam.') },
@@ -115,7 +115,7 @@ export function createPho2(ctx, magic, { Y, toWorld, toLocal }) {
   let cool = 0, top = null, topT = 0;
   function doJob(k) {
     const J = JOB[k.sh.name] || {}; cool = 1.2; ctx.sfx && ctx.sfx('ui'); k.work = 3;
-    if (J.buy) { const [price, mana, what] = J.buy; if (!ctx.account || !ctx.account.addCoins(-price)) return ctx.toast('🪙 Chưa đủ xu — làm nhiệm vụ, trả lời câu đố để có thêm xu nhé!', 3500); magic.setMana && magic.setMana((magic.mana || 0) + mana); ctx.sfx && ctx.sfx('coin'); return ctx.toast(`${k.sh.name}: “${what}, của cháu đây!” +${mana} năng lượng phép. 🔬 ${k.sh.fact}`, 6500); }
+    if (J.buy) { const [price, mana, what] = J.buy; if (!ctx.account || !ctx.account.addCoins(-price)) return ctx.toast('🪙 Chưa đủ đồng vàng — làm nhiệm vụ, trả lời câu đố để có thêm đồng vàng nhé!', 3500); magic.setMana && magic.setMana((magic.mana || 0) + mana); ctx.sfx && ctx.sfx('coin'); return ctx.toast(`${k.sh.name}: “${what}, của cháu đây!” +${mana} năng lượng phép. 🔬 ${k.sh.fact}`, 6500); }
     if (J.quiz) return magic.ask(J.quiz, () => { ctx.account && ctx.account.addCoins(2); ctx.toast(`🎁 ${k.sh.name}: “Giỏi lắm!” +2 🪙`, 3500); }, J.act);
     if (J.look) { ctx.toast(`🔭 Em ghé mắt vào kính… ${J.look[k.line++ % J.look.length]}`, 6500); return; }
     if (J.music) { pluck(6); return ctx.toast(`🎵 Tiếng đàn tranh ngân nga 5 nốt <b>ngũ cung</b> (Sol · La · Đô · Rê · Mi) — thang âm của nhạc dân tộc Việt. 🔬 ${k.sh.fact}`, 6500); }

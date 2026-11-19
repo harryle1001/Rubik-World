@@ -123,7 +123,7 @@ export function createMiniGameHost(ctx) {
   const host = { active: null, key: null };
   const G0 = k => ((ctx.miniGames[k] && ctx.miniGames[k].name) || k).replace(/^\P{L}+/u, '');
   let S = null;   // trạng thái phiên chơi hiện tại
-  const meta = createMeta(ctx, host, $);   // cấp độ, xếp hạng, huy hiệu, nhiệm vụ ngày, xu + điểm nhà, 2 người (meta.js)
+  const meta = createMeta(ctx, host, $);   // cấp độ, xếp hạng, huy hiệu, nhiệm vụ ngày, đồng vàng + điểm nhà, 2 người (meta.js)
 
   // ---------- Tìm chỗ đặt khu chơi: đất phẳng, không đè nhà/cây, xoắn ốc theo góc vàng (2π/φ²) quanh cửa ----------
   const groundAt = (x, z) => Math.max(ctx.terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, 99) : -99);
