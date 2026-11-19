@@ -9,7 +9,7 @@ const MOBILE = process.argv.includes('--mobile'), SHOTS = arg('shots'), URL = ar
 const fails = [], errors = [], log = (...a) => console.log(...a);
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const bc = await browser.newContext(MOBILE ? { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 1, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148' } : { viewport: { width: 1280, height: 720 } });
-await bc.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); } catch (e) {} });
+await bc.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); localStorage.setItem('island.intro', '1'); } catch (e) {} });   // bỏ hướng dẫn + đoạn mở đầu
 const page = await bc.newPage();
 page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
