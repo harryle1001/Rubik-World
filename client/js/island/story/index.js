@@ -310,6 +310,7 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
       if (dd < 2 && dy < 3 && !busy) takeShard();
     } else if (!shardPos && C && s.ti >= C.tasks.length && s.started) placeShard();
     if (npc.visible && (npcT -= dt) <= 0) { npcT = 1; npc.position.y = gy(npc.position.x, npc.position.z) + 2.6; }
+    if (ctx.magic) { const m = ctx.magic.mana; if (mana0 != null && m < mana0 - 1) s.castN = (s.castN | 0) + 1; mana0 = m; }   // niệm phép = năng lượng tụt
     // nhiệm vụ hiện tại
     if (T && s.started && !busy && !cut) {
       const at = P(T.at), dd = Math.hypot(p.x - at[0], p.z - at[1]);
@@ -317,7 +318,6 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
       else if (T.type === 'talk' && dd < (T.r || 5) + 3) ctx.offer(`💬 Nói chuyện với ${WHO[T.who].n}`, () => doTalk(T), 9);
       else if (T.type === 'quiz' && dd < 8) ctx.offer(`📚 ${esc(T.text)}`, () => doQuiz(T), 9);
       else if (T.type === 'cond') {
-        if (/phép/.test(T.text) && ctx.magic) { const m = ctx.magic.mana; if (mana0 != null && m < mana0 - 1) s.castN = (s.castN | 0) + 1; mana0 = m; }
         const now = performance.now(); if (now - slow > 250) { slow = now; try { if (T.test(ctx, s)) advance(); } catch (e) {} }
       }
     }

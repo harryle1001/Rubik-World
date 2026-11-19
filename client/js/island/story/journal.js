@@ -43,7 +43,7 @@ export function createJournal(ctx, { S, save, CHAPTERS, say }) {
     CFG.player.gravity = gl && held && !pl.grounded && !pl.vehicle && !(ctx.dive && ctx.dive.swimming) ? G0 / GLIDE[gl] : G0;
     if ((slow -= dt) > 0) return; slow = 0.5;
     CFG.player.run = RUN0 * (1 + PCT[tier('run')]);
-    if (ctx.dive) ctx.dive.maxOxygen = Math.max(21, LUNG[tier('lung')]);
+    { const d = ctx.dive; if (d) { d._o2Base = LUNG[tier('lung')]; d.maxOxygen = d._o2Base * ((ctx.treasure && ctx.treasure.o2Mult) || 1); } }   // nhân với bình khí kho báu (treasure.js)
     const v = pl.vehicle; if (v && v.speed) { if (v._b0 == null) v._b0 = v.speed; v.speed = v._b0 * (1 + PCT[tier('ride')]); }
     if (el && !el.hidden && !document.body.classList.contains('rs-modal')) document.body.classList.add('rs-modal');
   }

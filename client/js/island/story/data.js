@@ -37,6 +37,14 @@ export const CHAPTERS = [
       { type: 'cond', at: [223, 0], r: 0, text: 'Chơi 1 mini game ở khu Thể thao (gặp chủ trò, bấm E)', test: c => !!c.mgActive, hint: 'Mini game nào cũng được: đá bóng, bắn bóng rổ, đua xe…' },
     ],
     shard: [205, -12], outro: [['ru', 'Mảnh Vàng — màu của nắng!'], ['mu', 'Bà chỉ muốn thế giới… bớt chói mắt thôi mà! Bà ra biển hóng gió đây.'], ['ru', 'Ra biển phía tây! Nhớ hít thật sâu trước khi lặn.']] },
+
+  { id: 3, name: 'Mảnh Lam', region: 'Biển Xanh', icon: '🌊', col: '#3aa0ff', subj: 'Khoa học', xp: 55, sao: 13, title: 'Thợ lặn nhí',
+    intro: [['ru', 'Mảnh Lam rơi xuống đáy biển gần Resort Biển Xanh.'], ['rua', 'Ta là Bà Rùa Biển. Muốn xuống biển sâu, cháu phải hiểu biển đã!']],
+    tasks: [
+      { type: 'quiz', who: 'rua', at: [-170, 8], s: ['kh'], tag: 'bien', n: 3, need: 2, text: 'Trả lời câu đố biển của Bà Rùa' },
+      { type: 'cond', at: [-318, 0], r: 0, text: 'Bơi ra biển và lặn sâu 2 m (nút lặn / phím Q)', test: c => !!(c.dive && c.dive.diving && c.dive.depth > 2), hint: 'Đi xuống nước, bấm lặn. Để ý thanh dưỡng khí!' },
+    ],
+    shard: [-322, 8], underwater: true, outro: [['rua', 'Cháu lặn giỏi lắm! Mảnh Lam là màu của biển và bầu trời.'], ['mu', 'Bà… bà sang Học viện Pha Lê học phép tàng hình đây! Không ai thấy bà đâu!'], ['ru', 'Học viện ở đảo xa phía tây bắc. Ra bến đi thuyền đèn lồng nhé!']] },
 ];
 
 let EGG = () => 0;
