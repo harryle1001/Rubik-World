@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trường Rubik · Chủ game</title><meta name="robots" content="noindex,nofollow">
+<style>
+:root{--bg:#f6f0e4;--ink:#2e2418;--mute:#7a6a58;--line:#e6dccb;--pri:#3fb8a8;--bad:#c8502c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.618 system-ui,sans-serif}
+header{background:#1b1626;color:#fff;padding:13px 21px;display:flex;gap:13px;align-items:center}header b{font-size:21px}header .sp{flex:1}
+main{max-width:987px;margin:0 auto;padding:21px 16px 55px}.card{background:#fff;border-radius:21px;padding:21px;margin-bottom:21px;box-shadow:0 2px 13px #0000000d}
+h2{font-size:21px;margin:0 0 13px}small,.mute{color:var(--mute);font-size:13px}
+input,select{width:100%;padding:8px 13px;border-radius:13px;border:2px solid var(--line);font:600 16px system-ui}label{display:block;font:700 13px system-ui;margin:8px 0 3px}
+.row{display:flex;gap:13px;flex-wrap:wrap;align-items:flex-end}.row>*{flex:1 1 144px}
+.b{padding:8px 21px;border-radius:13px;border:0;background:var(--pri);color:#fff;font:800 15px system-ui;cursor:pointer}.b.sec{background:#efe3cc;color:var(--ink)}.b.sm{padding:3px 13px;font-size:13px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fill,minmax(144px,1fr));gap:13px}.kpi div{background:#faf5ea;border-radius:13px;padding:13px;font:700 13px system-ui;color:var(--mute)}.kpi b{display:block;font-size:21px;color:var(--ink)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{color:var(--mute)}
+.msg{min-height:21px;color:var(--bad);font:700 13px system-ui}.hid{display:none!important}.cbox{height:233px;position:relative}
+</style></head><body>
+<header><b>🛠️ Chủ game</b><span class="sp"></span><button class="b sec sm hid" id="bOut">Khoá</button></header>
+<main>
+<section class="card" id="vKey"><h2>Nhập mã chủ game (ADMIN_KEY)</h2><div class="row"><div><input id="key" type="password" autocomplete="off"></div><div style="flex:0 0 auto"><button class="b" id="bKey">Mở</button></div></div><div class="msg" id="kMsg"></div></section>
+<section id="vMain" class="hid">
+  <div class="card"><h2>📈 Tổng quan</h2><div class="kpi" id="kpi"></div><div class="cbox" style="margin-top:13px"><canvas id="cRev"></canvas></div><p class="mute" id="gwLine"></p></div>
+  <div class="card"><h2>🏦 Đối soát chuyển khoản</h2><p class="mute">So nội dung chuyển khoản (RUBIK xxxxxx) và số tiền trong sao kê ngân hàng, rồi bấm Xác nhận để kích hoạt gói + gửi biên nhận.</p><div class="tw"><table id="pend"></table></div></div>
+  <div class="card"><h2>🎀 Cấp gói thủ công</h2><div class="row"><div><label>Email/SĐT phụ huynh hoặc tên đăng nhập học sinh</label><input id="gLogin"></div><div style="flex:0 1 144px"><label>Gói</label><select id="gPlan"><option value="family">Gia đình</option><option value="year">Năm</option><option value="month">Tháng</option></select></div><div style="flex:0 1 89px"><label>Số ngày</label><input id="gDays" type="number" value="30"></div><div style="flex:0 0 auto"><button class="b" id="bGrant">Cấp</button></div></div><div class="msg" id="gMsg"></div></div>
+  <div class="card"><h2>🏷️ Mã giảm giá</h2><div class="row"><div><label>Mã</label><input id="cCode" style="text-transform:uppercase"></div><div style="flex:0 1 89px"><label>% giảm</label><input id="cPct" type="number" value="21"></div><div style="flex:0 1 110px"><label>hoặc giảm (đ)</label><input id="cOff" type="number" value="0"></div><div style="flex:0 1 89px"><label>Lượt tối đa</label><input id="cMax" type="number" value="100"></div><div style="flex:0 1 160px"><label>Hết hạn</label><input id="cUntil" type="date"></div><div style="flex:0 0 auto"><button class="b" id="bCp">Tạo</button></div></div><div class="msg" id="cMsg"></div><div class="tw"><table id="cps"></table></div></div>
+  <div class="card"><h2>🏫 Giấy phép trường học (B2B)</h2><p class="mute">Học sinh nhập mã trường trong game (👤 → 🏫 Mã trường) để dùng toàn bộ nội dung đến hạn.</p><div class="row"><div><label>Tên trường</label><input id="lSchool"></div><div style="flex:0 1 110px"><label>Số học sinh</label><input id="lSeats" type="number" value="144"></div><div style="flex:0 1 160px"><label>Hạn dùng</label><input id="lUntil" type="date"></div><div style="flex:0 1 144px"><label>Giá hợp đồng (đ)</label><input id="lPrice" type="number" value="0"></div><div><label>Liên hệ</label><input id="lContact"></div><div style="flex:0 0 auto"><button class="b" id="bLic">Tạo</button></div></div><div class="msg" id="lMsg"></div><div class="tw"><table id="lics"></table></div></div>
+  <div class="card"><h2>🧾 Đơn gần đây</h2><div class="tw"><table id="recent"></table></div></div>
+  <div class="card" id="obCard"><h2>📬 Hộp thư giả lập</h2><p class="mute">Chưa đặt SMTP_URL nên email (biên nhận, nhắc gia hạn, tóm tắt tuần) được giữ ở đây để kiểm tra.</p><div id="ob"></div></div>
+</section></main>
+<script src="/lib/chart.js"></script>
+<script>
+const $ = s => document.querySelector(s), esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const money = n => Number(n).toLocaleString('vi-VN') + 'đ', dd = t => t ? new Date(t).toLocaleString('vi-VN') : '—';
+let key = sessionStorage.getItem('rubik.adminKey') || '', chart;
+const call = async (p, body, method) => { const r = await fetch('/api/admin' + p, { method: method || (body ? 'POST' : 'GET'), headers: { 'Content-Type': 'application/json', 'x-admin-key': key }, body: body ? JSON.stringify(body) : undefined }); const j = await r.json().catch(() => ({})); return Object.assign(j, { status: r.status }); };
+async function load() {
+  const S = await call('/summary'); if (S.status === 401) { sessionStorage.removeItem('rubik.adminKey'); $('#vKey').classList.remove('hid'); $('#vMain').classList.add('hid'); $('#kMsg').textContent = S.error; return; }
+  sessionStorage.setItem('rubik.adminKey', key); $('#vKey').classList.add('hid'); $('#vMain').classList.remove('hid'); $('#bOut').classList.remove('hid');
+  const k = S.kinds; $('#kpi').innerHTML = [['Doanh thu', money(S.revenue)], ['Phụ huynh', S.parents], ['Học sinh', S.students], ['Đang trả phí', k.paid + k.gift], ['Dùng thử', k.trial], ['Gói trường', k.school], ['Miễn phí', k.free], ['Chờ đối soát', S.pending.length]].map(([a, b]) => `<div>${a}<b>${b}</b></div>`).join('');
+  $('#gwLine').textContent = 'Cổng: ' + S.gateways.map(g => `${g.icon} ${g.name} (${g.mode})`).join(' · ') + ` · Email: ${S.mailer}`;
+  const M = Object.keys(S.byMonth).sort().slice(-13); chart && chart.destroy(); chart = new Chart($('#cRev'), { type: 'bar', data: { labels: M, datasets: [{ label: 'Doanh thu (đ)', data: M.map(m => S.byMonth[m]), backgroundColor: '#3fb8a8', borderRadius: 8 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+  const row = o => `<td>${esc(o.id)}</td><td>${dd(o.created)}</td><td>${esc(o.login || '—')}</td><td>${esc(o.planName)}</td><td>${money(o.amount)}${o.coupon ? ' <small>(' + esc(o.coupon) + ')</small>' : ''}</td><td>${esc(o.gateway)}</td>`;
+  $('#pend').innerHTML = S.pending.length ? '<tr><th>Đơn</th><th>Tạo lúc</th><th>Phụ huynh</th><th>Gói</th><th>Số tiền</th><th>Cổng</th><th>Nội dung CK</th><th></th></tr>' + S.pending.map(o => `<tr>${row(o)}<td><b>${esc(o.transfer)}</b></td><td><button class="b sm" data-ok="${o.id}">Xác nhận</button> <button class="b sec sm" data-no="${o.id}">Huỷ</button></td></tr>`).join('') : '<tr><td class="mute">Không có đơn chờ.</td></tr>';
+  $('#recent').innerHTML = '<tr><th>Đơn</th><th>Tạo lúc</th><th>Phụ huynh</th><th>Gói</th><th>Số tiền</th><th>Cổng</th><th>Trạng thái</th><th>Trả lúc</th></tr>' + S.recent.map(o => `<tr>${row(o)}<td>${esc(o.status)}</td><td>${dd(o.paidAt)}</td></tr>`).join('');
+  $('#cps').innerHTML = S.coupons.length ? '<tr><th>Mã</th><th>Giảm</th><th>Đã dùng</th><th>Hết hạn</th><th></th></tr>' + S.coupons.map(c => `<tr><td><b>${esc(c.code)}</b></td><td>${c.pct ? c.pct + '%' : ''}${c.off ? ' −' + money(c.off) : ''}</td><td>${c.used | 0}/${c.max || '∞'}</td><td>${c.until ? new Date(c.until).toLocaleDateString('vi-VN') : '—'}</td><td><button class="b sec sm" data-dc="${esc(c.code)}">Xoá</button></td></tr>`).join('') : '';
+  $('#lics').innerHTML = S.licenses.length ? '<tr><th>Trường</th><th>Mã</th><th>Suất</th><th>Hạn</th><th>Giá</th><th>Liên hệ</th><th></th></tr>' + S.licenses.map(l => `<tr><td>${esc(l.school)}</td><td><b style="letter-spacing:3px">${esc(l.code)}</b></td><td>${l.used | 0}/${l.seats}</td><td>${new Date(l.until).toLocaleDateString('vi-VN')}</td><td>${money(l.price)}</td><td>${esc(l.contact)}</td><td><button class="b sec sm" data-dl="${l.id}">Xoá</button></td></tr>`).join('') : '';
+  $('#obCard').classList.toggle('hid', S.mailer === 'smtp'); $('#ob').innerHTML = S.outbox.map(m => `<details style="margin-bottom:8px"><summary><b>${esc(m.subject)}</b> → ${esc(m.to)} <small>${dd(m.at)}</small></summary><iframe sandbox style="width:100%;height:377px;border:1px solid #e6dccb;border-radius:13px" srcdoc="${esc(m.html)}"></iframe></details>`).join('') || '<small>Trống.</small>';
+  document.querySelectorAll('[data-ok]').forEach(b => b.onclick = async () => { const ref = prompt('Mã giao dịch ngân hàng (tuỳ chọn):') || ''; await call(`/orders/${b.dataset.ok}/confirm`, { ref }); load(); });
+  document.querySelectorAll('[data-no]').forEach(b => b.onclick = async () => { if (confirm('Huỷ đơn?')) { await call(`/orders/${b.dataset.no}/reject`, {}); load(); } });
+  document.querySelectorAll('[data-dc]').forEach(b => b.onclick = async () => { await call('/coupons/' + b.dataset.dc, null, 'DELETE'); load(); });
+  document.querySelectorAll('[data-dl]').forEach(b => b.onclick = async () => { if (confirm('Xoá giấy phép? Học sinh của trường sẽ về gói miễn phí.')) { await call('/licenses/' + b.dataset.dl, null, 'DELETE'); load(); } });
+}
+$('#bKey').onclick = () => { key = $('#key').value.trim(); load(); }; $('#key').onkeydown = e => e.key === 'Enter' && $('#bKey').click();
+$('#bOut').onclick = () => { sessionStorage.removeItem('rubik.adminKey'); location.reload(); };
+$('#bGrant').onclick = async () => { const r = await call('/grant', { login: $('#gLogin').value, plan: $('#gPlan').value, days: +$('#gDays').value }); $('#gMsg').textContent = r.error || `✅ Đã cấp cho ${r.to === 'parent' ? 'phụ huynh' : 'học sinh'} đến ${new Date(r.until).toLocaleDateString('vi-VN')}`; load(); };
+$('#bCp').onclick = async () => { const r = await call('/coupons', { code: $('#cCode').value, pct: +$('#cPct').value, off: +$('#cOff').value, max: +$('#cMax').value, until: $('#cUntil').value }); $('#cMsg').textContent = r.error || ''; load(); };
+$('#bLic').onclick = async () => { const r = await call('/licenses', { school: $('#lSchool').value, seats: +$('#lSeats').value, until: $('#lUntil').value, price: +$('#lPrice').value, contact: $('#lContact').value }); $('#lMsg').textContent = r.error || `✅ Mã trường: ${r.license.code}`; load(); };
+if (key) load();
+</script></body></html>

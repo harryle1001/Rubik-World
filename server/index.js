@@ -8,10 +8,29 @@ const { ZONES, CATALOG, CROPS, PLOT_PRICE, PLOT_COUNT } = require('../client/js/
 
 const PORT = process.env.PORT || 3000;
 const ROOT = path.join(__dirname, '..');
-const DATA = path.join(ROOT, 'data', 'players.json');
-const WORLD_FILE = path.join(ROOT, 'data', 'world.json');
-const ADMIN_FILE = path.join(ROOT, 'data', 'admin.json');
+const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');   // Railway/Fly: gắn volume vào đây để dữ liệu không mất khi deploy lại
+try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
+const DATA = path.join(DATA_DIR, 'players.json');
+const WORLD_FILE = path.join(DATA_DIR, 'world.json');
+const ADMIN_FILE = path.join(DATA_DIR, 'admin.json');
+const helmet = require('helmet');
+const { rateLimit } = require('express-rate-limit');
 const app = express();
+app.set('trust proxy', 1);   // Render/Railway/Fly đứng sau proxy HTTPS → lấy đúng IP cho giới hạn tốc độ
+app.disable('x-powered-by');
+// tiêu đề bảo mật (CSP tắt vì game dùng importmap + script nội tuyến; vẫn có HSTS, nosniff, chống nhúng iframe lạ…)
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+if (process.env.FORCE_HTTPS === '1') app.use((req, res, next) => (req.secure || req.path === '/api/health' ? next() : res.redirect(301, 'https://' + req.headers.host + req.originalUrl)));
+app.get('/teacher', (req, res) => res.sendFile(path.join(ROOT, 'client', 'teacher.html')));
+app.get('/parent', (req, res) => res.sendFile(path.join(ROOT, 'client', 'parent.html')));   // Gói Phụ huynh: đăng ký, liên kết con, mua gói, báo cáo học tập
+app.get('/admin', (req, res) => res.sendFile(path.join(ROOT, 'client', 'admin.html')));     // chủ game: doanh thu, đối soát, mã giảm giá, giấy phép trường
+app.get(['/privacy', '/terms'], (req, res) => {   // văn bản pháp lý: docs/*.md → HTML gọn (tiêu đề, danh sách, đậm, liên kết)
+  const md = fs.readFileSync(path.join(ROOT, 'docs', req.path === '/terms' ? 'terms.md' : 'privacy-policy.md'), 'utf8'), e = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const il = s => e(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/_(.+?)_/g, '<i>$1</i>').replace(/`(.+?)`/g, '<code>$1</code>').replace(/\[(.+?)\]\((\/[\w/]*)\)/g, '<a href="$2">$1</a>');
+  const body = md.replace(/^(#+ .*)$/gm, '\n$1\n').trim().split(/\n{2,}/).map(b => /^#+ /.test(b) ? `<h${b.match(/^#+/)[0].length}>${il(b.replace(/^#+ /, ''))}</h${b.match(/^#+/)[0].length}>` : /^- /m.test(b) ? b.replace(/^(?!- )(.+)$/m, '<p>$1</p>').replace(/(^- .+\n?)+/m, m => '<ul>' + m.trim().split('\n').map(l => `<li>${il(l.slice(2))}</li>`).join('') + '</ul>').replace(/<p>(.+?)<\/p>/, (m, t) => `<p>${il(t)}</p>`) : `<p>${il(b)}</p>`).join('\n');
+  res.type('html').send(`<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trường Rubik</title><style>body{margin:0;background:#f6f0e4;color:#2e2418;font:16px/1.618 system-ui,sans-serif}main{max-width:720px;margin:0 auto;padding:34px 16px 55px}h1{font-size:34px;line-height:1.236}h2{font-size:21px;margin-top:34px}a{color:#2c8f82}code{background:#efe3cc;padding:0 5px;border-radius:5px}</style><main>${body}<p><a href="/parent">← Trang Phụ huynh</a></p></main></html>`);
+});
+app.get('/lib/chart.js', (req, res) => { res.set('Cache-Control', 'public, max-age=604800'); res.sendFile(path.join(ROOT, 'node_modules', 'chart.js', 'dist', 'chart.umd.min.js')); });
 app.get('/sw.js', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'sw.js')); });
 // Trang gốc mở thẳng Đảo Rubik 3D (game duy nhất; game 2D client/school/ chỉ còn lưu trữ, không liên kết)
 app.get(['/', '/index.html'], (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'ocean.html')); });
@@ -42,11 +61,13 @@ function compressed(dir, prefix = '') {
   };
 }
 app.use(compressed(path.join(ROOT, 'client')));
-app.use(express.static(path.join(ROOT, 'client')));
+const LONG = /\.(glb|gltf|png|jpe?g|webp|ktx2|mp3|ogg|wav|m4a|hdr|woff2?)$/i;
+const setCache = (res, f) => res.setHeader('Cache-Control', LONG.test(f) ? 'public, max-age=604800' : 'public, max-age=0, must-revalidate');
+app.use(express.static(path.join(ROOT, 'client'), { setHeaders: setCache }));
 app.use('/assets', express.static(path.join(ROOT, 'public', 'assets')));
 app.get('/lib/phaser.min.js', (req, res, next) => { req.url = '/phaser.min.js'; compressed(path.join(ROOT, 'node_modules', 'phaser', 'dist'))(req, res, () => res.sendFile(path.join(ROOT, 'node_modules', 'phaser', 'dist', 'phaser.min.js'))); });
 app.use('/lib/three', compressed(path.join(ROOT, 'node_modules', 'three')));
-app.use('/lib/three', express.static(path.join(ROOT, 'node_modules', 'three')));
+app.use('/lib/three', express.static(path.join(ROOT, 'node_modules', 'three'), { maxAge: '7d' }));
 app.get('/lib/chess.js', (req, res) => res.sendFile(path.join(ROOT, 'node_modules', 'chess.js', 'chess.js')));
 const server = http.createServer(app);
 // cho phép app Capacitor (iOS: capacitor://localhost, Android: https://localhost) kết nối multiplayer
@@ -208,63 +229,8 @@ io.on('connection', socket => {
     if (!p) return; persist(p); players.delete(socket.id); io.to(p.zone).emit('left', p.id); io.emit('system', `${p.name} đã rời game.`);
   });
 });
-// ---------- Đảo Rubik 3D (ocean.html): namespace riêng /island, chỉ đồng bộ vị trí người chơi ----------
-const island = io.of('/island'), islanders = new Map();
-const HOUSES_FILE = path.join(ROOT, 'data', 'houses.json'); let HOUSES = {}, housesDirty = false;
-try { HOUSES = JSON.parse(fs.readFileSync(HOUSES_FILE, 'utf8')) || {}; } catch (e) {}
-setInterval(() => { if (!housesDirty) return; housesDirty = false; fs.mkdir(path.dirname(HOUSES_FILE), { recursive: true }, () => fs.writeFile(HOUSES_FILE, JSON.stringify(HOUSES), () => {})); }, 3000);
-const num = (v, lo, hi) => (Number.isFinite(+v) ? Math.max(lo, Math.min(hi, +v)) : 0);
-island.on('connection', socket => {
-  let me = null, last = 0;
-  socket.on('join', d => {
-    if (me) return;
-    me = { id: socket.id, name: clean(d && d.name, 18) || 'Bạn mới', hue: num(d && d.hue, 0, 360), x: 0, y: 0, z: 10, r: 0, s: 0, cloak: false, liftOk: false };
-    islanders.set(socket.id, me);
-    const pubP = q => ({ id: q.id, name: q.name, hue: q.hue, x: q.x, y: q.y, z: q.z, r: q.r, s: q.s, cloak: q.cloak, liftOk: q.liftOk });
-    socket.emit('players', [...islanders.values()].filter(p => p.id !== socket.id).map(pubP));
-    socket.broadcast.emit('joined', pubP(me));
-  });
-  socket.on('m', d => {
-    const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
-    me.x = num(d.x, -3000, 3000); me.y = num(d.y, -20, 300); me.z = num(d.z, -3000, 3000); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);   // thế giới rộng ~1,7 km (Học viện Pha Lê, bay chổi tới 233 m)
-    socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
-  });
-  // ---------- phép thuật (spellbook.js): chỉ chuyển tiếp hiệu ứng, kiểm tra dữ liệu; không có phép gây hại ----------
-  let spT = 0; const pub = () => island.emit('pstate', { id: me.id, cloak: !!me.cloak, liftOk: !!me.liftOk });
-  socket.on('spell', d => {
-    const now = Date.now(); if (!me || !d || now - spT < 250 || !/^[a-z0-9_-]{1,20}$/.test(d.s) || !Array.isArray(d.a) || d.a.length !== 3) return; spT = now;
-    const x = d.x && typeof d.x === 'object' && JSON.stringify(d.x).length <= 300 ? d.x : undefined;
-    socket.broadcast.emit('spell', { id: me.id, s: d.s, a: d.a.map(v => num(v, -2000, 2000)), c: /^#[0-9a-f]{6}$/i.test(d.c) ? d.c : '#ffe3a0', x });
-  });
-  socket.on('perm', d => { if (!me || !d) return; me.liftOk = !!d.liftOk; pub(); });
-  socket.on('liftReq', d => {   // Nâng Bạn: chỉ khi người được nâng đã bật cho phép; 1 lần / 5 giây
-    const t = d && islanders.get(d.to), now = Date.now(); if (!me || !t || !t.liftOk || t.cloak || now - (me.liftT || 0) < 5000) return; me.liftT = now;
-    if (Math.hypot(t.x - me.x, t.z - me.z) > 34) return; island.to(t.id).emit('lifted', { by: me.id, name: me.name });
-  });
-  socket.on('admin', d => { if (!me || !d) return; me.admin = typeof d.key === 'string' && d.key.trim().toUpperCase() === ADMIN_KEY.toUpperCase(); socket.emit('admin', { ok: me.admin, quiet: !!d.quiet }); if (!me.admin && me.cloak) { me.cloak = false; pub(); } });
-  socket.on('cloak', d => { if (!me || !me.admin || !d) return; me.cloak = !!d.on; pub(); });   // áo choàng tàng hình: chỉ chủ game
-  socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
-  // Làng Phù Thuỷ Nhỏ (academy/village.js): mỗi tên 1 ngôi nhà; lần lưu đầu "giữ chỗ" bằng mã máy (token) → người khác không ghi đè được
-  socket.on('house:save', (d, ack) => {
-    const cb = typeof ack === 'function' ? ack : () => {};
-    if (!d || typeof d.name !== 'string' || typeof d.token !== 'string' || !Array.isArray(d.pieces)) return cb({ err: 'Dữ liệu nhà không hợp lệ.' });
-    const name = d.name.trim().slice(0, 20), tok = d.token.slice(0, 64); if (!name) return cb({ err: 'Thiếu tên.' });
-    const old = HOUSES[name]; if (old && old.token !== tok) return cb({ err: 'Tên này đã có nhà của một bạn khác trên máy khác — nhà em chỉ lưu trên máy này.' });
-    const pieces = d.pieces.slice(0, 377).filter(p => Array.isArray(p) && p.length === 6 && typeof p[0] === 'string' && p[0].length < 13 && p.slice(1).every(n => Number.isInteger(n) && n >= 0 && n < 13));
-    HOUSES[name] = { token: tok, pieces, at: Date.now() }; housesDirty = true; cb({ ok: true });
-  });
-  socket.on('house:get', (name, ack) => { if (typeof ack !== 'function') return; const h = HOUSES[String(name || '')]; ack(h ? { name, pieces: h.pieces, at: h.at } : null); });
-  socket.on('house:list', (_, ack) => { if (typeof ack !== 'function') return; ack(Object.entries(HOUSES).map(([name, h]) => ({ name, n: h.pieces.length, at: h.at })).sort((a, b) => b.at - a.at).slice(0, 55)); });
-  // Săn Cầu Vàng (academy/pitch.js): phòng 'sky' — người vào trước làm chủ trận (mô phỏng NPC + bóng), server chỉ chuyển tiếp
-  socket.on('skJoin', () => { if (!me || sky.has(socket.id)) return; sky.add(socket.id); socket.join('sky'); skyRoom(); });
-  socket.on('skLeave', () => { if (sky.delete(socket.id)) { socket.leave('sky'); skyRoom(); } });
-  let skT = 0;
-  socket.on('skState', d => { const now = Date.now(); if ([...sky][0] !== socket.id || now - skT < 60) return; skT = now; if (JSON.stringify(d || 0).length < 4096) socket.to('sky').volatile.emit('skState', d); });
-  socket.on('skAct', d => { const host = [...sky][0]; if (!sky.has(socket.id) || !host || host === socket.id || !d || typeof d.a !== 'string') return; island.to(host).emit('skAct', { id: socket.id, a: d.a.slice(0, 8), d: Array.isArray(d.d) ? d.d.slice(0, 3).map(v => num(v, -1, 1)) : null }); });
-  socket.on('disconnect', () => { if (sky.delete(socket.id)) skyRoom(); });
-});
-const sky = new Set();
-const skyRoom = () => island.to('sky').emit('skRoom', { host: [...sky][0] || null, ids: [...sky].slice(0, 8) });
+// ---------- Đảo Rubik 3D (ocean.html): namespace /island + API tài khoản/lớp/sự kiện → server/online.js ----------
+const ready = require('./online')(app, io, { ADMIN_KEY, express, rateLimit });
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
-server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); });
+ready.then(() => server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); })).catch(e => { console.error('Không mở được kho dữ liệu:', e); process.exit(1); });

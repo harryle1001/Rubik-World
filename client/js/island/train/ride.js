@@ -58,6 +58,7 @@ export function createRide(ctx, { consist }) {
   const V = { speed: 0, turn: 0, accel: 4, fly: true, lift: 0, maxAlt: 999, anim: 'sit', seat: 0, seatZ: 0, camAdd: 0, train: true };
   function board() {
     if (st.aboard || player.vehicle || (ctx.aircraft && ctx.aircraft.flying) || (ctx.ferry && ctx.ferry.riding)) return;
+    if (st.at === 'A' && ctx.premium && !ctx.premium.allow('academy')) return;   // tàu tới cao nguyên Học viện: Gói Phụ huynh
     blink(() => {
       face(st.at === 'A' ? 1 : -1);
       st.aboard = true; st.phase = 'board'; schedule();

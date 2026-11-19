@@ -7,3 +7,4 @@ data/admin.json
 data/world.json
 www/
 data/houses.json
+data/*.db*

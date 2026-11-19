@@ -1,14 +1,42 @@
-# Chính sách quyền riêng tư — Đảo Rubik (bản nháp)
+# Chính sách bảo mật — Trường Rubik / Đảo Rubik
 
-_Bản nháp để tham khảo. Hãy nhờ người có chuyên môn pháp lý xem lại trước khi công bố._
+_Bản nháp tuân theo Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân, Luật Bảo vệ quyền lợi người tiêu dùng 2023 và Luật Trẻ em 2016. Nhờ người có chuyên môn pháp lý xem lại và điền thông tin ở dấu <...> trước khi công bố._
 
-**Đảo Rubik** là trò chơi học tập dành cho trẻ em. Chúng tôi tôn trọng và bảo vệ quyền riêng tư của trẻ.
+## 1. Bên kiểm soát và xử lý dữ liệu
+<Tên doanh nghiệp/hộ kinh doanh>, mã số thuế <...>, địa chỉ <...>, email hỗ trợ <...>, điện thoại <...> ("chúng tôi").
 
-1. **Chúng tôi không thu thập thông tin cá nhân.** App không yêu cầu tên thật, email, số điện thoại, ảnh, vị trí GPS hay danh bạ.
-2. **Dữ liệu lưu trên máy:** biệt danh ngẫu nhiên, màu áo nhân vật, tiến độ giải đố và vật phẩm được lưu ngay trên thiết bị, có thể xoá bằng cách gỡ app.
-3. **Khi chơi cùng bạn bè (có mạng):** app gửi biệt danh ngẫu nhiên và vị trí nhân vật trong game tới máy chủ, để người chơi khác cùng đảo nhìn thấy. Máy chủ không lưu các dữ liệu này sau khi người chơi rời đảo.
-4. **Không có quảng cáo, không mua hàng trong app, không công cụ phân tích hay theo dõi của bên thứ ba.**
-5. **Không có trò chuyện (chat)** giữa người chơi.
-6. **Liên hệ:** phụ huynh có câu hỏi xin gửi tới: _<email liên hệ của nhà phát triển>_.
+## 2. Dữ liệu chúng tôi thu thập
+**Của trẻ em (học sinh):**
+- Tên đăng nhập do em tự đặt (không dùng tên thật đầy đủ, không cho phép dãy số dài như số điện thoại), mật khẩu (chỉ lưu bản băm scrypt).
+- Tiến độ trò chơi (cấp độ, xu, vật phẩm, nhà Tứ Linh, nhiệm vụ).
+- Thống kê học tập: số câu đúng/sai theo môn và chủ đề, thời gian chơi mỗi ngày.
+- Mã lớp/mã trường nếu em tham gia lớp học của giáo viên hoặc gói của trường.
+- **Không** thu thập: tên thật, ngày sinh, ảnh, giọng nói, vị trí GPS, danh bạ, email/SĐT của trẻ. Không có trò chuyện tự do — chỉ biểu cảm và câu mẫu do hệ thống định sẵn.
 
-Cập nhật lần cuối: _<ngày>_.
+**Của phụ huynh:** email hoặc số điện thoại, tên gọi (tuỳ chọn), mật khẩu (băm), thời điểm và phiên bản đồng ý, lịch sử đơn hàng (gói, số tiền, cổng thanh toán, mã giao dịch). **Chúng tôi không nhận và không lưu số thẻ** — việc nhập thẻ/ví diễn ra trên trang của MoMo, ZaloPay, VNPay.
+
+## 3. Sự đồng ý của cha mẹ (dữ liệu trẻ em là dữ liệu cá nhân nhạy cảm cần bảo vệ đặc biệt)
+- Trẻ có thể chơi phần miễn phí với tài khoản chỉ gồm tên đăng nhập. Khi liên kết, **cha/mẹ/người giám hộ xác nhận là người lớn và đồng ý** cho trẻ dùng dịch vụ và cho chúng tôi xử lý dữ liệu học tập của trẻ theo chính sách này. Hệ thống ghi lại thời điểm và phiên bản chính sách được đồng ý.
+- Với trẻ từ đủ 7 tuổi, chúng tôi khuyến khích cha mẹ giải thích và hỏi ý kiến của con trước khi liên kết (Điều 20 NĐ 13/2023).
+- Cha mẹ có thể rút lại sự đồng ý bất kỳ lúc nào bằng cách **bỏ liên kết** hoặc **xoá tài khoản của con** ở trang Phụ huynh.
+
+## 4. Mục đích xử lý
+Cung cấp trò chơi và lưu tiến độ; lập báo cáo học tập cho phụ huynh/giáo viên đã được liên kết; giới hạn giờ chơi do phụ huynh đặt; xử lý thanh toán, gửi biên nhận, nhắc gia hạn và tóm tắt tuần; bảo đảm an toàn (chặn, báo cáo, khoá tài khoản vi phạm). **Không quảng cáo, không bán hay chia sẻ dữ liệu để tiếp thị, không lập hồ sơ quảng cáo.**
+
+## 5. Ai được xem dữ liệu của trẻ
+Chỉ: phụ huynh đã liên kết bằng mã do chính trẻ tạo (hết hạn sau 30 phút); giáo viên của lớp mà trẻ tự tham gia (chỉ thống kê học tập, không có thông tin phụ huynh); chủ game khi cần xử lý báo cáo vi phạm. Người chơi khác chỉ thấy tên đăng nhập và nhân vật trong game.
+
+## 6. Bên thứ ba
+Đơn vị lưu trữ máy chủ (<Render, khu vực Singapore>), cổng thanh toán (MoMo, ZaloPay, VNPay — chỉ nhận mã đơn, số tiền, mô tả gói), dịch vụ gửi email (<tên nhà cung cấp SMTP>). Dữ liệu có thể được lưu ở máy chủ ngoài Việt Nam; chúng tôi lập hồ sơ đánh giá tác động chuyển dữ liệu ra nước ngoài theo Điều 25 NĐ 13/2023.
+
+## 7. Thời gian lưu
+Tài khoản và tiến độ: đến khi bị xoá. Thống kê học tập theo ngày: 60 ngày gần nhất. Phiên đăng nhập: 30–60 ngày. Chứng từ thanh toán: theo thời hạn của pháp luật kế toán (được ẩn danh khi phụ huynh xoá tài khoản).
+
+## 8. Quyền của phụ huynh và trẻ
+Được biết, đồng ý, truy cập, chỉnh sửa, **xoá**, hạn chế xử lý, phản đối, rút lại sự đồng ý, khiếu nại. Thực hiện ngay tại trang Phụ huynh (`/parent`): xem báo cáo, bỏ liên kết, **Xoá tài khoản & dữ liệu của con** (xoá vĩnh viễn), xoá tài khoản phụ huynh. Yêu cầu khác gửi email hỗ trợ; chúng tôi phản hồi trong 72 giờ.
+
+## 9. Bảo mật
+HTTPS, mật khẩu băm scrypt, mã phiên ngẫu nhiên lưu dạng băm, giới hạn số lần thử đăng nhập, chữ ký số kiểm tra mọi thông báo thanh toán, phân quyền: mỗi phụ huynh chỉ truy cập dữ liệu của con mình. Khi có sự cố lộ dữ liệu, chúng tôi thông báo cho Bộ Công an (A05) trong 72 giờ và cho phụ huynh bị ảnh hưởng.
+
+## 10. Liên hệ & cập nhật
+Email: <...>. Khi thay đổi chính sách, chúng tôi thông báo trên trang Phụ huynh và xin đồng ý lại nếu thay đổi mục đích xử lý. Phiên bản: 2026-11.
