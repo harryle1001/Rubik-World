@@ -173,6 +173,7 @@ body.rs-modal #bMap{display:none}`;
   }
 
   function toggle(v = !open) {
+    if (v && !open && ctx.mapHook && ctx.mapHook()) return;   // nơi khác (vd. nội thất Học viện) tự mở bản đồ riêng
     if (v === open) return; open = v; ctx.mapOpen = v; root.hidden = !v; tip = null;
     if (v) {
       ctx.sfx && ctx.sfx('ui'); if (ctx.school && ctx.school.win) close2D(ctx.school.win);
