@@ -112,7 +112,8 @@ export async function playIntro(ctx, { first = false } = {}) {
   play('sit', 0);
   // gục đầu: xoay xương (sau animation mỗi khung) quanh trục ngang thế giới, đổi sang hệ cha của xương
   const qa = new THREE.Quaternion(), qp = new THREE.Quaternion(), ax = new THREE.Vector3();
-  const bend = (b, a, axis) => { if (!b || !a) return; b.parent.getWorldQuaternion(qp); ax.copy(axis).applyQuaternion(qp.invert()); qa.setFromAxisAngle(ax, a); b.quaternion.premultiply(qa); b.updateMatrixWorld(true); };
+  const bent = new Map(), unbend = () => { for (const [b, q] of bent) b.quaternion.copy(q); bent.clear(); };   // khôi phục xương trước khung sau (VRM không tự ghi đè)
+  const bend = (b, a, axis) => { if (!b || !a) return; if (!bent.has(b)) bent.set(b, b.quaternion.clone()); b.parent.getWorldQuaternion(qp); ax.copy(axis).applyQuaternion(qp.invert()); qa.setFromAxisAngle(ax, a); b.quaternion.premultiply(qa); b.updateMatrixWorld(true); };
   const bones = () => { const h = hero(); if (!h) return null; if (h._ib) return h._ib; const H = h.vrm && h.vrm.humanoid, n = k => H ? H.getRawBoneNode(k) : null, o = k => h.model.getObjectByName(k);
     return (h._ib = { spine: n('spine'), chest: n('upperChest') || n('chest') || o('chest'), neck: n('neck'), head: n('head') || o('head'), armL: n('leftUpperArm') || o('upperarml'), armR: n('rightUpperArm') || o('upperarmr'), foreL: n('leftLowerArm') || o('lowerarml'), foreR: n('rightLowerArm') || o('lowerarmr') }); };
   const RIGHT = new THREE.Vector3(0, 0, 1), FWD = new THREE.Vector3(-1, 0, 0);   // em nhìn về −x (bảng): trục ngang = z
@@ -144,7 +145,7 @@ export async function playIntro(ctx, { first = false } = {}) {
     while (ni < NARR.length && t >= NARR[ni][0]) { const [, x] = NARR[ni++]; cap.style.opacity = 0; setTimeout(() => { if (done) return; cap.innerHTML = x; cap.style.opacity = 1; }, 250); speak(x); }
     while (si < SAY.length && t >= SAY[si][0]) { const [, x, v] = SAY[si++]; say.innerHTML = x; say.style.opacity = v; if (x && ni < 2) speak(x.replace(/[“”👨‍🏫]/gu, ''), v, 0.95); }
     if (music) music.volume = Math.max(0, Math.min(0.38, t < 2 ? t * 0.19 : t < 10 ? 0.38 - (t - 2) * 0.03 : t < 15 ? 0.14 : t < 18 ? 0.14 * (18 - t) / 3 : 0));
-    const h = hero(); if (h) play(...want);   // giữ đúng động tác (hệ khác có thể gọi emote) if (h) h.anim.update(dt);
+    unbend(); const h = hero(); if (h) play(...want);   // giữ đúng động tác (hệ khác có thể gọi emote) if (h) h.anim.update(dt);
     if (teacher) teacher.anim.update(dt);
     // ----- cảnh lớp học (0 – 16,6 s) -----
     if (t < 16.6) {
@@ -203,7 +204,7 @@ export async function playIntro(ctx, { first = false } = {}) {
     if (window.speechSynthesis) speechSynthesis.cancel();
     blk.style.opacity = 1; await tmo(skip ? 300 : 618);
     if (built && !G.userData.moved) { SI.stage(null); if (teacher) teacher.model.removeFromParent(); if (ctx.sky) ctx.sky.state.lock = save.lock; if (S) { P.teleport(wake[0], wake[1]); P.pos.y = Math.max(P.pos.y, 1.2); } }
-    if (built) { G.removeFromParent(); G.traverse(o => { if (o.geometry) o.geometry.dispose(); }); geo.dispose(); mats.forEach(m => m.dispose()); pm.dispose(); dot.dispose(); }
+    if (built) { unbend(); G.removeFromParent(); G.traverse(o => { if (o.geometry) o.geometry.dispose(); }); geo.dispose(); mats.forEach(m => m.dispose()); pm.dispose(); dot.dispose(); }
     if (music) { music.pause(); music.src = ''; }
     camera.up.set(0, 1, 0); P.root.rotation.set(0, 0, 0);
     if (P.hero) P.hero.anim.play(P.hero.set.idle, 0.2);
