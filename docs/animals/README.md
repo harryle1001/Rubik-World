@@ -43,7 +43,7 @@ Nông trại · rừng (quanh Đền Tri Thức + đất tự nhiên cao, xa ph�
 
 ## Tự kiểm tra
 `PORT=3111 node server/index.js &` rồi `node tools/wild-test.mjs [--mobile] [--nowild] [--fast]` (dịch chuyển tới 14 sinh cảnh, sáng/đêm/mưa, chụp ảnh cận,
-đo draw call + ms JS, mở ống nhòm / sổ tay / nhiệm vụ, bắt lỗi console) → ảnh `d-*.png` (1280×720), `m-*.png` (390×844) trong thư mục này. Kết quả lần cuối: không lỗi console ở cả hai cỡ màn hình; `tools/smoke-test.mjs --mobile` ✅. `node tools/wild-doc.mjs` sinh lại 2 bảng.
+đo draw call + ms JS, mở ống nhòm / sổ tay / nhiệm vụ, bắt lỗi console) → ảnh `d-*.jpg` (1280×720), `m-*.jpg` (390×844) trong thư mục này. Kết quả lần cuối: không lỗi console ở cả hai cỡ màn hình; `tools/smoke-test.mjs --mobile` ✅. `node tools/wild-doc.mjs` sinh lại 2 bảng.
 
 ## Giới hạn đã biết (nói thẳng)
 - 10 model không có animation (gấu, hổ/sư tử/báo, tê giác, hà mã, lạc đà, hải cẩu, bò biển, bạch tuộc, cá mập đầu búa, bách thanh): chỉ nhún/lắc theo bước.
