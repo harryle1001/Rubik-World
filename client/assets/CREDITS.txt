@@ -133,6 +133,10 @@ models/alley/*.glb (tường, cửa, cửa sổ, mái, ống khói, cờ, đèn 
 tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — https://ambientcg.com/view?id=PavingStones070 (thu 512 px, giảm bão hoà)
 models/alley/wiz-hat.glb, wiz-cape.glb  mũ + áo choàng tách từ models/hero-mage.glb (KayKit Adventurers, CC0 — xem trên), tô màu bằng code
 models/alley/broom.glb  "Medieval Tools Pack" — System G6, OpenGameArt, CC0 — https://opengameart.org/content/medieval-tools-pack (chuyển .blend → .glb bằng bpy)
+models/alley/owl.glb  cú — tách mesh "Owl" (84 mặt) từ "Animal Figurines" — OpenGameArt, cấp phép kép CC0 / CC-BY-SA 3.0 (dùng theo CC0)
+  https://opengameart.org/content/animal-figurines (chuyển .blend → .glb bằng bpy, bỏ texture, tô màu bằng code)
+Phố Phép Thuật v2 (alley-merge.js gộp draw call): dùng thêm models/kit/* sẵn có (Kenney / Quaternius CC0 — xem mục kit ở trên):
+  két rau quả, táo, bí ngô, dưa hấu, thùng, chum, chậu, bồn hoa, hoa, cột đèn khí, đèn lồng treo, bảng phấn, bàn ghế trà, giá sách, sách, nhạc cụ, nấm
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
 
 Nhân vật anime xem thử (client/assets/vrm/, trang client/vrm-preview.html — CHƯA dùng trong game; chi tiết docs/vrm-preview/LICENSES.md):

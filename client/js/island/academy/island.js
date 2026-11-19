@@ -1,6 +1,7 @@
 // academy/island.js — DỰNG ĐẢO HỌC VIỆN (greybox): địa hình (đồi, vách, hồ, lạch), dốc đá + bến, đường băng, khối lâu đài.
 // Chỉ gọi khi người chơi lại gần (index.js); dispose() trả lại bộ nhớ khi đi xa.
 import * as THREE from 'three';
+import { BUILD_SITE } from './build.js';
 import { CFG } from '../config.js';
 import { matV, mat } from '../sample/palette.js';
 import { Batch } from './geo.js';
@@ -136,6 +137,7 @@ export function plantIsland(ctx) {
     if (isleDist(u, v) > -13 || plateauDist(u, v) < LAKE + 13 || villageDist(u, v) < 8) continue;
     if (Math.abs(u - RUNWAY.u) < RUNWAY.hw + 21 && Math.abs(v) < RUNWAY.hl + 21) continue;
     if (u > PLAT.u + PLAT.hu && Math.abs(v) < 34) continue;
+    if (u > BUILD_SITE.u0 && u < BUILD_SITE.u1 && v > BUILD_SITE.v0 && v < BUILD_SITE.v1) continue;   // Đồng Pha Lê (build.js)
     const [x, z] = toWorld(u, v), h = terrain.heightAt(x, z); if (h < 2.6) continue;
     const big = 3.6 + rnd() * 1.6; (rnd() < 0.4 ? tall : pines).push([x, h - 0.2, z, big, rnd() * 6.28]);
   }

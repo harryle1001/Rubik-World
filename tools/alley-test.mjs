@@ -13,6 +13,7 @@ await page.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); 
 await page.goto('http://localhost:3000/ocean.html');
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready, null, { timeout: 300000 });
 await page.locator('button[data-a="guest"]').first().click({ timeout: 8000 }).catch(() => {});
+{ const g = page.getByText('Chơi khách', { exact: true }); if (await g.count()) await g.first().click({ timeout: 5000 }).catch(() => {}); }
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
 const H = +(process.argv.find(a => a.startsWith('--hour=')) || '--hour=10').split('=')[1];
 await page.evaluate(H => Object.defineProperty(__island.sky.state, 'hour', { get: () => H, set() {}, configurable: true }), H);

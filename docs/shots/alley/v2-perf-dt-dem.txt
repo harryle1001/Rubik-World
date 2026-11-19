@@ -1,0 +1,9 @@
+u 24: max 227 · tb 201
+u 8: max 170 · tb 170
+u -14: max 175 · tb 175
+u -30: max 171 · tb 171
+u -50: max 172 · tb 172
+u -70: max 168 · tb 168
+u -85: max 161 · tb 151
+u -104: max 139 · tb 139
+{"mobile":true,"hour":20.5,"max":227,"errors":[]}

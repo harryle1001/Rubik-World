@@ -1,0 +1,14 @@
+{
+ "log": [
+  "A offer: 🧊 Nhận Lô 3 để xây",
+  "A tại lô: [-709.5,-651.5,[-720,-662]]",
+  "A mine=2",
+  "A sau 5 lần Đặt: 5 khối, mana 95",
+  "A sau Phá: 4",
+  "A sau lâu đài: 391 khối",
+  "A tổng: 509 khối",
+  "B mine=3 · B thấy lô A: 509 khối, chủ Bé An",
+  "B thử đặt vào lô A: 509"
+ ],
+ "errors": []
+}

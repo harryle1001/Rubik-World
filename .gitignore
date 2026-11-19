@@ -5,5 +5,6 @@ data/players.json
 !client/icons/*.png
 data/admin.json
 data/world.json
+data/builds.json
 www/
 data/houses.json
