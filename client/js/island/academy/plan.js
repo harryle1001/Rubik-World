@@ -73,9 +73,9 @@ export function sdRR(u, v, hu, hv, r) {
 export const plateauDist = (u, v) => sdRR(u - PLAT.u, v, PLAT.hu, PLAT.hv, PLAT.r);
 export const isleDist0 = (u, v) => sdRR(u - ISLE.u, v, ISLE.hu, ISLE.hv, ISLE.r);
 
-// ---------- RỪNG PHÉP THUẬT: thuỳ đất phía tây, sau Tháp Gió (r 144) + hồ r 34 (đảo nhỏ r 6,5, đường dạo vòng r 37–42) ----------
+// ---------- RỪNG PHÉP THUẬT: thuỳ đất phía tây, sau Tháp Gió (r 144) + hồ r 34 sâu 6 m (đảo nhỏ r 6,5, đường dạo vòng r 37–42) ----------
 // góc θ quanh tâm hồ: 0 = nam (+u), π/2 = đông (+v, về cổng/Tháp Gió), −π/2 = tây (thác), π = bắc (bến thuyền)
-export const FOREST = { u: -34, v: -377, r: 144, gate: [-34, -255], lake: { u: -34, v: -390, r: 34, bed: -8, ring: 39.5, rw: 2.5 } };
+export const FOREST = { u: -34, v: -377, r: 144, gate: [-34, -255], lake: { u: -34, v: -390, r: 34, bed: -6, ring: 39.5, rw: 2.5 } };
 const FL = FOREST.lake;
 export const lakeAt = (th, r) => [FL.u + Math.cos(th) * r, FL.v + Math.sin(th) * r];
 export const CLIFF = { th: -Math.PI / 2, r: 58, top: 21, cr: 11 };                 // vách thác nước: đỉnh 21 m, mép vách cách tâm hồ 47 m
@@ -89,7 +89,7 @@ export function forestH(u, v, x, z) {
   let h = (3.4 + n * 8) * land - 6 * (1 - land);
   const r = Math.hypot(u - FL.u, v - FL.v);
   if (r < FL.r + 21) h = lerp(1.6, h, smooth(FL.r + 8, FL.r + 21, r));                       // bờ phẳng + đường dạo
-  if (r < FL.r + 3) h = lerp(FL.bed, 1.6, smooth(FL.r - 8, FL.r + 3, r));                    // lòng hồ sâu 8 m
+  if (r < FL.r + 3) h = lerp(FL.bed, 1.6, smooth(FL.r - 8, FL.r + 3, r));                    // lòng hồ sâu 6 m (= đáy biển chung, dive.js lặn được)
   if (r < 13) h = Math.max(h, lerp(1.6, FL.bed, smooth(5, 13, r)));                          // đảo nhỏ giữa hồ
   const [cu, cv] = lakeAt(CLIFF.th, CLIFF.r), dc = Math.hypot(u - cu, v - cv);
   if (dc < CLIFF.cr + 8) h = Math.max(h, CLIFF.top * (1 - smooth(CLIFF.cr - 2, CLIFF.cr + 2, dc)) + n * 1.3);   // vách đá dựng

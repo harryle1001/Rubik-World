@@ -20,6 +20,7 @@ import { create as createCreatures } from './creatures.js';   // sinh vật kỳ
 import { create as createTree } from './tree.js';             // cây cổ thụ biết nói
 import { L as CL } from './castle.js';
 import { createForest } from './forest.js';                // rừng phép thuật (thuỳ tây)
+import { createLake } from './forest-lake.js';             // hồ trong rừng
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 
@@ -105,6 +106,7 @@ export function createAcademy(ctx) {
   }
 
   const forest = ctx.forest = createForest(ctx);
+  forest.plug(ctx.forestLake = createLake(ctx, forest));
 
   // ---------- tải / dỡ theo khoảng cách ----------
   const far = createFar(ctx);
