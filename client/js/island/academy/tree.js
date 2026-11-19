@@ -40,8 +40,10 @@ const QUIZ = [
   Q('🔬', 'Vì sao rừng được gọi là "lá phổi xanh"?', ['Hút các-bô-níc, nhả ô-xi', 'Vì lá giống phổi', 'Vì rừng biết thở ra khói', 'Vì rừng màu xanh dương'], 'Rừng <b>hút các-bô-níc, nhả ô-xi</b>, làm không khí trong lành.'),
 ];
 
-export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
-  const st = load('academy.tree', { bloom: 0, n: 0, s: 0 });
+export function create(ctx, magic, { toWorld, toLocal, L, Y, cfg }) {
+  // cfg (tuỳ chọn): dựng thêm cây biết nói khác (Rừng Phép Thuật) — vị trí, khoá lưu, tên, chuyện kể, câu đố, lời chào
+  const C = Object.assign({ at: AT, key: 'academy.tree', name: 'Cụ Đa', stories: STORIES, quiz: QUIZ, hello: null }, cfg);
+  const st = load(C.key, { bloom: 0, n: 0, s: 0 });
   let g = null, A = null, colAdded = false;
 
   // ống nối 2 điểm (cành, rễ): r0 ở a, r1 ở c
@@ -56,7 +58,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   function build() {
     if (g) return;
     seed = 1618;
-    const [wx, wz] = toWorld(AT.u, AT.v), gy = Math.max(Y, ctx.terrain.heightAt(wx, wz)) - 0.1;
+    const [wx, wz] = toWorld(C.at.u, C.at.v), gy = Math.max(Y, ctx.terrain.heightAt(wx, wz)) - 0.1;
     g = new THREE.Group(); g.name = 'academy-tree'; g.position.set(wx, gy, wz);
     const [ex, ez] = toWorld(0, 40);   // mặt cây nhìn về lối vào Sân Thảo Mộc (khe dãy ngăn v 32–40, |u| < 5)
     g.rotation.y = Math.atan2(ex - wx, ez - wz);
@@ -136,7 +138,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     // mục tiêu phép 🌱 Mọc lên: niệm lên cây → câu đố Sinh học/Khoa học
     const target = magic.addTarget({ spell: 'grow', pos: new THREE.Vector3(wx, gy + 4, wz), reach: 21, onCast(api) {
       wake('🌱 Ồ, phép <b>Mọc lên</b>! Cành ta thấy ấm hẳn. Trả lời câu đố này, ta sẽ nở hoa cho cháu xem.', 4);
-      api.ask(nextQ(), reward, '🌳 Câu đố của Cụ Đa');
+      api.ask(nextQ(), reward, `🌳 Câu đố của ${C.name}`);
     } });
     A = { body, lids, brows, mouth, leafM, leaves, pts, pos, target, wx, wz, gy, awake: false, talk: 0, away: 0, blink: 2, blinkT: 0, lid: 1, swirl: 0, mode: 0, dummy: new THREE.Object3D() };
     refreshBloom();
@@ -180,12 +182,12 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     A.pts.geometry.setDrawRange(fly ? 0 : N_FLY, (fly ? N_FLY : 0) + nf);
     A.pts.visible = fly || nf > 0;
   }
-  function nextQ() { const q = QUIZ[st.n % QUIZ.length]; return q; }
+  function nextQ() { const q = C.quiz[st.n % C.quiz.length]; return q; }
   function reward() {
-    st.n++; st.bloom = Math.min(N_FLOWER, st.bloom + 13); save('academy.tree', st);
+    st.n++; st.bloom = Math.min(N_FLOWER, st.bloom + 13); save(C.key, st);
     magic.setMana(magic.mana + 21);
     if (A) { A.swirl = 21; A.talk = 4; refreshBloom(); magic.burst(new THREE.Vector3(A.wx, A.gy + 21, A.wz), new THREE.Vector3(0, 1, 0), '#ffb3d1', 34, 4, 1); }
-    ctx.toast(`🌸 Cụ Đa cười khà khà: «Giỏi lắm cháu ơi!» Cây nở thêm hoa pha lê, đom đóm bay quanh tán. <b>+21 năng lượng phép</b>.${st.bloom >= N_FLOWER ? ' Tán đa đã nở rực rỡ!' : ''}`, 5500);
+    ctx.toast(`🌸 ${C.name} cười khà khà: «Giỏi lắm cháu ơi!» Cây nở thêm hoa pha lê, đom đóm bay quanh tán. <b>+21 năng lượng phép</b>.${st.bloom >= N_FLOWER ? ' Tán đa đã nở rực rỡ!' : ''}`, 5500);
   }
   function wake(msg, talk = 4.5) {
     if (!A) return;
@@ -193,10 +195,10 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     A.away = 0; A.talk = talk; if (msg) ctx.toast(msg, Math.max(3500, talk * 1300));
   }
   function story() {
-    const s = STORIES[st.s % STORIES.length]; st.s++; save('academy.tree', st);
-    wake(`🌳 <b>Cụ Đa</b> kể: «${s}»`, 6);
+    const s = C.stories[st.s % C.stories.length]; st.s++; save(C.key, st);
+    wake(`🌳 <b>${C.name}</b> kể: «${s}»`, 6); ctx.forestEvent && cfg && ctx.forestEvent('tale');
   }
-  function quiz() { wake(null, 2); magic.ask(nextQ(), reward, '🌳 Câu đố của Cụ Đa'); }
+  function quiz() { wake(null, 2); magic.ask(nextQ(), reward, `🌳 Câu đố của ${C.name}`); }
 
   function unbuild() {
     if (!g) return;
@@ -212,11 +214,11 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     g.visible = d < 296; if (!near) return;
     // thức / ngủ
     const inYard = Math.abs(p.y - A.gy) < 4;
-    if (!A.awake && d <= TALK_R && inYard) wake('🌳 Cây đa cổ thụ mở mắt, rung rinh tán lá: «Ồ… chào cháu! Ta là <b>Cụ Đa</b>, đứng ở Sân Thảo Mộc này đã hơn nghìn năm. Cháu muốn nghe chuyện hay giải đố nào?»', 5);
+    if (!A.awake && d <= TALK_R && inYard) wake(C.hello || '🌳 Cây đa cổ thụ mở mắt, rung rinh tán lá: «Ồ… chào cháu! Ta là <b>Cụ Đa</b>, đứng ở Sân Thảo Mộc này đã hơn nghìn năm. Cháu muốn nghe chuyện hay giải đố nào?»', 5);
     if (A.awake && d > SLEEP_R) { A.away += dt; if (A.away > 8) A.awake = false; }
     if (A.awake && d <= TALK_R && inYard && !ctx.player.vehicle) {
-      if (A.mode === 0) ctx.offer('📖 Cụ Đa kể chuyện', () => { story(); A.mode = 1; }, 8);
-      else ctx.offer('❓ Câu đố Cụ Đa', () => { quiz(); A.mode = 0; }, 8);
+      if (A.mode === 0) ctx.offer(`📖 ${C.name} kể chuyện`, () => { story(); A.mode = 1; }, 8);
+      else ctx.offer(`❓ Câu đố ${C.name}`, () => { quiz(); A.mode = 0; }, 8);
     }
     A.talk = Math.max(0, A.talk - dt); A.swirl = Math.max(0, A.swirl - dt);
     const talking = A.talk > 0, u = A.body.material.userData.u;
