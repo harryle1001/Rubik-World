@@ -1,7 +1,7 @@
 // olympics.js — THẾ VẬN HỘI RUBIK 3D: sân vận động có khán đài cổ vũ, học sinh toon chạy/nhảy/bơi thật bằng animation.
-//   🏃 Chạy tiếp sức 4 × 34 m (chạm để chạy, bấm 🤝 trao gậy trong vùng vàng)
+//   🏃 Chạy tiếp sức 4 × 21 m (chạm để chạy, bấm 🤝 trao gậy trong vùng vàng)
 //   🦘 Nhảy xa (chạy đà, giữ để chọn góc bật, thả để bật — học về góc bay)
-//   🏊 Bơi 50 m (chạm = 1 nhịp tay, 😮‍💨 thở đúng nhịp 3 tay)
+//   🏊 Bơi 25 m (chạm = 1 nhịp tay, 😮‍💨 thở đúng nhịp 3 tay)
 //   🪶 Đá cầu (chạm đúng lúc quả cầu rơi tới chân — môn dân gian Việt Nam)
 //   🪢 Kéo co 5 × 5 (chạm theo nhịp "Dô ta" + giải phép tính nhanh để cả đội kéo mạnh)
 // Điều khiển 1 tay: chạm / giữ ở bất kỳ đâu + 1 nút lớn bên phải. Máy tính: Space, nút E/Enter cho nút lớn.
@@ -14,20 +14,20 @@ const EVENTS = {
     fact: 'Tiếp sức: bạn nhận gậy chạy đà trước trong vùng trao gậy nên không mất tốc độ. Chạy xong, đi bộ chậm và thả lỏng để tim đập chậm lại từ từ.' },
   longjump: { n: 'Nhảy xa', i: '🦘', unit: 'm', how: 'Chạm liên tục để chạy đà. Gần ván giậm: GIỮ để chọn góc bật, THẢ tay để bật nhảy (đừng giẫm quá vạch đỏ!).',
     fact: 'Quãng bay ≈ 2·v<sub>ngang</sub>·v<sub>đứng</sub> / g. Vận động viên bật khoảng 20–30° (không phải 45°) vì chạy càng nhanh càng khó bật cao — tốc độ chạy đà quan trọng nhất!' },
-  swim: { n: 'Bơi 50 m', i: '🏊', unit: 's', lower: true, how: 'Mỗi lần chạm là 1 nhịp tay. Bấm 😮‍💨 để lấy hơi — chuẩn nhất là sau mỗi 3 nhịp tay.',
+  swim: { n: 'Bơi 25 m', i: '🏊', unit: 's', lower: true, how: 'Mỗi lần chạm là 1 nhịp tay. Bấm 😮‍💨 để lấy hơi — chuẩn nhất là sau mỗi 3 nhịp tay.',
     fact: 'Bơi sải thở mỗi 3 nhịp tay giúp đủ ô-xy và quay đầu đều cả hai bên. Luôn khởi động kỹ và chỉ xuống nước khi có người lớn trông chừng.' },
   dacau: { n: 'Đá cầu', i: '🪶', unit: 'quả', how: 'Chạm đúng lúc quả cầu rơi vào vòng sáng dưới chân (vòng chuyển xanh). Trượt 3 lần là hết lượt.',
     fact: 'Đá cầu là môn thể thao dân gian Việt Nam: rèn sự khéo léo, phản xạ và sự phối hợp tay – mắt – chân. Mắt luôn nhìn theo quả cầu, đá bằng má trong bàn chân.' },
   tug: { n: 'Kéo co', i: '🪢', unit: '', how: 'Chạm theo nhịp “Dô… TA!” để cả đội kéo. Trả lời đúng phép tính nhanh → cả đội kéo một cú thật mạnh!',
     fact: 'Kéo co: cả đội ngả người ra sau, chân bám chắc và hô “Dô ta” để kéo cùng một nhịp. Sức mạnh tập thể thắng sức mạnh một người!' },
 };
-// vị trí các khu trong sân (m)
-const V = { relay: [0, 0], longjump: [0, 21], swim: [-89, 0], dacau: [-34, 26], tug: [55, 28] };
-const LEG = 34, FINISH = LEG * 4, POOL = 50;
+// vị trí các khu trong sân (m) — sân gọn 105 × 63 m (trước 290 × 63 m quá lớn, đè lên nhiều khu của thế giới): 4 × 21 m tiếp sức, bể 25 m
+const V = { relay: [-42, 0], longjump: [-30, 13], swim: [-12, -24], dacau: [8, 19], tug: [32, 19] };
+const LEG = 21, FINISH = LEG * 4, POOL = 25;
 
 function start(ctx, opts = {}) {
   const quit = () => (opts.onExit || opts.exit || opts.close || (() => self.dispose()))();
-  const A = arena(ctx, { sky: ['#6fb7ff', '#e6f3ff'], fog: [89, 340], shadow: 55, api: opts.api, center: [40, 12] }), { scene, cam } = A, W = !!A.inWorld;   // W: sân đặt trong thế giới mở
+  const A = arena(ctx, { sky: ['#6fb7ff', '#e6f3ff'], fog: [89, 340], shadow: 55, api: opts.api, center: [0, -4] }), { scene, cam } = A, W = !!A.inWorld;   // W: sân đặt trong thế giới mở
   const H = hud('🏅 Thế vận hội Rubik', quit, opts.api), inp = tapper(document.body), S = sfx(ctx), unlock = lockWorld(ctx);
   const T = new THREE.Vector3(), camP = new THREE.Vector3(0, 4, 12), camL = new THREE.Vector3();
   let ev = null, evKey = null, t = 0, clockT = 0;
@@ -37,26 +37,26 @@ function start(ctx, opts = {}) {
   {
     const b = batch();
     // cỏ: lưới có màu loang nhẹ
-    const g = W ? new THREE.PlaneGeometry(290, 63, 29, 6).rotateX(-Math.PI / 2) : new THREE.PlaneGeometry(420, 260, 42, 26).rotateX(-Math.PI / 2), p = g.attributes.position, c = new Float32Array(p.count * 3), col = new THREE.Color();
+    const g = W ? new THREE.PlaneGeometry(105, 63, 11, 6).rotateX(-Math.PI / 2) : new THREE.PlaneGeometry(420, 260, 42, 26).rotateX(-Math.PI / 2), p = g.attributes.position, c = new Float32Array(p.count * 3), col = new THREE.Color();
     for (let i = 0; i < p.count; i++) { col.set(((Math.floor(p.getX(i) / 10) + Math.floor(p.getZ(i) / 10)) & 1) ? '#7cc062' : '#72b758').offsetHSL(0, 0, rnd(-0.02, 0.02)); c.set([col.r, col.g, col.b], i * 3); }
     g.setAttribute('color', new THREE.BufferAttribute(c, 3)); g.deleteAttribute('uv');
-    const grass = new THREE.Mesh(g, vmat); grass.receiveShadow = true; grass.position.set(W ? 40 : 20, W ? 0.02 : 0, W ? 12 : 10); scene.add(grass);
+    const grass = new THREE.Mesh(g, vmat); grass.receiveShadow = true; grass.position.set(W ? 0 : 20, W ? 0.02 : 0, W ? -4 : 10); scene.add(grass);
     // đường chạy: 4 làn, vạch trắng, vùng trao gậy vàng, vạch đích ca-rô
     const [rx, rz] = V.relay;
-    b.box(FINISH + 34, 0.04, 8, rx + FINISH / 2, 0, rz, '#c0533a');
-    for (let i = 0; i <= 4; i++) b.box(FINISH + 34, 0.05, 0.07, rx + FINISH / 2, 0, rz + (i - 2) * 1.6, '#ffffff');
+    b.box(FINISH + 13, 0.04, 8, rx + FINISH / 2, 0, rz, '#c0533a');
+    for (let i = 0; i <= 4; i++) b.box(FINISH + 13, 0.05, 0.07, rx + FINISH / 2, 0, rz + (i - 2) * 1.6, '#ffffff');
     for (let k = 1; k < 4; k++) { b.box(10, 0.045, 6.4, rx + k * LEG, 0.004, rz, '#f2c14e'); b.box(0.12, 0.06, 6.4, rx + k * LEG - 5, 0, rz, '#fff'); b.box(0.12, 0.06, 6.4, rx + k * LEG + 5, 0, rz, '#fff'); }
     for (let i = 0; i < 16; i++) b.box(0.4, 0.06, 0.4, rx + FINISH + (i % 2) * 0.4 - 0.2, 0, rz - 3 + i * 0.4, i % 2 ? '#222' : '#fff');
     b.box(0.2, 3.4, 0.2, rx + FINISH, 0, rz - 3.6, '#ddd'); b.box(0.2, 3.4, 0.2, rx + FINISH, 0, rz + 3.6, '#ddd'); b.box(0.3, 0.8, 7.6, rx + FINISH, 3.3, rz, '#e8453c');
     // nhảy xa: đường chạy đà, ván giậm, hố cát
     const [lx, lz] = V.longjump;
-    b.box(36, 0.04, 1.6, lx + 17, 0, lz, '#c0533a'); b.box(0.2, 0.06, 1.6, lx + LEG, 0, lz, '#ffffff'); b.box(0.08, 0.065, 1.6, lx + LEG + 0.14, 0, lz, '#e8453c');
+    b.box(LEG + 2, 0.04, 1.6, lx + LEG / 2, 0, lz, '#c0533a'); b.box(0.2, 0.06, 1.6, lx + LEG, 0, lz, '#ffffff'); b.box(0.08, 0.065, 1.6, lx + LEG + 0.14, 0, lz, '#e8453c');
     b.box(11, 0.1, 3.4, lx + LEG + 6, 0, lz, '#f0d9a0'); b.box(11.4, 0.16, 0.2, lx + LEG + 6, 0, lz - 1.8, '#d9cfc0'); b.box(11.4, 0.16, 0.2, lx + LEG + 6, 0, lz + 1.8, '#d9cfc0');
     for (let m = 3; m <= 8; m++) b.box(0.05, 0.12, 0.6, lx + LEG + m, 0, lz - 2.3, '#ffffff');
-    // hồ bơi 50 m: thành bể, làn phao
+    // hồ bơi 25 m: thành bể, làn phao
     const [px, pz] = V.swim;
     b.box(POOL + 6, 0.35, 14, px + POOL / 2, 0, pz, '#e9eef2');
-    for (let i = 0; i <= 4; i++) for (let k = 0; k < 50; k++) b.add(new THREE.SphereGeometry(0.13, 6, 4), k % 5 ? (i % 2 ? '#e8453c' : '#3d8fd9') : '#ffffff', px + k + 0.5, 0.33, pz + (i - 2) * 2.4);
+    for (let i = 0; i <= 4; i++) for (let k = 0; k < POOL; k++) b.add(new THREE.SphereGeometry(0.13, 6, 4), k % 5 ? (i % 2 ? '#e8453c' : '#3d8fd9') : '#ffffff', px + k + 0.5, 0.33, pz + (i - 2) * 2.4);
     for (let i = 0; i < 4; i++) b.box(0.8, 0.6, 1, px - 0.6, 0.35, pz + (i - 1.5) * 2.4, '#ffffff');
     // sân đá cầu: thảm tròn
     const [dx, dz] = V.dacau; b.add(new THREE.CylinderGeometry(5.5, 5.5, 0.05, 34), '#3d8fd9', dx + 1.7, 0.025, dz); b.add(new THREE.CylinderGeometry(5.2, 5.2, 0.06, 34), '#5aa0e0', dx + 1.7, 0.03, dz);
@@ -67,14 +67,14 @@ function start(ctx, opts = {}) {
     for (const [x, z] of [[rx - 5, rz - 9], [rx + FINISH + 5, rz - 9], [px - 3, pz - 11], [px + POOL + 3, pz - 11]]) b.box(0.2, 7, 0.2, x, 0, z, '#ffffff');
     // vòng Olympic 5 màu trên tường khán đài
     const ring = new THREE.TorusGeometry(0.8, 0.12, 6, 24);
-    ['#3d8fd9', '#222222', '#e8453c', '#f2c14e', '#3fa36b'].forEach((cc, i) => b.add(ring, cc, rx + 60 + i * 1.8, i % 2 ? 6.9 : 7.6, rz - 9.6));
+    ['#3d8fd9', '#222222', '#e8453c', '#f2c14e', '#3fa36b'].forEach((cc, i) => b.add(ring, cc, rx + FINISH / 2 - 4 + i * 1.8, i % 2 ? 6.9 : 7.6, rz - 9.6));
     // cây quanh sân
     if (!W) for (let i = 0; i < 34; i++) { const a = i / 34 * TAU, x = 20 + Math.cos(a) * 160 + rnd(-6, 6), z = 10 + Math.sin(a) * 75 + rnd(-6, 6); b.add(new THREE.CylinderGeometry(0.25, 0.35, 2.2, 5), '#7a5232', x, 1.1, z); b.add(new THREE.IcosahedronGeometry(1.9, 0), pick(['#4f9a45', '#5aa84f', '#3f8a3e']), x, 3.4, z); }
     const m = b.mesh(); scene.add(m);
     // mặt nước hồ bơi
     const water = new THREE.Mesh(new THREE.PlaneGeometry(POOL, 10).rotateX(-Math.PI / 2), new THREE.MeshToonMaterial({ color: '#3fb6e0', transparent: true, opacity: 0.86 }));
     water.position.set(px + POOL / 2, 0.22, pz); scene.add(water); A.water = water;
-    crowds.push(crowd(scene, { x: rx + FINISH / 2, z: rz - 5.6, len: 144, rows: 4 }), crowd(scene, { x: px + POOL / 2, z: pz - 7.6, len: 55, rows: 4 }), crowd(scene, { x: tx, z: tz - 4.5, len: 21, rows: 3 }), crowd(scene, { x: dx + 1.7, z: dz - 7, len: 13, rows: 3 }));
+    crowds.push(crowd(scene, { x: rx + FINISH / 2, z: rz - 5.6, len: 89, rows: 4 }), crowd(scene, { x: px + POOL / 2, z: pz - 7.6, len: 34, rows: 4 }), crowd(scene, { x: tx, z: tz - 4.5, len: 21, rows: 3 }), crowd(scene, { x: dx + 1.7, z: dz - 7, len: 13, rows: 3 }));
   }
 
   // ---------- Học sinh: đội Đỏ (bạn) + 3 đội bạn ----------
@@ -215,7 +215,7 @@ function start(ctx, opts = {}) {
     function done() { const d = bestD, medal = d >= 5.4 ? 1 : d >= 4.8 ? 2 : d >= 4 ? 3 : 0; finish('longjump', +d.toFixed(2), medal, `Thành tích tốt nhất: ${d.toFixed(2)} m`); }
   };
 
-  // ---------- Bơi 50 m ----------
+  // ---------- Bơi 25 m ----------
   EV.swim = () => {
     const [ox, oz] = V.swim, laneZ = i => oz + (i - 1.5) * 2.4, sw = [0, 1, 2, 3].map(tm => ({ r: R[tm][tm ? 1 : 0], tm, x: ox, v: 0, done: false, skill: tm ? rnd(2.55, 3.1) : 0, br: 1, strokes: 0, breathT: 0, t: 0 }));
     let go = false, time = 0, pl1 = 0, breath = 1, sinceBreath = 0, breathing = 0, dive = 0;
@@ -243,7 +243,7 @@ function start(ctx, opts = {}) {
           play(s.r.h, 'run', 0.2, clamp(s.v * 0.9, 0.3, 3)); if (Math.random() < dt * s.v * 2.5) puff(s.x + 0.4, 0.3, z, '#ffffff', 1, 0.5);
         }
         bar.set(breath); bar.color(breath < 0.25 ? '#d2553f' : '#7fd1ff');
-        H.score(`⏱ ${time.toFixed(1)} s · ${Math.max(0, sw[0].x - ox).toFixed(0)}/50 m · 💨`);
+        H.score(`⏱ ${time.toFixed(1)} s · ${Math.max(0, sw[0].x - ox).toFixed(0)}/${POOL} m · 💨`);
         for (const c of crowds) c.excite(0.3 + sw[0].v / 6);
         T.set(sw[0].x + 3, 0.2, oz); return [sw[0].x - 1, 6.2, oz + 10];
       },
