@@ -123,7 +123,7 @@ export function createSchoolInterior(ctx) {
   const { scene } = ctx; ctx.boxes = ctx.boxes || []; ctx.decks = ctx.decks || [];
   const U = { uP: { value: new THREE.Vector3(0, -999, 0) }, uC: { value: new THREE.Vector3() } };
   const floors = [], wallMat = cutawayMat(U), vmat = toon('#ffffff', { vertexColors: true });
-  let built = false, cur = -1, entry = null, msgT = 0;
+  let built = false, cur = -1, entry = null, msgT = 0; let staged = null;   // dàn cảnh cho clip mở đầu (intro.js)
   // cửa vào: cửa Văn phòng (bản đồ trường, mặt bắc) → toạ độ 3D lấy lúc trường dựng xong
   let door = null; const doorOut = () => { if (door) return door; const S = ctx.school, r = S && S.ready && S.RS && S.RS.R && S.RS.R.office; if (!r || !r.dw) return null; return (door = to3(r.dw[0], r.dw[1])); };
 
@@ -444,6 +444,7 @@ export function createSchoolInterior(ctx) {
   let tick = 0, wantN = 0;
   function update(dt) {
     const p = ctx.player.pos;
+    if (staged) { U.uP.value.set(p.x, p.y + 1.0, p.z); U.uC.value.copy(ctx.camera.position); updateCrew(dt); return; }
     if (cur < 0) {   // ngoài trời: bước qua cửa Văn phòng (mặt bắc) → vào toà
       const d = doorOut(); if (!d || ctx.player.vehicle) return;
       const dxp = p.x - d[0], dzp = p.z - d[1];
@@ -475,5 +476,12 @@ export function createSchoolInterior(ctx) {
   }
   function msg(f) { if ((msgT = performance.now()) && ctx.toast) ctx.toast('🏫 ' + FLOOR_NAME[f], 2200); }
 
-  return { update, roomAt, boardOf, enter, exit, ROOMS, get floor() { return cur; }, get built() { return built; }, floors };
+  // clip mở đầu: dựng 1 phòng có học sinh ngồi (không theo thời khoá biểu); stage(null) trả về bình thường
+  async function stage(id, n = 8) {
+    const room = id && ROOMS.find(r => r.id === id);
+    if (!room) { staged = null; placeCrew(null); show(-1); return null; }
+    staged = room; show(room.f); await ensureCrew(n); if (staged === room) placeCrew(room, 'intro');
+    return { room, X: x => fx(room.f) + x, Y: fy(room.f), Z: z => OZ + z };
+  }
+  return { update, roomAt, boardOf, enter, exit, stage, ROOMS, get floor() { return cur; }, get built() { return built; }, floors };
 }
