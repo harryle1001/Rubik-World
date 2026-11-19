@@ -1,5 +1,5 @@
 // Service worker: chỉ cache Đảo Rubik 3D (game duy nhất; game 2D lưu trữ không được cache) → mở nhanh, offline có trang thân thiện.
-const CACHE = 'dao-rubik-v4';
+const CACHE = 'dao-rubik-v5';
 // Đảo 3D: file nạp sẵn; model .glb, three.js, bộ giải nén Draco được cache khi dùng lần đầu
 const ISLAND = ['/ocean.html', '/js/ocean.js', ...['config', 'style', 'sky', 'post', 'terrain', 'player', 'models', 'quiz-data', 'temple', 'audio', 'net', 'characters', 'animals', 'school-town', 'layout', 'data/index', 'data/map', 'data/people', 'data/clock', 'data/account', 'mg/host'].map(n => `/js/island/${n}.js`),
   '/lib/three/build/three.module.js', ...['den', 'rua', 'da'].map(n => `/assets/models/${n}.glb`),
@@ -13,7 +13,7 @@ self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c =>
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  if(e.request.method !== 'GET' || url.origin !== location.origin || url.pathname.startsWith('/socket.io/') || url.pathname.startsWith('/school/')) return; // live game traffic never cached
+  if(e.request.method !== 'GET' || url.origin !== location.origin || url.pathname.startsWith('/socket.io/') || url.pathname.startsWith('/api/') || url.pathname.startsWith('/pay/') || url.pathname.startsWith('/school/')) return; // live game traffic + API (ví, tiến độ, thanh toán) never cached
   if(e.request.mode === 'navigate'){ e.respondWith(fetch(e.request).then(r => { const c = r.clone(); caches.open(CACHE).then(k => k.put(e.request, c)); return r; }).catch(() => caches.match(e.request).then(r => r || caches.match('/ocean.html')).then(r => r || caches.match('/offline.html')))); return; }
   e.respondWith(caches.match(e.request).then(hit => { const net = fetch(e.request).then(r => { if(r.ok){ const c = r.clone(); caches.open(CACHE).then(k => k.put(e.request, c)); } return r; }).catch(() => hit); return hit || net; }));
 });

@@ -233,5 +233,5 @@ io.on('connection', socket => {
 const ready = require('./online')(app, io, { ADMIN_KEY, express, rateLimit });
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
-ready.then(r => require('./island-extras')(r, { clean, ADMIN_KEY, ROOT, DATA }));   // phép thuật, làng, Săn Cầu Vàng, trang phục, mini game, Tàu Pha Lê, Đồng Pha Lê trên /island
+ready.then(r => { let ex; try { ex = require('./island-extras'); } catch (e) { if (e.code !== 'MODULE_NOT_FOUND') throw e; console.warn('[island] chưa có server/island-extras.js — bỏ qua phần mở rộng'); } if (ex) ex(r, { clean, ADMIN_KEY, ROOT, DATA }); });   // phép thuật, làng, Săn Cầu Vàng, trang phục, mini game, Tàu Pha Lê, Đồng Pha Lê trên /island
 ready.then(() => server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); })).catch(e => { console.error('Không mở được kho dữ liệu:', e); process.exit(1); });
