@@ -289,7 +289,7 @@ export function createGlider(ctx) {
     } else ctx.toast(`🪁 Tiếp đất an toàn sau khi lượn <b>${Math.round(d)} m</b>!${nt ? ` Bãi đáp gần nhất: <b>${nt.t.name}</b> (cách ${Math.round(nt.d)} m) — lần sau nhắm vòng đỏ trắng để nhận ⭐.` : ''}`, 5500);
   }
   bEject.addEventListener('pointerdown', e => { e.preventDefault(); eject(); });
-  addEventListener('keydown', e => { if (e.code === 'KeyX' && !e.repeat) eject();   // U đã là phím Ván bạc bay });
+  addEventListener('keydown', e => { if (e.code === 'KeyX' && !e.repeat) eject(); });   // U đã là phím Ván bạc bay
   const bJump = document.getElementById('bJump'); let jumpLb = '';
   const setJump = s => { if (bJump && jumpLb !== s) { jumpLb = s; bJump.textContent = s || 'Nhảy'; } };
 
