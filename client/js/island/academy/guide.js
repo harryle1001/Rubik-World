@@ -46,6 +46,8 @@ const OUT = [
   [-8, -46, Math.PI / 2, '🪄 Sân Luyện Đũa · 🔭 Tháp Thiên Văn\n⬆ Cầu có mái → 🌲 Rừng Phép Thuật'],
   [-8, 46, -Math.PI / 2, '🌿 Nhà Kính (lớp Thảo Dược)\n📚 Thư viện tối (phép Sáng lên)'],
   [52, 66, -Math.PI / 2, '🧹 SÂN BAY CHỔI ➡ qua cầu đá\n8 vòng sáng · vòng tím có câu hỏi'],
+  [-120.5, 10, 0, '⬅ 🦉 Tháp Cú · 🌀 Tháp Cầu Thang Phép\n➡ 🛍️ Phố Phép Thuật Mới (Sân Bắc)'],
+  [-50, 16, 0, '⬆ Sau Đại sảnh: cổng sau → SÂN BẮC\n🦉 Tháp Cú · 🌀 Cầu Thang Phép · 🛍️ Phố Mới'],
   [-52, -104, Math.PI / 2, '🌲 Rừng Phép Thuật ⬅ qua cầu\n🗝️ 13 bí mật đang chờ'],
 ];
 // biển trong lâu đài theo tầng: [x, z, ry, chữ] — 2 đầu hành lang chính + cạnh giếng cầu thang
