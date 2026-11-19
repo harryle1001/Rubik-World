@@ -18,7 +18,7 @@ export function furnish(k, y, B) {
   // kệ sách cao nhiều tầng: chồng 3 kệ scale 2 (4 × 4,9 m), mặt trước theo ry
   const tallShelf = (x, z, ry, tiers = 3, s = 2) => { for (let i = 0; i < tiers; i++) put('furn_bookshelf_full', x, z, s, ry, 0.2 + i * 1.64); };
   const fireplace = (x, z, ry, w = 4) => { const g = new THREE.Group(); const b = new THREE.BoxGeometry(w, 3.2, 1.2); S.add(b, '#6f6a62', x, y + 1.6, z, ry); S.add(new THREE.BoxGeometry(w + 0.6, 0.35, 1.5), '#5a554e', x, y + 3.3, z, ry); G.add(new THREE.BoxGeometry(w * 0.55, 1.2, 0.2), '#ff9a3a', x + Math.sin(ry) * 0.55, y + 0.7, z + Math.cos(ry) * 0.55, ry); void g; };
-  const bed = (x, z, ry, col) => { const s = Math.sin(ry), c = Math.cos(ry); S.add(new THREE.BoxGeometry(2.2, 0.55, 3.2), WOOD, x, y + 0.28, z, ry); S.add(new THREE.BoxGeometry(2.0, 0.25, 2.6), col, x + s * 0.25, y + 0.68, z + c * 0.25, ry); S.add(new THREE.BoxGeometry(1.4, 0.22, 0.6), '#f3efe6', x - s * 1.15, y + 0.7, z - c * 1.15, ry); S.add(new THREE.BoxGeometry(2.2, 1.6, 0.15), WOOD, x - s * 1.6, y + 0.8, z - c * 1.6, ry); for (const q of [-1, 1]) for (const e of [-1.55, 1.55]) S.add(new THREE.CylinderGeometry(0.07, 0.07, 2.4, 5), WOODL, x + c * q * 1.0 + s * e, y + 1.2, z - s * q * 1.0 + c * e); };
+  const bed = (x, z, ry, col) => { const s = Math.sin(ry), c = Math.cos(ry); S.add(new THREE.BoxGeometry(2.2, 0.55, 3.2), WOOD, x, y + 0.28, z, ry); S.add(new THREE.BoxGeometry(2.05, 0.18, 3.0), '#f3efe6', x, y + 0.62, z, ry); S.add(new THREE.BoxGeometry(2.0, 0.25, 2.6), col, x + s * 0.25, y + 0.68, z + c * 0.25, ry); S.add(new THREE.BoxGeometry(1.4, 0.22, 0.6), '#f3efe6', x - s * 1.15, y + 0.7, z - c * 1.15, ry); S.add(new THREE.BoxGeometry(2.2, 1.6, 0.15), WOOD, x - s * 1.6, y + 0.8, z - c * 1.6, ry); for (const q of [-1, 1]) for (const e of [-1.55, 1.55]) S.add(new THREE.CylinderGeometry(0.07, 0.07, 2.4, 5), WOODL, x + c * q * 1.0 + s * e, y + 1.2, z - s * q * 1.0 + c * e); };
   const cauldron = (x, z) => { S.add(new THREE.CylinderGeometry(0.75, 0.55, 0.9, 10), IRON, x, y + 0.65, z); G.add(new THREE.CircleGeometry(0.62, 10).rotateX(-H), '#7dff9a', x, y + 1.08, z); G.add(new THREE.ConeGeometry(0.35, 0.3, 6), '#ff8a3a', x, y + 0.15, z); };
   const globe = (x, z, r = 0.55, h = 1.1) => { S.add(new THREE.CylinderGeometry(0.08, 0.3, h, 6), WOOD, x, y + h / 2, z); S.add(new THREE.SphereGeometry(r, 10, 7), '#3f7fa8', x, y + h + r, z); S.add(new THREE.TorusGeometry(r + 0.08, 0.03, 4, 16), GOLD, x, y + h + r, z, 0, 0.4); };
   const scope = (x, z, ry, L = 2.6) => { S.add(new THREE.CylinderGeometry(0.05, 0.05, 1.4, 5), WOOD, x, y + 0.7, z); S.add(new THREE.CylinderGeometry(0.16, 0.22, L, 8), GOLD, x, y + 1.6, z, ry, 1.0); };
@@ -128,10 +128,10 @@ export function furnish(k, y, B) {
       for (const [x, z] of [[85, 6], [64, 17], [74.5, 17]]) { S.add(new THREE.ConeGeometry(0.3, 0.5, 8), '#e8d8a8', x, y + 1.35, z, 0, PI); S.add(new THREE.ConeGeometry(0.3, 0.5, 8), '#e8d8a8', x, y + 1.85, z); G.add(new THREE.SphereGeometry(0.08, 6, 4), '#9fe6ff', x, y + 1.55, z); }
       row(4, 62, 24.5, 87, 24.5, (x, z) => put('furn_cabinet', x, z, 1.1, PI)); put('prop_workbench', 87, 3, 6, -H);
       // Phòng ngủ khách ×3
-      for (const [x, col] of [[3.5, '#8a3a5a'], [10.5, '#8a3a5a']]) { bed(x, 52, 0, col); put('furn_table_small', x + 2, 54, 0.6); }
-      for (const [x, col] of [[18, '#2f5a8a'], [25, '#2f5a8a']]) bed(x, 52, 0, col);
+      for (const [x, col] of [[3.5, '#e86a8a'], [10.5, '#e8c65a']]) { bed(x, 52.6, PI, col); put('furn_table_small', x + 2.2, 54, 0.6); }
+      for (const [x, col] of [[18, '#5a9ae8'], [25, '#5ad8a0']]) bed(x, 52.6, PI, col);
       put('furn_rug', 7, 43, 1.8); put('furn_cabinet', 1, 40, 1.1, H); put('furn_lamp', 13, 33, 1.1); put('furn_rug', 21.5, 43, 1.8); put('furn_cabinet', 28, 40, 1.1, -H); put('furn_chair', 16, 33, 1, 0.6);
-      bed(66, 52, 0, '#3a7a4a'); bed(74, 52, 0, '#3a7a4a'); put('furn_rug', 70, 43, 2); put('furn_armchair', 78, 34, 1.1, -H); put('furn_lamp', 62, 33, 1.1);
+      bed(66, 52.6, PI, '#f0a040'); bed(74, 52.6, PI, '#a07ae8'); put('furn_rug', 70, 43, 2); put('furn_armchair', 78, 34, 1.1, -H); put('furn_lamp', 62, 33, 1.1);
       // Phòng Pha Chế (điểm neo lớp 'potion'): vạc + bàn
       for (const [x, z] of [[34, 47], [40, 47], [49, 47], [55, 47], [37, 52], [52, 52]]) cauldron(x, z); row(3, 31, 54.4, 58, 54.4, (x, z) => { put('furn_shelf_big', x, z, 1.8, PI); put('prop_urn', x - 0.6, z - 0.2, 2, 0, 0.6); put('prop_urn', x + 0.6, z - 0.2, 2, 1, 0.6); });
       // Phòng Tự Học
