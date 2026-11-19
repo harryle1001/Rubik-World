@@ -1,0 +1,885 @@
+{
+ "wall-wood": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 32,
+  "kb": 16.1,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood"
+ },
+ "wall-wood-window-glass": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 122,
+  "kb": 17.3,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-window-glass"
+ },
+ "wall-wood-window-shutters": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 122,
+  "kb": 17.2,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-window-shutters"
+ },
+ "wall-wood-window-round": {
+  "size": [
+   0.2,
+   1,
+   1
+  ],
+  "tris": 294,
+  "kb": 18.8,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-window-round"
+ },
+ "wall-wood-window-small": {
+  "size": [
+   0.2,
+   1,
+   1
+  ],
+  "tris": 134,
+  "kb": 17.4,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-window-small"
+ },
+ "wall-wood-door": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 376,
+  "kb": 19.5,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-door"
+ },
+ "wall-wood-doorway-round": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 172,
+  "kb": 17.6,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-doorway-round"
+ },
+ "wall-wood-detail-cross": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 80,
+  "kb": 16.9,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-detail-cross"
+ },
+ "wall-wood-slope": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 84,
+  "kb": 16.7,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-slope"
+ },
+ "wall-wood-side": {
+  "size": [
+   0.1,
+   1,
+   0.26
+  ],
+  "tris": 22,
+  "kb": 16,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-side"
+ },
+ "wall-wood-corner": {
+  "size": [
+   1,
+   1,
+   1
+  ],
+  "tris": 52,
+  "kb": 16.5,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-wood-corner"
+ },
+ "wall": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 32,
+  "kb": 16.1,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall"
+ },
+ "wall-window-glass": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 178,
+  "kb": 17.9,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-window-glass"
+ },
+ "wall-window-shutters": {
+  "size": [
+   0.17,
+   1,
+   1
+  ],
+  "tris": 286,
+  "kb": 19.4,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-window-shutters"
+ },
+ "wall-window-round": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 278,
+  "kb": 19,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-window-round"
+ },
+ "wall-door": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 376,
+  "kb": 19.4,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-door"
+ },
+ "wall-doorway-round": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 172,
+  "kb": 17.4,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-doorway-round"
+ },
+ "wall-slope": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 32,
+  "kb": 16.1,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-slope"
+ },
+ "wall-side": {
+  "size": [
+   0.1,
+   1,
+   0.26
+  ],
+  "tris": 22,
+  "kb": 16,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-side"
+ },
+ "wall-corner": {
+  "size": [
+   1,
+   1,
+   1
+  ],
+  "tris": 52,
+  "kb": 16.5,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-corner"
+ },
+ "wall-arch": {
+  "size": [
+   0.1,
+   1,
+   0.3
+  ],
+  "tris": 32,
+  "kb": 16.1,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-arch"
+ },
+ "wall-arch-top-detail": {
+  "size": [
+   0.16,
+   1,
+   1
+  ],
+  "tris": 168,
+  "kb": 18.1,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-arch-top-detail"
+ },
+ "wall-block": {
+  "size": [
+   1,
+   1,
+   1
+  ],
+  "tris": 76,
+  "kb": 16.8,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wall-block"
+ },
+ "roof-high": {
+  "size": [
+   1.07,
+   1.18,
+   1
+  ],
+  "tris": 64,
+  "kb": 16.6,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-high"
+ },
+ "roof-high-gable": {
+  "size": [
+   1.1,
+   1.16,
+   1.13
+  ],
+  "tris": 72,
+  "kb": 16.8,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-high-gable"
+ },
+ "roof-high-gable-end": {
+  "size": [
+   1.12,
+   1.16,
+   1.13
+  ],
+  "tris": 52,
+  "kb": 16.6,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-high-gable-end"
+ },
+ "roof-high-gable-top": {
+  "size": [
+   1,
+   0.64,
+   1
+  ],
+  "tris": 56,
+  "kb": 16.5,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-high-gable-top"
+ },
+ "roof-high-point": {
+  "size": [
+   1.1,
+   1,
+   1.1
+  ],
+  "tris": 44,
+  "kb": 16.8,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-high-point"
+ },
+ "roof-high-window": {
+  "size": [
+   1.07,
+   1.18,
+   1
+  ],
+  "tris": 258,
+  "kb": 19,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-high-window"
+ },
+ "roof-high-flat": {
+  "size": [
+   1,
+   0.14,
+   1
+  ],
+  "tris": 20,
+  "kb": 15.9,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-high-flat"
+ },
+ "roof-high-corner": {
+  "size": [
+   1.07,
+   1.18,
+   1.07
+  ],
+  "tris": 36,
+  "kb": 16.3,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-high-corner"
+ },
+ "roof-gable-end": {
+  "size": [
+   1.09,
+   0.57,
+   1.07
+  ],
+  "tris": 50,
+  "kb": 16.6,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-gable-end"
+ },
+ "roof-point": {
+  "size": [
+   1.1,
+   0.5,
+   1.1
+  ],
+  "tris": 44,
+  "kb": 16.8,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "roof-point"
+ },
+ "chimney": {
+  "size": [
+   0.21,
+   1,
+   0.34
+  ],
+  "tris": 32,
+  "kb": 16.1,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "chimney"
+ },
+ "chimney-base": {
+  "size": [
+   0.34,
+   1,
+   0.52
+  ],
+  "tris": 78,
+  "kb": 17,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "chimney-base"
+ },
+ "chimney-top": {
+  "size": [
+   0.25,
+   0.63,
+   0.34
+  ],
+  "tris": 78,
+  "kb": 16.9,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "chimney-top"
+ },
+ "balcony-wall-fence": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 102,
+  "kb": 17.3,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "balcony-wall-fence"
+ },
+ "balcony-wall": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 64,
+  "kb": 16.6,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "balcony-wall"
+ },
+ "overhang": {
+  "size": [
+   0.28,
+   0.33,
+   1
+  ],
+  "tris": 68,
+  "kb": 16.8,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "overhang"
+ },
+ "banner-red": {
+  "size": [
+   0.05,
+   0.84,
+   0.5
+  ],
+  "tris": 98,
+  "kb": 17.3,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "banner-red"
+ },
+ "banner-green": {
+  "size": [
+   0.05,
+   0.84,
+   0.5
+  ],
+  "tris": 102,
+  "kb": 17.3,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "banner-green"
+ },
+ "lantern": {
+  "size": [
+   0.22,
+   1.56,
+   0.22
+  ],
+  "tris": 158,
+  "kb": 18.2,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "lantern"
+ },
+ "stall-red": {
+  "size": [
+   1,
+   1.24,
+   1
+  ],
+  "tris": 270,
+  "kb": 19.2,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "stall-red"
+ },
+ "stall-green": {
+  "size": [
+   1,
+   1.24,
+   1
+  ],
+  "tris": 322,
+  "kb": 19.6,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "stall-green"
+ },
+ "stall": {
+  "size": [
+   0.65,
+   0.37,
+   1
+  ],
+  "tris": 106,
+  "kb": 17.4,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "stall"
+ },
+ "stall-bench": {
+  "size": [
+   0.26,
+   0.23,
+   0.94
+  ],
+  "tris": 180,
+  "kb": 17.9,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "stall-bench"
+ },
+ "stall-stool": {
+  "size": [
+   0.26,
+   0.23,
+   0.26
+  ],
+  "tris": 180,
+  "kb": 17.9,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "stall-stool"
+ },
+ "cart": {
+  "size": [
+   0.89,
+   0.54,
+   1.34
+  ],
+  "tris": 608,
+  "kb": 24.1,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "cart"
+ },
+ "cart-high": {
+  "size": [
+   0.89,
+   0.86,
+   1.39
+  ],
+  "tris": 1028,
+  "kb": 31.2,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "cart-high"
+ },
+ "road": {
+  "size": [
+   1,
+   0.03,
+   1
+  ],
+  "tris": 12,
+  "kb": 15.7,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "road"
+ },
+ "planks": {
+  "size": [
+   1,
+   0.06,
+   1
+  ],
+  "tris": 96,
+  "kb": 17,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "planks"
+ },
+ "pillar-wood": {
+  "size": [
+   0.16,
+   1,
+   0.16
+  ],
+  "tris": 44,
+  "kb": 16.4,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "pillar-wood"
+ },
+ "pillar-stone": {
+  "size": [
+   0.16,
+   1,
+   0.16
+  ],
+  "tris": 124,
+  "kb": 17.5,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "pillar-stone"
+ },
+ "poles": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 28,
+  "kb": 16,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "poles"
+ },
+ "poles-horizontal": {
+  "size": [
+   0.1,
+   1,
+   1
+  ],
+  "tris": 40,
+  "kb": 16.3,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "poles-horizontal"
+ },
+ "fountain-round-detail": {
+  "size": [
+   2,
+   0.48,
+   2
+  ],
+  "tris": 1628,
+  "kb": 41.3,
+  "mats": 2,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "fountain-round-detail"
+ },
+ "stairs-stone": {
+  "size": [
+   1.02,
+   1,
+   0.5
+  ],
+  "tris": 136,
+  "kb": 17.7,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "stairs-stone"
+ },
+ "wheel": {
+  "size": [
+   0.24,
+   0.48,
+   0.47
+  ],
+  "tris": 192,
+  "kb": 19.1,
+  "mats": 1,
+  "tex": [
+   "128x128"
+  ],
+  "source": "Kenney Fantasy Town Kit 2.0 (CC0)",
+  "desc": "wheel"
+ },
+ "broom": {
+  "size": [
+   0.21,
+   0.21,
+   1.3
+  ],
+  "tris": 188,
+  "kb": 3.7,
+  "mats": 1,
+  "tex": [],
+  "source": "Medieval Tools Pack (System G6, OGA, CC0)",
+  "desc": "Chổi"
+ }
+}

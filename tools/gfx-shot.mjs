@@ -16,12 +16,15 @@ const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=sw
 const page = await browser.newPage(MOBILE ? { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 } : { viewport: { width: 1280, height: 720 } });
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
+await page.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); } catch (e) {} });
 await page.goto('http://localhost:3000/ocean.html');
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready, null, { timeout: 300000 });
 const fr = page.frames().find(f => f.url().includes('/school/'));
 if (fr) await fr.waitForSelector('#mLogin:not([hidden])', { timeout: 60000 }).catch(() => {});
 if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count()) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
+{ const g = page.locator('button[data-a="guest"]'); await g.first().click({ timeout: 8000 }).catch(() => {}); }
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
+await page.waitForTimeout(1500); { const k = page.getByText('Bỏ qua', { exact: true }); if (await k.count()) await k.first().click({ timeout: 3000 }).catch(() => {}); }
 await page.evaluate(() => {
   const c = __island; c.quality = () => {}; c.renderer.info.autoReset = false;
   const r = c.post.render; c.post.render = function () { c.renderer.info.reset(); r.call(this); window.__ri = { calls: c.renderer.info.render.calls, tris: c.renderer.info.render.triangles }; };
@@ -36,7 +39,7 @@ for (const H of HOURS) {
       if (v.cam) c.player.teleport(v.look[0], v.look[2]); else { c.player.teleport(v.x, v.z); c.player.cam.yaw = v.yaw; }
       c.terrain && c.terrain.state && c.terrain.state.relayoutAll && c.terrain.state.relayoutAll(c.player.pos);
     }, v);
-    await page.waitForTimeout(3500);
+    await page.waitForTimeout(+(process.argv.find(a => a.startsWith('--wait=')) || '--wait=3500').split('=')[1]);
     const ri = await page.evaluate(() => window.__ri);
     const name = `${v.name}-${String(H).replace('.', 'h')}${MOBILE ? '-dt' : ''}.png`;
     await page.screenshot({ path: `${OUT}/${name}` });

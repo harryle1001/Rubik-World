@@ -194,6 +194,8 @@ export function createMagic(ctx) {
   refresh();
   return {
     update, chooseWand, ask, burst, refresh, select,
+    setWand(wood, core) { st.wand = { wood: wood || (st.wand && st.wand.wood) || 'thong', core: core || (st.wand && st.wand.core) || 'lam' }; save('academy.wand', st.wand); paint(); refresh(); },   // Phố Phép Thuật: mua gỗ/lõi mới
+    get wand() { return st.wand; },
     get hasWand() { return !!st.wand; }, get mana() { return st.mana; }, setMana,
     addSpell(s) { spells.push(s); refresh(); }, addTarget(T) { targets.add(T); return T; }, removeTarget(T) { targets.delete(T); },
     get tip() { return tipW; }, get targets() { return targets; }, get spell() { return cur(); },

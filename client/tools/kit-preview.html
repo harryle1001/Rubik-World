@@ -11,7 +11,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 const q = new URLSearchParams(location.search), COLS = +q.get('cols') || 12, CELL = +q.get('cell') || 160, LBL = 18;
-let names = await (await fetch('/tools/kit-list.json')).json();
+const DIR = q.get('dir') || 'kit';   // ?dir=alley&list=a,b,c — xem kho khác
+let names = q.get('list') ? q.get('list').split(',') : await (await fetch('/tools/kit-list.json')).json();
 if (q.get('filter')) names = names.filter(n => n.startsWith(q.get('filter')));
 const rows = Math.ceil(names.length / COLS), sheet = document.getElementById('sheet');
 sheet.width = COLS * CELL; sheet.height = rows * (CELL + LBL);
@@ -24,7 +25,7 @@ const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(3, 5, 4)
 const cam = new THREE.PerspectiveCamera(30, 1, 0.01, 1000);
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
 for (let i = 0; i < names.length; i++) {
-  const gl = await new Promise(res => loader.load(`/assets/models/kit/${names[i]}.glb`, res, undefined, () => res(null)));
+  const gl = await new Promise(res => loader.load(`/assets/models/${DIR}/${names[i]}.glb`, res, undefined, () => res(null)));
   const x = (i % COLS) * CELL, y = Math.floor(i / COLS) * (CELL + LBL);
   if (gl) {
     const m = gl.scene; scene.add(m);
