@@ -104,7 +104,7 @@ export async function playIntro(ctx, { first = false } = {}) {
   const seat = V(5.02, 0.42, 5.35), hero = () => P.hero;
   const place = (p, ry) => { P.pos.copy(p); P.root.position.copy(p); P.root.rotation.set(0, ry, 0); const h = hero(); if (h) { h.model.position.set(0, 0, 0); h.model.rotation.set(0, 0, 0); } };
   place(seat, Math.PI / 2);   // người chơi: model nhìn −z cục bộ → yaw π/2 = nhìn −x (bảng)
-  let anim = null, animH = null, want = ['sit', 0, false]; const play = (n, f = 0.3, once = false) => { want = [n, f, once]; const h = hero(); if (!h) return; const k = h.set[n] || (n === 'floor' && h.set.sit) || h.set.idle; if (anim !== k || animH !== h) { anim = k; animH = h; h.anim.play(k, animH === h ? f : 0, once); } };
+  let anim = null, animH = null, want = ['sit', 0, false]; const play = (n, f = 0.3, once = false) => { want = [n, f, once]; const h = hero(); if (!h) return; const k = h.set[n] || (n === 'floor' && h.set.sit) || h.set.idle; if (anim !== k || animH !== h || h.anim.current !== h.anim.actions[k]) { anim = k; animH = h; h.anim.play(k, animH === h ? f : 0, once); } };
   // hướng mặt: đo từ 2 vai (VRM và chibi khác quy ước) → lật π nếu đang không nhìn về hướng mong muốn
   const _a = new THREE.Vector3(), _b = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
   const face = dir => { const B = bones(); if (!B || !B.armL || !B.armR) return; P.root.updateMatrixWorld(true); B.armL.getWorldPosition(_a); B.armR.getWorldPosition(_b); _a.sub(_b).cross(UP); if (_a.x * dir.x + _a.z * dir.z < 0) P.root.rotation.y += Math.PI; };
@@ -144,7 +144,7 @@ export async function playIntro(ctx, { first = false } = {}) {
     while (ni < NARR.length && t >= NARR[ni][0]) { const [, x] = NARR[ni++]; cap.style.opacity = 0; setTimeout(() => { if (done) return; cap.innerHTML = x; cap.style.opacity = 1; }, 250); speak(x); }
     while (si < SAY.length && t >= SAY[si][0]) { const [, x, v] = SAY[si++]; say.innerHTML = x; say.style.opacity = v; if (x && ni < 2) speak(x.replace(/[“”👨‍🏫]/gu, ''), v, 0.95); }
     if (music) music.volume = Math.max(0, Math.min(0.38, t < 2 ? t * 0.19 : t < 10 ? 0.38 - (t - 2) * 0.03 : t < 15 ? 0.14 : t < 18 ? 0.14 * (18 - t) / 3 : 0));
-    const h = hero(); if (h && animH !== h) play(...want); if (h) h.anim.update(dt);
+    const h = hero(); if (h) play(...want);   // giữ đúng động tác (hệ khác có thể gọi emote) if (h) h.anim.update(dt);
     if (teacher) teacher.anim.update(dt);
     // ----- cảnh lớp học (0 – 16,6 s) -----
     if (t < 16.6) {
