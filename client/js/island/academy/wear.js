@@ -9,7 +9,7 @@ export const CAPES = [
   { id: 'cape-tim', name: 'Tím sao', col: '#5b3a8e' }, { id: 'cape-vang', name: 'Vàng nghệ', col: '#c9962a' }, { id: 'cape-den', name: 'Đen tuyền', col: '#26232b' },
 ];
 export const HATS = [{ id: 'hat-tim', name: 'Mũ tím sao', col: '#6b4aa8' }, { id: 'hat-lam', name: 'Mũ lam đêm', col: '#2a3f7a' }, { id: 'hat-do', name: 'Mũ đỏ thẫm', col: '#8e2433' }];
-export const BROOMS = [{ id: 'broom', name: 'Chổi bay gỗ sồi', col: '#9a6a3e' }, { id: 'broom-vang', name: 'Chổi bay cán vàng', col: '#e0b040' }];
+export const BROOMS = [{ id: 'broom', name: 'Chổi bay gỗ sồi', col: '#9a6a3e', price: 34 }, { id: 'broom-tre', name: 'Chổi Tre Gió Lộng', col: '#9cb85a', price: 44 }, { id: 'broom-vang', name: 'Chổi bay cán vàng', col: '#e0b040', price: 55 }, { id: 'broom-sao', name: 'Chổi Sao Băng', col: '#8a7cff', price: 89 }];   // cưỡi được (brooms.js): 13 · 17 · 21 · 21×2 m/s
 export const PETS = [
   { id: 'pet-meo', name: 'Mèo mướp', model: 'animal-cat', size: 0.5, walk: 'Walk', run: 'Run', idle: 'Idle' },
   { id: 'pet-cun', name: 'Cún Shiba', model: 'animal-shiba', size: 0.62, walk: 'Walk', run: 'Gallop', idle: 'Idle' },
@@ -66,6 +66,7 @@ export function createWear(ctx) {
   function update(dt) {
     const hero = ctx.player.hero;
     if (hero && hero !== heroRef) { heroRef = hero; for (const s of ['cape', 'hat', 'broom']) if (st.eq[s]) mount(s, st.eq[s]); }
+    if (parts.broom) parts.broom.visible = !(ctx.vehicles && ctx.vehicles.riding === 'broom');   // đang cưỡi chổi: chổi sau lưng ẩn
     if (!pet && st.eq.pet && petId !== st.eq.pet) spawnPet(st.eq.pet);
     if (!pet) return;
     const pp = ctx.player.pos, R = pet.root, yaw = ctx.player.cam ? ctx.player.cam.yaw : 0;

@@ -39,7 +39,7 @@ body.rs-modal #bMore,body.rs-modal #moreMenu{display:none}
 @media (max-height:500px) and (orientation:landscape){.vbtns{flex-direction:row;top:calc(max(12px,env(safe-area-inset-top)) + 55px)}}
 .vbtns button{width:52px;height:52px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:24px;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer}
 .vbtns button.off{opacity:.38;filter:grayscale(1)}body.rs-modal .vbtns{display:none}@media (pointer:fine){#info{bottom:max(13px,env(safe-area-inset-bottom))}}
-#bUp{background:#d8632acc}#bDown{background:#3d6fb0cc}
+#bUp{background:#d8632acc}#bDown{background:#3d6fb0cc}.btns:has(#bDown:not([hidden])) #bRun:not([hidden]){transform:translateY(-83px);background:#c9962acc}
 #whistle{position:fixed;right:calc(max(12px,env(safe-area-inset-right)) + 63px);top:50%;transform:translateY(-50%);z-index:27;background:#1b1626e6;border:2px solid #fff6;border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:6px;max-height:55vh;overflow:auto;color:#fff;font:700 14px system-ui;min-width:190px}
 #whistle button{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:12px;border:0;background:#ffffff1c;color:#fff;font:700 15px system-ui;text-align:left;cursor:pointer}#whistle button:hover{background:#ffffff33}#whistle small{opacity:.7;font-weight:500}
 #tame{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:#0a1a2a99;padding:14px}
@@ -63,7 +63,7 @@ body.rs-modal #bMore,body.rs-modal #moreMenu{display:none}
 <button id="bAct" hidden></button>
 <div id="o2"><i><b id="o2f"></b></i></div>
 <div id="joy"><div id="knob"></div></div>
-<div class="vbtns"><button id="bStyle" title="Đổi kiểu xe (V)" hidden>🔄</button><button id="bBell" title="Chuông (R)" hidden>🔔</button><button id="bBike" title="Xe đạp (B)">🚲</button><button id="bBalloon" title="Khinh khí cầu (T)"></button><button id="bWhistle" title="Huýt sáo gọi thú cưỡi (H)">🎶</button></div>
+<div class="vbtns"><button id="bStyle" title="Đổi kiểu xe (V)" hidden>🔄</button><button id="bBell" title="Chuông (R)" hidden>🔔</button><button id="bBike" title="Xe đạp (B)">🚲</button><button id="bBalloon" title="Khinh khí cầu (T)"></button><button id="bBroom" title="Chổi bay (J)">🧹</button><button id="bWhistle" title="Huýt sáo gọi thú cưỡi (H)">🎶</button></div>
 <div id="whistle" hidden></div><div id="tame" hidden></div>
 <div class="btns"><button id="bRun">Chạy</button><button id="bJump">Nhảy</button><button id="bDive" hidden>🤿 Lặn</button><button id="bSurf" hidden>⬆ Nổi</button><button id="bDown" hidden>⬇ Xuống</button><button id="bUp" hidden>⬆ Lên</button></div>
 <script type="module" src="/js/ocean.js"></script>

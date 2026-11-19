@@ -18,6 +18,7 @@ import { SPAWN, landDist, blocked, ISLAND_R, TEMPLE_C } from './island/layout.js
 import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
 import { createMounts } from './island/mounts.js';
+import { createBrooms } from './island/brooms.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
@@ -130,6 +131,7 @@ const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + ti
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 const mounts = createMounts(ctx);
+const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp đảo (nút 🧹 / phím J), giá chổi ở Sân Đại Sảnh Học viện
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -181,6 +183,7 @@ renderer.setAnimationLoop(() => {
   vehicles.update(dt);
   aircraft.update(dt, clock.elapsedTime);
   mounts.update(dt);
+  brooms.update(dt);
   academy.update(dt);
   train.update(dt);
   sky.update(dt, camera, player.pos);
