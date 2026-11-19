@@ -220,11 +220,37 @@ island.on('connection', socket => {
   });
   socket.on('m', d => {
     const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
-    me.x = num(d.x, -150, 150); me.y = num(d.y, -20, 60); me.z = num(d.z, -150, 150); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);
-    socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
+    me.x = num(d.x, -2000, 2000); me.y = num(d.y, -60, 200); me.z = num(d.z, -2000, 2000); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);   // thế giới rộng ±2 km (Học viện, Tàu Pha Lê)
+    const pk = [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)];
+    // trên Tàu Pha Lê: toạ độ cục bộ của toa (c = chỉ số toa, lx/lz m, st = id ghế hoặc −1) → người khác thấy đứng vững trên tàu đang chạy
+    if (Number.isInteger(d.c) && d.c >= 0 && d.c < 16 && TR.aboard.has(socket.id)) pk.push(d.c, +num(d.lx, -3, 3).toFixed(2), +num(d.lz, -8, 8).toFixed(2), Number.isInteger(d.st) ? Math.max(-1, Math.min(1023, d.st)) : -1);
+    socket.broadcast.volatile.emit('m', pk);
   });
-  socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
+  // ---------- Tàu Pha Lê: 1 đoàn tàu chung, lịch theo GIỜ SERVER; ghế ngồi giữ chỗ trên server ----------
+  socket.on('tr', d => {
+    if (!me || !d) return; const now = Date.now();
+    if (d.op === 'board') { if (TR.phase === 'run') return; TR.aboard.add(socket.id); if (TR.phase === 'wait') { TR.phase = 'board'; TR.dep = now + TR_BOARD; } }
+    else if (d.op === 'leave') { TR.aboard.delete(socket.id); freeSeat(socket.id); if (!TR.aboard.size && TR.phase === 'board') TR.phase = 'wait'; }
+    else if (d.op === 'sit') { const id = num(d.id, 0, 1023) | 0, who = TR.seats.get(id); if (!TR.aboard.has(socket.id) || (who && who !== socket.id)) { socket.emit('trSeat', { ok: false, id }); return; } freeSeat(socket.id); TR.seats.set(id, socket.id); socket.emit('trSeat', { ok: true, id }); }
+    else if (d.op === 'stand') freeSeat(socket.id);
+    else if (d.op === 'skip') { if (TR.phase !== 'run' || !TR.aboard.has(socket.id)) return; if (TR.aboard.size > 1) { socket.emit('toast', '🚂 Có bạn khác cùng chuyến — mình cùng ngắm cảnh tới ga nhé!'); return; } TR.t0 = now - TR_DUR; }
+    else if (d.op === 'reloc') { if (TR.phase !== 'wait' || TR.aboard.size || (d.at !== 'A' && d.at !== 'B')) return; TR.at = d.at; TR.dir = d.at === 'A' ? 1 : -1; }
+    else return;
+    trSend();
+  });
+  socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); if (TR.aboard.delete(socket.id) || freeSeat(socket.id)) { if (!TR.aboard.size && TR.phase === 'board') TR.phase = 'wait'; trSend(); } });
+  socket.emit('tr', trPub());
 });
+const TR = { at: 'A', dir: 1, phase: 'wait', dep: 0, t0: 0, aboard: new Set(), seats: new Map() }, TR_DUR = 144000, TR_BOARD = 21000;   // chạy 144 s, chờ khách 21 s (Fibonacci)
+const trPub = () => ({ at: TR.at, dir: TR.dir, phase: TR.phase, dep: TR.dep, t0: TR.t0, n: TR.aboard.size, now: Date.now(), seats: [...TR.seats] });
+const trSend = () => island.emit('tr', trPub());
+function freeSeat(sid) { let hit = false; for (const [k, v] of TR.seats) if (v === sid) { TR.seats.delete(k); hit = true; } if (hit) trSend(); return hit; }
+setInterval(() => {   // máy trạng thái: chờ khách → khởi hành đúng giờ → tới ga (đổi chiều) → xuống hết → chờ
+  const now = Date.now();
+  if (TR.phase === 'board' && now >= TR.dep) { TR.phase = 'run'; TR.t0 = now; trSend(); }
+  else if (TR.phase === 'run' && now >= TR.t0 + TR_DUR) { TR.at = TR.at === 'A' ? 'B' : 'A'; TR.phase = 'arrive'; TR.dep = now + 3000; trSend(); }
+  else if (TR.phase === 'arrive' && now >= TR.dep) { TR.dir = -TR.dir; TR.phase = 'wait'; TR.aboard.clear(); TR.seats.clear(); trSend(); }
+}, 250);
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
 server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); });

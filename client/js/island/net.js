@@ -15,6 +15,7 @@ function nameTag(text) {
 
 export function createNet(ctx) {
   const others = new Map(); let sock = null;
+  const hooks = [];   // (sự kiện, hàm) đăng ký trước khi socket sẵn sàng (vd. train/sync.js)
   const status = document.getElementById('online');
   const setStatus = () => { if (status) status.textContent = sock && sock.connected ? `👥 ${others.size + 1} người trên đảo` : '⚪ Chơi một mình'; };
 
@@ -42,10 +43,12 @@ export function createNet(ctx) {
     sock.on('players', list => list.forEach(add));
     sock.on('joined', add);
     sock.on('left', remove);
-    sock.on('m', ([id, x, y, z, r, sp]) => { // ước lượng vận tốc từ 2 gói liên tiếp để dự đoán giữa các gói (gói trễ không làm khựng)
+    for (const [ev, fn] of hooks) sock.on(ev, fn);
+    sock.on('m', ([id, x, y, z, r, sp, tc = -1, tx = 0, tz = 0, tst = -1]) => { // ước lượng vận tốc từ 2 gói liên tiếp để dự đoán giữa các gói (gói trễ không làm khựng)
       const o = others.get(id); if (!o) return; const now = performance.now() / 1000, gap = Math.min(0.5, Math.max(0.05, now - o.recv));
       o.from.copy(o.to); const vx = (x - o.to.x) / gap, vz = (z - o.to.z) / gap; if (vx * vx + vz * vz > 400) o.vel.set(0, 0, 0); else { o.vel.x += (vx - o.vel.x) * 0.382; o.vel.z += (vz - o.vel.z) * 0.382; } // lọc nhiễu (1/φ²)
-      o.to.set(x, y, z); o.r = r; o.s = sp; o.t = 0; o.age = 0; o.recv = now; });
+      o.to.set(x, y, z); o.r = r; o.s = sp; o.t = 0; o.age = 0; o.recv = now;
+      o.tr = tc >= 0 && tc !== undefined ? { c: tc, x: tx, z: tz, st: tst } : null; });   // đang trên Tàu Pha Lê: toạ độ cục bộ toa
   };
   s.onerror = setStatus; document.head.appendChild(s); setStatus();
 
@@ -54,10 +57,12 @@ export function createNet(ctx) {
     const p = ctx.player;
     if (sock && sock.connected && (sendT += dt) > 0.1) {
       sendT = 0;
-      if (lastSent.distanceToSquared(p.pos) > 0.0004 || p.speed > 0.05) { sock.emit('m', { x: p.pos.x, y: p.pos.y, z: p.pos.z, r: p.rot, s: p.speed }); lastSent.copy(p.pos); }
+      const tp = ctx.train && ctx.train.netPose && ctx.train.netPose();   // trên tàu: gửi kèm toa + toạ độ cục bộ + ghế
+      if (tp || lastSent.distanceToSquared(p.pos) > 0.0004 || p.speed > 0.05) { sock.emit('m', tp ? { x: p.pos.x, y: p.pos.y, z: p.pos.z, r: tp.r, s: p.speed, c: tp.c, lx: tp.x, lz: tp.z, st: tp.st } : { x: p.pos.x, y: p.pos.y, z: p.pos.z, r: p.rot, s: p.speed }); lastSent.copy(p.pos); }
     }
     for (const o of others.values()) {
       o.t = Math.min(1, o.t + dt / 0.1); o.age += dt; const root = o.h.root;
+      if (o.tr && ctx.train && ctx.train.placeOther && ctx.train.placeOther(o, dt)) continue;   // trên tàu: train/sync.js đặt theo toa (đứng/ngồi)
       // vị trí dự đoán = gói mới nhất + vận tốc × thời gian từ gói (tối đa 1/φ³ s), hiển thị bám theo bằng lò xo; lệch > 8 m thì đặt lại
       o.pred.copy(o.vel).multiplyScalar(Math.min(o.age, 1 / 1.618 ** 3)).add(o.to);
       if (root.position.distanceToSquared(o.pred) > 64) { root.position.copy(o.pred); o.pv.set(0, 0, 0); } else dampV3(root.position, o.pred, o.pv, T.soft, dt);
@@ -70,5 +75,7 @@ export function createNet(ctx) {
       o.h.legL.rotation.x = Math.sin(o.phase) * a; o.h.legR.rotation.x = -Math.sin(o.phase) * a; o.h.armL.rotation.x = -Math.sin(o.phase) * a; o.h.armR.rotation.x = Math.sin(o.phase) * a;
     }
   }
-  return { update, others, get connected() { return !!(sock && sock.connected); } };
+  const on = (ev, fn) => { hooks.push([ev, fn]); if (sock) sock.on(ev, fn); };
+  const emit = (ev, d) => { if (sock && sock.connected) sock.emit(ev, d); };
+  return { update, others, on, emit, get id() { return sock && sock.id; }, get connected() { return !!(sock && sock.connected); } };
 }
