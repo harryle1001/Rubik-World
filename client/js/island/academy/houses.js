@@ -230,7 +230,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     }
     if (player.pos.y < Y + 3 && HALL_HOUSE.glass.some(([u, v]) => Math.hypot(qu - u, qv - v) < 2.6)) ctx.offer('⏳ Bảng điểm 4 Nhà', showRank, 8);
   }
-  const api = { houseId, rec, saveRec, openCard, closeCard, get card() { return card; }, ceremony, event, totals, ranking, showTasks, showRank, boardLines };
+  const api = { houseId, addPoints: (n, why) => addPts(n | 0, why), rec, saveRec, openCard, closeCard, get card() { return card; }, ceremony, event, totals, ranking, showTasks, showRank, boardLines };
   ctx.houses = api;
   return { build, unbuild, update, api };
 }

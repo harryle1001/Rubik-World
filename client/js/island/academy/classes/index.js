@@ -59,7 +59,8 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
       const p = W(u + nu * 2, v + nv * 2); doors.push({ p, text, start });
     };
     for (const [key, name, , [du, dv, nu, nv]] of ROOMS) addDoor(du, dv, nu, nv, '🚪 ' + name.replace(/^\P{L}+/u, ''), () => ctx.mg.start(key, { x: 0, z: 0, n: name }));
-    addDoor(A.u + A.r + 0.2, A.v, 1, 0, '🚪 Lớp Thiên Văn (trên tháp)', () => ctx.mg.start('cls-astro', { x: 1, z: 0, n: 'Thiên Văn' }));
+    addDoor(A.u, A.v - A.r - 0.2, 0, -1,   // sau ghép: dời sang mặt tây tháp — mặt nam trùng chỗ cầu thang lên/xuống ban công (index.js)
+      '🚪 Lớp Thiên Văn (trên tháp)', () => ctx.mg.start('cls-astro', { x: 1, z: 0, n: 'Thiên Văn' }));
     // nhà kính: bệ đá + 8 sườn vòm (cung tròn) + vòm kính bán cầu + cửa; gộp 3 nhà kính vào 2 mesh
     const labels = [];
     DOMES.forEach(([u, v], i) => {

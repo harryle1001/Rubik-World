@@ -110,7 +110,8 @@ export function createAcademy(ctx) {
   // ---------- nội thất lâu đài: cửa phép ở đại sảnh, cổng chính, ban công tháp thiên văn ----------
   const Hh0 = CL.hall, A0 = CL.astro, face = (du, dv) => Math.atan2(du * F[0] + dv * S[0], du * F[1] + dv * S[1]);
   const DOORS = {   // [u, v, y, hướng mặt cửa (u, v)] ngoài lâu đài
-    hall: [Hh0.u0 + 1.7, -7.2, BASE, 1, 0], gate: [CL.box.u1 - CL.T - 0.05, -14, BASE, -1, 0], balcony: [A0.u + A0.r2 + 0.05, A0.v, BASE + A0.h1, 1, 0],
+    hall: [Hh0.u1 - 1.65, -5.3, BASE, -1, 0],   // sau ghép: dời từ tường sau (u0+1,7; v −7,2) ra mặt trong tường trước — chỗ cũ bị đồng hồ cát nhà (HALL_HOUSE.glass) che
+    gate: [CL.box.u1 - CL.T - 0.05, -14, BASE, -1, 0], balcony: [A0.u + A0.r2 + 0.05, A0.v, BASE + A0.h1, 1, 0],
   };
   const interior = createInterior(ctx, { OX: C[0] - 44.5, OZ: C[1] - 27.5, exitTo: id => { const d = DOORS[id]; if (!d) return null; const [x, z] = toWorld(d[0] + d[3] * 2.4, d[1] + d[4] * 2.4); return [x, z, d[2], face(d[3], d[4]) + Math.PI]; } });
   let doorG = null;
