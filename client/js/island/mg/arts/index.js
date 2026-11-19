@@ -4,6 +4,7 @@ import { startArtMusic } from './art-music.js';
 import { startLibrary } from './library.js';
 import { startTelescope } from './telescope.js';
 import { startHall } from './hall.js';
+import { startCircuit } from './circuit.js';
 
 export function register(ctx) {
   const G = ctx.miniGames = ctx.miniGames || {};
@@ -14,5 +15,6 @@ export function register(ctx) {
   G['reader-books'] = G['royal-library'] = G['library'];   // cửa đọc sách / thư viện hoàng gia dùng chung thư viện 3D
   G['telescope'] = { name: '🔭 Đài thiên văn', group: 'arts', radius: 8, start: startTelescope };   // cửa "Kính viễn vọng"
   G.reader = { name: '🎤 Hội trường Người Thầy Ánh Sáng', group: 'arts', radius: 13, start: startHall };   // cửa Hội trường: nghe kể chuyện danh nhân + 3 câu hỏi
+  G.academy = { name: '🔌 Học viện: Lắp mạch điện', group: 'arts', radius: 8, start: startCircuit };   // cửa Học viện trí tuệ / Lắp ráp điện
   return G;
 }
