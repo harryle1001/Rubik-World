@@ -18,6 +18,22 @@ const TINT = [[1, 1, 1], [1, 0.9, 0.78], [0.9, 0.96, 1], [1, 0.86, 0.9], [0.9, 1
 // phố: tim đường u (cục bộ), hướng mặt tiền của từng dãy (n = +1: nhà nằm phía +u của phố, mặt tiền nhìn −u)
 export const PHO2 = { v0: 9, v1: 80, streets: [-131.2, -150], hw: 2.6, plaza: [80, 95] };
 const ROWS = [{ f: -128.6, n: 1 }, { f: -133.8, n: -1 }, { f: -147.4, n: 1 }, { f: -152.6, n: -1 }];   // mép mặt tiền + hướng vào nhà
+const Q = (q, choices, explain) => ({ q, choices, a: 0, explain });
+// việc của từng tiệm (v4): buy = mua (xu → năng lượng) · quiz = câu đố riêng · look/music/toy = trải nghiệm + điều khoa học
+const JOB = {
+  '🍦 Kem Tuyết Phép': { act: '🍦 Mua kem tuyết (2 🪙)', buy: [2, 13, 'Que kem tuyết mát lạnh, toả khói lạnh li ti'] },
+  '🎨 Màu Vẽ Biết Bay': { act: '🎨 Pha màu', quiz: Q('Trộn màu vàng với màu xanh lam được màu gì?', ['Xanh lá', 'Tím', 'Cam', 'Nâu'], 'Vàng + xanh lam = <b>xanh lá</b>. Đỏ + xanh lam = tím, đỏ + vàng = cam.') },
+  '🔭 Tiệm Kính Thiên Văn': { act: '🔭 Ngắm qua kính', look: ['🌕 Mặt Trăng: những vết lõm là <b>hố va chạm</b> do thiên thạch rơi xuống.', '🪐 Sao Thổ có <b>vành đai</b> làm từ băng đá và bụi.', '🔴 Sao Hỏa đỏ vì đất đá chứa nhiều <b>gỉ sắt</b>.', '⭐ Sao Bắc Cực gần như đứng yên — người xưa dùng để <b>tìm hướng Bắc</b>.'] },
+  '🎵 Nhạc Cụ Phép': { act: '🎵 Gảy đàn tranh', music: true },
+  '📜 Giấy Cuộn & Bút Lông': { act: '📜 Viết thư pháp', quiz: Q('Từ nào viết ĐÚNG chính tả?', ['Sáng sủa', 'Sán sủa', 'Sáng xủa', 'Xáng sủa'], 'Viết đúng: <b>sáng sủa</b>. Thư pháp Việt viết chữ quốc ngữ bằng bút lông rất đẹp.') },
+  '🧸 Đồ Chơi Phép': { act: '🧸 Quay con quay', toy: true },
+  '🥮 Bánh Truyền Thống': { act: '🥮 Mua bánh dẻo (3 🪙)', buy: [3, 21, 'Bánh dẻo nhân đậu xanh thơm mùi lá dứa'] },
+  '🪴 Vườn Ươm Cây Phép': { act: '🪴 Gieo hạt', quiz: Q('Hạt giống cần gì để nảy mầm?', ['Nước, không khí, độ ấm', 'Chỉ cần muối', 'Chỉ cần bóng tối', 'Không cần gì'], 'Hạt cần <b>nước, không khí và độ ấm</b>. Mầm cây em gieo sẽ lớn dần!') },
+};
+function pluck(n = 5) {   // 5 nốt ngũ cung (đàn tranh) bằng WebAudio
+  try { const A = pluck.a || (pluck.a = new (window.AudioContext || window.webkitAudioContext)()), F = [392, 440, 523.25, 587.33, 659.25];
+    for (let i = 0; i < n; i++) { const o = A.createOscillator(), g = A.createGain(), t = A.currentTime + i * 0.28; o.type = 'triangle'; o.frequency.value = F[Math.floor(Math.random() * F.length)]; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9); o.connect(g).connect(A.destination); o.start(t); o.stop(t + 1); } } catch (e) {}
+}
 const SHOPS = [
   { name: '🍦 Kem Tuyết Phép', subj: 'khoahoc', fact: 'Kem tan vì <b>nhiệt</b> làm nước đá chuyển từ thể rắn sang thể lỏng.' },
   { name: '🎨 Màu Vẽ Biết Bay', subj: 'khoahoc', fact: 'Trộn <b>vàng + xanh lam</b> ra xanh lá; <b>đỏ + vàng</b> ra cam.' },
@@ -96,13 +112,28 @@ export function createPho2(ctx, magic, { Y, toWorld, toLocal }) {
     built = { g, boxes, keepers };
   }
   function unbuild() { if (!built) return; ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); }); for (const b of built.boxes) { const i = ctx.boxes.indexOf(b); if (i >= 0) ctx.boxes.splice(i, 1); } built = null; }
-  let cool = 0;
+  let cool = 0, top = null, topT = 0;
+  function doJob(k) {
+    const J = JOB[k.sh.name] || {}; cool = 1.2; ctx.sfx && ctx.sfx('ui'); k.work = 3;
+    if (J.buy) { const [price, mana, what] = J.buy; if (!ctx.account || !ctx.account.addCoins(-price)) return ctx.toast('🪙 Chưa đủ xu — làm nhiệm vụ, trả lời câu đố để có thêm xu nhé!', 3500); magic.setMana && magic.setMana((magic.mana || 0) + mana); ctx.sfx && ctx.sfx('coin'); return ctx.toast(`${k.sh.name}: “${what}, của cháu đây!” +${mana} năng lượng phép. 🔬 ${k.sh.fact}`, 6500); }
+    if (J.quiz) return magic.ask(J.quiz, () => { ctx.account && ctx.account.addCoins(2); ctx.toast(`🎁 ${k.sh.name}: “Giỏi lắm!” +2 🪙`, 3500); }, J.act);
+    if (J.look) { ctx.toast(`🔭 Em ghé mắt vào kính… ${J.look[k.line++ % J.look.length]}`, 6500); return; }
+    if (J.music) { pluck(6); return ctx.toast(`🎵 Tiếng đàn tranh ngân nga 5 nốt <b>ngũ cung</b> (Sol · La · Đô · Rê · Mi) — thang âm của nhạc dân tộc Việt. 🔬 ${k.sh.fact}`, 6500); }
+    if (J.toy) { if (!top) { top = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.4, 8).rotateX(Math.PI), new THREE.MeshToonMaterial({ color: '#e0484a' })); built.g.add(top); } top.position.copy(k.p).addScaledVector(new THREE.Vector3(Math.sin(k.face), 0, Math.cos(k.face)), 1.2); top.position.y = Y + 0.2; topT = 6; return ctx.toast(`🧸 Con quay đỏ xoay tít trên mặt đường đá! 🔬 ${k.sh.fact}`, 5500); }
+    ctx.toast(`${k.sh.name}: “Chào cháu! 🔬 ${k.sh.fact}”`, 5000);
+  }
   function update(dt) {
     if (!built) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z), vis = Math.hypot(cu + 141, cv - 50) < 110 && cam.y < 600 && (cu < -108 || cam.y > Y + 21); built.g.visible = vis; if (!vis) return;   // khuất sau lâu đài → không vẽ
-    cool -= dt; const p = ctx.player.pos;
+    cool -= dt; const p = ctx.player.pos, t = performance.now() / 1000;
+    if (top) { topT -= dt; top.visible = topT > 0; top.rotation.y += dt * 21; top.rotation.z = Math.sin(t * 3) * 0.08 * Math.max(0, 3 - topT); }
     for (const k of built.keepers) {
-      if (k.hero && cam.distanceTo(k.p) < 34) k.hero.anim.update(dt);
-      if (Math.hypot(p.x - k.p.x, p.z - k.p.z) < 2.8 && Math.abs(p.y - Y) < 2 && cool <= 0) ctx.offer(`🛍️ Vào ${k.sh.name}`, () => { cool = 1; ctx.sfx && ctx.sfx('ui'); ctx.toast(`${k.sh.name}: “Chào cháu! 🔬 ${k.sh.fact}” — Trả lời đúng câu đố được quà nhé!`, 6000); setTimeout(() => magic.ask(k.sh.subj, () => { ctx.account && ctx.account.addCoins(2); ctx.toast(`🎁 Chủ tiệm tặng em quà nhỏ: +2 🪙`, 3000); }, '🛍️ ' + k.sh.name), 1800); }, 8);
+      const d = Math.hypot(p.x - k.p.x, p.z - k.p.z);
+      if (k.hero && cam.distanceTo(k.p) < 34) {   // chủ tiệm làm việc: lau quầy / xếp hàng; khách lại gần thì quay sang chào
+        k.work = (k.work || 0) - dt; const busy = Math.floor(t / 4 + k.line) % 2, clip = d < 4 ? 'interact' : busy ? 'use' : 'idle';
+        if (k.clip !== clip) { k.clip = clip; k.hero.anim.play(k.hero.set[clip] || k.hero.set.idle, 0.3); }
+        k.hero.model.rotation.y = d < 5 ? Math.atan2(p.x - k.p.x, p.z - k.p.z) : k.face; k.hero.anim.update(dt);
+      }
+      if (d < 2.8 && Math.abs(p.y - Y) < 2 && cool <= 0) ctx.offer((JOB[k.sh.name] || {}).act || `🛍️ Vào ${k.sh.name}`, () => doJob(k), 8);
     }
   }
   return { build, unbuild, update };
