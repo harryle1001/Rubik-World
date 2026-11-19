@@ -205,7 +205,7 @@ export function hud(title, onExit, api = null) {
   const h = {
     root,
     title: t => api ? api.hud.title(t) : $('.ttl').textContent = t,
-    score: t => api ? api.hud.info(t) : $('.sc').innerHTML = t,
+    score: t => { if (t === h._sc) return; h._sc = t; api ? api.hud.info(t) : $('.sc').innerHTML = t; },   // các môn gọi mỗi khung: chỉ ghi DOM khi chữ đổi (trước: parse innerHTML 60 lần/giây)
     tip: t => $('.tip').innerHTML = t || '',
     msg(t, ms = 1300) { msgEl.textContent = t; msgEl.style.opacity = 1; clearTimeout(mt); if (ms) mt = setTimeout(() => msgEl.style.opacity = 0, ms); },
     bar(top = '58px', color = '#ffd27a') { const b = document.createElement('div'); b.className = 'bar'; b.style.top = top; b.innerHTML = '<i></i>'; b.firstChild.style.background = color; root.appendChild(b); return { el: b, set: v => b.firstChild.style.width = (clamp(v, 0, 1) * 100).toFixed(1) + '%', color: c => b.firstChild.style.background = c, show: v => b.style.display = v ? '' : 'none' }; },

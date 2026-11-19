@@ -4,6 +4,7 @@
 // Tỷ lệ vàng: bàn 13 (Fibonacci), quân X cao 0,618 m, O vòng tròn π, nảy 0,382 s (1/φ²), camera 21 m.
 import * as THREE from 'three';
 import { PHI } from '../../layout.js';
+import { quickQuiz } from '../quick-quiz.js';
 
 const N = 13, CELL = 1, TOP = 0.12, H = N * CELL / 2;
 const DIRS = [[1, 0], [0, 1], [1, 1], [1, -1]];
@@ -41,6 +42,8 @@ function fiveFrom(B, i, j, who) {
   return null;
 }
 
+// nhiễu của AI: Dễ hay bỏ sót hàng 3 mở (trẻ thắng được), Vừa chặn gần đủ, Khó không nhiễu + ưu tiên tấn công
+const NOISE = { easy: 4500, medium: 300, hard: 0 };
 export function startCaro(ctx, { api }) {
   const { root, hud, me } = api, M = api.mat, sfx = api.sfx;
   let level = (() => { try { return localStorage.getItem('mg.caro.level') || 'easy'; } catch (e) { return 'easy'; } })();
@@ -59,7 +62,7 @@ export function startCaro(ctx, { api }) {
   const winLine = new THREE.Mesh(new THREE.BoxGeometry(1, 0.06, 0.12), new THREE.MeshBasicMaterial({ color: '#ffd36e' })); winLine.visible = false; root.add(winLine);
   const _o = new THREE.Object3D(), drops = [];
 
-  let B = [], turn = 'x', over = false, busy = false, moves = 0, t0 = 0;
+  let secShown = -1, B = [], turn = 'x', over = false, busy = false, moves = 0, t0 = 0;
   function put(i, j, who) {
     B[i][j] = who; moves++; const I = who === 'x' ? X : O, k = I.count++; const [x, z] = cellPos(i, j);
     drops.push({ I, k, x, z, t: 0 }); mark.position.x = x; mark.position.z = z; mark.visible = true; hintM.visible = false; sfx('land');
@@ -75,7 +78,7 @@ export function startCaro(ctx, { api }) {
   function finish(win, cells) {
     over = true; if (cells) showWin(cells); const t = Math.round(performance.now() / 1000 - t0);
     if (win) { me.emote('cheer'); lan && lan.emote('no'); lan && lan.say('Em giỏi quá!'); } else if (win === false) { lan && lan.emote('cheer'); me.emote('no'); }
-    setTimeout(() => api.end(win ? { score: Math.max(13, 200 - moves * 3) + (level === 'medium' ? 55 : 0), title: '🎉 5 quân liền — Em thắng!', text: `Thắng sau ${Math.ceil(moves / 2)} nước, ${Math.floor(t / 60)} phút ${t % 60} giây. Mẹo: luôn chặn khi đối thủ có 3 quân mở hai đầu!` }
+    setTimeout(() => api.end(win ? { score: Math.max(13, 200 - moves * 3) + ({ medium: 55, hard: 144 }[level] || 0), title: '🎉 5 quân liền — Em thắng!', text: `Thắng sau ${Math.ceil(moves / 2)} nước, ${Math.floor(t / 60)} phút ${t % 60} giây. Mẹo: luôn chặn khi đối thủ có 3 quân mở hai đầu!` }
       : win === false ? { score: null, save: false, title: 'Bạn Nhi thắng ván này', text: 'Không sao! Hãy để ý: khi đối thủ có 3 quân liền mà hai đầu còn trống, phải chặn ngay — nếu để thành 4 mở thì không chặn kịp.' }
         : { score: 34, title: '🤝 Hoà cờ', text: 'Bàn đã kín mà chưa ai có 5 quân. Hoà cũng đẹp!' }), 1600);
   }
@@ -87,7 +90,7 @@ export function startCaro(ctx, { api }) {
     turn = 'o'; busy = true;
     if (lan && Math.random() < 0.4) lan.say(['Hừm…', 'Để mình nghĩ…', 'À ha!'][(Math.random() * 3) | 0], 1200);
     setTimeout(() => {
-      if (over) return; const m = bestMove(B, 'o', 'x', level === 'easy' ? 900 : 60);
+      if (over) return; const m = bestMove(B, 'o', 'x', NOISE[level] ?? NOISE.easy);
       put(m.i, m.j, 'o'); if (m.def >= 4e3 && Math.random() < 0.7) hud.msg('Nhi vừa <b>chặn</b> hàng của em!', 1800);
       const w2 = fiveFrom(B, m.i, m.j, 'o'); if (w2) return finish(false, w2);
       if (moves >= N * N) return finish(null);
@@ -104,9 +107,9 @@ export function startCaro(ctx, { api }) {
     const i = Math.round(_p.x / CELL + (N - 1) / 2), j = Math.round(_p.z / CELL + (N - 1) / 2); return i >= 0 && j >= 0 && i < N && j < N ? [i, j] : null;
   }
   // ---------- HUD ----------
-  [['easy', '🙂 Dễ'], ['medium', '🤔 Vừa']].forEach(([lv, t]) => { const b = hud.button(t, () => { if (level === lv) return; level = lv; try { localStorage.setItem('mg.caro.level', lv); } catch (e) {} api.restart(); }); b.classList.toggle('on', level === lv); });
-  hud.button('💡 Gợi ý', () => {
-    if (over || busy || turn !== 'x') return; const m = bestMove(B, 'x', 'o', 0); const [x, z] = cellPos(m.i, m.j); hintM.position.set(x, TOP + 0.03, z); hintM.visible = true;
+  [['easy', '🙂 Dễ'], ['medium', '🤔 Vừa'], ['hard', '🔥 Khó']].forEach(([lv, t]) => { const b = hud.button(t, () => { if (level === lv) return; level = lv; try { localStorage.setItem('mg.caro.level', lv); } catch (e) {} api.restart(); }); b.classList.toggle('on', level === lv); });
+  hud.button('💡 Gợi ý', async () => {
+    if (over || busy || turn !== 'x') return; busy = true; const ok = await quickQuiz(api, ['toan'], '💡 Trả lời đúng để mở gợi ý'); busy = false; if (!ok || over) return; const m = bestMove(B, 'x', 'o', 0); const [x, z] = cellPos(m.i, m.j); hintM.position.set(x, TOP + 0.03, z); hintM.visible = true;
     hud.msg(m.def >= 5e4 ? '💡 Nhi sắp có 5 — <b>chặn ngay</b> ô sáng xanh!' : m.atk >= 5e4 ? '💡 Đi ô sáng xanh là em có <b>4 mở</b> — gần thắng rồi!' : m.def >= 4e3 ? '💡 Chặn hàng 3 mở của Nhi ở ô sáng xanh.' : m.atk >= 4e3 ? '💡 Ô sáng xanh tạo <b>3 mở hai đầu</b> cho em.' : '💡 Đi gần quân của mình để nối dài hàng.', 3500);
   });
   hud.button('🔁 Ván mới', () => api.restart());
@@ -122,7 +125,7 @@ export function startCaro(ctx, { api }) {
     update(dt) {
       for (let k = drops.length - 1; k >= 0; k--) { const d = drops[k]; d.t += dt; const u = Math.min(1, d.t / (1 / (PHI * PHI))), y = TOP + (1 - u) * 2.2 + Math.sin(Math.PI * Math.min(1, u * 1.3)) * 0.2 * (1 - u);
         _o.position.set(d.x, y, d.z); _o.rotation.set(0, d.I === X ? 0 : u * Math.PI, 0); _o.scale.setScalar(0.6 + 0.4 * u); _o.updateMatrix(); d.I.setMatrixAt(d.k, _o.matrix); d.I.instanceMatrix.needsUpdate = true; if (u >= 1) drops.splice(k, 1); }
-      if (!over && t0) hud.time(performance.now() / 1000 - t0);
+      if (!over && t0) { const s = performance.now() / 1000 - t0 | 0; if (s !== secShown) hud.time(secShown = s); }
       if (mark.visible) mark.material.opacity = 0.6 + Math.sin(performance.now() / 260) * 0.3;
     },
     dispose() { over = true; },

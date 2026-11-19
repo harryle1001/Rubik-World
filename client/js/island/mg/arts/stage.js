@@ -171,7 +171,7 @@ export function createStage(ctx, { title = 'Mini game', bg = '#bfe3f5', fov = 50
     if (ctx.player && !inw) ctx.player.frozen = !!frozen0;
     removeEventListener('keydown', onKey, true); removeEventListener('keyup', onKey, true); removeEventListener('resize', resize);
     root.remove(); if (!document.querySelector('.mga')) document.body.classList.remove('mga-open');
-    if (inw) scene.traverse(o => { for (const m of o.material ? [].concat(o.material) : []) if (!(m.userData && m.userData.own)) m.userData.shared = true; });   // vật liệu toon dùng chung (style.js) → host không dispose
+    if (inw) scene.traverse(o => { for (const m of o.material ? [].concat(o.material) : []) { if (m.map && !m.map.userData.shared) m.map.dispose(); if (!(m.userData && m.userData.own)) m.userData.shared = true; } });   // texture riêng của game (nhãn chữ, bìa sách): giải phóng GPU (dùng lại thì three tự nạp lại); trước: rò ~40 texture mỗi lần vào xưởng   // vật liệu toon dùng chung (style.js) → host không dispose
     else scene.traverse(o => { if (o.geometry && !o.userData.shared) o.geometry.dispose(); const ms = o.material ? [].concat(o.material) : []; for (const m of ms) { if (m.map) m.map.dispose(); if (m.userData && m.userData.own) m.dispose(); } });
   };
   return S;

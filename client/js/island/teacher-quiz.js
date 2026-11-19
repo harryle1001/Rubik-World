@@ -108,15 +108,16 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
       el.insertAdjacentHTML('beforeend', `<p class="ex">${ok ? `✅ <b>Chính xác!</b>${r.prize ? ' ' + r.prize : ''} ${esc(q.e)}` : `💡 <b>Chưa đúng.</b> Đáp án: <b>${esc(q.c[q.a])}</b>. ${esc(q.e)}`}</p>${row(after[0], after[1])}`);
       bindRow(after[2], after[3]);
       if (ok) { ctx.sfx && ctx.sfx('ok'); ctx.player.emote && ctx.player.emote('cheer'); if (who?.e?.hero) emote(who.e.hero, who.e.st, 'cheer'); }
-      else { ctx.sfx && ctx.sfx('ui'); if (who?.e?.hero) emote(who.e.hero, who.e.st, 'no'); }
+      else { ctx.sfx && ctx.sfx('bad'); if (who?.e?.hero) emote(who.e.hero, who.e.st, 'no'); }
     });
   }
-  // câu đố theo môn & lớp (vòng lặp "Câu khác")
+  // câu đố theo môn & lớp (vòng lặp "Câu khác"); đúng liền 3 câu → thưởng thêm 1 ⭐
+  let streak = 0;
   function quiz(subj) {
     who.grade = true; who.redo = () => quiz(subj);
     const g = load(GRADE, 0); if (!g) return chooseGrade(() => quiz(subj));
     const S = bank.subjects[subj], chip = `${S.icon} ${subjName(subj, g)}`;
-    askQ(pick(g, subj), chip, ok => { logQ(subj, ok); if (!ok) return; ctx.reward(1); ctx.questEvent && ctx.questEvent('quiz'); return { prize: '+1 ⭐' }; },
+    askQ(pick(g, subj), chip, ok => { logQ(subj, ok); streak = ok ? streak + 1 : 0; if (!ok) return; const bonus = streak % 3 === 0; ctx.reward(bonus ? 2 : 1, bonus ? `Chuỗi ${streak} câu đúng` : undefined); ctx.questEvent && ctx.questEvent('quiz'); return { prize: bonus ? `+2 ⭐ 🔥 Chuỗi ${streak} câu đúng liền!` : `+1 ⭐${streak > 1 ? ` · chuỗi ${streak}` : ''}` }; },
       ['❓ Câu khác', '👋 Tạm biệt', () => quiz(subj)]);
   }
   const markDone = id => { const d = load(DONE, {}); if (d.day !== today()) { d.day = today(); d.ids = []; } if (!d.ids.includes(id)) d.ids.push(id); save(DONE, d); };
