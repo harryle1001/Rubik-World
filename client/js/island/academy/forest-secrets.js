@@ -74,7 +74,7 @@ export function createSecrets(ctx, forest, magic) {
   const count = () => SECRETS.filter(s => found[s.id]).length;
   function discover(id) {
     const sc = SECRETS.find(s => s.id === id); if (!sc || found[id]) return; found[id] = Date.now(); save(KEY, found);
-    const n = count(); ctx.sfx && ctx.sfx('ok');
+    const n = count(); ctx.sfx && ctx.sfx('ok'); ctx.houses && ctx.houses.addPoints && ctx.houses.addPoints(5, 'bí mật rừng');   // sau ghép: điểm nhà Tứ Linh
     magic.burst && magic.burst(player.pos.clone().setY(player.pos.y + 1.5), new THREE.Vector3(0, 1, 0), '#c9a3ff', 21, 4, 1);
     ctx.toast(`${sc.icon} <b>Bí mật ${n}/13: ${sc.name}</b><br>${sc.text}`, 7000);
     if (n === 13 && !gotAll) { gotAll = found.__all = true; save(KEY, found); magic.setMana && magic.setMana(magic.mana + 89); setTimeout(() => ctx.toast('🌟 Em đã tìm đủ <b>13 bí mật</b> của Rừng Phép Thuật! Khu rừng tặng em <b>+89 năng lượng phép</b>. Em là <b>Nhà thám hiểm rừng</b> thật sự!', 7000), 7500); }
@@ -84,7 +84,7 @@ export function createSecrets(ctx, forest, magic) {
   // móc nối rỗng cho lớp Pha Chế / nhà kính (chưa có): đọc kho, nghe sự kiện
   ctx.academyIngredients = { get: () => ({ ...bag }), list: INGR.map(i => ({ id: i.id, icon: i.icon, name: i.name })), use(id) { if (!bag[id]) return false; bag[id]--; save(IKEY, bag); return true; } };
   function collect(id) {
-    const it = INGR.find(i => i.id === id); if (!it) return; bag[id] = (bag[id] || 0) + 1; save(IKEY, bag); ctx.sfx && ctx.sfx('ok');
+    const it = INGR.find(i => i.id === id); if (!it) return; bag[id] = (bag[id] || 0) + 1; save(IKEY, bag); ctx.sfx && ctx.sfx('ok'); ctx.houses && ctx.houses.addPoints && ctx.houses.addPoints(3, 'nguyên liệu rừng');
     const have = INGR.filter(i => bag[i.id]).length;
     ctx.toast(`🧺 Thu được <b>${it.icon} ${it.name}</b> cho lớp <b>Pha Chế</b> (${have}/${INGR.length} loại).${have === INGR.length ? ' Đủ giỏ nguyên liệu rồi — mang về nhà kính Học viện nhé!' : ''}`, 4500);
     dispatchEvent(new CustomEvent('academy:ingredient', { detail: { id, n: bag[id] } }));

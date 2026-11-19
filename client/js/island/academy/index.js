@@ -30,6 +30,7 @@ import { createLife } from './forest-life.js';             // sinh vật phép t
 import { createSecrets } from './forest-secrets.js';       // 13 bí mật, Bà Gạo kể cổ tích, nguyên liệu Pha Chế, bản đồ rừng
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
+const CLASS_AT = [['class0', 'cls-light'], ['class1', 'cls-shape'], ['class1b', 'cls-creature'], ['potion', 'cls-brew']];   // điểm neo lớp (interior/plan.js) → lớp phép thuật (classes/index.js)
 
 export function createAcademy(ctx) {
   const { terrain, scene, player } = ctx;
@@ -175,6 +176,10 @@ export function createAcademy(ctx) {
         if (!hallHi) { hallHi = true; ctx.toast('🏰 Chào mừng tới <b>Đại sảnh</b>! Mỗi học sinh được tặng một cây đũa phép — hãy chọn cây của em.', 5000); }
         ctx.offer('🪄 Nhận đũa phép', () => magic.chooseWand(true), 9);
       }
+    }
+    if (interior.inside && !ctx.mgActive) for (const [aid, key] of CLASS_AT) {   // sau ghép: phòng học trống trong nội thất → mở lớp phép thuật (classes/)
+      const a = interior.anchor(aid), g = ctx.miniGames && ctx.miniGames[key];
+      if (a && g && Math.abs(pp.y - a.pos[1]) < 2.5 && Math.hypot(pp.x - a.pos[0], pp.z - a.pos[2]) < 5.5) { ctx.offer('📖 Học ' + g.name, () => ctx.mg.start(key, { x: 0, z: 0, n: g.name }), 8.5); break; }
     }
     if (isle && !interior.inside) for (const [id, [u, v, y]] of Object.entries(DOORS)) if (Math.hypot(qu - u, qv - v) < 3.2 && Math.abs(pp.y - y) < 2.5) ctx.offer(id === 'balcony' ? '🚪 Vào Tháp Chính (cầu thang xoắn xuống các tầng)' : '🚪 Vào trong lâu đài (7 tầng)', () => interior.enter(id), 8.5);
     if (qu > QUAY.u0 - 2 && qu < QUAY.u0 + QUAY.w + 4 && qv > -3 && qv < QUAY.v1 + 3 && Math.abs(pp.y - QUAY.y) < 2) ctx.offer('⛵ Đi thuyền về đảo Rubik', () => ferry.start(-1), 8);
