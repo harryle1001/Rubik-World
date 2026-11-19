@@ -216,7 +216,7 @@ export function createVillage(ctx) {
     // xa hơn 233 m (điện thoại) / sương + 55 m (máy tính): làng đã chìm trong sương → tắt hẳn (cả model kit) để không tốn draw call ở giữa đảo
     const p = ctx.player.pos, d = Math.hypot(p.x - Ox, p.z - Oz), fogFar = scene.fog ? scene.fog.far : 300, want = d < (MOB ? Math.min(233, fogFar) : fogFar + 55);
     if (want !== vis) { vis = want; root.visible = cage.visible = weed.visible = want; for (const m of kitIM) m.visible = want; if (!want) for (const m of freshIM) m.visible = false; }
-    if ((westT -= dt) <= 0) { westT = 0.5; const wv = Math.hypot(p.x - WEST.O[0], p.z - WEST.O[1]) < (MOB ? Math.min(233, fogFar) : fogFar + 55); if (westRoot && westRoot.visible !== wv) westRoot.visible = wv; }
+    if ((westT -= dt) <= 0) { westT = 0.5; for (const m of kitIM) if (m.visible !== vis) m.visible = vis;   /* model kit nạp trễ: ép theo trạng thái làng */ const wv = Math.hypot(p.x - WEST.O[0], p.z - WEST.O[1]) < (MOB ? Math.min(233, fogFar) : fogFar + 55); if (westRoot && westRoot.visible !== wv) westRoot.visible = wv; }
     if (!vis) return;
     const hr = ctx.sky.state.hour, market = hr >= 4.9 && hr < 8.5;
     if ((tick -= dt) <= 0) { tick = 0.5; for (const m of freshIM) if (m.visible !== market) m.visible = market; const pull = hr >= 15.8 && hr < 18.4; if (seine.visible !== pull) seine.visible = pull; }
