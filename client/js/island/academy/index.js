@@ -18,6 +18,7 @@ import { createContent } from './content.js';
 import { create as createPaintings } from './paintings.js';   // tranh biết cử động
 import { create as createCreatures } from './creatures.js';   // sinh vật kỳ ảo
 import { create as createTree } from './tree.js';             // cây cổ thụ biết nói
+import { create as createHouses } from './houses.js';         // 4 nhà Tứ Linh: lễ chọn nhà, phòng sinh hoạt chung, điểm nhà
 import { L as CL } from './castle.js';
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
@@ -86,7 +87,7 @@ export function createAcademy(ctx) {
   // ---------- đũa phép: Tiệm Đũa Pha Lê cạnh cầu tàu đảo chính ----------
   const magic = ctx.magic = createMagic(ctx);
   const spells = createSpells(ctx, magic, { toWorld, L: CL, Y: BASE }), content = createContent(ctx, magic, { toWorld, L: CL, Y: BASE });
-  const extras = [createPaintings, createCreatures, createTree].map(f => f(ctx, magic, { toWorld, toLocal, L: CL, Y: BASE }));   // mỗi mô-đun 1 file riêng
+  const extras = [createPaintings, createCreatures, createTree, createHouses].map(f => f(ctx, magic, { toWorld, toLocal, L: CL, Y: BASE }));   // mỗi mô-đun 1 file riêng
   const shop = pw(pr0 - 5, -7), shopY = base(shop[0], shop[1]);
   {
     const b = new Batch(), wood = '#a8744a', woodD = '#6e4a30';
