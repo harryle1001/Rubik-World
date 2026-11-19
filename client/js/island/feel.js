@@ -50,7 +50,8 @@ body.fxCine #fxRegion{opacity:1}body.rs-modal #fxRegion,body.fxPhoto #fxRegion,b
       an.onfinish = () => { e.remove(); if (i === k - 1 && t.animate) t.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.13)' }, { transform: 'scale(1)' }], { duration: 236 }); };
     }
   }
-  ctx.reward = (o = {}) => { if (o.coins) { coins(o.coins); pop('+' + o.coins + ' 🪙'); } if (o.xp) setTimeout(() => pop('+' + o.xp + ' XP', 'xp'), o.coins ? 380 : 0); ctx.vibrate([21, 34, 21]); };
+  const reward0 = ctx.reward;   // thưởng ⭐ kiểu cũ ctx.reward(số sao, ghi chú) của teacher-quiz.js: giữ nguyên, không ghi đè mất
+  ctx.reward = (o = {}, note) => { if (typeof o === 'number') { reward0 && reward0(o, note); return; } if (o.coins) { coins(o.coins); pop('+' + o.coins + ' 🪙'); } if (o.xp) setTimeout(() => pop('+' + o.xp + ' XP', 'xp'), o.coins ? 380 : 0); ctx.vibrate([21, 34, 21]); };
   // tự bắt mọi lần cộng xu / kinh nghiệm / lên cấp (data/account.js) → không phải sửa từng nơi thưởng
   let last = null;
   const watch = acc => {
