@@ -113,3 +113,20 @@ Lâu đài Gothic dùng bảng màu và vật liệu riêng. Mọi quy tắc kh�
 - **Phép thuật khắp nơi:** đom đóm/hạt sáng (Points, 1 draw call), sương hồ (InstancedMesh 21 tấm, 1 draw call), cờ đuôi nheo, cú bay quanh tháp. Mỗi thứ chỉ tốn 1 draw call.
 - **LOD:** < 144 m vẽ đủ chi tiết (trụ chống, tháp nhọn, cờ, cửa sổ tháp) · 144–296 m chỉ còn khối chính + cửa sổ · > 296 m bóng xa (`far.js`, có đốm cửa sổ ban đêm).
 - **Ngân sách:** đứng trong lâu đài ≤ 233 draw call cả khung hình (điện thoại), tam giác lâu đài ≤ 144 k.
+
+## 10. Ngoại lệ: Hải đăng Mũi Sóng (đảo đá tây nam, `client/js/island/lighthouse/`)
+
+Mọi quy tắc khác của file này giữ nguyên; chỉ lệch ở các điểm sau.
+
+| Nhóm | Hex | Dùng cho |
+|---|---|---|
+| Đá biển xám tím | `#8d8790` · tối `#5f5a66` · sáng `#aaa4a6` · rêu `#6f7f5a` | mặt đảo đá (cùng tông với đá kit `rock_shore_*`), chân đá ướt, mảng rêu sát nước |
+| Sọc tháp | `rubikR` `#d8433a` · `stoneCreamL` `#f7efdc` | 6 sọc đỏ–trắng cao 8 · 5 · 5 · 3 · 3 · 2 m (Fibonacci, tổng 26 m) |
+| Kính | cửa sổ ngày `#2a3440` → đêm `#ffd98a` · thấu kính `#bfeee6` | ô cửa sổ sáng dần theo `sky.state.night`; thấu kính Fresnel phát sáng khi đèn bật |
+
+- **Số đo:** tháp 34 m = thân 144 bậc × 0,18 m (25,92 m) + buồng đèn 5 m + chóp 3 m; chân rộng 2 × 5 m, đỉnh 2 × 5/φ m; cầu thang 34 bậc/vòng; sàn ở bậc 34 · 68 · 102; ban công rộng φ m; bến gỗ 21 m, 21 bậc đá; đảo cách bờ 233 m; đèn quay 13 s/vòng (chớp 6,5 s); thuyền 21 s.
+- **Trong tháp:** vật liệu "trong nhà" = toon + cộng sáng `uLift` (0,3 ngày → 0,38 đêm), không nhận bóng đổ; vẫn không dùng `PointLight`.
+- **Camera trong tháp:** vỏ tháp không chặn camera; khi người ở trong thân tháp mà camera ở ngoài lớp trát thì ẩn vỏ → nhìn "cắt lớp" (thấy cầu thang xoắn và các tầng).
+- **Chùm sáng:** 2 nón cộng màu (`AdditiveBlending`, không sương) + 1 quầng sprite; ở xa > 296 m cả đèn + bóng tháp được kéo về 233 m và thu nhỏ đúng tỷ lệ (như `academy/far.js`), bị đồi che thì ẩn.
+- **Bọt sóng:** 1 dải lưới bám đường mép nước + vòng quanh đá ngầm, shader riêng (1 draw call), đỉnh bám theo `terrain.waveHeight`.
+- **Ngân sách đo được:** đứng trên đảo 66–106 draw call cả khung hình (điện thoại, ngân sách 233) · 99–135 (máy tính); khi ở xa chỉ còn 4 draw call (bóng tháp, 2 chùm sáng, quầng).
