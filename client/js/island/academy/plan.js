@@ -71,8 +71,31 @@ export function sdRR(u, v, hu, hv, r) {
   return Math.hypot(Math.max(qx, 0), Math.max(qz, 0)) + Math.min(Math.max(qx, qz), 0) - r;
 }
 export const plateauDist = (u, v) => sdRR(u - PLAT.u, v, PLAT.hu, PLAT.hv, PLAT.r);
-export const isleDist = (u, v) => sdRR(u - ISLE.u, v, ISLE.hu, ISLE.hv, ISLE.r);
-export const R_BOUND = Math.hypot(ISLE.hu + Math.abs(ISLE.u), ISLE.hv) + 21;   // bán kính bao (để lọc nhanh)
+export const isleDist0 = (u, v) => sdRR(u - ISLE.u, v, ISLE.hu, ISLE.hv, ISLE.r);
+
+// ---------- RỪNG PHÉP THUẬT: thuỳ đất phía tây, sau Tháp Gió (r 144) + hồ r 34 sâu 6 m (đảo nhỏ r 6,5, đường dạo vòng r 37–42) ----------
+// góc θ quanh tâm hồ: 0 = nam (+u), π/2 = đông (+v, về cổng/Tháp Gió), −π/2 = tây (thác), π = bắc (bến thuyền)
+export const FOREST = { u: -34, v: -377, r: 144, gate: [-34, -255], lake: { u: -34, v: -390, r: 34, bed: -6, ring: 39.5, rw: 2.5 } };
+const FL = FOREST.lake;
+export const lakeAt = (th, r) => [FL.u + Math.cos(th) * r, FL.v + Math.sin(th) * r];
+export const CLIFF = { th: -Math.PI / 2, r: 58, top: 21, cr: 11 };                 // vách thác nước: đỉnh 21 m, mép vách cách tâm hồ 47 m
+export const forestDist = (u, v) => Math.hypot(u - FOREST.u, v - FOREST.v) - FOREST.r;
+export const isleDist = (u, v) => Math.min(isleDist0(u, v), forestDist(u, v));
+export const R_BOUND = Math.hypot(FOREST.u - ISLE.u, FOREST.v) + FOREST.r + 21;   // bán kính bao (để lọc nhanh) — tính cả thuỳ rừng
+// độ cao thuỳ rừng (−99 nếu ngoài)
+export function forestH(u, v, x, z) {
+  const dF = forestDist(u, v) + fbm(x * 0.013 + 3, z * 0.013) * 13 - 6; if (dF > 34) return -99;
+  const n = fbm(x * 0.021, z * 0.021), land = 1 - smooth(-21, 8, dF);
+  let h = (3.4 + n * 8) * land - 6 * (1 - land);
+  const r = Math.hypot(u - FL.u, v - FL.v);
+  if (r < FL.r + 21) h = lerp(1.6, h, smooth(FL.r + 8, FL.r + 21, r));                       // bờ phẳng + đường dạo
+  if (r < FL.r + 3) h = lerp(FL.bed, 1.6, smooth(FL.r - 8, FL.r + 3, r));                    // lòng hồ sâu 6 m (= đáy biển chung, dive.js lặn được)
+  if (r < 13) h = Math.max(h, lerp(1.6, FL.bed, smooth(5, 13, r)));                          // đảo nhỏ giữa hồ
+  const [cu, cv] = lakeAt(CLIFF.th, CLIFF.r), dc = Math.hypot(u - cu, v - cv);
+  if (dc < CLIFF.cr + 8) h = Math.max(h, CLIFF.top * (1 - smooth(CLIFF.cr - 2, CLIFF.cr + 2, dc)) + n * 1.3);   // vách đá dựng
+  if (Math.abs(u - FL.u) < 4 && v < FL.v - FL.r + 3 && v > FL.v - CLIFF.r + CLIFF.cr - 1) h = Math.min(h, lerp(-1.4, h, smooth(1.6, 4, Math.abs(u - FL.u))));   // suối từ chân thác ra hồ
+  return h;
+}
 
 // Dốc đá + bến: độ cao mặt đi (null nếu ngoài dải)
 export function quayY(u, v) {
@@ -85,8 +108,9 @@ export function quayY(u, v) {
 
 // Độ cao địa hình theo toạ độ cục bộ (u, v); x, z thế giới chỉ dùng cho nhiễu
 export function heightLocal(u, v, x, z) {
-  const dI = isleDist(u, v);
-  if (dI > 34) return -6;
+  const hF = v < -144 ? forestH(u, v, x, z) : -99;
+  const dI = isleDist0(u, v);
+  if (dI > 34) return Math.max(-6, hF);
   const n = fbm(x * 0.021, z * 0.021), n2 = fbm(x * 0.008 + 7, z * 0.008 - 3);
   const land = 1 - smooth(-21, 8, dI);
   const hill = 2.6 + n * 13 + Math.max(0, n2 - 0.5) * 34;
@@ -103,7 +127,7 @@ export function heightLocal(u, v, x, z) {
     if (dP < 5) h = lerp(PLAT.y + n * 0.6, LAKE_Y, smooth(0, 5, dP));
   } else if (u > 0 && Math.abs(v) < INLET + 8) h = lerp(h, LAKE_Y - 2, 1 - smooth(INLET, INLET + 8, Math.abs(v)));
   const q = quayY(u, v); if (q !== null) h = q - 0.3;                    // dốc/bến: mặt đá riêng (groundExtra), đất thấp hơn 0,3 m
-  return h;
+  return Math.max(h, hF);
 }
 export function heightAt(x, z) { const [u, v] = toLocal(x, z); return heightLocal(u, v, x, z); }
 

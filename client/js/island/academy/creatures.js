@@ -44,14 +44,14 @@ const INFO = {
 
 // ---------- hình khối (hướng tới +z, đáy y = 0 nếu đứng đất) ----------
 const tris = pts => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts.flat(), 3)); g.computeVertexNormals(); return g; };
-function dragonSeg() {   // 1 đốt thân: trụ 6 cạnh nằm dọc z + bụng vàng nhạt + vây lưng
+export function dragonSeg() {   // 1 đốt thân: trụ 6 cạnh nằm dọc z + bụng vàng nhạt + vây lưng
   const b = new Batch();
   b.add(new THREE.CylinderGeometry(1, 1, 1.9, 6), '#2f8f6a', 0, 0, 0, 0, PI / 2);
   b.box(-0.62, 0.62, -1.02, -0.62, -0.95, 0.95, '#efe0a8');
   b.add(new THREE.ConeGeometry(0.36, 1.0, 4), '#f2c443', 0, 1.2, -0.2, 0, -0.55);
   return b.build();
 }
-function dragonHead() {
+export function dragonHead() {
   const b = new Batch(), J = '#2f8f6a', G = '#f2c443';
   b.box(-0.9, 0.9, -0.6, 0.8, -1.0, 1.0, J);                                 // sọ
   b.box(-0.66, 0.66, -0.55, 0.25, 0.9, 2.5, J);                              // mõm

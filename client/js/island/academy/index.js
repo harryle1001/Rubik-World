@@ -24,6 +24,10 @@ import { create as createClasses } from './classes/index.js'; // lớp học ph�
 import { create as createWonders } from './wonders.js';       // phép thuật khắp nơi: trần trời, giáp, sách bay, ma, cú, tượng, cửa, nhạc nước
 import { L as CL } from './castle.js';
 import { createInterior } from './interior/index.js';   // nội thất 7 tầng (không gian phép trên cao)
+import { createForest } from './forest.js';                // rừng phép thuật (thuỳ tây)
+import { createLake } from './forest-lake.js';             // hồ trong rừng
+import { createLife } from './forest-life.js';             // sinh vật phép thuật
+import { createSecrets } from './forest-secrets.js';       // 13 bí mật, Bà Gạo kể cổ tích, nguyên liệu Pha Chế, bản đồ rừng
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 
@@ -130,6 +134,11 @@ export function createAcademy(ctx) {
     scene.add(g); return g;
   };
 
+  const forest = ctx.forest = createForest(ctx);
+  forest.plug(ctx.forestLake = createLake(ctx, forest));
+  forest.plug(ctx.forestLife = createLife(ctx, forest, magic));
+  forest.plug(ctx.forestSecrets = createSecrets(ctx, forest, magic));
+
   // ---------- tải / dỡ theo khoảng cách ----------
   const far = createFar(ctx);
   let isle = null, planted = false; const boxes = ctx.boxes = ctx.boxes || [];
@@ -148,6 +157,7 @@ export function createAcademy(ctx) {
     ferry.update(dt);
     stream(); far.update();
     if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); for (const x of extras) x.update(dt, t); }
+    forest.update(dt, performance.now() / 1000);
     magic.update(dt); spells.update(dt); content.update(dt, performance.now() / 1000); interior.update(dt);
     if (ferry.riding || player.vehicle) return;
     const pp = player.pos;
@@ -169,5 +179,5 @@ export function createAcademy(ctx) {
     if (isle && !interior.inside) for (const [id, [u, v, y]] of Object.entries(DOORS)) if (Math.hypot(qu - u, qv - v) < 3.2 && Math.abs(pp.y - y) < 2.5) ctx.offer(id === 'balcony' ? '🚪 Vào Tháp Chính (cầu thang xoắn xuống các tầng)' : '🚪 Vào trong lâu đài (7 tầng)', () => interior.enter(id), 8.5);
     if (qu > QUAY.u0 - 2 && qu < QUAY.u0 + QUAY.w + 4 && qv > -3 && qv < QUAY.v1 + 3 && Math.abs(pp.y - QUAY.y) < 2) ctx.offer('⛵ Đi thuyền về đảo Rubik', () => ferry.start(-1), 8);
   }
-  return { update, far, ferry, magic, interior, anchors: interior.anchors, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) }, shop };
+  return { update, far, ferry, magic, interior, anchors: interior.anchors, forest, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) }, shop };
 }
