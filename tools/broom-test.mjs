@@ -12,7 +12,7 @@ page.on('pageerror', e => errors.push('pageerror: ' + e.message));
 await page.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); } catch (e) {} });
 await page.goto('http://localhost:3000/ocean.html');
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready, null, { timeout: 300000 });
-await page.locator('button[data-a="guest"], button:has-text("Chơi khách")').first().click({ timeout: 15000 }).catch(() => {});
+await page.locator('button[data-a="guest"], button:has-text("Chơi khách")').first().click({ timeout: 60000 }).catch(() => {});
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => {});
 await page.evaluate(() => Object.defineProperty(__island.sky.state, 'hour', { get: () => 10, set() {}, configurable: true }));
 const sfx = MOBILE ? '-dt' : '';
@@ -51,6 +51,48 @@ if (PART === 'broom') {
   await page.evaluate(() => { window.__v = { a: 0, d: 13, h: 4 }; }); await wait(2500); await shot('b4-gia-choi-hoc-vien');
   await page.evaluate(() => { window.__v = null; });
   log.push('brooms in academy: ' + await page.evaluate(() => __island.vehicles.all.filter(v => v.type === 'broom').length));
+}
+
+if (PART === 'match' || PART === 'practice') {
+  const [OX, OZ] = await page.evaluate(() => import('/js/island/academy/plan.js').then(P => P.toWorld(-34, 172)));
+  await page.evaluate(([x, z]) => __island.player.teleport(x, z - 21, 26), [OX, OZ]); await wait(9000);
+  await page.waitForFunction(() => __island.pitch, null, { timeout: 60000 });
+  for (let k = 0; k < 8 && !(await page.evaluate(() => __island.vehicles.riding === 'broom')); k++) { await page.evaluate(() => { document.activeElement && document.activeElement.blur(); if (!__island.player.frozen) __island.brooms.summon(); }); await wait(1500); }
+  await page.evaluate(([x, z]) => { __island.player.teleport(x, z - 21, 26); __island.player.cam.yaw = Math.PI; }, [OX, OZ]); await wait(4000);
+  if (PART === 'match') {
+    for (let k = 0; k < 6 && !(await page.evaluate(() => !!__island.pitch.match)); k++) { await page.evaluate(() => __island.pitch.start('att', 180)); await wait(3000); }
+    log.push('info ' + await page.evaluate(() => document.getElementById('info').textContent.slice(0, 80)));
+    await page.waitForFunction(() => __island.pitch.match && !__island.pitch.match.loading, null, { timeout: 120000 }); await wait(4000);
+    await page.evaluate(() => { window.__v = { a: Math.PI + 0.3, d: 9, h: 3 }; }); await wait(1500); await shot('m1-vao-tran');
+    log.push('drawcalls match ' + await calls());
+    await page.evaluate(() => { window.__v = null; });
+    // ghi bàn: cầm bóng trước vòng giữa phía nam, bấm E
+    await page.evaluate(() => { const c = __island, M = c.pitch.match, [ox, oz] = c.pitch.origin; M.ball.owner = M.me; c.player.teleport(ox, oz + 40, 34 - 0.5); c.player.setRot(0); c.player.cam.yaw = Math.PI; });
+    await wait(1200); await shot('m2-cam-bong');
+    const s0 = await page.evaluate(() => __island.pitch.match.teams[0].score);
+    if (MOBILE) await page.locator('#bAct').tap().catch(e => log.push('tap ' + e.message)); else await key('KeyE', 200);
+    await page.waitForFunction(s0 => __island.pitch.match.teams[0].score > s0, s0, { timeout: 30000 }).catch(() => {});
+    log.push('score after throw ' + await page.evaluate(() => __island.pitch.match.teams.map(t => t.score).join('-')));
+    // Cầu Vàng thức dậy
+    await page.evaluate(() => { __island.pitch.match.t = 34.5; }); await page.waitForFunction(() => __island.pitch.match && __island.pitch.match.goldOn, null, { timeout: 60000 }); await wait(2000);
+    await page.evaluate(() => { const c = __island, g = c.pitch.match.goldPos; c.player.teleport(g.x, g.z - 7, g.y - 1); c.player.cam.yaw = Math.PI; window.__v = { a: Math.PI * 0.85, d: 6, h: 1.8 }; }); await wait(900); await shot('m3-cau-vang');
+    await page.evaluate(() => { window.__v = null; });
+    // giữa hiệp: câu hỏi nhanh
+    await page.evaluate(() => { const M = __island.pitch.match; M.left = M.dur / 2 + 0.05; }); await page.waitForSelector('#mgCard', { timeout: 60000 }).catch(() => {}); await wait(1000); await shot('m4-cau-hoi-giua-hiep');
+    const a = await page.evaluate(() => { const c = document.getElementById('mgCard'); return c ? +c.dataset.a : -1; });
+    if (a >= 0) await page.locator(`#mgCard button[data-i="${a}"]`).click(); await wait(3000);
+    log.push('boost ' + await page.evaluate(() => __island.pitch.match.boostT.toFixed(1)));
+    // bắt Cầu Vàng → thắng ván
+    await page.evaluate(() => { const c = __island, g = c.pitch.match.goldPos; c.player.teleport(g.x, g.z, g.y); }); await page.waitForFunction(() => !__island.pitch.match || __island.pitch.match.winner != null, null, { timeout: 30000 }).catch(() => {});
+    log.push('winner ' + await page.evaluate(() => __island.pitch.match && __island.pitch.match.winner));
+    await page.waitForFunction(() => !__island.pitch.match, null, { timeout: 60000 }).catch(() => {}); await wait(800); await shot('m5-ket-qua');
+    log.push('house ' + JSON.stringify(await page.evaluate(() => __island.houses && __island.houses.rec && __island.houses.rec())));
+  } else {
+    await page.evaluate(() => __island.pitch.rings()); await wait(1500);
+    await page.evaluate(() => { window.__v = { a: Math.PI + 0.25, d: 8, h: 3 }; }); await wait(1200); await shot('p1-luyen-bay-vong'); await page.evaluate(() => { window.__v = null; });
+    for (let k = 0; k < 13; k++) { await page.evaluate(() => { const R = __island.pitch.practice; if (!R) return; const q = R.pts[R.i]; __island.player.teleport(q.x, q.z, q.y - 0.5); }); await wait(900); if (k === 6) await shot('p2-giua-duong'); }
+    await wait(1200); await shot('p3-ve-dich'); log.push('practice done ' + await page.evaluate(() => !__island.pitch.practice) + ' best ' + await page.evaluate(() => localStorage.getItem('sk.ring.best')));
+  }
 }
 fs.writeFileSync(`${OUT}/test-${PART}${sfx}.json`, JSON.stringify({ log, errors }, null, 1));
 console.log(log.join('\n')); if (errors.length) console.log('LỖI:\n' + errors.join('\n'));
