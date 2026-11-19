@@ -19,7 +19,7 @@ canvas{touch-action:none}
 @media (min-width:700px){.topbtns .lb{display:inline}}
 #bMore{position:fixed;z-index:26;top:max(12px,env(safe-area-inset-top));right:calc(max(12px,env(safe-area-inset-right)) + 50px);font-size:20px;padding:0}
 #bMore[aria-expanded=true]{background:#f0a23a;color:#231600}
-#moreMenu{position:fixed;z-index:27;top:calc(max(12px,env(safe-area-inset-top)) + 50px);right:max(12px,env(safe-area-inset-right));display:flex;flex-direction:column;gap:8px;padding:8px;border-radius:21px;background:#101a2ee6;box-shadow:0 6px 18px #0006}
+#moreMenu{position:fixed;z-index:29;top:calc(max(12px,env(safe-area-inset-top)) + 50px);right:max(12px,env(safe-area-inset-right));display:flex;flex-direction:column;gap:8px;padding:8px;border-radius:21px;background:#101a2ee6;box-shadow:0 6px 18px #0006}
 #moreMenu button{min-height:42px;padding:0 21px;border-radius:21px;border:2px solid #fff6;background:#ffffff14;color:#fff;font:700 15px system-ui;text-align:left;white-space:nowrap;cursor:pointer}
 body.rs-modal #bMore,body.rs-modal #moreMenu{display:none}
 @media (max-height:500px) and (orientation:landscape){#moreMenu{top:max(12px,env(safe-area-inset-top));right:calc(max(12px,env(safe-area-inset-right)) + 100px);flex-direction:row;padding:0;background:none;box-shadow:none}#moreMenu button{background:#101a2ee6}}
@@ -55,7 +55,7 @@ body.rs-modal #bMore,body.rs-modal #moreMenu{display:none}
 @media(max-width:420px){#quiz .ch{grid-template-columns:1fr}}
 #info{position:fixed;right:calc(max(12px,env(safe-area-inset-right)) + 65px);bottom:calc(max(18px,env(safe-area-inset-bottom)) + 165px);max-width:min(calc(100vw - 89px),360px);box-sizing:border-box;text-align:left!important;background:#000b;color:#fff;padding:10px 16px;border-radius:13px;font-size:15px;line-height:1.45;opacity:0;transition:.3s;pointer-events:none;text-align:center}
 @media (max-height:500px) and (orientation:landscape){#info{right:calc(max(16px,env(safe-area-inset-right)) + 188px);bottom:max(12px,env(safe-area-inset-bottom));max-width:min(46vw,320px)}}
-@media (pointer:fine){#info{right:max(12px,env(safe-area-inset-right))}}</style>
+@media (pointer:fine){#info{right:max(12px,env(safe-area-inset-right));bottom:max(13px,env(safe-area-inset-bottom))}}</style>
 <link rel="preload" href="/assets/models/hero-rogue.glb" as="fetch" crossorigin="anonymous"><!-- xương + animation nhân vật: tải trước tiên -->
 <script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script>
 </head><body>

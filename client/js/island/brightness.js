@@ -9,7 +9,7 @@ export function createBrightness(ctx) {
 
   const css = document.createElement('style');
   css.textContent = `#bBright{font-size:15px}
-#brightBox{position:fixed;z-index:27;right:max(12px,env(safe-area-inset-right));top:calc(max(12px,env(safe-area-inset-top)) + 55px);box-sizing:border-box;width:min(calc(100vw - 24px),377px);
+#brightBox{position:fixed;z-index:29;right:max(12px,env(safe-area-inset-right));top:calc(max(12px,env(safe-area-inset-top)) + 55px);box-sizing:border-box;width:min(calc(100vw - 24px),377px);
  display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;background:#101a2ecc;color:#f2f4ff;font:600 14px system-ui;box-shadow:0 6px 18px #0006}
 #brightBox input{flex:1;min-width:0;accent-color:#ffc23e}#brightBox span{min-width:3.2em;text-align:right;font-variant-numeric:tabular-nums}
 body.rs-modal #brightBox{display:none}

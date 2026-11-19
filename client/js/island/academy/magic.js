@@ -31,7 +31,7 @@ const css = `
 #mgCard button.ok{background:#2c6455}#mgCard button.no{background:#7a2e2e}#mgCard .dots{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 #mgCard .dots button{width:34px;height:34px;border-radius:50%;padding:0}#mgCard .dots button[aria-pressed=true]{outline:3px solid #ffe3a0}
 #mgCard .row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}#mgCard .row button[aria-pressed=true]{background:#5a4a2a;border-color:#ffe3a0}
-#bSpell{position:fixed;z-index:26;right:max(16px,env(safe-area-inset-right));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 82px);width:70px;height:70px;border-radius:50%;border:2px solid #ffe3a0aa;background:radial-gradient(#3a2a6a,#1b1626cc);color:#fff;font-size:28px;touch-action:none;-webkit-user-select:none;user-select:none}@media (pointer:fine){#bSpell{display:none}}body.rs-modal #bSpell{display:none}
+#bSpell{position:fixed;z-index:26;right:calc(max(16px,env(safe-area-inset-right)) + 180px);bottom:max(18px,env(safe-area-inset-bottom));width:70px;height:70px;border-radius:50%;border:2px solid #ffe3a0aa;background:radial-gradient(#3a2a6a,#1b1626cc);color:#fff;font-size:28px;touch-action:none;-webkit-user-select:none;user-select:none}@media (pointer:fine){#bSpell{display:none}}body.rs-modal #bSpell{display:none}
 #mgRing{position:fixed;z-index:28;pointer-events:none}#mgRing button{position:absolute;width:55px;height:55px;margin:-27px;border-radius:50%;border:2px solid #ffe3a0;background:#1b1626ee;color:#fff;font:700 11px system-ui;pointer-events:auto}
 `;
 
@@ -85,7 +85,7 @@ export function createMagic(ctx) {
   hud.innerHTML = '<span id="mgkName"></span><span class="bar"><i></i></span><span id="mgkVal"></span><button id="mgkRe">📚 +34</button><button id="mgkPick">⟳</button>';
   document.body.appendChild(hud);
   const bar = hud.querySelector('.bar i');
-  const bSpell = document.createElement('button'); bSpell.id = 'bSpell'; bSpell.textContent = '✨'; bSpell.hidden = true; document.body.appendChild(bSpell);   // điện thoại: ngay trên nút Nhảy
+  const bSpell = document.createElement('button'); bSpell.id = 'bSpell'; bSpell.textContent = '✨'; bSpell.hidden = true; document.body.appendChild(bSpell);   // điện thoại: cùng hàng, bên trái cụm Chạy/Nhảy (ô trên dành cho nút ✋ bAct)
   const cur = () => spells.find(s => s.id === st.spell && avail(s)) || spells.find(avail);
   const avail = s => !s.unlocked || s.unlocked();
   function refresh() {
