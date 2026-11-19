@@ -10,6 +10,9 @@ import { matV, mat } from '../sample/palette.js';
 import { placeKit } from '../kit.js';
 import { loadModel } from '../models.js';
 import { C } from './plan.js';
+import { loadHero, STUDENTS } from '../characters.js';
+import { dressWizard } from './practice.js';
+import { CFG } from '../config.js';
 
 const PI = Math.PI, AU = 21, AV = 34, PU = 82, PV = 80;   // tâm sân (u, v), bán trục
 const HC = ['#c8302c', '#3a6fc4', '#3f8a4c', '#c9a24a'], BAN = ['red', 'blue', 'green', 'yellow'];
@@ -65,6 +68,7 @@ export function createBroom(ctx, magic, { Y, toWorld, toLocal }) {
     RINGS.forEach(([u, v, h, ry], i) => { o.position.set(v, Y + h, u); o.rotation.set(0, ry, 0); o.updateMatrix(); rings.setMatrixAt(i, o.matrix); });
     rings.frustumCulled = false; G.add(rings); paint(-1);
     arrow = new THREE.Mesh(new THREE.ConeGeometry(0.6, 1.6, 4), mat('lampGlow')); arrow.rotation.x = PI; arrow.visible = false; G.add(arrow);
+    buildMatch();
     ctx.scene.add(G); (ctx.boxes = ctx.boxes || []).push(...boxes);
   }
   const col = new THREE.Color();
@@ -119,6 +123,7 @@ export function createBroom(ctx, magic, { Y, toWorld, toLocal }) {
   function update(dt, t) {
     if (!G) return;
     const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z); G.visible = Math.hypot(cu - PU, cv - PV) < 233 && cam.y < 600;
+    if (G.visible) matchUpdate(dt, t);
     const p = player.pos, [u, v] = toLocal(p.x, p.z);
     if (!run) { if (G.visible && inPitch(u, v) && Math.abs(p.y - Y) < 2 && !player.vehicle) ctx.offer('🧹 Bay chổi qua 8 vòng sáng', start, 8.5); return; }
     // lên / xuống
@@ -144,6 +149,46 @@ export function createBroom(ctx, magic, { Y, toWorld, toLocal }) {
     }
     run.prev = Math.hypot(dx, dz, dy) < R * 3 ? side : null;
     if (Math.hypot(u - PU, v - PV) > 144) { ctx.toast('🧭 Bay xa sân quá — chổi tự đưa em về!', 3000); stop(false); }
+  }
+  // ---------- trận "Truyền Bóng Pha Lê" (v3): 2 đội NPC bay chổi, bóng bay giữa các cầu thủ, ghi điểm khi đưa bóng tới Sao Đích ----------
+  // Giờ thi đấu 15:00–17:30 (và mọi lúc nếu chưa có ai bay). Nhà Long (đỏ) gặp Nhà Phụng (xanh). Điện thoại 4 cầu thủ.
+  let M = null;
+  function buildMatch() {
+    const n = CFG.isMobile ? 4 : 6, fl = [];
+    for (let i = 0; i < n; i++) {
+      const f = { i, team: i % 2, hero: null, br: null, ph: i * 1.05, r: 9 + (i % 3) * 5, h: 4 + (i % 3) * 3.4 }; fl.push(f);
+      loadHero(STUDENTS[(i * 7) % STUDENTS.length], 1.36).then(h => { if (!h || !G) return; f.hero = h; h.npc = true; G.add(h.model); h.anim.play(h.set.sit || h.set.idle, 0); dressWizard(h, f.team ? '#3a6fc4' : '#c8302c', CFG.isMobile ? null : (f.team ? '#3a6fc4' : '#c8302c'));
+        loadModel('alley/broom').then(m => { if (m && G) { m.scale.setScalar(1.3); m.position.set(0, 0.42 / h.model.scale.y, 0.15 / h.model.scale.y); m.scale.multiplyScalar(1 / h.model.scale.y); h.model.add(m); } }); });
+    }
+    const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(0.42, 1), new THREE.MeshBasicMaterial({ color: '#bff4ff', toneMapped: false })); G.add(ball);
+    const stars = []; for (const s of [-1, 1]) { const st = new THREE.Mesh(new THREE.OctahedronGeometry(1.3), new THREE.MeshBasicMaterial({ color: s < 0 ? '#ff6a5a' : '#6ab0ff', toneMapped: false })); st.position.set(PV + s * (AV - 4), Y + 9, PU); G.add(st); stars.push(st); }
+    const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128; const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(8.4, 2.1), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false, side: THREE.DoubleSide })); board.position.set(PV, Y + 12, PU - AU - 1); G.add(board);
+    M = { fl, ball, stars, cv, tex, board, score: [0, 0], holder: 0, next: 0, from: new THREE.Vector3(), t0: 0, fly: 0, goal: -1, on: false, drawn: '' };
+  }
+  function drawBoard() {
+    const g = M.cv.getContext('2d'), s = `${M.score[0]}-${M.score[1]}`; if (M.drawn === s) return; M.drawn = s;
+    g.fillStyle = '#2b2238'; g.fillRect(0, 0, 512, 128); g.strokeStyle = '#d9b45a'; g.lineWidth = 6; g.strokeRect(4, 4, 504, 120);
+    g.font = 'bold 40px system-ui'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#ff8a7a'; g.fillText('🐉 Long ' + M.score[0], 130, 64); g.fillStyle = '#fff3d0'; g.fillText('–', 256, 64); g.fillStyle = '#8ac0ff'; g.fillText(M.score[1] + ' Phụng 🦚', 382, 64); M.tex.needsUpdate = true;
+  }
+  const fpos = (f, t, out) => { const a = t * (0.45 + f.i * 0.03) * (f.team ? 1 : -1) + f.ph; return out.set(PV + Math.sin(a) * (AV - 8) * (0.5 + 0.5 * Math.cos(a * 0.5 + f.i)), Y + f.h + Math.sin(t * 0.9 + f.i) * 1.6, PU + Math.cos(a) * (AU - 6) * 0.8); };
+  const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3();
+  function matchUpdate(dt, t) {
+    if (!M) return; const hr = ctx.sky && ctx.sky.state ? ctx.sky.state.hour : 10, on = !run && ((hr >= 15 && hr < 17.5) || hr >= 8 && hr < 20);
+    if (on !== M.on) { M.on = on; for (const f of M.fl) if (f.hero) f.hero.model.visible = on; M.ball.visible = on; for (const s of M.stars) s.visible = on; }
+    if (!on) return;
+    for (const f of M.fl) { if (!f.hero) continue; fpos(f, t, tmp); fpos(f, t + 0.1, tmp2); f.hero.model.position.copy(tmp); f.hero.model.rotation.y = Math.atan2(tmp2.x - tmp.x, tmp2.z - tmp.z); f.hero.anim.update(dt); }
+    for (const s of M.stars) s.rotation.y = t * 1.3;
+    // bóng: bay từ người giữ tới người kế tiếp (0,9 s); đôi khi lao tới Sao Đích → ghi điểm
+    if (t > M.next) {
+      const h = M.fl[M.holder]; fpos(h, t, M.from); M.t0 = t; M.fly = 0.9;
+      if (Math.random() < 0.22) { M.goal = h.team; } else { M.goal = -1; M.holder = (M.holder + 1 + Math.floor(Math.random() * (M.fl.length - 1))) % M.fl.length; }
+      M.next = t + 1.6 + Math.random() * 1.2;
+    }
+    const k = Math.min(1, (t - M.t0) / M.fly); const to = M.goal >= 0 ? tmp.copy(M.stars[M.goal ? 0 : 1].position) : fpos(M.fl[M.holder], t, tmp);
+    M.ball.position.lerpVectors(M.from, to, k); M.ball.position.y += Math.sin(k * Math.PI) * 2.6;
+    if (M.goal >= 0 && k >= 1) { M.score[M.goal]++; const p = player.pos, [u, v] = toLocal(p.x, p.z); if (Math.hypot(u - PU, v - PV) < 55) { ctx.sfx && ctx.sfx('coin'); ctx.toast(`🏆 <b>${M.goal ? 'Nhà Phụng' : 'Nhà Long'}</b> ghi điểm! Tỉ số ${M.score[0]} – ${M.score[1]}.`, 3000); } M.goal = -1; M.from.copy(M.ball.position); M.t0 = t; }
+    drawBoard();
   }
   return { build, unbuild, update, start, stop, get running() { return !!run; }, PITCH: { u: PU, v: PV } };
 }
