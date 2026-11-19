@@ -1,0 +1,21 @@
+{
+ "log": [
+  "tea#1: 330 → 327",
+  "map#0: 327 → 314",
+  "clock#0: 314 → 301",
+  "fire#1: 301 → 298",
+  "music#0: 298 → 285",
+  "oldbook#0: 285 → 280",
+  "pet#4: 280 → 259",
+  "bag fw: ok",
+  "bag ins: ok",
+  "bag compass: ok",
+  "bag puz: ok",
+  "bag watch: ok",
+  "nút: 🌙 Cổng Hẻm Đêm — giải câu đố mẹo để mở",
+  "cổng: đã hỏi · mở=true",
+  "night#1: 262 → 264",
+  "wear {\"eq\":{\"pet\":\"pet-cu\"},\"bag\":{\"fw-cu\":1},\"own\":[\"compass\",\"watch\",\"ins-sao\",\"old0\",\"pet-cu\"]}"
+ ],
+ "errors": []
+}
