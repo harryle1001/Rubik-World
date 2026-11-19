@@ -1759,3 +1759,6 @@ body.v60tTps #v34Swipe{opacity:.55}
 #v62kQa .tb{padding:0 8px 10px}#v62kQa .tb p{margin:4px 0;word-break:break-word}
 #v62kQa .it{border-radius:10px;padding:6px 8px;margin:6px 0}#v62kQa .it img{width:100%;max-width:240px;border-radius:8px;display:block}
 @media (max-width:520px){#v62kQa{top:auto;bottom:max(12px,env(safe-area-inset-bottom));right:12px;width:auto;max-height:61.8dvh}}
+
+/* v64m: bản đồ Puny World — giữ điểm ảnh sắc nét */
+#v32MapCv,#miniCv{image-rendering:pixelated}
