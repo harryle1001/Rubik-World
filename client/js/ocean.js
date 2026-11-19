@@ -55,6 +55,7 @@ import { createAcademy } from './island/academy/index.js';
 import { createSpellbook } from './island/spellbook.js';
 import { createTrain } from './island/train/index.js';
 import { createRegions } from './island/regions/index.js';
+import { createDestiny } from './island/zone-destiny.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { createVrmNpc } from './island/vrm/vrm-npc.js';
 import { createPlayerVrm } from './island/vrm/player-vrm.js';
@@ -135,9 +136,14 @@ const social = ctx.social = createSocial(ctx);
 const events = ctx.events = createEvents(ctx); if (/[?&]test\b/.test(location.search)) window.__ctx = ctx;   // kiểm thử tự động
  // 🧰 săn kho báu thứ Bảy, 🧹 giải bay chổi Chủ nhật (events.js, lịch do server)
 // ↑ social.js: 👥 bạn bè mã 6 ký tự, 😊 biểu cảm + câu mẫu (không chat tự do), nhóm, lời mời, chặn/báo cáo, sự kiện, lớp (social.js)
+const destiny = createDestiny(ctx); // Rừng Thiên Định: khu rừng ẩn ngoài vịnh bắc, lối mòn bí mật, cây ước nguyện (zone-destiny.js)
 const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms, draw call, tam giác, bộ nhớ… // 👤 đăng nhập / khách / Lưu đăng nhập, xu & vật phẩm (data/account.js)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
-const tutorial = ctx.tutorial = createTutorial(ctx); // hướng dẫn chơi lần đầu: 3 bước, bỏ qua được (tutorial.js)
+const tutorial = ctx.tutorial = createTutorial(ctx); // ❓ hướng dẫn chơi: chỉ mở khi bấm (menu ☰), không tự bật (tutorial.js)
+// 🎬 clip mở đầu (lần đầu vào game, sau đăng nhập): tải lười intro.js; xem lại ở menu ☰. ?test bỏ qua (thêm &intro để thử)
+ctx.intro = { open: false, tick: null, play: (o = {}) => ctx.intro.open ? null : document.body.classList.contains('st-cut') || ctx.mgActive ? ctx.toast('🎬 Xem lại clip sau khi xong đoạn hội thoại / trò chơi nhé!') : import('./island/intro.js').then(m => m.playIntro(ctx, o)).catch(e => { console.warn('intro', e); ctx.intro.open = false; }) };
+{ const Q = location.search, iv = setInterval(() => { if (loading.veil || !ctx.warmed) return; const a = ctx.account, box = document.getElementById('accBox'); if (!a || !a.profile || (box && !box.hidden) || document.body.classList.contains('rs-modal')) return; clearInterval(iv);
+  let seen = !!a.profile.introSeen; try { seen = seen || localStorage.getItem('island.intro') === '1'; } catch (e) {} if ((!seen && !/[?&]test\b/.test(Q)) || /[?&]intro\b/.test(Q)) ctx.intro.play({ first: true }); }, 300); }
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 const sealife = ctx.sealife = createSealife(ctx); // thế giới biển: san hô, đàn cá, sứa, rùa, cá đuối, cá heo, Bách khoa biển
@@ -172,6 +178,8 @@ player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2);
   addEventListener('pointerdown', e => { if (!menu.hidden && !menu.contains(e.target) && e.target !== more) show(false); }, true);
 }
 document.getElementById('bMenu').onclick = () => school.menu();
+{ const m = document.getElementById('moreMenu'), add = (id, t, fn) => { const b = document.createElement('button'); b.id = id; b.textContent = t; b.onclick = fn; m.appendChild(b); };
+  add('bHelp', '❓ Hướng dẫn', () => tutorial.show()); add('bIntro', '🎬 Xem lại clip mở đầu', () => ctx.intro.play()); }
 
 // Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại, hoa, nấm, gốc cây, pha lê quanh đền (khu I rừng & đền, layout.js)
 {
@@ -227,6 +235,7 @@ renderer.setAnimationLoop(() => {
   living.update(dt);
   skyshow.update(dt); // sau player/sky: chế độ ngắm trời đặt lại camera
   dive.update(dt); // sau ambience: ghi đè sương/màu khi dưới nước
+  destiny.update(dt, clock.elapsedTime); // sau weather/ambience: sương đặc trong bãi sương
   mg.update(dt, clock.elapsedTime);
   sealife.update(dt);
   treasure.update(dt);
@@ -241,6 +250,7 @@ renderer.setAnimationLoop(() => {
   ctx.flushOffer();
   brightness.update();
   tutorial.update(dt);
+  if (ctx.intro.tick) ctx.intro.tick();   // 🎬 clip mở đầu: camera điện ảnh (sau mọi cập nhật, trước khi vẽ)
   perf.update(dt);
   unfreezeGuard(dt);
   // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong
@@ -267,7 +277,7 @@ let frzT = 0;
 function unfreezeGuard(dt) {
   if (!player.frozen) { frzT = 0; return; }
   if ((frzT += dt) < 1) return; frzT = 0;
-  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden]), #accBox:not([hidden]), #schoolMenu:not([hidden])')) player.frozen = false;
+  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#dstWish, #dstBreath, #quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden]), #accBox:not([hidden]), #schoolMenu:not([hidden])')) player.frozen = false;
 }
 
 // ---------- Chất lượng tự động: mức (0..3) + độ phân giải động (logic trong autoq.js) ----------

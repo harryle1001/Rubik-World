@@ -110,6 +110,6 @@ export function createJournal(ctx, { S, save, CHAPTERS, say }) {
     if (b.dataset.review !== undefined) { close(); ctx.learn.askSet({ s: ['toan', 'tv', 'kh', 'lsdl', 'ta'], n: 5, need: 3, title: '📔 Ôn tập', ava: '🧠' }).then(r => ctx.toast(`🧠 Ôn tập xong: đúng ${r.n}/5 câu!`, 4000)); return; }
     if (b.dataset.replay !== undefined) { close(); const C = CHAPTERS[S().ch]; if (C) say(C.intro, { cine: true }); }
   }
-  addEventListener('keydown', e => { if (e.code === 'KeyJ' && !e.repeat && !/INPUT|TEXTAREA/.test((document.activeElement || {}).tagName)) { if (el && !el.hidden) close(); else if (!ctx.player.frozen) open(); } else if (e.code === 'Escape' && el && !el.hidden) close(); });
+  addEventListener('keydown', e => { if (e.code === 'KeyY' && !e.repeat && !/INPUT|TEXTAREA/.test((document.activeElement || {}).tagName)) { if (el && !el.hidden) close(); else if (!ctx.player.frozen) open(); } else if (e.code === 'Escape' && el && !el.hidden) close(); });
   return { addXP, giveTitle, onAnswer, open, close, update, points, get isOpen() { return !!(el && !el.hidden); } };
 }
