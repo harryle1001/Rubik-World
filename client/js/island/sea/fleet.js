@@ -103,7 +103,7 @@ export function createFleet(ctx) {
   const add = (kind, o) => { const K = KIND[kind], v = Object.assign({ kind, K, x: 0, z: 0, y: 0, h: 0, sp: 0, pitch: 0, roll: 0, vis: false, d: 1e9, wakeT: Math.random(), mat: new THREE.Matrix4(), s: 0, ph: vessels.length * 2.399 }, o); v.i = (byKind[kind] = byKind[kind] || []).push(v) - 1; vessels.push(v); return v; };
 
   // ----- đội hình -----
-  const laneIn = makePath(lane(0)), laneOut = makePath(lane(47).reverse());           // tàu du lịch vòng trong, tàu hàng vòng ngoài ngược chiều
+  const laneIn = makePath(lane(0)), laneOut = makePath(lane(34).reverse());           // tàu du lịch vòng trong, tàu hàng vòng ngoài ngược chiều
   add('liner', { mode: 'lane', path: laneIn, s: laneIn.L * 0.33 });
   add('cargo', { mode: 'lane', path: laneOut, s: laneOut.L * 0.5 });
   if (!MOB) add('cargo', { mode: 'lane', path: laneOut, s: laneOut.L * 0.02 });
@@ -270,7 +270,7 @@ export function createFleet(ctx) {
     const anyVis = {};
     for (const v of vessels) {
       move(v, dt, t);
-      v.d = Math.hypot(v.x - cx, v.z - cz); v.vis = v.d < far + v.K.len;
+      v.d = Math.hypot(v.x - cx, v.z - cz); v.vis = v.d < (v.K.len > 20 ? far + v.K.len : far - 34);   // thuyền nhỏ: sát mép sương đã không còn thấy → ẩn sớm 34 m
       if (!v.vis) continue;
       anyVis[v.kind] = true; pose(v, dt, t, v.d < 144 || v.K.len > 30);
       // bọt đuôi

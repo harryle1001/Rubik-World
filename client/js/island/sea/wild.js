@@ -157,7 +157,7 @@ export function createWild(ctx, { fleet, pilot, village }) {
 
     // ----- sương sớm -----
     const vd = Math.hypot(p.x - BAY.O[0], p.z - BAY.O[1]), rain = ctx.weather && ctx.weather.cur ? ctx.weather.cur.r : 0;
-    const mk = Math.max(0, Math.min(1, (hr - 4.6) / 0.6, (7.4 - hr) / 0.9)) * (vd < 260 ? 1 : 0) * (1 - Math.min(1, rain * 3));
+    const mk = Math.max(0, Math.min(1, (hr - 4.6) / 0.6, (7.4 - hr) / 0.9)) * (vd < 190 ? 1 : 0) * (1 - Math.min(1, rain * 3));
     MU.uK.value += (mk - MU.uK.value) * Math.min(1, dt * 0.5); const mv = MU.uK.value > 0.01; if (mist.visible !== mv) mist.visible = mv;
     if (mv) { MU.uT.value = t; MU.uCol.value.setRGB(1, 0.96, 0.9).lerp(_c.set('#9fb0c8'), S.night * 0.7); if (vd < 60 && MU.uK.value > 0.6) once('mist'); }
     if (hr > 17.3 && hr < 18.4 && vd < 60 && !stormy) once('sunset');

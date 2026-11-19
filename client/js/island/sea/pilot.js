@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { loadModel } from '../models.js';
 import { CFG } from '../config.js';
-import { PHI, BAY, toW, PIER_V, RESORT_JETTY, STOPS } from './site.js';
+import { PHI, BAY, toW, PIER_V, WEST, toW2, STOPS } from './site.js';
 
 const KNOT = 1.852 / 3.6;   // 1 hải lý/giờ = 1,852 km/h ≈ 0,514 m/s
 const DIR8 = ['bắc', 'đông bắc', 'đông', 'đông nam', 'nam', 'tây nam', 'tây', 'tây bắc'];
@@ -37,7 +37,7 @@ export function createPilot(ctx, { fleet }) {
 
   // ---------- HUD la bàn gió ----------
   const hud = document.createElement('div');
-  const TOP = () => `calc(max(12px,env(safe-area-inset-top)) + ${MOB || innerWidth < 610 ? 204 : 96}px)`;   // điện thoại dọc: nằm dưới bảng nhiệm vụ
+  const TOP = () => `calc(max(12px,env(safe-area-inset-top)) + ${MOB || innerWidth < 610 ? 338 : 96}px)`;   // điện thoại dọc: nằm dưới bảng nhiệm vụ + bảng cốt truyện
   hud.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:0;z-index:26;display:none;align-items:center;gap:8px;padding:5px 13px 5px 5px;border-radius:34px;background:#0f2a3ad9;color:#fff3d6;font:700 13px/1.25 system-ui;pointer-events:none;max-width:94vw';
   hud.innerHTML = `<svg width="55" height="55" viewBox="-28 -28 56 56" style="flex:none"><circle r="26" fill="#17384a" stroke="#fff3d6" stroke-width="1.6"/>
 <g fill="#fff3d6" font-size="8" font-weight="800" text-anchor="middle"><text y="-16">B</text><text x="19" y="3">Đ</text><text y="22">N</text><text x="-19" y="3">T</text></g>
@@ -66,12 +66,11 @@ export function createPilot(ctx, { fleet }) {
       onDismount: () => { showHud(false); pl.root.rotation.set(0, 0, 0); } };
     g.position.set(x, 0, z); g.rotation.y = ry; V.register(v); boats.push(v); return v;
   }
-  const J = RESORT_JETTY;
   // seat / seatZ: chỗ ngồi đo từ lưới model (sàn khoang lái phía lái thuyền), dy: mớn nước
   make({ model: 'boat_sail_a', s: 1.6, sail: true, name: 'Thuyền buồm Vịnh Én', seat: 0.8, seatZ: -2.3, dy: -0.32, ry: BAY.ry, ...xz(toW(29.8, PIER_V + 3.5)) });
   make({ model: 'boat_speed_a', s: 1.7, sail: false, name: 'Ca nô làng chài', seat: 1.18, seatZ: -1.9, dy: -0.3, ry: BAY.ry, ...xz(toW(29, PIER_V - 3.4)) });
-  make({ model: 'boat_speed_e', s: 1.9, sail: false, name: 'Ca nô Resort', seat: 0.65, seatZ: 0.8, dy: -0.3, ry: -Math.PI / 2, x: J.x0 + J.headD + 5, z: J.z - 3.4 });
-  make({ model: 'boat_sail_b', s: 1.6, sail: true, name: 'Thuyền buồm Resort', seat: 0.8, seatZ: -2.2, dy: -0.32, ry: -Math.PI / 2, x: J.x0 + J.headD + 6, z: J.z + 3.5 });
+  make({ model: 'boat_speed_e', s: 1.9, sail: false, name: 'Ca nô Bến Tây', seat: 0.65, seatZ: 0.8, dy: -0.3, ry: WEST.ry, ...xz(toW2(21, -3.5)) });
+  make({ model: 'boat_sail_b', s: 1.6, sail: true, name: 'Thuyền buồm Bến Tây', seat: 0.8, seatZ: -2.2, dy: -0.32, ry: WEST.ry, ...xz(toW2(21, 3.6)) });
   function xz([x, z]) { return { x, z }; }
 
   let heel = 0, lastState = '', sailed = 0;
@@ -153,7 +152,7 @@ export function createPilot(ctx, { fleet }) {
     const p = pl.pos;
     if (!aboard) {
       if (F.state === 'dock' && !pl.vehicle && !pl.frozen) { const s = F.at || STOPS[0], d = Math.hypot(p.x - s.land[0], p.z - s.land[1]); if (d < 7) ctx.offer(`⛴️ Lên phà đi ${nextName()}`, board, 2.2); }   // ưu tiên thấp hơn nói chuyện / câu cá với người đứng cạnh
-      else if (!pl.vehicle && !pl.frozen) for (const s of STOPS) if (Math.hypot(p.x - s.land[0], p.z - s.land[1]) < 6) { once('wait' + s.id, `⛴️ <b>Bến phà ${s.name}</b> — phà chạy vòng 3 bến: Làng chài · Làng nổi · Resort. Chờ phà cập bến rồi lên nhé!`, 5000); }
+      else if (!pl.vehicle && !pl.frozen) for (const s of STOPS) if (Math.hypot(p.x - s.land[0], p.z - s.land[1]) < 6) { once('wait' + s.id, `⛴️ <b>Bến phà ${s.name}</b> — phà chạy vòng 3 bến: Làng chài · Làng nổi · Bến Tây. Chờ phà cập bến rồi lên nhé!`, 5000); }
       return;
     }
     // đứng trên boong: vị trí theo thân phà (nhấp nhô theo sóng)

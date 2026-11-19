@@ -1,7 +1,7 @@
 // sea/site.js — BỐ CỤC THẾ GIỚI ĐẠI DƯƠNG (chỉ số liệu, không dựng hình):
 //   - Làng chài Vịnh Én ở vịnh cát hướng đông – đông nam (góc 23°, giữa khu Thể thao và Sân bay), hệ toạ độ riêng (u ra khơi, v dọc bờ).
-//   - Luồng tàu lớn (tàu du lịch, tàu hàng) vòng nửa đông – nam đảo, cách bờ ~ 89–144 m (Fibonacci) để còn thấy trong sương.
-//   - Tuyến phà 3 bến: Làng chài ⇄ Làng nổi ⇄ Resort Biển Xanh. Tránh góc tây bắc (cầu cạn Tàu Pha Lê, thuyền đèn lồng).
+//   - Luồng tàu lớn (tàu du lịch, tàu hàng): từ khơi đông bắc vòng nửa đông – nam đảo ra khơi tây nam, cách bờ ~ 89–144 m (Fibonacci).
+//   - Tuyến phà 3 bến: Làng chài ⇄ Làng nổi ⇄ Bến Tây (cạnh cầu ra Làng Cổ). Không cắt 2 cầu (bắc, tây), cầu cạn Tàu Pha Lê, 4 vùng ngoài khơi.
 import { PHI } from '../layout.js';
 
 export const DEG = Math.PI / 180;
@@ -27,26 +27,30 @@ export const DECKS = [
 // ----- Bến phà: p = chỗ phà đậu (song song mép bến), land = chỗ khách bước lên -----
 const A = toW(PIER_U1 + 4.7, PIER_V), aLand = toW(PIER_U1 - 1.6, PIER_V);
 export const PONTOON = { x: 254.9, z: 253.9, r: 2, y: 1.1 };
-export const RESORT_JETTY = { x0: -335, x1: -301.5, z: 30, w: 3, headW: 21, headD: 5, y: 1.3 };   // cầu phà riêng ở nam Resort (cầu cũ sát cầu cạn tàu hoả)
+// ----- Bến Tây: cầu phà ở vịnh tây nam (tia 150°), ngay nam cầu ra Làng Cổ; hệ (u ra khơi, v dọc bờ) riêng -----
+export const WEST = (() => { const a = 150 * DEG, D = [Math.cos(a), Math.sin(a)], T = [-D[1], D[0]], r0 = 271.25, O = [D[0] * r0, D[1] * r0]; return { D, T, O, ry: Math.atan2(D[0], D[1]), U1: 34, W: 3, headW: 21, headD: 5, y: 1.3 }; })();
+export const toW2 = (u, v) => [WEST.O[0] + WEST.D[0] * u + WEST.T[0] * v, WEST.O[1] + WEST.D[1] * u + WEST.T[1] * v];
 export const STOPS = [
   { id: 'chai', name: NAME, p: A, land: aLand },
   { id: 'noi', name: 'Làng nổi trên biển', p: [250.6, 249.6], land: [254.9, 253.9] },   // ponton 4 × 4 m nối dài đầu cầu Làng nổi (village.js)
-  { id: 'resort', name: 'Resort Biển Xanh', p: [RESORT_JETTY.x0 - 4.7, RESORT_JETTY.z], land: [RESORT_JETTY.x0 + 2, RESORT_JETTY.z] },
+  { id: 'tay', name: 'Bến Tây (cầu Làng Cổ)', p: toW2(WEST.U1 + 4.7, 0), land: toW2(WEST.U1 - 2.5, 0) },
 ];
-// đường phà = VÒNG KÍN (phà luôn chạy tới, không quay đầu tại bến): Làng chài → Làng nổi → Resort → (vòng ngoài) → Làng nổi → Làng chài.
+// đường phà = VÒNG KÍN (phà luôn chạy tới, không quay đầu tại bến): Làng chài → Làng nổi → Bến Tây → (vòng ngoài) → Làng nổi → Làng chài.
 // Lượt đi men trong (bán kính 336 m), lượt về men ngoài (358 m); ở bến đầu/cuối có vòng quay giọt nước để cập song song mép bến.
+// Không vượt cầu Làng Cổ (tia 168°) và cầu Núi Tuyết (bắc): tuyến chỉ nằm ở nửa đông – nam.
 const B = STOPS[1].p, C = STOPS[2].p;
 export const FERRY_PATH = [
   A, toW(52, -1), toW(76, 12), [322, 160], [316, 196], [290, 213], [262, 228], B,
-  [243, 259.5], [222, 270], ...[56, 70, 86, 102, 118, 134, 150, 164].map(a => polar(336, a)), [-341, 62], C,
-  [-341, 6], [-352, -4], [-367, 4], [-372, 30], [-366, 60], ...[166, 150, 134, 118, 102, 86, 70, 58].map(a => polar(358, a)), [226, 282], [243, 259.5], B,
+  [243, 259.5], [222, 270], ...[56, 70, 86, 102, 118, 134].map(a => polar(336, a)), toW2(42, -70), toW2(WEST.U1 + 4.7, -32), C,
+  toW2(40, 26), toW2(54, 40), toW2(72, 36), toW2(84, 16), ...[150, 134, 118, 102, 86, 70, 58].map(a => polar(358, a)), [226, 282], [243, 259.5], B,
   [262, 228], [292, 212], [332, 196], [344, 152], toW(88, -14), toW(78, -32), toW(60, -37), toW(47, -28),
 ];
-const iB1 = 7, iC = 19, iB2 = iC + 16;
+const iB1 = 7, iC = 18, iB2 = iC + 14;
 export const FERRY_STOPS = [{ i: 0, stop: 0 }, { i: iB1, stop: 1 }, { i: iC, stop: 2 }, { i: iB2, stop: 1 }];   // thứ tự ghé bến trên vòng
 
-// ----- Luồng tàu lớn: đường hở từ khơi bắc → đông → nam → khơi tây nam (đi 2 chiều, lệch bán kính) -----
-const LANE = [[720, 265], [560, 274], [455, 294], [432, 318], [426, 342], [432, 4], [462, 22], [530, 37], [538, 52], [470, 68], [432, 86], [426, 106], [436, 126], [470, 141], [560, 150], [720, 156]];
+// ----- Luồng tàu lớn: đường hở từ khơi đông bắc (giữa Núi Tuyết và Thành phố Tương lai) → đông → nam → khơi tây nam
+//       (giữa Quần đảo San Hô và Làng Cổ); đi 2 chiều, lệch bán kính 34 m. Không cắt cầu, không vào 4 vùng ngoài khơi. -----
+const LANE = [[790, 316], [600, 318], [470, 322], [432, 334], [426, 348], [430, 4], [462, 22], [530, 37], [538, 52], [470, 68], [432, 86], [424, 106], [440, 122], [520, 131], [640, 135], [790, 137]];
 export const lane = (dr = 0) => LANE.map(([r, a]) => polar(r + dr, a));
 
 // ----- Ngư trường của ghe (ngoài khơi phía đông, bắc tuyến phà) & vòng lượn của thuyền buồm, ca nô -----

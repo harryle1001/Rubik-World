@@ -116,7 +116,7 @@ export function createFolk(ctx, { village, fleet }) {
   let fishModel = null; loadModel('kit/fish').then(m => { if (!m) return; m.visible = false; m.scale.setScalar(0.75); scene.add(m); fishModel = m; });
 
   // ---- thi câu ----
-  const hud = document.createElement('div'); hud.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:calc(max(12px,env(safe-area-inset-top)) + ' + (MOB ? 204 : 96) + 'px);z-index:27;padding:6px 13px;border-radius:16px;background:#0f2a3acc;color:#fff3d6;font:700 13px system-ui;white-space:nowrap;display:none;pointer-events:none'; document.body.appendChild(hud);
+  const hud = document.createElement('div'); hud.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:calc(max(12px,env(safe-area-inset-top)) + ' + (MOB ? 338 : 96) + 'px);z-index:27;padding:6px 13px;border-radius:16px;background:#0f2a3acc;color:#fff3d6;font:700 13px system-ui;white-space:nowrap;display:none;pointer-events:none'; document.body.appendChild(hud);
   const bookN = () => { try { return (JSON.parse(localStorage.getItem('mg.sport.fishbook') || '{}').n) || 0; } catch (e) { return 0; } };
   let contest = null;
   function startContest(f) {

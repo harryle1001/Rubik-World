@@ -10,9 +10,9 @@
 | 04 | Tàu du lịch + tàu hàng trên luồng, ghe đánh cá, bọt đuôi tàu |
 | 05 | Lái thuyền buồm theo gió (la bàn gió, hải lý/giờ), cá heo nhảy theo thuyền |
 | 06 | Ca nô rẽ sóng |
-| 07 | Đi nhờ phà tới Làng nổi · 07b cá voi phun nước |
+| 07 | Đi nhờ phà (3 bến: Làng chài · Làng nổi · Bến Tây cạnh cầu Làng Cổ) · 07b cá voi phun nước |
 | 08 | Chiều: ghe về bến · 09 kéo lưới rùng trên bãi, người câu mỏm đá |
 | 10 | Đêm: đèn tàu (đỏ mạn trái, xanh mạn phải, trắng cột), đèn cầu tàu · 11 tàu du lịch sáng đèn |
 | 12 | Giông: mưa, sóng cao, thuyền về bến lên đèn |
 
-Draw call (chất lượng mức 1): điện thoại tối đa 159 ở làng chài (giới hạn 233); cả game tối đa 188.
+Draw call (chất lượng mức 1): điện thoại tối đa 191 ở làng chài (giới hạn 233).
