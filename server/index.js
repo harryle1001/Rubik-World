@@ -33,6 +33,7 @@ app.get(['/privacy', '/terms'], (req, res) => {   // văn bản pháp lý: docs/
 app.get('/lib/chart.js', (req, res) => { res.set('Cache-Control', 'public, max-age=604800'); res.sendFile(path.join(ROOT, 'node_modules', 'chart.js', 'dist', 'chart.umd.min.js')); });
 app.get('/sw.js', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'sw.js')); });
 // Trang gốc mở thẳng Đảo Rubik 3D (game duy nhất; game 2D client/school/ chỉ còn lưu trữ, không liên kết)
+const site = require('./site')(app, { ROOT });   // trang người lớn: /gioi-thieu, /blog, sitemap, robots (không bao giờ có quảng cáo trong game)
 app.get(['/', '/index.html'], (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'ocean.html')); });
 app.get('/manifest.webmanifest', (req, res) => { res.type('application/manifest+json'); res.sendFile(path.join(ROOT, 'client', 'manifest.webmanifest')); });
 // Nén brotli/gzip (zlib có sẵn của Node, không thêm thư viện): JS, HTML, model .glb (meshopt được thiết kế để nén tiếp),
