@@ -233,4 +233,4 @@ io.on('connection', socket => {
 const ready = require('./online')(app, io, { ADMIN_KEY, express, rateLimit });
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
-ready.then(() => server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); })).catch(e => { console.error('Không mở được kho dữ liệu:', e); process.exit(1); });
+ready.then(({ db }) => { app.locals.sp = require('./sponsors')(app, { db, express, rateLimit, ADMIN_KEY, ROOT }); }).then(() => server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); })).catch(e => { console.error('Không mở được kho dữ liệu:', e); process.exit(1); });

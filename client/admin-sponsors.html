@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nhà tài trợ · Chủ game</title><meta name="robots" content="noindex,nofollow">
+<style>
+:root{--bg:#f6f0e4;--ink:#2e2418;--mute:#7a6a58;--line:#e6dccb;--pri:#3fb8a8;--bad:#c8502c;--ok:#2f8f4e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.618 system-ui,sans-serif}
+header{background:#1b1626;color:#fff;padding:13px 21px;display:flex;gap:13px;align-items:center;flex-wrap:wrap}header b{font-size:21px}header .sp{flex:1}header a{color:#ffd36e;font:700 13px system-ui}
+main{max-width:987px;margin:0 auto;padding:21px 16px 55px}.card{background:#fff;border-radius:21px;padding:21px;margin-bottom:21px;box-shadow:0 2px 13px #0000000d}
+h2{font-size:21px;margin:0 0 13px}h3{font-size:16px;margin:13px 0 5px}small,.mute{color:var(--mute);font-size:13px}
+input,select,textarea{width:100%;padding:8px 13px;border-radius:13px;border:2px solid var(--line);font:600 15px system-ui;background:#fff}textarea{min-height:55px;resize:vertical}label{display:block;font:700 13px system-ui;margin:8px 0 3px}
+.row{display:flex;gap:13px;flex-wrap:wrap;align-items:flex-end}.row>*{flex:1 1 144px}
+.b{padding:8px 21px;border-radius:13px;border:0;background:var(--pri);color:#fff;font:800 15px system-ui;cursor:pointer}.b.sec{background:#efe3cc;color:var(--ink)}.b.sm{padding:3px 13px;font-size:13px}.b.bad{background:var(--bad)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mute);white-space:nowrap}
+.msg{min-height:21px;color:var(--bad);font:700 13px system-ui}.msg.ok{color:var(--ok)}.hid{display:none!important}
+.chip{display:inline-block;border-radius:13px;padding:0 8px;font:700 12px system-ui;background:#efe3cc}.chip.approved{background:#cdeedb;color:#1d6b3a}.chip.pending{background:#fde7b8}.chip.rejected,.chip.paused{background:#f6d2c8}
+.spl{display:grid;grid-template-columns:repeat(auto-fill,minmax(233px,1fr));gap:13px}.spc{border:2px solid var(--line);border-radius:13px;padding:13px;border-top:6px solid var(--c)}.spc img{width:55px;height:55px;object-fit:contain;float:right;margin-left:8px}
+.q{border:1px dashed var(--line);border-radius:13px;padding:8px 13px;margin-top:8px}.note{background:#faf5ea;border-radius:13px;padding:8px 13px;font-size:13px}
+</style></head><body>
+<header><b>🏷️ Nhà tài trợ</b><span class="sp"></span><a href="/admin">← Bảng chủ game</a><button class="b sec sm hid" id="bOut">Khoá</button></header>
+<main>
+<section class="card" id="vKey"><h2>Nhập mã chủ game (ADMIN_KEY)</h2><div class="row"><div><input id="key" type="password" autocomplete="off"></div><div style="flex:0 0 auto"><button class="b" id="bKey">Mở</button></div></div><div class="msg" id="kMsg"></div></section>
+<section id="vMain" class="hid">
+  <div class="card note">🛡️ <b>An toàn trẻ em</b> (Luật Quảng cáo 2012, Luật Trẻ em 2016): chỉ nhận ngành hàng phù hợp trẻ; không video, không pop-up, không chen ngang — biển chỉ hiện trong thế giới, em tự lại gần mới xem; luôn có nhãn <b>“Nhà tài trợ”</b>; link chỉ mở sau <b>cổng phụ huynh</b>; không chia sẻ dữ liệu trẻ cho nhà tài trợ (báo cáo chỉ là số đếm gộp). Mọi thay đổi nội dung phải <b>duyệt lại</b> trước khi lên đảo.</div>
+  <div class="card"><h2>📍 Vị trí & giá tham khảo</h2><div class="tw"><table id="tSlots"></table></div><p class="mute">Giá tham khảo / 30 ngày (dãy Fibonacci ×10.000 đ). Ảnh mẫu & mô tả: <code>docs/sponsor-kit.md</code>.</p></div>
+  <div class="card"><h2>🤝 Nhà tài trợ</h2><div class="spl" id="spList"></div>
+    <h3 id="fTitle">➕ Thêm nhà tài trợ</h3><input type="hidden" id="fId">
+    <div class="row"><div><label>Tên hiển thị (≤ 34 ký tự)</label><input id="fName" maxlength="34"></div><div><label>Ngành hàng</label><select id="fCat"></select></div><div style="flex:0 1 89px"><label>Màu</label><input id="fColor" type="color" value="#2c8f82" style="height:44px;padding:3px"></div></div>
+    <div class="row"><div><label>Câu thông điệp ngắn (≤ 55 ký tự)</label><input id="fMsg" maxlength="55"></div><div><label>Link — chỉ hiện cho phụ huynh (https://)</label><input id="fLink" placeholder="https://"></div></div>
+    <label>Giới thiệu 1 câu trong thẻ thông tin (≤ 144)</label><input id="fAbout" maxlength="144">
+    <div class="row"><div><label>Liên hệ nội bộ (không hiện trong game)</label><input id="fContact" maxlength="89"></div><div style="flex:0 1 144px"><label>Thưởng nhiệm vụ (⭐ 1–5)</label><input id="fReward" type="number" min="1" max="5" value="3"></div></div>
+    <h3>❓ Nhiệm vụ tài trợ — 3 câu đố kiến thức về chủ đề của nhà tài trợ (để trống nếu không có)</h3><div id="fQuest"></div>
+    <div class="row" style="margin-top:13px"><div style="flex:0 0 auto"><button class="b" id="bSave">Lưu (chờ duyệt)</button></div><div style="flex:0 0 auto"><button class="b sec" id="bNew">Làm mới form</button></div></div><div class="msg" id="fMsgBox"></div>
+    <div id="logoBox" class="hid"><h3>🖼️ Logo (tự thu về ≤ 512 px)</h3><div class="row"><div><label>Logo ban ngày</label><input type="file" id="fLogo" accept="image/png,image/jpeg,image/webp,image/svg+xml"></div><div><label>Logo ban đêm (tuỳ chọn, nền tối)</label><input type="file" id="fLogoN" accept="image/png,image/jpeg,image/webp,image/svg+xml"></div></div><small>Gợi ý: logo vuông, nền trong suốt, nét đậm — biển gỗ trong game chỉ cao 1,6 m.</small></div>
+  </div>
+  <div class="card"><h2>🗓️ Gán vị trí & lịch chạy</h2>
+    <div class="row"><div><label>Vị trí</label><select id="bSlot"></select></div><div><label>Nhà tài trợ</label><select id="bSp"></select></div><div style="flex:0 1 160px"><label>Từ ngày</label><input type="date" id="bFrom"></div><div style="flex:0 1 160px"><label>Đến ngày</label><input type="date" id="bTo"></div><div style="flex:0 0 auto"><button class="b" id="bBook">Gán</button></div></div><div class="msg" id="bMsg"></div>
+    <div class="tw"><table id="tBook"></table></div><p class="mute">Chỉ nhà tài trợ <b>đã duyệt</b> mới hiện trên đảo; mỗi vị trí 1 nhà tài trợ trong cùng thời gian. Đảo đọc lại cấu hình mỗi lần mở game.</p></div>
+</section></main>
+<script>
+const $ = s => document.querySelector(s), esc = s => String(s ?? '').replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';'), money = n => (n || 0).toLocaleString('vi-VN') + ' đ';
+const ST = { approved: 'Đã duyệt', pending: 'Chờ duyệt', paused: 'Tạm dừng', rejected: 'Từ chối' };
+let key = sessionStorage.getItem('rubik.adminKey') || '', S = null;
+const call = async (p, body, method) => { const r = await fetch('/api/sp/admin' + p, { method: method || (body ? 'POST' : 'GET'), headers: { 'Content-Type': 'application/json', 'x-admin-key': key }, body: body ? JSON.stringify(body) : undefined }); const j = await r.json().catch(() => ({})); return Object.assign(j, { status: r.status }); };
+const say = (el, t, ok) => { el.textContent = t || ''; el.classList.toggle('ok', !!ok); };
+async function load() {
+  const r = await call(''); if (r.status === 401) { sessionStorage.removeItem('rubik.adminKey'); $('#vKey').classList.remove('hid'); $('#vMain').classList.add('hid'); say($('#kMsg'), r.error); return; }
+  sessionStorage.setItem('rubik.adminKey', key); $('#vKey').classList.add('hid'); $('#vMain').classList.remove('hid'); $('#bOut').classList.remove('hid'); render(r);
+}
+function render(r) {
+  if (r && r.slots) S = r; const spOf = id => S.sponsors.find(x => x.id === id), liveOf = id => S.live.find(x => x.slot === id);
+  $('#tSlots').innerHTML = '<tr><th>Vị trí</th><th>Khu</th><th>Kiểu</th><th>Giá / 30 ngày</th><th>Đang chạy hôm nay</th></tr>' + S.slots.map(s => { const l = liveOf(s.id), sp = l && spOf(l.sp); return `<tr><td><b>${esc(s.name)}</b><br><small>${s.id}</small></td><td>${esc(s.zone)}</td><td>${s.kind}</td><td>${money(s.price)}</td><td>${sp ? esc(sp.name) : '<span class="mute">— trống (hiện lời nhắn của đảo)</span>'}</td></tr>`; }).join('');
+  $('#fCat').innerHTML = '<option value="">— chọn —</option>' + Object.entries(S.cats).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('');
+  $('#spList').innerHTML = S.sponsors.map(sp => `<div class="spc" style="--c:${esc(sp.color)}">${sp.logoUrl ? `<img src="${esc(sp.logoUrl)}" alt="">` : ''}<b>${esc(sp.name)}</b> <span class="chip ${sp.status}">${ST[sp.status] || sp.status}</span><br><small>${esc(S.cats[sp.cat] || '?')}</small><br>${esc(sp.msg)}<br><small>❓ ${sp.quest.length ? sp.quest.length + ' câu đố' : 'không có nhiệm vụ'}${sp.link ? ' · 🔗 ' + esc(sp.link.replace(/^https:\/\//, '')) : ''}</small>
+    ${sp.problems.length ? `<div class="msg">${sp.problems.map(esc).join('<br>')}</div>` : ''}${sp.reviewNote ? `<div><small>Ghi chú duyệt: ${esc(sp.reviewNote)}</small></div>` : ''}
+    <div class="row" style="margin-top:8px;gap:5px"><button class="b sm sec" data-ed="${sp.id}">Sửa</button>${sp.status !== 'approved' ? `<button class="b sm" data-st="approved" data-id="${sp.id}">Duyệt</button>` : `<button class="b sm sec" data-st="paused" data-id="${sp.id}">Tạm dừng</button>`}${sp.status === 'pending' ? `<button class="b sm sec" data-st="rejected" data-id="${sp.id}">Từ chối</button>` : ''}<button class="b sm bad" data-del="${sp.id}">Xoá</button></div></div>`).join('') || '<p class="mute">Chưa có nhà tài trợ nào.</p>';
+  $('#bSlot').innerHTML = S.slots.map(s => `<option value="${s.id}">${esc(s.name)} — ${money(s.price)}</option>`).join('');
+  $('#bSp').innerHTML = S.sponsors.map(sp => `<option value="${sp.id}">${esc(sp.name)} (${ST[sp.status]})</option>`).join('');
+  const t = S.today; $('#tBook').innerHTML = '<tr><th>Vị trí</th><th>Nhà tài trợ</th><th>Từ</th><th>Đến</th><th>Giá</th><th>Trạng thái</th><th></th></tr>' + S.book.map(b => { const sp = spOf(b.sp), s = S.slots.find(x => x.id === b.slot); const k = b.to < t ? 'Hết hạn' : b.from > t ? 'Sắp tới' : sp && sp.status === 'approved' ? '▶ Đang chạy' : 'Chờ duyệt nội dung'; return `<tr><td>${esc(s ? s.name : b.slot)}</td><td>${esc(sp ? sp.name : '?')}</td><td>${b.from}</td><td>${b.to}</td><td>${money(b.price)}</td><td>${k}</td><td><button class="b sm bad" data-unbook="${b.id}">Xoá</button></td></tr>`; }).join('');
+}
+function quests(q = []) { $('#fQuest').innerHTML = [0, 1, 2].map(i => { const x = q[i] || { q: '', a: ['', '', '', ''], c: 0, s: '', explain: '' }; return `<div class="q"><label>Câu ${i + 1}</label><input data-q="${i}" value="${esc(x.q)}" maxlength="144" placeholder="Câu hỏi kiến thức, phù hợp lứa tuổi tiểu học"><div class="row">${[0, 1, 2, 3].map(k => `<div><label><input type="radio" name="c${i}" value="${k}" ${x.c === k ? 'checked' : ''} style="width:auto"> Đáp án ${'ABCD'[k]}${k === 0 ? ' (chọn ô tròn = đúng)' : ''}</label><input data-a="${i}-${k}" value="${esc(x.a[k] || '')}" maxlength="55"></div>`).join('')}</div><div class="row"><div style="flex:0 1 160px"><label>Môn</label><input data-s="${i}" value="${esc(x.s || '')}" placeholder="Khoa học"></div><div><label>Giải thích khi sai</label><input data-x="${i}" value="${esc(x.explain || '')}" maxlength="144"></div></div></div>`; }).join(''); }
+function form(sp) {
+  sp = sp || {}; $('#fId').value = sp.id || ''; $('#fName').value = sp.name || ''; $('#fCat').value = sp.cat || ''; $('#fColor').value = sp.color || '#2c8f82'; $('#fMsg').value = sp.msg || ''; $('#fLink').value = sp.link || ''; $('#fAbout').value = sp.about || ''; $('#fContact').value = sp.contact || ''; $('#fReward').value = sp.reward || 3;
+  quests(sp.quest); $('#fTitle').textContent = sp.id ? '✏️ Sửa: ' + sp.name : '➕ Thêm nhà tài trợ'; $('#logoBox').classList.toggle('hid', !sp.id); say($('#fMsgBox'), '');
+}
+const readQ = () => [0, 1, 2].map(i => ({ q: $(`[data-q="${i}"]`).value, a: [0, 1, 2, 3].map(k => $(`[data-a="${i}-${k}"]`).value).filter(Boolean), c: +((document.querySelector(`[name=c${i}]:checked`) || {}).value || 0), s: $(`[data-s="${i}"]`).value, explain: $(`[data-x="${i}"]`).value })).filter(q => q.q.trim());
+$('#bSave').onclick = async () => { const r = await call('/sponsor', { id: $('#fId').value || undefined, name: $('#fName').value, cat: $('#fCat').value, color: $('#fColor').value, msg: $('#fMsg').value, link: $('#fLink').value, about: $('#fAbout').value, contact: $('#fContact').value, reward: +$('#fReward').value, quest: readQ() }); if (r.error) return say($('#fMsgBox'), r.error); render(r); form(S.sponsors.find(x => x.id === r.id)); say($('#fMsgBox'), '✅ Đã lưu — trạng thái "Chờ duyệt". Tải logo rồi bấm Duyệt.', true); };
+$('#bNew').onclick = () => form();
+// logo: thu về ≤ 512 px trên trình duyệt (WebP, không hỗ trợ thì PNG) → server chỉ nhận ảnh raster, không nhận SVG thô
+const shrink = file => new Promise((ok, no) => { const im = new Image(); im.onload = () => { const k = Math.min(1, 512 / Math.max(im.naturalWidth || 512, im.naturalHeight || 512)), w = Math.max(1, Math.round((im.naturalWidth || 512) * k)), h = Math.max(1, Math.round((im.naturalHeight || 512) * k)), c = Object.assign(document.createElement('canvas'), { width: w, height: h }); c.getContext('2d').drawImage(im, 0, 0, w, h); let d = c.toDataURL('image/webp', 0.88); if (!d.startsWith('data:image/webp')) d = c.toDataURL('image/png'); URL.revokeObjectURL(im.src); ok(d); }; im.onerror = () => no(new Error('Không đọc được ảnh.')); im.src = URL.createObjectURL(file); });
+for (const [sel, night] of [['#fLogo', false], ['#fLogoN', true]]) $(sel).onchange = async e => { const f = e.target.files[0]; if (!f) return; try { const r = await call(`/sponsor/${$('#fId').value}/logo`, { data: await shrink(f), night }); if (r.error) return say($('#fMsgBox'), r.error); render(r); say($('#fMsgBox'), '✅ Đã tải logo — cần duyệt lại.', true); } catch (err) { say($('#fMsgBox'), err.message); } e.target.value = ''; };
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.ed) { form(S.sponsors.find(x => x.id === b.dataset.ed)); $('#fTitle').scrollIntoView({ behavior: 'smooth' }); }
+  else if (b.dataset.st) { const note = b.dataset.st === 'rejected' ? prompt('Lý do từ chối (gửi lại nhà tài trợ):') || '' : ''; const r = await call(`/sponsor/${b.dataset.id}/status`, { status: b.dataset.st, note }); if (r.error) return alert(r.error); render(r); }
+  else if (b.dataset.del) { if (!confirm('Xoá nhà tài trợ này và lịch chạy của họ?')) return; render(await call('/sponsor/' + b.dataset.del, null, 'DELETE')); }
+  else if (b.dataset.unbook) render(await call('/book/' + b.dataset.unbook, null, 'DELETE'));
+});
+$('#bBook').onclick = async () => { const r = await call('/book', { slot: $('#bSlot').value, sp: $('#bSp').value, from: $('#bFrom').value, to: $('#bTo').value }); if (r.error) return say($('#bMsg'), r.error); render(r); say($('#bMsg'), '✅ Đã gán.', true); };
+{ const d = new Date(Date.now() + 7 * 3600e3); $('#bFrom').value = d.toISOString().slice(0, 10); $('#bTo').value = new Date(d.getTime() + 29 * 864e5).toISOString().slice(0, 10); }
+$('#bKey').onclick = () => { key = $('#key').value.trim(); load(); }; $('#key').onkeydown = e => { if (e.key === 'Enter') $('#bKey').click(); };
+$('#bOut').onclick = () => { sessionStorage.removeItem('rubik.adminKey'); location.reload(); };
+form(); if (key) load();
+</script></body></html>

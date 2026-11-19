@@ -117,6 +117,7 @@ export function createSponsors(ctx) {
   // ---------- nạp cấu hình: server (/api/sp/config) → tĩnh (sponsors/config.json) ----------
   async function load() {
     const get = u => fetch(u, { cache: 'no-cache' }).then(r => r.ok ? r.json() : Promise.reject(r.status));
+    for (let k = 0; k < 34 && !ctx.account; k++) await new Promise(r => setTimeout(r, 89));   // account-hud.js tạo sau mô-đun này
     let cfg = null; const acc = ctx.account; if (acc && acc.ready) await acc.ready.catch(() => {});   // có server → /admin quản lý; không (link artifact) → file tĩnh
     if (acc && acc.online) try { cfg = await get('/api/sp/config'); st.server = true; } catch (e) {}
     if (!cfg) try { cfg = await get('sponsors/config.json'); } catch (e) { return; }
