@@ -19,7 +19,7 @@ const fr = page.frames().find(f => f.url().includes('/school/'));
 if (fr) await fr.waitForSelector('#mLogin:not([hidden])', { timeout: 60000 }).catch(() => {});
 if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count()) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
 await page.waitForSelector('#accBox:not([hidden])', { timeout: 30000 }).catch(() => {}); await page.waitForTimeout(500);   // bảng đăng nhập đảo hiện trễ
-await page.locator('#accBox button', { hasText: 'Chơi khách' }).first().click({ timeout: 8000 }).catch(() => {});
+await page.evaluate(() => { const b = document.querySelector('#accBox [data-a=guest]'); if (b) b.click(); });   // bấm bằng DOM: máy kiểm thử vẽ < 1 FPS, Playwright chờ nút "đứng yên" sẽ quá giờ
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 20000 }).catch(() => fails.push('nhân vật bị khoá lúc vào game'));
 // máy kiểm thử vẽ bằng CPU (vài FPS): lúc đi bộ tạm tắt vẽ để mô phỏng chạy đủ 60 khung/giây; chụp ảnh thì vẽ lại
 const draw = on => page.evaluate(on => { const c = __island; if (!c.post.__r) c.post.__r = c.post.render; c.post.render = on ? c.post.__r : () => {}; }, on);
