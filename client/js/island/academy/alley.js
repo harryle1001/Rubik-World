@@ -44,7 +44,7 @@ const STYLE = {
 export function create(ctx, magic, { toWorld, toLocal, Y }) {
   const W = (u, v, y) => { const [x, z] = toWorld(u, v); return new THREE.Vector3(x, y, z); };
   const gy = (u, v) => { const [x, z] = toWorld(u, v); return heightLocal(u, v, x, z); };
-  let built = null;
+  let built = null, glowWin = null;
 
   // ---------- bố cục (tính 1 lần): danh sách nhà ----------
   function layout() {
@@ -80,7 +80,7 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
     const inst = new Map(), boxes = [];                                   // tên module → [{ m, c }]
     const put = (name, m, c) => { if (!inst.has(name)) inst.set(name, []); inst.get(name).push({ m, c }); };
     const T = new THREE.Matrix4(), R = new THREE.Matrix4(), Sc = new THREE.Matrix4(), up = new THREE.Vector3(0, 1, 0);
-    const houses = layout();
+    const houses = layout(), glows = [];   // glows: tấm ánh đèn sau lỗ cửa sổ
     for (const h of houses) {
       // khung nhà: gốc = giữa mép trước, chân tường; Z = vào sâu (ra xa lối), X = dọc mặt tiền
       let n;                                                                       // thế giới: x = v, z = u
@@ -94,7 +94,7 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
       const base = new THREE.Matrix4().makeBasis(X, up, n).setPosition(fx.x, y0, fx.z);
       base.multiply(new THREE.Matrix4().makeRotationX(h.lean[0])).multiply(new THREE.Matrix4().makeRotationZ(h.lean[1]));
       const col = new THREE.Color(...h.tint), rc = new THREE.Color(...h.roof);
-      const cell = (i, k, j, a, name, c = col) => { const m = base.clone().multiply(T.makeTranslation((i + 0.5 - h.w / 2) * S, k * S, (j + 0.5) * S)).multiply(R.makeRotationY(a)).multiply(Sc.makeScale(S, S, S)); put(name, m, c); };
+      const cell = (i, k, j, a, name, c = col) => { const m = base.clone().multiply(T.makeTranslation((i + 0.5 - h.w / 2) * S, k * S, (j + 0.5) * S)).multiply(R.makeRotationY(a)).multiply(Sc.makeScale(S, S, S)); put(name, m, c); if (/window/.test(name)) glows.push(m.clone().multiply(T.makeTranslation(0.466, 0.52, 0))); };
       for (let k = 0; k < h.fl; k++) {
         const st = STYLE[k === 0 ? h.style : h.top];
         const doorAt = h.bank ? Math.floor(h.w / 2) : (h.w > 1 ? Math.floor(rnd() * h.w) : 0);
@@ -191,6 +191,12 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
       const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
       const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, toneMapped: false, color: 0xdddddd })); m.name = 'alley-signs'; g.add(m);
     }
+    // ---------- ánh đèn trong nhà: 1 tấm phẳng sau mỗi lỗ cửa sổ (1 draw call) — ngày: nội thất tối, đêm: vàng ấm ----------
+    {
+      const geo = new THREE.PlaneGeometry(0.62, 0.62).rotateY(Math.PI / 2), im = new THREE.InstancedMesh(geo, new THREE.MeshBasicMaterial({ color: 0x2a1d16, toneMapped: false }), glows.length);
+      glows.forEach((m, i) => { im.setMatrixAt(i, m); im.setColorAt(i, new THREE.Color().setHSL(0.08 + Math.random() * 0.04, 0.9, 0.45 + Math.random() * 0.2)); });
+      im.computeBoundingSphere(); im.name = 'alley-window-light'; g.add(im); glowWin = im;
+    }
     // ---------- nạp model + InstancedMesh ----------
     const meshes = [];
     for (const [name, list] of inst) loadModel('alley/' + name).then(src => {
@@ -198,12 +204,28 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
       src.updateMatrixWorld(true);
       src.traverse(o => {
         if (!o.isMesh) return;
-        const im = new THREE.InstancedMesh(o.geometry, o.material, list.length);
+        let mtl = o.material;
+        if (/lantern/.test(name)) { mtl = mtl.clone(); glowMat(mtl, /lantern/.test(name), o.matrixWorld.clone()); }
+        const im = new THREE.InstancedMesh(o.geometry, mtl, list.length);
         list.forEach((it, i) => { im.setMatrixAt(i, it.m.clone().multiply(o.matrixWorld)); im.setColorAt(i, it.c); });
-        im.castShadow = !/^(lantern|banner|chimney-top)/.test(name); im.receiveShadow = true; im.name = 'alley-' + name;
+        im.castShadow = /^(wall|roof|chimney$)/.test(name); im.receiveShadow = true; im.name = 'alley-' + name;
         im.computeBoundingSphere(); g.add(im); meshes.push(im);
       });
     });
+    // ---------- cờ dây ngang lối: model banner Kenney thu nhỏ treo dọc dây võng (mỗi 21 m một dây) ----------
+    for (let u = U0 - 9, n = 0; u > U1 + 6; u -= 21, n++) {
+      if (Math.abs(u - PLAZA) < 4) continue;
+      const a = W(u, vc(u) - hw(u) - 0.4, gy(u, vc(u)) + S * 2.15), b = W(u + 1.5, vc(u + 1.5) + hw(u + 1.5) + 0.4, gy(u, vc(u)) + S * 2.15), N = 8;
+      for (let i = 1; i < N; i++) {
+        const t = i / N, p = a.clone().lerp(b, t); p.y -= Math.sin(t * Math.PI) * 0.55;
+        const q = new THREE.Quaternion().setFromAxisAngle(up, Math.atan2(b.x - a.x, b.z - a.z) + Math.PI / 2);
+        put(i % 2 ? 'banner-red' : 'banner-green', new THREE.Matrix4().compose(p.clone().setY(p.y - 0.62), q, new THREE.Vector3(0.75, 0.75, 0.75)).multiply(T.makeTranslation(-0.42, 0, 0)), new THREE.Color(1, 1, 1));
+      }
+      put('pillar-wood', new THREE.Matrix4().compose(a.clone().lerp(b, 0.5).setY(a.y + 0.02), new THREE.Quaternion().setFromUnitVectors(up, b.clone().sub(a).normalize()), new THREE.Vector3(0.25, a.distanceTo(b), 0.25)).multiply(T.makeTranslation(0, -0.5, 0)), new THREE.Color(0.5, 0.42, 0.35));
+    }
+    // ---------- hạt sáng, khói, quầng đèn ----------
+    const fx = makeFx(houses.filter(h => h.smoke).map(h => h.smoke), lamps, W, gy);
+    g.add(fx.group);
     ctx.boxes.push(...boxes);
     // ---------- chủ tiệm (NPC): đứng trước cửa, quay ra lối ----------
     const keepers = [];
@@ -220,7 +242,7 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
       });
       ctx.colliders.push({ x: p.x, z: p.z, r: 0.35, alley: true });
     });
-    built = { g, boxes, houses, lamps, stalls, meshes, keepers };
+    built = { g, boxes, houses, lamps, stalls, meshes, keepers, fx };
   }
 
   function unbuild() {
@@ -237,17 +259,71 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
   function update(dt) {
     if (!built) return;
     const vis = ctx.camera.position.distanceTo(center()) < 233; built.g.visible = vis; if (!vis) return;
+    NIGHT.value = ctx.sky && ctx.sky.state ? Math.min(1, ctx.sky.state.night * 1.4) : 0;
+    built.fx.update(dt, NIGHT.value);
+    if (glowWin) glowWin.material.color.setRGB(0.16 + NIGHT.value * 0.84, 0.11 + NIGHT.value * 0.69, 0.08 + NIGHT.value * 0.37);
     const pp = ctx.player.pos;
     for (const k of built.keepers) {
       if (!k.hero) continue;
       const d = Math.hypot(pp.x - k.p.x, pp.z - k.p.z);
-      if (d < 21) k.hero.anim.update(dt);
+      const near = d < 21; if (k.hero.model.visible !== near) k.hero.model.visible = near;   // LOD: chủ tiệm chỉ hiện khi lại gần
+      if (!near) continue;
+      k.hero.anim.update(dt);
       const want = d < 5 ? Math.atan2(pp.x - k.p.x, pp.z - k.p.z) : k.face, r = k.hero.model.rotation;
       r.y += (((want - r.y + Math.PI * 3) % (Math.PI * 2)) - Math.PI) * Math.min(1, dt * 4);
       if (d < 3.4 && !ctx.player.vehicle && Math.abs(pp.y - k.p.y) < 2) ctx.offer(`🛍️ ${k.sh.name}`, () => shop.open(k), 8);
     }
   }
   return (ctx.alley = { build, unbuild, update, shop, get built() { return built; } });
+}
+
+// ---------- HIỆU ỨNG: hạt sáng lơ lửng (89), khói ống khói (13/ống), quầng đèn lồng — Points, 3 draw call ----------
+function dotTex() {
+  const c = document.createElement('canvas'); c.width = c.height = 64; const k = c.getContext('2d'), gr = k.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.35, 'rgba(255,255,255,0.5)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); k.fillStyle = gr; k.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(c);
+}
+function makeFx(smokes, lamps, W, gy) {
+  const group = new THREE.Group(), tex = dotTex();
+  const pts = (n, mat) => { const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n * 3), 3)); const p = new THREE.Points(geo, mat); p.frustumCulled = false; group.add(p); return p; };
+  // hạt sáng: vàng-lam, trôi chậm theo xoắn ốc trên lối
+  const NS = 89, sp = pts(NS, new THREE.PointsMaterial({ map: tex, size: 0.34, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: 0xffe3a0, opacity: 0.5 }));
+  const seeds = Array.from({ length: NS }, (_, i) => ({ u: U0 - (i / NS) * (U0 - U1), r: Math.random() * 6.28, h: 1.2 + Math.random() * 5.5, w: 0.3 + Math.random() * 0.6 }));
+  // khói: mỗi ống 13 cụm bay lên, loang dần
+  const NK = 13, sm = pts(Math.max(1, smokes.length * NK), new THREE.PointsMaterial({ map: tex, size: 1.6, transparent: true, depthWrite: false, color: 0xcfc8c0, opacity: 0.2 }));
+  // quầng đèn lồng: ban đêm mới hiện
+  const lg = pts(Math.max(1, lamps.length), new THREE.PointsMaterial({ map: tex, size: 3.4, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: 0xffc070, opacity: 0 }));
+  lamps.forEach((p, i) => lg.geometry.attributes.position.setXYZ(i, p.x, p.y + 0.15, p.z));
+  let t = 0;
+  function update(dt, night) {
+    t += dt;
+    const a = sp.geometry.attributes.position;
+    seeds.forEach((s, i) => { const u = s.u + Math.sin(t * 0.13 + i) * 2, v = vc(u) + Math.sin(t * s.w + s.r) * hw(u) * 0.8, y = gy(u, vc(u)) + s.h + Math.sin(t * 0.7 + s.r * 3) * 0.5, p = W(u, v, y); a.setXYZ(i, p.x, p.y, p.z); });
+    a.needsUpdate = true; sp.material.opacity = 0.35 + night * 0.55; sp.material.size = 0.26 + night * 0.12;
+    const b = sm.geometry.attributes.position;
+    smokes.forEach((p, j) => { for (let k = 0; k < NK; k++) { const f = ((t * 0.18 + k / NK) % 1); b.setXYZ(j * NK + k, p.x + Math.sin(f * 5 + j) * 0.5 * f + f * 1.6, p.y + f * 5.5, p.z + Math.cos(f * 4 + j) * 0.4 * f); } });
+    b.needsUpdate = true; sm.material.opacity = 0.2 * (1 - night * 0.6);
+    lg.material.opacity = night;
+  }
+  return { group, update };
+}
+
+// ---------- ÁNH SÁNG ĐÊM: 1 uniform dùng chung cho mọi vật liệu phát sáng của phố ----------
+const NIGHT = { value: 0 };
+function glowMat(m, lamp, deq) {   // deq: ma trận giải lượng tử meshopt (vị trí gốc → toạ độ module)
+  // Cửa sổ/cửa: ô kính lõm sau mặt tường (toạ độ module x ∈ (0,41; 0,49), mặt quay +x, giữa ô) → ánh đèn vàng ấm khi tối.
+  // Đèn lồng: chụp kính tím nhạt trong bảng màu Kenney → sáng hẳn.
+  m.onBeforeCompile = sh => {
+    sh.uniforms.uNight = NIGHT; sh.uniforms.uDeq = { value: deq };
+    sh.vertexShader = 'uniform mat4 uDeq; varying vec3 vLp; varying vec3 vLn;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vLp = (uDeq * vec4(position, 1.0)).xyz; vLn = normalize(mat3(uDeq) * normal);');
+    sh.fragmentShader = 'uniform float uNight; varying vec3 vLp; varying vec3 vLn;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      { vec3 c = diffuseColor.rgb;
+        float g = ${lamp ? 'step(0.45, c.b) * step(c.r + 0.15, c.b) * step(1.18, vLp.y) * 2.4' : 'step(0.5, vLn.x) * step(0.38, vLp.x) * step(vLp.x, 0.468) * step(0.1, vLp.y) * step(vLp.y, 0.86) * step(abs(vLp.z), 0.3) * 1.3'};
+        float k = uNight * g;
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0, 0.74, 0.4), min(1.0, k));
+        totalEmissiveRadiance += vec3(1.0, 0.6, 0.26) * k; }`);
+  };
+  m.customProgramCacheKey = () => 'alley-glow' + (lamp ? 'L' : 'W');
 }
 
 // ---------- CỬA HÀNG: thẻ hàng hoá, mỗi lần mua trả lời 1 câu đố học tập; trả bằng xu tài khoản (ctx.account) ----------
