@@ -77,6 +77,16 @@ export const CHAPTERS = [
       { type: 'collect', at: VALLEY, n: 3, spread: 21, icon: '🔴', col: '#ff6b5a', text: 'Nhặt 3 vảy rồng màu quanh thung lũng' },
     ],
     shard: VALLEY, shardOff: [6, 0], outro: [['rong', 'Hay quá! Mảnh Đỏ — màu cờ, màu lửa ấm áp. Cầm lấy!'], ['mu', 'Rồng cũng đứng về phía các em à… Bà lên Đền Tri Thức vậy!'], ['cu', 'Đền ở khu rừng phía tây bắc đảo Rubik. Ở đó toàn câu đố hay!']] },
+
+  { id: 7, name: 'Mảnh Cam', region: 'Đền Tri Thức', icon: '⛩️', col: '#ff9f43', subj: 'Toán', xp: 377, sao: 34, title: 'Nhà toán học Đền',
+    intro: [['su', 'Đền Tri Thức giữ bí mật của số φ, số π và dãy Fibonacci.'], ['su', '1, 1, 2, 3, 5, 8… mỗi số bằng tổng hai số trước. Hạt hướng dương cũng xếp như thế!']],
+    tasks: [
+      { type: 'goto', at: [-150, -150], r: 13, text: 'Tới Đền Tri Thức' },
+      { type: 'collect', at: [-158, -158], n: 5, spread: 34, icon: '🌻', col: '#ffb020', text: 'Nhặt 5 hạt hướng dương Fibonacci quanh đền' },
+      { type: 'quiz', who: 'su', at: [-150, -150], s: ['toan'], n: 5, need: 3, text: 'Thử thách Toán của Sư Đền' },
+      { type: 'cond', at: [-150, -150], r: 0, text: 'Tìm thêm 1 bí mật trên đảo (📖 Sổ bí mật có gợi ý)', test: (c, S) => eggCount() > (S.eggs0 ?? 99) || eggCount() >= 21, hint: 'Mở 📖 Bí mật xem gợi ý: gõ số π, tìm khối Rubik vàng…' },
+    ],
+    shard: [-150, -150], shardOff: [6, 6], outro: [['su', 'Mảnh Cam — màu hoàng hôn trên đền.'], ['mu', 'Thôi được rồi! Mảnh cuối ở chỗ bà. Lên Tháp Thiên Văn ở Học viện mà lấy!'], ['cu', 'Trận cuối: không phải đánh nhau, mà là… thi kiến thức! Hoo-hoo!']] },
 ];
 
 let EGG = () => 0;
