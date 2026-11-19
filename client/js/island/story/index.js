@@ -270,7 +270,7 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
     boss.group.visible = s.ch === 7 && s.ti >= 1;
     if (s.ch === 7 && !boss.placed) { const [x, z] = P(CHAPTERS[7].tasks[1].at); boss.group.position.set(x + 2, gy(x + 2, z), z - 2); boss.placed = true; }
     // tự mở chương 1 lần đầu: đã vào tài khoản, hướng dẫn chơi xong, không bảng nào mở, đứng 3 s
-    if (logged && !s.started && !busy) { const now = performance.now(); if (player.frozen || (ctx.tutorial && ctx.tutorial.open) || document.body.classList.contains('rs-modal') || ctx.mgActive || !idle) idle = now; else if (now - idle > 3000) { idle = 0; startChapter(); } }   // đồng hồ thật (máy chậm: dt bị chặn)
+    if (logged && !s.started && !busy) { const now = performance.now(); if (player.frozen || (ctx.tutorial && ctx.tutorial.open) || (ctx.intro && ctx.intro.open) || document.body.classList.contains('rs-modal') || ctx.mgActive || !idle) idle = now; else if (now - idle > 3000) { idle = 0; startChapter(); } }   // đồng hồ thật (máy chậm: dt bị chặn)
     if (logged && s.started && C && !picks.userData.ok) { picks.userData.ok = true; enterTask(); }
     // mũi tên + chấm + cột sáng
     const tgt = s.started && C && !cut && !busy ? target() : null, guide = !!tgt && !player.frozen && !ctx.mgActive;
