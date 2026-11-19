@@ -188,3 +188,9 @@ Vùng mới ngoài khơi (client/js/island/regions/, 2026-11): dùng lại model
 tree_fat, farm_hay_round, plant_lily, qn_tree_c, fence_wood, plant_palm_tall/bend, prop_beach_umbrella, fish, plant_tree_town,
 prop_streetlight, sedan, prop_bench_park, boat_sail_a, boat_speed_a) + models/san-ho.glb, rua.glb. Công trình (đình, giếng, đài khí tượng,
 hải đăng, tuabin gió…) và dù lượn: khối greybox dựng bằng code (CC0 của dự án).
+Nhạc thích ứng theo vùng (OpenGameArt, CC0 1.0 — đã cắt ≤ 96 s, MP3 64 kbps):
+audio/bgm-academy.mp3        "Magic Mush" — https://opengameart.org/content/magic-mush (Học viện Pha Lê, ban ngày / khi dùng phép)
+audio/bgm-magic-night.mp3    "Fantasy: Rising Moon" — https://opengameart.org/content/fantasy-rising-moon (Học viện Pha Lê, ban đêm)
+audio/bgm-village.mp3        "Orient: Peace Valley" — https://opengameart.org/content/orient-peace-valley (Làng nổi trên biển)
+audio/bgm-temple-ethnic.mp3  "Asian/Oriental 1" — https://opengameart.org/content/asianoriental1 (Rừng & Đền Tri Thức)
+Lớp nhịp, gió khi bay, chuông trường: tổng hợp bằng Web Audio trong js/island/audio.js (không dùng file).

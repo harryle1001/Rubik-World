@@ -20,9 +20,17 @@ let seed = CFG.seed; export const rand = () => { seed = (seed * 16807) % 2147483
 export const WIND = { uTime: { value: 0 }, uPlayer: { value: new THREE.Vector3(0, -99, 0) }, uWind: { value: 0 }, // uWind 0..1: gió mạnh (weather.js)
   uGust: { value: new THREE.Vector4(0.93, 0.37, 0, 0) },   // living.js: xy hướng gió · z cơn giật 0..1 · w pha dải gió
   uMov: { value: Array.from({ length: 6 }, () => new THREE.Vector4(0, -99, 0, 0)) },   // living.js: người chơi/xe/thú làm cỏ rẽ (xyz, bán kính)
-  uShk: { value: Array.from({ length: 4 }, () => new THREE.Vector4(0, 0, 0, -99)) } }; // living.js: cây bị va/rung (x, z, biên độ, lúc bắt đầu)
+  uShk: { value: Array.from({ length: 4 }, () => new THREE.Vector4(0, 0, 0, -99)) },   // living.js: cây bị va/rung (x, z, biên độ, lúc bắt đầu)
+  uSeason: { value: new THREE.Vector3() } };   // weather.js: x thu (lá vàng cam) · y đông (lá nhạt sương giá) · z xuân (xanh non)
 // GLSL dùng chung: gió có hướng + cơn giật trôi qua đồng cỏ, rẽ cỏ quanh vật di chuyển, cây rung khi bị va (đổi thế giới → hệ bản sao)
+// màu theo mùa: chỉ đổi phần xanh lá (độ "xanh" = g vượt r, b) → thân gỗ, hoa, đá giữ nguyên (dùng chung cho mặt đất ở weather.js)
+export const SEASON_GLSL = `uniform vec3 uSeason;
+  vec3 seasonCol(vec3 c, float k){ float g = clamp((c.g - max(c.r, c.b)) * 5., 0., 1.);
+    c = mix(c, vec3(c.g * 1.35, c.g * .8, c.b * .4), g * uSeason.x * k);
+    c = mix(c, mix(vec3(dot(c, vec3(.3, .59, .11))), vec3(.84, .9, .94), .4), g * uSeason.y * k);
+    return mix(c, c * vec3(1.03, 1.08, .94), g * uSeason.z); }`;
 const WIND_GLSL = `uniform float uTime, uWind; uniform vec3 uPlayer; uniform vec4 uGust; uniform vec4 uMov[6]; uniform vec4 uShk[4];
+  ${SEASON_GLSL}
   vec3 toL(vec3 w){ vec3 c0 = instanceMatrix[0].xyz; return vec3(dot(w, c0), dot(w, instanceMatrix[1].xyz), dot(w, instanceMatrix[2].xyz)) / max(dot(c0, c0), 1e-6); }   // instance ẩn (tỉ lệ 0) → không chia cho 0 (NaN)
   vec2 windOff(vec3 ip){ vec2 d = uGust.xy;
     float fl = sin(uTime*1.7 + ip.x*0.35 + ip.z*0.27)*0.7 + sin(uTime*3.3 + ip.x)*0.3;
@@ -172,7 +180,7 @@ export function createTerrain(scene) {
   function windy(mat, amp, push = 0) {
     mat.onBeforeCompile = sh => {
       Object.assign(sh.uniforms, WIND);
-      sh.vertexShader = WIND_GLSL + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      sh.vertexShader = WIND_GLSL + sh.vertexShader.replace('#include <color_vertex>', '#include <color_vertex>\n#ifdef USE_COLOR\n vColor = seasonCol(vColor, .618);\n#endif').replace('#include <begin_vertex>', `#include <begin_vertex>
         vec3 ip = (modelMatrix * instanceMatrix * vec4(0.,0.,0.,1.)).xyz, c0 = instanceMatrix[0].xyz;
         float hh = max(position.y, 0.);
         vec2 wo = windOff(ip); transformed += toL(vec3(wo.x, 0., wo.y)) * length(c0) * ${amp.toFixed(3)} * hh;
@@ -434,7 +442,8 @@ export function natureMat(wind = 0, push = 0) {
       .replace('#include <color_vertex>', `vColor = vec3(1.); vColor *= color;
         #ifdef USE_INSTANCING_COLOR
           vColor *= mix(vec3(1.), instanceColor.xyz, tint);
-        #endif`)
+        #endif
+        vColor = mix(vColor, seasonCol(vColor, 1.), tint);`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>
         vec3 ip = (modelMatrix * instanceMatrix * vec4(0.,0.,0.,1.)).xyz;
         ${wind ? `float hh = max(position.y, 0.); hh *= hh;

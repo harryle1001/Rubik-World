@@ -34,6 +34,8 @@ import { createLiving } from './island/living.js';
 import { createSkyshow } from './island/skyshow.js';
 import { createDive } from './island/dive.js';
 import { createPerf } from './island/perf.js';
+import { createFeel } from './island/feel.js';
+import { createPhoto } from './island/photo.js';
 import { createAutoQ, SK } from './island/autoq.js';
 import { createMiniGameHost } from './island/mg/host.js';
 import { createAccountHud } from './island/account-hud.js';
@@ -144,6 +146,8 @@ registerVisit(ctx); // mini game 3D ghé thăm: Tham quan nhà, BBQ, Trung tâm 
 const mounts = ctx.mounts = createMounts(ctx);
 const vrmNpc = ctx.vrmNpc = createVrmNpc(ctx); ctx.playerVrm = createPlayerVrm(ctx); ctx.creator = createCreator(ctx); // nhân vật anime VRM: NPC gần (LOD), người chơi (nạp sau), 🎨 trình tạo nhân vật (vrm/)
 const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp đảo (nút 🧹 / phím J), giá chổi ở Sân Đại Sảnh Học viện
+const photo = createPhoto(ctx); // 📷 chế độ chụp ảnh: dừng thời gian, camera tự do, bộ lọc, lưu ảnh có khung logo (photo.js)
+const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, xu bay vào HUD, màn chuyển, tên vùng điện ảnh (feel.js)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -184,6 +188,7 @@ const perf = ctx.perf = createPerf(ctx); // cắt vật nhỏ ở xa, viền, ng
 window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
   const dt = stepDt(clock.getDelta()); // dt ổn định (motion.js): làm mượt khi FPS dao động, giới hạn bước
+  if (ctx.photoMode) { photo.update(dt); post.render(); stats.frame(); return; }   // 📷 chụp ảnh: thế giới đứng yên, chỉ camera tự do
   if (!ctx.freeCam) player.update(dt); // freeCam: camera tự do để gỡ lỗi
   physics.update(dt);
   terrain.update(dt, clock.elapsedTime, player.pos);
@@ -217,6 +222,7 @@ renderer.setAnimationLoop(() => {
   schoolYard.update(dt);
   lessons.update(dt);
   quests.update(dt);
+  feel.update(dt);
   ctx.flushOffer();
   brightness.update();
   tutorial.update(dt);
