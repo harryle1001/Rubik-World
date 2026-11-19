@@ -35,9 +35,9 @@ export function createSeats(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
     if (G) return; G = new THREE.Group(); G.name = 'academy-seats'; ctx.scene.add(G);
     const n = CFG.isMobile ? 5 : 7, chairs = [];
     for (let i = 0; i < n; i++) {
-      const v = (i - (n - 1) / 2) * 1.6, u = H.u0 + 2.25, [x, z] = toWorld(u, v); chairs.push([x, Y + 0.6, z, 1, 0]);
+      const v = (i - (n - 1) / 2) * 1.6, u = H.u0 + 2.25, [x, z] = toWorld(u, v); chairs.push([x, Y + 1.6, z, 1, 0]);
       const kind = STUDENTS[(i * 5 + 2) % STUDENTS.length], col = ['#3a3f6b', '#5a2a3a', '#2f5a4a', '#6b4a2a', '#2a4a6b', '#4a2a5a', '#3a5a3a'][i];
-      loadHero(kind, 1.68, { role: 'teacher', old: i % 3 === 0, shirt: col, pants: '#2a2433', glasses: i % 2 === 0 }).then(h => { if (!h || !G) return; h.npc = true; h.model.position.set(x, Y + 0.6, z); h.model.rotation.y = 0; G.add(h.model); h.anim.play(h.set.sit || h.set.idle, 0); dressWizard(h, col); teachers.push(h); });
+      loadHero(kind, 1.68, { role: 'teacher', old: i % 3 === 0, shirt: col, pants: '#2a2433', glasses: i % 2 === 0 }).then(h => { if (!h || !G) return; h.npc = true; h.model.position.set(x, Y + 1.6, z); h.model.rotation.y = 0; G.add(h.model); h.anim.play(h.set.sit || h.set.idle, 0); dressWizard(h, col); teachers.push(h); });
     }
     placeKit(G, 'furn_chair', chairs, { shadow: false });
   }

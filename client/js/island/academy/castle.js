@@ -60,7 +60,7 @@ function layout(B, far = false) {
   wall.box(Hh.v0, Hh.v0 + t, Y, Y + Hh.h, Hh.u0, Hh.u1, C_WALL); wall.box(Hh.v1 - t, Hh.v1, Y, Y + Hh.h, Hh.u0, Hh.u1, C_WALL);
   wall.box(Hh.v0, -Hh.door, Y, Y + Hh.h, Hh.u1 - t, Hh.u1, C_WALL); wall.box(Hh.door, Hh.v1, Y, Y + Hh.h, Hh.u1 - t, Hh.u1, C_WALL);
   wall.box(-Hh.door, Hh.door, Y + 8, Y + Hh.h, Hh.u1 - t, Hh.u1, C_WALL);                              // lanh tô cửa 6 × 8 m
-  roof.gable(Hh.v0 - 0.8, Hh.v1 + 0.8, Hh.u0 - 0.8, Hh.u1 + 0.8, Y + Hh.h, 13, C_ROOF);
+  (B.hallRoof || roof).gable(Hh.v0 - 0.8, Hh.v1 + 0.8, Hh.u0 - 0.8, Hh.u1 + 0.8, Y + Hh.h, 13, C_ROOF);   // mái riêng (gần): ẩn khi ở trong sảnh cao phép (hall-magic.js)
   if (!far) {
     solid(Hh.u0, Hh.u0 + t, Hh.v0, Hh.v1, Y + Hh.h); solid(Hh.u0, Hh.u1, Hh.v0, Hh.v0 + t, Y + Hh.h); solid(Hh.u0, Hh.u1, Hh.v1 - t, Hh.v1, Y + Hh.h);
     solid(Hh.u1 - t, Hh.u1, Hh.v0, -Hh.door, Y + Hh.h); solid(Hh.u1 - t, Hh.u1, Hh.door, Hh.v1, Y + Hh.h);
@@ -71,8 +71,11 @@ function layout(B, far = false) {
       for (const s of [-1, 1]) wall.box(v + s * 1.0 - 0.2, v + s * 1.0 + 0.2, Y, Y + 0.45, Hh.u0 + 8, Hh.u1 - 4, C_WOOD);
       solid(Hh.u0 + 8, Hh.u1 - 4, v - 0.55, v + 0.55, Y + 0.8);
     }
-    wall.box(-6, 6, Y, Y + 0.6, Hh.u0 + 2, Hh.u0 + 5, '#9a9286'); wall.box(-5, 5, Y + 0.6, Y + 1.4, Hh.u0 + 2.6, Hh.u0 + 4, C_WOOD_L);   // bục + bàn giáo viên
-    solid(Hh.u0 + 2, Hh.u0 + 5, -6, 6, Y + 1.4);
+    // bục giáo viên cao 1,6 m (v4) + bàn dài; 2 cầu thang 3 bậc ở 2 góc trước (giữa là Quả cầu Tứ Linh)
+    wall.box(-6.8, 6.8, Y, Y + 1.6, Hh.u0 + 1.6, Hh.u0 + 5, '#9a9286'); wall.box(-6.9, 6.9, Y + 1.5, Y + 1.66, Hh.u0 + 1.6, Hh.u0 + 5.1, '#c9a24a');
+    wall.box(-5.6, 5.6, Y + 1.6, Y + 2.4, Hh.u0 + 2.6, Hh.u0 + 4, C_WOOD_L);
+    for (const s of [-1, 1]) for (let k = 0; k < 3; k++) { const a = s > 0 ? 3.6 : -6.8, b = s > 0 ? 6.8 : -3.6, top = Y + (3 - k) * 1.6 / 3; wall.box(a, b, Y, top, Hh.u0 + 5 + k * 0.42, Hh.u0 + 5.42 + k * 0.42, '#8f887e'); solid(Hh.u0 + 5 + k * 0.42, Hh.u0 + 5.42 + k * 0.42, a, b, top); }
+    solid(Hh.u0 + 1.6, Hh.u0 + 5, -6.8, 6.8, Y + 1.6); solid(Hh.u0 + 2.6, Hh.u0 + 4, -5.6, 5.6, Y + 2.4);
     for (const v of [Hh.v0 + t, Hh.v1 - t]) for (let u = Hh.u0 + 5; u < Hh.u1 - 3; u += 5.5) (win || glow).box(v - 0.08, v + 0.08, Y + 6, Y + 15, u - 0.9, u + 0.9, '#ffffff');   // cửa sổ cao
   }
   // --- thư viện 13 × 34 × 21 ---
@@ -167,12 +170,12 @@ export const lookChoice = () => { let v = new URLSearchParams(location.search).g
 
 /** Lâu đài gần: trả về { group, boxes (thế giới), deckY(u,v), update(dt, t, playerPos) } */
 export function buildCastle(ctx) {
-  const B = { wall: new Batch(), roof: null, glow: new Batch(), glass: new Batch(), win: new Batch(), det: new Batch() }; B.roof = B.wall;
+  const B = { wall: new Batch(), roof: null, glow: new Batch(), glass: new Batch(), win: new Batch(), det: new Batch(), hallRoof: new Batch() }; B.roof = B.wall;
   const { boxes: local, tips, decks, inst } = layout(B), look = lookChoice(), stone = stoneMaterial(look);
   const g = new THREE.Group(); g.name = 'academy-castle';
   const add = (geo, m, shadow) => { const o = new THREE.Mesh(geo, m); o.castShadow = shadow; o.receiveShadow = true; o.matrixAutoUpdate = false; g.add(o); return o; };
   add(B.wall.build(), stone, true);
-  const detail = add(B.det.build(), stone, true);
+  const detail = add(B.det.build(), stone, true), hallRoof = add(B.hallRoof.build(), stone, true);
   const merl = instMesh(MERLON, C_WALL_D, inst.merlon, stone), arch = instMesh(ARCH_GEO, C_WALL, inst.arch, stone);   // răng cưa · nhịp vòm (instancing)
   g.add(merl, arch);
   add(B.glow.build(), mat('lampGlow'), false);
@@ -208,7 +211,7 @@ export function buildCastle(ctx) {
   };
   const hc = toWorld((Hh.u0 + Hh.u1) / 2, 0), [bx0, bz0] = toWorld(L.box.u0, -L.box.hv), [bx1, bz1] = toWorld(L.box.u1, L.box.hv), cam = ctx.camera.position;
   return {
-    group: g, boxes, deckY, L, look,
+    group: g, boxes, deckY, L, look, hallRoof,
     update(dt, t, p) {
       const near = Math.hypot(p.x - hc[0], p.z - hc[1]) < 55; wax.visible = flame.visible = near; if (near) placeCandles(t);
       const dBox = Math.hypot(Math.max(bx0 - cam.x, 0, cam.x - bx1), Math.max(bz0 - cam.z, 0, cam.z - bz1));
