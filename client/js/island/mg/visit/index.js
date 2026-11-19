@@ -32,7 +32,7 @@ const BBQ_Q = [
 ];
 const SHOP = [{ m: 'apple', n: 'táo', p: 5 }, { m: 'carrot', n: 'cà rốt', p: 3 }, { m: 'fish', n: 'cá', p: 13 }, { m: 'furn_lamp', n: 'đèn', p: 21 }, { m: 'music_guitar', n: 'đàn', p: 34 }];   // giá Fibonacci
 const shopQ = it => () => { const k = 2 + Math.floor(Math.random() * 3), tot = k * it.p, pay = Math.ceil((tot + 1) / 10) * 10, a = pay - tot;
-  const s = new Set([a]); while (s.size < 3) s.add(Math.max(0, a + pick([-3, -2, -1, 1, 2, 5]))); return { q: `Mua ${k} ${it.n} (${it.p} xu/món), trả ${pay} xu. Thối lại?`, a: String(a), choices: [...s].map(String).sort(() => Math.random() - 0.5), why: `${k} × ${it.p} = ${tot} xu; ${pay} − ${tot} = ${a} xu.` }; };
+  const s = new Set([a]); while (s.size < 3) s.add(Math.max(0, a + pick([-3, -2, -1, 1, 2, 5]))); return { q: `Mua ${k} ${it.n} (${it.p} đồng/món), trả ${pay} đồng. Thối lại?`, a: String(a), choices: [...s].map(String).sort(() => Math.random() - 0.5), why: `${k} × ${it.p} = ${tot} đồng; ${pay} − ${tot} = ${a} đồng.` }; };
 const STYLE = { 'Biệt thự cổ điển': 'cột tròn & mái vòm kiểu châu Âu', 'Nhà ống phố': 'mặt tiền hẹp, nhà sâu — rất phổ biến ở Việt Nam', 'Nhà gỗ': 'gỗ ấm, mùa đông giữ nhiệt tốt', 'Nhà tròn mái nấm': 'hình tròn chịu gió đều mọi phía',
   'Resort hồ bơi': 'mặt nước làm mát không khí', 'Nhà kiểu Nhật': 'cửa trượt giấy, vườn đá thiền', 'Lâu đài mini': 'tháp tròn & tường dày phòng thủ', 'Nhà sàn': 'dựng trên cột, tránh lũ và ẩm', 'Nhà kính hiện đại': 'kính lớn đón nắng tự nhiên',
   'Nhà Địa Trung Hải': 'tường trắng, mái ngói đỏ, mát mùa hè', 'Nhà mái Thái': 'mái dốc nhiều tầng thoát mưa nhanh', 'Nhà container': 'tái chế thùng hàng thép', 'Villa hiện đại': 'khối hộp vuông vức, mái bằng' };
@@ -87,7 +87,7 @@ export function register(ctx) {
     item: i => ({ m: ['fish', 'carrot', 'apple', 'fish', 'carrot'][i], size: 0.7, y: 0.5 }), done: it => it.g.traverse(o => o.isMesh && o.material && o.material.color && (o.material = o.material.clone(), o.material.color.multiplyScalar(0.62))),
     intro: () => '🔥 Chú Bình: “Chạm từng món quanh lửa, trả lời đúng thì món nướng chín vàng!”', endTitle: '🍢 Đầu bếp lửa trại!', endText: 'Nhớ: rửa tay trước khi ăn, đứng xa lửa, dập lửa bằng nước hoặc cát.' }) };
   G.mall = { name: '🛍️ Đi chợ tính tiền', radius: 8, doors: [/Chị Ngọc · Trung tâm thương mại/], start: game({ icon: '🛍️', center: { m: 'furn_table_round', size: 1.6 },
-    item: i => ({ m: SHOP[i].m, size: 1.3, label: `${SHOP[i].p} xu`, q: shopQ(SHOP[i]) }),
+    item: i => ({ m: SHOP[i].m, size: 1.3, label: `${SHOP[i].p} đồng`, q: shopQ(SHOP[i]) }),
     intro: () => '🛍️ Chị Ngọc: “Chạm món hàng, tính đúng tiền thối là mua được!” (giá là số Fibonacci)', endTitle: '🧮 Người mua sắm thông minh!', endText: 'Tiền thối = tiền đưa − tổng tiền. Tính nhẩm trước khi trả để không bị nhầm.' }) };
   G.coach = { name: '🤖 Coach Ru luyện não', radius: 8, doors: [/Coach Ru/], start: game({ icon: '🤖', qs: [() => quiz('math', 2), () => quiz('vocab'), () => quiz('science'), () => quiz('geo')],
     item: i => ({ color: RUBIK[i], label: ['Toán', 'Anh', 'Khoa học', 'Địa lý', 'Tổng hợp'][i], q: [() => quiz('math', 2), () => quiz('vocab'), () => quiz('science'), () => quiz('geo'), () => quiz('mix')][i] }),

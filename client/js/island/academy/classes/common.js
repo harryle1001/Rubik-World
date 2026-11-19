@@ -3,7 +3,7 @@
 //  room()      sàn lớp tròn bán kính 8 m (Fibonacci) + bảng đen + bàn học: dựng 1 lần, ít draw call (Batch tô màu đỉnh).
 //  teacher()   thầy cô NPC đứng cạnh bảng, nói 2–3 câu (bong bóng + dòng chữ HUD).
 //  ask()       câu hỏi 4 lựa chọn nổi phía dưới, chạm được trên điện thoại; trả Promise<boolean>.
-//  finish()    thẻ kết quả (api.end) + xu (ctx.account) + điểm nhà (hook) + ghi vào Sổ học tập.
+//  finish()    thẻ kết quả (api.end) + đồng vàng (ctx.account) + điểm nhà (hook) + ghi vào Sổ học tập.
 //  addHousePoints(ctx, n, lý do) — HOOK điểm nhà: nếu hệ thống nhà (ctx.houses.addPoints) có thì gọi, không thì bỏ qua.
 import * as THREE from 'three';
 import { loadModel } from '../../models.js';
@@ -81,12 +81,12 @@ export const cleanup = () => document.querySelectorAll('#mgHud .cl-q').forEach(e
 /** HOOK điểm nhà Tứ Linh — để trống khi chưa có hệ thống nhà (nhánh academy-houses). */
 export function addHousePoints(ctx, n, reason) { try { if (ctx.houses && ctx.houses.addPoints) return ctx.houses.addPoints(n, reason); } catch (e) { console.warn(e); } return null; }
 
-/** kết thúc lớp: score/max → xu = 3·số sao (Fibonacci), điểm nhà = 5·số sao */
+/** kết thúc lớp: score/max → đồng vàng = 3·số sao (Fibonacci), điểm nhà = 5·số sao */
 export function finish(ctx, api, { score, max, title, text = '' }) {
   const stars = score >= max ? 3 : score >= max * 0.618 ? 2 : score > 0 ? 1 : 0, coins = [0, 3, 8, 13][stars], house = [0, 5, 8, 13][stars];
   if (coins && ctx.account && ctx.account.addCoins) ctx.account.addCoins(coins);
   if (house) addHousePoints(ctx, house, title);
-  api.end({ score, title: `${title} ${'⭐'.repeat(stars)}${'☆'.repeat(3 - stars)}`, text: `${text}<br>🪙 +${coins} xu · 🏰 +${house} điểm nhà` });
+  api.end({ score, title: `${title} ${'⭐'.repeat(stars)}${'☆'.repeat(3 - stars)}`, text: `${text}<br>🪙 +${coins} đồng vàng · 🏰 +${house} điểm nhà` });
 }
 
 /** sprite chữ nhỏ (nhãn trên vật) */

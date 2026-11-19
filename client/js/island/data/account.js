@@ -1,4 +1,4 @@
-// account.js — Tài khoản người chơi của đảo 3D: đăng ký / đăng nhập / khách, "Lưu đăng nhập", xu & vật phẩm.
+// account.js — Tài khoản người chơi của đảo 3D: đăng ký / đăng nhập / khách, "Lưu đăng nhập", đồng vàng & vật phẩm.
 // ONLINE (server có /api): tài khoản trên server (mật khẩu băm scrypt ở server, đăng nhập bằng token), tiến độ đồng bộ lên server:
 //   hồ sơ (xu, cấp, nhà Tứ Linh, đồ) + mọi khoá localStorage island./academy./mg./rs. (nhân vật, nhiệm vụ, vườn, nhà xây…).
 // OFFLINE (app không có mạng / server cũ): như trước, lưu trên máy ở localStorage 'island.accounts'.
@@ -21,7 +21,7 @@ async function passHash(pass, salt) {
 }
 const newSalt = () => { const a = new Uint8Array(12); crypto.getRandomValues(a); return hex(a); };
 // hồ sơ cùng dạng với 2D (level, exp, money = xu, inv = vật phẩm, equip) để chuyển qua lại không mất gì
-export const newProfile = (name, look = null) => ({ name, look, level: 1, exp: 0, money: 30, inv: { bike1: Date.now() }, equip: { bike: 'bike1' }, books: {}, fish: {}, stats: { games: 0, catches: 0, read: 0, medals: 0 }, created: Date.now(), cdo: {} });
+export const newProfile = (name, look = null) => ({ name, look, level: 1, exp: 0, money: 34, inv: { bike1: Date.now() }, equip: { bike: 'bike1' }, books: {}, fish: {}, stats: { games: 0, catches: 0, read: 0, medals: 0 }, created: Date.now(), cdo: {} });
 // ---------- đồng bộ server ----------
 const API = (window.ISLAND_SERVER || '') + '/api', TOK = 'island.token', TOKN = 'island.tokenName';
 const NOSYNC = /^island\.(accounts|guest|migrated|sound|bright|stats|mapOpts|rememberName|token|tokenName|name|tut|cloud\..*|lockDay)$/;
@@ -32,7 +32,7 @@ const tokenName = () => { try { return sessionStorage.getItem(TOKN) || localStor
 async function call(path, body, method) {
   const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
   try {
-    const r = await fetch(API + path, { method: method || (body ? 'POST' : 'GET'), signal: ctl.signal, headers: Object.assign({ 'Content-Type': 'application/json' }, getToken() ? { Authorization: 'Bearer ' + getToken() } : {}), body: body ? JSON.stringify(body) : undefined });
+    const r = await fetch(API + path, { method: method || (body ? 'POST' : 'GET'), signal: ctl.signal, cache: 'no-store', headers: Object.assign({ 'Content-Type': 'application/json' }, getToken() ? { Authorization: 'Bearer ' + getToken() } : {}), body: body ? JSON.stringify(body) : undefined });
     const j = await r.json().catch(() => ({})); return Object.assign(j, { status: r.status });
   } catch (e) { return { status: 0, error: 'Không kết nối được máy chủ.' }; } finally { clearTimeout(to); }
 }
@@ -84,6 +84,7 @@ export function createAccount() {
   acc.expired = () => { setToken(null); acc.cloud = false; acc.user = null; acc.name = null; acc.profile = null; emit(); };
   const emit = () => { for (const f of subs) try { f(acc); } catch (e) {} };
   acc.onChange = f => { subs.add(f); return () => subs.delete(f); };
+  acc.changed = () => emit();   // economy/wallet.js: báo các phần HUD vẽ lại sau khi ví/cặp đổi
   acc.save = () => {
     if (!acc.profile) return;
     if (acc.guest) { store(GUEST, acc.profile); return; }
@@ -94,14 +95,14 @@ export function createAccount() {
   acc.register = async (name, pass, remember = true) => {
     name = String(name || '').trim();
     if (await acc.ready) {
-      const g = acc.guest ? acc.profile : null, prog = { profile: g ? Object.assign(newProfile(name), { money: g.money, inv: g.inv, exp: g.exp, level: g.level, house: g.house }) : null, ls: snapshot() };
-      const r = await call('/auth/register', { name, pass, progress: prog }); if (r.error) return r.error;
+      const g = acc.guest ? acc.profile : null, prog = { profile: g ? Object.assign(newProfile(name), { money: g.money, inv: g.inv, exp: g.exp, level: g.level, house: g.house, own: g.own, bag: g.bag, cap: g.cap }) : null, ls: snapshot() };
+      const r = await call('/auth/register', { name, pass, progress: prog }); if (r.error || !r.user) return r.error || 'Máy chủ trả lời chậm — thử lại nhé.';
       enterCloud(r.user, remember, r.token); return null;
     } if (!/^[\p{L}\p{N}_.\- ]{3,20}$/u.test(name)) return 'Tên đăng nhập cần 3–20 ký tự (chữ, số, dấu cách, _ . -).';
     if (String(pass || '').length < 4) return 'Mật khẩu cần ít nhất 4 ký tự.';
     const a = all(); if (a.users[name]) return 'Tên này đã có người dùng trên máy này. Hãy chọn tên khác hoặc đăng nhập.';
     const salt = newSalt(), g = load(GUEST), prof = newProfile(name);
-    if (g && acc.guest) { prof.money = Math.max(prof.money, g.money || 0); Object.assign(prof.inv, g.inv || {}); }   // đang chơi khách → giữ xu & đồ đã kiếm
+    if (g && acc.guest) { prof.money = Math.max(prof.money, g.money || 0); Object.assign(prof.inv, g.inv || {}); Object.assign(prof, { own: g.own, bag: g.bag, cap: g.cap }); }   // đang chơi khách → giữ đồng vàng, đồ & cặp đã kiếm
     a.users[name] = { salt, hash: await passHash(pass, salt), profile: prof }; a.last = name; a.remember = remember ? name : null; store(KEY, a);
     enter(name, prof); return null;
   };
@@ -136,7 +137,7 @@ export function createAccount() {
   acc.lastName = () => { try { const v = localStorage.getItem(NK); return v != null ? v : (all().last || ''); } catch (e) { return ''; } };
   acc.rememberName = (name, on) => { try { localStorage.setItem(NK, on ? String(name || '').trim() : ''); } catch (e) {} };
   acc.nameRemembered = () => { try { return localStorage.getItem(NK) !== ''; } catch (e) { return true; } };
-  // xu & vật phẩm
+  // 🪙 đồng vàng (profile.money — trước đây gọi là "xu") & vật phẩm
   Object.defineProperty(acc, 'coins', { get: () => acc.profile ? acc.profile.money | 0 : 0 });
   acc.addCoins = n => { if (!acc.profile) return false; if (acc.profile.money + n < 0) return false; acc.profile.money += n; acc.save(); emit(); return true; };
   acc.addExp = n => { const p = acc.profile; if (!p) return; p.exp += n; while (p.exp >= needExp(p.level)) { p.exp -= needExp(p.level); p.level++; } acc.save(); emit(); };

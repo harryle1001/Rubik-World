@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Trường Rubik · Phụ huynh</title>
+<meta name="description" content="Theo dõi việc học của con, giới hạn giờ chơi và mở Gói Phụ huynh Trường Rubik.">
+<meta name="robots" content="noindex"><meta name="theme-color" content="#1b1626">
+<style>
+/* φ: chữ 13/16/21/34/55 · khoảng 8/13/21/34/55 · bo 13/21 · cột 987 = 610·φ · thẻ gói tỉ lệ 1:φ */
+:root{--bg:#f6f0e4;--card:#fff;--ink:#2e2418;--mute:#7a6a58;--line:#e6dccb;--pri:#3fb8a8;--pri2:#2c8f82;--acc:#f0a23a;--bad:#c8502c;--night:#1b1626;--gold:#c9a24a}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.618 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--pri2)}
+header{background:var(--night);color:#fff;padding:13px 21px;display:flex;align-items:center;gap:13px;position:sticky;top:0;z-index:5}
+header b{font-size:21px;letter-spacing:.3px}header .sp{flex:1}header span{opacity:.7;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:40vw}
+header button{background:#fff2;color:#fff;border:0;border-radius:13px;padding:8px 13px;font:700 13px system-ui;cursor:pointer}
+main{max-width:987px;margin:0 auto;padding:21px 16px 89px}
+.card{background:var(--card);border-radius:21px;padding:21px;margin-bottom:21px;box-shadow:0 2px 13px #0000000d}
+h1{font-size:34px;line-height:1.236;margin:0 0 13px}h2{font-size:21px;margin:0 0 13px}h3{font-size:16px;margin:21px 0 8px}p{margin:0 0 13px}small,.mute{color:var(--mute);font-size:13px}
+label{display:block;font:700 13px system-ui;margin:8px 0 3px}
+input,select{width:100%;padding:13px;border-radius:13px;border:2px solid var(--line);font:600 16px system-ui;background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:0;border-color:var(--pri)}
+label.ck{display:flex;gap:8px;align-items:flex-start;font-weight:600;line-height:1.5}label.ck input{width:21px;height:21px;flex:0 0 21px;margin:0}label.ck span{flex:1}
+@media(max-width:520px){header>span:not(#who){display:none}header b{font-size:16px;white-space:nowrap}}
+.row{display:flex;gap:13px;flex-wrap:wrap;align-items:flex-end}.row>*{flex:1 1 144px}
+.b{padding:13px 21px;border-radius:13px;border:0;background:var(--pri);color:#fff;font:800 16px system-ui;cursor:pointer;text-decoration:none;display:inline-block;text-align:center}
+.b:hover{background:var(--pri2)}.b.sec{background:#efe3cc;color:var(--ink)}.b.red{background:#f3c7bd;color:#6a1a0a}.b.gold{background:var(--acc);color:#2a1a0a}.b.sm{padding:5px 13px;font-size:13px}.b:disabled{opacity:.5;cursor:default}
+.msg{min-height:21px;color:var(--bad);font:700 13px system-ui;margin-top:8px}.ok{color:var(--pri2)}
+.hid{display:none!important}
+.hero{display:grid;grid-template-columns:1.618fr 1fr;gap:34px;align-items:center}
+@media(max-width:760px){.hero{grid-template-columns:1fr}h1{font-size:28px}}
+.ticks{list-style:none;padding:0;margin:0 0 13px}.ticks li{padding:3px 0 3px 29px;position:relative}.ticks li:before{content:"✦";position:absolute;left:5px;color:var(--gold)}
+.tabs{display:flex;gap:8px;margin-bottom:13px}.tabs button{flex:1;padding:8px;border-radius:13px;border:2px solid var(--line);background:#fff;font:800 15px system-ui;cursor:pointer;color:var(--ink)}.tabs button.on{background:var(--night);border-color:var(--night);color:#fff}
+.kids{display:grid;grid-template-columns:repeat(auto-fill,minmax(233px,1fr));gap:13px}
+.kid{border:2px solid var(--line);border-radius:21px;padding:13px 21px;cursor:pointer;background:#fff;text-align:left;font:inherit;color:inherit}.kid.on{border-color:var(--pri);background:#e6f6f3}
+.kid b{font-size:21px;display:block}
+.badge{display:inline-block;padding:0 8px;border-radius:8px;font:800 13px/1.618 system-ui;background:#efe3cc}.badge.paid{background:#d9f2ee;color:#1d6a60}.badge.trial{background:#fff0d6;color:#7a4a00}.badge.school{background:#e3e8ff;color:#2a3a8a}.badge.free{background:#eee;color:#555}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}@media(max-width:760px){.plans{grid-template-columns:1fr}}
+.plan{border:2px solid var(--line);border-radius:21px;padding:21px;display:flex;flex-direction:column;gap:8px;position:relative;background:#fff}
+.plan.best{border-color:var(--gold);box-shadow:0 8px 34px #c9a24a33}.plan .tag{position:absolute;top:-13px;right:21px;background:var(--gold);color:#fff;font:800 13px system-ui;padding:3px 13px;border-radius:13px}
+.plan .price{font:900 34px/1.236 system-ui}.plan .price small{font-size:13px;font-weight:700}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}@media(max-width:600px){.stat{grid-template-columns:repeat(2,1fr)}}
+.stat div{background:#faf5ea;border-radius:13px;padding:8px 13px;font:700 13px system-ui;color:var(--mute)}.stat b{display:block;font-size:21px;color:var(--ink)}
+.charts{display:grid;grid-template-columns:1.618fr 1fr;gap:21px}@media(max-width:760px){.charts{grid-template-columns:1fr}}
+.cbox{position:relative;height:233px}
+.lock{text-align:center;padding:34px 21px;background:repeating-linear-gradient(135deg,#faf5ea 0 13px,#f6efe0 13px 26px);border-radius:21px}
+.pill{display:inline-block;padding:3px 13px;border-radius:13px;background:#efe3cc;margin:0 5px 8px 0;font-size:13px;font-weight:700}.pill.w{background:#fde4dc;color:#7a2a12}.pill.g{background:#d9f2ee;color:#1d6a60}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--mute)}.tw{overflow-x:auto}
+dialog{border:0;border-radius:21px;padding:0;max-width:min(610px,calc(100vw - 32px));width:100%;box-shadow:0 21px 55px #0005}dialog::backdrop{background:#0a1222b3}
+dialog .in{padding:21px}.gw{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gw button{padding:13px;border-radius:13px;border:2px solid var(--line);background:#fff;font:700 15px system-ui;cursor:pointer;text-align:left;color:var(--ink)}.gw button.on{border-color:var(--pri);background:#e6f6f3}
+@media(max-width:420px){.gw{grid-template-columns:1fr}}
+.qr{display:grid;grid-template-columns:auto 1fr;gap:21px;align-items:center}.qr img{width:233px;max-width:100%;border-radius:13px;border:1px solid var(--line)}@media(max-width:520px){.qr{grid-template-columns:1fr;justify-items:center}}
+.banner{border-radius:21px;padding:13px 21px;margin-bottom:21px;font-weight:700}.banner.ok{background:#d9f2ee;color:#1d6a60}.banner.wait{background:#fff0d6;color:#7a4a00}.banner.bad{background:#fde4dc;color:#7a2a12}
+footer{text-align:center;color:var(--mute);font-size:13px;padding:21px}
+</style></head><body>
+<header><b>👪 Trường Rubik</b><span>Phụ huynh</span><div class="sp"></div><span id="who"></span><button id="bOut" class="hid">Đăng xuất</button></header>
+<main>
+  <div id="banner" class="banner hid"></div>
+  <!-- ===== chưa đăng nhập ===== -->
+  <section id="vLogin" class="hid">
+    <div class="card hero">
+      <div><h1>Đồng hành cùng con trên Đảo Rubik</h1>
+        <p class="mute" style="font-size:16px">Game mở thế giới cho học sinh tiểu học: vừa khám phá vừa học Toán, Tiếng Việt, Tiếng Anh, Khoa học, Sử–Địa.</p>
+        <ul class="ticks"><li><b>Báo cáo học tập hằng tuần</b>: môn nào giỏi, chủ đề nào cần luyện, thời gian chơi</li><li>Đặt <b>giới hạn giờ chơi</b> và <b>giao nhiệm vụ học</b> cho con</li><li><b>Không quảng cáo</b>, không vật phẩm may rủi, không chat tự do</li><li>Dùng thử <b id="trialD">7</b> ngày toàn bộ nội dung — không cần thẻ</li></ul></div>
+      <div>
+        <div class="tabs"><button data-t="in" class="on">Đăng nhập</button><button data-t="up">Tạo tài khoản</button></div>
+        <label for="lg">Email hoặc số điện thoại</label><input id="lg" autocomplete="username" inputmode="email" maxlength="80">
+        <label for="pw">Mật khẩu <small id="pwHint" class="hid">(ít nhất 8 ký tự)</small></label><input id="pw" type="password" autocomplete="current-password" maxlength="72">
+        <div id="upBox" class="hid"><label for="nm">Tên gọi <small>(không bắt buộc)</small></label><input id="nm" maxlength="40" placeholder="VD: Mẹ Na">
+          <label class="ck" style="margin-top:13px"><input type="checkbox" id="cAdult"><span>Tôi là người lớn (từ 18 tuổi) — cha, mẹ hoặc người giám hộ.</span></label>
+          <label class="ck"><input type="checkbox" id="cTerms"><span>Tôi đã đọc và đồng ý <a href="/privacy" target="_blank">Chính sách bảo mật</a> và <a href="/terms" target="_blank">Điều khoản dịch vụ</a>.</span></label></div>
+        <button class="b" id="bGo" style="width:100%;margin-top:13px">Đăng nhập</button><div class="msg" id="lgMsg" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+  <!-- ===== đã đăng nhập ===== -->
+  <section id="vMain" class="hid">
+    <div class="card"><div class="row" style="align-items:center"><div><h2 style="margin:0">Các con</h2><small id="subLine"></small></div><div style="flex:0 0 auto"><a class="b gold" href="#plans" id="bBuy">⭐ Mua / gia hạn gói</a></div></div>
+      <div class="kids" id="kids" style="margin-top:13px"></div>
+      <h3>➕ Liên kết tài khoản của con</h3>
+      <p class="mute">Trong game, con bấm <b>👤</b> (góc trên) → <b>👪 Mã liên kết phụ huynh</b>, rồi đọc 6 ký tự cho bạn. Mã dùng được trong 30 phút.</p>
+      <div class="row"><div style="flex:0 1 233px"><label for="lk">Mã liên kết</label><input id="lk" maxlength="6" autocomplete="off" style="text-transform:uppercase;letter-spacing:5px;font-weight:900" placeholder="ABC123"></div>
+        <div style="flex:2 1 233px"><label class="ck"><input type="checkbox" id="cLink"><span>Tôi là cha/mẹ/người giám hộ của bé và đồng ý cho bé dùng Trường Rubik; đồng ý để Trường Rubik xử lý dữ liệu học tập của bé theo <a href="/privacy" target="_blank">Chính sách bảo mật</a>.</span></label></div>
+        <div style="flex:0 0 auto"><button class="b" id="bLink">Liên kết</button></div></div><div class="msg" id="lkMsg"></div>
+    </div>
+    <div id="kidPanel" class="hid">
+      <div class="card"><div class="row" style="align-items:center"><div><h2 style="margin:0" id="rTitle">📊 Báo cáo học tập</h2><small id="rRange"></small></div>
+        <div style="flex:0 0 auto"><select id="rWeek" aria-label="Chọn tuần"><option value="0">Tuần này</option><option value="1">Tuần trước</option><option value="2">2 tuần trước</option><option value="3">3 tuần trước</option></select></div></div>
+        <div id="rBody" style="margin-top:13px"></div></div>
+      <div class="card"><h2>🛡️ Kiểm soát của bố mẹ</h2>
+        <div class="row"><div style="flex:0 1 233px"><label for="lim">Giới hạn giờ chơi mỗi ngày</label><select id="lim"><option value="0">Không giới hạn</option><option>21</option><option>34</option><option>55</option><option>89</option><option>144</option></select></div><div style="flex:0 0 auto"><button class="b sec" id="bLim">Lưu</button></div><div><small id="limNow"></small></div></div>
+        <h3>🎯 Giao nhiệm vụ học</h3>
+        <div class="row"><div><label for="tT">Tên nhiệm vụ</label><input id="tT" maxlength="60" placeholder="VD: Luyện bảng nhân 7"></div>
+          <div style="flex:0 1 144px"><label for="tS">Môn</label><select id="tS"><option value="*">Mọi môn</option><option>Toán</option><option>Tiếng Việt</option><option>Tiếng Anh</option><option>Khoa học</option><option>Sử–Địa</option></select></div>
+          <div style="flex:0 1 144px"><label for="tK">Yêu cầu</label><select id="tK"><option value="ok">Trả lời đúng</option><option value="n">Làm</option></select></div>
+          <div style="flex:0 1 89px"><label for="tN">Số câu</label><input id="tN" type="number" min="1" max="200" value="21"></div><div style="flex:0 0 auto"><button class="b" id="bTask">Giao</button></div></div>
+        <div id="tasks" style="margin-top:13px"></div><div class="msg" id="kMsg"></div>
+        <h3>🗑️ Dữ liệu của con</h3><p class="mute">Bỏ liên kết: bạn không xem được dữ liệu của con nữa. Xoá tài khoản: xoá vĩnh viễn tài khoản game, tiến độ, thống kê học tập của con (không khôi phục được).</p>
+        <div class="row"><div style="flex:0 0 auto"><button class="b sec" id="bUnlink">Bỏ liên kết</button></div><div style="flex:0 0 auto"><button class="b red" id="bDelKid">Xoá tài khoản & dữ liệu của con…</button></div></div>
+      </div>
+    </div>
+    <div class="card" id="plans"><h2>⭐ Gói Phụ huynh</h2>
+      <p class="mute">Miễn phí mãi mãi: đảo Rubik, Trường Rubik, một phần mini game, chương 1–2 cốt truyện. Gói mở thêm: toàn bộ cốt truyện, Học viện Pha Lê, phép thuật, rồng & phượng hoàng, chổi bay, ván bay, diều lượn, mọi mini game và <b>báo cáo học tập</b>. Gói <b>không tự gia hạn</b>.</p>
+      <div class="plans" id="planList"></div>
+    </div>
+    <div class="card"><h2>🧾 Lịch sử thanh toán</h2><div class="tw"><table id="orders"></table></div></div>
+    <div class="card"><h2>⚙️ Cài đặt</h2>
+      <label class="ck"><input type="checkbox" id="cWeekly"><span>Gửi email tóm tắt học tập mỗi tối Chủ nhật</span></label>
+      <div id="emBox" class="row hid" style="margin-top:8px"><div><label for="em">Email nhận báo cáo & biên nhận</label><input id="em" type="email" maxlength="80"></div></div>
+      <div style="margin-top:13px"><button class="b sec" id="bNotify">Lưu cài đặt</button></div><div class="msg" id="nMsg"></div>
+      <h3>Xoá tài khoản phụ huynh</h3><p class="mute">Xoá thông tin đăng nhập của bạn. Lịch sử giao dịch được giữ ẩn danh theo quy định kế toán.</p><button class="b red sm" id="bDelMe">Xoá tài khoản phụ huynh…</button>
+    </div>
+  </section>
+</main>
+<footer>Trường Rubik · <a href="/privacy">Bảo mật</a> · <a href="/terms">Điều khoản</a> · Không quảng cáo · Không lootbox</footer>
+<dialog id="dPay"><div class="in" id="payIn"></div></dialog>
+<dialog id="dAsk"><div class="in"><h2 id="askT"></h2><p id="askP" class="mute"></p><label for="askPw">Nhập mật khẩu phụ huynh để xác nhận</label><input id="askPw" type="password" autocomplete="current-password"><div class="row" style="margin-top:13px"><button class="b sec" id="askNo">Huỷ</button><button class="b red" id="askYes">Xác nhận</button></div><div class="msg" id="askMsg"></div></div></dialog>
+<script src="/lib/chart.js" defer></script>
+<script>
+const $ = s => document.querySelector(s), esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const money = n => Number(n).toLocaleString('vi-VN') + 'đ', dd = t => new Date(t).toLocaleDateString('vi-VN');
+const TK = 'rubik.parentToken';
+let tok = localStorage.getItem(TK) || '', ME = null, cur = null, mode = 'in', charts = [], CFG = null;
+async function call(path, body, method) {
+  const r = await fetch('/api/family' + path, { method: method || (body ? 'POST' : 'GET'), headers: Object.assign({ 'Content-Type': 'application/json' }, tok ? { Authorization: 'Bearer ' + tok } : {}), body: body ? JSON.stringify(body) : undefined }).catch(() => null);
+  if (!r) return { error: 'Không kết nối được máy chủ.' };
+  const j = await r.json().catch(() => ({})); if (r.status === 401 && tok && path !== '/login') { logout(true); } return Object.assign(j, { status: r.status });
+}
+const KIND = { paid: ['paid', '⭐ Gói Phụ huynh'], trial: ['trial', '🎁 Dùng thử'], school: ['school', '🏫 Gói trường'], gift: ['paid', '🎀 Được tặng'] };
+const badge = e => e && e.on ? `<span class="badge ${KIND[e.kind][0]}">${KIND[e.kind][1]} · đến ${dd(e.until)}</span>` : '<span class="badge free">Miễn phí</span>';
+function show(v) { $('#vLogin').classList.toggle('hid', v !== 'login'); $('#vMain').classList.toggle('hid', v !== 'main'); $('#bOut').classList.toggle('hid', v !== 'main'); }
+function logout(expired) { if (tok && !expired) call('/logout', {}); tok = ''; localStorage.removeItem(TK); ME = null; $('#who').textContent = ''; show('login'); }
+// ---------- đăng nhập / đăng ký ----------
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { mode = b.dataset.t; document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b)); $('#upBox').classList.toggle('hid', mode !== 'up'); $('#pwHint').classList.toggle('hid', mode !== 'up'); $('#bGo').textContent = mode === 'up' ? 'Tạo tài khoản phụ huynh' : 'Đăng nhập'; $('#pw').autocomplete = mode === 'up' ? 'new-password' : 'current-password'; });
+$('#bGo').onclick = async () => {
+  const m = $('#lgMsg'); m.textContent = '…';
+  const r = mode === 'up' ? await call('/register', { login: $('#lg').value, pass: $('#pw').value, name: $('#nm').value, adult: $('#cAdult').checked, consent: $('#cTerms').checked }) : await call('/login', { login: $('#lg').value, pass: $('#pw').value });
+  if (r.error) { m.textContent = r.error; return; } m.textContent = ''; tok = r.token; localStorage.setItem(TK, tok); render(r.me);
+};
+$('#pw').onkeydown = e => { if (e.key === 'Enter') $('#bGo').click(); };
+$('#bOut').onclick = () => logout();
+// ---------- trang chính ----------
+function render(me) {
+  ME = me; show('main'); $('#who').textContent = me.name || me.login;
+  const s = me.sub; $('#subLine').innerHTML = s && s.until > Date.now() ? `Gói <b>${esc((me.plans.find(p => p.id === s.plan) || {}).name)}</b> còn hiệu lực đến <b>${dd(s.until)}</b> (không tự gia hạn)` : `Chưa có gói · mỗi con được dùng thử ${me.trialDays} ngày khi liên kết`;
+  $('#kids').innerHTML = me.kids.length ? me.kids.map(k => `<button class="kid${cur === k.uid ? ' on' : ''}" data-u="${k.uid}"><b>🧒 ${esc(k.name)}</b>${badge(k.plan)}<br><small>Cấp ${k.level} · hôm nay ${k.todayMin} phút${k.limitMin ? ' / ' + k.limitMin : ''}${k.last ? ' · chơi gần nhất ' + dd(k.last) : ''}</small></button>`).join('') : '<p class="mute">Chưa liên kết con nào.</p>';
+  document.querySelectorAll('.kid').forEach(b => b.onclick = () => { cur = b.dataset.u; render(ME); loadKid(); });
+  if (!cur && me.kids.length) { cur = me.kids[0].uid; render(me); return loadKid(); }
+  if (cur && !me.kids.some(k => k.uid === cur)) { cur = null; $('#kidPanel').classList.add('hid'); }
+  $('#planList').innerHTML = me.plans.map(p => { const per = p.id === 'month' ? '/tháng' : '/năm', save = p.id === 'year' ? Math.round((1 - p.price / (me.plans[0].price * 12)) * 100) : 0;
+    return `<div class="plan${p.id === 'year' ? ' best' : ''}">${p.id === 'year' ? `<span class="tag">Tiết kiệm ${save}%</span>` : ''}<b style="font-size:21px">${esc(p.name)}</b><div class="price">${money(p.price)}<small>${per}</small></div>
+      <small>${p.seats > 1 ? `Dùng cho tối đa ${p.seats} con` : 'Dùng cho 1 con'} · ${p.days} ngày</small><small>${p.id === 'family' ? '≈ ' + money(Math.round(p.price / 12 / p.seats / 1000) * 1000) + ' mỗi con / tháng' : p.id === 'year' ? '≈ ' + money(Math.round(p.price / 12 / 1000) * 1000) + ' / tháng' : 'Linh hoạt, mua theo tháng'}</small>
+      <div style="flex:1"></div><button class="b${p.id === 'year' ? ' gold' : ''}" data-p="${p.id}">Chọn gói</button></div>`; }).join('');
+  document.querySelectorAll('[data-p]').forEach(b => b.onclick = () => openPay(b.dataset.p));
+  const ST = { paid: '✅ Đã thanh toán', pending: '⏳ Chờ thanh toán', failed: '❌ Không thành công', cancelled: '🚫 Đã huỷ' };
+  $('#orders').innerHTML = me.orders.length ? '<tr><th>Mã đơn</th><th>Ngày</th><th>Gói</th><th>Số tiền</th><th>Cổng</th><th>Trạng thái</th></tr>' + me.orders.map(o => `<tr><td>${esc(o.id)}</td><td>${dd(o.created)}</td><td>${esc(o.planName)}</td><td>${money(o.amount)}</td><td>${esc(o.gateway)}</td><td>${ST[o.status] || o.status}${o.status === 'pending' && o.transfer ? `<br><small>Nội dung CK: ${esc(o.transfer)}</small>` : ''}</td></tr>`).join('') : '<tr><td class="mute">Chưa có giao dịch.</td></tr>';
+  $('#cWeekly').checked = !!(me.notify && me.notify.weekly); const phone = !me.login.includes('@'); $('#emBox').classList.toggle('hid', !phone); if (phone) $('#em').value = me.email || '';
+}
+async function refresh() { const r = await call('/me'); if (r.me) render(r.me); return r; }
+$('#bLink').onclick = async () => { const m = $('#lkMsg'); m.className = 'msg'; m.textContent = '…'; const r = await call('/link', { code: $('#lk').value, consent: $('#cLink').checked }); if (r.error) { m.textContent = r.error; return; } $('#lk').value = ''; m.className = 'msg ok'; m.textContent = r.trial ? `🎉 Đã liên kết! Con được dùng thử ${ME.trialDays} ngày toàn bộ nội dung.` : '✅ Đã liên kết.'; cur = r.me.kids[r.me.kids.length - 1].uid; render(r.me); loadKid(); };
+// ---------- báo cáo của 1 con ----------
+const COLORS = { 'Toán': '#3fb8a8', 'Tiếng Việt': '#f0a23a', 'Tiếng Anh': '#6a7fdb', 'Khoa học': '#5aa05a', 'Sử–Địa': '#c8702c', 'Khác': '#a89880' };
+async function loadKid() {
+  const k = ME.kids.find(k => k.uid === cur); if (!k) return; $('#kidPanel').classList.remove('hid');
+  $('#rTitle').textContent = `📊 Báo cáo học tập · ${k.name}`; $('#lim').value = [0, 21, 34, 55, 89, 144].includes(k.limitMin) ? k.limitMin : 0; $('#limNow').textContent = `Hôm nay con đã chơi ${k.todayMin} phút.`;
+  $('#tasks').innerHTML = k.tasks.length ? k.tasks.map(t => `<span class="pill${t.done >= t.n ? ' g' : ''}">${t.done >= t.n ? '✅' : '🎯'} ${esc(t.title)} · ${t.subject === '*' ? 'mọi môn' : esc(t.subject)} · ${t.done}/${t.n} <a href="#" data-t="${t.id}" title="Xoá">✕</a></span>`).join('') : '<small>Chưa giao nhiệm vụ nào.</small>';
+  document.querySelectorAll('[data-t]').forEach(a => a.onclick = async e => { e.preventDefault(); const r = await call(`/kids/${cur}/tasks/${a.dataset.t}`, null, 'DELETE'); if (r.me) { render(r.me); loadKid(); } });
+  const r = await call(`/kids/${cur}/report?week=${$('#rWeek').value}`); charts.forEach(c => c.destroy()); charts = [];
+  if (r.locked) { $('#rRange').textContent = ''; $('#rBody').innerHTML = `<div class="lock"><div style="font-size:55px">📊</div><h2>Báo cáo học tập thuộc Gói Phụ huynh</h2><p class="mute">Xem con giỏi môn nào, chủ đề nào cần luyện thêm, thời gian chơi mỗi ngày — kèm email tóm tắt mỗi tuần.</p><a class="b gold" href="#plans">Xem các gói</a></div>`; return; }
+  if (r.error) { $('#rBody').innerHTML = `<p class="msg">${esc(r.error)}</p>`; return; }
+  const R = r.report, pct = R.total.n ? Math.round(R.total.ok / R.total.n * 100) : 0, f = d => d.slice(8) + '/' + d.slice(5, 7);
+  $('#rRange').textContent = `Từ ${f(R.from)} đến ${f(R.to)}`;
+  $('#rBody').innerHTML = `<div class="stat"><div>Thời gian<b>${R.total.min} phút</b></div><div>Số câu đã làm<b>${R.total.n}</b></div><div>Trả lời đúng<b>${R.total.ok} · ${pct}%</b></div><div>Ngày có học<b>${R.days.filter(d => d.min > 0 || d.n > 0).length}/7</b></div></div>
+    <div class="charts" style="margin-top:21px"><div><h3 style="margin-top:0">Thời gian & số câu mỗi ngày</h3><div class="cbox"><canvas id="c1" aria-label="Biểu đồ thời gian mỗi ngày"></canvas></div></div><div><h3 style="margin-top:0">Tỉ lệ đúng theo môn</h3><div class="cbox"><canvas id="c2" aria-label="Biểu đồ tỉ lệ đúng theo môn"></canvas></div></div></div>
+    <div class="tw" style="margin-top:21px"><table><tr><th>Môn</th><th>Số câu</th><th>Đúng</th><th>Sai</th><th>Tỉ lệ đúng</th></tr>${R.subjects.map(s => `<tr><td><b style="color:${COLORS[s.subject]}">●</b> ${esc(s.subject)}</td><td>${s.n}</td><td>${s.ok}</td><td>${s.n - s.ok}</td><td>${s.n ? Math.round(s.ok / s.n * 100) + '%' : '—'}</td></tr>`).join('')}</table></div>
+    <h3>💡 Chủ đề cần luyện thêm</h3>${R.weak.length ? R.weak.map(w => `<span class="pill w">${esc(w.topic)} · ${w.ok}/${w.n} đúng (${w.pct}%)</span>`).join('') : '<small>Chưa có chủ đề nào dưới 70% (cần ít nhất 3 câu mỗi chủ đề).</small>'}
+    <h3>🏆 Thành tích tuần</h3>${R.achievements.length ? R.achievements.map(a => `<span class="pill g">${esc(a)}</span>`).join('') : '<small>Tuần này chưa có thành tích — cùng con đặt mục tiêu nhỏ nhé!</small>'}`;
+  const go = () => { if (!window.Chart) return setTimeout(go, 89); Chart.defaults.font.family = 'system-ui'; Chart.defaults.color = '#7a6a58';
+    const days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+    charts.push(new Chart($('#c1'), { data: { labels: R.days.map((d, i) => days[i] + ' ' + f(d.d)), datasets: [{ type: 'bar', label: 'Phút chơi', data: R.days.map(d => d.min), backgroundColor: '#3fb8a8', borderRadius: 8, yAxisID: 'y' }, { type: 'line', label: 'Câu đúng', data: R.days.map(d => d.ok), borderColor: '#f0a23a', backgroundColor: '#f0a23a', tension: .382, yAxisID: 'y1' }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'phút' } }, y1: { beginAtZero: true, position: 'right', grid: { display: false }, title: { display: true, text: 'câu' } } } } }));
+    const S = R.subjects.filter(s => s.n); charts.push(new Chart($('#c2'), { type: 'bar', data: { labels: S.map(s => s.subject), datasets: [{ label: '% đúng', data: S.map(s => Math.round(s.ok / s.n * 100)), backgroundColor: S.map(s => COLORS[s.subject]), borderRadius: 8 }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 100, ticks: { callback: v => v + '%' } } } } })); };
+  go();
+}
+$('#rWeek').onchange = loadKid;
+$('#bLim').onclick = async () => { const r = await call(`/kids/${cur}/limit`, { limitMin: +$('#lim').value }); $('#kMsg').className = 'msg ok'; $('#kMsg').textContent = r.error || '✅ Đã lưu. Con sẽ thấy giới hạn mới ngay.'; if (r.me) render(r.me); };
+$('#bTask').onclick = async () => { const r = await call(`/kids/${cur}/tasks`, { title: $('#tT').value, subject: $('#tS').value, kind: $('#tK').value, n: +$('#tN').value }); if (r.error) { $('#kMsg').textContent = r.error; return; } $('#tT').value = ''; render(r.me); loadKid(); };
+function ask(title, text, fn) { $('#askT').textContent = title; $('#askP').textContent = text; $('#askPw').value = ''; $('#askMsg').textContent = ''; $('#dAsk').showModal(); $('#askNo').onclick = () => $('#dAsk').close(); $('#askYes').onclick = async () => { const err = await fn($('#askPw').value); if (err) $('#askMsg').textContent = err; else $('#dAsk').close(); }; }
+$('#bUnlink').onclick = async () => { if (!confirm('Bỏ liên kết với tài khoản của con?')) return; const r = await call(`/kids/${cur}`, null, 'DELETE'); if (r.me) { cur = null; $('#kidPanel').classList.add('hid'); render(r.me); } };
+$('#bDelKid').onclick = () => { const k = ME.kids.find(k => k.uid === cur); ask(`Xoá tài khoản của ${k.name}?`, 'Xoá vĩnh viễn tài khoản game, tiến độ, đồ, bạn bè và toàn bộ thống kê học tập của con. Không thể khôi phục.', async pw => { const r = await call(`/kids/${cur}/delete`, { pass: pw }); if (r.error) return r.error; cur = null; $('#kidPanel').classList.add('hid'); render(r.me); }); };
+$('#bDelMe').onclick = () => ask('Xoá tài khoản phụ huynh?', 'Tài khoản game của con vẫn giữ (bạn có thể xoá từng con trước). Lịch sử giao dịch được ẩn danh.', async pw => { const r = await call('/me', { pass: pw }, 'DELETE'); if (r.error) return r.error; logout(true); });
+$('#bNotify').onclick = async () => { const r = await call('/notify', { weekly: $('#cWeekly').checked, email: $('#emBox').classList.contains('hid') ? undefined : $('#em').value }); $('#nMsg').className = 'msg ' + (r.error ? '' : 'ok'); $('#nMsg').textContent = r.error || '✅ Đã lưu.'; if (r.me) render(r.me); };
+// ---------- mua gói ----------
+let sel = { plan: null, gw: null };
+function openPay(plan) {
+  if (!ME.kids.length) { $('#lkMsg').textContent = 'Hãy liên kết tài khoản của con trước khi mua gói.'; $('#lk').focus(); return; }
+  const P = ME.plans.find(p => p.id === plan); sel = { plan, gw: null, quote: P.price };
+  $('#payIn').innerHTML = `<h2>${esc(P.name)} · <span id="qPrice">${money(P.price)}</span></h2><p class="mute">Áp dụng cho ${P.seats > 1 ? 'tối đa ' + P.seats + ' con' : '1 con (con liên kết đầu tiên)'} · ${P.days} ngày · không tự gia hạn.</p>
+    <label>Cách thanh toán</label><div class="gw">${ME.gateways.map(g => `<button data-g="${g.id}">${g.icon} ${esc(g.name)}${g.mode === 'sim' ? ' <small>(giả lập)</small>' : g.mode === 'sandbox' ? ' <small>(sandbox)</small>' : ''}</button>`).join('')}</div>
+    <div class="row" style="margin-top:8px"><div><label for="cp">Mã giảm giá <small>(nếu có)</small></label><input id="cp" maxlength="21" style="text-transform:uppercase"></div><div style="flex:0 0 auto"><button class="b sec" id="bCp">Áp dụng</button></div></div>
+    <p class="mute" style="margin-top:13px">Bạn sẽ thanh toán trên trang của cổng thanh toán. Trường Rubik không lưu số thẻ. Biên nhận gửi về email của bạn.</p>
+    <div class="row"><button class="b sec" id="bPayNo">Huỷ</button><button class="b gold" id="bPayGo" disabled>Thanh toán</button></div><div class="msg" id="pMsg"></div>`;
+  $('#dPay').showModal();
+  document.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { sel.gw = b.dataset.g; document.querySelectorAll('[data-g]').forEach(x => x.classList.toggle('on', x === b)); $('#bPayGo').disabled = false; });
+  $('#bCp').onclick = async () => { const r = await call('/quote', { plan, coupon: $('#cp').value }); if (r.error) { $('#pMsg').textContent = r.error; return; } $('#pMsg').textContent = ''; $('#qPrice').innerHTML = `<s style="opacity:.5;font-size:16px">${money(P.price)}</s> ${money(r.amount)}`; };
+  $('#bPayNo').onclick = () => $('#dPay').close();
+  $('#bPayGo').onclick = async () => {
+    $('#bPayGo').disabled = true; $('#pMsg').textContent = '…'; const r = await call('/checkout', { plan, gateway: sel.gw, coupon: $('#cp').value });
+    if (r.error) { $('#pMsg').textContent = r.error; $('#bPayGo').disabled = false; return; }
+    if (r.payUrl) { location.href = r.payUrl; return; }
+    if (r.bank) { const k = r.bank; $('#payIn').innerHTML = `<h2>🏦 Chuyển khoản VietQR</h2>${k.demo ? '<p class="banner wait">Tài khoản minh hoạ — chủ game chưa cấu hình số tài khoản thật.</p>' : ''}<div class="qr"><img src="${esc(k.qr)}" alt="Mã VietQR" width="233" height="233"><div><p>Quét mã bằng app ngân hàng bất kỳ, hoặc chuyển khoản:</p><p>Ngân hàng: <b>${esc(k.bankName)}</b><br>Số TK: <b>${esc(k.acc)}</b><br>Chủ TK: <b>${esc(k.accName)}</b><br>Số tiền: <b>${money(k.amount)}</b><br>Nội dung: <b style="font-size:21px;letter-spacing:2px">${esc(k.memo)}</b></p><small>Gói được kích hoạt sau khi Trường Rubik đối soát (thường trong vài giờ làm việc). Ghi đúng nội dung để đối soát nhanh.</small></div></div><div style="margin-top:13px"><button class="b" id="bQrOk">Tôi đã chuyển khoản</button></div>`; $('#bQrOk').onclick = () => { $('#dPay').close(); refresh(); banner('wait', '⏳ Đã ghi nhận đơn chuyển khoản. Gói sẽ kích hoạt khi đối soát xong — bạn sẽ nhận email biên nhận.'); }; }
+  };
+}
+function banner(kind, html) { const b = $('#banner'); b.className = 'banner ' + kind; b.innerHTML = html; b.classList.remove('hid'); scrollTo({ top: 0, behavior: 'smooth' }); }
+async function checkOrder(id) {
+  for (let i = 0; i < 8; i++) {
+    const r = await call('/orders/' + encodeURIComponent(id)); if (!r.order) return;
+    if (r.order.status === 'paid') { render(r.me); return banner('ok', `🎉 Thanh toán thành công đơn <b>${esc(id)}</b> — ${esc(r.order.planName)} có hiệu lực đến <b>${dd(r.order.until)}</b>. Con chỉ cần vào lại game để mở khoá. Biên nhận đã gửi email.`); }
+    if (r.order.status === 'failed' || r.order.status === 'cancelled') return banner('bad', `Đơn <b>${esc(id)}</b> chưa thanh toán được. Bạn có thể thử lại hoặc chọn cách khác.`);
+    banner('wait', `⏳ Đang chờ cổng thanh toán xác nhận đơn <b>${esc(id)}</b>…`); await new Promise(r => setTimeout(r, 1618));
+  }
+}
+// ---------- khởi động ----------
+(async () => {
+  CFG = await fetch('/api/family/config').then(r => r.json()).catch(() => null); if (CFG) $('#trialD').textContent = CFG.trialDays;
+  if (!tok) return show('login');
+  const r = await refresh(); if (!r.me) return show('login');
+  const m = location.hash.match(/order=([\w]+)/); if (m) { history.replaceState(null, '', '/parent'); checkOrder(m[1]); }
+})();
+</script>
+</body></html>

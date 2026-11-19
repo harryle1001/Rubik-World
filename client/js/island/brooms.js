@@ -80,8 +80,10 @@ export function holdPose(model, root, k = 1) {
 
 export function createBrooms(ctx) {
   const V = ctx.vehicles, pl = ctx.player, { terrain, scene } = ctx, W = CFG.island.waterLevel;
-  const own = id => id === 'broom-tap' || !!(ctx.wear && ctx.wear.own && ctx.wear.own(id));
-  const chosen = () => { const e = ctx.wear && ctx.wear.eq && ctx.wear.eq.broom; return e && BROOM[e] && own(e) ? e : 'broom-tap'; };
+  // 🔒 chổi mở khoá ở 🛒 Cửa hàng (economy/) hoặc Xưởng Chổi Bay; chổi đặt sẵn ở Sân Đại Sảnh ai cũng cưỡi thử được
+  const own = id => ctx.eco ? ctx.eco.owns(id) : id === 'broom-tap' || !!(ctx.wear && ctx.wear.own && ctx.wear.own(id));
+  let pick = null;
+  const chosen = () => { const e = pick || (ctx.wear && ctx.wear.eq && ctx.wear.eq.broom); if (e && BROOM[e] && own(e)) return e; return [...BROOM_TYPES].reverse().map(b => b.id).find(own) || null; };
   const ground = (x, z) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, 999) : -99, W);
   function roofAt(x, z, m) {   // như aircraft.js: nóc hộp cao nhất trong bán kính m
     const L = ctx.grid ? ctx.grid.near(x, z).boxes : (ctx.boxes || []); let top = -99;
@@ -146,11 +148,13 @@ export function createBrooms(ctx) {
   BROOM_TYPES.forEach((b, i) => { const [x, z] = toWorld(13, -21 + i * 10.5); park(b.id, x, z, 0, BASE_Y + 0.6); });
 
   // gọi chổi (nút 🧹 / phím G / phép): lên chổi đang chọn; đang cưỡi chổi → xuống
-  function summon() {
+  function summon(type0) {
+    if (typeof type0 === 'string') { if (!own(type0)) return ctx.eco && ctx.eco.locked(type0); pick = type0; }
     if (V.riding === 'broom') return V.dismount();
     if (V.current) return ctx.toast('🚶 Xuống phương tiện đang đi trước đã', 2200);
     if (pl.frozen || (ctx.dive && ctx.dive.swimming)) return ctx.toast('🌊 Lên bờ rồi mới gọi chổi nhé', 2200);
-    const type = chosen(), v = make(type); v.temp = true;
+    const type = chosen(); if (!type) return ctx.eco ? ctx.eco.locked('broom-tap') : null;
+    const v = make(type); v.temp = true;
     v.group.position.copy(pl.pos); v.group.rotation.set(0, pl.rot, 0); V.register(v); V.mount(v);
     if (type === 'broom-tap' && !own('broom')) setTimeout(() => ctx.toast('🧹 Mua chổi nhanh hơn ở <b>Xưởng Chổi Bay</b> — Phố Phép Thuật (Học viện Pha Lê)', 3500), 5800);
   }

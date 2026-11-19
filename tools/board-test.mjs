@@ -32,6 +32,7 @@ const log = {};
 // trạng thái nhân vật trên ván (có hiện không, đang là mẫu nào) — để bắt lỗi "người biến mất"
 const hero = () => page.evaluate(() => { const c = __island, P = c.player, h = P.hero, m = h.model; let meshes = 0, shown = 0; m.traverse(o => { if (o.isMesh) { meshes++; let v = true; for (let q = o; q; q = q.parent) if (!q.visible) v = false; if (v) shown++; } }); return { vrm: !!h.isVrm, meshes, shown, attached: m.parent === P.root, y: +m.getWorldPosition(new c.camera.position.constructor()).y.toFixed(2), boardY: +c.silverBoard.pos.y.toFixed(2), others: c.net.others.size }; });
 // 1. gọi ván (nút 🏄 / phím U)
+await B(() => { const c = __island; if (c.eco && !c.eco.owns('board-bac')) c.account.profile.own.push('board-bac'); });   // ván mở khoá ở 🛒 Cửa hàng (economy/)
 if (MOBILE) await page.locator('#bBoard').tap(); else await page.keyboard.press('KeyU');
 await page.waitForTimeout(1500); log.riding = await B(() => __island.silverBoard.riding); log.callsTown = await calls(); log.hero1 = await hero(); await shot('01-goi-van');
 // 2. bay qua thị trấn (tự lái thẳng, không xuyên nhà)

@@ -65,6 +65,7 @@ export function createRide(ctx, { consist, interior }) {
   function board() {
     if (st.aboard || st.phase === 'run' || player.vehicle || (ctx.aircraft && ctx.aircraft.flying) || (ctx.ferry && ctx.ferry.riding)) return;
     const q = nearest(player.pos.x, player.pos.z, PARK[st.at].lo - 13, PARK[st.at].hi + 13);
+    if (st.at === 'A' && ctx.premium && !ctx.premium.allow('academy')) return;   // tàu tới cao nguyên Học viện: Gói Phụ huynh
     blink(() => {
       face(st.at === 'A' ? 1 : -1);
       st.aboard = true; st.phase = 'board'; schedule(); if (online()) ride.net.emit({ op: 'board' });
@@ -149,7 +150,7 @@ export function createRide(ctx, { consist, interior }) {
     // chưa lên tàu: lời mời ở sân ga (cạnh thân tàu)
     if (player.vehicle) return;
     const P = PARK[st.at], pp = player.pos, pS = at((P.lo + P.hi) / 2);
-    if ((pp.x - pS.x) ** 2 + (pp.z - pS.z) ** 2 < 55 * 55 && Math.abs(pp.y - P.top) < 1.6) ctx.offer(`🚂 Lên tàu (${fmt(Math.floor(sky.state.hour) + 1)} → ${st.at === 'A' ? PARK.B.name : PARK.A.name})`, board, 9);
+    if ((pp.x - pS.x) ** 2 + (pp.z - pS.z) ** 2 < 55 * 55 && Math.abs(pp.y - P.top) < 1.6) ctx.offer(`🚂 Lên tàu${st.at === 'A' && ctx.premium && !ctx.premium.on() ? ' 🔒' : ''} (${fmt(Math.floor(sky.state.hour) + 1)} → ${st.at === 'A' ? PARK.B.name : PARK.A.name})`, board, 9);
   }
   // tàu đang đỗ ở ga xa, người chơi ở ga kia (đi thuyền/máy bay sang) → chuyển tàu về ga gần khi không ai thấy
   function relocate(stn) { if (online()) { if (srv.phase === 'wait' && !srv.n && srv.at !== stn) ride.net.emit({ op: 'reloc', at: stn }); return; } if (st.aboard || st.phase === 'run' || st.at === stn) return; st.at = stn; st.dir = stn === 'A' ? 1 : -1; st.sHead = headFor(stn, st.dir); consist.place(st.sHead, st.dir); }

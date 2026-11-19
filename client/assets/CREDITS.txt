@@ -199,3 +199,9 @@ Rừng Thiên Định (client/js/island/zone-destiny.js, destiny-plan.js, destin
   Hươu trắng: models/animal-deer.glb (Quaternius – Ultimate Animated Animals, CC0) nhuộm trắng bằng code.
   Âm thanh: amb-river, amb-birds, amb-birds2, amb-crickets (đã ghi nguồn ở trên); chuông gió tổng hợp bằng WebAudio (ctx.note).
   Vách đá, cây Thiên Định, đền đá, cầu khỉ, công, cổng đá, dây leo, thác, sương, tia nắng: dựng bằng khối cơ bản + shader tự viết.
+
+🎒 Cặp sách · 🛒 Cửa hàng · 🪙/💎 ví (js/island/economy/) — dùng lại model CC0 đã có, không tải thêm:
+  models/alley/stall-red.glb → quầy 🛒 trước cổng Trường Rubik
+  audio/sfx-coin.mp3, sfx-gem.mp3 → âm thanh đồng vàng / kim cương bay vào ví
+  Biểu tượng 🪙 đồng vàng & 💎 kim cương hồng: SVG vẽ riêng cho dự án (js/island/economy/wallet.js), CC0.
+  Ba lô đeo lưng: khối đơn giản dựng bằng code (chưa có model CC0 ba lô phù hợp) — thay khi có.

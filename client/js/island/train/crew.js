@@ -1,6 +1,6 @@
 // train/crew.js — PHỤC VỤ TRÊN TÀU: cô nhân viên đẩy xe đồ ăn đi dọc lối đi qua 6 toa (dừng ở mỗi khoang/cụm ghế),
 // gặp bạn thì chào + soát vé (lần đầu mỗi chuyến), bấm ✋ "Gọi đồ" để chọn: 4 đồ uống + 4 bánh kẹo phép thuật.
-// Trả bằng xu (ctx.account) sau khi trả lời đúng 1 câu đố vui (ctx.magic.ask); món mua hiện trên bàn trước ghế hoặc trên tay.
+// Trả bằng đồng vàng (ctx.account) sau khi trả lời đúng 1 câu đố vui (ctx.magic.ask); món mua hiện trên bàn trước ghế hoặc trên tay.
 // Nút 🛎 (khi đang ngồi): gọi cô tới chỗ mình. Mỗi máy tự mô phỏng xe đẩy (không cần đồng bộ).
 import * as THREE from 'three';
 import { Batch } from '../academy/geo.js';
@@ -99,7 +99,7 @@ export function createCrew(ctx, { consist, interior, cabin, ride }) {
   function openMenu() {
     T.busy = true; player.frozen = true;
     const c = coins(), btn = it => `<button class="it" data-id="${it.id}"><i>${it.e}</i>${it.n}<br><small>${it.p} 🪙</small></button>`;
-    menu.innerHTML = `<div class="card"><span class="coin">🪙 ${c === null ? '—' : c}</span><h4>🛒 Xe đồ ăn Tàu Pha Lê</h4><div class="sub">Cô Lam: “Em muốn dùng gì nào? Trả lời đúng 1 câu đố vui rồi trả xu nhé!”</div>
+    menu.innerHTML = `<div class="card"><span class="coin">🪙 ${c === null ? '—' : c}</span><h4>🛒 Xe đồ ăn Tàu Pha Lê</h4><div class="sub">Cô Lam: “Em muốn dùng gì nào? Trả lời đúng 1 câu đố vui rồi trả đồng vàng nhé!”</div>
       <div class="g"><b>🥤 Đồ uống</b>${MENU.filter(i => !i.m).map(btn).join('')}<b>✨ Bánh kẹo phép thuật</b>${MENU.filter(i => i.m).map(btn).join('')}</div><button class="x">Để sau</button></div>`;
     menu.hidden = false; ctx.sfx && ctx.sfx('ui');
     menu.querySelector('.x').onclick = closeMenu; menu.onclick = e => { if (e.target === menu) closeMenu(); };
@@ -108,11 +108,11 @@ export function createCrew(ctx, { consist, interior, cabin, ride }) {
   function closeMenu() { menu.hidden = true; player.frozen = false; T.busy = false; T.wait = 1.5; }
   function order(it) {
     const c = coins();
-    if (c === null) { closeMenu(); ctx.toast('👤 Bấm <b>Đăng nhập</b> hoặc <b>Chơi khách</b> để có ví xu nhé!', 4000); return; }
-    if (c < it.p) { ctx.toast(`🪙 Cần <b>${it.p} xu</b> (em có ${c}). Giải đố ở <b>🏦 Ngân Hàng Kho Báu</b> (Phố Phép Thuật) hoặc mở rương kho báu để có thêm xu nhé!`, 5000); return; }
+    if (c === null) { closeMenu(); ctx.toast('👤 Bấm <b>Đăng nhập</b> hoặc <b>Chơi khách</b> để có ví đồng vàng nhé!', 4000); return; }
+    if (c < it.p) { ctx.toast(`🪙 Cần <b>${it.p} đồng vàng</b> (em có ${c}). Giải đố ở <b>🏦 Ngân Hàng Kho Báu</b> (Phố Phép Thuật) hoặc mở rương kho báu để có thêm đồng vàng nhé!`, 5000); return; }
     menu.hidden = true;
     const pay = () => {
-      if (!ctx.account.addCoins(-it.p)) { ctx.toast('Không đủ xu.', 2500); closeMenu(); return; }
+      if (!ctx.account.addCoins(-it.p)) { ctx.toast('Không đủ đồng vàng.', 2500); closeMenu(); return; }
       ctx.sfx && ctx.sfx('coin'); serveItem(it); staff && staff.anim.play('Interact', 0.2, true); ride.snd ? ride.snd.cup() : chime();
       ctx.toast(`${it.e} <b>${it.n}</b> — mời em! −${it.p} 🪙<br><small>${it.f}</small>`, 7000);
       let n = +(localStorage.getItem('island.trainOrders') || 0) + 1; try { localStorage.setItem('island.trainOrders', n); } catch (e) {}
