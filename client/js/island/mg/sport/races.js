@@ -15,4 +15,7 @@ export const races = {
   kart: R('🏎️ Rubik Kart', { topic: 'math', speed: 10, boost: 7, jump: false, sit: true, seat: 0.22, ride: 'kart_a', rivalRides: ['kart_b', 'kart_c'], rideSize: 1.7, skip: /character/, ground: '#4a4f5a', side: '#7fbf6a', line: '#ffd36e', obst: 'tyre', obstColor: '#e8453c',
     decor: [['prop_traffic_cone', 0.7, 5], ['plant_tree_town', 4, 13]],
     title: '🏎️ Lái vào làn có <b>đáp án đúng</b> để lấy “Rubik tăng tốc” · né lốp xe!', fact: 'Xe chạy càng nhanh càng cần quãng đường dài để phanh. Ngồi xe luôn thắt dây an toàn nhé!' }),
+  'animal-race': R('🦌 Đua thú khoa học', { mode: 'button', topic: 'science', speed: 8, boost: 6, jump: false, obst: null, sit: true, seat: 0.95, ride: 'animal-deer', rivalRides: ['animal-fox', 'animal-shiba'], rideSize: 1.5,
+    ground: '#c9a46a', side: '#86c46e', line: '#fff3d6', decor: [['farm_hay_bale', 1.1, 8], ['fence_wood', 1.6, 4]],
+    title: '🦌 Trả lời đúng câu hỏi ở dưới để chú hươu của em <b>bứt tốc</b>!', fact: 'Hươu chạy được khoảng 50–70 km/giờ, cáo khoảng 50 km/giờ. Động vật ăn cỏ thường chạy nhanh để thoát khỏi thú săn mồi.' }),
 };

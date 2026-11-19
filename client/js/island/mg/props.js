@@ -18,7 +18,7 @@ export async function prop(parent, name, { size = 1, x = 0, y = 0, z = 0, ry = 0
 const clean = n => n.split('|').pop();
 export async function anim(parent, name, height = 1) {
   const g = await loadAnimated(name, true); if (!g) return null;
-  const b = new THREE.Box3().setFromObject(g.scene), k = height / Math.max(b.max.y - b.min.y, 1e-3); g.scene.scale.multiplyScalar(k);
+  g.scene.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(g.scene), k = height / Math.max(b.max.y - b.min.y, 1e-3); g.scene.scale.multiplyScalar(k); g.scene.position.y = -b.min.y * k;
   const w = new THREE.Group(); w.add(g.scene); parent.add(share(w));
   g.scene.traverse(o => { if (o.isMesh) o.castShadow = true; });
   return { obj: w, anim: animator(g.scene, g.animations, clean) };

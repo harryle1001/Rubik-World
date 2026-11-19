@@ -86,7 +86,7 @@ export function runner(ctx, api, C) {
     G.done = true;
     if (ok) { S.right++; S.score += 10 * (S.boostT > 0 ? 2 : 1); S.boostT = 2.6; sfx('ok'); me.emote('cheer'); hud.msg(`✅ ${G.Q.why} · Tăng tốc!`, 1800); }
     else { S.wrong++; S.slowT = 1.6; sfx('land'); me.emote('no'); hud.msg(`❌ ${pickTxt ? `Không phải “${pickTxt}”. ` : ''}${G.Q.why}`, 2600); }
-    if (C.mode === 'button') { hud.clearBar(); setTimeout(() => S.live && !S.over && hud.msg('', 0), 1800); }
+    if (C.mode === 'button') hud.clearBar();
   }
 
   // ---------- Vật cản ----------
@@ -148,7 +148,7 @@ export function runner(ctx, api, C) {
       if (S.d - FAR > S.nextGate && S.nextGate < C.goal - 21) { const G = gates.find(g => g.done && !g.g.visible); if (G) { G.pending = S.nextGate; G.g.visible = C.mode === 'lane'; G.s = S.nextGate; S.nextGate += GATE; G.armed = false; } }
       for (const G of gates) {
         if (G.pending == null) continue; const z = -(G.s - S.d); G.g.position.z = z;
-        if (!G.armed && z > (C.mode === 'lane' ? -50 : -34)) { G.armed = true; arm(G, G.s); }
+        if (!G.armed && S.count <= 0 && z > (C.mode === 'lane' ? -50 : -34)) { G.armed = true; arm(G, G.s); }
         if (G.armed && !G.done && z > 0) { if (C.mode === 'lane') judge(G, G.Q.choices[S.lane] === G.Q.a, G.Q.choices[S.lane]); else { if (S.asked) S.asked.answer(-1); judge(G, false, null); } }
         if (z > 4) { G.g.visible = false; G.pending = null; G.done = true; }
       }

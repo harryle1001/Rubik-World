@@ -45,6 +45,6 @@ export function quiz(topic = 'math', level = 1) {
 // Hiện 3 nút đáp án ở thanh dưới của host; fn(đúng?, đáp án chọn) — gọi 1 lần rồi tự xoá nút
 export function askBar(api, Q, fn, keep = []) {
   api.hud.clearBar(); let done = false;
-  Q.choices.forEach((c, i) => api.hud.button(`<small>${i + 1}</small> ${c}`, () => { if (done) return; done = true; api.hud.clearBar(); keep.forEach(k => k()); fn(c === Q.a, c); }));
+  Q.choices.forEach((c, i) => api.hud.button(c, () => { if (done) return; done = true; api.hud.clearBar(); keep.forEach(k => k()); fn(c === Q.a, c); }));
   return { answer: i => { if (!done && Q.choices[i] != null) { done = true; api.hud.clearBar(); keep.forEach(k => k()); fn(Q.choices[i] === Q.a, Q.choices[i]); } }, get done() { return done; } };
 }
