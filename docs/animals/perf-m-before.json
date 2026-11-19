@@ -1,0 +1,156 @@
+[
+ {
+  "name": "farm",
+  "calls": 180,
+  "tris": 615698,
+  "wildMs": 0,
+  "frameMs": 445.4,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "forest",
+  "calls": 168,
+  "tris": 529523,
+  "wildMs": 0,
+  "frameMs": 436.6,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "hills",
+  "calls": 154,
+  "tris": 546277,
+  "wildMs": 0,
+  "frameMs": 431.6,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "grove",
+  "calls": 163,
+  "tris": 558794,
+  "wildMs": 0.007,
+  "frameMs": 445.5,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "wet",
+  "calls": 165,
+  "tris": 560624,
+  "wildMs": 0,
+  "frameMs": 461.1,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "meadow",
+  "calls": 174,
+  "tris": 571322,
+  "wildMs": 0.007,
+  "frameMs": 451.8,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "town",
+  "calls": 160,
+  "tris": 532689,
+  "wildMs": 0.007,
+  "frameMs": 436.2,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "safari",
+  "calls": 142,
+  "tris": 490421,
+  "wildMs": 0.007,
+  "frameMs": 428.8,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "safari-hole",
+  "calls": 141,
+  "tris": 490694,
+  "wildMs": 0,
+  "frameMs": 422.5,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "beach",
+  "calls": 134,
+  "tris": 420210,
+  "wildMs": 0,
+  "frameMs": 357.8,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "sea",
+  "calls": 123,
+  "tris": 413181,
+  "wildMs": 0,
+  "frameMs": 369,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "sea-deep",
+  "calls": 126,
+  "tris": 412725,
+  "wildMs": 0,
+  "frameMs": 364.9,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "polarS",
+  "calls": 129,
+  "tris": 434783,
+  "wildMs": 0,
+  "frameMs": 381.3,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ },
+ {
+  "name": "polarN",
+  "calls": 127,
+  "tris": 342653,
+  "wildMs": 0,
+  "frameMs": 297.9,
+  "actors": 0,
+  "flocks": 0,
+  "sp": {},
+  "q": 1
+ }
+]

@@ -175,8 +175,9 @@ export function createWildlife(ctx) {
     model.scale.multiplyScalar(k); model.position.multiplyScalar(k); model.position.x -= I.cx * k; model.position.z -= I.cz * k; model.position.y -= I.minY * k;
     pivot.rotation.y = RY[modelName] || 0; pivot.add(model); root.add(pivot);
     if (tinted) tint(S, model); else model.traverse(o => { if (o.isMesh) o.userData.wild = S; });
-    model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = false; if (o.material.map && !o.material.alphaTest) { o.material.alphaTest = 0.5; o.material.needsUpdate = true; } } });   // texture có vùng trong suốt (lưỡi rắn, màng chân ếch)
-    addOutline(model); const outlines = []; model.traverse(o => { if (o.userData.outline && isOutlineMat(o.material)) outlines.push(o); });
+    model.traverse(o => { if (o.isMesh) { o.castShadow = !mob || size >= 1; o.receiveShadow = false; if (o.material.map && !o.material.alphaTest) { o.material.alphaTest = 0.5; o.material.needsUpdate = true; } } });   // texture có vùng trong suốt (lưỡi rắn, màng chân ếch)
+    if (!mob) addOutline(model);   // điện thoại: thú wild không vẽ viền, thú nhỏ không đổ bóng (giữ ≤ 233 draw call)
+    const outlines = []; model.traverse(o => { if (o.userData.outline && isOutlineMat(o.material)) outlines.push(o); });
     let clips = g.animations; const ov = ANIM[modelName] || {};
     if (ov.borrow) clips = clips.concat(await borrowClips(modelName, ov.borrow, model, clips));
     const anim = animator(model, clips, clean), names = Object.keys(anim.actions), good = names.filter(n => !BAD.test(n));

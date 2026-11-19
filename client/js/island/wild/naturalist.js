@@ -46,7 +46,7 @@ export function createNaturalist(ctx) {
 #natBino .lb{position:absolute;left:50%;top:calc(50% + min(24vw,24vh));transform:translateX(-50%);padding:5px 13px;border-radius:21px;background:#1b1626e6;color:#fff;font:700 15px system-ui;white-space:nowrap;text-align:center}#natBino .lb small{display:block;font:italic 12px system-ui;opacity:.85}
 #natBino .zm{position:absolute;left:50%;bottom:max(96px,13vh);transform:translateX(-50%);display:flex;gap:8px;pointer-events:auto}#natBino .zm button{min-width:55px;height:42px;border-radius:21px;border:2px solid #fff8;background:#1b1626cc;color:#fff;font:700 14px system-ui;cursor:pointer}#natBino .zm button.on{background:#f0a23a}
 #natChip{position:fixed;left:50%;top:max(64px,calc(env(safe-area-inset-top) + 64px));transform:translateX(-50%);z-index:25;padding:5px 13px;border-radius:21px;background:#3f6b2ae6;color:#fff;font:700 13px system-ui;pointer-events:none;white-space:nowrap}
-@media(max-width:700px){#natBino .zm{bottom:auto;top:calc(50% + 41vw)}#natBino .lb{top:calc(50% + 26vw)}}
+@media(max-width:700px){#natBook header small{display:none}#natBook header h3{font-size:16px}#natBino .zm{bottom:auto;top:calc(50% + 41vw)}#natBino .lb{top:calc(50% + 26vw)}}
 #natFlash{position:fixed;inset:0;z-index:61;background:#fff;opacity:0;pointer-events:none;transition:opacity .34s}`;
   document.head.appendChild(css);
   const mk = (tag, id, html = '') => { const e = document.createElement(tag); if (id) e.id = id; e.innerHTML = html; return e; };
@@ -147,7 +147,7 @@ export function createNaturalist(ctx) {
     return best;
   }
   // chụp ngay sau khi vẽ xong khung hình (canvas WebGL không giữ ảnh giữa các khung)
-  const post = ctx.post; if (post && post.render) { const r0 = post.render; post.render = function () { r0.apply(this, arguments); if (shotReq) { const S = shotReq; shotReq = null; snap(S); } }; }
+  let hooked = false; const hookPost = () => { const post = ctx.post; if (hooked || !post || !post.render) return; hooked = true; const r0 = post.render; post.render = function () { r0.apply(this, arguments); if (shotReq) { const S = shotReq; shotReq = null; snap(S); } }; };   // ctx.post được gán sau khi các module tạo xong → móc ở khung đầu tiên
   const cvs = document.createElement('canvas'); cvs.width = cvs.height = 96;
   function snap(S) {
     try { const src = ctx.renderer.domElement, s = Math.min(src.width, src.height) * (binoOn ? 0.62 : 0.34), g = cvs.getContext('2d'); g.drawImage(src, (src.width - s) / 2, (src.height - s) / 2, s, s, 0, 0, 96, 96); D.photo[S.id] = cvs.toDataURL('image/jpeg', 0.72); } catch (e) { D.photo[S.id] = ''; }
@@ -187,7 +187,7 @@ export function createNaturalist(ctx) {
   // ───────── vòng lặp ─────────
   let scanT = 0, hideShown = false, sleepSeen = 0;
   N.update = dt => {
-    if (!wild.ready) return;
+    hookPost(); if (!wild.ready) return;
     if (ctx.photoMode || ctx.freeCam) { if (binoOn) setBino(0); return; }   // chế độ chụp ảnh tự do (photo.js) / cắt cảnh cốt truyện đang giữ camera
     if (track.on) stepTrack();
     // ống nhòm: camera ra đầu nhân vật, nhìn theo hướng kéo, zoom theo mức; nhận loài ở tâm ngắm
@@ -229,6 +229,7 @@ export function createNaturalist(ctx) {
     };
     N._offer();
   };
+  N.shoot = S => { shotReq = S; };   // chụp ảnh loài S ở khung hình kế tiếp (nút hành động gọi; tools/wild-test.mjs dùng)
   N.open = open; N.close = close; N.setBino = setBino; N.found = found; N.startTrack = startTrack; N.PHI = PHI;
   return N;
 }

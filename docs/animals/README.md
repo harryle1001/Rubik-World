@@ -38,11 +38,12 @@ Nông trại · rừng (quanh Đền Tri Thức + đất tự nhiên cao, xa ph�
 - Chim nhỏ, côn trùng, đàn cá: **InstancedMesh nướng 2 tư thế** của animation (`flocks.js`) → 2 draw call/đàn, không tính xương.
 - Chỉ sinh nhóm trong 46 m (điện thoại) / 60 m (máy tính) quanh người chơi, huỷ khi ra xa hơn 13 m nữa; nhóm gần nhất được ưu tiên.
 - **Tối đa 21 con có xương cùng lúc trên điện thoại** (34 trên máy tính), tính cả thú của `animals.js` đang hiện; tối đa 5 (8) đàn instanced.
-- Số đo trước/sau từng sinh cảnh: xem [perf.md](perf.md). Tắt hệ để so sánh: thêm `?nowild` vào URL.
+- Điện thoại (390×844, đo sau khi ghép nhánh chính): **nhiều nhất 224 draw call** (rừng đền ban đêm; giới hạn 233), JS của hệ ≤ 0,45 ms/khung; thú wild trên điện thoại không vẽ viền, thú nhỏ không đổ bóng.
+- Số đo từng sinh cảnh: xem [perf.md](perf.md) (cột "trước" đo ở lần chạy khác nên lệch theo trạng thái LOD/cây cỏ; bảng máy tính đo trước khi ghép nhánh chính). Tắt hệ để so sánh: thêm `?nowild` vào URL.
 
 ## Tự kiểm tra
 `PORT=3111 node server/index.js &` rồi `node tools/wild-test.mjs [--mobile] [--nowild] [--fast]` (dịch chuyển tới 14 sinh cảnh, sáng/đêm/mưa, chụp ảnh cận,
-đo draw call + ms JS, mở ống nhòm / sổ tay / nhiệm vụ, bắt lỗi console) → ảnh `d-*.png` (1280×720), `m-*.png` (390×844) trong thư mục này. `node tools/wild-doc.mjs` sinh lại 2 bảng.
+đo draw call + ms JS, mở ống nhòm / sổ tay / nhiệm vụ, bắt lỗi console) → ảnh `d-*.png` (1280×720), `m-*.png` (390×844) trong thư mục này. Kết quả lần cuối: không lỗi console ở cả hai cỡ màn hình; `tools/smoke-test.mjs --mobile` ✅. `node tools/wild-doc.mjs` sinh lại 2 bảng.
 
 ## Giới hạn đã biết (nói thẳng)
 - 10 model không có animation (gấu, hổ/sư tử/báo, tê giác, hà mã, lạc đà, hải cẩu, bò biển, bạch tuộc, cá mập đầu búa, bách thanh): chỉ nhún/lắc theo bước.
