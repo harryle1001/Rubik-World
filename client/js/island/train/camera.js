@@ -10,8 +10,8 @@ import { at, nearest, TUNNEL, LEN } from './route.js';
 import { FLOOR } from './consist.js';
 import { EDGE } from './stations.js';
 
-export const MODES = ['auto', 'window', 'aerial', 'cab'];
-export const MODE_NAME = { auto: '🎬 Tự động', window: '🪟 Cửa sổ', aerial: '🚁 Trên cao', cab: '🚂 Buồng lái' };
+export const MODES = ['auto', 'seat', 'window', 'aerial', 'cab'];
+export const MODE_NAME = { auto: '🎬 Tự động', seat: '🪑 Trong toa', window: '🪟 Cửa sổ', aerial: '🚁 Trên cao', cab: '🚂 Buồng lái' };
 
 export function createDirector(ctx, consist) {
   const { camera, terrain } = ctx;
@@ -51,7 +51,7 @@ export function createDirector(ctx, consist) {
     const type = pick(R), L = loco(); L.updateMatrixWorld();
     let cut = false;
     if (type !== key) { key = type; cut = true; fixed = null; }
-    const seat = consist.cars[R.seatCar].o;
+    const S = R.seat || { car: 4, x: -0.7, z: 0, ry: 0 }, seat = consist.cars[S.car].o;
     let inCar = false, fov = 50;
     switch (type) {
       case 'depart': case 'arrive': {   // máy trên sân ga
@@ -60,7 +60,8 @@ export function createDirector(ctx, consist) {
         local(L, 0, 2.2, 1.5, wlook); fov = 46; break;
       }
       case 'window': {   // qua vai nhìn ra cửa sổ bên trái (ngồi ghế cạnh cửa sổ)
-        seat.updateMatrixWorld(); local(seat, 0.38, FLOOR + 1.34, 0.55, want); local(seat, -6, FLOOR + 0.7, 3.2, wlook); inCar = true; fov = 58; cut = cut || !fixed; fixed = 1; break;
+        const sd = S.x ? Math.sign(S.x) : -1, fx = Math.sin(S.ry), fz = Math.cos(S.ry);   // qua vai người ngồi, nhìn ra cửa sổ phía gần
+        seat.updateMatrixWorld(); local(seat, S.x - fx * 0.35 - sd * 0.32, FLOOR + 1.34, S.z - fz * 0.35, want); local(seat, sd * 6, FLOOR + 0.7, S.z + fz * 3.2, wlook); inCar = true; fov = 58; cut = cut || !fixed; fixed = 1; break;
       }
       case 'cab': {
         local(L, -1.55, 3.3, -2.6, want); local(L, -1.2, 3.1, 55, wlook); fov = 55;   // nghiêng ra mép trái buồng lái: khói không che
@@ -71,7 +72,7 @@ export function createDirector(ctx, consist) {
       case 'aerial': case 'aerial2': {
         const f = fwdOf(L), sd = type === 'aerial' ? 1 : -1;
         want.copy(L.position).addScaledVector(f, -30).add(v.set(f.z * 21 * sd, 21, -f.x * 21 * sd));
-        consist.cars[3].o.getWorldPosition(wlook); wlook.y += 1; fov = 48; break;
+        consist.cars[4].o.getWorldPosition(wlook); wlook.y += 1; fov = 48; break;
       }
       case 'track': {   // máy cố định ven đường ray phía trước, đổi chỗ khi tàu đã qua
         if (!fixed || (R.s - fixed.s) * R.dir > 13) {
@@ -99,9 +100,8 @@ export function createDirector(ctx, consist) {
     dark.style.opacity = inTun ? 1 : 0;
     if (R.dir > 0 && !R.titled && R.s > TUNNEL.s1 + 13) { R.titled = true; titleT = 6.5; title.style.opacity = 1; }
     if (titleT > 0 && (titleT -= dt) <= 0) title.style.opacity = 0;
-    consist.setHideGlow(inCar ? R.seatCar - 2 : -1);
     return { inCar, inTun, type };
   }
-  function reset() { key = ''; fixed = null; dark.style.opacity = 0; title.style.opacity = 0; titleT = 0; consist.setHideGlow(-1); if (fov0 !== null) { camera.fov = fov0; camera.updateProjectionMatrix(); fov0 = null; } }
+  function reset() { key = ''; fixed = null; dark.style.opacity = 0; title.style.opacity = 0; titleT = 0; if (fov0 !== null) { camera.fov = fov0; camera.updateProjectionMatrix(); fov0 = null; } }
   return { update, reset };
 }

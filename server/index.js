@@ -226,8 +226,11 @@ island.on('connection', socket => {
   });
   socket.on('m', d => {
     const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
-    me.x = num(d.x, -3000, 3000); me.y = num(d.y, -20, 300); me.z = num(d.z, -3000, 3000); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);   // thế giới rộng ~1,7 km (Học viện Pha Lê, bay chổi tới 233 m)
-    socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
+    me.x = num(d.x, -3000, 3000); me.y = num(d.y, -60, 300); me.z = num(d.z, -3000, 3000); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);   // thế giới rộng ~1,7 km (Học viện Pha Lê, bay chổi tới 233 m)
+    const pk = [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)];
+    // trên Tàu Pha Lê: toạ độ cục bộ của toa (c = chỉ số toa, lx/lz m, st = id ghế hoặc −1) → người khác thấy đứng vững trên tàu đang chạy
+    if (Number.isInteger(d.c) && d.c >= 0 && d.c < 16 && TR.aboard.has(socket.id)) pk.push(d.c, +num(d.lx, -3, 3).toFixed(2), +num(d.lz, -8, 8).toFixed(2), Number.isInteger(d.st) ? Math.max(-1, Math.min(1023, d.st)) : -1);
+    socket.broadcast.volatile.emit('m', pk);
   });
   // ---------- phép thuật (spellbook.js): chỉ chuyển tiếp hiệu ứng, kiểm tra dữ liệu; không có phép gây hại ----------
   let spT = 0; const pub = () => island.emit('pstate', { id: me.id, cloak: !!me.cloak, liftOk: !!me.liftOk });
@@ -243,7 +246,6 @@ island.on('connection', socket => {
   });
   socket.on('admin', d => { if (!me || !d) return; me.admin = typeof d.key === 'string' && d.key.trim().toUpperCase() === ADMIN_KEY.toUpperCase(); socket.emit('admin', { ok: me.admin, quiet: !!d.quiet }); if (!me.admin && me.cloak) { me.cloak = false; pub(); } });
   socket.on('cloak', d => { if (!me || !me.admin || !d) return; me.cloak = !!d.on; pub(); });   // áo choàng tàng hình: chỉ chủ game
-  socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
   // Làng Phù Thuỷ Nhỏ (academy/village.js): mỗi tên 1 ngôi nhà; lần lưu đầu "giữ chỗ" bằng mã máy (token) → người khác không ghi đè được
   socket.on('house:save', (d, ack) => {
     const cb = typeof ack === 'function' ? ack : () => {};
@@ -262,9 +264,33 @@ island.on('connection', socket => {
   socket.on('skState', d => { const now = Date.now(); if ([...sky][0] !== socket.id || now - skT < 60) return; skT = now; if (JSON.stringify(d || 0).length < 4096) socket.to('sky').volatile.emit('skState', d); });
   socket.on('skAct', d => { const host = [...sky][0]; if (!sky.has(socket.id) || !host || host === socket.id || !d || typeof d.a !== 'string') return; island.to(host).emit('skAct', { id: socket.id, a: d.a.slice(0, 8), d: Array.isArray(d.d) ? d.d.slice(0, 3).map(v => num(v, -1, 1)) : null }); });
   socket.on('disconnect', () => { if (sky.delete(socket.id)) skyRoom(); });
+  // ---------- Tàu Pha Lê: 1 đoàn tàu chung, lịch theo GIỜ SERVER; ghế ngồi giữ chỗ trên server ----------
+  socket.on('tr', d => {
+    if (!me || !d) return; const now = Date.now();
+    if (d.op === 'board') { if (TR.phase === 'run') return; TR.aboard.add(socket.id); if (TR.phase === 'wait') { TR.phase = 'board'; TR.dep = now + TR_BOARD; } }
+    else if (d.op === 'leave') { TR.aboard.delete(socket.id); freeSeat(socket.id); if (!TR.aboard.size && TR.phase === 'board') TR.phase = 'wait'; }
+    else if (d.op === 'sit') { const id = num(d.id, 0, 1023) | 0, who = TR.seats.get(id); if (!TR.aboard.has(socket.id) || (who && who !== socket.id)) { socket.emit('trSeat', { ok: false, id }); return; } freeSeat(socket.id); TR.seats.set(id, socket.id); socket.emit('trSeat', { ok: true, id }); }
+    else if (d.op === 'stand') freeSeat(socket.id);
+    else if (d.op === 'skip') { if (TR.phase !== 'run' || !TR.aboard.has(socket.id)) return; if (TR.aboard.size > 1) { socket.emit('toast', '🚂 Có bạn khác cùng chuyến — mình cùng ngắm cảnh tới ga nhé!'); return; } TR.t0 = now - TR_DUR; }
+    else if (d.op === 'reloc') { if (TR.phase !== 'wait' || TR.aboard.size || (d.at !== 'A' && d.at !== 'B')) return; TR.at = d.at; TR.dir = d.at === 'A' ? 1 : -1; }
+    else return;
+    trSend();
+  });
+  socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); if (TR.aboard.delete(socket.id) || freeSeat(socket.id)) { if (!TR.aboard.size && TR.phase === 'board') TR.phase = 'wait'; trSend(); } });
+  socket.emit('tr', trPub());
 });
 const sky = new Set();
 const skyRoom = () => island.to('sky').emit('skRoom', { host: [...sky][0] || null, ids: [...sky].slice(0, 8) });
+const TR = { at: 'A', dir: 1, phase: 'wait', dep: 0, t0: 0, aboard: new Set(), seats: new Map() }, TR_DUR = 144000, TR_BOARD = 21000;   // chạy 144 s, chờ khách 21 s (Fibonacci)
+const trPub = () => ({ at: TR.at, dir: TR.dir, phase: TR.phase, dep: TR.dep, t0: TR.t0, n: TR.aboard.size, now: Date.now(), seats: [...TR.seats] });
+const trSend = () => island.emit('tr', trPub());
+function freeSeat(sid) { let hit = false; for (const [k, v] of TR.seats) if (v === sid) { TR.seats.delete(k); hit = true; } if (hit) trSend(); return hit; }
+setInterval(() => {   // máy trạng thái: chờ khách → khởi hành đúng giờ → tới ga (đổi chiều) → xuống hết → chờ
+  const now = Date.now();
+  if (TR.phase === 'board' && now >= TR.dep) { TR.phase = 'run'; TR.t0 = now; trSend(); }
+  else if (TR.phase === 'run' && now >= TR.t0 + TR_DUR) { TR.at = TR.at === 'A' ? 'B' : 'A'; TR.phase = 'arrive'; TR.dep = now + 3000; trSend(); }
+  else if (TR.phase === 'arrive' && now >= TR.dep) { TR.dir = -TR.dir; TR.phase = 'wait'; TR.aboard.clear(); TR.seats.clear(); trSend(); }
+}, 250);
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
 server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); });
