@@ -23,6 +23,8 @@ await page.evaluate(() => { const b = document.querySelector('#accBox [data-a=gu
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 20000 }).catch(() => fails.push('nhân vật bị khoá lúc vào game'));
 // máy kiểm thử vẽ bằng CPU (vài FPS): lúc đi bộ tạm tắt vẽ để mô phỏng chạy đủ 60 khung/giây; chụp ảnh thì vẽ lại
 const draw = on => page.evaluate(on => { const c = __island; if (!c.post.__r) c.post.__r = c.post.render; c.post.render = on ? c.post.__r : () => {}; }, on);
+// cốt truyện (story/): đoạn cắt cảnh/thoại tự bật sẽ giành camera → kiểm thử tự bỏ qua (phím Esc)
+await page.evaluate(() => setInterval(() => { if (document.getElementById('stSay')) dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape', bubbles: true })); }, 400));
 const shot = async name => { if (!SHOTS) return; await draw(true); await page.waitForTimeout(MOBILE ? 2600 : 2200); await page.screenshot({ path: `${SHOTS}/${name}${MOBILE ? '-mobile' : ''}.png` }); await draw(false); };
 const pos = () => page.evaluate(() => { const p = __island.player.pos; return [p.x, p.z, p.y]; });
 const setHour = h => page.evaluate(h => { __island.sky.state.lock = h; }, h);
