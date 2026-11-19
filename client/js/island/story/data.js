@@ -67,6 +67,16 @@ export const CHAPTERS = [
       { type: 'goto', at: FLAKE, r: 8, text: 'Đứng bên hồ chờ mảnh pha lê hiện ra' },
     ],
     shard: FLAKE, shardOff: [3, -3], outro: [['cu', 'Mảnh Lục — màu của lá cây!'], ['mu', 'Ối, cây xanh trở lại rồi… Bà sẽ nhờ Rồng Mây giữ mảnh Đỏ!'], ['cu', 'Rồng Mây ngủ ở Thung lũng Rồng trên đảo Rubik, phía nam. Bay qua đó nhé!']] },
+
+  { id: 6, name: 'Mảnh Đỏ', region: 'Thung lũng Rồng', icon: '🐉', col: '#ff5a4e', subj: 'Sử – Địa', xp: 233, sao: 21, title: 'Người kể chuyện Rồng',
+    intro: [['cu', 'Người Việt tự hào là “Con Rồng cháu Tiên”.'], ['cu', 'Rồng Mây hiền lắm, chỉ hơi… ngủ nhiều. Hãy bay ngang qua cho rồng thức dậy!']],
+    tasks: [
+      { type: 'cond', at: VALLEY, r: 0, text: 'Bay (máy bay ✈️ hoặc khinh khí cầu 🎈) qua Thung lũng Rồng', test: c => (!!(c.aircraft && c.aircraft.flying) || !!(c.player.vehicle && c.player.vehicle.fly)) && near(c, VALLEY, 89), hint: 'Máy bay ở Sân bay Cánh Diều; khinh khí cầu: nút 🎈.' },
+      { type: 'talk', who: 'rong', at: VALLEY, r: 8, text: 'Đánh thức Rồng Mây', lines: [['rong', 'Oáp… ai vừa bay qua đầu ta thế? Ta mơ đang ăn bánh chưng…'], ['rong', 'Mảnh Đỏ hả? Trả lời đúng chuyện ngày xưa thì ta trả!']] },
+      { type: 'quiz', who: 'rong', at: VALLEY, s: ['lsdl'], tag: 'rong', n: 5, need: 3, text: 'Kể chuyện Rồng – Tiên với Rồng Mây' },
+      { type: 'collect', at: VALLEY, n: 3, spread: 21, icon: '🔴', col: '#ff6b5a', text: 'Nhặt 3 vảy rồng màu quanh thung lũng' },
+    ],
+    shard: VALLEY, shardOff: [6, 0], outro: [['rong', 'Hay quá! Mảnh Đỏ — màu cờ, màu lửa ấm áp. Cầm lấy!'], ['mu', 'Rồng cũng đứng về phía các em à… Bà lên Đền Tri Thức vậy!'], ['cu', 'Đền ở khu rừng phía tây bắc đảo Rubik. Ở đó toàn câu đố hay!']] },
 ];
 
 let EGG = () => 0;
