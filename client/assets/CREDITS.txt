@@ -134,3 +134,15 @@ tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — h
 models/alley/wiz-hat.glb, wiz-cape.glb  mũ + áo choàng tách từ models/hero-mage.glb (KayKit Adventurers, CC0 — xem trên), tô màu bằng code
 models/alley/broom.glb  "Medieval Tools Pack" — System G6, OpenGameArt, CC0 — https://opengameart.org/content/medieval-tools-pack (chuyển .blend → .glb bằng bpy)
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
+
+Tàu Pha Lê v2 — nội thất toa, đồ ăn, âm thanh (đều CC0 1.0):
+models/kit/kk_stool, kk_counter, kk_counter_deco, kk_table_round, kk_plate, kk_jar_a/b/c, kk_menu, kk_cabinet_half
+  KayKit – Restaurant Bits 1.0, Kay Lousberg — https://kaylousberg.itch.io (LICENSE.txt: CC0) · tải qua jsDelivr từ github.com/KayKit-Game-Assets/KayKit-Restaurant-Bits-1.0
+models/kit/kk_lamp_table, kk_table_small, kk_couch, kk_chair, kk_armchair, kk_books, kk_pillow, kk_shelf
+  KayKit – Furniture Bits 1.0, Kay Lousberg (CC0) · github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0
+models/kit/food_cake, food_cupcake, food_cookie, food_donut, food_icecream
+  Quaternius / Kenney (CC0) qua gói npm "@netforge/asset-library-files" 0.2.0, thư mục library/lowpoly
+  (chuẩn hoá bằng tools/kit/process.mjs, texture 128 px). Ly sứ, xe đẩy, băng ghế, vách khoang: khối tự dựng trong code (không có model CC0 phù hợp).
+audio/amb-train-engine.mp3  "Steamboat engine sound" — https://opengameart.org/content/steamboat-engine-sound (CC0)
+audio/sfx-cup.mp3, sfx-dish.mp3  "Cutlery sounds" (cup_on_table_01, fork_on_dish_01) — https://opengameart.org/content/cutlery-sounds (CC0)
+Chuông thông báo ga: audio/sfx-bell1.mp3 (đã ghi ở trên); giọng đọc thông báo: Web Speech API của máy (nếu có giọng tiếng Việt).
