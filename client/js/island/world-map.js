@@ -109,6 +109,7 @@ body.rs-modal #bMap{display:none}`;
     for (const e of EXTRA) L.push({ n: e.name.toUpperCase(), x: (e.r[0] + e.r[2]) / 2, z: (e.r[1] + e.r[3]) / 2, big: 2 });
     for (const t of TEMPLES) L.push({ n: t.name, x: t.x, z: t.z, ic: '⛩️' });
     if (ctx.eggs && ctx.eggs.spots) for (const q of ctx.eggs.spots()) if (!q.hide) L.push({ n: q.n, x: q.x, z: q.z, ic: q.ic, spot: true });
+    for (const q of ctx.mapPlaces || []) L.push(q);   // địa danh do phần khác thêm (sea/index.js: làng chài, bến phà)
     const sc = ctx.school; if (!sc) return L;
     if (sc.gate) L.push({ n: 'Cổng trường', x: sc.gate[0], z: sc.gate[1], ic: '🏫' });
     const RS = sc.RS;
@@ -223,6 +224,7 @@ body.rs-modal #bMap{display:none}`;
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.fillStyle = '#3aa3a9'; g.fillRect(0, 0, w, h);
     g.imageSmoothingEnabled = zoom < PPM * 2;
     g.drawImage(base, sx(B.x0), sy(B.z0), (B.x1 - B.x0) * zoom, (B.z1 - B.z0) * zoom);
+    for (const f of ctx.mapLayers || []) f(g, sx, sy, zoom);   // lớp vẽ thêm (sea/index.js: cầu tàu, tuyến phà, tàu thuyền đang chạy)
     const p = ctx.player.pos, inView = (x, z, m = 30) => { const X = sx(x), Y = sy(z); return X > -m && X < w + m && Y > -m && Y < h + m; };
     const near = (x, z) => !opts.near || Math.hypot(x - p.x, z - p.z) < NEAR;
     if (opts.near) { g.beginPath(); g.arc(sx(p.x), sy(p.z), NEAR * zoom, 0, 7); g.setLineDash([10, 8]); g.lineWidth = 3; g.strokeStyle = 'rgba(255,243,214,.9)'; g.stroke(); g.setLineDash([]); }

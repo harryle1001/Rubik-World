@@ -44,6 +44,7 @@ import { createSchoolInterior } from './island/school-interior.js';
 import { createSchoolYard } from './island/school-yard.js';
 import { createAcademy } from './island/academy/index.js';
 import { createTrain } from './island/train/index.js';
+import { createSea } from './island/sea/index.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
@@ -130,6 +131,7 @@ const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + ti
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 const mounts = createMounts(ctx);
+const sea = ctx.sea = createSea(ctx); // thế giới đại dương: đội tàu thuyền theo tuyến, làng chài, ngư dân, lái thuyền buồm/ca nô, phà, cá heo/cá voi (sea/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -193,6 +195,7 @@ renderer.setAnimationLoop(() => {
   mg.update(dt, clock.elapsedTime);
   sealife.update(dt);
   treasure.update(dt);
+  sea.update(dt, clock.elapsedTime);
   teacherQuiz.update(dt);
   schoolInterior.update(dt);
   schoolYard.update(dt);
