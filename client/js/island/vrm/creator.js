@@ -2,7 +2,7 @@
 // kiểu hiển thị (anime / chibi cho máy yếu). Xem trước 3D ở trên (61,8% màn hình — φ), bảng chọn ở dưới; lưu vào tài khoản.
 // Mở: nút ☰ → 🎨 Nhân vật, hoặc ctx.creator.open(). Lưu xong gọi ctx.onAvatar(look) (vrm/player-vrm.js thay nhân vật).
 import * as THREE from 'three';
-import { loadVrmHero, HAIR, EYES, SKINS } from './vrm-hero.js';
+import { loadVrmHero, HAIR, EYES, SKINS, HAIRS, BASES } from './vrm-hero.js';
 import { loadAvatar, saveAvatar, houseOf } from './avatar.js';
 import { HOUSES, HOUSE } from '../academy/houses-data.js';
 import { PALETTE } from './vrm-outfit.js';
@@ -28,6 +28,7 @@ export function createCreator(ctx) {
     const locked = ctx.account && ctx.account.house;
     return `<div class="rw"><i>Mẫu</i><div class="ch">${[['victoria', '👧 Nữ tóc buộc'], ['vivi', '👧 Nữ tóc bob'], ['shino', '👧 Nữ tóc dài'], ['hair-m', '👦 Nam']].map(([v, t]) => chip(t, L.base === v, 'base', v)).join('')}</div></div>
       <div class="rw"><i>Nhà</i><div class="ch">${HOUSES.map(h => `<button class="c${houseOf(ctx, L) === h.id ? ' on' : ''}" data-k="house" data-v="${h.id}"${locked ? ' disabled' : ''}><span style="display:inline-block;width:13px;height:13px;border-radius:50%;vertical-align:-2px;background:${PALETTE[h.id].robe};box-shadow:3px 0 0 ${PALETTE[h.id].trim}"></span> ${h.icon} ${h.name.replace('Nhà ', '')}</button>`).join('')}</div>${locked ? `<div class="lock">🔮 Em đã được Quả cầu Tứ Linh chọn vào ${HOUSE[locked].name} — đồng phục theo màu nhà.</div>` : ''}</div>
+      <div class="rw"><i>Kiểu tóc</i><div class="ch">${Object.entries(HAIRS).filter(([, h]) => h.g.includes(BASES[L.base].gender)).map(([v, h]) => chip(h.name, (L.hairStyle || L.base) === v, 'hairStyle', v)).join('')}</div></div>
       <div class="rw"><i>Tóc</i><div class="ch">${HAIR.map(c => sw(c, L.hair === c, 'hair', c)).join('')}</div></div>
       <div class="rw"><i>Mắt</i><div class="ch">${EYES.map(c => sw(c, L.eye === c, 'eye', c)).join('')}</div></div>
       <div class="rw"><i>Da</i><div class="ch">${['#f6dcc6', '#e6c2a2', '#c89a74'].map((c, i) => sw(c, (L.skin | 0) === i, 'skin', i)).join('')}</div></div>
@@ -69,7 +70,8 @@ export function createCreator(ctx) {
       const k = b.dataset.k, v = b.dataset.v; if (!k) return;
       L[k] = k === 'skin' ? +v : k === 'hat' || k === 'scarf' ? v === '1' : v;
       render();
-      if (['base', 'glasses', 'hat', 'scarf'].includes(k)) rebuild();
+      if (k === 'base') L.hairStyle = v;   // đổi mẫu → về tóc gốc của mẫu
+      if (['base', 'glasses', 'hat', 'scarf', 'hairStyle'].includes(k)) rebuild();
       else if (hero && k !== 'mode') { hero.setLook({ hair: L.hair, eye: L.eye, skin: L.skin, house: houseOf(ctx, L) }); if (k === 'house' && hero.anim.has('Cheer')) { hero.anim.play('Cheer', 0.15, true); setTimeout(() => hero && hero.anim.play('Idle', 0.3), 1500); } }
     });
     cv.addEventListener('pointerdown', e => { drag = e.clientX; cv.setPointerCapture(e.pointerId); });

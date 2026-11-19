@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { loadVrm, tint, hideParts, hasPart, cutBelow, outlineMats, BASES } from './vrm-core.js';
 import { vrmClips, kaykitRest } from './vrm-anim.js';
 import { dressVrm, PALETTE } from './vrm-outfit.js';
+import { setHairStyle, HAIRS } from './vrm-hair.js';
 
 export const NAMES = { idle: 'Idle', walk: 'Walking_A', run: 'Running_A', jump: 'Jump_Idle', cheer: 'Cheer', interact: 'Interact', pickup: 'PickUp', sit: 'Sit_Chair', floor: 'Sit_Floor_Idle', no: 'Head_No', hit: 'Hit_A', use: 'Use_Item' };
 export const HAIR = ['#2a2230', '#4a3226', '#7a5236', '#9c4a32', '#d9b46a', '#3a4a78', '#e8a0b8', '#c8ccd8'];
@@ -29,6 +30,7 @@ export async function loadVrmHero(look = {}, opt = {}) {
   const base = BASES[look.base] ? look.base : 'victoria', set = opt.set || 'mobile';
   const t0 = performance.now();
   const { vrm, tris: bodyTris, prims } = await loadVrm(base, set);
+  if (look.hairStyle && look.hairStyle !== base && HAIRS[look.hairStyle]) await setHairStyle(vrm, look.hairStyle, set).catch(e => console.warn('Tóc', e));   // ghép kiểu tóc từ mẫu khác (vrm-hair.js)
   const model = new THREE.Group(); model.name = 'vrm-' + base; model.add(vrm.scene);
   const out = outfitFor(look), neck = hasPart(vrm, 'neck');
   if ((neck && !out.scarf) || (BASES[base].gender === 'f' && look.tie !== true)) out.tie = false;   // nữ: giữ nơ/cà vạt in sẵn của đồng phục VRoid   // có nơ cổ gốc VRoid (sắc nét) → giữ nơ, đổi màu theo nhà thay cho cà vạt
@@ -104,4 +106,4 @@ export async function loadVrmHero(look = {}, opt = {}) {
   hero.loadMs = Math.round(performance.now() - t0);
   return hero;
 }
-export { BASES };
+export { BASES, HAIRS };

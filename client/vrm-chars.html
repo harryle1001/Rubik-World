@@ -28,16 +28,20 @@ const fl = add(new THREE.CircleGeometry(21, 64), '#d8d0bf', 0, 0, 0); fl.rotatio
 for (let i = 1; i <= 5; i++) { const ring = add(new THREE.RingGeometry(i * PHI - 0.02, i * PHI + 0.02, 96), '#c3b9a4', 0, 0.002, 0); ring.rotation.x = -Math.PI / 2; }
 add(new THREE.BoxGeometry(34, 7, 0.8), '#e9dfcb', 0, 3.5, -7); for (let i = -6; i <= 6; i++) { add(new THREE.BoxGeometry(1.1, 1.1 * PHI * 1.4, 0.2), '#8fb4cf', i * 2.6, 3.2, -6.55); add(new THREE.BoxGeometry(0.5, 7.2, 0.5), '#d6c9ae', i * 2.6 + 1.3, 3.6, -6.4); }
 
-const look = id => ({ base: Q.get('base') || 'victoria', scarf: Q.get('scarf') === '1', house: id, hair: Q.get('hair') || null, eye: Q.get('eye') || null, skin: +(Q.get('skin') || 0), hat: Q.get('hat') === '1', glasses: Q.get('glasses') || 'none', wand: Q.get('wand') !== '0' });
+const look = id => ({ base: Q.get('base') || 'victoria', scarf: Q.get('scarf') === '1', hairStyle: Q.get('hs') || null, house: id, hair: Q.get('hair') || null, eye: Q.get('eye') || null, skin: +(Q.get('skin') || 0), hat: Q.get('hat') === '1', glasses: Q.get('glasses') || 'none', wand: Q.get('wand') !== '0' });
 const people = [];
 if (VIEW === 'one') people.push(look(Q.get('house') || 'long'));
 if (VIEW === 'group') ['long', 'phung', 'lan', 'quy'].forEach((h, i) => { people.push({ base: 'hair-m', house: h, hair: HAIR[[0, 1, 5, 2][i]], eye: EYES[i], skin: i % 3, hat: i % 2 === 0, glasses: ['none', 'round', 'none', 'square'][i], wand: true }); people.push({ base: ['victoria', 'vivi', 'shino', 'victoria'][i], house: h, hair: HAIR[[4, 2, 0, 7][i]], eye: EYES[(i + 2) % 6], skin: (i + 1) % 3, hat: i % 2 === 1, glasses: ['round', 'none', 'square', 'none'][i], wand: true }); });
+if (VIEW === 'mix') {   // đa dạng: thân × kiểu tóc × màu tóc/mắt/da × kính × nhà (như NPC trong game)
+  const F = [['victoria', 'shino'], ['vivi', 'dshibu'], ['shino', 'victoria'], ['victoria', 'vita'], ['vivi', 'shibu'], ['shino', 'vivi']], M = [['hair-m', 'hair-m'], ['hair-m', 'fumiriya'], ['hair-m', 'vita'], ['hair-m', 'shibu']], hs = ['long', 'phung', 'lan', 'quy'];
+  [F[0], M[0], F[1], M[1], F[2], M[2], F[3], M[3], F[4], F[5]].forEach(([b, h], i) => people.push({ base: b, hairStyle: h, house: hs[i % 4], hair: HAIR[(i * 3) % 8], eye: EYES[i % 6], skin: i % 3, glasses: i % 4 === 1 ? 'round' : i % 5 === 3 ? 'square' : 'none', hat: i % 3 === 2, wand: true }));
+}
 if (VIEW === 'teacher') people.push({ base: 'fumiriya', role: 'teacher', hat: true, glasses: 'square', wand: true, hair: '#3a2e2a' }, { base: 'fumiriya', role: 'teacher', hat: false, wand: true, hair: '#c8ccd8', glasses: 'round' });
 const heroes = [], t0 = performance.now();
-for (const L of people) heroes.push(await loadVrmHero(L, { set: SET, height: L.base === 'fumiriya' ? 1.8 : L.base === 'hair-m' ? 1.66 : 1.56 }));
+for (const [i, L] of people.entries()) heroes.push(await loadVrmHero(L, { set: SET, height: (L.base === 'fumiriya' ? 1.8 : L.base === 'hair-m' ? 1.66 : 1.56) * (VIEW === 'mix' ? 0.95 + (i * 7 % 11) / 100 : 1) }));
 if (Q.get('lod') === 'lite') for (const h of heroes) { h.setLod('lite'); for (const o of h.outlines) o.visible = false; }   // như NPC 5–21 m trong game
-const gap = VIEW === 'group' ? 0.95 : 1.1;
-heroes.forEach((h, i) => { h.model.position.set((i - (heroes.length - 1) / 2) * gap, 0, VIEW === 'group' ? -Math.abs(i - 3.5) * 0.12 : 0); h.model.rotation.y = VIEW === 'group' ? -(i - 3.5) * 0.06 : 0; scene.add(h.model); h.model.traverse(o => { if (o.isMesh) o.castShadow = true; }); h.anim.play(Q.get('anim') || 'Idle', 0); });
+const gap = VIEW === 'group' ? 0.95 : VIEW === 'mix' ? 0.82 : 1.1;
+heroes.forEach((h, i) => { h.model.position.set((i - (heroes.length - 1) / 2) * gap, 0, VIEW === 'group' || VIEW === 'mix' ? -Math.abs(i - 3.5) * 0.12 : 0); h.model.rotation.y = VIEW === 'group' ? -(i - 3.5) * 0.06 : 0; scene.add(h.model); h.model.traverse(o => { if (o.isMesh) o.castShadow = true; }); h.anim.play(Q.get('anim') || 'Idle', 0); });
 const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.05, 100), ctl = new OrbitControls(cam, r.domElement);
 const H = Math.max(...heroes.map(h => h.height)), W = heroes.length * gap;
 const dist = Math.max(H * 0.56 / Math.tan(Math.PI / 12), (W / 2 + 0.4) / (Math.tan(Math.PI / 12) * cam.aspect));
@@ -47,6 +51,7 @@ if (Q.get('zoom') === 'face') { const hy = heroes[0].height * 0.9; cam.position.
 const cap = document.getElementById('cap');
 if (VIEW === 'one') { const h = HOUSE[Q.get('house') || 'long']; cap.textContent = `${h.icon} ${h.name} · ${heroes[0].look.base === 'hair-m' ? 'Học sinh nam' : 'Học sinh nữ'}`; }
 else if (VIEW === 'teacher') cap.textContent = '🧙 Thầy cô Học viện Pha Lê';
+else if (VIEW === 'mix') cap.textContent = '✨ 10 bạn: ghép thân × 8 kiểu tóc × màu tóc, mắt, da, kính, nhà';
 else cap.textContent = '🐉 Long · 🦚 Phụng · 🦄 Lân · 🐢 Quy';
 if (Q.get('cap') === '0') cap.hidden = true;
 // đo: draw call / tam giác của 1 người (không bóng)

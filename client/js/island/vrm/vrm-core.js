@@ -12,6 +12,7 @@ import { VRMLoaderPlugin, VRMUtils } from '../../vendor/three-vrm.module.min.js'
 export const BASES = {   // mẫu đã duyệt (CC0, pixiv/VRoid) — texture WebP đủ màu (tools/vrm-slim.mjs --hq)
   victoria: { name: 'Nữ tóc buộc', gender: 'f' }, vivi: { name: 'Nữ tóc bob', gender: 'f' }, shino: { name: 'Nữ tóc dài', gender: 'f' },
   'hair-m': { name: 'Nam', gender: 'm' }, fumiriya: { name: 'Thầy giáo', gender: 'm' },
+  shibu: { name: 'Nữ (thân Shibu)', gender: 'f', donor: true }, dshibu: { name: 'Nữ (thân D. Shibu)', gender: 'f', donor: true }, vita: { gender: 'f', donor: true }, 'hair-f': { gender: 'f', donor: true },   // donor: chủ yếu cho tóc
 };
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder); loader.register(p => new VRMLoaderPlugin(p));
 const bufs = new Map();   // ArrayBuffer theo url (tải 1 lần, mỗi nhân vật parse riêng: three-vrm không clone được)
@@ -116,10 +117,10 @@ export function cutBelow(vrm, kind, y) {
   vrm.scene.traverse(o => {
     if (!o.isSkinnedMesh || o.userData.vrmKind !== kind || !o.geometry.index) return;
     o.userData.cutY = y + 0.04;   // vrm-outfit.js: bỏ qua đỉnh dưới mức này khi đo dáng thân
-    const g = o.geometry, pa = g.attributes.position, low = new Uint8Array(pa.count);
-    for (let i = 0; i < pa.count; i++) { v.fromBufferAttribute(pa, i); o.applyBoneTransform(i, v); v.applyMatrix4(o.matrixWorld); low[i] = v.y < y ? 1 : 0; }
+    const g = o.geometry, pa = g.attributes.position, low = new Float32Array(pa.count);
+    for (let i = 0; i < pa.count; i++) { v.fromBufferAttribute(pa, i); o.applyBoneTransform(i, v); v.applyMatrix4(o.matrixWorld); low[i] = v.y; }
     const I = g.index.array, keep = [];
-    for (let t = 0; t < I.length; t += 3) if (!(low[I[t]] && low[I[t + 1]] && low[I[t + 2]])) keep.push(I[t], I[t + 1], I[t + 2]);
+    for (let t = 0; t < I.length; t += 3) if ((low[I[t]] + low[I[t + 1]] + low[I[t + 2]]) / 3 >= y) keep.push(I[t], I[t + 1], I[t + 2]);
     g.setIndex(keep); g.clearGroups(); const n = keep.length, mats = [].concat(o.material); if (mats.length > 1) for (let i = 0; i < mats.length; i++) g.addGroup(0, n, i);
   });
 }

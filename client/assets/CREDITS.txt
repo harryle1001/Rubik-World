@@ -137,6 +137,7 @@ Nhân vật anime xem thử (client/assets/vrm/, trang client/vrm-preview.html �
 
 Nhân vật anime TRONG GAME (đảo 3D, client/js/island/vrm/): mẫu CC0 — Victoria Rubin, Vivi, Sendagaya Shino (học sinh nữ),
   HairSample_Male (học sinh nam), Sakurada Fumiriya (thầy cô); pixiv Inc. / VRoid, CC0 (meta VRM licenseName "CC0").
+  Kiểu tóc ghép thêm từ Sendagaya Shibu, Darkness Shibu, Vita (CC0, cùng nguồn madjin/vrm-samples vroid/beta/).
   Bản trong client/assets/vrm/{full,mobile}/ làm lại từ file gốc bằng tools/vrm-slim.mjs --hq --meshopt (texture WebP).
   @pixiv/three-vrm 3.5.5 (MIT, © pixiv Inc.) chép vào client/js/vendor/three-vrm.module.min.js (+ three-vrm.LICENSE.txt), không dùng CDN.
   Đồng phục phù thuỷ Tứ Linh (áo choàng, mũ trùm, khăn sọc, cà vạt, mũ chóp, kính, đũa): dựng bằng code trong vrm-outfit.js

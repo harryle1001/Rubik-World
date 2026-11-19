@@ -30,10 +30,11 @@ export function createVrmNpc(ctx) {
   const inScene = o => { for (let p = o; p; p = p.parent) { if (p === ctx.scene) return true; if (!p.visible) return false; } return false; };
   const lookOf = e => {
     const p = e.hero.model.getWorldPosition(new THREE.Vector3()), acad = ctx.zoneAt && ctx.zoneAt(p.x, p.z) === ACADEMY.name, f = /female/.test(e.kind), s = e.seed;
-    if (e.role === 'teacher') return { base: f ? 'victoria' : 'fumiriya', role: 'teacher', robe: acad, hat: acad && s % 2 === 0, glasses: s % 3 ? 'none' : 'square', hair: f ? HAIR[(s + 1) % 3] : HAIR[[0, 1, 7][s % 3]], wand: acad };
-    return { base: f ? ['victoria', 'vivi', 'shino'][s % 3] : 'hair-m', house: HOUSE_IDS[s % 4], outfit: acad ? 'wizard' : 'school', hair: HAIR[s % 6], eye: EYES[s % 6], skin: s % 3, glasses: s % 5 === 1 ? 'round' : s % 7 === 3 ? 'square' : 'none', hat: acad && s % 3 === 0, wand: acad };
+    if (e.role === 'teacher') return { base: f ? 'victoria' : 'fumiriya', hairStyle: f ? ['shino', 'dshibu', 'victoria'][s % 3] : ['fumiriya', 'hair-m'][s % 2], role: 'teacher', robe: acad, hat: acad && s % 2 === 0, glasses: s % 3 ? 'none' : 'square', hair: f ? HAIR[(s + 1) % 3] : HAIR[[0, 1, 7][s % 3]], wand: acad };
+    const hs = f ? ['victoria', 'vivi', 'shino', 'shibu', 'dshibu', 'vita'] : ['hair-m', 'fumiriya', 'vita', 'shibu'];
+    return { base: f ? ['victoria', 'vivi', 'shino'][s % 3] : 'hair-m', hairStyle: hs[(s * 5 + 2) % hs.length], hScale: 0.94 + (s * 7 % 13) / 100, house: HOUSE_IDS[s % 4], outfit: acad ? 'wizard' : 'school', hair: HAIR[s % 6], eye: EYES[s % 6], skin: s % 3, glasses: s % 5 === 1 ? 'round' : s % 7 === 3 ? 'square' : 'none', hat: acad && s % 3 === 0, wand: acad };
   };
-  const keyOf = L => [L.base, L.role, L.house, L.outfit, L.robe, L.hat, L.glasses, L.hair, L.skin].join('|');
+  const keyOf = L => [L.base, L.hairStyle, L.role, L.house, L.outfit, L.robe, L.hat, L.glasses, L.hair, L.skin].join('|');
   function sync(e, dt) {
     const v = e.vrm, ca = e.hero.anim.current; v.happyUntil = e.hero.happyUntil || 0;
     if (ca) { const n = ca.getClip().name, va = v.anim.actions[n]; if (va && v.anim.current !== va) v.anim.play(n, 0.2); if (va) va.timeScale = ca.timeScale; }
@@ -58,7 +59,7 @@ export function createVrmNpc(ctx) {
     loading = true; const L = lookOf(e), k = keyOf(L), t0 = performance.now();
     try {
       let v = (pool.get(k) || []).pop();
-      if (!v) { v = await loadVrmHero(L, { set: 'mobile', height: Math.max(1.42, Math.min(1.8, e.height * (e.role === 'teacher' ? 1.05 : 1.16))) }); st.loads++; st.loadMs = Math.round(performance.now() - t0); }
+      if (!v) { v = await loadVrmHero(L, { set: 'mobile', height: Math.max(1.42, Math.min(1.8, e.height * (e.role === 'teacher' ? 1.05 : 1.16) * (L.hScale || 1))) }); st.loads++; st.loadMs = Math.round(performance.now() - t0); }
       v.npc = true; v.setWand(!!L.wand);
       const ok = st.on && inScene(e.hero.model) && e.d < FAR + HY && st.attached < MAX;
       if (ok) { e.key = k; attach(e, v); } else { const l = pool.get(k) || []; l.push(v); pool.set(k, l); }

@@ -15,6 +15,8 @@ Chỉ sửa đảo 3D (`client/js/island/…`), không đụng `client/school/`.
 | `thay-giao.jpg` | Thầy giáo Học viện (Fumiriya + áo choàng xanh than viền vàng, mũ chóp, đũa) — 2 biến thể |
 | `tao-nhan-vat.jpg` | Trình tạo nhân vật trên điện thoại 390×844 (2 trạng thái: nữ Phụng → nam Lân + mũ chóp) |
 | `dao-di-bo.jpg` · `dao-xe-dap.jpg` | Người chơi (Victoria, Nhà Phụng, kính tròn) đi bộ / đạp xe ở quảng trường Trường Rubik |
+| `8-kieu-toc.jpg` | **8 kiểu tóc ghép** trên cùng thân Victoria: dài thẳng · buộc lệch · bob búi · ngắn kẹp · bob mái bằng · tém xù · nam tém · nam mái dài |
+| `da-dang-10-ban.jpg` | 10 bạn phối ngẫu nhiên thân × tóc × màu tóc/mắt/da × kính × mũ × nhà × chiều cao (bộ mobile, như NPC) |
 | `truoc-sau-net.jpg` | Độ nét: bản cũ (texture PNG gom 256 màu, Shino) ↔ bản mới (WebP đủ màu, Victoria) |
 | `truoc-sau-di-bo.jpg` · `truoc-sau-xe-dap.jpg` · `truoc-sau-npc.jpg` | So sánh **trước (chibi) / sau (anime)** cùng vị trí, cùng giờ |
 
@@ -34,6 +36,11 @@ Chỉ sửa đảo 3D (`client/js/island/…`), không đụng `client/school/`.
 - `client/js/vendor/three-vrm.module.min.js` — @pixiv/three-vrm 3.5.5 (MIT) chép vào dự án, không CDN.
 - **Độ nét:** file VRM làm lại từ bản gốc bằng `tools/vrm-slim.mjs --hq --meshopt`: texture **WebP đủ màu** (EXT_texture_webp) thay PNG gom 256 màu
   (nguyên nhân tóc/mắt vỡ nét), lọc dị hướng ×8. Nhẹ hơn cả trước: full 1,4–1,8 MB, mobile 1,2–1,5 MB/mẫu.
+- **Đa dạng (lần 3):** `vrm/vrm-hair.js` ghép **kiểu tóc** giữa 9 mẫu VRoid CC0 (cùng khung đầu, xương `HairJoint-*`): tách lưới tóc + cây xương tóc +
+  thông số SpringBone của mẫu cho tóc (nạp 1 lần/mẫu), nhân bản cho từng người, canh theo tâm 2 mắt và tỉ lệ khoảng cách mắt, tạo lại lò xo tóc
+  va chạm với đầu/thân mẫu nhận. 8 kiểu dùng được (bỏ tai mèo của Vita; HairSample Female tai dính liền tóc → không dùng).
+  3 thân nữ × 6 kiểu tóc nữ, 1 thân nam × 4 kiểu tóc nam, + 8 màu tóc, 6 màu mắt, 3 màu da, kính, mũ, 4 nhà, chiều cao ±6% → NPC ít khi trùng nhau.
+  Trình tạo nhân vật có hàng **Kiểu tóc** (lọc theo nam/nữ). Mặt vẫn chung khuôn VRoid (muốn khác mặt: tự tạo bằng VRoid Studio).
 - `vrm/vrm-core.js` nạp VRM (bộ `full` cho người chơi, `mobile` cho NPC), **gộp primitive cùng vật liệu**
   (tóc VRoid 46–114 primitive → 1; thân 4 → 1): HairSample Male 131 → 15 lưới, Shino 67 → 18. Texture tóc + mống mắt chuyển xám 1 lần/mẫu
   → **đổi màu tóc/mắt/da bằng litFactor** (MToon `color` + `shadeColorFactor`); texture dùng chung giữa các bản sao cùng mẫu.
