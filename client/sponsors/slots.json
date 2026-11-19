@@ -1,0 +1,15 @@
+[
+ {"id":"plaza-board","name":"Biển gỗ Quảng trường Cổng trường","zone":"Trường Rubik","kind":"board","price":3770000},
+ {"id":"plaza-balloon","name":"Khinh khí cầu neo trên Quảng trường","zone":"Trường Rubik","kind":"balloon","price":6100000},
+ {"id":"quest-board","name":"Bảng Nhiệm vụ tài trợ (3 câu đố)","zone":"Trường Rubik","kind":"quest","price":3770000},
+ {"id":"town-plaza","name":"Biển gỗ Quảng trường phố","zone":"Thể thao & Rubik Kart","kind":"board","price":2330000},
+ {"id":"library-plate","name":"Bảng tên \"Thư viện Tri Thức — tài trợ bởi …\"","zone":"Thư viện & Phố mua sắm","kind":"plate","price":3770000},
+ {"id":"stadium-flag-a","name":"Cờ Sân vận động Olympic (trái)","zone":"Thư viện & Phố mua sắm","kind":"flag","price":1440000},
+ {"id":"stadium-flag-b","name":"Cờ Sân vận động Olympic (phải)","zone":"Thư viện & Phố mua sắm","kind":"flag","price":1440000},
+ {"id":"broom-start","name":"Vạch xuất phát Giải bay chổi","zone":"Trường Rubik","kind":"banner","price":2330000},
+ {"id":"station-board","name":"Bảng ga tàu (sân ga đi)","zone":"Ga Tàu Pha Lê","kind":"board","price":2330000},
+ {"id":"train-counter","name":"Quầy quà vặt trên Tàu Pha Lê","zone":"Tàu Pha Lê","kind":"counter","price":1440000},
+ {"id":"alley-plaza","name":"Biển treo Quảng trường Phố Phép Thuật","zone":"Học viện Pha Lê","kind":"hang","price":2330000},
+ {"id":"alley-gate","name":"Biển treo cổng Phố Phép Thuật","zone":"Học viện Pha Lê","kind":"hang","price":1440000},
+ {"id":"pitch-flag","name":"Cờ sân Săn Cầu Vàng","zone":"Học viện Pha Lê","kind":"flag","price":1440000}
+]

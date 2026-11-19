@@ -1,0 +1,296 @@
+{
+ "v": 1,
+ "sample": true,
+ "note": "Cấu hình tĩnh (chế độ không server). Sinh từ /admin → Nhà tài trợ → Xuất JSON tĩnh. Ba nhà tài trợ ở đây là MẪU.",
+ "slots": [
+  {
+   "id": "plaza-board",
+   "name": "Biển gỗ Quảng trường Cổng trường",
+   "zone": "Trường Rubik",
+   "kind": "board",
+   "price": 3770000
+  },
+  {
+   "id": "plaza-balloon",
+   "name": "Khinh khí cầu neo trên Quảng trường",
+   "zone": "Trường Rubik",
+   "kind": "balloon",
+   "price": 6100000
+  },
+  {
+   "id": "quest-board",
+   "name": "Bảng Nhiệm vụ tài trợ (3 câu đố)",
+   "zone": "Trường Rubik",
+   "kind": "quest",
+   "price": 3770000
+  },
+  {
+   "id": "town-plaza",
+   "name": "Biển gỗ Quảng trường phố",
+   "zone": "Thể thao & Rubik Kart",
+   "kind": "board",
+   "price": 2330000
+  },
+  {
+   "id": "library-plate",
+   "name": "Bảng tên \"Thư viện Tri Thức — tài trợ bởi …\"",
+   "zone": "Thư viện & Phố mua sắm",
+   "kind": "plate",
+   "price": 3770000
+  },
+  {
+   "id": "stadium-flag-a",
+   "name": "Cờ Sân vận động Olympic (trái)",
+   "zone": "Thư viện & Phố mua sắm",
+   "kind": "flag",
+   "price": 1440000
+  },
+  {
+   "id": "stadium-flag-b",
+   "name": "Cờ Sân vận động Olympic (phải)",
+   "zone": "Thư viện & Phố mua sắm",
+   "kind": "flag",
+   "price": 1440000
+  },
+  {
+   "id": "broom-start",
+   "name": "Vạch xuất phát Giải bay chổi",
+   "zone": "Trường Rubik",
+   "kind": "banner",
+   "price": 2330000
+  },
+  {
+   "id": "station-board",
+   "name": "Bảng ga tàu (sân ga đi)",
+   "zone": "Ga Tàu Pha Lê",
+   "kind": "board",
+   "price": 2330000
+  },
+  {
+   "id": "train-counter",
+   "name": "Quầy quà vặt trên Tàu Pha Lê",
+   "zone": "Tàu Pha Lê",
+   "kind": "counter",
+   "price": 1440000
+  },
+  {
+   "id": "alley-plaza",
+   "name": "Biển treo Quảng trường Phố Phép Thuật",
+   "zone": "Học viện Pha Lê",
+   "kind": "hang",
+   "price": 2330000
+  },
+  {
+   "id": "alley-gate",
+   "name": "Biển treo cổng Phố Phép Thuật",
+   "zone": "Học viện Pha Lê",
+   "kind": "hang",
+   "price": 1440000
+  },
+  {
+   "id": "pitch-flag",
+   "name": "Cờ sân Săn Cầu Vàng",
+   "zone": "Học viện Pha Lê",
+   "kind": "flag",
+   "price": 1440000
+  }
+ ],
+ "list": [
+  {
+   "slot": "plaza-board",
+   "sp": "mau-hat-dau"
+  },
+  {
+   "slot": "plaza-balloon",
+   "sp": "mau-khung-long"
+  },
+  {
+   "slot": "quest-board",
+   "sp": "mau-hat-dau"
+  },
+  {
+   "slot": "town-plaza",
+   "sp": "mau-cau-vong"
+  },
+  {
+   "slot": "library-plate",
+   "sp": "mau-hat-dau"
+  },
+  {
+   "slot": "stadium-flag-a",
+   "sp": "mau-cau-vong"
+  },
+  {
+   "slot": "stadium-flag-b",
+   "sp": "mau-khung-long"
+  },
+  {
+   "slot": "broom-start",
+   "sp": "mau-cau-vong"
+  },
+  {
+   "slot": "station-board",
+   "sp": "mau-khung-long"
+  },
+  {
+   "slot": "train-counter",
+   "sp": "mau-cau-vong"
+  },
+  {
+   "slot": "alley-plaza",
+   "sp": "mau-hat-dau"
+  },
+  {
+   "slot": "alley-gate",
+   "sp": "mau-khung-long"
+  },
+  {
+   "slot": "pitch-flag",
+   "sp": "mau-cau-vong"
+  }
+ ],
+ "sponsors": [
+  {
+   "id": "mau-hat-dau",
+   "name": "Nhà sách Hạt Đậu (mẫu)",
+   "cat": "sach",
+   "color": "#2c8f82",
+   "msg": "Mỗi ngày một trang sách",
+   "about": "Nhà tài trợ MẪU để minh hoạ — không phải thương hiệu thật.",
+   "logo": "sponsors/mau-hat-dau.svg",
+   "link": "https://example.com/hat-dau",
+   "reward": 3,
+   "quest": [
+    {
+     "q": "Phần nằm ở đầu cuốn sách, liệt kê các chương và số trang, gọi là gì?",
+     "a": [
+      "Lời bạt",
+      "Mục lục",
+      "Bìa sau",
+      "Phụ lục"
+     ],
+     "c": 1,
+     "s": "Tiếng Việt",
+     "explain": "Mục lục giúp em tìm nhanh chương mình cần đọc."
+    },
+    {
+     "q": "Người vẽ tranh minh hoạ cho truyện gọi là gì?",
+     "a": [
+      "Hoạ sĩ minh hoạ",
+      "Biên tập viên",
+      "Thủ thư",
+      "Nhà in"
+     ],
+     "c": 0,
+     "s": "Tiếng Việt"
+    },
+    {
+     "q": "Đọc sách 20 phút mỗi ngày, sau 1 tuần (7 ngày) em đọc được bao nhiêu phút?",
+     "a": [
+      "120 phút",
+      "140 phút",
+      "160 phút",
+      "100 phút"
+     ],
+     "c": 1,
+     "s": "Toán",
+     "explain": "20 × 7 = 140 phút."
+    }
+   ]
+  },
+  {
+   "id": "mau-khung-long",
+   "name": "Bảo tàng Khủng Long Nhí (mẫu)",
+   "cat": "baotang",
+   "color": "#d98a3a",
+   "msg": "Khám phá thời tiền sử",
+   "about": "Nhà tài trợ MẪU để minh hoạ — không phải thương hiệu thật.",
+   "logo": "sponsors/mau-khung-long.svg",
+   "link": "https://example.com/khung-long",
+   "reward": 3,
+   "quest": [
+    {
+     "q": "Xương hay dấu vết sinh vật cổ được giữ lại trong đá gọi là gì?",
+     "a": [
+      "Hoá thạch",
+      "Thạch nhũ",
+      "Pha lê",
+      "Thiên thạch"
+     ],
+     "c": 0,
+     "s": "Khoa học"
+    },
+    {
+     "q": "Khủng long ăn cỏ cổ dài thường ăn gì?",
+     "a": [
+      "Cá",
+      "Lá cây trên cao",
+      "Thịt",
+      "Côn trùng"
+     ],
+     "c": 1,
+     "s": "Khoa học"
+    },
+    {
+     "q": "Nhà khoa học nghiên cứu hoá thạch gọi là gì?",
+     "a": [
+      "Nhà thiên văn",
+      "Nhà cổ sinh vật học",
+      "Nhà hoá học",
+      "Nhà địa lí"
+     ],
+     "c": 1,
+     "s": "Khoa học"
+    }
+   ]
+  },
+  {
+   "id": "mau-cau-vong",
+   "name": "Bút màu Cầu Vồng (mẫu)",
+   "cat": "dodung",
+   "color": "#e0503e",
+   "msg": "Tô màu thế giới của em",
+   "about": "Nhà tài trợ MẪU để minh hoạ — không phải thương hiệu thật.",
+   "logo": "sponsors/mau-cau-vong.svg",
+   "link": "https://example.com/cau-vong",
+   "reward": 3,
+   "quest": [
+    {
+     "q": "Pha màu vàng với màu xanh lam được màu gì?",
+     "a": [
+      "Cam",
+      "Tím",
+      "Xanh lá",
+      "Nâu"
+     ],
+     "c": 2,
+     "s": "Mĩ thuật"
+    },
+    {
+     "q": "Cầu vồng có mấy màu?",
+     "a": [
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "c": 2,
+     "s": "Khoa học",
+     "explain": "Đỏ, cam, vàng, lục, lam, chàm, tím — 7 màu."
+    },
+    {
+     "q": "Cầu vồng thường xuất hiện khi nào?",
+     "a": [
+      "Có nắng sau mưa",
+      "Giữa đêm",
+      "Khi có sương muối",
+      "Khi trời nhiều mây đen"
+     ],
+     "c": 0,
+     "s": "Khoa học",
+     "explain": "Ánh nắng đi qua giọt nước bị tách thành nhiều màu."
+    }
+   ]
+  }
+ ]
+}

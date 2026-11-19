@@ -53,12 +53,13 @@ export function createPremium(ctx) {
     box.querySelector('[data-a=ask]').onclick = gate; box.querySelector('[data-a=no]').onclick = close;
   }
   // CỔNG PHỤ HUYNH: phép nhân 2 chữ số (người lớn tính nhẩm được, trẻ nhỏ khó đoán) — qua cổng mới thấy địa chỉ web & mã liên kết
-  function gate() {
-    if (Date.now() - gateOk < 600e3) return parentInfo();
+  function gate(onOk) {   // onOk: việc làm sau khi qua cổng (sponsors.js: mở trang nhà tài trợ); mặc định: thông tin Gói Phụ huynh
+    const next = typeof onOk === 'function' ? () => { close(); onOk(); } : parentInfo;
+    if (Date.now() - gateOk < 600e3) return next();
     const a = 12 + Math.floor(Math.random() * 13), b = 13 + Math.floor(Math.random() * 8);
     openBox(`<div class="big">🔐</div><h3>Dành cho bố mẹ</h3><p>Em đưa máy cho bố mẹ nhé! Bố mẹ trả lời giúp:</p><p style="font-size:21px"><b>${a} × ${b} = ?</b></p><input id="pmAns" inputmode="numeric" maxlength="4" autocomplete="off"><div class="msg"></div><button class="pri" data-a="ok">Tiếp tục</button><button data-a="no">Huỷ</button>`);
     const inp = box.querySelector('#pmAns'); setTimeout(() => inp.focus(), 50);
-    const ok = () => { if (+inp.value === a * b) { gateOk = Date.now(); parentInfo(); } else { box.querySelector('.msg').textContent = 'Chưa đúng. Hãy nhờ bố mẹ nhé!'; inp.value = ''; setTimeout(close, 1618); } };
+    const ok = () => { if (+inp.value === a * b) { gateOk = Date.now(); next(); } else { box.querySelector('.msg').textContent = 'Chưa đúng. Hãy nhờ bố mẹ nhé!'; inp.value = ''; setTimeout(close, 1618); } };
     box.querySelector('[data-a=ok]').onclick = ok; inp.onkeydown = e => { if (e.key === 'Enter') ok(); }; box.querySelector('[data-a=no]').onclick = close;
   }
   async function parentInfo() {
