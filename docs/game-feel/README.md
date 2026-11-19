@@ -37,4 +37,4 @@ Trước khi sửa: draw call trung vị 214 (mức 3).
 - Thêm: 🌦️ mưa phùn · 💨 trời nổi gió · 🥵 nắng nóng · 🧊 mưa đá · ❄️ tuyết (phủ trắng nền, mái; tan ~2 phút) · 🌨️ bão tuyết — dùng lại hạt mưa (đổi tốc độ rơi, độ dài vệt, màu, chao lượn), mỗi kiểu kèm 1 câu kiến thức.
 - Thời tiết chọn theo mùa thật (tỷ lệ như bản 2D; tuyết chỉ mùa đông). Lá cây, cỏ, nền đổi màu: xuân xanh non · thu vàng cam · đông nhạt sương giá.
 - 0 draw call thêm. Gỡ lỗi: `?weather=snow&season=dong`, `__island.weather.setSeason('thu')`.
-![](5-tuyet-mua-dong.png)
+![](5-tuyet-mua-dong.png) ![](5-la-mua-thu.png)
