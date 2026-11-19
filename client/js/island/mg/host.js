@@ -132,12 +132,13 @@ export function createMiniGameHost(ctx) {
     if (!rayObjs) {   // chỉ lấy vật ở gần cửa (≤ 89 m) cho nhẹ
       rayObjs = []; tallInst = []; const sp = new THREE.Sphere(), m4 = new THREE.Matrix4(), v3 = new THREE.Vector3();
       scene.traverse(o => { if (!(o.isMesh || o.isInstancedMesh) || o.isSkinnedMesh || !o.visible || !o.geometry) return;
+        if (o.material && o.material.isShaderMaterial) return;   // lớp cỏ (shader phủ cả vùng, bán kính ~100 m) không phải vật cản
         if (o.isInstancedMesh && o.count > 377) {   /* nhiều bản sao: chỉ lấy bản cao (cây) làm vòng tròn chắn, bỏ cỏ thấp */ if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); const bb = o.geometry.boundingBox; if (bb.max.y - bb.min.y < 1.2) return;
           for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); m4.premultiply(o.matrixWorld); v3.setFromMatrixPosition(m4); if (Math.hypot(v3.x - x, v3.z - z) < 89 + R) tallInst.push([v3.x, v3.z, Math.max(bb.max.x - bb.min.x, bb.max.z - bb.min.z) * 0.5 * m4.getMaxScaleOnAxis()]); } return; }   /* cỏ (rất nhiều bản sao, thấp): bỏ qua */ if (o.isInstancedMesh) { if (!o.boundingSphere) o.computeBoundingSphere(); sp.copy(o.boundingSphere); } else { if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere); } sp.applyMatrix4(o.matrixWorld); if (Math.hypot(sp.center.x - x, sp.center.z - z) < sp.radius + 89) rayObjs.push(o); });
     }
     for (const c of tallInst) { const dx = c[0] - x, dz = c[1] - z, r = R + c[2]; if (dx * dx + dz * dz < r * r) return false; }   // cây trồng bằng instancing (cọ, thông…)
-    for (let k = 0; k < 21; k++) {   // 21 tia (Fibonacci) phủ tới 1,15 R: khu chơi vuông (bàn cờ) có góc vượt ra ngoài vòng tròn R
-      const r = R * 1.15 * Math.sqrt((k + 0.5) / 21), a = k * 2 * Math.PI / (PHI * PHI); _o.set(x + Math.cos(a) * r, y0 + 21, z + Math.sin(a) * r); _rc.set(_o, _dn); _rc.far = 20.5;
+    for (let k = 0; k < 55; k++) {   // 55 tia (Fibonacci) phủ tới 1,15 R (khu chơi vuông có góc vượt ra ngoài R); dày để không lọt thân cây/tre mảnh
+      const r = R * 1.15 * Math.sqrt((k + 0.5) / 55), a = k * 2 * Math.PI / (PHI * PHI); _o.set(x + Math.cos(a) * r, y0 + 21, z + Math.sin(a) * r); _rc.set(_o, _dn); _rc.far = 20.5;
       const h = _rc.intersectObjects(rayObjs, false); if (h.length && h[0].point.y > y0 + 0.35) return false;
     }
     return true;
@@ -151,6 +152,7 @@ export function createMiniGameHost(ctx) {
     return [x0, z0];
   }
   const spotCache = new Map();
+
 
   // ---------- Nhân vật (người chơi + NPC) ----------
   function makeActor(root, getHero, isPlayer) {
@@ -179,7 +181,7 @@ export function createMiniGameHost(ctx) {
       root.position.set(A.pos.x, A.pos.y, A.pos.z); root.rotation.set(0, A.yaw, 0);
       const h = getHero();
       if (h) { if (isPlayer) { h.model.position.set(0, 0, 0); h.model.rotation.set(0, 0, 0); } driveHero(h, { speed: A.speed, grounded: true, walk: 5.5, oneShot: st.oneShot, sitting: A.sitting }); h.anim.update(dt); }
-      if (A.bubble && A.bt > 0) { A.bt -= dt; A.bubble.position.set(A.pos.x, (h ? h.height : 1.4) + 0.8, A.pos.z); A.bubble.material.opacity = Math.min(1, A.bt * 3); if (A.bt <= 0) A.bubble.visible = false; }
+      if (A.bubble && A.bt > 0) { A.bt -= dt; A.bubble.position.set(A.pos.x, A.pos.y + (h ? h.height : 1.4) + 0.8, A.pos.z); A.bubble.material.opacity = Math.min(1, A.bt * 3); if (A.bt <= 0) A.bubble.visible = false; }
     };
     return A;
   }
@@ -258,20 +260,21 @@ export function createMiniGameHost(ctx) {
     if (ctx.school && ctx.school.labels) for (const l of ctx.school.labels) l.visible = false;
     // vật nhỏ của thế giới lọt vào khu chơi (cột đèn, khung thành, ghế…): ẩn tạm, thoát thì hiện lại
     for (const o of S.hidden || []) o.visible = true; S.hidden = []; for (const [o, list] of S.hiddenInst || []) { for (const [i, m] of list) o.setMatrixAt(i, m); o.instanceMatrix.needsUpdate = true; } S.hiddenInst = [];
-    if (!G.inPlace) { const sp = new THREE.Sphere(), c = new THREE.Vector3(anchor[0], anchor[3], anchor[1]), RR = R * 1.15;
-      scene.traverse(o => { if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || !o.visible || !o.geometry) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
-        if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
-        if (sp.radius < 5 && Math.hypot(sp.center.x - c.x, sp.center.z - c.z) < RR + sp.radius * 0.5 && sp.center.y < c.y + 8 && sp.center.y > c.y - 3) { o.visible = false; S.hidden.push(o); } });
-      // cây, tre, bụi trồng bằng instancing trong khu chơi: thu nhỏ về 0 tạm thời, thoát thì trả lại ma trận cũ
-      S.hiddenInst = []; const m4 = new THREE.Matrix4(), v3 = new THREE.Vector3(), Z = new THREE.Matrix4().makeScale(0, 0, 0);
-      scene.traverse(o => { if (!o.isInstancedMesh || !o.visible) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
-        const saved = []; for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); v3.setFromMatrixPosition(m4).applyMatrix4(o.matrixWorld); if (Math.hypot(v3.x - c.x, v3.z - c.z) < RR + 1 && v3.y < c.y + 8 && v3.y > c.y - 3) { saved.push([i, m4.clone()]); o.setMatrixAt(i, Z); } }
-        if (saved.length) { o.instanceMatrix.needsUpdate = true; S.hiddenInst.push([o, saved]); } }); }
+    if (!G.inPlace) { hideWorld(api, anchor, R); S.rehide = [1.6, 4.2, 8.9]; S.rehideT = 0; }   // chunk thế giới nạp muộn quanh khu chơi → ẩn lại vài lần
     if (!G.inPlace) api.me.place(0, R * 0.5, Math.PI);
     try { const ex = () => host.exit(); S.game = G.start(ctx, { ...opts, key, door, api, onExit: ex, exit: ex }) || {}; }   // mọi nút Thoát của game (stage.js, kit.js) gọi về host.exit
     catch (e) { console.error('[mg] lỗi khởi động', key, e); S.game = {}; host.exit(); return false; }
     S.camNow = null; S.occD = null; return true;
   }
+  function hideWorld(api, anchor, R) { const sp = new THREE.Sphere(), c = new THREE.Vector3(anchor[0], anchor[3], anchor[1]), RR = R * 1.15;
+      scene.traverse(o => { if (!(o.isMesh || o.isSprite) || o.isInstancedMesh || o.isSkinnedMesh || !o.visible || !o.geometry) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;   // + nhãn chữ (Sprite) của thế giới
+        if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
+        if (sp.radius < 5 && Math.hypot(sp.center.x - c.x, sp.center.z - c.z) < RR + sp.radius * 0.5 && sp.center.y < c.y + 8 && sp.center.y > c.y - 3) { o.visible = false; S.hidden.push(o); } });
+      // cây, tre, bụi trồng bằng instancing trong khu chơi: thu nhỏ về 0 tạm thời, thoát thì trả lại ma trận cũ
+      const m4 = new THREE.Matrix4(), v3 = new THREE.Vector3(), Z = new THREE.Matrix4().makeScale(0, 0, 0);
+      scene.traverse(o => { if (!o.isInstancedMesh || !o.visible) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
+        const saved = []; for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); if (m4.elements[0] === 0 && m4.elements[5] === 0) continue; v3.setFromMatrixPosition(m4).applyMatrix4(o.matrixWorld); if (Math.hypot(v3.x - c.x, v3.z - c.z) < RR + 1 && v3.y < c.y + 8 && v3.y > c.y - 3) { saved.push([i, m4.clone()]); o.setMatrixAt(i, Z); } }
+        if (saved.length) { o.instanceMatrix.needsUpdate = true; S.hiddenInst.push([o, saved]); } }); }
   function teardown() {
     if (!S || !S.api) return;
     const api = S.api;
@@ -365,6 +368,7 @@ export function createMiniGameHost(ctx) {
     if (!S || !S.api) return;
     const api = S.api;
     for (const a of api.actors) a.update(dt);
+    if (S.rehide && S.rehide.length) { S.rehideT = (S.rehideT || 0) + dt; if (S.rehideT > S.rehide[0]) { S.rehide.shift(); hideWorld(api, api.anchor, S.anchorR); } }
     try { S.game && S.game.update && S.game.update(dt, t); } catch (e) { console.error('[mg]', e); host.exit(); return; }
     if (S && S.api) camUpdate(dt);
   };

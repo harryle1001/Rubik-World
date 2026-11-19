@@ -3,6 +3,10 @@
 import { startArtMusic } from './art-music.js';
 import { startLibrary } from './library.js';
 import { startTelescope } from './telescope.js';
+import { startHall } from './hall.js';
+import { startCircuit } from './circuit.js';
+import { startZen } from './zen.js';
+import { startGarden } from './garden.js';
 
 export function register(ctx) {
   const G = ctx.miniGames = ctx.miniGames || {};
@@ -12,5 +16,9 @@ export function register(ctx) {
   G.music = G.art = G['art-music'];   // khoá cửa trong DOOR_KEYS (host.js): Phòng nhạc → music, Vẽ tranh → art
   G['reader-books'] = G['royal-library'] = G['library'];   // cửa đọc sách / thư viện hoàng gia dùng chung thư viện 3D
   G['telescope'] = { name: '🔭 Đài thiên văn', group: 'arts', radius: 8, start: startTelescope };   // cửa "Kính viễn vọng"
+  G.reader = { name: '🎤 Hội trường Người Thầy Ánh Sáng', group: 'arts', radius: 13, start: startHall };   // cửa Hội trường: nghe kể chuyện danh nhân + 3 câu hỏi
+  G.academy = { name: '🔌 Học viện: Lắp mạch điện', group: 'arts', radius: 8, start: startCircuit };   // cửa Học viện trí tuệ / Lắp ráp điện
+  G.zen = { name: '🧘 Vườn thiền', group: 'arts', radius: 13, start: startZen };   // cửa Vườn thiền / Ngồi thiền: tập thở 4-2-4
+  G.garden = { name: '🌱 Khu vườn của em', group: 'arts', radius: 8, start: startGarden };   // cửa Khu vườn mở bán: chăm 9 luống rau bằng kiến thức về cây
   return G;
 }
