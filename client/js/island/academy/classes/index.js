@@ -15,8 +15,7 @@ import { startBrew } from './brew.js';
 import { startShape } from './shape.js';
 import { startAstro } from './astro.js';
 import { startCreature } from './creature.js';
-//import { startHerb, domeStatus } from './herb.js';
-const startHerb = null, domeStatus = null;   // (tạm) lớp còn lại thêm ở các commit sau
+import { startHerb, domeStatus } from './herb.js';
 
 // lớp: [khoá, tên, tâm phòng (u, v), cửa (u, v, pháp tuyến nu, nv), hàm chơi]
 const ROOMS = [
@@ -37,9 +36,9 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   }
   // thiên văn: đài nổi ở mép ban công phía nam tháp thiên văn (−z cục bộ hướng ra ngoài tháp)
   const A = L.astro;
-  if (startAstro) { const [x, z] = toWorld(A.u + A.deck - 0.6, A.v), [cx, cz] = toWorld(A.u, A.v), d = Math.hypot(x - cx, z - cz);
+  { const [x, z] = toWorld(A.u + A.deck - 0.6, A.v), [cx, cz] = toWorld(A.u, A.v), d = Math.hypot(x - cx, z - cz);
     G['cls-astro'] = { name: '🔭 Lớp Thiên Văn trên tháp', group: 'academy', radius: 5, spot: () => [x, z, yawTo((x - cx) / d, (z - cz) / d)], start: (c, o) => startAstro(c || ctx, o) }; }
-  if (startHerb) G['cls-herb'] = { name: '🌱 Nhà kính Thảo Dược', group: 'academy', radius: DOME_R,
+  G['cls-herb'] = { name: '🌱 Nhà kính Thảo Dược', group: 'academy', radius: DOME_R,
     spot: (c, door) => { const [u, v] = DOMES[(door && door.dome) || 0], [x, z] = toWorld(u, v), [x2, z2] = toWorld(u - 1, v); return [x, z, yawTo(x2 - x, z2 - z)]; },
     start: (c, o) => startHerb(c || ctx, { ...o, world: built }) };
 
@@ -60,10 +59,10 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
       const p = W(u + nu * 2, v + nv * 2); doors.push({ p, text, start });
     };
     for (const [key, name, , [du, dv, nu, nv]] of ROOMS) addDoor(du, dv, nu, nv, '🚪 ' + name.replace(/^\P{L}+/u, ''), () => ctx.mg.start(key, { x: 0, z: 0, n: name }));
-    if (startAstro) addDoor(A.u + A.r + 0.2, A.v, 1, 0, '🚪 Lớp Thiên Văn (trên tháp)', () => ctx.mg.start('cls-astro', { x: 1, z: 0, n: 'Thiên Văn' }));
+    addDoor(A.u + A.r + 0.2, A.v, 1, 0, '🚪 Lớp Thiên Văn (trên tháp)', () => ctx.mg.start('cls-astro', { x: 1, z: 0, n: 'Thiên Văn' }));
     // nhà kính: bệ đá + 8 sườn vòm (cung tròn) + vòm kính bán cầu + cửa; gộp 3 nhà kính vào 2 mesh
     const labels = [];
-    if (startHerb) DOMES.forEach(([u, v], i) => {
+    DOMES.forEach(([u, v], i) => {
       const [x, z] = toWorld(u, v);
       b.cyl(x, Y - 0.2, z, DOME_R + 0.3, 0.5, '#b3aca0', 21);
       for (let k = 0; k < 8; k++) b.add(new THREE.TorusGeometry(DOME_R, 0.07, 4, 13, Math.PI), '#e8eef7', x, Y + 0.3, z, k * Math.PI / 8);
