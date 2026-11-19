@@ -55,6 +55,7 @@ import { createSpellbook } from './island/spellbook.js';
 import { createTrain } from './island/train/index.js';
 import { createRegions } from './island/regions/index.js';
 import { createDestiny } from './island/zone-destiny.js';
+import { createSea } from './island/sea/index.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { createVrmNpc } from './island/vrm/vrm-npc.js';
 import { createPlayerVrm } from './island/vrm/player-vrm.js';
@@ -164,6 +165,7 @@ const vrmNpc = ctx.vrmNpc = createVrmNpc(ctx); ctx.playerVrm = createPlayerVrm(c
 const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp đảo (nút 🧹 / phím J), giá chổi ở Sân Đại Sảnh Học viện
 const photo = createPhoto(ctx); // 📷 chế độ chụp ảnh: dừng thời gian, camera tự do, bộ lọc, lưu ảnh có khung logo (photo.js)
 const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, xu bay vào HUD, màn chuyển, tên vùng điện ảnh (feel.js)
+const sea = ctx.sea = createSea(ctx); // thế giới đại dương: đội tàu thuyền theo tuyến, làng chài, ngư dân, lái thuyền buồm/ca nô, phà, cá heo/cá voi (sea/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -236,6 +238,7 @@ renderer.setAnimationLoop(() => {
   mg.update(dt, clock.elapsedTime);
   sealife.update(dt);
   treasure.update(dt);
+  sea.update(dt, clock.elapsedTime);
   teacherQuiz.update(dt);
   schoolInterior.update(dt);
   schoolYard.update(dt);
