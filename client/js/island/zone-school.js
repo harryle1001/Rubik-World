@@ -263,7 +263,7 @@ export function buildSchoolZone(a) {
       d.cone(0.12, 0.3, -0.5, 1.55, 0.25, '#e8c391', 5); d.ball(0.16, -0.5, 1.95, 0.25, '#ff9ec4'); d.cone(0.12, 0.3, -0.1, 1.55, 0.25, '#e8c391', 5); d.ball(0.16, -0.1, 1.95, 0.25, '#fff3c4');
       d.box(1.6, 0.3, 0.04, 0, 0.75, 0.57, '#f5c518'); });
     }
-    for (const [x2, y2] of [[200, 435], [500, 435], [1100, 435], [860, 760]]) { const [x, z] = at(x2 + 70, y2); d.cyl(0.25, 0.22, 0.75, x, Y, z, '#4f9a7a', 8); d.cyl(0.27, 0.27, 0.07, x, Y + 0.75, z, '#3f7a62', 8); }
+    for (const [x2, y2] of [[200, 435], [500, 435], [1100, 435], [860, 760]]) { const [x, z] = at(x2 + 70, y2); kit('prop_bin', x, Y, z, 0.21, rnd() * 6); }   // thùng rác: model CC0 (Kenney Furniture Kit)
     // sân chơi: nền cao su, xích đu, cầu trượt, bập bênh
     { const [px, pz] = at(910, 830), b = SB;
       GR.box(11, 0.05, 5.4, px, Y, pz, '#e8a27c'); addFoot(px - 5.6, pz - 2.8, px + 5.6, pz + 2.8); for (const s of [-1, 1]) GR.box(11.2, 0.12, 0.18, px, Y, pz + s * 2.75, C.curb);

@@ -7,6 +7,7 @@
 // Phong cách: kiến trúc mềm (thân nhà bo cạnh, trụ tròn, mái vòm/mái cong), KHÔNG hàng rào/rào chắn (thế giới mở);
 // tỷ lệ theo φ (PHI): nhà rộng/sâu ≈ φ, tầng trên/tầng dưới ≈ 1/φ.
 // Toạ độ: P(x2, y2, gợi ý x) đổi 2D → 3D; mặt tiền công trình quay ra cửa (RS.doors) và đường đi; va chạm đẩy vào ctx.boxes.
+import { placeKitCells } from './zone-extra.js';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { toon, addOutline } from './style.js';
@@ -108,8 +109,10 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
   const doorF = (b, x, z, w = 1.4, h = 2.3, col = '#8a5a34') => { b.box(w + 0.3, h + 0.2, 0.1, x, 0.4, z, K.white); b.box(w, h, 0.16, x, 0.4, z + 0.01, col); b.box(0.08, 0.08, 0.2, x + w * 0.3, 1.5, z + 0.05, K.yellow); };
   const awning = (b, w, x, y, z, c1, c2 = K.white, deep = 1.3) => { const n = Math.max(3, Math.round(w / 0.55)), sw = w / n; for (let i = 0; i < n; i++) b.box(sw, 0.08, deep, x - w / 2 + sw * (i + 0.5), y, z + deep / 2 - 0.1, i % 2 ? c2 : c1, 0, 0.32); for (let i = 0; i < n; i++) b.box(sw, 0.28, 0.06, x - w / 2 + sw * (i + 0.5), y - 0.6, z + deep * 0.95 - 0.1, i % 2 ? c2 : c1); };
   const column = (b, x, z, h, col = K.white, r = 0.3) => { b.box(r * 2.6, 0.3, r * 2.6, x, 0, z, col); b.cyl(r * 0.88, r, h - 0.6, x, 0.3, z, col, 8); b.box(r * 2.6, 0.3, r * 2.6, x, h - 0.3, z, col); };
-  const bench = (b, x, z, ry = 0) => b.group(x, Y, z, ry, () => { b.box(1.6, 0.1, 0.5, 0, 0.42, 0, K.wood); b.box(1.6, 0.4, 0.08, 0, 0.55, -0.22, K.wood, 0, -0.15); for (const s of [-1, 1]) b.box(0.1, 0.42, 0.45, s * 0.65, 0, 0, '#5a4a3a'); });
-  const planter = (b, x, z, col = '#e85d8a') => { b.box(0.9, 0.5, 0.9, x, Y, z, K.stoneD); b.ball(0.45, x, Y + 0.7, z, K.grassD, 1, 0.7, 1); for (let i = 0; i < 3; i++) b.ball(0.12, x + (i - 1) * 0.25, Y + 1.0, z + 0.2, col); };
+  // đồ lẻ đường phố → model CC0 instancing (đợt đồ hoạ 4): ghế gỗ, bồn cây, quầy hàng + sọt rau quả, thùng rác, biển chỉ đường (Kenney / OGA, CREDITS.txt)
+  const KE = {}, ke = (n, x, z, s, ry = 0) => (KE[n] ||= []).push([x, Y, z, s, ry]);
+  const bench = (b, x, z, ry = 0) => { ke('prop_bench', x, z, 1.45, ry); ke('prop_bin', x + Math.cos(ry) * 1.25, z - Math.sin(ry) * 1.25, 0.21, ry); };
+  const planter = (b, x, z) => ke('prop_planter', x, z, 2.6, 0);
   const flowers = (x0, z0, x1, z1, n, cols = ['#e8453c', '#f5c518', '#ff8ac2', '#ffffff', '#b07ad8']) => { for (let i = 0; i < n; i++) { const x = x0 + rnd() * (x1 - x0), z = z0 + rnd() * (z1 - z0); d.cone(0.03, 0.35, x, Y, z, K.grass2, 3); d.ball(0.11, x, Y + 0.38, z, cols[i % cols.length]); } };
   const bush = (b, x, z, s = 1, col = K.grassD) => { b.ball(0.7 * s, x, Y + 0.4 * s, z, col, 1.2, 0.8, 1.1); b.ball(0.5 * s, x + 0.5 * s, Y + 0.3 * s, z + 0.2 * s, '#5aa04a', 1, 0.8, 1); };
   const streetLamp = (bb, x, z) => { if (nearDoor(x, z, 3)) return; lamp(bb, x, z); L.box(0.36, 0.46, 0.36, x + 0.58, Y + 1.98, z, '#ffe28a'); };
@@ -179,7 +182,7 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
         sign(b, name, w * 0.8, 0.6, 0, h - 0.57, 4.42);
       });
       // quầy hàng trước cửa
-      d.group(x - w * 0.15, Y, fz + 1.4, 0, () => { d.box(1.6, 0.8, 0.7, 0, 0, 0, K.wood); for (let j = 0; j < 4; j++) d.ball(0.15, -0.55 + j * 0.37, 0.92, 0, ['#e8453c', '#f5c518', '#ff8ac2', '#7fd0ff'][(i + j) % 4]); });
+      ke(i % 2 ? 'prop_stall_green' : 'prop_stall_red', x - w * 0.15, fz + 1.9, 1.9, Math.PI); ke(['prop_crate_tomatoes', 'prop_crate_carrots', 'prop_crate_bottles'][i % 3], x - w * 0.15 + 1.5, fz + 2.2, 0.42, Math.PI + 0.2);
       planter(d, x + w * 0.45, fz + 1.0, acc);
     });
     collide(sh.x0 + 1, fz - 8.8, sh.x1 - 1, fz - 0.2, 7);
@@ -189,6 +192,7 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
     b.box(sh.w - 4, 0.03, 0.03, sh.cx, Y + 4.4, sh.z1 - 3, K.ink);
     b.group(sh.cx, Y, fz + 6.5, 0, () => { b.cyl(1.4, 1.4, 0.9, 0, 0, 0, K.white, 10); b.cyl(0.08, 0.08, 2.4, 0, 0.9, 0, K.ink, 6); b.cone(2.2, 1.0, 0, 3.0, 0, K.red, 10); b.cone(1.0, 0.3, 0, 2.8, 0, K.white, 10); });
     for (const s of [-1, 1]) { bench(d, sh.cx + s * 6, fz + 6.5, s * PI / 2); tree(sh.cx + s * 12, fz + 7, 'leaf', 0.9); }
+    for (const s of [-1, 1]) ke('prop_signpost', sh.cx + s * (sh.w / 2 - 1.5), fz + 9.5, 3.4, s > 0 ? PI : 0);
   });
 
   // --- Nhà game 2 người: mái vòm bán trụ, neon, tay cầm khổng lồ; bàn caro (Bạn Nhi) & bàn cờ vây (Ông Sáu) trước nhà ---
@@ -593,5 +597,6 @@ export function buildZoneEast({ ctx, RS, env, B, DG, trees, lamp, measure, rnd, 
   const gm = L.mesh(new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false }), false);
   if (gm) { gm.castShadow = false; scene.add(gm); out.push(gm); }
   const sm = atlas.mesh(); if (sm) { scene.add(sm); out.push(sm); }
+  for (const [n, l] of Object.entries(KE)) placeKitCells(scene, n, l, 70, { shadow: /stall/.test(n) });
   return { meshes: out };
 }

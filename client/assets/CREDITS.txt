@@ -101,3 +101,7 @@ models/kit/ đợt đồ hoạ CC0 3 — Sân bay (air_hangar, air_hangar_b, air
     Car Kit 3.1                https://opengameart.org/content/car-kit               (tractor, truck-flat, van, delivery)
     City Kit (Roads) 2.2       https://opengameart.org/content/city-kit-roads        (light-square-double)
   Chuẩn hoá bằng tools/kit/process.mjs (gộp mesh, texture 128 px, nén Meshopt).
+
+models/kit/prop_bin.glb (thùng rác) — đợt đồ hoạ CC0 4
+  Kenney Furniture Kit, CC0 1.0 (License.txt: "Creative Commons Zero, CC0") — https://opengameart.org/content/furniture-kit
+  Chuyển OBJ → GLB bằng tools/kit/obj2glb.mjs. Đợt 4 dùng thêm model đã có: prop_bench, prop_planter, prop_stall_red/green, prop_crate_*, prop_signpost (Kenney, CC0).
