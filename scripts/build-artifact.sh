@@ -3,7 +3,7 @@
 # Dùng: bash scripts/build-artifact.sh <thư-mục-ra>. Model .glb đổi đuôi .wasm (artifact không phục vụ .glb), three.js lấy từ jsdelivr.
 set -e
 R=$(cd "$(dirname "$0")/.." && pwd); B=$1; CDN=https://cdn.jsdelivr.net/npm/three@0.169.0
-rm -rf $B; mkdir -p $B/js && cp -r $R/client/js/island $R/client/js/ocean.js $B/js/ && cp -r $R/client/assets $B/ && cp $R/client/ocean.html $B/index.html
+rm -rf $B; mkdir -p $B/js && cp -r $R/client/js/island $R/client/js/ocean.js $R/client/js/vendor $B/js/ && cp -r $R/client/assets $R/client/sponsors $B/ && cp $R/client/ocean.html $B/index.html   # sponsors/: cấu hình nhà tài trợ tĩnh (config.json) + logo mẫu
 cd $B
 sed -i "/rel=\"preload\" href=\"\/assets\/models\//d" index.html
 sed -i "s#\"/lib/three/build/three.module.js\"#\"$CDN/build/three.module.js\"#; s#\"/lib/three/examples/jsm/\"#\"$CDN/examples/jsm/\"#; s#src=\"/js/ocean.js\"#src=\"js/ocean.js\"#" index.html

@@ -123,7 +123,8 @@ export function createSponsors(ctx) {
     let cfg = null; const acc = ctx.account; if (acc && acc.ready) await acc.ready.catch(() => {});   // có server → /admin quản lý; không (link artifact) → file tĩnh
     if (acc && acc.online) try { cfg = await get('/api/sp/config'); st.server = true; } catch (e) {}
     if (!cfg) try { cfg = await get('sponsors/config.json'); } catch (e) { return; }
-    st.cfg = cfg; const sps = new Map((cfg.sponsors || []).map(x => [x.id, x])), by = Object.fromEntries((cfg.list || []).map(a => [a.slot, sps.get(a.sp)]).filter(a => a[1]));
+    st.cfg = cfg; const day = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10), sps = new Map((cfg.sponsors || []).map(x => [x.id, x]));   // file tĩnh: tự lọc lịch từ–đến (giờ VN)
+    const by = {}; for (const a of cfg.list || []) if (!by[a.slot] && sps.get(a.sp) && !(a.from > day) && !(a.to < day)) by[a.slot] = sps.get(a.sp);
     st.slots = (cfg.slots || []).filter(s => KIND[s.kind] && (PLACE[s.id] || s.kind === 'counter')).slice(0, 16).map(s => ({ ...s, sp: by[s.id] || null, place: PLACE[s.id] && PLACE[s.id]() }));
     build(); await repaint();
   }

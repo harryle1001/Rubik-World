@@ -34,7 +34,8 @@ input,select,textarea{width:100%;padding:8px 13px;border-radius:13px;border:2px 
   </div>
   <div class="card"><h2>🗓️ Gán vị trí & lịch chạy</h2>
     <div class="row"><div><label>Vị trí</label><select id="bSlot"></select></div><div><label>Nhà tài trợ</label><select id="bSp"></select></div><div style="flex:0 1 160px"><label>Từ ngày</label><input type="date" id="bFrom"></div><div style="flex:0 1 160px"><label>Đến ngày</label><input type="date" id="bTo"></div><div style="flex:0 0 auto"><button class="b" id="bBook">Gán</button></div></div><div class="msg" id="bMsg"></div>
-    <div class="tw"><table id="tBook"></table></div><p class="mute">Chỉ nhà tài trợ <b>đã duyệt</b> mới hiện trên đảo; mỗi vị trí 1 nhà tài trợ trong cùng thời gian. Đảo đọc lại cấu hình mỗi lần mở game.</p></div>
+    <div class="tw"><table id="tBook"></table></div>
+    <div class="row" style="margin-top:13px"><div style="flex:0 0 auto"><button class="b sec" id="bExport">⬇ Xuất JSON tĩnh</button></div><div><small>Cho bản <b>không server</b> (link artifact, app offline): tải <code>config.json</code> (logo nhúng sẵn, kèm lịch từ–đến — đảo tự bật/tắt theo ngày) rồi thay file <code>client/sponsors/config.json</code>. Bản tĩnh không gửi báo cáo.</small></div></div><p class="mute">Chỉ nhà tài trợ <b>đã duyệt</b> mới hiện trên đảo; mỗi vị trí 1 nhà tài trợ trong cùng thời gian. Đảo đọc lại cấu hình mỗi lần mở game.</p></div>
   <div class="card"><h2>📊 Báo cáo cho nhà tài trợ</h2>
     <div class="row"><div><label>Nhà tài trợ</label><select id="rSp"></select></div><div style="flex:0 1 160px"><label>Từ ngày</label><input type="date" id="rFrom"></div><div style="flex:0 1 160px"><label>Đến ngày</label><input type="date" id="rTo"></div><div style="flex:0 0 auto"><button class="b" id="bRep">Xem</button></div><div style="flex:0 0 auto"><button class="b sec" id="bCsv">⬇ CSV</button></div><div style="flex:0 0 auto"><button class="b sec" id="bPdf">🖨 PDF</button></div></div>
     <div class="kpi" id="rKpi" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(144px,1fr));gap:13px;margin-top:13px"></div><div class="tw"><table id="rTab"></table></div>
@@ -103,6 +104,7 @@ $('#bPdf').onclick = async () => {   // trang in gọn → "Lưu thành PDF" c�
     <p><small>Số đếm gộp, ẩn danh — Đảo Rubik không thu thập hay chia sẻ dữ liệu cá nhân của trẻ em (Luật Trẻ em 2016, Nghị định 13/2023). Hiển thị = biển trong khung nhìn ≥ 1 giây.</small></p>`);
   w.document.close(); setTimeout(() => w.print(), 300);
 };
+$('#bExport').onclick = async () => { const r = await fetch('/api/sp/admin/export', { headers: { 'x-admin-key': key } }); if (!r.ok) return alert('Không xuất được.'); const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(await r.blob()), download: 'config.json' }); a.click(); };
 $('#bKey').onclick = () => { key = $('#key').value.trim(); load(); }; $('#key').onkeydown = e => { if (e.key === 'Enter') $('#bKey').click(); };
 $('#bOut').onclick = () => { sessionStorage.removeItem('rubik.adminKey'); location.reload(); };
 form(); if (key) load();

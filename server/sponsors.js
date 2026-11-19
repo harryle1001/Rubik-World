@@ -120,6 +120,17 @@ module.exports = function sponsors(app, { db, express, rateLimit, ADMIN_KEY, ROO
     lines.push(['Tổng', sp ? sp.name : 'Tất cả', '', R.tot.i, R.tot.v, R.tot.o, R.tot.qs, R.tot.qd].map(q).join(','));
     res.set('Content-Disposition', `attachment; filename="bao-cao-tai-tro-${spId || 'tat-ca'}-${from}-${to}.csv"`); res.type('text/csv; charset=utf-8').send('\ufeff' + lines.join('\r\n'));
   });
+  // chế độ TĨNH (link artifact / app không server): cấu hình + logo nhúng data URL, kèm lịch từ–đến để đảo tự lọc theo ngày
+  adm.get('/export', (req, res) => {
+    const today = vnDay(), book = db.all('sp_book').filter(b => b.to >= today && slotOf(b.slot)), used = new Map();
+    for (const b of book) { const sp = db.get('sp_sponsors', b.sp); if (sp && sp.status === 'approved') used.set(sp.id, sp); }
+    const uri = id => { const L = db.get('sp_logos', id); return L ? `data:${L.type};base64,${L.b64}` : undefined; };
+    const out = { v: 1, exported: today, note: 'Cấu hình tĩnh xuất từ /admin/sponsors — đặt vào client/sponsors/config.json khi chạy không server.',
+      slots: SLOTS.map(({ id, name, zone, kind, price }) => ({ id, name, zone, kind, price })),
+      sponsors: [...used.values()].map(sp => ({ ...pubSp(sp), logo: uri(sp.id), logoNight: uri(sp.id + '-n') })),
+      list: book.filter(b => used.has(b.sp)).sort((a, b) => a.from.localeCompare(b.from)).map(b => ({ slot: b.slot, sp: b.sp, from: b.from, to: b.to })) };
+    res.set('Content-Disposition', 'attachment; filename="config.json"'); res.json(out);
+  });
   app.use('/api/sp/admin', adm);
   app.get('/admin/sponsors', (req, res) => res.sendFile(path.join(ROOT, 'client', 'admin-sponsors.html')));
   return { live, SLOTS, CATS, adm, state, report };
