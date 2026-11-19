@@ -137,7 +137,7 @@ const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + ti
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 registerVisit(ctx); // mini game 3D ghé thăm: Tham quan nhà, BBQ, Trung tâm thương mại, Coach Ru (mg/visit/) — sau registerArts (gắn cửa Nông trại vào garden)
-const mounts = createMounts(ctx);
+const mounts = ctx.mounts = createMounts(ctx);
 const vrmNpc = ctx.vrmNpc = createVrmNpc(ctx); ctx.playerVrm = createPlayerVrm(ctx); ctx.creator = createCreator(ctx); // nhân vật anime VRM: NPC gần (LOD), người chơi (nạp sau), 🎨 trình tạo nhân vật (vrm/)
 const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp đảo (nút 🧹 / phím J), giá chổi ở Sân Đại Sảnh Học viện
 document.getElementById('bSchool').onclick = () => school.goSchool();

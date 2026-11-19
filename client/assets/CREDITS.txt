@@ -156,3 +156,7 @@ Làng Phù Thuỷ Nhỏ — xây nhà bằng phép "Dựng Lên!" (client/js/isl
   wall-window-glass, roof-high, roof-point, stairs-stone, wall-block, lantern) và models/kit/* (Kenney Fence/Nature/Furniture Kit:
   fence_picket, plant_tree_town, plant_bush_round, furn_table, furn_chair, furn_bookshelf_full, furn_couch). Màu texture bảng màu
   được nướng sang màu đỉnh để gộp cả lô thành 1 lưới. Khối Rubik (6 màu chuẩn), nền lô, biển tên: dựng/vẽ bằng code.
+Thung Lũng Rồng + thú bay cưỡi được (đảo Học viện, client/js/island/academy/dragons.js, flyers.js, bestiary.js): không thêm tệp mới.
+  Rồng cánh (Lửa, Nước, Mây, Rubik), rồng con, trứng, Chim Lạc khổng lồ, Ngựa có cánh: dựng bằng khối trong code (low poly, xoay khớp, không xương).
+  Lý do: model rồng/thú bay CC0 có hoạt ảnh (Quaternius Ultimate Monsters/Animals, Poly Pizza) chỉ tải qua Google Drive / poly.pizza — bị chặn mạng
+  trong môi trường làm việc. Dùng lại khối đã có: rồng Việt (academy/creatures.js), ngựa + phượng hoàng (mounts.js).

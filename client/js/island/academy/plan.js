@@ -85,7 +85,21 @@ const FL = FOREST.lake;
 export const lakeAt = (th, r) => [FL.u + Math.cos(th) * r, FL.v + Math.sin(th) * r];
 export const CLIFF = { th: -Math.PI / 2, r: 58, top: 21, cr: 11 };                 // vách thác nước: đỉnh 21 m, mép vách cách tâm hồ 47 m
 export const forestDist = (u, v) => Math.hypot(u - FOREST.u, v - FOREST.v) - FOREST.r;
-export const isleDist = (u, v) => Math.min(isleDist0(u, v), forestDist(u, v));
+// ---------- THUNG LŨNG RỒNG: lòng chảo r 55 cạnh bìa bắc Rừng Phép Thuật, vách đá cao 34 m (r 55–89), cửa thung lũng mở về phía rừng ----------
+export const VALLEY = { u: -215, v: -345, r: 55, rim: 89, top: 34, gap: 0.42 };   // gap: nửa góc cửa (rad), hướng về tâm rừng
+export const VALLEY_GATE = Math.atan2(FOREST.v - VALLEY.v, FOREST.u - VALLEY.u);   // góc hướng cửa (θ = atan2(dv, du))
+export const valleyDist = (u, v) => Math.hypot(u - VALLEY.u, v - VALLEY.v) - VALLEY.rim;
+export function valleyH(u, v, x, z) {
+  const r = Math.hypot(u - VALLEY.u, v - VALLEY.v); if (r > VALLEY.rim + 34) return -99;
+  const n = fbm(x * 0.03, z * 0.03), th = Math.atan2(v - VALLEY.v, u - VALLEY.u);
+  let da = Math.abs(th - VALLEY_GATE); if (da > Math.PI) da = 2 * Math.PI - da;
+  const open = 1 - smooth(VALLEY.gap * 0.6, VALLEY.gap, da);                                 // 1 ở giữa cửa
+  const wall = smooth(VALLEY.r - 2, VALLEY.r + 8, r) * (1 - smooth(VALLEY.rim - 8, VALLEY.rim + 21, r));
+  const floor = 3.4 + n * 2.2, out = (1 - smooth(VALLEY.rim, VALLEY.rim + 34, r)) * 5 - 3;
+  let h = r < VALLEY.r + 8 ? floor : lerp(floor, out, smooth(VALLEY.rim - 8, VALLEY.rim + 34, r));
+  return Math.max(h, (VALLEY.top + n * 5) * wall * (1 - open));
+}
+export const isleDist = (u, v) => Math.min(isleDist0(u, v), forestDist(u, v), valleyDist(u, v));
 export const R_BOUND = Math.hypot(FOREST.u - ISLE.u, FOREST.v) + FOREST.r + 21;   // bán kính bao (để lọc nhanh) — tính cả thuỳ rừng
 // độ cao thuỳ rừng (−99 nếu ngoài)
 export function forestH(u, v, x, z) {
@@ -113,7 +127,7 @@ export function quayY(u, v) {
 
 // Độ cao địa hình theo toạ độ cục bộ (u, v); x, z thế giới chỉ dùng cho nhiễu
 export function heightLocal(u, v, x, z) {
-  const hF = v < -144 ? forestH(u, v, x, z) : -99;
+  const hF = v < -144 ? Math.max(forestH(u, v, x, z), valleyH(u, v, x, z)) : -99;
   const dI = isleDist0(u, v);
   if (dI > 34) return Math.max(-6, hF);
   const n = fbm(x * 0.021, z * 0.021), n2 = fbm(x * 0.008 + 7, z * 0.008 - 3);
