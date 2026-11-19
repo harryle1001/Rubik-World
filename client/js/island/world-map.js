@@ -64,7 +64,7 @@ body.rs-modal #bMap{display:none}`;
       if (p2) { let reg = 'north'; try { reg = RS.regionAt(p2[0], p2[1]); } catch (e) {} c = hex(REGION_COL[reg] || '#d8cdb5'); land[i] = 1; }
       else if (ex) { c = hex(EXTRA_COL[ex.id] || '#e6d6a8'); land[i] = 1; }
       else {
-        const h = ctx.terrain.heightAt(x, z);
+        const h = ctx.destiny && ctx.destiny.mapHide(x, z) ? -6 : ctx.terrain.heightAt(x, z);   // Rừng Thiên Định: chưa tìm ra thì chỉ là biển
         if (h < 0.15) { const t = Math.min(1, Math.max(0, -h / 6)); c = lerp([116, 214, 205], [52, 160, 168], t); }
         else if (h < 1.1 && !(flatDist(x, z) < 3 && lagoonDist(x, z) > 4)) { c = [244, 221, 156]; land[i] = 1; }
         else { const t = Math.min(1, (h - 1.1) / 12); c = h > 13 ? [205, 186, 140] : lerp([166, 216, 115], [96, 158, 72], t); land[i] = 1; }
@@ -98,7 +98,7 @@ body.rs-modal #bMap{display:none}`;
     for (const r of ctx.boxes || []) b.fillRect((r.x0 - B.x0) * PPM, (r.z0 - B.z0) * PPM, Math.max(1.5, (r.x1 - r.x0) * PPM), Math.max(1.5, (r.z1 - r.z0) * PPM));
     // sàn gỗ, bến nổi (làng nổi trên biển)
     b.fillStyle = '#b07f4e'; b.strokeStyle = '#6b4a2b'; b.lineWidth = 1;
-    for (const k of ctx.decks || []) { const r = [(k.x0 - B.x0) * PPM, (k.z0 - B.z0) * PPM, (k.x1 - k.x0) * PPM, (k.z1 - k.z0) * PPM]; b.fillRect(...r); b.strokeRect(...r); }
+    for (const k of ctx.decks || []) { if (ctx.destiny && ctx.destiny.mapHide(k.x0, k.z0, 1)) continue; const r = [(k.x0 - B.x0) * PPM, (k.z0 - B.z0) * PPM, (k.x1 - k.x0) * PPM, (k.z1 - k.z0) * PPM]; b.fillRect(...r); b.strokeRect(...r); }
     baseTown = !!RS; baseDone = true;
   }
 
@@ -108,6 +108,7 @@ body.rs-modal #bMap{display:none}`;
     for (const b of BLOCKS) L.push({ n: b.name.toUpperCase(), x: (b.r[0] + b.r[2]) / 2, z: b.r[1] + 6, big: 2 });
     for (const e of EXTRA) L.push({ n: e.name.toUpperCase(), x: (e.r[0] + e.r[2]) / 2, z: (e.r[1] + e.r[3]) / 2, big: 2 });
     for (const t of TEMPLES) L.push({ n: t.name, x: t.x, z: t.z, ic: '⛩️' });
+    if (ctx.destiny) L.push(...ctx.destiny.places());
     if (ctx.eggs && ctx.eggs.spots) for (const q of ctx.eggs.spots()) if (!q.hide) L.push({ n: q.n, x: q.x, z: q.z, ic: q.ic, spot: true });
     const sc = ctx.school; if (!sc) return L;
     if (sc.gate) L.push({ n: 'Cổng trường', x: sc.gate[0], z: sc.gate[1], ic: '🏫' });
@@ -287,5 +288,5 @@ body.rs-modal #bMap{display:none}`;
     g.restore(); text('B', X, Y - 40, 13, '#fff3d6'); text('Đ', X + 40, Y, 12); text('N', X, Y + 40, 12); text('T', X - 40, Y, 12);
   }
 
-  return { update, toggle, get open() { return open; } };
+  return { update, toggle, get open() { return open; }, redraw() { baseDone = false; } };
 }

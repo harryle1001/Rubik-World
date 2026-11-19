@@ -84,6 +84,7 @@ const TURTLE_TALES = [
   'Năm <b>1070</b> Văn Miếu được xây ở Thăng Long; năm 1076 có <b>Quốc Tử Giám</b>, trường đại học đầu tiên của nước ta.',
   'Truyền thuyết kể: <b>Rùa Vàng</b> đòi lại gươm thần của vua Lê Lợi, nên hồ ấy mang tên <b>Hồ Hoàn Kiếm</b>.',
   'Rùa mẹ bơi hàng nghìn km rồi quay về <b>đúng bãi biển nơi mình nở ra</b> để đẻ trứng. Đừng xả rác xuống biển nhé!',
+  'Câu đố của ta: <b>“Mười ba viên đá nổi giữa lạch, rèm dây leo che cửa đá.”</b> Sau lưng ta có khu rừng <b>không có trên bản đồ</b>. Đêm xuống, cứ theo đom đóm…',
 ];
 const RIDDLES = [
   { q: 'Cái gì càng lấy đi lại càng to ra?', c: ['Cái hố', 'Quả bóng', 'Cái bánh'], a: 0, ex: 'Càng đào (lấy đất đi) thì cái hố càng to!' },

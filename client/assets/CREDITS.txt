@@ -134,3 +134,8 @@ tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — h
 models/alley/wiz-hat.glb, wiz-cape.glb  mũ + áo choàng tách từ models/hero-mage.glb (KayKit Adventurers, CC0 — xem trên), tô màu bằng code
 models/alley/broom.glb  "Medieval Tools Pack" — System G6, OpenGameArt, CC0 — https://opengameart.org/content/medieval-tools-pack (chuyển .blend → .glb bằng bpy)
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
+Rừng Thiên Định (client/js/island/zone-destiny.js, destiny-plan.js, destiny-ui.js): không tải thêm tài nguyên mới.
+  Cây, bụi, đá, dương xỉ, nấm, hoa, khúc gỗ: model Quaternius (qn_*, CC0) đã có — đi chung InstancedMesh của terrain.js (NATURE).
+  Hươu trắng: models/animal-deer.glb (Quaternius – Ultimate Animated Animals, CC0) nhuộm trắng bằng code.
+  Âm thanh: amb-river, amb-birds, amb-birds2, amb-crickets (đã ghi nguồn ở trên); chuông gió tổng hợp bằng WebAudio (ctx.note).
+  Vách đá, cây Thiên Định, đền đá, cầu khỉ, công, cổng đá, dây leo, thác, sương, tia nắng: dựng bằng khối cơ bản + shader tự viết.

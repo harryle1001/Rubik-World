@@ -8,6 +8,7 @@ import { loadModel } from './models.js';
 import { createOceanWater } from './ocean-water.js';
 import { PLAZA } from './sample/plaza.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { destinyHeight } from './destiny-plan.js';
 
 // ---------- noise ----------
 const hash = (x, y) => { let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -58,7 +59,7 @@ export function rawHeight(x, z) {
   { const dt = Math.hypot(x - TEMPLE_C[0], z - TEMPLE_C[1]); if (dt < 30) out = out + (3 - out) * (1 - smooth(14, 30, dt)); }
   // hồ bán nguyệt phía nam trường
   { const ld = lagoonDist(x, z); if (ld < 6) { const t = smooth(-1, 8, -ld); out = Math.min(out, FLAT * (1 - t) - 2.6 * t); } }
-  return out;
+  return destinyHeight(x, z, out);   // khối núi ẩn Rừng Thiên Định ngoài vịnh bắc (destiny-plan.js)
 }
 
 export function createTerrain(scene) {

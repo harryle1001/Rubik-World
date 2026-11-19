@@ -44,6 +44,7 @@ import { createSchoolInterior } from './island/school-interior.js';
 import { createSchoolYard } from './island/school-yard.js';
 import { createAcademy } from './island/academy/index.js';
 import { createTrain } from './island/train/index.js';
+import { createDestiny } from './island/zone-destiny.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
@@ -113,6 +114,7 @@ const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lă
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
 const accountHud = createAccountHud(ctx);
+const destiny = createDestiny(ctx); // Rừng Thiên Định: khu rừng ẩn ngoài vịnh bắc, lối mòn bí mật, cây ước nguyện (zone-destiny.js)
 const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms, draw call, tam giác, bộ nhớ… // 👤 đăng nhập / khách / Lưu đăng nhập, xu & vật phẩm (data/account.js)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
 const tutorial = ctx.tutorial = createTutorial(ctx); // hướng dẫn chơi lần đầu: 3 bước, bỏ qua được (tutorial.js)
@@ -190,6 +192,7 @@ renderer.setAnimationLoop(() => {
   living.update(dt);
   skyshow.update(dt); // sau player/sky: chế độ ngắm trời đặt lại camera
   dive.update(dt); // sau ambience: ghi đè sương/màu khi dưới nước
+  destiny.update(dt, clock.elapsedTime); // sau weather/ambience: sương đặc trong bãi sương
   mg.update(dt, clock.elapsedTime);
   sealife.update(dt);
   treasure.update(dt);
@@ -225,7 +228,7 @@ let frzT = 0;
 function unfreezeGuard(dt) {
   if (!player.frozen) { frzT = 0; return; }
   if ((frzT += dt) < 1) return; frzT = 0;
-  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden]), #accBox:not([hidden]), #schoolMenu:not([hidden])')) player.frozen = false;
+  if (!worldMap.open && !document.body.classList.contains('rs-modal') && !document.querySelector('#dstWish, #dstBreath, #quiz:not([hidden]), #eggBook:not([hidden]), #townInfo:not([hidden]), #accBox:not([hidden]), #schoolMenu:not([hidden])')) player.frozen = false;
 }
 
 // ---------- Chất lượng tự động: mức (0..3) + độ phân giải động (logic trong autoq.js) ----------
