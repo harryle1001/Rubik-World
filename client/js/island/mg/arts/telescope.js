@@ -33,12 +33,14 @@ const dirOf = (az, el, v = new THREE.Vector3()) => v.set(Math.sin(az) * Math.cos
 export function startTelescope(ctx, { api }) {
   const { root, hud, me } = api, M = api.mat, sfx = api.sfx;
   // ---------- Sân ngắm sao ----------
-  const pad = new THREE.Mesh(new THREE.CylinderGeometry(8, 8.3, 0.62, 34), M('#c9c2b4')); pad.position.y = 0.31;   // sân cao 0,618 m: nổi trên đường/bậc thềm quanh đó pad.receiveShadow = true; root.add(pad);
+  const pad = new THREE.Mesh(new THREE.CylinderGeometry(8, 8.3, 0.62, 34), M('#c9c2b4')); pad.position.y = 0.31; pad.receiveShadow = true; root.add(pad);   // sân cao 0,618 m: nổi trên đường/bậc thềm quanh đó (trước: lệnh add lọt vào chú thích → sân không hiện)
   const inner = new THREE.Mesh(new THREE.CircleGeometry(5, 34).rotateX(-Math.PI / 2), M('#2c3966')); inner.position.y = 0.63; root.add(inner);
   // la bàn 8 hướng trên sân (π: chia đều vòng tròn)
   const dirs = ['B', 'ĐB', 'Đ', 'ĐN', 'N', 'TN', 'T', 'TB'];
-  dirs.forEach((t, i) => { const c = document.createElement('canvas'); c.width = c.height = 128; const k = c.getContext('2d'); k.fillStyle = i % 2 ? '#cfd8ff' : '#ffd36e'; k.font = 'bold 72px system-ui'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(t, 64, 64);
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false })); const a = i * Math.PI / 4; m.position.set(Math.sin(a) * 4.2, 0.65, Math.cos(a) * 4.2); m.rotation.y = a; root.add(m); });
+  { // 8 chữ la bàn vẽ chung 1 canvas, 1 mặt phẳng (trước: 8 mesh + 8 texture)
+    const c = document.createElement('canvas'); c.width = c.height = 512; const k = c.getContext('2d'), u = 512 / 10; k.font = 'bold 36px system-ui'; k.textAlign = 'center'; k.textBaseline = 'middle';
+    dirs.forEach((t, i) => { const a = i * Math.PI / 4; k.save(); k.translate(256 + Math.sin(a) * 4.2 * u, 256 + Math.cos(a) * 4.2 * u); k.rotate(-a); k.fillStyle = i % 2 ? '#cfd8ff' : '#ffd36e'; k.fillText(t, 0, 0); k.restore(); });
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(10, 10).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false })); m.position.y = 0.65; root.add(m); }
   // kính viễn vọng: chân 3 càng + ống dài φ m (xoay theo hướng ngắm)
   const scope = new THREE.Group(); scope.position.set(0, 0.62, 0); root.add(scope);
   for (let i = 0; i < 3; i++) { const a = i * Math.PI * 2 / 3, leg = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 1.3, 6), M('#3b3b4a')); leg.position.set(Math.sin(a) * 0.3, 0.6, Math.cos(a) * 0.3); leg.rotation.set(Math.cos(a) * 0.4, 0, -Math.sin(a) * 0.4); scope.add(leg); }
@@ -79,7 +81,7 @@ export function startTelescope(ctx, { api }) {
   api.actor('student-male-c', { name: 'Thầy Thiên Văn', height: 1.68, look: { role: 'adult', shirt: '#3b4a7a', pants: '#2a2a3a', glasses: true } }).then(a => { if (!a) return; teacher = a; a.place(-2.2, 1.4, 0); a.pos.y = PAD; a.face(0, 0); a.say('Chào em! Đêm nay trời trong lắm.', 3000); });
 
   // ---------- Điều khiển kính: hướng ngắm (az, el) ----------
-  let az = 0, el = 0.6, looking = false, round = 0, list = [], cur = null, score = 0, tRound = 0, t0 = 0, over = false, drag = null;
+  let secShown = -1, az = 0, el = 0.6, looking = false, round = 0, list = [], cur = null, score = 0, tRound = 0, t0 = 0, over = false, drag = null;
   const outside = () => { api.cam.x = 0; api.cam.y = 1.2; api.cam.z = 0; api.cam.yaw = Math.PI * 0.8; api.cam.pitch = 0.5; api.cam.dist = 13; };
   outside();
   function aimCam() {   // camera đặt tại mắt kính, nhìn theo (az, el): host đặt camera = tâm + cầu(yaw, pitch, dist) → đảo hướng
@@ -113,10 +115,10 @@ export function startTelescope(ctx, { api }) {
     const r = api.ray(e).ray, dl = r.direction.clone(); root.worldToLocal(dl.add(root.getWorldPosition(new THREE.Vector3()))).normalize();   // hướng tia trong hệ cục bộ
     let best = null, bd = 0.9965;   // ≈ 4,8° (dễ chạm trên điện thoại)
     for (const p of pick) { const k = p.d.dot(dl); if (k > bd) { bd = k; best = p; } }
-    if (!best) { hud.msg(`Chưa đúng chỗ. <small>${cur.hint}</small>`, 2200); sfx('land'); return; }
-    if (best.T !== cur) { sfx('land'); hud.msg(`Đó là <b>${best.T.n}</b>. Mình đang tìm <b>${cur.n}</b> — <small>${cur.hint}</small>`, 3000); return; }
+    if (!best) { hud.msg(`Chưa đúng chỗ. <small>${cur.hint}</small>`, 2200); sfx('bad'); return; }
+    if (best.T !== cur) { sfx('bad'); hud.msg(`Đó là <b>${best.T.n}</b>. Mình đang tìm <b>${cur.n}</b> — <small>${cur.hint}</small>`, 3000); return; }
     // tìm thấy!
-    cur.found = true; const pts = Math.max(21, 100 - Math.floor(tRound) * 3); score += pts; hud.score(score); sfx('ok');
+    cur.found = true; const pts = Math.max(21, 100 - Math.floor(tRound) * 3); score += pts; hud.score(score); sfx(pts > 80 ? 'coin' : 'ok');
     const T = cur, a0 = performance.now(); if (T.lines) { const fade = () => { const k = Math.min(1, (performance.now() - a0) / 1000 / PHI); T.lines.material.opacity = k * 0.9; if (k < 1 && !over) requestAnimationFrame(fade); }; fade(); }
     hud.msg(`✨ <b>${T.n}</b> +${pts}<br><small>${T.fact}</small>`, 0); if (teacher) teacher.emote('cheer');
     cur = null; round++;
@@ -136,7 +138,7 @@ export function startTelescope(ctx, { api }) {
     up(e) { if (!drag || e.pointerId !== drag.id) return; const moved = Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8; drag = null; if (!moved && e.type === 'pointerup') tapSky(e); },
     key(e) { if (!looking) return; const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1], KeyA: [-1, 0], KeyD: [1, 0], KeyW: [0, 1], KeyS: [0, -1] }[e.code]; if (k) { az += k[0] * 0.13; el = Math.max(0.05, Math.min(1.45, el + k[1] * 0.08)); aimCam(); } },
     update(dt) {
-      tRound += dt; if (t0 && !over && list.length) hud.time(performance.now() / 1000 - t0);
+      tRound += dt; if (t0 && !over && list.length) { const s = performance.now() / 1000 - t0 | 0; if (s !== secShown) hud.time(secShown = s); }
       // ống kính quay theo hướng ngắm; sao nhấp nháy nhẹ, hành tinh thì không
       head.rotation.set(-el, az, 0, 'YXZ');
       if (looking) { const t = performance.now() / 1000; for (const T of TARGETS) if (!T.big || T.big < 1.5) T.pts.material.opacity = 0.82 + Math.sin(t * 5 + T.az) * 0.18; }
