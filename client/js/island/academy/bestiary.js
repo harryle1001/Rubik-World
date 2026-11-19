@@ -1,5 +1,5 @@
 // academy/bestiary.js — 📖 BÁCH KHOA SINH VẬT: thẻ thông tin thần thoại thật (nguồn gốc, ý nghĩa) + kiến thức động vật thật tương ứng
-// (chim, bò sát, thú, cá). Mở thẻ khi gặp sinh vật (ctx.bestiary.see(id)); xem ở ☰ → 📖 Bách khoa sinh vật hoặc phím J.
+// (chim, bò sát, thú, cá). Mở thẻ khi gặp sinh vật (ctx.bestiary.see(id)); xem ở ☰ → 📖 Bách khoa sinh vật hoặc phím K (J là gọi chổi).
 // Lưu máy 'academy.bestiary'. Bố cục theo φ: thẻ 233 px, chữ 13/21 px, khoảng cách 8/13 px.
 const KEY = 'academy.bestiary';
 const E = (icon, name, where, group, myth, real, know) => ({ icon, name, where, group, myth, real, know });
@@ -83,7 +83,7 @@ export function createBestiary(ctx) {
   { const menu = document.getElementById('moreMenu'); if (menu) { const b = document.createElement('button'); b.id = 'bBestiary'; b.textContent = '📖 Bách khoa sinh vật'; b.onclick = () => open(); menu.appendChild(b); } }
   addEventListener('keydown', e => {
     if (e.repeat || e.target instanceof HTMLInputElement) return;
-    if (e.code === 'KeyJ') { if (el.hidden) { if (!document.body.classList.contains('rs-modal')) open(); } else close(); }
+    if (e.code === 'KeyK') { if (el.hidden) { if (!document.body.classList.contains('rs-modal')) open(); } else close(); }
     else if (e.code === 'Escape' && !el.hidden) close();
   });
   return { see, open, close, seen, CARDS };
