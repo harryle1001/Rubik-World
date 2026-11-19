@@ -1,0 +1,595 @@
+{
+ "mode": "after",
+ "q": "?",
+ "desk": {
+  "rect": {
+   "quick": [
+    29,
+    95,
+    1206,
+    73
+   ],
+   "mini": [
+    1261,
+    25,
+    150,
+    150
+   ],
+   "mtrack": [
+    1181,
+    187,
+    230,
+    406
+   ],
+   "prof": [
+    29,
+    57,
+    463,
+    38
+   ],
+   "col": [
+    39,
+    577,
+    75,
+    252
+   ],
+   "mentor": [
+    132,
+    763,
+    320,
+    77
+   ],
+   "lamp": [
+    56,
+    577,
+    40,
+    57
+   ],
+   "menuBtn": null,
+   "mis": null,
+   "log": null,
+   "sound": [
+    29,
+    134,
+    128,
+    32
+   ],
+   "toi": [
+    587,
+    134,
+    71,
+    32
+   ],
+   "mlog": [
+    1181,
+    601,
+    230,
+    273
+   ],
+   "toast": [
+    422,
+    177,
+    596,
+    42
+   ],
+   "luongNote": [
+    475,
+    218,
+    490,
+    23
+   ],
+   "cayNote": [
+    479,
+    234,
+    482,
+    24
+   ],
+   "rodTag": [
+    563,
+    661,
+    140,
+    52
+   ],
+   "rodCard": [
+    552,
+    269,
+    162,
+    515
+   ],
+   "chip": [
+    593,
+    10,
+    255,
+    34
+   ]
+  },
+  "labels": [
+   "Đèn 16px",
+   "Xe đạp 16px",
+   "Máy bay 16px",
+   "Hành tinh 16px"
+  ],
+  "quickAll": {
+   "rows": 3,
+   "cut": 0,
+   "scrollW": 1206,
+   "clientW": 1206,
+   "overMini": false
+  },
+  "smallHud": [],
+  "menu": {
+   "tiles": 23,
+   "en": 0,
+   "minFs": 16,
+   "over": 0,
+   "sample": [
+    "Trò chơi",
+    "Huấn luyện viên AI",
+    "Bản đồ",
+    "Sự kiện",
+    "Thời gian",
+    "Cửa hàng"
+   ],
+   "chips": [
+    "Hạ 16px",
+    "Mưa 16px",
+    "19:22 ×10 16px"
+   ],
+   "pageOver": false
+  },
+  "menuSmall": [],
+  "menuTile": [
+   14,
+   214,
+   168,
+   95
+  ],
+  "menu2Small": [],
+  "menu2": [
+   "Trí tuệ",
+   "Thể thao",
+   "Vui chơi",
+   "Nhạc & vẽ",
+   "Cuộc sống"
+  ],
+  "luongSmall": [],
+  "caySmall": [],
+  "treas": [
+   {
+    "i": 1,
+    "got": "Đồng xu cổ",
+    "tn": 1,
+    "items": 1,
+    "toast": "🎁 Kho báu! Bạn câu được 🪙 Đồng xu cổ. Đồng xu cổ giúp nhà khảo cổ biết người xưa buôn bán thế nào. | 🎁 Kho báu! Bạn câu được 🪙 Đồng xu c"
+   },
+   {
+    "i": 2,
+    "got": "Ngọc trai",
+    "tn": 2,
+    "items": 2,
+    "toast": "🎁 Kho báu! Bạn câu được 🦪 Ngọc trai. Ngọc trai hình thành khi một hạt cát lọt vào con trai, trai tiết xà cừ bọc lại nhiều năm. | 🎁 Kho bá"
+   },
+   {
+    "i": 3,
+    "got": "Vỏ sò cầu vồng",
+    "tn": 3,
+    "items": 3,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu. | 🎁 Kho báu! Bạn câu"
+   },
+   {
+    "i": 4,
+    "got": "Vỏ sò cầu vồng",
+    "tn": 4,
+    "items": 4,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu. | 🎁 Kho báu! Bạn câu"
+   },
+   {
+    "i": 5,
+    "got": "Đồng xu cổ",
+    "tn": 5,
+    "items": 5,
+    "toast": "🎁 Kho báu! Bạn câu được 🪙 Đồng xu cổ. Đồng xu cổ giúp nhà khảo cổ biết người xưa buôn bán thế nào. | 🎁 Kho báu! Bạn câu được 🪙 Đồng xu c"
+   },
+   {
+    "i": 6,
+    "got": null,
+    "tn": 5,
+    "items": 5,
+    "toast": "🌊 Hôm nay biển đã tặng đủ 5 món quý, mai quay lại nhé!"
+   },
+   {
+    "i": 7,
+    "got": null,
+    "tn": 5,
+    "items": 5,
+    "toast": "🌊 Hôm nay biển đã tặng đủ 5 món quý, mai quay lại nhé!"
+   },
+   {
+    "i": 8,
+    "got": null,
+    "tn": 5,
+    "items": 5,
+    "toast": "🌊 Hôm nay biển đã tặng đủ 5 món quý, mai quay lại nhé!"
+   }
+  ],
+  "treasReal": {
+   "got": 0,
+   "same": true,
+   "last": {
+    "n": "Mực ống",
+    "w": 0.31
+   }
+  },
+  "chip": "🌊 Hôm nay đã đủ 5 món quý",
+  "panels": {
+   "set": [],
+   "shop": [],
+   "prof": [],
+   "mis": []
+  },
+  "fps": {
+   "avg": 55,
+   "min": 30
+  },
+  "fpsWalk": {
+   "avg": 59,
+   "min": 30
+  },
+  "logs": []
+ },
+ "phone": {
+  "rect": {
+   "quick": null,
+   "mini": [
+    304,
+    6,
+    76,
+    76
+   ],
+   "mtrack": null,
+   "prof": [
+    8,
+    6,
+    280,
+    90
+   ],
+   "col": [
+    10,
+    164,
+    75,
+    252
+   ],
+   "mentor": [
+    10,
+    743,
+    260,
+    77
+   ],
+   "lamp": [
+    27,
+    164,
+    40,
+    57
+   ],
+   "menuBtn": [
+    8,
+    106,
+    46,
+    46
+   ],
+   "mis": [
+    330,
+    90,
+    46,
+    46
+   ],
+   "log": [
+    330,
+    142,
+    46,
+    46
+   ],
+   "sound": null,
+   "toi": null,
+   "mlog": null,
+   "toast": [
+    68,
+    102,
+    254,
+    78
+   ],
+   "luongNote": [
+    47,
+    253,
+    296,
+    46
+   ],
+   "cayNote": [
+    51,
+    267,
+    288,
+    48
+   ],
+   "rodTag": [
+    212,
+    558,
+    133,
+    52
+   ],
+   "rodCard": [
+    201,
+    170,
+    155,
+    511
+   ],
+   "chip": [
+    68,
+    64,
+    255,
+    34
+   ]
+  },
+  "labels": [
+   "Đèn 16px",
+   "Xe đạp 16px",
+   "Máy bay 16px",
+   "Hành tinh 16px"
+  ],
+  "quickAll": null,
+  "smallHud": [],
+  "menu": {
+   "tiles": 23,
+   "en": 0,
+   "minFs": 16,
+   "over": 0,
+   "sample": [
+    "Trò chơi",
+    "Huấn luyện viên AI",
+    "Bản đồ",
+    "Sự kiện",
+    "Thời gian",
+    "Cửa hàng"
+   ],
+   "chips": [
+    "Đông 16px",
+    "Mưa 16px",
+    "19:22 ×10 16px"
+   ],
+   "pageOver": false
+  },
+  "menuSmall": [],
+  "menuTile": [
+   14,
+   164,
+   115,
+   103
+  ],
+  "menu2Small": [],
+  "menu2": [
+   "Trí tuệ",
+   "Thể thao",
+   "Vui chơi",
+   "Nhạc & vẽ",
+   "Cuộc sống"
+  ],
+  "luongSmall": [],
+  "caySmall": [],
+  "treas": [
+   {
+    "i": 1,
+    "got": "Ngọc trai",
+    "tn": 1,
+    "items": 1,
+    "toast": "🎁 Kho báu! Bạn câu được 🦪 Ngọc trai. Ngọc trai hình thành khi một hạt cát lọt vào con trai, trai tiết xà cừ bọc lại nhiều năm. | 🎁 Kho bá"
+   },
+   {
+    "i": 2,
+    "got": "Đồng xu cổ",
+    "tn": 2,
+    "items": 2,
+    "toast": "🎁 Kho báu! Bạn câu được 🪙 Đồng xu cổ. Đồng xu cổ giúp nhà khảo cổ biết người xưa buôn bán thế nào. | 🎁 Kho báu! Bạn câu được 🪙 Đồng xu c"
+   },
+   {
+    "i": 3,
+    "got": "Vỏ sò cầu vồng",
+    "tn": 3,
+    "items": 3,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu. | 🎁 Kho báu! Bạn câu"
+   },
+   {
+    "i": 4,
+    "got": "Vỏ sò cầu vồng",
+    "tn": 4,
+    "items": 4,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu. | 🎁 Kho báu! Bạn câu"
+   },
+   {
+    "i": 5,
+    "got": "Vỏ sò cầu vồng",
+    "tn": 5,
+    "items": 5,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu. | 🎁 Kho báu! Bạn câu"
+   },
+   {
+    "i": 6,
+    "got": null,
+    "tn": 5,
+    "items": 5,
+    "toast": "🌊 Hôm nay biển đã tặng đủ 5 món quý, mai quay lại nhé!"
+   },
+   {
+    "i": 7,
+    "got": null,
+    "tn": 5,
+    "items": 5,
+    "toast": "🌊 Hôm nay biển đã tặng đủ 5 món quý, mai quay lại nhé!"
+   },
+   {
+    "i": 8,
+    "got": null,
+    "tn": 5,
+    "items": 5,
+    "toast": "🌊 Hôm nay biển đã tặng đủ 5 món quý, mai quay lại nhé!"
+   }
+  ],
+  "treasReal": {
+   "got": 0,
+   "same": true,
+   "last": {
+    "n": "Mực ống",
+    "w": 0.31
+   }
+  },
+  "chip": "🌊 Hôm nay đã đủ 5 món quý",
+  "fps": {
+   "avg": 60,
+   "min": 30
+  },
+  "fpsWalk": {
+   "avg": 60,
+   "min": 60
+  },
+  "logs": []
+ },
+ "land": {
+  "rect": {
+   "quick": null,
+   "mini": [
+    758,
+    6,
+    76,
+    76
+   ],
+   "mtrack": null,
+   "prof": [
+    8,
+    6,
+    388,
+    51
+   ],
+   "col": [
+    10,
+    125,
+    75,
+    252
+   ],
+   "mentor": [
+    96,
+    289,
+    260,
+    77
+   ],
+   "lamp": [
+    27,
+    125,
+    40,
+    57
+   ],
+   "menuBtn": [
+    8,
+    67,
+    46,
+    46
+   ],
+   "mis": [
+    784,
+    90,
+    46,
+    46
+   ],
+   "log": [
+    784,
+    142,
+    46,
+    46
+   ],
+   "sound": null,
+   "toi": null,
+   "mlog": null,
+   "toast": [
+    192,
+    63,
+    460,
+    58
+   ],
+   "luongNote": [
+    177,
+    218,
+    490,
+    23
+   ],
+   "cayNote": [
+    181,
+    234,
+    482,
+    24
+   ],
+   "rodTag": [
+    265,
+    330,
+    140,
+    52
+   ],
+   "rodCard": [
+    254,
+    -62,
+    162,
+    515
+   ]
+  },
+  "labels": [
+   "Đèn 16px",
+   "Xe đạp 16px",
+   "Máy bay 16px",
+   "Hành tinh 16px"
+  ],
+  "quickAll": null,
+  "smallHud": [],
+  "menu": {
+   "tiles": 23,
+   "en": 0,
+   "minFs": 16,
+   "over": 0,
+   "sample": [
+    "Trò chơi",
+    "Huấn luyện viên AI",
+    "Bản đồ",
+    "Sự kiện",
+    "Thời gian",
+    "Cửa hàng"
+   ],
+   "chips": [
+    "Đông 16px",
+    "Sương mù 16px",
+    "19:23 ×10 16px"
+   ],
+   "pageOver": false
+  },
+  "menuSmall": [],
+  "menuTile": [
+   14,
+   144,
+   128,
+   115
+  ],
+  "menu2Small": [],
+  "menu2": [
+   "Trí tuệ",
+   "Thể thao",
+   "Vui chơi",
+   "Nhạc & vẽ",
+   "Cuộc sống"
+  ],
+  "luongSmall": [],
+  "caySmall": [],
+  "fps": {
+   "avg": 59,
+   "min": 30
+  },
+  "fpsWalk": {
+   "avg": 60,
+   "min": 30
+  },
+  "logs": []
+ }
+}

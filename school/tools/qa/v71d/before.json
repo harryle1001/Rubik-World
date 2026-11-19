@@ -1,0 +1,796 @@
+{
+ "mode": "before",
+ "q": "?nov71d",
+ "desk": {
+  "rect": {
+   "quick": [
+    29,
+    95,
+    982,
+    31
+   ],
+   "mini": [
+    1261,
+    25,
+    150,
+    150
+   ],
+   "mtrack": [
+    1181,
+    187,
+    230,
+    286
+   ],
+   "prof": [
+    29,
+    57,
+    432,
+    38
+   ],
+   "col": [
+    39,
+    633,
+    46,
+    228
+   ],
+   "mentor": [
+    100,
+    803,
+    320,
+    77
+   ],
+   "lamp": [
+    42,
+    633,
+    40,
+    51
+   ],
+   "menuBtn": null,
+   "mis": null,
+   "log": null,
+   "sound": [
+    1091,
+    95,
+    109,
+    29
+   ],
+   "toi": [
+    1565,
+    95,
+    59,
+    29
+   ],
+   "mlog": [
+    1181,
+    481,
+    230,
+    253
+   ],
+   "toast": [
+    422,
+    73,
+    596,
+    42
+   ],
+   "luongNote": null,
+   "cayNote": null,
+   "rodTag": null,
+   "rodCard": [
+    552,
+    327,
+    162,
+    457
+   ],
+   "chip": null
+  },
+  "labels": [
+   "Lamp on 10px",
+   "Bike 10px",
+   "Plane 10px",
+   "Hành tinh 10px"
+  ],
+  "quickAll": {
+   "rows": 1,
+   "cut": 8,
+   "scrollW": 1595,
+   "clientW": 982,
+   "overMini": false
+  },
+  "smallHud": [
+   "13px v27Brand: The Rubik School",
+   "12px B: Nhiệm vụ",
+   "15px mtrackN: 0/66",
+   "14px mtrackFold: ▾",
+   "12px v38h: Hôm nay · thưởng thêm $1",
+   "15px SPAN: Thắng một trận đấu onlin",
+   "15px SPAN: Bày 10 món đồ trang trí",
+   "12.5px SMALL: 0/10",
+   "15px SPAN: Đạp xe đạp của riêng bạn",
+   "15px SPAN: Ở trong chế độ đắm chìm ",
+   "12.5px SMALL: 0/60",
+   "15px SPAN: Tự điều khiển một bạn ra",
+   "15px SPAN: Phát hiện tàu hải tặc",
+   "12px profName: qaky6v5",
+   "15px profLvl: Level 1",
+   "15px profMoney: $30",
+   "15px v45Heart: ❤️ 0",
+   "12px B: 80",
+   "14px hMenu: ☰ Menu",
+   "14px v70sQuick: 📖 Hành trình",
+   "14px hSet: ⚙ Cài đặt",
+   "14px hMe: Nhân vật của tôi",
+   "14px hShop: Cửa hàng",
+   "14px hHome: Nhà tôi",
+   "14px hMarket: Chợ",
+   "14px hSchool: Đi đến trường",
+   "14px hWhere: Tôi ở đâu?",
+   "14px hOnline: Online",
+   "14px hSound: Âm thanh: bật",
+   "14px ambName: Đại dương sâu thẳm",
+   "14px tSang: ☀️ Sáng",
+   "14px tTrua: 🌞 Trưa",
+   "12px B: Nhật ký",
+   "15px SPAN: gợi ý & sự kiện",
+   "14px mlogFold: ▾",
+   "14px tip: 💡 Bấm E khi đứng trước ",
+   "14px LI: qaky6v5 vừa gia nhập thế",
+   "11.6667px SMALL: 19:21",
+   "14px LI: Bạn đang điều khiển qaky",
+   "11.6667px SMALL: 19:21",
+   "14px LI: Thời tiết chuyển sang mư",
+   "11.6667px SMALL: 19:20",
+   "14px LI: Chuyển sang mùa Xuân.",
+   "11.6667px SMALL: 19:20",
+   "14px LI: Chào mừng đến Trường Age",
+   "11.6667px SMALL: 07:12",
+   "14px LI: Thứ 2, ngày 1 bắt đầu. M",
+   "11.6667px SMALL: 07:12",
+   "10px SMALL: Lamp on",
+   "10px SMALL: Bike",
+   "10px SMALL: Plane",
+   "10px SMALL: Hành tinh"
+  ],
+  "menu": {
+   "tiles": 23,
+   "en": 23,
+   "minFs": 15,
+   "over": 0,
+   "sample": [
+    "Mini GamesTrò chơi",
+    "AI CoachHuấn luyện viên AI",
+    "MapBản đồ",
+    "EventsSự kiện",
+    "TimeThời gian",
+    "ShopCửa hàng"
+   ],
+   "chips": [
+    "Spring · Xuân 14px",
+    "Rain · Mưa 14px",
+    "19:22 ×10 14px"
+   ],
+   "pageOver": false
+  },
+  "menuSmall": [
+   "14px SPAN: Spring · Xuân",
+   "14px SPAN: Rain · Mưa",
+   "14px SPAN: 19:22 ×10",
+   "15px B: Mini Games",
+   "11.5px SMALL: Trò chơi",
+   "15px B: AI Coach",
+   "11.5px SMALL: Huấn luyện viên AI",
+   "15px B: Map",
+   "11.5px SMALL: Bản đồ",
+   "15px B: Events",
+   "11.5px SMALL: Sự kiện",
+   "15px B: Time",
+   "11.5px SMALL: Thời gian",
+   "15px B: Shop",
+   "11.5px SMALL: Cửa hàng",
+   "15px B: My Home",
+   "11.5px SMALL: Nhà tôi",
+   "15px B: Market",
+   "11.5px SMALL: Chợ",
+   "15px B: Quests",
+   "11.5px SMALL: Nhiệm vụ",
+   "15px B: Leaderboard",
+   "11.5px SMALL: Xếp hạng",
+   "15px B: Pirate Port",
+   "11.5px SMALL: Bến hải tặc",
+   "15px B: Emotes",
+   "11.5px SMALL: Biểu cảm",
+   "15px B: Profile",
+   "11.5px SMALL: Hồ sơ",
+   "15px B: Online",
+   "11.5px SMALL: Chơi cùng bạn",
+   "15px B: Settings",
+   "11.5px SMALL: Cài đặt",
+   "15px B: Airplane",
+   "11.5px SMALL: Máy bay",
+   "15px B: Fire Station",
+   "11.5px SMALL: 🚒 Trạm cứu hỏa 114",
+   "15px B: Police",
+   "11.5px SMALL: 🚓 Đồn cảnh sát 113",
+   "15px B: Tower 81",
+   "11.5px SMALL: 🏙️ Tháp Rubik 81",
+   "15px B: Magic Tree",
+   "11.5px SMALL: 🌳 Cây thần kỳ",
+   "15px B: My Salary",
+   "11.5px SMALL: 💰 Lương của em",
+   "15px B: Stage Show",
+   "11.5px SMALL: 🎤 Diễn văn nghệ",
+   "15px B: Events & Badges",
+   "11.5px SMALL: 🏅 Lễ hội & Thành tựu"
+  ],
+  "menuTile": [
+   14,
+   214,
+   168,
+   110
+  ],
+  "menu2Small": [
+   "14px SPAN: Spring · Xuân",
+   "14px SPAN: Rain · Mưa",
+   "14px SPAN: 19:22 ×10",
+   "13px SMALL: Trò chơi",
+   "14px B: Brain",
+   "11px SMALL: Trí tuệ",
+   "14px B: Sports",
+   "11px SMALL: Thể thao",
+   "14px B: Play",
+   "11px SMALL: Vui chơi",
+   "14px B: Music & Art",
+   "11px SMALL: Nhạc & vẽ",
+   "14px B: Life",
+   "11px SMALL: Cuộc sống",
+   "15px B: Chess",
+   "11.5px SMALL: Cờ vua",
+   "15px B: Rubik's Cube",
+   "11.5px SMALL: Rubik 3D",
+   "15px B: Chess Tables",
+   "11.5px SMALL: Xem 5 bàn cờ",
+   "15px B: Gomoku",
+   "11.5px SMALL: Cờ caro",
+   "15px B: Go",
+   "11.5px SMALL: Cờ vây",
+   "15px B: Academy",
+   "11.5px SMALL: Học viện",
+   "15px B: Library",
+   "11.5px SMALL: Thư viện",
+   "15px B: 2-Player Games",
+   "11.5px SMALL: Game 2 người"
+  ],
+  "menu2": [
+   "BrainTrí tuệ",
+   "SportsThể thao",
+   "PlayVui chơi",
+   "Music & ArtNhạc & vẽ",
+   "LifeCuộc sống"
+  ],
+  "luongSmall": [],
+  "caySmall": [],
+  "treas": [
+   {
+    "i": 1,
+    "got": "Sao biển vàng",
+    "items": 1,
+    "toast": "🎁 Kho báu! Bạn câu được ⭐ Sao biển vàng. Sao biển có thể mọc lại cánh bị mất. (Bạn chụp ảnh rồi giữ làm kỷ niệm nhé.)"
+   },
+   {
+    "i": 2,
+    "got": "Ngọc trai",
+    "items": 2,
+    "toast": "🎁 Kho báu! Bạn câu được 🦪 Ngọc trai. Ngọc trai hình thành khi một hạt cát lọt vào con trai, trai tiết xà cừ bọc lại nhiều năm."
+   },
+   {
+    "i": 3,
+    "got": "Sao biển vàng",
+    "items": 3,
+    "toast": "🎁 Kho báu! Bạn câu được ⭐ Sao biển vàng. Sao biển có thể mọc lại cánh bị mất. (Bạn chụp ảnh rồi giữ làm kỷ niệm nhé.)"
+   },
+   {
+    "i": 4,
+    "got": "Ngọc trai",
+    "items": 4,
+    "toast": "🎁 Kho báu! Bạn câu được 🦪 Ngọc trai. Ngọc trai hình thành khi một hạt cát lọt vào con trai, trai tiết xà cừ bọc lại nhiều năm."
+   },
+   {
+    "i": 5,
+    "got": "Ngọc trai",
+    "items": 5,
+    "toast": "🎁 Kho báu! Bạn câu được 🦪 Ngọc trai. Ngọc trai hình thành khi một hạt cát lọt vào con trai, trai tiết xà cừ bọc lại nhiều năm."
+   },
+   {
+    "i": 6,
+    "got": "Vỏ sò cầu vồng",
+    "items": 6,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu."
+   },
+   {
+    "i": 7,
+    "got": "Đồng xu cổ",
+    "items": 7,
+    "toast": "🎁 Kho báu! Bạn câu được 🪙 Đồng xu cổ. Đồng xu cổ giúp nhà khảo cổ biết người xưa buôn bán thế nào."
+   },
+   {
+    "i": 8,
+    "got": "Đồng xu cổ",
+    "items": 8,
+    "toast": "🎁 Kho báu! Bạn câu được 🪙 Đồng xu cổ. Đồng xu cổ giúp nhà khảo cổ biết người xưa buôn bán thế nào."
+   }
+  ],
+  "treasReal": {
+   "got": 1,
+   "same": false,
+   "last": {
+    "n": "Mực ống",
+    "w": 0.31
+   }
+  },
+  "chip": null,
+  "panels": {
+   "set": [
+    "13px v39cred: Âm thanh: Kenney & uisfx",
+    "13px H3: Âm thanh",
+    "13px H3: Thời gian, thời tiết, mù",
+    "14px BUTTON: ☀️ Sáng",
+    "14px BUTTON: 🌞 Trưa",
+    "14px BUTTON: 🌇 Chiều",
+    "14px BUTTON: 🌙 Tối"
+   ],
+   "shop": [],
+   "prof": [
+    "13px H2: Túi đồ",
+    "15px chipi: Xe đạp mini ✓",
+    "15px chipi: Cần câu Kho Báu Đại Dươn"
+   ],
+   "mis": []
+  },
+  "fps": {
+   "avg": 57,
+   "min": 30
+  },
+  "fpsWalk": {
+   "avg": 59,
+   "min": 30
+  },
+  "logs": []
+ },
+ "phone": {
+  "rect": {
+   "quick": null,
+   "mini": [
+    304,
+    6,
+    76,
+    76
+   ],
+   "mtrack": null,
+   "prof": [
+    8,
+    6,
+    280,
+    90
+   ],
+   "col": [
+    10,
+    164,
+    75,
+    252
+   ],
+   "mentor": [
+    10,
+    743,
+    260,
+    77
+   ],
+   "lamp": [
+    15,
+    164,
+    65,
+    57
+   ],
+   "menuBtn": [
+    8,
+    106,
+    46,
+    46
+   ],
+   "mis": [
+    330,
+    90,
+    46,
+    46
+   ],
+   "log": [
+    330,
+    142,
+    46,
+    46
+   ],
+   "sound": null,
+   "toi": null,
+   "mlog": null,
+   "toast": [
+    98,
+    56,
+    195,
+    102
+   ],
+   "luongNote": null,
+   "cayNote": null,
+   "rodTag": null,
+   "rodCard": [
+    201,
+    229,
+    155,
+    453
+   ],
+   "chip": null
+  },
+  "labels": [
+   "Lamp on 16px",
+   "Bike 16px",
+   "Plane 16px",
+   "Hành tinh 16px"
+  ],
+  "quickAll": null,
+  "smallHud": [],
+  "menu": {
+   "tiles": 23,
+   "en": 23,
+   "minFs": 15,
+   "over": 0,
+   "sample": [
+    "Mini GamesTrò chơi",
+    "AI CoachHuấn luyện viên AI",
+    "MapBản đồ",
+    "EventsSự kiện",
+    "TimeThời gian",
+    "ShopCửa hàng"
+   ],
+   "chips": [
+    "Spring · Xuân 13px",
+    "Windy · Gió 13px",
+    "19:22 ×10 13px"
+   ],
+   "pageOver": false
+  },
+  "menuSmall": [
+   "13px SPAN: Spring · Xuân",
+   "13px SPAN: Windy · Gió",
+   "13px SPAN: 19:22 ×10",
+   "15px B: Mini Games",
+   "11.5px SMALL: Trò chơi",
+   "15px B: AI Coach",
+   "11.5px SMALL: Huấn luyện viên AI",
+   "15px B: Map",
+   "11.5px SMALL: Bản đồ",
+   "15px B: Events",
+   "11.5px SMALL: Sự kiện",
+   "15px B: Time",
+   "11.5px SMALL: Thời gian",
+   "15px B: Shop",
+   "11.5px SMALL: Cửa hàng",
+   "15px B: My Home",
+   "11.5px SMALL: Nhà tôi",
+   "15px B: Market",
+   "11.5px SMALL: Chợ",
+   "15px B: Quests",
+   "11.5px SMALL: Nhiệm vụ",
+   "15px B: Leaderboard",
+   "11.5px SMALL: Xếp hạng",
+   "15px B: Pirate Port",
+   "11.5px SMALL: Bến hải tặc",
+   "15px B: Emotes",
+   "11.5px SMALL: Biểu cảm",
+   "15px B: Profile",
+   "11.5px SMALL: Hồ sơ",
+   "15px B: Online",
+   "11.5px SMALL: Chơi cùng bạn",
+   "15px B: Settings",
+   "11.5px SMALL: Cài đặt",
+   "15px B: Airplane",
+   "11.5px SMALL: Máy bay",
+   "15px B: Fire Station",
+   "11.5px SMALL: 🚒 Trạm cứu hỏa 114",
+   "15px B: Police",
+   "11.5px SMALL: 🚓 Đồn cảnh sát 113"
+  ],
+  "menuTile": [
+   14,
+   162,
+   115,
+   97
+  ],
+  "menu2Small": [
+   "13px SPAN: Spring · Xuân",
+   "13px SPAN: Windy · Gió",
+   "13px SPAN: 19:22 ×10",
+   "13px SMALL: Trò chơi",
+   "14px B: Brain",
+   "11px SMALL: Trí tuệ",
+   "14px B: Sports",
+   "11px SMALL: Thể thao",
+   "14px B: Play",
+   "11px SMALL: Vui chơi",
+   "14px B: Music & Art",
+   "11px SMALL: Nhạc & vẽ",
+   "14px B: Life",
+   "11px SMALL: Cuộc sống",
+   "15px B: Chess",
+   "11.5px SMALL: Cờ vua",
+   "15px B: Rubik's Cube",
+   "11.5px SMALL: Rubik 3D",
+   "15px B: Chess Tables",
+   "11.5px SMALL: Xem 5 bàn cờ",
+   "15px B: Gomoku",
+   "11.5px SMALL: Cờ caro",
+   "15px B: Go",
+   "11.5px SMALL: Cờ vây",
+   "15px B: Academy",
+   "11.5px SMALL: Học viện",
+   "15px B: Library",
+   "11.5px SMALL: Thư viện",
+   "15px B: 2-Player Games",
+   "11.5px SMALL: Game 2 người"
+  ],
+  "menu2": [
+   "BrainTrí tuệ",
+   "SportsThể thao",
+   "PlayVui chơi",
+   "Music & ArtNhạc & vẽ",
+   "LifeCuộc sống"
+  ],
+  "luongSmall": [],
+  "caySmall": [],
+  "treas": [
+   {
+    "i": 1,
+    "got": "Vỏ sò cầu vồng",
+    "items": 1,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu."
+   },
+   {
+    "i": 2,
+    "got": "Ngọc trai",
+    "items": 2,
+    "toast": "🎁 Kho báu! Bạn câu được 🦪 Ngọc trai. Ngọc trai hình thành khi một hạt cát lọt vào con trai, trai tiết xà cừ bọc lại nhiều năm."
+   },
+   {
+    "i": 3,
+    "got": "Đồng xu cổ",
+    "items": 3,
+    "toast": "🎁 Kho báu! Bạn câu được 🪙 Đồng xu cổ. Đồng xu cổ giúp nhà khảo cổ biết người xưa buôn bán thế nào."
+   },
+   {
+    "i": 4,
+    "got": "Ngọc trai",
+    "items": 4,
+    "toast": "🎁 Kho báu! Bạn câu được 🦪 Ngọc trai. Ngọc trai hình thành khi một hạt cát lọt vào con trai, trai tiết xà cừ bọc lại nhiều năm."
+   },
+   {
+    "i": 5,
+    "got": "Vỏ sò cầu vồng",
+    "items": 5,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu."
+   },
+   {
+    "i": 6,
+    "got": "Vỏ sò cầu vồng",
+    "items": 6,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu."
+   },
+   {
+    "i": 7,
+    "got": "Sao biển vàng",
+    "items": 7,
+    "toast": "🎁 Kho báu! Bạn câu được ⭐ Sao biển vàng. Sao biển có thể mọc lại cánh bị mất. (Bạn chụp ảnh rồi giữ làm kỷ niệm nhé.)"
+   },
+   {
+    "i": 8,
+    "got": "Vỏ sò cầu vồng",
+    "items": 8,
+    "toast": "🎁 Kho báu! Bạn câu được 🐚 Vỏ sò cầu vồng. Vỏ sò làm từ canxi, lớp xà cừ bên trong phản chiếu ánh sáng thành bảy màu."
+   }
+  ],
+  "treasReal": {
+   "got": 1,
+   "same": false,
+   "last": {
+    "n": "Mực ống",
+    "w": 0.31
+   }
+  },
+  "chip": null,
+  "fps": {
+   "avg": 59,
+   "min": 20
+  },
+  "fpsWalk": {
+   "avg": 60,
+   "min": 60
+  },
+  "logs": []
+ },
+ "land": {
+  "rect": {
+   "quick": null,
+   "mini": [
+    758,
+    6,
+    76,
+    76
+   ],
+   "mtrack": null,
+   "prof": [
+    8,
+    6,
+    390,
+    51
+   ],
+   "col": [
+    10,
+    125,
+    75,
+    252
+   ],
+   "mentor": [
+    96,
+    289,
+    260,
+    77
+   ],
+   "lamp": [
+    15,
+    125,
+    65,
+    57
+   ],
+   "menuBtn": [
+    8,
+    67,
+    46,
+    46
+   ],
+   "mis": [
+    784,
+    90,
+    46,
+    46
+   ],
+   "log": [
+    784,
+    142,
+    46,
+    46
+   ],
+   "sound": null,
+   "toi": null,
+   "mlog": null,
+   "toast": [
+    211,
+    56,
+    422,
+    59
+   ],
+   "luongNote": null,
+   "cayNote": null,
+   "rodTag": null,
+   "rodCard": [
+    254,
+    -33,
+    162,
+    457
+   ]
+  },
+  "labels": [
+   "Lamp on 16px",
+   "Bike 16px",
+   "Plane 16px",
+   "Hành tinh 16px"
+  ],
+  "quickAll": null,
+  "smallHud": [],
+  "menu": {
+   "tiles": 23,
+   "en": 23,
+   "minFs": 15,
+   "over": 0,
+   "sample": [
+    "Mini GamesTrò chơi",
+    "AI CoachHuấn luyện viên AI",
+    "MapBản đồ",
+    "EventsSự kiện",
+    "TimeThời gian",
+    "ShopCửa hàng"
+   ],
+   "chips": [
+    "Winter · Đông 14px",
+    "Snow · Tuyết rơi 14px",
+    "19:23 ×10 14px"
+   ],
+   "pageOver": false
+  },
+  "menuSmall": [
+   "14px SPAN: Winter · Đông",
+   "14px SPAN: Snow · Tuyết rơi",
+   "14px SPAN: 19:23 ×10",
+   "15px B: Mini Games",
+   "11.5px SMALL: Trò chơi",
+   "15px B: AI Coach",
+   "11.5px SMALL: Huấn luyện viên AI",
+   "15px B: Map",
+   "11.5px SMALL: Bản đồ",
+   "15px B: Events",
+   "11.5px SMALL: Sự kiện",
+   "15px B: Time",
+   "11.5px SMALL: Thời gian",
+   "15px B: Shop",
+   "11.5px SMALL: Cửa hàng",
+   "15px B: My Home",
+   "11.5px SMALL: Nhà tôi",
+   "15px B: Market",
+   "11.5px SMALL: Chợ",
+   "15px B: Quests",
+   "11.5px SMALL: Nhiệm vụ",
+   "15px B: Leaderboard",
+   "11.5px SMALL: Xếp hạng",
+   "15px B: Pirate Port",
+   "11.5px SMALL: Bến hải tặc",
+   "15px B: Emotes",
+   "11.5px SMALL: Biểu cảm"
+  ],
+  "menuTile": [
+   14,
+   143,
+   128,
+   110
+  ],
+  "menu2Small": [
+   "14px SPAN: Winter · Đông",
+   "14px SPAN: Snow · Tuyết rơi",
+   "14px SPAN: 19:23 ×10",
+   "13px SMALL: Trò chơi",
+   "14px B: Brain",
+   "11px SMALL: Trí tuệ",
+   "14px B: Sports",
+   "11px SMALL: Thể thao",
+   "14px B: Play",
+   "11px SMALL: Vui chơi",
+   "14px B: Music & Art",
+   "11px SMALL: Nhạc & vẽ",
+   "14px B: Life",
+   "11px SMALL: Cuộc sống",
+   "15px B: Chess",
+   "11.5px SMALL: Cờ vua",
+   "15px B: Rubik's Cube",
+   "11.5px SMALL: Rubik 3D",
+   "15px B: Chess Tables",
+   "11.5px SMALL: Xem 5 bàn cờ",
+   "15px B: Gomoku",
+   "11.5px SMALL: Cờ caro",
+   "15px B: Go",
+   "11.5px SMALL: Cờ vây",
+   "15px B: Academy",
+   "11.5px SMALL: Học viện"
+  ],
+  "menu2": [
+   "BrainTrí tuệ",
+   "SportsThể thao",
+   "PlayVui chơi",
+   "Music & ArtNhạc & vẽ",
+   "LifeCuộc sống"
+  ],
+  "luongSmall": [],
+  "caySmall": [],
+  "fps": {
+   "avg": 59,
+   "min": 20
+  },
+  "fpsWalk": {
+   "avg": 60,
+   "min": 60
+  },
+  "logs": []
+ }
+}
