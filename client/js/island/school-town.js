@@ -2,9 +2,9 @@
 // Chạy ĐỘC LẬP (không còn iframe game 2D): bản đồ, giờ học, 21 bạn & thầy cô, NPC lấy từ lớp dữ liệu riêng island/data/
 // (docs/3d-standalone.md). Module này dựng lại bằng 3D:
 //   - Nền theo vùng (sân trường, sân bóng, bãi biển, nông trại…), tường các lớp có chừa cửa, nhà ở → buildGreybox()
-//   - Cửa vào (77 cửa): đứng gần bấm E/nút → mở mini game 3D (mg/host.js); cửa chưa có bản 3D → "Sắp mở" → doors
+//   - Cửa vào (77 cửa): đứng gần bấm E/nút → mở mini game 3D (mg/host.js), chơi tại chỗ → doors
 //   - Học sinh, thầy cô, khách du lịch đi lại theo thời khóa biểu → updatePeople()
-//   - Cầu nối đảo ↔ trường; nút "🏫 Đến trường"; giờ trong ngày theo đồng hồ của trường
+//   - Cầu nối đảo ↔ trường; nút "🏫 Đến trường" (dịch chuyển tới cổng); giờ trong ngày theo đồng hồ của trường
 // Toạ độ: 2D (x, y) pixel → 3D qua layout.js (bản đồ 2D cắt thành khối, đặt quanh đảo; cổng trường ở giữa thế giới).
 import * as THREE from 'three';
 import { toon, gradientMap } from './style.js';
@@ -132,17 +132,16 @@ export function createSchoolTown(ctx) {
     town.ready = true; if (ctx.toast && (!ctx.zoneId || ctx.zoneId === 'A')) { ctx.zoneGreeted = 'A'; ctx.toast('🏫 Chào mừng đến Trường Rubik! Các khu vui chơi nằm quanh đảo — đi bộ khám phá nhé', 5500); }
   }
 
-  // ---------- Mở cửa → mini game 3D (mg/host.js); chưa có bản 3D → "Sắp mở" (không mở game 2D nữa) ----------
+  // ---------- Mở cửa → mini game 3D chơi tại chỗ (mg/host.js); mọi cửa trong data/map.js đều có game ----------
   let nearDoor = null, nameTag = null;
-  const title = d => d.n.replace(/^Nói chuyện với /, '').split('·')[0].trim();
   town.enter = q => {
     const k = doorKey(ctx, q.d);
     const go = () => { if (k && ctx.mg && ctx.miniGames && ctx.miniGames[k] && ctx.mg.start(k, q)) { ctx.sfx && ctx.sfx('ok'); return; }
-      ctx.toast(`🚧 <b>${q.d.n}</b><br>Sắp mở — bản 3D đang được xây. Ghé lại sau nhé!`, 3500); };
+      ctx.toast(`<b>${q.d.n}</b>`, 2100); };
     // có bản 3D: chủ trò nói 2–3 câu + 1 câu hỏi khởi động (teacher-quiz.js) rồi mới vào
     if (k && ctx.miniGames && ctx.miniGames[k] && ctx.teacherQuiz && ctx.teacherQuiz.intro) ctx.teacherQuiz.intro(k, { x: q.x, z: q.z, y: TOWN_Y }, go); else go();
   };
-  // 📚 Menu trường (3D): các mini game 3D đã mở → bấm để tới cửa & vào chơi
+  // 🎮 Mini game (menu ☰): danh sách mini game 3D → bấm để dịch chuyển tới cửa & chơi tại chỗ
   let menuEl = null;
   town.menu = () => {
     if (!town.ready) { ctx.toast('Trường Rubik đang dựng…'); return; }
@@ -158,12 +157,11 @@ export function createSchoolTown(ctx) {
         const q = town.doors.find(q => doorKey(ctx, q.d) === b.dataset.k); if (!q) return; ctx.player.teleport(q.x, q.z + 1.5); ctx.player.pos.y = TOWN_Y; setTimeout(() => town.enter(q), 300); });
     }
     const G = ctx.miniGames || {}, open = Object.keys(G).filter(k => town.doors.some(q => doorKey(ctx, q.d) === k));
-    const soon = new Set(town.doors.filter(q => !G[doorKey(ctx, q.d)]).map(q => title(q.d)));
-    menuEl.innerHTML = `<div class="card"><h3>📚 Trường Rubik</h3><p>${town.clock.label()} · ${town.clock.periodName()}</p><div class="g">${open.map(k => `<button data-k="${k}">${G[k].name || k}</button>`).join('') || '<p>Chưa có mini game 3D.</p>'}</div>
-      <p style="margin-top:13px">🚧 Sắp mở (${soon.size}): ${[...soon].slice(0, 13).join(', ')}${soon.size > 13 ? '…' : ''}</p><button class="x">Đóng</button></div>`;
+    menuEl.innerHTML = `<div class="card"><h3>🎮 Mini game · Đảo Rubik</h3><p>${town.clock.label()} · ${town.clock.periodName()}</p><div class="g">${open.map(k => `<button data-k="${k}">${G[k].name || k}</button>`).join('') || '<p>Chưa có mini game 3D.</p>'}</div>
+      <button class="x">Đóng</button></div>`;
     menuEl.hidden = false; ctx.player.frozen = true;
   };
-  town.goSchool = () => { ctx.player.teleport(SPAWN[0], SPAWN[1]); ctx.player.pos.y = TOWN_Y; ctx.zoneId = ctx.zoneGreeted = 'A'; ctx.toast('🏫 Về lại Trường Rubik!'); };
+  town.goSchool = () => { ctx.player.teleport(SPAWN[0], SPAWN[1]); ctx.player.pos.y = TOWN_Y; ctx.zoneId = ctx.zoneGreeted = 'A'; ctx.toast('🏫 Tới cổng Trường Rubik 3D!'); };   // 🏫: dịch chuyển tới cổng trường
 
   // ---------- Học sinh, thầy cô, khách: lấy vị trí từ mô phỏng của trường ----------
   // (trang phục theo vai trò, pool, hoạt ảnh, tên trên đầu → town-people.js)
@@ -189,7 +187,7 @@ export function createSchoolTown(ctx) {
     // cửa gần nhất
     const p = ctx.player.pos; let best = null, bd = 2.2;
     for (const q of town.doors) { const d = Math.abs(q.x - p.x) + Math.abs(q.z - p.z); if (d < bd) { bd = d; best = q; } }
-    if (best) { const k = doorKey(ctx, best.d), ok = k && ctx.miniGames && ctx.miniGames[k]; ctx.offer((ok ? '🚪 ' : '🚧 ') + best.d.n.split('·')[0].trim() + (ok ? '' : ' · Sắp mở'), () => town.enter(best), 2); }
+    if (best) { const k = doorKey(ctx, best.d), ok = k && ctx.miniGames && ctx.miniGames[k]; ctx.offer((ok ? '🚪 ' : '') + best.d.n.split('·')[0].trim(), () => town.enter(best), 2); }
     if (town.info && Math.abs(town.info.x - p.x) + Math.abs(town.info.z - p.z) < 5) ctx.offer('📜 Đọc bảng φ & π', showInfo, 1);
     // nhãn tên cửa: 1 sprite dùng lại (trước: mỗi cửa mới tạo canvas + texture + vật liệu, không giải phóng → giật + rò bộ nhớ GPU)
     if (best !== nearDoor) { nearDoor = best; if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8, nameTag); else if (nameTag) nameTag.visible = false; }

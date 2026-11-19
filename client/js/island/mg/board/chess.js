@@ -38,7 +38,6 @@ function pieceGeo(t, side) {
 }
 
 async function getChess(ctx) {
-  try { if (ctx.school && ctx.school.win && typeof ctx.school.win.Chess === 'function') return ctx.school.win.Chess; } catch (e) {}
   if (window.Chess) return window.Chess;
   await new Promise((res, rej) => { const s = document.createElement('script'); s.src = '/lib/chess.js'; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
   return window.Chess;

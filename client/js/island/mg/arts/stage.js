@@ -83,7 +83,7 @@ function css() {
 .mga .card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,520px);max-height:80vh;overflow:auto;background:#fff6df;border:3px solid #7a5a2e;border-radius:21px;padding:13px 21px;box-shadow:0 8px 30px #0008;font-size:15px;pointer-events:auto}
 .mga .card h3{margin:0 0 8px;font-size:21px}.mga .card .opts{display:grid;gap:8px;margin-top:13px}
 .mga .sw{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #7a5a2e;padding:0;min-height:0}.mga .sw.on{box-shadow:0 0 0 4px #e0564a}
-body.mga-open>*:not(.mga):not(canvas):not(iframe):not(style):not(script){visibility:hidden!important}
+body.mga-open>*:not(.mga):not(canvas):not(style):not(script){visibility:hidden!important}
 .mga.inw{z-index:29}.mga.inw .ttl,.mga.inw .x,.mga.inw .top .sc{display:none}
 .mga.inw .top{top:calc(max(8px,env(safe-area-inset-top)) + 55px)}.mga.inw .tip{top:calc(max(8px,env(safe-area-inset-top)) + 107px)}
 @media (max-width:600px){.mga button{padding:6px 10px}.mga .ttl{display:none}.mga:not(.inw) .tip{top:calc(max(8px,env(safe-area-inset-top)) + 96px)}}`;

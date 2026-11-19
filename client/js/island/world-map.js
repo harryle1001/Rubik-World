@@ -126,16 +126,13 @@ body.rs-modal #bMap{display:none}`;
   root.querySelector('.zoom').onclick = e => { const z = e.target.dataset.z; if (!z) return; if (z === 'me') focusMe(); else { zoom *= +z; clampView(); } };
   root.querySelector('.x').onclick = () => toggle(false);
   btn.onclick = () => toggle(true);
-  // Phím M do bản đồ 3D tự bắt (pha capture) ở cửa sổ chính VÀ trong iframe trường 2D (nếu còn) — không để lọt sang bản đồ 2D #v32Map.
+  // Phím M mở/đóng bản đồ 3D (pha capture)
   const typing = el => el && (/INPUT|TEXTAREA|SELECT/.test(el.tagName) || el.isContentEditable);
-  const close2D = w => { try { const d = w.document, m = d.querySelector('#v32Map'); if (m && !m.hidden) (w.v32MapClose ? w.v32MapClose() : (m.hidden = true)); const bm = d.querySelector('#mBigMap'); if (bm && !bm.hidden && w.hideModal) w.hideModal(); } catch (e) {} };
   const onKey = w => e => {
-    if (e.code === 'KeyM') { if (typing(e.target) || typing(w.document.activeElement)) return; e.preventDefault(); e.stopImmediatePropagation(); if (e.repeat) return; if (w !== window) { close2D(w); try { w.document.activeElement?.blur(); } catch (er) {} window.focus(); } toggle(); }
+    if (e.code === 'KeyM') { if (typing(e.target) || typing(w.document.activeElement)) return; e.preventDefault(); e.stopImmediatePropagation(); if (e.repeat) return; toggle(); }
     else if (e.code === 'Escape' && open) { e.preventDefault(); e.stopImmediatePropagation(); toggle(false); }
   };
   addEventListener('keydown', onKey(window), true);
-  let hooked = null;
-  const hookFrame = () => { const w = ctx.school && ctx.school.win; if (!w || w === hooked) return; try { w.addEventListener('keydown', onKey(w), true); hooked = w; } catch (e) {} };
   // kéo / chụm 2 ngón / lăn chuột
   const pts = new Map(); let pinch = 0, moved = 0;
   cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; pinch = 0; });
@@ -175,7 +172,7 @@ body.rs-modal #bMap{display:none}`;
   function toggle(v = !open) {
     if (v === open) return; open = v; ctx.mapOpen = v; root.hidden = !v; tip = null;
     if (v) {
-      ctx.sfx && ctx.sfx('ui'); if (ctx.school && ctx.school.win) close2D(ctx.school.win);
+      ctx.sfx && ctx.sfx('ui');
       if (!baseDone || (!baseTown && ctx.school && ctx.school.RS)) buildBase();
       placeList = places().sort((a, b) => (b.ic ? 1 : 0) - (a.ic ? 1 : 0));   // biểu tượng giữ chỗ trước, chữ to tự né focusMe(opts.near ? 4 : zoom); frozenBefore = ctx.player.frozen; ctx.player.frozen = true;
     } else ctx.player.frozen = frozenBefore;
@@ -216,7 +213,7 @@ body.rs-modal #bMap{display:none}`;
   }
   let lastT = performance.now();
   function update() {
-    hookFrame(); const now = performance.now(); scanDex(Math.min(0.1, (now - lastT) / 1000)); scanZone(Math.min(0.1, (now - lastT) / 1000)); lastT = now;
+    const now = performance.now(); scanDex(Math.min(0.1, (now - lastT) / 1000)); scanZone(Math.min(0.1, (now - lastT) / 1000)); lastT = now;
     if (!open) return;
     const dpr = Math.min(devicePixelRatio, 2), w = W(), h = H();
     if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
