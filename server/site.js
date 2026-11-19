@@ -156,7 +156,7 @@ ${posts().length ? `<section style="padding-top:0"><div class="w"><h2>Góc phụ
 <details><summary>Dữ liệu của con được bảo vệ thế nào?</summary><p>Không cần email của trẻ. Dữ liệu học tập chỉ dùng để làm báo cáo cho bố mẹ, xử lý theo Nghị định 13/2023/NĐ-CP. Xem <a href="/privacy">Chính sách bảo mật</a>.</p></details></div></section>
 <div class="w">${adSlot()}</div>
 <section class="dark" style="text-align:center"><div class="w"><h2>Sẵn sàng lên đảo?</h2><p class="sub" style="margin:0 auto 34px">Không cần tài khoản để thử. Bố mẹ có thể chơi cùng con 21 phút đầu tiên.</p><a class="b gold" href="/">▶ Chơi ngay</a></div></section>`;
-    send(res, page(req, { title: `${NAME} — Game thế giới mở 3D học mà chơi cho học sinh tiểu học`, desc: 'Đảo Rubik: thế giới mở 3D miễn phí, học Toán, Tiếng Việt, Tiếng Anh, Khoa học qua phiêu lưu. Không quảng cáo trong game, không chat tự do, có báo cáo học tập cho bố mẹ.', p: '/gioi-thieu', body, ads: true, ld }));
+    send(res, page(req, { title: `${NAME} — Game 3D học mà chơi cho học sinh tiểu học`, desc: 'Thế giới mở 3D miễn phí: học Toán, Tiếng Việt, Tiếng Anh, Khoa học qua phiêu lưu. Game không quảng cáo, không chat tự do, có báo cáo học tập cho bố mẹ.', p: '/gioi-thieu', body, ads: true, ld }));
   });
 
   // ---------- Góc phụ huynh (blog) ----------
