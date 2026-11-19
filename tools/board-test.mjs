@@ -10,13 +10,14 @@ const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=sw
 const page = await browser.newPage(MOBILE ? { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Mobile' } : { viewport: { width: 1280, height: 720 } });
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
-await page.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); localStorage.setItem('island.grade', '3'); } catch (e) {} });
+await page.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); localStorage.setItem('island.intro', '1'); localStorage.setItem('island.grade', '3'); } catch (e) {} });
 await page.goto('http://localhost:3000/ocean.html');
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready && __island.player.hero, null, { timeout: 300000 });
 await page.locator('#accBox button[data-a="guest"]').first().click({ timeout: 60000 }).catch(() => {});
   await page.waitForTimeout(500); await page.evaluate(() => document.getElementById('accBox') && document.getElementById('accBox').remove());
-  await page.waitForFunction(() => document.body.classList.contains('st-cut'), null, { timeout: 90000 }).catch(() => {});
-  for (let k = 0; k < 20 && await page.evaluate(() => document.body.classList.contains('st-cut')); k++) { await page.keyboard.press('Escape'); await page.waitForTimeout(600); }   // đoạn dẫn chuyện chương 1 tự mở lần đầu → bỏ qua
+  // cốt truyện (story/): thoại tự bật lần đầu sẽ giành camera → tự bỏ qua bằng Esc (chỉ khi khung thoại đang hiện)
+  await page.evaluate(() => setInterval(() => { if (document.getElementById('stSay') && document.body.classList.contains('st-cut')) dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape', bubbles: true })); }, 400));
+  await page.waitForTimeout(9000);
   await page.waitForFunction(() => !document.body.classList.contains('st-cut') && !__island.freeCam, null, { timeout: 20000 }).catch(() => {});
 await page.waitForFunction(() => !__island.player.frozen && !__island.loading.veil, null, { timeout: 60000 }).catch(() => {});
 await page.evaluate(() => Object.defineProperty(__island.sky.state, 'hour', { get: () => 10, set() {}, configurable: true }));
@@ -28,16 +29,18 @@ await page.evaluate(() => { const c = __island, i = c.renderer.info, o = c.post.
 const calls = () => page.evaluate(() => window.__calls);
 const B = fn => page.evaluate(fn);
 const log = {};
+// trạng thái nhân vật trên ván (có hiện không, đang là mẫu nào) — để bắt lỗi "người biến mất"
+const hero = () => page.evaluate(() => { const c = __island, P = c.player, h = P.hero, m = h.model; let meshes = 0, shown = 0; m.traverse(o => { if (o.isMesh) { meshes++; let v = true; for (let q = o; q; q = q.parent) if (!q.visible) v = false; if (v) shown++; } }); return { vrm: !!h.isVrm, meshes, shown, attached: m.parent === P.root, y: +m.getWorldPosition(new c.camera.position.constructor()).y.toFixed(2), boardY: +c.silverBoard.pos.y.toFixed(2), others: c.net.others.size }; });
 // 1. gọi ván (nút 🏄 / phím U)
 if (MOBILE) await page.locator('#bBoard').tap(); else await page.keyboard.press('KeyU');
-await page.waitForTimeout(1500); log.riding = await B(() => __island.silverBoard.riding); log.callsTown = await calls(); await shot('01-goi-van');
+await page.waitForTimeout(1500); log.riding = await B(() => __island.silverBoard.riding); log.callsTown = await calls(); log.hero1 = await hero(); await shot('01-goi-van');
 // 2. bay qua thị trấn (tự lái thẳng, không xuyên nhà)
 await B(() => { const b = __island.silverBoard; b.S.auto = () => ({ z: -1 }); });
 await page.waitForTimeout(4000); await shot('02-luot-pho'); log.spd = await B(() => +__island.silverBoard.speed.toFixed(1));
 await B(() => { const b = __island.silverBoard; b.S.auto = () => ({ z: -1, x: 1, boost: true }); }); await page.waitForTimeout(1300); await shot('03-cua-nghieng');
 // 3. lướt biển: đặt ván ra bờ nam, lướt sát mặt nước
 await B(() => { const b = __island.silverBoard; b.place(40, 1, 330, Math.PI / 2); b.S.auto = () => ({ z: -1, boost: true }); });
-await page.waitForTimeout(3500); await shot('04-luot-bien'); log.callsSea = await calls();
+await page.waitForTimeout(3500); await shot('04-luot-bien'); log.callsSea = await calls(); log.hero4 = await hero();
 // 4. nhào lộn
 await B(() => __island.silverBoard.trick('flip')); await page.waitForTimeout(330); await shot('05-lon-vong');
 await page.waitForTimeout(900); await B(() => __island.silverBoard.trick('spin')); await page.waitForTimeout(300); await shot('06-xoay-360');
