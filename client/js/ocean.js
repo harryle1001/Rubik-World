@@ -32,6 +32,7 @@ import { createLiving } from './island/living.js';
 import { createSkyshow } from './island/skyshow.js';
 import { createDive } from './island/dive.js';
 import { createPerf } from './island/perf.js';
+import { createFeel } from './island/feel.js';
 import { createAutoQ, SK } from './island/autoq.js';
 import { createMiniGameHost } from './island/mg/host.js';
 import { createAccountHud } from './island/account-hud.js';
@@ -130,6 +131,7 @@ const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + ti
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 const mounts = createMounts(ctx);
+const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, xu bay vào HUD, màn chuyển, tên vùng điện ảnh (feel.js)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -198,6 +200,7 @@ renderer.setAnimationLoop(() => {
   schoolYard.update(dt);
   lessons.update(dt);
   quests.update(dt);
+  feel.update(dt);
   ctx.flushOffer();
   brightness.update();
   tutorial.update(dt);

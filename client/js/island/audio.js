@@ -156,7 +156,7 @@ export function createAudio(ctx) {
     // THREE.Audio.setVolume = 1 sự kiện setTargetAtTime mỗi lần gọi → chỉ gọi khi âm lượng đổi thật (trước: mỗi khung, hàng đợi tự động hoá AudioParam phình ra)
     if (nightMusic.buffer) vol(nightMusic, 0.22 * st.night);
     // NHẠC THÍCH ỨNG: hoạt động (bay/tàu/phép thuật) > khu (khu nhỏ thắng khu lớn) · ngày/đêm · crossfade ~φ² s giữa các bản
-    const act = activity(), V = ctx.player.vehicle, sp = ctx.player.speed || 0;
+    const act = activity(), V = ctx.player.vehicle, sp0 = ctx.moveSpeed ?? ctx.player.speed, sp = Number.isFinite(sp0) ? sp0 : 0;
     let best = null, bs = Infinity; for (const m of musics) { const d = Math.hypot(m.x - p.x, m.z - p.z); if (d < m.r && m.r < bs) { bs = m.r; best = m; } }
     let file = null, want = 0, nightMul = 1;
     if (ACT_MUSIC[act]) { file = ACT_MUSIC[act]; want = 0.3; nightMul = 0.4; }
