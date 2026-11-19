@@ -6,6 +6,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { PHI, to3 } from '../../layout.js';
+import { quickQuiz } from '../quick-quiz.js';
 
 const C = PHI * PHI, TOP = 0.3;           // cạnh ô, mặt bàn
 const NAME = { p: 'Tốt', n: 'Mã', b: 'Tượng', r: 'Xe', q: 'Hậu', k: 'Vua' };
@@ -51,17 +52,26 @@ function evalBoard(g) {
     let v = PV[p.type] + (p.type === 'n' || p.type === 'b' ? cen * 8 : p.type === 'p' ? adv * 6 + cen * 3 : p.type === 'k' ? -cen * 6 : cen * 2); s += p.color === 'w' ? v : -v; }
   return s;
 }
-function search(g, d, a, b, max) {
-  if (d === 0 || g.game_over()) { if (g.in_checkmate()) return max ? -99999 - d : 99999 + d; if (g.game_over()) return 0; return evalBoard(g); }
+function search(g, d, a, b, max, q) {
+  if (d === 0 || g.game_over()) { if (g.in_checkmate()) return max ? -99999 - d : 99999 + d; if (g.game_over()) return 0; return q ? quiet(g, a, b, max, 2) : evalBoard(g); }
   const ms = g.moves(); ms.sort((x, y) => (y.includes('x') ? 1 : 0) - (x.includes('x') ? 1 : 0));
-  for (const m of ms) { g.move(m); const v = search(g, d - 1, a, b, !max); g.undo(); if (max) { if (v > a) a = v; } else if (v < b) b = v; if (a >= b) break; }
+  for (const m of ms) { g.move(m); const v = search(g, d - 1, a, b, !max, q); g.undo(); if (max) { if (v > a) a = v; } else if (v < b) b = v; if (a >= b) break; }
   return max ? a : b;
 }
-function bestMove(g, depth, noise) {
+// mức khó: ở lá chỉ xét tiếp nước ĂN QUÂN (tối đa 2 lớp) → không "treo" quân vô cớ
+function quiet(g, a, b, max, n) {
+  const sp = evalBoard(g); if (!n) return sp;
+  if (max) { if (sp >= b) return sp; if (sp > a) a = sp; } else { if (sp <= a) return sp; if (sp < b) b = sp; }
+  for (const m of g.moves()) { if (!m.includes('x')) continue; g.move(m); const v = quiet(g, a, b, !max, n - 1); g.undo(); if (max) { if (v > a) a = v; } else if (v < b) b = v; if (a >= b) break; }
+  return max ? a : b;
+}
+// Tìm nước tốt nhất, mỗi nước gốc 1 lượt (nhường khung hình giữa các lượt): trước đây tính liền 0,5–2 s → khựng hình trên điện thoại
+async function bestMove(g, depth, noise, q = false) {
   const max = g.turn() === 'w'; let best = null, bv = max ? -1e9 : 1e9;
-  for (const m of g.moves({ verbose: true })) { g.move(m); const v = search(g, depth - 1, -1e9, 1e9, !max) + (Math.random() - 0.5) * noise; g.undo(); if (max ? v > bv : v < bv) { bv = v; best = m; } }
+  for (const m of g.moves({ verbose: true })) { g.move(m); const v = search(g, depth - 1, -1e9, 1e9, !max, q) + (Math.random() - 0.5) * noise; g.undo(); if (max ? v > bv : v < bv) { bv = v; best = m; } if (depth > 1) await new Promise(r => setTimeout(r, 0)); }
   return best;
 }
+const LV = { easy: [1, 260], medium: [2, 40], hard: [2, 0, true] };   // độ sâu, nhiễu (cho trẻ: Dễ hay sơ hở), quiescence
 
 export function chessSpot(ctx) {   // khu chơi cạnh công viên cờ khổng lồ (bắc trường)
   const [px, pz] = to3(340, -280), [x, z] = ctx.mg.findSpot(px, pz, 15);
@@ -87,8 +97,13 @@ export function startChess(ctx, { api }) {
   const _o = new THREE.Object3D(), _c = new THREE.Color();
   function setMarks(list) { marks.count = list.length; list.forEach(([sq, col, s = 1], i) => { const [x, z] = sqPos(sq); _o.position.set(x, TOP + 0.02, z); _o.scale.setScalar(s); _o.updateMatrix(); marks.setMatrixAt(i, _o.matrix); marks.setColorAt(i, _c.set(col)); }); marks.instanceMatrix.needsUpdate = true; if (marks.instanceColor) marks.instanceColor.needsUpdate = true; }
   // ---------- Quân cờ ----------
-  const pmat = M('#ffffff', { vertexColors: true }), pieces = new Map(), dead = { w: 0, b: 0 }, tweens = [];
-  function makePiece(t, side, sq) { const m = new THREE.Mesh(pieceGeo(t, side), pmat); m.castShadow = true; const [x, z] = sqPos(sq); m.position.set(x, TOP, z); m.rotation.y = side === 'w' ? 0 : Math.PI; m.userData = { t, side }; root.add(m); pieces.set(sq, m); return m; }
+  // tất cả quân trong 1 BatchedMesh (1 lần vẽ, trước: 32 mesh + 32 bóng); mỗi quân là 1 Object3D "bóng ma" để tween, đồng bộ ma trận mỗi khung
+  const pmat = M('#ffffff', { vertexColors: true }), pieces = new Map(), dead = { w: 0, b: 0 }, tweens = [], ghosts = new Set();
+  const gid = {}; let nv = 0; for (const t of 'pnbrqk') for (const sd of 'wb') nv += pieceGeo(t, sd).attributes.position.count;
+  const batch = new THREE.BatchedMesh(48, nv, 0, pmat); batch.castShadow = true; batch.frustumCulled = false; root.add(batch);
+  for (const t of 'pnbrqk') for (const sd of 'wb') gid[t + sd] = batch.addGeometry(pieceGeo(t, sd));
+  function makePiece(t, side, sq) { const m = new THREE.Object3D(); m.userData = { t, side, id: batch.addInstance(gid[t + side]) }; const [x, z] = sqPos(sq); m.position.set(x, TOP, z); m.rotation.y = side === 'w' ? 0 : Math.PI; ghosts.add(m); pieces.set(sq, m); return m; }
+  const dropPiece = m => { if (ghosts.delete(m)) batch.deleteInstance(m.userData.id); };
   const tween = (dur, fn) => new Promise(res => tweens.push({ t: 0, dur, fn, res }));
   const wait = s => tween(s, () => {});
   async function hop(m, to, high) {
@@ -103,7 +118,7 @@ export function startChess(ctx, { api }) {
     m.rotation.z = 0;
   }
   // ---------- Luật + lượt ----------
-  let G = null, sel = null, busy = true, last = null, score = 0, t0 = 0, over = false, hint = null;
+  let secShown = -1, G = null, sel = null, busy = true, last = null, score = 0, t0 = 0, over = false, hint = null;
   const actors = { w: me, b: null }, fans = [];
   const standAt = (sq, side) => { const [x, z] = sqPos(sq); return [x + 0.55 * C * (side === 'w' ? 1 : -1), z + 0.5 * C * (side === 'w' ? 1 : -1)]; };
   async function play(mv) {
@@ -114,7 +129,7 @@ export function startChess(ctx, { api }) {
     if (cap && pieces.get(cap)) { const v = pieces.get(cap); pieces.delete(cap); knockOut(v); if (side === 'w') { score += VAL[mv.captured]; hud.score(score); fans.forEach(f => f.emote('cheer')); fans[0] && fans[0].say(['Hay quá!', 'Ăn quân rồi!', 'Tuyệt!'][(Math.random() * 3) | 0]); } else me.emote('no'); }
     pieces.delete(mv.from); pieces.set(mv.to, m); await hop(m, mv.to, mv.piece === 'n');
     if (mv.flags.includes('k') || mv.flags.includes('q')) { const rk = mv.flags.includes('k'), rf = (rk ? 'h' : 'a') + mv.from[1], rt = (rk ? 'f' : 'd') + mv.from[1], rm = pieces.get(rf); pieces.delete(rf); pieces.set(rt, rm); await hop(rm, rt, false); }
-    if (mv.promotion) { root.remove(m); const q = makePiece(mv.promotion, side, mv.to); q.scale.setScalar(0.01); await tween(0.4, k => q.scale.setScalar(Math.max(0.01, k * 1.15 - Math.sin(Math.PI * k) * 0.05))); q.scale.setScalar(1); hud.msg('👑 Tốt phong Hậu!', 2200); }
+    if (mv.promotion) { dropPiece(m); const q = makePiece(mv.promotion, side, mv.to); q.scale.setScalar(0.01); await tween(0.4, k => q.scale.setScalar(Math.max(0.01, k * 1.15 - Math.sin(Math.PI * k) * 0.05))); q.scale.setScalar(1); hud.msg('👑 Tốt phong Hậu!', 2200); }
     if (A) { const [x, z] = standAt(mv.to, side); A.walkTo(x, z); }
     last = mv; setMarks([[mv.from, '#ffd36e', 1.6], [mv.to, '#ffd36e', 1.6]]);
     const san = mv.san;
@@ -127,7 +142,7 @@ export function startChess(ctx, { api }) {
   function aiTurn() {
     if (over || !G) return;
     if (actors.b) actors.b.say(['Để ông nghĩ…', 'Hừm…', 'À ha!'][(Math.random() * 3) | 0], 1500);
-    setTimeout(() => { if (over || !G) return; const mv = level === 'easy' ? bestMove(G, 1, 140) : bestMove(G, 2, 20); if (!mv) return; G.move(mv); play(mv); }, 600);
+    setTimeout(async () => { if (over || !G) return; const L = LV[level] || LV.easy, mv = await bestMove(G, L[0], L[1], L[2]); if (!mv || over || !G) return; G.move(mv); play(mv); }, 600);
   }
   function finish(win) {
     over = true; busy = true; const t = Math.round(performance.now() / 1000 - t0);
@@ -156,11 +171,11 @@ export function startChess(ctx, { api }) {
     else { sel = null; setMarks(last ? [[last.from, '#ffd36e', 1.6], [last.to, '#ffd36e', 1.6]] : []); }
   }
   // ---------- HUD ----------
-  const lvBtns = [['easy', '🙂 Dễ'], ['medium', '🤔 Vừa']].map(([lv, t]) => { const b = hud.button(t, () => { if (level === lv) return; level = lv; try { localStorage.setItem('mg.chess.level', lv); } catch (e) {} api.restart(); }); b.classList.toggle('on', level === lv); return b; });
-  hud.button('💡 Gợi ý', () => { if (busy || over || !G) return; const mv = bestMove(G, 2, 0); if (!mv) return; hint = mv; sel = null; setMarks([[mv.from, '#4fc3ff', 1.7], [mv.to, '#b48cff', 1.7]]); hud.msg(`💡 Thử: <b>${NAME[mv.piece]} ${mv.from} → ${mv.to}</b> (${mv.san})`, 3500); });
+  const lvBtns = [['easy', '🙂 Dễ'], ['medium', '🤔 Vừa'], ['hard', '🔥 Khó']].map(([lv, t]) => { const b = hud.button(t, () => { if (level === lv) return; level = lv; try { localStorage.setItem('mg.chess.level', lv); } catch (e) {} api.restart(); }); b.classList.toggle('on', level === lv); return b; });
+  hud.button('💡 Gợi ý', async () => { if (busy || over || !G) return; busy = true; const ok = await quickQuiz(api, ['toan'], '💡 Trả lời đúng để mở gợi ý'); if (!ok || over || !G) { busy = false; return; } const mv = await bestMove(G, 2, 0); busy = false; if (!mv) return; hint = mv; sel = null; setMarks([[mv.from, '#4fc3ff', 1.7], [mv.to, '#b48cff', 1.7]]); hud.msg(`💡 Thử: <b>${NAME[mv.piece]} ${mv.from} → ${mv.to}</b> (${mv.san})`, 3500); });
   hud.button('↩ Đi lại', () => {
     if (busy || over || !G || G.history().length < 2) return; G.undo(); G.undo(); sel = null; last = null; setMarks([]);
-    for (const m of pieces.values()) root.remove(m); pieces.clear(); dead.w = dead.b = 0; build(); hud.msg('Đã đi lại 1 nước.', 1500);
+    for (const m of [...ghosts]) dropPiece(m); pieces.clear(); dead.w = dead.b = 0; build(); hud.msg('Đã đi lại 1 nước.', 1500);
   });
   function build() { const B = G.board(); for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) { const p = B[i][j]; if (p) makePiece(p.type, p.color, String.fromCharCode(97 + j) + (8 - i)); } }
   // ---------- Nhân vật ----------
@@ -173,15 +188,16 @@ export function startChess(ctx, { api }) {
   getChess(ctx).then(Chess => {
     if (!Chess) { hud.msg('Không tải được luật cờ (chess.js).', 0); return; }
     G = new Chess(); build(); busy = false; t0 = performance.now() / 1000;
-    hud.score(0); hud.msg(`Bạn cầm quân <b>trắng</b>, đi trước. Chạm một quân để xem cách đi. (${level === 'easy' ? 'Mức dễ' : 'Mức vừa'})`, 4500);
+    hud.score(0); hud.msg(`Bạn cầm quân <b>trắng</b>, đi trước. Chạm một quân để xem cách đi. (${{ easy: 'Mức dễ', medium: 'Mức vừa', hard: 'Mức khó' }[level]})`, 4500);
   }).catch(() => hud.msg('Không tải được luật cờ (chess.js).', 0));
   return {
     tap,
     update(dt) {
       for (let i = tweens.length - 1; i >= 0; i--) { const w = tweens[i]; w.t += dt; const k = Math.min(1, w.t / w.dur); w.fn(k); if (k >= 1) { tweens.splice(i, 1); w.res(); } }
-      if (G && !over && t0) hud.time(performance.now() / 1000 - t0);
+      if (G && !over && t0) { const s = performance.now() / 1000 - t0 | 0; if (s !== secShown) hud.time(secShown = s); }
       if (sel && pieces.get(sel)) { const m = pieces.get(sel); m.position.y = TOP + Math.abs(Math.sin(performance.now() / 180)) * 0.35; }
       for (const [sq, m] of pieces) if (sq !== sel && !tweens.length) m.position.y = TOP;
+      for (const m of ghosts) { m.updateMatrix(); batch.setMatrixAt(m.userData.id, m.matrix); }
     },
     dispose() { tweens.length = 0; over = true; G = null; },
   };
