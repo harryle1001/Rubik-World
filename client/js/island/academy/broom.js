@@ -99,7 +99,7 @@ export function createBroom(ctx, magic, { Y, toWorld, toLocal }) {
     run = { i: 0, t0: performance.now(), q: 0, ok: 0, wait: false, prev: null, up: 2.6 };
     player.teleport(x, z, Y + 1.5);
     player.vehicle = { speed: 9.5, turn: 1.9, accel: 1.1, fly: true, lift: 4, maxAlt: Y + 34, anim: 'sit', seat: 0.3, seatZ: 0, camAdd: 3 };
-    if (!broomM) loadModel('alley/broom').then(mdl => { if (!mdl) return; broomM = mdl; mdl.scale.setScalar(1.3);   // chổi nằm dọc +z (hướng bay) if (run) player.root.add(mdl); });
+    if (!broomM) loadModel('alley/broom').then(mdl => { if (!mdl) return; broomM = mdl; mdl.scale.setScalar(1.3); if (run) player.root.add(mdl); });   // chổi nằm dọc +z (hướng bay)
     else player.root.add(broomM);
     paint(0); hud(); ctx.sfx && ctx.sfx('magic');
     const own = ctx.wear && ctx.wear.eq && ctx.wear.eq.broom;
