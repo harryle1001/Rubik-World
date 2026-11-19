@@ -24,6 +24,12 @@ body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
   const chip = document.createElement('div'); chip.id = 'accChip'; chip.style.order = 1; chip.setAttribute('role', 'button'); chip.tabIndex = 0; row.appendChild(chip);
   const box = document.createElement('div'); box.id = 'accBox'; box.hidden = true; document.body.appendChild(box);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  // Gói Phụ huynh (premium.js): trạng thái gói + mã liên kết phụ huynh (sau cổng phụ huynh) + mã trường (giấy phép B2B)
+  const KIND = { paid: '⭐ Gói Phụ huynh', trial: '🎁 Dùng thử', school: '🏫 Gói của trường', gift: '🎀 Được tặng' };
+  const planHtml = () => { const e = acc.user && acc.user.plan; if (!e || acc.online === false) return '';
+    return `<p style="margin:0 0 8px;font-weight:700">${e.on ? `${KIND[e.kind] || '⭐'} · đến ${new Date(e.until).toLocaleDateString('vi-VN')}` : '🌱 Đang chơi phần miễn phí'}</p>
+      <div class="row" style="margin-bottom:8px"><button data-a="parent">👪 Mã liên kết phụ huynh</button></div>
+      <details style="margin-bottom:13px;font:600 13px system-ui"><summary>🏫 Trường em có mã Trường Rubik?</summary><div class="row" style="margin-top:8px"><input type="text" id="accLic" maxlength="6" placeholder="Mã trường" style="flex:1 1 55%;text-transform:uppercase"><button data-a="lic">Nhập</button></div><div class="msg"></div></details>`; };
   const render = () => {
     const p = acc.profile;
     chip.innerHTML = p ? `${acc.guest ? '🙂' : '👤'} ${esc(acc.name)} · Lv ${p.level} · 🪙 <b>${p.money | 0}</b>` : '👤 Đăng nhập';
@@ -35,13 +41,13 @@ body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
     const p = acc.profile;
     if (p && !acc.guest) {
       const items = Object.keys(p.inv || {}).length;
-      box.innerHTML = `<div class="card"><h3>👤 ${esc(acc.name)}</h3><p>Tài khoản lưu trên máy này${acc.migrated ? ' (đã chuyển từ Trường Rubik 2D)' : ''}.</p>
+      box.innerHTML = `<div class="card"><h3>👤 ${esc(acc.name)}</h3><p>${acc.cloud ? `☁️ Tiến độ lưu trên máy chủ trường — chơi máy nào cũng được.${acc.user ? ` Mã bạn bè: <b style="letter-spacing:2px">${esc(acc.user.code)}</b>` : ''}` : `Tài khoản lưu trên máy này${acc.migrated ? ' (đã chuyển từ Trường Rubik 2D)' : ''}.`}</p>
         <div class="stat"><div>Cấp độ<b>${p.level}</b></div><div>Xu<b>🪙 ${p.money | 0}</b></div><div>Kinh nghiệm<b>${p.exp | 0}/${acc.needExp(p.level)}</b></div><div>Vật phẩm<b>🎒 ${items}</b></div></div>
-        <div class="row"><button class="pri" data-a="close">Chơi tiếp</button><button data-a="out">Đăng xuất</button></div></div>`;
+        ${acc.cloud ? planHtml() : ''}<div class="row"><button class="pri" data-a="close">Chơi tiếp</button><button data-a="out">Đăng xuất</button></div></div>`;
     } else {
-      box.innerHTML = `<div class="card"><h3 class="brand"><img src="/icons/logo.svg" alt="">Đảo Rubik</h3><p>Đăng nhập để lưu cấp độ, xu và đồ của bạn. Đừng dùng mật khẩu thật ở nơi khác nhé.</p>
+      box.innerHTML = `<div class="card"><h3 class="brand"><img src="/icons/logo.svg" alt="">Đảo Rubik</h3><p>${acc.online ? '☁️ Đăng nhập để lưu tiến độ lên máy chủ trường và chơi cùng bạn bè. Không cần email.' : 'Đăng nhập để lưu cấp độ, xu và đồ của bạn.'} Đừng dùng tên thật đầy đủ hay mật khẩu dùng ở nơi khác nhé.</p>
         <form id="accForm" autocomplete="on" onsubmit="return false"><label for="accName">Tên đăng nhập</label><input type="text" id="accName" name="username" maxlength="20" autocomplete="username" value="${esc(acc.lastName())}">
-        <label for="accPass">Mật khẩu</label><input type="password" id="accPass" name="password" maxlength="40" autocomplete="current-password">
+        <label for="accPass">Mật khẩu <small style="font-weight:600;opacity:.6">(ít nhất 6 ký tự)</small></label><input type="password" id="accPass" name="password" maxlength="40" autocomplete="current-password">
         <label class="rem"><input type="checkbox" id="accKeep" ${acc.nameRemembered() ? 'checked' : ''}> Nhớ tên đăng nhập (lần sau không phải gõ lại)</label>
         <label class="rem" style="margin-top:-5px"><input type="checkbox" id="accRem" checked> Lưu đăng nhập (lần sau vào thẳng, không cần mật khẩu)</label></form>
         <div class="row"><button class="pri" data-a="in">Đăng nhập</button><button data-a="new">Tạo tài khoản</button><button data-a="guest">Chơi khách</button></div>
@@ -56,14 +62,19 @@ body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
     const a = e.target.dataset && e.target.dataset.a; if (!a) { if (e.target === box && acc.profile) close(); return; }
     const msg = box.querySelector('.msg'), v = id => (box.querySelector(id) || {}).value || '', rem = !!(box.querySelector('#accRem') || {}).checked;
     if (a === 'close') return close();
+    if (a === 'parent') { close(); return ctx.premium && ctx.premium.parentGate(); }
+    if (a === 'lic') { const r = await acc.api('/license/join', { code: v('#accLic') }); if (r.error) { msg.textContent = r.error; return; } if (acc.user) acc.user.plan = r.plan; ctx.toast && ctx.toast('🏫 Đã nhận gói của trường! Học viện Pha Lê đang chờ em.'); return open(); }
     if (a === 'out') { acc.logout(); ctx.toast && ctx.toast('Đã đăng xuất.'); return open(); }
     if (a === 'guest') { acc.playGuest(); close(); ctx.toast && ctx.toast('🙂 Đang chơi khách — bấm 👤 để đăng nhập lưu tiến độ'); return; }
     const keepName = !!(box.querySelector('#accKeep') || {}).checked;
-    msg.textContent = '…'; const err = await (a === 'in' ? acc.login(v('#accName'), v('#accPass'), rem) : acc.register(v('#accName'), v('#accPass'), rem));
+    msg.textContent = '…'; await acc.ready; const err = await (a === 'in' ? acc.login(v('#accName'), v('#accPass'), rem) : acc.register(v('#accName'), v('#accPass'), rem));
+    if (err === 'reload') { msg.textContent = '☁️ Đang tải tiến độ của em…'; return; }
     if (err) { msg.textContent = err; return; }
     acc.rememberName(acc.name, keepName || rem);
     close(); ctx.sfx && ctx.sfx('ok'); ctx.toast && ctx.toast(`👋 Chào ${esc(acc.name)}!${rem ? ' Đã lưu đăng nhập trên máy này.' : ''}`);
   });
+  acc.onExpired = () => { ctx.toast && ctx.toast('🔑 Phiên đăng nhập đã hết, em đăng nhập lại nhé.'); open(); };
+  acc.ready.then(() => { if (!box.hidden && !acc.profile) open(); });
   chip.onclick = open; chip.onkeydown = e => { if (e.key === 'Enter') open(); };
   // vào game: đã "Lưu đăng nhập" → vào thẳng; chưa → mở bảng đăng nhập (có nút Chơi khách)
   if (acc.resume()) setTimeout(() => ctx.toast && ctx.toast(`👋 Chào mừng ${esc(acc.name)} quay lại!`), 1500);

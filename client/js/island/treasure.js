@@ -120,12 +120,12 @@ export function createTreasure(ctx) {
 
   function ask(c) {
     const q = pickQuestions(['bien'], 1)[0]; freeze(true); quiz.hidden = false; ctx.sfx && ctx.sfx('ui');
-    quiz.innerHTML = `<div class="card"><p class="sub">🧰 Rương kho báu số ${c.i + 1} · ${c.s.zone.icon} ${c.s.zone.name}</p><h3>${q.q}</h3>
+    delete quiz.dataset.tried; quiz.innerHTML = `<div class="card"><p class="sub">🧰 Rương kho báu số ${c.i + 1} · ${c.s.zone.icon} ${c.s.zone.name}</p><h3>${q.q}</h3>
       <div class="ch">${q.choices.map((t, k) => `<button data-k="${k}">${t}</button>`).join('')}</div><p class="ex">Trả lời đúng để mở rương nhé!</p><button class="later">Để sau</button></div>`;
     const close = () => { quiz.hidden = true; freeze(false); };
     quiz.querySelector('.later').onclick = close;
     quiz.querySelectorAll('.ch button').forEach(b => b.onclick = () => {
-      const k = +b.dataset.k, ex = quiz.querySelector('.ex');
+      const k = +b.dataset.k, ex = quiz.querySelector('.ex'); if (!quiz.dataset.tried) { quiz.dataset.tried = 1; const ok = k === q.a; dispatchEvent(new CustomEvent('rw-learn', { detail: { s: 'Biển', ok } })); }
       if (k !== q.a) { b.className = 'bad'; b.disabled = true; ex.innerHTML = `💡 <b>Gợi ý:</b> ${q.hint || 'Đọc kỹ câu hỏi rồi thử lại nhé!'} Thử lại nào!`; ctx.sfx && ctx.sfx('ui'); return; }
       quiz.querySelectorAll('.ch button').forEach((x, j) => { x.disabled = true; if (j === q.a) x.className = 'ok'; });
       ex.innerHTML = `✅ <b>Chính xác!</b> ${q.explain}<br><button class="go">🎁 Mở rương</button>`;
