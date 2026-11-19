@@ -129,7 +129,7 @@ export function createSchoolTown(ctx) {
       if (roadDist(x, z) < ROAD_W / 2 && (y == null || y > TOWN_Y - 0.3)) return 'stone';
       return prevSurf(x, z, y);
     };
-    town.ready = true; if (ctx.toast && (!ctx.zoneId || ctx.zoneId === 'A')) { ctx.zoneGreeted = 'A'; ctx.toast('🏫 Chào mừng đến Trường Rubik! Các khu vui chơi nằm quanh đảo — đi bộ khám phá nhé', 5500); }
+    town.ready = true; if (ctx.toast && (!ctx.zoneId || ctx.zoneId === 'A')) { ctx.zoneGreeted = 'A'; }
   }
 
   // ---------- Mở cửa → mini game 3D chơi tại chỗ (mg/host.js); mọi cửa trong data/map.js đều có game ----------
