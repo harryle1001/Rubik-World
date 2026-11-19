@@ -196,6 +196,7 @@ export function createTerrain(scene) {
   // Chia lại gần/xa/ẩn khi người chơi đi > 3 m hoặc camera quay > 0,21 rad: chỉ giữ vật trong hình nón nhìn của camera
   // (+ vòng 13 m quanh người chơi cho bóng đổ) → không vẽ cây sau lưng, kể cả ở pass bóng; số draw call không đổi.
   const lodSets = [], KS = {};
+  const NAT = { add: (k, l) => addNature(k, l), skip: null, relayout: () => { for (const S of lodSets) S.relayout(S.last); } };
   const pick = a => a[Math.floor(rand() * a.length)];
   const view = { x: 0, z: 0, dx: 0, dz: -1, cos: -2, yaw: 0, on: false };   // hình nón nhìn (mặt phẳng XZ), cos < -1 → tắt lọc
   function kitSet(kind, items = []) {
@@ -224,6 +225,7 @@ export function createTerrain(scene) {
       const one = !state.shadows, V = view, r0 = def.r * 8 + 13, r02 = r0 * r0;
       for (let k = 0; k < items.length; k++) {
         const e = items[k].m.elements, x = e[12], z = e[14], dx = x - p.x, dz = z - p.z, d = dx * dx + dz * dz;
+        if (NAT.skip && NAT.skip(x, z, def.r * 6)) continue;   // khu mini game đang chơi (mg/host.js): không mọc cây/cỏ trong sân chơi
         if (d > r02 && V.cos > -1) { const ex = x - V.x, ez = z - V.z, L = Math.hypot(ex, ez) || 1; if ((ex * V.dx + ez * V.dz) / L < V.cos) continue; }   // ngoài hình nón nhìn
         if (d < n2) a.push(k); else if (set.far && d < f2) (d > l2 ? c : one ? a : b).push(k);
       }
@@ -309,7 +311,7 @@ export function createTerrain(scene) {
     for (let i = 0; i < 3 && lodQ.length && player; i++) { const L = lodQ.shift(); L.queued = false; L.at.copy(player); L.relayout(player); }
   }
   state.relayoutAll = p => { for (const L of lodSets) L.relayout(p, state.treeDist); };
-  return { heightAt, slopeAt, update, colliders, ground, waterMat, waveHeight: ocean.waveHeight, waveNormal: ocean.waveNormal, water: ocean, state, plants, trunks, nature: { add: addNature } };
+  return { heightAt, slopeAt, update, colliders, ground, waterMat, waveHeight: ocean.waveHeight, waveNormal: ocean.waveNormal, water: ocean, state, plants, trunks, nature: NAT };
 }
 
 // LOD cây xa (> 89 m, Fibonacci; style-guide §5 "55–144 m: hình khối + màu"): tán = khối 20 mặt (cây tròn) / chóp 6 cạnh (thông),

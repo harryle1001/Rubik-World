@@ -213,6 +213,9 @@ const island = io.of('/island'), islanders = new Map();
 const HOUSES_FILE = path.join(ROOT, 'data', 'houses.json'); let HOUSES = {}, housesDirty = false;
 try { HOUSES = JSON.parse(fs.readFileSync(HOUSES_FILE, 'utf8')) || {}; } catch (e) {}
 setInterval(() => { if (!housesDirty) return; housesDirty = false; fs.mkdir(path.dirname(HOUSES_FILE), { recursive: true }, () => fs.writeFile(HOUSES_FILE, JSON.stringify(HOUSES), () => {})); }, 3000);
+// Mini game đảo 3D: bảng xếp hạng toàn trường (top 13 mỗi game, lưu data/mg-top.json) + chuyển tin 2 người chơi cùng
+const MGTOP_FILE = path.join(ROOT, 'data', 'mg-top.json'); let mgTop = {}; try { mgTop = JSON.parse(fs.readFileSync(MGTOP_FILE, 'utf8')) || {}; } catch (e) {}
+let mgSaveT = null; const mgSave = () => { clearTimeout(mgSaveT); mgSaveT = setTimeout(() => fs.writeFile(MGTOP_FILE, JSON.stringify(mgTop), () => {}), 3000); };
 const num = (v, lo, hi) => (Number.isFinite(+v) ? Math.max(lo, Math.min(hi, +v)) : 0);
 island.on('connection', socket => {
   let me = null, last = 0;
@@ -267,6 +270,14 @@ island.on('connection', socket => {
   // trang phục mua ở Phố Phép Thuật (mũ, áo choàng) — chỉ nhận mã ngắn chữ thường
   const lid = v => (typeof v === 'string' && /^[a-z0-9-]{1,21}$/.test(v) ? v : null);
   socket.on('look', d => { if (!me || !d) return; me.look = { cape: lid(d.cape), hat: lid(d.hat) }; socket.broadcast.emit('look', [me.id, me.look]); });
+  socket.on('mg', d => { if (!me) return; me.mg = d && d.k ? { k: clean(d.k, 24), t: clean(d.t, 40) } : null; socket.broadcast.emit('mg', [me.id, me.mg]); });
+  let mgWin = 0, mgN = 0;   // tối đa 21 tin / giây mỗi người
+  socket.on('mgTo', d => { const now = Date.now(); if (now - mgWin > 1000) { mgWin = now; mgN = 0; } if (!me || !d || ++mgN > 21 || !islanders.has(d.to)) return; let x = null; try { x = d.d && JSON.stringify(d.d).length < 800 ? d.d : null; } catch (e) {}
+    island.to(d.to).emit('mgFrom', { from: me.id, name: me.name, type: clean(d.type, 12), d: x }); });
+  socket.on('mgScore', d => { if (!me || !d) return; const k = clean(d.k, 24), s = +d.s, lb = !!d.lb; if (!k || !Number.isFinite(s)) return;
+    const L = mgTop[k] = mgTop[k] || [], old = L.find(e => e.n === me.name); if (old) { if (lb ? s < old.s : s > old.s) { old.s = s; old.t = Date.now(); } } else L.push({ n: me.name, s, t: Date.now() });
+    L.sort((a, b) => lb ? a.s - b.s : b.s - a.s); L.length = Math.min(L.length, 13); mgSave(); socket.emit('mgTop', { k, list: L }); });
+  socket.on('mgTop', k => { k = clean(k, 24); socket.emit('mgTop', { k, list: mgTop[k] || [] }); });
   // ---------- Tàu Pha Lê: 1 đoàn tàu chung, lịch theo GIỜ SERVER; ghế ngồi giữ chỗ trên server ----------
   socket.on('tr', d => {
     if (!me || !d) return; const now = Date.now();

@@ -37,8 +37,21 @@ export const BANK = {
     T('Hướng Mặt Trời mọc?', 'Đông', 'Tây', 'Bắc'), T('Nước có hình chữ S?', 'Việt Nam', 'Nhật Bản', 'Ý'),
   ],
 };
+// Cấp độ + lớp của phiên chơi (mg/meta.js đặt khi vào game): lv 1–3, grade 1–9 ('island.grade', 0 = chưa chọn).
+// Câu theo lớp lấy từ data/quiz-bank.json (GDPT 2018) — nạp 1 lần, chưa nạp xong thì dùng ngân hàng ngắn ở trên.
+export const QZ = { lv: 1, grade: 0, bank: null };
+fetch(new URL('../data/quiz-bank.json', import.meta.url)).then(r => r.json()).then(b => { QZ.bank = b; }).catch(() => {});
+const TOPIC_SUBJ = { math: 'toan', science: 'kh', geo: 'lsdl', viet: 'tv' };
+export function gradeQ(subj) {   // → { q, a, wrong: [..], why } hoặc null; lớp = lớp em chọn (mặc định theo cấp độ) ± cấp độ
+  const B = QZ.bank && QZ.bank.grades; if (!B) return null;
+  const g = Math.max(1, Math.min(9, (QZ.grade || [2, 4, 6][QZ.lv - 1] || 3) + (QZ.grade ? QZ.lv - 2 : 0))), list = B[g] && B[g][subj];
+  if (!list || !list.length) return null; const t = pick(list);
+  return { q: t.q, a: t.c[t.a], wrong: t.c.filter((_, i) => i !== t.a), why: t.e || `Đáp án: ${t.c[t.a]}`, g };
+}
 export function quiz(topic = 'math', level = 1) {
   if (topic === 'mix') topic = pick(['math', 'math', 'vocab', 'science', 'geo']);
+  level = Math.max(level, QZ.lv);
+  if (TOPIC_SUBJ[topic] && Math.random() < (topic === 'math' ? 0.38 : 0.62)) { const t = gradeQ(TOPIC_SUBJ[topic]); if (t) return { q: t.q, a: t.a, choices: [t.a, ...t.wrong.sort(() => Math.random() - 0.5).slice(0, 2)].sort(() => Math.random() - 0.5), why: t.why }; }
   if (topic === 'math') { const m = mathQ(level); return { q: m.q + ' = ?', a: String(m.a), choices: m.choices.map(String), why: `${m.q} = ${m.a}` }; }
   const t = pick(BANK[topic] || BANK.science);
   return { q: t.q, a: t.a, choices: [t.a, ...t.wrong].sort(() => Math.random() - 0.5), why: t.why || `Đáp án: ${t.a}` };
@@ -46,8 +59,9 @@ export function quiz(topic = 'math', level = 1) {
 // Hiện 3 nút đáp án ở thanh dưới của host; fn(đúng?, đáp án chọn) — gọi 1 lần rồi tự xoá nút
 export function askBar(api, Q, fn, keep = []) {
   api.hud.clearBar(); let done = false;
-  Q.choices.forEach((c, i) => api.hud.button(c, () => { if (done) return; done = true; api.hud.clearBar(); keep.forEach(k => k()); fn(c === Q.a, c); }));
-  return { answer: i => { if (!done && Q.choices[i] != null) { done = true; api.hud.clearBar(); keep.forEach(k => k()); fn(Q.choices[i] === Q.a, Q.choices[i]); } }, get done() { return done; } };
+  const hit = c => { api.onQuiz && api.onQuiz(c === Q.a); fn(c === Q.a, c); };   // api.onQuiz: nhiệm vụ / huy hiệu (meta.js)
+  Q.choices.forEach((c, i) => api.hud.button(c, () => { if (done) return; done = true; api.hud.clearBar(); keep.forEach(k => k()); hit(c); }));
+  return { answer: i => { if (!done && Q.choices[i] != null) { done = true; api.hud.clearBar(); keep.forEach(k => k()); hit(Q.choices[i]); } }, get done() { return done; } };
 }
 // Bảng 3D: câu hỏi (dòng trên) + 3 ô đáp án màu đỏ/vàng/xanh — 1 canvas, 1 draw call. board(w) → { mesh, draw(Q, hi?) }
 export function board(w) {

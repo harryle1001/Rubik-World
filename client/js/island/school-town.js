@@ -157,7 +157,7 @@ export function createSchoolTown(ctx) {
         const q = town.doors.find(q => doorKey(ctx, q.d) === b.dataset.k); if (!q) return; ctx.player.teleport(q.x, q.z + 1.5); ctx.player.pos.y = TOWN_Y; setTimeout(() => town.enter(q), 300); });
     }
     const G = ctx.miniGames || {}, open = Object.keys(G).filter(k => town.doors.some(q => doorKey(ctx, q.d) === k));
-    menuEl.innerHTML = `<div class="card"><h3>🎮 Mini game · Đảo Rubik</h3><p>${town.clock.label()} · ${town.clock.periodName()}</p><div class="g">${open.map(k => `<button data-k="${k}">${G[k].name || k}</button>`).join('') || '<p>Chưa có mini game 3D.</p>'}</div>
+    menuEl.innerHTML = `<div class="card"><h3>🎮 Mini game · Đảo Rubik</h3><p>${town.clock.label()} · ${town.clock.periodName()}</p>${ctx.mgMeta ? ctx.mgMeta.menuHtml() : ''}<div class="g">${open.map(k => `<button data-k="${k}">${G[k].name || k}</button>`).join('') || '<p>Chưa có mini game 3D.</p>'}</div>
       <button class="x">Đóng</button></div>`;
     menuEl.hidden = false; ctx.player.frozen = true;
   };
@@ -187,7 +187,7 @@ export function createSchoolTown(ctx) {
     // cửa gần nhất
     const p = ctx.player.pos; let best = null, bd = 2.2;
     for (const q of town.doors) { const d = Math.abs(q.x - p.x) + Math.abs(q.z - p.z); if (d < bd) { bd = d; best = q; } }
-    if (best) { const k = doorKey(ctx, best.d), ok = k && ctx.miniGames && ctx.miniGames[k]; ctx.offer((ok ? '🚪 ' : '') + best.d.n.split('·')[0].trim(), () => town.enter(best), 2); }
+    if (best) { const k = doorKey(ctx, best.d), ok = k && ctx.miniGames && ctx.miniGames[k]; ctx.offer((ok ? '✋ Chơi ' + (ctx.miniGames[k].name || '').replace(/^\P{L}+/u, '') : best.d.n.split('·')[0].trim()), () => town.enter(best), 2); }
     if (town.info && Math.abs(town.info.x - p.x) + Math.abs(town.info.z - p.z) < 5) ctx.offer('📜 Đọc bảng φ & π', showInfo, 1);
     // nhãn tên cửa: 1 sprite dùng lại (trước: mỗi cửa mới tạo canvas + texture + vật liệu, không giải phóng → giật + rò bộ nhớ GPU)
     if (best !== nearDoor) { nearDoor = best; if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8, nameTag); else if (nameTag) nameTag.visible = false; }

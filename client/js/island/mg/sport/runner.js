@@ -15,15 +15,17 @@ const LANE = PHI * PHI, GATE = 55, NEAR = 13, FAR = -55, KIDS = ['student-male-b
 export function runner(ctx, api, C) {
   C = Object.assign({ goal: 610, topic: 'math', speed: 8, boost: 5, jump: true, mode: 'lane', ground: '#9aa3ad', side: '#7fbf6a', line: '#ffffff',
     obst: 'cone', obstColor: '#ff8a3d', decor: [], ride: null, rideSize: 1, sit: false, rivals: 2, fact: '', title: '' }, C);
+  C.speed *= [0.85, 1, 1.18][(api.level || 1) - 1] || 1;   // cấp độ (mg/meta.js): Dễ chậm hơn, Khó nhanh hơn
   const { root, hud, me } = api, sfx = api.sfx, M = api.mat;
   // Đường đua đặt trên CẦU CẠN cao H = 13 m (Fibonacci): đường dài 68 m không bao giờ đè lên nhà/cây của thế giới mở, khu chơi dưới đất chỉ cần bán kính 13 m
-  const H = C.lift ?? 13, world = new THREE.Group(); world.position.y = H; root.add(world);
+  // Host tìm được hành lang đất trống (api.onGround, xem host findRect) → đường chạy sát đất trên nền đắp; không có thì lùi về cầu cạn
+  const H = C.lift ?? (api.onGround ? 0 : 13), world = new THREE.Group(); world.position.y = H; root.add(world);
   // ---------- Đường + lề + dầm cầu + trụ (1 khối gộp) + vạch làn trôi (InstancedMesh) ----------
   { const b = batch(), W = LANE * 3 + 1, L = NEAR - FAR + 21, zc = (NEAR + FAR) / 2 - 8, SW = 6.8;
     b.add(new THREE.PlaneGeometry(W, L).rotateX(-Math.PI / 2), C.ground, 0, 0.03, zc);
     for (const s of [-1, 1]) { b.add(new THREE.PlaneGeometry(SW, L).rotateX(-Math.PI / 2), C.side, s * (W / 2 + SW / 2), 0.02, zc); b.box(0.3, 0.25, L, s * W / 2, 0, zc, C.line); b.box(0.2, 0.9, L, s * (W / 2 + SW), 0, zc, '#e8e2d4'); }
-    b.box(W + SW * 2 + 0.4, 0.9, L, 0, -0.9, zc, '#b9b2a6');
-    for (const z of [NEAR - 2, -8, FAR + 21]) for (const s of [-1, 1]) b.add(new THREE.CylinderGeometry(0.8, 1.1, H, 10), '#cfc8bb', s * (W / 2 + 2), -H / 2 - 0.9, z);
+    if (H) b.box(W + SW * 2 + 0.4, 0.9, L, 0, -0.9, zc, '#b9b2a6'); else b.box(W + SW * 2 + 0.4, 2.7, L, 0, -2.7, zc, '#a99f8a');   // nền đắp che chỗ đất trũng
+    if (H) for (const z of [NEAR - 2, -8, FAR + 21]) for (const s of [-1, 1]) b.add(new THREE.CylinderGeometry(0.8, 1.1, H, 10), '#cfc8bb', s * (W / 2 + 2), -H / 2 - 0.9, z);
     world.add(b.mesh()); }
   const stripes = new THREE.InstancedMesh(new THREE.BoxGeometry(0.16, 0.02, 1.6), new THREE.MeshBasicMaterial({ color: C.line }), 2 * 21);
   { const o = new THREE.Object3D(); let k = 0; for (const x of [-LANE / 2, LANE / 2]) for (let i = 0; i < 21; i++) { o.position.set(x, 0.05, NEAR - i * 4); o.updateMatrix(); stripes.setMatrixAt(k++, o.matrix); } }
@@ -89,7 +91,7 @@ export function runner(ctx, api, C) {
   // ---------- Vật cản ----------
   const _o = new THREE.Object3D();
   function spawnOb() {
-    const s = S.nextOb; S.nextOb += rnd(11, 19);
+    const s = S.nextOb; S.nextOb += rnd(11, 19) * [1.3, 1, 0.78][(api.level || 1) - 1];   // Khó: vật cản dày hơn
     if (!om || Math.abs(((s - 34) % GATE + GATE) % GATE) < 7 || s > C.goal - 13) return;   // không đặt sát cổng / đích
     obs.push({ s, lane: Math.floor(rnd(0, 3)), hit: false }); if (Math.random() < 0.3) obs.push({ s: s + 0.01, lane: Math.floor(rnd(0, 3)), hit: false });
   }

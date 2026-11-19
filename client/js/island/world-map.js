@@ -114,6 +114,7 @@ body.rs-modal #bMap{display:none}`;
     const RS = sc.RS;
     if (RS && RS.R) for (const k in RS.R) { const r = RS.R[k]; if (!r || !r.name || r.w == null || r.y + r.h / 2 < Y_MIN || r.y + r.h / 2 > Y_MAX) continue; const [cx, cz] = to3(r.x + r.w / 2, r.y + r.h / 2); L.push({ n: r.name, x: cx, z: cz, ext: Math.min(r.w, r.h, 2400) * 0.05 }); }
     for (const q of sc.doors || []) L.push({ n: q.d.n.split('·')[0].trim(), x: q.x, z: q.z, door: true });
+    for (const g of ctx.mgSigns || []) L.push({ n: '🎮 ' + g.n, x: g.x, z: g.z, ic: '🎮' });   // mini game 3D (mg/signs.js)
     return L;
   }
 
