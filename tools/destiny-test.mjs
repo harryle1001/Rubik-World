@@ -9,7 +9,7 @@ const MOBILE = process.argv.includes('--mobile'), SHOTS = arg('shots'), URL = ar
 const fails = [], errors = [], log = (...a) => console.log(...a);
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const bc = await browser.newContext(MOBILE ? { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 1, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148' } : { viewport: { width: 1280, height: 720 } });
-await bc.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); } catch (e) {} });
+await bc.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); localStorage.setItem('island.intro', '1'); } catch (e) {} });   // bỏ hướng dẫn + đoạn mở đầu
 const page = await bc.newPage();
 page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
@@ -18,7 +18,8 @@ await page.waitForFunction(() => window.__island && __island.school && __island.
 const fr = page.frames().find(f => f.url().includes('/school/'));
 if (fr) await fr.waitForSelector('#mLogin:not([hidden])', { timeout: 60000 }).catch(() => {});
 if (fr) { const b = fr.getByText('Chỉ xem, chưa chơi'); if (await b.count()) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
-await page.getByText('Chơi khách').first().click({ timeout: 8000 }).catch(() => {});
+await page.waitForSelector('#accBox:not([hidden])', { timeout: 30000 }).catch(() => {}); await page.waitForTimeout(500);   // bảng đăng nhập đảo hiện trễ
+await page.evaluate(() => { const b = document.querySelector('#accBox [data-a=guest]'); if (b) b.click(); });   // bấm bằng DOM: máy kiểm thử vẽ < 1 FPS, Playwright chờ nút "đứng yên" sẽ quá giờ
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 20000 }).catch(() => fails.push('nhân vật bị khoá lúc vào game'));
 // máy kiểm thử vẽ bằng CPU (vài FPS): lúc đi bộ tạm tắt vẽ để mô phỏng chạy đủ 60 khung/giây; chụp ảnh thì vẽ lại
 const draw = on => page.evaluate(on => { const c = __island; if (!c.post.__r) c.post.__r = c.post.render; c.post.render = on ? c.post.__r : () => {}; }, on);
