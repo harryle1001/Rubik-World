@@ -56,6 +56,17 @@ export const CHAPTERS = [
       { type: 'cond', at: YARD, r: 0, text: 'Niệm thử 1 phép (nút ✨ / phím F)', test: (c, S) => S.castN > 0, hint: 'Hết năng lượng thì bấm 📚 để nạp.' },
     ],
     shard: YARD, shardOff: [5, 5], outro: [['cu', 'Excellent! Mảnh Tím — màu của phép thuật!'], ['mu', 'Bà chưa học được tàng hình… nên bà trốn vào Rừng Phép Thuật!'], ['cu', 'Rừng ở thuỳ đất phía tây đảo. Ta sẽ dạy em một phép mới.']] },
+
+  { id: 5, name: 'Mảnh Lục', region: 'Rừng Phép Thuật', icon: '🌲', col: '#4cd964', subj: 'Khoa học', xp: 144, sao: 21, title: 'Bạn của Rừng',
+    intro: [['cu', 'Cây rừng bị mất màu rồi, lá xám như tro!'], ['cu', 'Phép Cầu Vồng 🌈 tách ánh sáng trắng thành 7 màu — dùng nó trả màu cho cây.']],
+    tasks: [
+      { type: 'goto', at: FGATE, r: 13, text: 'Tới cổng đá Rừng Phép Thuật' },
+      { type: 'talk', who: 'cu', at: FGATE, r: 8, text: 'Học phép Cầu Vồng 🌈 với Cú Thần', give: 'rainbow', lines: [['cu', 'Ánh sáng trắng = đỏ, cam, vàng, lục, lam, chàm, tím.'], ['cu', 'Chọn phép 🌈 rồi niệm vào cây xám. Thử nào!']] },
+      { type: 'cast', at: c => toWorld(FOREST.gate[0], FOREST.gate[1] - 34), n: 3, spread: 13, spell: 'rainbow', text: 'Niệm 🌈 trả màu cho 3 cây pha lê xám' },
+      { type: 'quiz', who: 'cu', at: FLAKE, s: ['kh'], tag: 'cay', n: 3, need: 2, text: 'Câu đố cây cối bên hồ rừng' },
+      { type: 'goto', at: FLAKE, r: 8, text: 'Đứng bên hồ chờ mảnh pha lê hiện ra' },
+    ],
+    shard: FLAKE, shardOff: [3, -3], outro: [['cu', 'Mảnh Lục — màu của lá cây!'], ['mu', 'Ối, cây xanh trở lại rồi… Bà sẽ nhờ Rồng Mây giữ mảnh Đỏ!'], ['cu', 'Rồng Mây ngủ ở Thung lũng Rồng trên đảo Rubik, phía nam. Bay qua đó nhé!']] },
 ];
 
 let EGG = () => 0;
