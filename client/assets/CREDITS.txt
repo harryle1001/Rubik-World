@@ -135,8 +135,9 @@ Nhân vật anime xem thử (client/assets/vrm/, trang client/vrm-preview.html �
   Olivia (100Avatars R1) — Polygonal Mind, CC0 — qua github.com/ToxSam/open-source-avatars (tệp trên arweave.net).
   Thư viện @pixiv/three-vrm 3.5.5 (MIT). Đã thu nhỏ texture + nén meshopt bằng tools/vrm-slim.mjs.
 
-Nhân vật anime TRONG GAME (đảo 3D, client/js/island/vrm/): chỉ dùng 4 mẫu CC0 đã duyệt — Sendagaya Shino, Sendagaya Shibu,
-  HairSample_Male (học sinh) và Sakurada Fumiriya (thầy cô); pixiv Inc. / VRoid, CC0.
+Nhân vật anime TRONG GAME (đảo 3D, client/js/island/vrm/): mẫu CC0 — Victoria Rubin, Vivi, Sendagaya Shino (học sinh nữ),
+  HairSample_Male (học sinh nam), Sakurada Fumiriya (thầy cô); pixiv Inc. / VRoid, CC0 (meta VRM licenseName "CC0").
+  Bản trong client/assets/vrm/{full,mobile}/ làm lại từ file gốc bằng tools/vrm-slim.mjs --hq --meshopt (texture WebP).
   @pixiv/three-vrm 3.5.5 (MIT, © pixiv Inc.) chép vào client/js/vendor/three-vrm.module.min.js (+ three-vrm.LICENSE.txt), không dùng CDN.
   Đồng phục phù thuỷ Tứ Linh (áo choàng, mũ trùm, khăn sọc, cà vạt, mũ chóp, kính, đũa): dựng bằng code trong vrm-outfit.js
   (không có phụ kiện CC0 khớp xương VRoid để lấy sẵn) — thiết kế nguyên bản của dự án.

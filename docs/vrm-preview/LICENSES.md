@@ -22,7 +22,7 @@ Seed-san (VRM 1.0, `VRMC_vrm.meta`): như bảng. README của bản sao madjin 
 "The CC license for these models is CC0 … Copyright is waived" và "AvatarSample_A・B・C … can be used freely, as long as you comply with their conditions of use. While copyright is not waived".
 
 ## Mẫu đã xem xét nhưng không đưa vào hàng
-- Darkness_Shibu, Victoria_Rubin (CC0, VRoid) — trùng phong cách, để dự phòng.
+- Darkness_Shibu (CC0, VRoid) — để dự phòng. **Victoria_Rubin (CC0, meta licenseName "CC0", author VRoid)** — đã đưa vào game (docs/vrm-chars), cùng nguồn madjin/vrm-samples `vroid/beta/`.
 - AvatarSample_B, C — cùng điều khoản như A.
 - VRM1_Constraint_Twist_Sample (pixiv, VRM Public License 1.0, credit không bắt buộc, cấm dùng chống đối xã hội/thù ghét) — mẫu trong repo @pixiv/three-vrm; là mẫu kỹ thuật, dùng được nếu cần.
 - fem_vroid / masc_vroid (tác giả "jin", licenseName Other, không có URL điều khoản) — **loại** vì không rõ giấy phép.

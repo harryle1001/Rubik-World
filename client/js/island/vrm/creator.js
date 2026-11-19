@@ -26,12 +26,13 @@ export function createCreator(ctx) {
   const chip = (t, on, k, v) => `<button class="c${on ? ' on' : ''}" data-k="${k}" data-v="${v}">${t}</button>`;
   function panel(L) {
     const locked = ctx.account && ctx.account.house;
-    return `<div class="rw"><i>Mẫu</i><div class="ch">${[['shino', '👧 Nữ tóc dài'], ['shibu', '👧 Nữ tóc ngắn'], ['hair-m', '👦 Nam']].map(([v, t]) => chip(t, L.base === v, 'base', v)).join('')}</div></div>
+    return `<div class="rw"><i>Mẫu</i><div class="ch">${[['victoria', '👧 Nữ tóc buộc'], ['vivi', '👧 Nữ tóc bob'], ['shino', '👧 Nữ tóc dài'], ['hair-m', '👦 Nam']].map(([v, t]) => chip(t, L.base === v, 'base', v)).join('')}</div></div>
       <div class="rw"><i>Nhà</i><div class="ch">${HOUSES.map(h => `<button class="c${houseOf(ctx, L) === h.id ? ' on' : ''}" data-k="house" data-v="${h.id}"${locked ? ' disabled' : ''}><span style="display:inline-block;width:13px;height:13px;border-radius:50%;vertical-align:-2px;background:${PALETTE[h.id].robe};box-shadow:3px 0 0 ${PALETTE[h.id].trim}"></span> ${h.icon} ${h.name.replace('Nhà ', '')}</button>`).join('')}</div>${locked ? `<div class="lock">🔮 Em đã được Quả cầu Tứ Linh chọn vào ${HOUSE[locked].name} — đồng phục theo màu nhà.</div>` : ''}</div>
       <div class="rw"><i>Tóc</i><div class="ch">${HAIR.map(c => sw(c, L.hair === c, 'hair', c)).join('')}</div></div>
       <div class="rw"><i>Mắt</i><div class="ch">${EYES.map(c => sw(c, L.eye === c, 'eye', c)).join('')}</div></div>
       <div class="rw"><i>Da</i><div class="ch">${['#f6dcc6', '#e6c2a2', '#c89a74'].map((c, i) => sw(c, (L.skin | 0) === i, 'skin', i)).join('')}</div></div>
       <div class="rw"><i>Kính</i><div class="ch">${[['none', 'Không'], ['round', '◯ Tròn'], ['square', '▢ Vuông']].map(([v, t]) => chip(t, L.glasses === v, 'glasses', v)).join('')}</div></div>
+      <div class="rw"><i>Khăn</i><div class="ch">${chip('Không', !L.scarf, 'scarf', 0)}${chip('🧣 Khăn sọc', !!L.scarf, 'scarf', 1)}</div></div>
       <div class="rw"><i>Mũ</i><div class="ch">${chip('Không', !L.hat, 'hat', 0)}${chip('🧙 Mũ chóp', !!L.hat, 'hat', 1)}</div></div>
       <div class="rw"><i>Hiển thị</i><div class="ch">${chip('✨ Anime', L.mode !== 'chibi', 'mode', 'vrm')}${chip('🧸 Chibi (máy yếu)', L.mode === 'chibi', 'mode', 'chibi')}</div></div>
       <div class="ft"><button data-a="x">Huỷ</button><button class="ok" data-a="ok">💾 Lưu nhân vật</button></div>`;
@@ -66,9 +67,9 @@ export function createCreator(ctx) {
       if (b.dataset.a === 'x') return close();
       if (b.dataset.a === 'ok') { saveAvatar(ctx, { ...L }); close(); ctx.toast && ctx.toast('🎨 Đã lưu nhân vật!'); ctx.onAvatar && ctx.onAvatar({ ...L }); return; }
       const k = b.dataset.k, v = b.dataset.v; if (!k) return;
-      L[k] = k === 'skin' ? +v : k === 'hat' ? v === '1' : v;
+      L[k] = k === 'skin' ? +v : k === 'hat' || k === 'scarf' ? v === '1' : v;
       render();
-      if (['base', 'glasses', 'hat'].includes(k)) rebuild();
+      if (['base', 'glasses', 'hat', 'scarf'].includes(k)) rebuild();
       else if (hero && k !== 'mode') { hero.setLook({ hair: L.hair, eye: L.eye, skin: L.skin, house: houseOf(ctx, L) }); if (k === 'house' && hero.anim.has('Cheer')) { hero.anim.play('Cheer', 0.15, true); setTimeout(() => hero && hero.anim.play('Idle', 0.3), 1500); } }
     });
     cv.addEventListener('pointerdown', e => { drag = e.clientX; cv.setPointerCapture(e.pointerId); });

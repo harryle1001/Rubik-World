@@ -4,9 +4,9 @@
 // Chế độ cập nhật (LOD): hero.vrmMode = 'full' (SpringBone + biểu cảm) | 'lite' (chỉ xương chính).
 // Bí danh xương kiểu KayKit (head, chest, handr, lowerarmr, upperlegl/r) để các phần cũ (đũa, mũ, đạp xe…) dùng tiếp.
 import * as THREE from 'three';
-import { loadVrm, tint, hideParts, outlineMats, BASES } from './vrm-core.js';
+import { loadVrm, tint, hideParts, hasPart, cutBelow, outlineMats, BASES } from './vrm-core.js';
 import { vrmClips, kaykitRest } from './vrm-anim.js';
-import { dressVrm } from './vrm-outfit.js';
+import { dressVrm, PALETTE } from './vrm-outfit.js';
 
 export const NAMES = { idle: 'Idle', walk: 'Walking_A', run: 'Running_A', jump: 'Jump_Idle', cheer: 'Cheer', interact: 'Interact', pickup: 'PickUp', sit: 'Sit_Chair', floor: 'Sit_Floor_Idle', no: 'Head_No', hit: 'Hit_A', use: 'Use_Item' };
 export const HAIR = ['#2a2230', '#4a3226', '#7a5236', '#9c4a32', '#d9b46a', '#3a4a78', '#e8a0b8', '#c8ccd8'];
@@ -17,22 +17,28 @@ export function outfitFor(look) {
   const L = look || {};
   if (L.role === 'teacher') return { house: 'teacher', robe: L.robe !== false, hood: false, scarf: false, tie: false, hat: !!L.hat, glasses: L.glasses || 'none', wand: !!L.wand };
   if (L.outfit === 'school') return { house: 'school', robe: false, scarf: true, tie: false, hat: false, glasses: L.glasses || 'none', wand: false };
-  return { house: L.house || 'long', robe: true, hood: true, scarf: L.scarf !== false, tie: L.tie !== false, hat: !!L.hat, glasses: L.glasses || 'none', wand: !!L.wand };
+  return { house: L.house || 'long', robe: true, hood: true, scarf: L.scarf === true, tie: L.tie !== false, hat: !!L.hat, glasses: L.glasses || 'none', wand: !!L.wand };
 }
 
 const _q = new THREE.Quaternion(), _qa = new THREE.Quaternion(), X = new THREE.Vector3(1, 0, 0);
 /**
- * look: { base:'shino'|'shibu'|'hair-m'|'fumiriya', hair, eye, skin(0..2), glasses, hat, house, role, outfit, wand }
+ * look: { base:'victoria'|'vivi'|'shino'|'hair-m'|'fumiriya', hair, eye, skin(0..2), glasses, hat, house, role, outfit, wand }
  * opt: { set:'full'|'mobile', height }
  */
 export async function loadVrmHero(look = {}, opt = {}) {
-  const base = BASES[look.base] ? look.base : 'shino', set = opt.set || 'mobile';
+  const base = BASES[look.base] ? look.base : 'victoria', set = opt.set || 'mobile';
   const t0 = performance.now();
   const { vrm, tris: bodyTris, prims } = await loadVrm(base, set);
   const model = new THREE.Group(); model.name = 'vrm-' + base; model.add(vrm.scene);
-  tint(vrm, { hair: look.hair, eye: look.eye, skin: SKINS[look.skin | 0] });
-  const out = outfitFor(look), fit = dressVrm(vrm, model, out);
-  if (out.robe || out.scarf) hideParts(vrm, ['neck']);   // nơ cổ gốc → thay bằng cà vạt / khăn
+  const out = outfitFor(look), neck = hasPart(vrm, 'neck');
+  if ((neck && !out.scarf) || (BASES[base].gender === 'f' && look.tie !== true)) out.tie = false;   // nữ: giữ nơ/cà vạt in sẵn của đồng phục VRoid   // có nơ cổ gốc VRoid (sắc nét) → giữ nơ, đổi màu theo nhà thay cho cà vạt
+  const bowOf = h => (PALETTE[h] || PALETTE.long).bow;
+  tint(vrm, { hair: look.hair, eye: look.eye, skin: SKINS[look.skin | 0], bow: bowOf(out.house) });
+  if (out.robe && !hasPart(vrm, 'bottoms')) {   // váy liền (Victoria, Vivi): cắt váy dưới eo, khép vạt trước áo choàng
+    const hy = vrm.humanoid.getRawBoneNode('hips').getWorldPosition(new THREE.Vector3()).y; cutBelow(vrm, 'tops', hy + 0.05); out.closed = true;
+  }
+  const fit = dressVrm(vrm, model, out);
+  if (out.scarf) hideParts(vrm, ['neck']);
   // cỡ: chiều cao tự nhiên của mẫu (đỉnh tóc) → height mong muốn
   const nat = Math.max(fit.headTop, 1.2), height = opt.height || nat; model.userData.k = height / nat;
   vrm.scene.scale.setScalar(1); model.scale.setScalar(1);
@@ -66,8 +72,8 @@ export async function loadVrmHero(look = {}, opt = {}) {
   const hero = {
     vrm, model: outer, set: NAMES, height, outlines: [...outlineMats(vrm), ...fit.outlines], head: H.getRawBoneNode('head'), outlineOn: true,
     tris: bodyTris + fit.tris, prims, happyUntil: 0, vrmMode: 'full', look: { ...look, base }, fit, isVrm: true, loadMs: 0,
-    setHouse: id => fit.setHouse(id),
-    setLook(L) { tint(vrm, { hair: L.hair, eye: L.eye, skin: SKINS[L.skin | 0] }); if (L.house) fit.setHouse(L.house); Object.assign(hero.look, L); },
+    setHouse: id => { fit.setHouse(id); tint(vrm, { bow: bowOf(id) }); },
+    setLook(L) { tint(vrm, { hair: L.hair, eye: L.eye, skin: SKINS[L.skin | 0], bow: L.house ? bowOf(L.house) : null }); if (L.house) fit.setHouse(L.house); Object.assign(hero.look, L); },
     dispose() { outer.removeFromParent(); mixer.stopAllAction(); vrm.scene.traverse(o => { if (o.isMesh) { o.geometry.dispose(); } }); for (const me of fit.group) me.geometry.dispose(); },
   };
   // chi tiết nhỏ chỉ cần khi ở gần (LOD 'lite': ẩn ánh mắt, kẻ mắt, đũa → bớt 3 lần vẽ/người)

@@ -12,9 +12,9 @@ import { HOUSES } from '../academy/houses-data.js';
 const PHI = 1.618033988749895;
 const dark = (h, k) => '#' + new THREE.Color(h).multiplyScalar(k).getHexString();
 // bảng màu: robe = thân áo, trim = viền/lót/sọc/kính (litFactor); không dùng đen + vàng–đỏ thẫm kiểu trường phù thuỷ trong truyện
-export const PALETTE = Object.fromEntries(HOUSES.map(h => [h.id, { robe: dark(h.col, 0.3), trim: dark(h.col2, 0.8), name: h.name }]));
-PALETTE.teacher = { robe: '#2b3352', trim: '#d4b45a', name: 'Thầy cô' };
-PALETTE.school = { robe: '#d8232a', trim: '#d8232a', name: 'Trường Rubik' };   // khăn quàng đỏ
+export const PALETTE = Object.fromEntries(HOUSES.map(h => [h.id, { robe: dark(h.col, 0.3), trim: dark(h.col2, 0.8), name: h.name, bow: h.col }]));
+PALETTE.teacher = { robe: '#2b3352', trim: '#d4b45a', name: 'Thầy cô', bow: '#d4b45a' };
+PALETTE.school = { robe: '#d8232a', trim: '#d8232a', name: 'Trường Rubik', bow: '#d8232a' };   // khăn quàng đỏ
 
 const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -71,6 +71,7 @@ export function dressVrm(vrm, model, opt = {}) {
       v.fromBufferAttribute(pa, i); o.applyBoneTransform(i, v); v.applyMatrix4(o.matrixWorld);
       if (k === 'hair') { hairPts.push(v.clone()); continue; }
       if (morph) { facePts.push(v.clone()); continue; }
+      if (o.userData.cutY !== undefined && v.y < o.userData.cutY) continue;   // váy liền đã cắt
       if (v.y > hips.y - 0.05 * S && Math.abs(v.x) > shX * 0.92) continue;   // bỏ tay (T-pose)
       const b = Math.floor(v.y / BIN); let e = bins.get(b); if (!e) bins.set(b, e = { x: 0, z0: 9, z1: -9 });
       e.x = Math.max(e.x, Math.abs(v.x)); e.z0 = Math.min(e.z0, v.z); e.z1 = Math.max(e.z1, v.z);
@@ -89,10 +90,11 @@ export function dressVrm(vrm, model, opt = {}) {
     }
     if (y >= hips.y) { const e = ext(y), zc = (e.z1 + e.z0) / 2, zr = (e.z1 - e.z0) / 2; return { y, rx: Math.max(e.x + m, hip.rx * 0.9), zf: zr + m, zb: zr + m, zc }; }
     const t = (hips.y - y) / (hips.y - hemY), e = ext(y), zc = lerp(hip.zc, (e.z1 + e.z0) / 2, 0.5);
-    return { y, rx: Math.max(hip.rx, e.x + m) * (1 + 0.236 * t), zf: Math.max(hip.zf, e.z1 - zc + m) + 0.03 * S * t, zb: Math.max(hip.zb, zc - e.z0 + m) + 0.045 * S * t, zc };
+    const cap = 9;   // (váy liền đã cắt dưới eo trước khi đo → không cần chặn)
+    return { y, rx: Math.min(Math.max(hip.rx, e.x + m), cap) * (1 + 0.146 * t), zf: Math.min(Math.max(hip.zf, e.z1 - zc + m), cap * 0.8) + 0.03 * S * t, zb: Math.min(Math.max(hip.zb, zc - e.z0 + m), cap * 0.8) + 0.045 * S * t, zc };
   };
   // khe xẻ trước (nửa góc, rad): cổ chữ V rộng → khép ở eo → hơi mở ở gấu
-  const gapAt = y => y > chest.y ? lerp(0.2, 0.62, smooth(chest.y, collarY, y)) : y > hips.y ? lerp(0.1, 0.2, smooth(hips.y, chest.y, y)) : lerp(0.1, 0.3, smooth(hips.y, hemY, y));
+  const gapAt = y => y > chest.y ? lerp(0.2, 0.62, smooth(chest.y, collarY, y)) : y > hips.y ? lerp(0.1, 0.2, smooth(hips.y, chest.y, y)) : opt.closed ? lerp(0.1, 0.05, smooth(hips.y, hemY, y)) : lerp(0.1, 0.3, smooth(hips.y, hemY, y));
   const ys = []; { const ctrl = [collarY, lerp(collarY, lArm.y, 0.5), lArm.y, lerp(lArm.y, chest.y, 0.5), chest.y, spine.y, lerp(spine.y, hips.y, 0.5), hips.y]; ys.push(...ctrl); const nL = 7; for (let i = 1; i <= nL; i++) ys.push(lerp(hips.y, hemY, i / nL)); }
   const R = ys.map(ring);
   for (let k = 0; k < 2; k++) for (let i = 1; i + 1 < R.length; i++) for (const p of ['rx', 'zf', 'zb']) if (R[i].y < lArm.y) R[i][p] = Math.max(R[i][p], (R[i - 1][p] + R[i + 1][p]) / 2 * 0.98);   // làm mượt, không lõm
@@ -143,6 +145,13 @@ export function dressVrm(vrm, model, opt = {}) {
     band(collarY, hemY, r => -gapAt(r.y) - tw / Math.max(r.rx, 0.05), r => -gapAt(r.y), 0.003 * S);
     // gấu áo: dải 4 cm quanh dưới cùng
     { const r0 = R[R.length - 1], r1 = { ...ring(hemY + 0.045 * S) }; const ths = thetas(r0); const row = (r, d) => ths.map(th => { const p = surf(r, th, d); return T.v(p.x, p.y, p.z, wRobe(p.y, th, p.x)); }); T.grid([row(r1, 0.0035 * S), row(r0, 0.0035 * S)]); }
+    // váy xếp ly màu áo (mẫu mặc váy liền: váy gốc đã cắt dưới eo) — trong áo choàng, tới trên gối, 24 nếp
+    if (opt.closed) {
+      const yT = hips.y + 0.03 * S, yB = lerp(hips.y, knee.y, 1.15), nY = 5, nT = 48, rows = [];
+      for (let i = 0; i <= nY; i++) { const t = i / nY, yy = lerp(yT, yB, t), r = ring(yy), k = 0.93 + 0.06 * t;
+        rows.push([...Array(nT + 1)].map((_, j) => { const th = 2 * Math.PI * j / nT, pl = 1 + (j % 2 ? 0.035 : -0.01) * t, p = new THREE.Vector3(r.rx * k * pl * Math.sin(th), yy, r.zc + (Math.cos(th) >= 0 ? r.zf : r.zb) * k * pl * Math.cos(th)); return A.v(p.x, p.y, p.z, wRobe(p.y, th, p.x)); })); }
+      A.grid(rows); A.grid(rows.map(row => row.map(i => { const q = A.P.slice(i * 3, i * 3 + 3); return A.v(q[0] * 0.985, q[1], q[2] * 0.985, { [iH]: 1 }); })), true);
+    }
     // mũ trùm hạ sau gáy: vỏ phồng trên lưng (A) + mép (T)
     if (opt.hood !== false) {
       const y0 = collarY + 0.035 * S, y1 = lArm.y - 0.17 * S, nY = 7, nT = 9, rows = [], rim = [];
@@ -169,16 +178,21 @@ export function dressVrm(vrm, model, opt = {}) {
   }
   // ---- khăn quàng sọc (vòng cổ + 2 đuôi) — sọc theo Fibonacci 5:1:2:1:3 (khác sọc đều) ----
   if (opt.scarf) {
-    const e = ext(collarY - 0.015 * S), zc = (e.z1 + e.z0) / 2, rx = Math.min(e.x, 0.07 * S) + 0.03 * S, rz = Math.min((e.z1 - e.z0) / 2, 0.07 * S) + 0.03 * S, tr = 0.02 * S, y = collarY - 0.012 * S, nA = 20, nB = 6, rows = [];
+    const e = ext(collarY - 0.015 * S), zc = (e.z1 + e.z0) / 2, rx = Math.min(e.x, 0.07 * S) + 0.03 * S, rz = Math.min((e.z1 - e.z0) / 2, 0.07 * S) + 0.03 * S, tr = 0.017 * S, y = collarY - 0.012 * S, nA = 24, nB = 8, rows = [];
     for (let i = 0; i <= nA; i++) { const a = 2 * Math.PI * i / nA, c = new THREE.Vector3(rx * Math.sin(a), y, zc + rz * Math.cos(a)), out = new THREE.Vector3(Math.sin(a), 0, Math.cos(a));
       rows.push([...Array(nB + 1)].map((_, k) => { const b = 2 * Math.PI * k / nB, p = c.clone().addScaledVector(out, tr * Math.cos(b)).add(new THREE.Vector3(0, tr * 1.3 * Math.sin(b), 0)); return T.v(p.x, p.y, p.z, { [iN]: 0.5, [iU]: 0.5 }); })); }
     T.grid(rows);
-    const pat = [8, 1, 2, 1, 5], tot = pat.reduce((a, b) => a + b, 0), len = 0.27 * S;
-    for (const [sx, tilt] of [[0.085, 0.12], [-0.07, -0.08]]) {
-      let yy = y - 0.01 * S; const zAt = yq => ext(yq).z1 + 0.014 * S;   // đuôi khăn ôm theo ngực
-      pat.forEach((p, k) => { const h = len * p / tot, o = new THREE.Vector3(sx * S + tilt * (y - yy), yy - h / 2, zAt(yy - h / 2)); const sk = k % 2 ? A : T; sk.box(o, new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1), 0.03 * S, h / 2 + 0.0005, 0.007 * S, { [iU]: 1 }); yy -= h; });
-      // tua rua cuối khăn
-      for (let f = -2; f <= 2; f++) T.box(new THREE.Vector3(sx * S + tilt * (y - yy) + f * 0.012 * S, yy - 0.015 * S, zAt(yy)), new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1), 0.004 * S, 0.015 * S, 0.004 * S, { [iU]: 1 });
+    // 2 đuôi khăn mềm (ống dẹt elip, ôm theo ngực), sọc Fibonacci 8:1:2:1:5 theo chiều dài; đuôi trái dài, đuôi phải ngắn chồng lên
+    const pat = [8, 1, 2, 1, 5], tot = pat.reduce((a, b) => a + b, 0), wR = 0.032 * S, tR = 0.008 * S, nS = 10;
+    const zAt = yq => ext(yq).z1 + 0.012 * S;
+    for (const [sx, tilt, len, dz] of [[0.035, 0.06, 0.3 * S, 0], [-0.03, -0.1, 0.23 * S, 0.012 * S]]) {
+      const nR = 16, rows = [];
+      for (let i = 0; i <= nR; i++) { const t = i / nR, yy = y - 0.006 * S - len * t, cx = sx * S + tilt * len * t + 0.01 * S * Math.sin(t * Math.PI), cz = zAt(yy) + tR + dz, w = wR * (1 + 0.15 * t);
+        rows.push({ t, pts: [...Array(nS + 1)].map((_, k) => { const a = 2 * Math.PI * k / nS; return new THREE.Vector3(cx + w * Math.cos(a), yy, cz + tR * Math.sin(a)); }) }); }
+      const band = t => { let u = t * tot, k = 0; while (k < pat.length - 1 && u > pat[k]) { u -= pat[k]; k++; } return k % 2 ? A : T; };
+      for (let i = 0; i < nR; i++) { const sk = band((rows[i].t + rows[i + 1].t) / 2), r0 = rows[i].pts.map(p => sk.v(p.x, p.y, p.z, { [iU]: 1 })), r1 = rows[i + 1].pts.map(p => sk.v(p.x, p.y, p.z, { [iU]: 1 })); sk.grid([r0, r1], true); }
+      const last = rows[nR].pts, yy = last[0].y;   // tua rua: 7 sợi mảnh
+      for (let f = 0; f < 7; f++) { const p = last[Math.round(f * nS / 2 / 6)]; T.box(new THREE.Vector3(p.x, yy - 0.012 * S, p.z), new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1), 0.0022 * S, 0.012 * S, 0.0022 * S, { [iU]: 1 }); }
     }
   }
   // ---- cà vạt (thấy qua cổ chữ V) ----

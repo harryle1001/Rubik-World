@@ -5,11 +5,11 @@ const hash = s => { let h = 7; for (const c of String(s)) h = (h * 31 + c.charCo
 // mặc định: suy từ kiểu học sinh chibi (heroKind) để người cũ không bị đổi giới tính/màu bất ngờ
 export function defaultAvatar(kind = 'student-male-a') {
   const f = /female/.test(kind), k = hash(kind);
-  return { base: f ? (k % 2 ? 'shibu' : 'shino') : 'hair-m', hair: HAIR[k % 4], eye: EYES[k % EYES.length], skin: k % 3, glasses: k % 5 === 0 ? 'round' : 'none', hat: false, house: 'long', mode: 'vrm' };
+  return { base: f ? ['victoria', 'vivi', 'shino'][k % 3] : 'hair-m', hair: HAIR[k % 4], eye: EYES[k % EYES.length], skin: k % 3, glasses: k % 5 === 0 ? 'round' : 'none', hat: false, scarf: false, house: 'long', mode: 'vrm' };
 }
 export function loadAvatar(ctx) {
   const a = ctx.account && ctx.account.avatar; if (a) return { ...defaultAvatar(ctx.heroKind), ...a };
-  try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) return { ...defaultAvatar(ctx.heroKind), ...s }; } catch (e) {}
+  try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) { const d = { ...defaultAvatar(ctx.heroKind), ...s }; if (d.base === 'shibu') d.base = 'vivi'; return d; } } catch (e) {}
   return defaultAvatar(ctx.heroKind);
 }
 export function saveAvatar(ctx, a) {

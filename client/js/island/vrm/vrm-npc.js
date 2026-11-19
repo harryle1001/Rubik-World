@@ -30,8 +30,8 @@ export function createVrmNpc(ctx) {
   const inScene = o => { for (let p = o; p; p = p.parent) { if (p === ctx.scene) return true; if (!p.visible) return false; } return false; };
   const lookOf = e => {
     const p = e.hero.model.getWorldPosition(new THREE.Vector3()), acad = ctx.zoneAt && ctx.zoneAt(p.x, p.z) === ACADEMY.name, f = /female/.test(e.kind), s = e.seed;
-    if (e.role === 'teacher') return { base: f ? 'shino' : 'fumiriya', role: 'teacher', robe: acad, hat: acad && s % 2 === 0, glasses: s % 3 ? 'none' : 'square', hair: f ? HAIR[(s + 1) % 3] : HAIR[[0, 1, 7][s % 3]], wand: acad };
-    return { base: f ? (s % 2 ? 'shibu' : 'shino') : 'hair-m', house: HOUSE_IDS[s % 4], outfit: acad ? 'wizard' : 'school', hair: HAIR[s % 6], eye: EYES[s % 6], skin: s % 3, glasses: s % 5 === 1 ? 'round' : s % 7 === 3 ? 'square' : 'none', hat: acad && s % 3 === 0, wand: acad };
+    if (e.role === 'teacher') return { base: f ? 'victoria' : 'fumiriya', role: 'teacher', robe: acad, hat: acad && s % 2 === 0, glasses: s % 3 ? 'none' : 'square', hair: f ? HAIR[(s + 1) % 3] : HAIR[[0, 1, 7][s % 3]], wand: acad };
+    return { base: f ? ['victoria', 'vivi', 'shino'][s % 3] : 'hair-m', house: HOUSE_IDS[s % 4], outfit: acad ? 'wizard' : 'school', hair: HAIR[s % 6], eye: EYES[s % 6], skin: s % 3, glasses: s % 5 === 1 ? 'round' : s % 7 === 3 ? 'square' : 'none', hat: acad && s % 3 === 0, wand: acad };
   };
   const keyOf = L => [L.base, L.role, L.house, L.outfit, L.robe, L.hat, L.glasses, L.hair, L.skin].join('|');
   function sync(e, dt) {
@@ -81,6 +81,6 @@ export function createVrmNpc(ctx) {
     const sh = e.d < 13; if (v._sh !== sh) { v._sh = sh; v.model.traverse(o => { if (o.isMesh && o.userData.cast0 === undefined) o.userData.cast0 = o.castShadow; if (o.isMesh) o.castShadow = sh && o.userData.cast0; }); }
   }
   // tải trước file VRM mobile (mạng) sau khi vào game; parse khi cần
-  const iv = setInterval(() => { if (!ctx.warmed) return; clearInterval(iv); const c = navigator.connection; if (st.on && !(c && (c.saveData || /2g|3g/.test(c.effectiveType || '')))) for (const id of ['shino', 'shibu', 'hair-m']) prefetch(id, 'mobile'); }, 1000);   // mạng yếu / tiết kiệm dữ liệu: chỉ tải khi gặp
+  const iv = setInterval(() => { if (!ctx.warmed) return; clearInterval(iv); const c = navigator.connection; if (st.on && !(c && (c.saveData || /2g|3g/.test(c.effectiveType || '')))) for (const id of ['victoria', 'vivi', 'hair-m']) prefetch(id, 'mobile'); }, 1000);   // mạng yếu / tiết kiệm dữ liệu: chỉ tải khi gặp
   return Object.assign(st, { update, reg, setOn(on) { st.on = on; if (!on) for (const e of reg) detach(e); } });
 }

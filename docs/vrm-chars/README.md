@@ -1,7 +1,7 @@
 # Học sinh phù thuỷ Tứ Linh — nhân vật anime VRM trong đảo 3D (chờ duyệt)
 
-Nhánh `claude/vrm-chars`. Mẫu đã duyệt (CC0, pixiv/VRoid): **Sendagaya Shino** (nữ tóc dài), **Shibu** (nữ tóc ngắn),
-**HairSample Male** (nam), **Sakurada Fumiriya** (thầy giáo). Giấy phép: [../vrm-preview/LICENSES.md](../vrm-preview/LICENSES.md), `client/assets/CREDITS.txt`.
+Nhánh `claude/vrm-chars`. Mẫu (CC0, pixiv/VRoid): nữ **Victoria Rubin** (tóc buộc — mặc định), **Vivi** (tóc bob), **Sendagaya Shino** (tóc dài);
+nam **HairSample Male**; thầy giáo **Sakurada Fumiriya**. (Lần 2: bỏ Shibu, thêm Victoria + Vivi theo góp ý "nữ đeo khăn xấu, vỡ nét".) Giấy phép: [../vrm-preview/LICENSES.md](../vrm-preview/LICENSES.md), `client/assets/CREDITS.txt`.
 Chỉ sửa đảo 3D (`client/js/island/…`), không đụng `client/school/`.
 
 ## Ảnh đề xuất
@@ -14,14 +14,17 @@ Chỉ sửa đảo 3D (`client/js/island/…`), không đụng `client/school/`.
 | `hoc-vien-4-nha.jpg` | 4 nhà (8 bạn) đứng cùng nhau ở **sân Luyện Đũa, Học viện Pha Lê** — trong đảo thật, chế độ điện thoại |
 | `thay-giao.jpg` | Thầy giáo Học viện (Fumiriya + áo choàng xanh than viền vàng, mũ chóp, đũa) — 2 biến thể |
 | `tao-nhan-vat.jpg` | Trình tạo nhân vật trên điện thoại 390×844 (2 trạng thái: nữ Phụng → nam Lân + mũ chóp) |
-| `dao-di-bo.jpg` · `dao-xe-dap.jpg` | Người chơi (Shino, Nhà Phụng, kính tròn) đi bộ / đạp xe ở quảng trường Trường Rubik |
+| `dao-di-bo.jpg` · `dao-xe-dap.jpg` | Người chơi (Victoria, Nhà Phụng, kính tròn) đi bộ / đạp xe ở quảng trường Trường Rubik |
+| `truoc-sau-net.jpg` | Độ nét: bản cũ (texture PNG gom 256 màu, Shino) ↔ bản mới (WebP đủ màu, Victoria) |
 | `truoc-sau-di-bo.jpg` · `truoc-sau-xe-dap.jpg` · `truoc-sau-npc.jpg` | So sánh **trước (chibi) / sau (anime)** cùng vị trí, cùng giờ |
 
 ## Thiết kế đồng phục (nguyên bản, không phải Harry Potter)
 - **Áo choàng dài xẻ trước** màu đậm của nhà (không phải áo đen), viền trước + gấu + cổ tay màu thứ 2 của nhà, tay áo loe,
   **mũ trùm hạ sau gáy**. Gấu áo ở 1/φ từ gối xuống mắt cá; khe cổ chữ V khép dần tới eo.
-- **Khăn quàng sọc Fibonacci 8:1:2:1:5** (nền màu thứ 2, sọc màu áo) — khác sọc đều; đuôi khăn ôm theo ngực, có tua rua.
-- **Cà vạt** 4 đoạn 2 màu (thấy qua cổ chữ V), **mũ chóp nhọn** (cao 1/φ³ chiều cao người, chóp cong ra sau, dải màu viền),
+- **Nơ cổ / cà vạt gốc của VRoid** (sắc nét) giữ lại và **đổi màu theo nhà** (Shino: nơ màu nhà); nam: cà vạt 2 màu dựng thêm.
+- **Khăn quàng sọc Fibonacci 8:1:2:1:5** nay là **tuỳ chọn** (mặc định tắt), làm lại mềm: vòng cổ mảnh + 2 đuôi ống dẹt ôm ngực, tua rua.
+- Mẫu mặc **váy liền** (Victoria, Vivi): cắt váy gốc dưới eo, áo choàng **khép vạt trước** + váy xếp ly 24 nếp màu nhà bên trong → không đâm xuyên.
+- **mũ chóp nhọn** (cao 1/φ³ chiều cao người, chóp cong ra sau, dải màu viền),
   **đũa gỗ** đầu pha lê màu nhà, **kính tròn / vuông** gọng màu kim loại của nhà (vàng · bạc · đồng · ngọc).
 - Không sẹo, không huy hiệu, không chữ/biểu tượng nhà trên áo; Nhà Long dùng đỏ son + vàng của Tứ Linh (không đỏ thẫm–vàng sọc đều).
 - Thầy cô: áo choàng xanh than viền vàng, không khăn; ở Trường Rubik thầy giáo mặc gile + cà vạt gốc của Fumiriya.
@@ -29,6 +32,8 @@ Chỉ sửa đảo 3D (`client/js/island/…`), không đụng `client/school/`.
 
 ## Kỹ thuật
 - `client/js/vendor/three-vrm.module.min.js` — @pixiv/three-vrm 3.5.5 (MIT) chép vào dự án, không CDN.
+- **Độ nét:** file VRM làm lại từ bản gốc bằng `tools/vrm-slim.mjs --hq --meshopt`: texture **WebP đủ màu** (EXT_texture_webp) thay PNG gom 256 màu
+  (nguyên nhân tóc/mắt vỡ nét), lọc dị hướng ×8. Nhẹ hơn cả trước: full 1,4–1,8 MB, mobile 1,2–1,5 MB/mẫu.
 - `vrm/vrm-core.js` nạp VRM (bộ `full` cho người chơi, `mobile` cho NPC), **gộp primitive cùng vật liệu**
   (tóc VRoid 46–114 primitive → 1; thân 4 → 1): HairSample Male 131 → 15 lưới, Shino 67 → 18. Texture tóc + mống mắt chuyển xám 1 lần/mẫu
   → **đổi màu tóc/mắt/da bằng litFactor** (MToon `color` + `shadeColorFactor`); texture dùng chung giữa các bản sao cùng mẫu.
@@ -63,7 +68,7 @@ Máy đo dùng GPU giả lập (SwiftShader, CPU) → **FPS/ms chỉ để so t�
 
 (▲ gồm cả lượt vẽ viền + bóng.) **1 nhân vật** (trang `vrm-chars.html`, không bóng): người chơi bộ full có viền **24 draw call (nam) / 26 (nữ)**,
 44–52 k▲ kể cả viền; NPC mobile **lite** (5–21 m) **14 draw call (nam) / 16 (nữ)** — đạt mục tiêu ~15 —, 16,5–19,4 k▲. Chibi cũ: 2 draw call, ~2,8 k▲.
-Tam giác model: Shino 31 k (full) / 17 k (mobile), HairSample Male 25 k / 14 k, Fumiriya 40 k / 21 k; đồng phục +3,3–3,7 k▲.
+Tam giác model: Victoria 28 k (full), Vivi 26 k, Shino 31 k / 17 k (mobile), HairSample Male 25 k / 14 k, Fumiriya 40 k / 21 k; đồng phục +3,3–4,5 k▲.
 
 **Thời gian tải:** khung 3D đầu tiên / trường sẵn sàng **không đổi** (2,2–2,5 s / 2,3–2,7 s; 3,37 MB như cũ) vì VRM nạp sau.
 Người chơi VRM xuất hiện sau ~5,2–5,7 s kể từ khi màn che mở trên máy đo (tải 1,8–2,2 MB + parse + dựng áo; máy thật nhanh hơn nhiều vì

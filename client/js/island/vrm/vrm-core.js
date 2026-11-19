@@ -9,8 +9,8 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { VRMLoaderPlugin, VRMUtils } from '../../vendor/three-vrm.module.min.js';
 
-export const BASES = {   // mẫu đã duyệt (CC0)
-  shino: { name: 'Nữ tóc dài', gender: 'f' }, shibu: { name: 'Nữ tóc ngắn', gender: 'f' },
+export const BASES = {   // mẫu đã duyệt (CC0, pixiv/VRoid) — texture WebP đủ màu (tools/vrm-slim.mjs --hq)
+  victoria: { name: 'Nữ tóc buộc', gender: 'f' }, vivi: { name: 'Nữ tóc bob', gender: 'f' }, shino: { name: 'Nữ tóc dài', gender: 'f' },
   'hair-m': { name: 'Nam', gender: 'm' }, fumiriya: { name: 'Thầy giáo', gender: 'm' },
 };
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder); loader.register(p => new VRMLoaderPlugin(p));
@@ -77,8 +77,9 @@ export async function loadVrm(id, set = 'mobile') {
   VRMUtils.removeUnnecessaryVertices(g.scene); VRMUtils.combineSkeletons(g.scene); VRMUtils.rotateVRM0(vrm);
   const merged = mergeByMaterial(vrm.scene);
   const mats = matsOf(vrm.scene); shareTextures(id + set, mats);
+  for (const m of mats) for (const k of ['map', 'shadeMultiplyTexture']) if (m[k] && m[k].anisotropy < 8) { m[k].anisotropy = 8; m[k].needsUpdate = true; }   // nét khi nhìn xiên
   for (const m of mats) {   // tóc + mống mắt: texture xám → đổi màu bằng litFactor
-    const k = kindOf(m.name); if ((k !== 'hair' && k !== 'iris') || !m.map) continue;
+    const k = kindOf(m.name); if ((k !== 'hair' && k !== 'iris' && k !== 'neck') || !m.map) continue;   // nơ cổ: đổi màu theo nhà
     const src = m.map, gt = grayTex(src, id + set + m.name);
     m.map = gt; if (m.shadeMultiplyTexture === src) m.shadeMultiplyTexture = gt;
     m.userData.base = m.color.clone(); m.userData.shade = m.shadeColorFactor ? m.shadeColorFactor.clone() : null;
@@ -96,17 +97,32 @@ export async function loadVrm(id, set = 'mobile') {
 
 // Màu tóc / mắt / da (litFactor = material.color của MToon; vùng tối = shadeColorFactor)
 const _c = new THREE.Color();
-export function tint(vrm, { hair, eye, skin } = {}) {
+export function tint(vrm, { hair, eye, skin, bow } = {}) {
   vrm.scene.traverse(o => {
     if (!o.isMesh) return;
     for (const m of [].concat(o.material)) {
       if (m.isOutline || !m.color) continue; const k = kindOf(m.name);
       if (k === 'hair' && hair) { m.color.set(hair); if (m.shadeColorFactor) m.shadeColorFactor.copy(_c.set(hair).multiplyScalar(0.618)); }
       else if (k === 'iris' && eye) { m.color.set(eye); if (m.shadeColorFactor) m.shadeColorFactor.set(eye); }
+      else if (k === 'neck' && bow) { m.color.set(bow); if (m.shadeColorFactor) m.shadeColorFactor.copy(_c.set(bow).multiplyScalar(0.62)); }
       else if (k === 'skin' && skin) { m.color.set(skin); if (m.shadeColorFactor) { m.userData.sh0 ??= m.shadeColorFactor.clone(); m.shadeColorFactor.copy(m.userData.sh0).multiply(_c.set(skin)); } }
     }
   });
 }
 // ẩn bớt lưới gốc khi mặc đồng phục phù thuỷ (váy/quần nằm trong áo choàng; nơ cổ thay bằng cà vạt)
+// cắt phần váy liền (lưới áo) dưới eo khi mặc áo choàng: váy xoè không đâm xuyên vạt áo
+export function cutBelow(vrm, kind, y) {
+  vrm.humanoid.update(); vrm.scene.updateMatrixWorld(true); const v = new THREE.Vector3();
+  vrm.scene.traverse(o => {
+    if (!o.isSkinnedMesh || o.userData.vrmKind !== kind || !o.geometry.index) return;
+    o.userData.cutY = y + 0.04;   // vrm-outfit.js: bỏ qua đỉnh dưới mức này khi đo dáng thân
+    const g = o.geometry, pa = g.attributes.position, low = new Uint8Array(pa.count);
+    for (let i = 0; i < pa.count; i++) { v.fromBufferAttribute(pa, i); o.applyBoneTransform(i, v); v.applyMatrix4(o.matrixWorld); low[i] = v.y < y ? 1 : 0; }
+    const I = g.index.array, keep = [];
+    for (let t = 0; t < I.length; t += 3) if (!(low[I[t]] && low[I[t + 1]] && low[I[t + 2]])) keep.push(I[t], I[t + 1], I[t + 2]);
+    g.setIndex(keep); g.clearGroups(); const n = keep.length, mats = [].concat(o.material); if (mats.length > 1) for (let i = 0; i < mats.length; i++) g.addGroup(0, n, i);
+  });
+}
+export const hasPart = (vrm, kind) => { let f = false; vrm.scene.traverse(o => { if (o.isMesh && o.userData.vrmKind === kind) f = true; }); return f; };
 export function hideParts(vrm, kinds) { vrm.scene.traverse(o => { if (o.isMesh && o.userData.vrmKind && kinds.includes(o.userData.vrmKind)) o.visible = false; }); }
 export const outlineMats = vrm => matsOf(vrm.scene).filter(m => m.isOutline);

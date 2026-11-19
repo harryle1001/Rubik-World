@@ -3,7 +3,7 @@
 // Giữ nguyên mọi chỉ số node/mesh/material/texture; chỉ thay dữ liệu bufferView:
 //  - texture: thu về tối đa --tex px (PNG nếu có trong suốt, JPEG nếu không)
 //  - tam giác: meshoptimizer simplify theo --ratio (giữ viền, bỏ qua lưới có morph khi --keep-morph)
-// Chạy: node tools/vrm-slim.mjs in.vrm out.vrm --tex=512 --ratio=0.5 [--keep-morph]
+// Chạy: node tools/vrm-slim.mjs in.vrm out.vrm --tex=512 --ratio=0.5 [--keep-morph] [--hq]
 import fs from 'fs';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
@@ -12,7 +12,7 @@ const { MeshoptSimplifier } = require('meshoptimizer');
 
 const [, , IN, OUT, ...opt] = process.argv;
 const arg = (k, d) => { const a = opt.find(o => o.startsWith('--' + k + '=')); return a ? +a.split('=')[1] : d; };
-const TEX = arg('tex', 1024), RATIO = arg('ratio', 1), KEEP_MORPH = opt.includes('--keep-morph');
+const TEX = arg('tex', 1024), RATIO = arg('ratio', 1), KEEP_MORPH = opt.includes('--keep-morph'), HQ = opt.includes('--hq');   // --hq: texture WebP đủ màu (không gom 256 màu → tóc/mặt không vỡ nét)
 
 const glb = fs.readFileSync(IN);
 const jlen = glb.readUInt32LE(12), json = JSON.parse(glb.subarray(20, 20 + jlen).toString('utf8'));
@@ -30,10 +30,14 @@ for (const img of json.images || []) {
   let alpha = false;
   if (m.hasAlpha) { const s = await sharp(views[img.bufferView]).stats(); alpha = s.channels[3] && s.channels[3].min < 250; }
   const p = sharp(views[img.bufferView]).resize({ width: Math.min(TEX, m.width), height: Math.min(TEX, m.height), fit: 'inside' });
+  if (HQ) {   // --hq: WebP đủ màu (giữ alpha) qua EXT_texture_webp → nét như gốc, nhẹ hơn PNG gom 256 màu
+    setView(img.bufferView, await p.webp({ quality: alpha ? 90 : 86, alphaQuality: 100, effort: 6 }).toBuffer()); img.mimeType = 'image/webp'; continue;
+  }
   const out = alpha ? await p.png({ compressionLevel: 9, palette: true, quality: 90 }).toBuffer() : await p.flatten().jpeg({ quality: 82, mozjpeg: true }).toBuffer();
   setView(img.bufferView, out); img.mimeType = alpha ? 'image/png' : 'image/jpeg';
 }
 
+if (HQ) { json.extensionsUsed = [...new Set([...(json.extensionsUsed || []), 'EXT_texture_webp'])]; for (const t of json.textures || []) if (t.source != null) t.extensions = { ...(t.extensions || {}), EXT_texture_webp: { source: t.source } }; }
 // 2) Tam giác
 await MeshoptSimplifier.ready;
 const readAcc = (a, Type) => {
