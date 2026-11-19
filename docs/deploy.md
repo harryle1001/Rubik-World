@@ -87,3 +87,8 @@ fly deploy
 | `FORCE_HTTPS` | `1` = chuyển http → https |
 | `PUBLIC_ORIGIN` | Tên miền được phép kết nối Socket.io từ nơi khác (app Capacitor đã được phép sẵn) |
 | `EVENT_ALWAYS` | Chỉ để thử: `1` = luôn có săn kho báu, `race` = luôn có giải bay chổi |
+
+## Gói Phụ huynh & thanh toán
+- Trang phụ huynh: `/parent` · chủ game: `/admin` (nhập `ADMIN_KEY`) · văn bản: `/privacy`, `/terms` (đọc từ `docs/privacy-policy.md`, `docs/terms.md`).
+- Khoá cổng thanh toán, giá gói, SMTP: xem **docs/payments.md**. Chưa đặt khoá → chế độ giả lập (an toàn để thử).
+- Kiểm thử trọn luồng: `node tools/parent-flow-test.mjs` (server chạy ở cổng 3311, `ADMIN_KEY=TESTKEY`).

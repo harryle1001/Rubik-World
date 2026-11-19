@@ -24,7 +24,12 @@ if (process.env.FORCE_HTTPS === '1') app.use((req, res, next) => (req.secure || 
 app.get('/teacher', (req, res) => res.sendFile(path.join(ROOT, 'client', 'teacher.html')));
 app.get('/parent', (req, res) => res.sendFile(path.join(ROOT, 'client', 'parent.html')));   // Gói Phụ huynh: đăng ký, liên kết con, mua gói, báo cáo học tập
 app.get('/admin', (req, res) => res.sendFile(path.join(ROOT, 'client', 'admin.html')));     // chủ game: doanh thu, đối soát, mã giảm giá, giấy phép trường
-app.get(['/privacy', '/terms'], (req, res) => res.sendFile(path.join(ROOT, 'client', 'legal.html')));
+app.get(['/privacy', '/terms'], (req, res) => {   // văn bản pháp lý: docs/*.md → HTML gọn (tiêu đề, danh sách, đậm, liên kết)
+  const md = fs.readFileSync(path.join(ROOT, 'docs', req.path === '/terms' ? 'terms.md' : 'privacy-policy.md'), 'utf8'), e = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const il = s => e(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/_(.+?)_/g, '<i>$1</i>').replace(/`(.+?)`/g, '<code>$1</code>').replace(/\[(.+?)\]\((\/[\w/]*)\)/g, '<a href="$2">$1</a>');
+  const body = md.split(/\n{2,}/).map(b => /^#+ /.test(b) ? `<h${b.match(/^#+/)[0].length}>${il(b.replace(/^#+ /, ''))}</h${b.match(/^#+/)[0].length}>` : /^- /m.test(b) ? b.replace(/^(?!- )(.+)$/m, '<p>$1</p>').replace(/(^- .+\n?)+/m, m => '<ul>' + m.trim().split('\n').map(l => `<li>${il(l.slice(2))}</li>`).join('') + '</ul>').replace(/<p>(.+?)<\/p>/, (m, t) => `<p>${il(t)}</p>`) : `<p>${il(b)}</p>`).join('\n');
+  res.type('html').send(`<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trường Rubik</title><style>body{margin:0;background:#f6f0e4;color:#2e2418;font:16px/1.618 system-ui,sans-serif}main{max-width:720px;margin:0 auto;padding:34px 16px 55px}h1{font-size:34px;line-height:1.236}h2{font-size:21px;margin-top:34px}a{color:#2c8f82}code{background:#efe3cc;padding:0 5px;border-radius:5px}</style><main>${body}<p><a href="/parent">← Trang Phụ huynh</a></p></main></html>`);
+});
 app.get('/lib/chart.js', (req, res) => { res.set('Cache-Control', 'public, max-age=604800'); res.sendFile(path.join(ROOT, 'node_modules', 'chart.js', 'dist', 'chart.umd.min.js')); });
 app.get('/sw.js', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'sw.js')); });
 app.get('/manifest.webmanifest', (req, res) => { res.type('application/manifest+json'); res.sendFile(path.join(ROOT, 'client', 'manifest.webmanifest')); });
