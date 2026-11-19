@@ -86,6 +86,7 @@ export function createPlayer(ctx) {
   let hero = null; const animState = {};
   self.ready = loadHero(ctx.heroKind || 'student-male-a').then(r => { if (!r) { h.body.visible = true; self.heroFailed = true; return; } hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); });
   self.emote = name => { if (hero) emote(hero, animState, name); };
+  self.setHero = r => { if (!r || r === hero) return; if (hero) hero.model.removeFromParent(); hero = r; h.body.visible = false; h.root.add(r.model); r.anim.play(r.set.idle, 0); };   // đổi nhân vật (vrm/player-vrm.js)
   let stepT = 0, stepPh = 1, jumpBuf = 0, coyote = 0;
   // trạng thái chuyển động mượt (tạo 1 lần, không cấp phát mỗi khung hình)
   const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3(), pivot = new THREE.Vector3(), pivV = new THREE.Vector3(), ZERO = new THREE.Vector3();

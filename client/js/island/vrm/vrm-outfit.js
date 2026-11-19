@@ -119,7 +119,7 @@ export function dressVrm(vrm, model, opt = {}) {
     else if (y >= hips.y) { const t = smooth(hips.y, spine.y, y); w[iS] = t; w[iH] = 1 - t; }
     else {
       const t = smooth(hips.y, hemY, y), c = Math.cos(th), s = Math.sin(th);
-      if (c >= 0) { const k = 0.9 * smooth(0, 0.55, t) * smooth(0, 0.35, c); w[s >= 0 ? iLL : iRL] = k; w[iH] = 1 - k; }   // vạt trước theo đùi
+      if (c >= 0) { const k = 0.5 * smooth(0, 0.618, t) * smooth(0.1, 0.8, c); w[s >= 0 ? iLL : iRL] = k; w[iH] = 1 - k; }   // vạt trước theo đùi (một nửa: vải không cứng như ống quần)
       else {   // vạt sau theo dây vải gần nhất (nội suy 2 dây)
         const k = smooth(0, 0.3, t) * smooth(0, 0.3, -c); let f = ((((th % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - chainTh[0]) / (Math.PI / CH);
         f = Math.max(0, Math.min(CH - 1, f)); const a = Math.floor(Math.min(f, CH - 1.0001)), u = f - a;

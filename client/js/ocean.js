@@ -45,6 +45,9 @@ import { createSchoolYard } from './island/school-yard.js';
 import { createAcademy } from './island/academy/index.js';
 import { createTrain } from './island/train/index.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
+import { createVrmNpc } from './island/vrm/vrm-npc.js';
+import { createPlayerVrm } from './island/vrm/player-vrm.js';
+import { createCreator } from './island/vrm/creator.js';
 import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
 import { register as registerSport } from './island/mg/sport/index.js';
@@ -130,6 +133,7 @@ const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + ti
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 const mounts = createMounts(ctx);
+const vrmNpc = ctx.vrmNpc = createVrmNpc(ctx); ctx.playerVrm = createPlayerVrm(ctx); ctx.creator = createCreator(ctx); // nhân vật anime VRM: NPC gần (LOD), người chơi (nạp sau), 🎨 trình tạo nhân vật (vrm/)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -181,6 +185,7 @@ renderer.setAnimationLoop(() => {
   vehicles.update(dt);
   aircraft.update(dt, clock.elapsedTime);
   mounts.update(dt);
+  vrmNpc.update(dt);
   academy.update(dt);
   train.update(dt);
   sky.update(dt, camera, player.pos);

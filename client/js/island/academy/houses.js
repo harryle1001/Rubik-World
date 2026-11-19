@@ -173,6 +173,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   function wear() {
     if (wearMesh) { wearMesh.removeFromParent(); wearMesh.geometry.dispose(); wearMesh = null; }
     const id = houseId(), hero = player.hero; wearFor = null; if (!id || !hero) return; wearFor = id;
+    if (hero.isVrm) { hero.setHouse(id); return; }   // nhân vật anime: đồng phục phù thuỷ đổi màu theo nhà (vrm-outfit.js)
     const h = HOUSE[id], root = player.root, head = hero.model.getObjectByName('head'), chest = hero.model.getObjectByName('chest') || hero.model.getObjectByName('torso');
     root.updateMatrixWorld(true);
     const hy = head ? head.getWorldPosition(new THREE.Vector3()).y - root.position.y : 1.3, H0 = hy;   // gốc đầu ≈ cổ
