@@ -138,6 +138,7 @@ models/alley/owl.glb  cú — tách mesh "Owl" (84 mặt) từ "Animal Figurines
 Phố Phép Thuật v2 (alley-merge.js gộp draw call): dùng thêm models/kit/* sẵn có (Kenney / Quaternius CC0 — xem mục kit ở trên):
   két rau quả, táo, bí ngô, dưa hấu, thùng, chum, chậu, bồn hoa, hoa, cột đèn khí, đèn lồng treo, bảng phấn, bàn ghế trà, giá sách, sách, nhạc cụ, nấm
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
+<<<<<<< HEAD
 
 Nhân vật anime xem thử (client/assets/vrm/, trang client/vrm-preview.html — CHƯA dùng trong game; chi tiết docs/vrm-preview/LICENSES.md):
   pixiv Inc. / VRoid Studio sample models, CC0 (meta VRM: licenseName "CC0"): Sendagaya Shino, Sendagaya Shibu, Sakurada Fumiriya,
@@ -194,3 +195,10 @@ audio/bgm-magic-night.mp3    "Fantasy: Rising Moon" — https://opengameart.org/
 audio/bgm-village.mp3        "Orient: Peace Valley" — https://opengameart.org/content/orient-peace-valley (Làng nổi trên biển)
 audio/bgm-temple-ethnic.mp3  "Asian/Oriental 1" — https://opengameart.org/content/asianoriental1 (Rừng & Đền Tri Thức)
 Lớp nhịp, gió khi bay, chuông trường: tổng hợp bằng Web Audio trong js/island/audio.js (không dùng file).
+=======
+Rừng Thiên Định (client/js/island/zone-destiny.js, destiny-plan.js, destiny-ui.js): không tải thêm tài nguyên mới.
+  Cây, bụi, đá, dương xỉ, nấm, hoa, khúc gỗ: model Quaternius (qn_*, CC0) đã có — đi chung InstancedMesh của terrain.js (NATURE).
+  Hươu trắng: models/animal-deer.glb (Quaternius – Ultimate Animated Animals, CC0) nhuộm trắng bằng code.
+  Âm thanh: amb-river, amb-birds, amb-birds2, amb-crickets (đã ghi nguồn ở trên); chuông gió tổng hợp bằng WebAudio (ctx.note).
+  Vách đá, cây Thiên Định, đền đá, cầu khỉ, công, cổng đá, dây leo, thác, sương, tia nắng: dựng bằng khối cơ bản + shader tự viết.
+>>>>>>> claude/destiny-forest
