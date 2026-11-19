@@ -220,9 +220,12 @@ island.on('connection', socket => {
   });
   socket.on('m', d => {
     const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
-    me.x = num(d.x, -150, 150); me.y = num(d.y, -20, 60); me.z = num(d.z, -150, 150); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);
+    me.x = num(d.x, -3000, 3000); me.y = num(d.y, -50, 500); me.z = num(d.z, -3000, 3000);   // cả đảo lớn (Học viện ở x ≈ −700, z ≈ −850) me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);
     socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
   });
+  // trang phục mua ở Phố Phép Thuật (mũ, áo choàng) — chỉ nhận mã ngắn chữ thường
+  const lid = v => (typeof v === 'string' && /^[a-z0-9-]{1,21}$/.test(v) ? v : null);
+  socket.on('look', d => { if (!me || !d) return; me.look = { cape: lid(d.cape), hat: lid(d.hat) }; socket.broadcast.emit('look', [me.id, me.look]); });
   socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
 });
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
