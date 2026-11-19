@@ -481,7 +481,7 @@ export function createAircraft(ctx) {
   }
 
   // ================= THẢ DÙ + TỰ LÁI VỀ ĐƯỜNG BĂNG =================
-  // eject(): người chơi nhảy ra (parachute.js), máy bay bật lái tự động: bay tới điểm vào 144 m trước đầu đường băng gần nhất,
+  // eject(): người chơi nhảy ra (glider.js: nút đỏ 🪁), máy bay bật lái tự động: bay tới điểm vào 144 m trước đầu đường băng gần nhất,
   // hạ dần theo dốc 1/φ³ (≈ 13°) rồi chạm đất ở đầu đường băng, lăn chậm và đỗ lại (lái được tiếp từ đó).
   const auto = [];
   const runwayList = () => [{ start: [RWY.x1 - 4, RWY.z], yaw: -Math.PI / 2, y: GY, name: 'sân bay Cánh Diều' }, ...(ctx.runways || [])];

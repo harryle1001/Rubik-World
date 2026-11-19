@@ -91,7 +91,7 @@ export function createRegions(ctx) {
   { const TW = [...TOWERS.map(([u, v, r, h, roof]) => [...acadW(u, v), r + 3, BASE_Y + h + roof]), [...acadW(CASTLE_L.astro.u, CASTLE_L.astro.v), CASTLE_L.astro.r + 3, BASE_Y + CASTLE_L.astro.h + CASTLE_L.astro.roof]];
     const prevTop = ctx.skyTop, AC = ACADEMY.c, RB = R_BOUND;
     ctx.skyTop = (x, z, m) => { let t = prevTop ? prevTop(x, z, m) : -99; if (Math.hypot(x - AC[0], z - AC[1]) < RB) for (const [tx, tz, r, top] of TW) if (Math.hypot(x - tx, z - tz) < r + m && top > t) t = top; return t; }; }
-  // bãi đáp nhảy dù trúng đích (parachute.js đọc ctx.chuteTargets)
+  // bãi đáp trúng đích khi nhảy khỏi máy bay (glider.js đọc ctx.chuteTargets)
   (ctx.chuteTargets = ctx.chuteTargets || []).push(
     { name: 'sân đình Làng Cổ', p: REGIONS[1].toWorld(34, -10) }, { name: 'quảng trường Thành phố Tương lai', p: FR.toWorld(0, 13) },
     { name: 'đảo San Hô', p: REGIONS[2].toWorld(-4, 4) }, { name: 'chân Núi Tuyết', p: REGIONS[0].toWorld(-21, 120) });

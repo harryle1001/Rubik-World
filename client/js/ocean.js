@@ -17,7 +17,7 @@ import { createTutorial } from './island/tutorial.js';
 import { SPAWN, landDist, blocked, ISLAND_R, TEMPLE_C } from './island/layout.js';
 import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
-import { createParachute } from './island/parachute.js';
+import { createGlider } from './island/glider.js';
 import { createMounts } from './island/mounts.js';
 import { createBrooms } from './island/brooms.js';
 import { KINDS } from './island/characters.js';
@@ -126,7 +126,6 @@ const academy = ctx.academy = createAcademy(ctx); // Học viện Pha Lê: đả
 const spells = ctx.spells = createSpellbook(ctx, academy.magic); // đũa phép dùng khắp thế giới: hô thần chú, phép mới, đồng bộ mạng, áo choàng chủ game
 const train = ctx.train = createTrain(ctx); // Tàu Pha Lê: tàu hơi nước từ ga bờ tây bắc qua đảo Đồi Thông, hầm, cầu cạn vòm đá tới cao nguyên Học viện
 const regions = ctx.regions = createRegions(ctx); // 4 vùng mới: Núi Tuyết (cầu), Làng Cổ (cầu), Quần đảo San Hô (thuyền), Thành phố Tương lai (thuyền + đường băng) — tải theo chunk
-const chute = ctx.chute = createParachute(ctx); // 🪂 thả dù từ máy bay, máy bay tự lái về đường băng, nhảy dù trúng đích ⭐
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
@@ -160,6 +159,7 @@ const vrmNpc = ctx.vrmNpc = createVrmNpc(ctx); ctx.playerVrm = createPlayerVrm(c
 const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp đảo (nút 🧹 / phím J), giá chổi ở Sân Đại Sảnh Học viện
 const photo = createPhoto(ctx); // 📷 chế độ chụp ảnh: dừng thời gian, camera tự do, bộ lọc, lưu ảnh có khung logo (photo.js)
 const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, xu bay vào HUD, màn chuyển, tên vùng điện ảnh (feel.js)
+const glider = createGlider(ctx); // Diều Lượn Rubik: rơi từ cao tự bung, cột khí nóng, 3·5·8 vòng, nút đỏ nhảy khỏi máy bay (glider.js)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -211,10 +211,10 @@ renderer.setAnimationLoop(() => {
   school.update(dt, clock.elapsedTime);
   vehicles.update(dt);
   aircraft.update(dt, clock.elapsedTime);
-  chute.update(dt); // sau aircraft: điều khiển người rơi + camera
   mounts.update(dt);
   vrmNpc.update(dt);
   brooms.update(dt);
+  glider.update(dt);
   academy.update(dt);
   spells.update(dt); // sau thị trấn/học viện: Bay Lên cộng độ cao lên người đã đặt vị trí
   train.update(dt);

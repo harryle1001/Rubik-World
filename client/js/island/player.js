@@ -97,6 +97,7 @@ export function createPlayer(ctx) {
   const hs = {}, lookSt = {}, lookPt = { x: 0, z: 0, on: false };
   const occ = ctx.camOcc = ctx.camOcc || createCamOcclude(ctx), camTo = new THREE.Vector3();
   // Phương tiện (vehicles.js gán): self.vehicle = { speed, turn, accel, water, fly, lift, anim, seat, camAdd, maxAlt } hoặc null
+  self.glide = null; self.airJump = false;   // diều lượn (glider.js gán): { on, steer, sink, camAdd } · airJump: bấm Nhảy giữa không trung
   self.vehicle = null; self.vel = vel; self.setRot = r => { rot = r; rotSt.v = 0; };
   Object.defineProperty(self, 'hero', { get: () => hero });
   Object.defineProperty(self, 'vy', { get: () => vy, set: v => { vy = v; } });
@@ -111,11 +112,14 @@ export function createPlayer(ctx) {
     const sp = (V ? V.speed : swim ? D.speed : running ? P.run : P.walk) * mag;
     const fx = -Math.sin(cam.yaw), fz = -Math.cos(cam.yaw), mx = (Math.cos(cam.yaw) * ix - fx * iz) / n, mz = (-Math.sin(cam.yaw) * ix - fz * iz) / n;
     // quán tính mềm: tăng tốc ≈ φ⁴/s, hãm ≈ φ⁵/s, trên không φ²/s
+    const GL = !V && self.glide && self.glide.on ? self.glide : null;   // đang lượn: glider.js lo vận tốc ngang, hướng và tốc độ rơi
+    if (GL) { rot = GL.steer(dt, self.frozen ? 0 : clamp(ix, -1, 1), self.frozen ? 0 : clamp(iz, -1, 1), rot, vel, cam); rotSt.v = 0; self.speed = Math.hypot(vel.x, vel.z); } else {
     const k = ease(V ? V.accel : !grounded ? AIR : mag > 0.05 ? ACC : DEC, dt);
     vel.x += (mx * sp - vel.x) * k; vel.z += (mz * sp - vel.z) * k; self.speed = Math.hypot(vel.x, vel.z);
     // xoay người: lò xo giảm chấn có giới hạn tốc độ quay → đổi hướng gấp vẫn mượt, không giật
     if (mag > 0.05) { const wa = Math.atan2(mx, mz); if (V) { const d = wrapAngle(wa - rot) * Math.min(1, dt * V.turn); rot += d; rotSt.v = d / dt; } else rot = dampAngle(rot, wa, rotSt, T.fast, dt, TURN_MAX); }
     else rotSt.v *= Math.exp(-dt * 12);
+    }
     let impact = 0;
 
     // di chuyển + va chạm (phần vật lý — physics.js dựng lưới ctx.grid để tra nhanh vật cản gần)
@@ -132,7 +136,8 @@ export function createPlayer(ctx) {
       const ox = pos.x, oz = pos.z; let nx = ox + ddx / ns, nz = oz + ddz / ns;
       if (!fly) {
         const N = near(nx, nz);
-        for (const c of N.cols) { const dx = nx - c.x, dz = nz - c.z, rr = c.r + R0, d2 = dx * dx + dz * dz; if (d2 < rr * rr) { const d = Math.sqrt(d2) || 1e-3; nx = c.x + dx / d * rr; nz = c.z + dz / d * rr; } }
+        for (const c of N.cols) { if (GL && pos.y > terrain.heightAt(c.x, c.z) + (c.h || 8)) continue;   // lượn cao hơn ngọn cây/đá thì bay qua
+          const dx = nx - c.x, dz = nz - c.z, rr = c.r + R0, d2 = dx * dx + dz * dz; if (d2 < rr * rr) { const d = Math.sqrt(d2) || 1e-3; nx = c.x + dx / d * rr; nz = c.z + dz / d * rr; } }
         // tường/nhà hình hộp (ctx.boxes: {x0,z0,x1,z1,top}) — đẩy ra về phía vừa đi tới; hộp thấp (≤ BSTEP) thì bước lên được
         for (const b of N.boxes) {
           if (nx < b.x0 - R0 || nx > b.x1 + R0 || nz < b.z0 - R0 || nz > b.z1 + R0 || b.top <= pos.y + BSTEP) continue;
@@ -165,6 +170,7 @@ export function createPlayer(ctx) {
     if (!fly) for (const b of near(pos.x, pos.z).boxes) if (b.top <= pos.y + BSTEP && b.top > g && pos.x > b.x0 - 0.15 && pos.x < b.x1 + 0.15 && pos.z > b.z0 - 0.15 && pos.z < b.z1 + 0.15) g = b.top;
     if (!fly && ctx.physics) for (const b of ctx.physics.solid) { const t = b.pos.y + b.K.r - 0.02; if (t > g && pos.y >= t - 0.3 && Math.abs(pos.x - b.pos.x) < 0.5 && Math.abs(pos.z - b.pos.z) < 0.5) g = t; }
     // nhảy dễ trúng: bấm sớm ≤ 1/φ⁴ s trước khi chạm đất vẫn nhận; vừa bước khỏi mép ≤ 0,1 s vẫn nhảy được
+    if (input.jump && !grounded && !V) self.airJump = true;   // bấm Nhảy giữa không trung → glider.js bung/thu diều
     if (input.jump) jumpBuf = 1 / PHI ** 4; input.jump = false; jumpBuf -= dt; coyote = grounded ? 0.1 : coyote - dt;
     if (jumpBuf > 0 && coyote > 0 && vy <= 0.01 && !self.frozen && !V && !(D && D.swimming)) { vy = P.jump; grounded = false; coyote = jumpBuf = 0; ctx.sfx && ctx.sfx('jump'); }
     if (V && V.water) { pos.y = V.waterY(pos.x, pos.z); vy = 0; grounded = true; }
@@ -174,7 +180,7 @@ export function createPlayer(ctx) {
     } else if (D && D.step(dt, g)) { vy = 0; grounded = true; }   // đang bơi/lặn: dive.js lo độ cao
     else if (self.hover != null) { pos.y = Math.max(g, self.hover); vy = 0; grounded = pos.y <= g + 0.01; }   // phép Nâng Bạn (spellbook.js): độ cao do phép điều khiển, không rơi
     else {
-    vy -= P.gravity * dt; pos.y += vy * dt;
+    if (GL) vy = GL.sink(dt, vy); else vy -= P.gravity * dt; pos.y += vy * dt;
     if (pos.y <= g) {
       if (!grounded) impact = -vy;
       if (!grounded && vy < -6) { puff(8, 2.5); ctx.sfx && ctx.sfx('land'); }
@@ -244,7 +250,7 @@ export function createPlayer(ctx) {
     yawF = damp(yawF, follow ? wrapAngle(rot + Math.PI - cam.yaw) * (0.5 + Math.min(PHI, self.speed / P.walk)) / PHI : 0, yawFSt, T.soft, dt); cam.yaw += yawF * dt;
     // điểm nhìn: cao φ m trên chân, nhìn trước theo hướng chạy (vận tốc × 1/φ³ s); trên không bám độ cao chậm hơn (nhảy không làm rung camera)
     tmp.set(pos.x + vel.x * CAM.lead, pos.y + CAM.height, pos.z + vel.z * CAM.lead);
-    const cAdd = (V ? V.camAdd || 0 : 0) + (D ? D.camAdd : 0);
+    const cAdd = (V ? V.camAdd || 0 : 0) + (D ? D.camAdd : 0) + (self.glide ? self.glide.camAdd : 0);
     if (snapCam) { pivot.copy(tmp); pivV.set(0, 0, 0); pyS.v = 0; camDist = colDist = cam.dist + cAdd; distSt.v = colSt.v = 0; ext = 0; }
     else { const py = damp(pivot.y, tmp.y, pyS, grounded || V ? T.quick : T.slow, dt); dampV3(pivot, tmp, pivV, T.quick, dt); pivot.y = py; }
     camDist = damp(camDist, cam.dist + cAdd, distSt, T.slow, dt); // lên/xuống xe, thuyền, khinh khí cầu: lùi/tiến mượt

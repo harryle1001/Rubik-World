@@ -111,6 +111,7 @@ body.rs-modal #bMap{display:none}`;
     if (ctx.destiny) L.push(...ctx.destiny.places());
     if (ctx.eggs && ctx.eggs.spots) for (const q of ctx.eggs.spots()) if (!q.hide) L.push({ n: q.n, x: q.x, z: q.z, ic: q.ic, spot: true });
     { const t = ctx.story && ctx.story.state().started && ctx.story.target(); if (t) L.push({ n: '🧩 Nhiệm vụ cốt truyện', x: t[0], z: t[1], ic: '🧩' }); }   // story/: điểm cần tới tiếp theo
+    if (ctx.glider) for (const q of ctx.glider.spots()) L.push({ n: q.n, x: q.x, z: q.z, ic: q.ic });   // bệ lượn 🪁 (glider.js)
     const sc = ctx.school; if (!sc) return L;
     if (sc.gate) L.push({ n: 'Cổng trường', x: sc.gate[0], z: sc.gate[1], ic: '🏫' });
     const RS = sc.RS;
