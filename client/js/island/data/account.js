@@ -84,6 +84,9 @@ export function createAccount() {
     else p.house = { id, at: Date.now(), changes: 0, pts: 0, week: 0, total: 0, daily: null };
     acc.save(); emit(); return true;
   };
+  // Nhân vật anime (vrm/creator.js): profile.avatar = { base, hair, eye, skin, glasses, hat, house, mode:'vrm'|'chibi' }
+  Object.defineProperty(acc, 'avatar', { get: () => acc.profile && acc.profile.avatar || null });
+  acc.setAvatar = a => { if (!acc.profile) return false; acc.profile.avatar = { ...a, at: Date.now() }; acc.save(); emit(); return true; };
   setInterval(() => acc.save(), 30000);
   addEventListener('pagehide', () => acc.save());
   return acc;
