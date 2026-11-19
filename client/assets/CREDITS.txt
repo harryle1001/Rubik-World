@@ -102,3 +102,7 @@ models/kit/qn_*.glb (cây tán, bạch dương, thông, dừa, bụi, bụi qu�
   (License.txt trong gói: "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"). Tải từ OpenGameArt (quaternius.com chỉ dẫn link Google Drive).
   Đã chuyển OBJ → GLB bằng tools/kit/obj2glb.mjs: giản lược meshopt (cây ≤ 260 tam giác, LOD ≤ 140, bụi/hoa/cỏ ≤ 90), pháp tuyến phẳng, nén Meshopt.
   Không tải được (bị chặn mạng trong môi trường làm việc): kenney.nl, poly.pizza, github.com (trang web/API) — KayKit lấy qua cdn.jsdelivr.net/gh.
+
+Lớp học phép thuật (client/js/island/academy/classes/): chỉ dùng lại model CC0 đã có trong assets/models/kit (KayKit Furniture/City/Restaurant Bits;
+  Kenney City/Furniture/Nature Kit; Quaternius) — school_desk, prop_workbench, prop_crate_bottles, furn_shelf_big, rock_small, fence_wood,
+  farm_hay_bale, prop_bucket, deer, fox — và models/animal-frog.glb (Quaternius, CC0). Không tải thêm tài nguyên mới.
