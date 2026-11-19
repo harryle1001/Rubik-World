@@ -21,7 +21,7 @@ body.intro-on>*:not(canvas):not(#intro){visibility:hidden!important}
 #intro .cap{position:absolute;left:50%;bottom:calc(8.3vh + 21px);transform:translateX(-50%);width:min(92vw,610px);text-align:center;font:700 clamp(16px,4.4vw,21px)/1.45 system-ui;text-shadow:0 2px 8px #000,0 0 21px #000a;opacity:0;transition:opacity .618s}
 #intro .say{position:absolute;left:50%;top:calc(8.3vh + 21px);transform:translateX(-50%);width:min(88vw,520px);text-align:center;font:italic 600 clamp(14px,3.8vw,17px)/1.45 system-ui;color:#fff6d8;text-shadow:0 2px 8px #000;opacity:0;transition:opacity .618s}
 #intro .btns{position:absolute;top:calc(max(12px,env(safe-area-inset-top)) + 8.3vh + 8px);right:max(12px,env(safe-area-inset-right));display:flex;gap:8px;pointer-events:auto}
-#intro button{min-height:44px;min-width:44px;padding:0 16px;border-radius:22px;border:2px solid #fff8;background:#0009;color:#fff;font:800 15px system-ui;cursor:pointer;touch-action:manipulation;backdrop-filter:blur(4px)}
+#intro button{white-space:nowrap;min-height:44px;min-width:44px;padding:0 16px;border-radius:22px;border:2px solid #fff8;background:#0009;color:#fff;font:800 15px system-ui;cursor:pointer;touch-action:manipulation;backdrop-filter:blur(4px)}
 #intro .prep{position:absolute;left:50%;top:58%;transform:translateX(-50%);font:600 13px system-ui;opacity:.7;letter-spacing:.1em}`;
 
 const FACE = ['#c41e3a', '#ff8c00', '#ffffff', '#ffd500', '#009e60', '#0051ba'];   // +x −x +y −y +z −z
@@ -78,7 +78,7 @@ export async function playIntro(ctx, { first = false } = {}) {
     const m = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 1.2), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false })); m.position.copy(V(0.2, 1.6, 4)); m.rotation.y = Math.PI / 2; G.add(m); }
   // tia nắng xiên qua cửa sổ (tường bắc z = 0): tấm cộng màu, không đổ bóng
   { const c = document.createElement('canvas'); c.width = 16; c.height = 128; const q = c.getContext('2d'), gr = q.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, '#ffd58a'); gr.addColorStop(1, '#ffd58a00'); q.fillStyle = gr; q.fillRect(0, 0, 16, 128);
-    const mat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false });
+    const mat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false });
     for (let i = 0; i < 5; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 5.5), mat); m.position.copy(V(3 + i * 2.1, 1.6, 1.9)); m.rotation.set(0.75, 0, 0.3); G.add(m); } }
   // đèn vàng ấm (giờ chiều) + đèn nhỏ ở khối Rubik (sáng dần)
   const sun = new THREE.PointLight('#ffb35c', 6, 13, 1.6); sun.position.copy(V(7, 2.6, 0.8)); G.add(sun);
@@ -104,7 +104,11 @@ export async function playIntro(ctx, { first = false } = {}) {
   const seat = V(5.02, 0.42, 5.35), hero = () => P.hero;
   const place = (p, ry) => { P.pos.copy(p); P.root.position.copy(p); P.root.rotation.set(0, ry, 0); const h = hero(); if (h) { h.model.position.set(0, 0, 0); h.model.rotation.set(0, 0, 0); } };
   place(seat, Math.PI / 2);   // người chơi: model nhìn −z cục bộ → yaw π/2 = nhìn −x (bảng)
-  let anim = null; const play = (n, f = 0.3, once = false) => { const h = hero(); if (!h) return; const k = h.set[n] || (n === 'floor' && h.set.sit) || h.set.idle; if (anim !== k) { anim = k; h.anim.play(k, f, once); } };
+  let anim = null, animH = null, want = ['sit', 0, false]; const play = (n, f = 0.3, once = false) => { want = [n, f, once]; const h = hero(); if (!h) return; const k = h.set[n] || (n === 'floor' && h.set.sit) || h.set.idle; if (anim !== k || animH !== h) { anim = k; animH = h; h.anim.play(k, animH === h ? f : 0, once); } };
+  // hướng mặt: đo từ 2 vai (VRM và chibi khác quy ước) → lật π nếu đang không nhìn về hướng mong muốn
+  const _a = new THREE.Vector3(), _b = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+  const face = dir => { const B = bones(); if (!B || !B.armL || !B.armR) return; P.root.updateMatrixWorld(true); B.armL.getWorldPosition(_a); B.armR.getWorldPosition(_b); _a.sub(_b).cross(UP); if (_a.x * dir.x + _a.z * dir.z < 0) P.root.rotation.y += Math.PI; };
+  let faced = null; const keepFace = dir => { const h = hero(); if (h && faced !== h) { faced = h; P.root.rotation.y = Math.PI / 2; h.anim.update(0); face(dir); } };
   play('sit', 0);
   // gục đầu: xoay xương (sau animation mỗi khung) quanh trục ngang thế giới, đổi sang hệ cha của xương
   const qa = new THREE.Quaternion(), qp = new THREE.Quaternion(), ax = new THREE.Vector3();
@@ -127,23 +131,24 @@ export async function playIntro(ctx, { first = false } = {}) {
   const shot = (a, b, la, lb, k, roll = 0) => { camera.position.lerpVectors(a, b, ease(k)); _l.lerpVectors(la, lb, ease(k)); camera.up.set(Math.sin(roll), Math.cos(roll), 0); camera.lookAt(_l); };
   const _l = new THREE.Vector3(), head = () => { const B = bones(); return B && B.head ? B.head.getWorldPosition(new THREE.Vector3()) : P.pos.clone().setY(P.pos.y + 1.2); };
   const C = { a0: V(12.3, 2.5, 1.0), a1: V(9.8, 2.0, 1.9), la0: V(1.2, 1.5, 4.2), la1: V(1.6, 1.3, 4.0),
-    b0: V(3.3, 1.35, 7.4), b1: V(3.75, 1.2, 6.85), c0: V(3.75, 1.05, 6.2), c1: V(4.0, 0.98, 5.95) };
+    b0: V(5.6, 1.7, 3.0), b1: V(4.9, 1.4, 3.6), c0: V(3.1, 1.3, 4.5), c1: V(3.7, 1.05, 4.95) };
   let last = performance.now(), moved = false; t = 0;
-  $('.prep').remove(); blk.style.opacity = 0; $('.ttl').style.opacity = 1; setTimeout(() => { if (!done) $('.ttl').style.opacity = 0; }, 2618);
+  $('.prep').remove(); blk.style.opacity = 0; const ttl = $('.ttl');
   cv.width = Math.min(innerWidth, 900); cv.height = Math.round(cv.width * innerHeight / innerWidth);
   ctx.intro.tick = tick; built = true;
 
   function tick() {
     if (done) return;
     const now = performance.now(), step = window.__introDt || (now - last) / 1000, dt = Math.min(0.05, step); last = now; t += step; window.__introT = t;   // __introDt: bước cố định khi kiểm thử
+    ttl.style.opacity = t < 2.618 ? 1 : 0;
     while (ni < NARR.length && t >= NARR[ni][0]) { const [, x] = NARR[ni++]; cap.style.opacity = 0; setTimeout(() => { if (done) return; cap.innerHTML = x; cap.style.opacity = 1; }, 250); speak(x); }
     while (si < SAY.length && t >= SAY[si][0]) { const [, x, v] = SAY[si++]; say.innerHTML = x; say.style.opacity = v; if (x && ni < 2) speak(x.replace(/[“”👨‍🏫]/gu, ''), v, 0.95); }
     if (music) music.volume = Math.max(0, Math.min(0.38, t < 2 ? t * 0.19 : t < 10 ? 0.38 - (t - 2) * 0.03 : t < 15 ? 0.14 : t < 18 ? 0.14 * (18 - t) / 3 : 0));
-    const h = hero(); if (h) h.anim.update(dt);
+    const h = hero(); if (h && animH !== h) play(...want); if (h) h.anim.update(dt);
     if (teacher) teacher.anim.update(dt);
     // ----- cảnh lớp học (0 – 16,6 s) -----
     if (t < 16.6) {
-      pose();
+      keepFace(FWD); pose();
       if (t < 5) shot(C.a0, C.a1, C.la0, C.la1, t / 5);
       else if (t < 10) { const hd = head(); shot(C.b0, C.b1, hd, hd, (t - 5) / 5); }
       else shot(C.c0, C.c1, cubeAt, cubeAt, (t - 10) / 6.6, t > 14.5 ? (t - 14.5) * 0.9 : 0);
