@@ -135,7 +135,8 @@ export function buildFloor(k, opt = {}) {
   const wallC = id => (kindOf(id) === 'room' ? C.wall : C.wallD);
   // --- sàn (theo vùng, màu riêng) + trần (dưới tầng trên không có sàn) ---
   rects((x, z) => { const id = cellId(k, x, z), kd = kindOf(id); return kd === 'room' || kd === 'corr' ? id : null; }, (x0, z0, x1, z1, id) => stone.box(x0, x1, y - 0.4, y, z0, z1, REG[id].c));
-  rects((x, z) => { const id = cellId(k, x, z), kd = kindOf(id); if (!(kd === 'room' || kd === 'corr' || kd === 'hole') || isShaft(id)) return null; const up = kindOf(cellId(k + 1, x, z)); return up === 'void' || up === 'solid' ? 1 : null; }, (x0, z0, x1, z1) => stone.box(x0, x1, y + CEIL, y + FH, z0, z1, C.ceil));
+  // trần: tầng trên không có sàn → khối mái dày; có sàn → tấm trần mỏng ngay dưới sàn trên (tầng trên chưa tải vẫn kín, màu trần riêng)
+  rects((x, z) => { const id = cellId(k, x, z), kd = kindOf(id); if (!(kd === 'room' || kd === 'corr' || kd === 'hole') || isShaft(id)) return null; const up = kindOf(cellId(k + 1, x, z)); return up === 'void' || up === 'solid' ? 2 : up === 'hole' || up === 'tower' ? null : 1; }, (x0, z0, x1, z1, t) => stone.box(x0, x1, y + CEIL - (t === 1 ? 0.06 : 0), t === 1 ? y + CEIL - 0.01 : y + FH, z0, z1, C.ceil));
   // --- tường / cửa / lan can ---
   runs(k, r => {
     const { ax, L, t, a, b } = r, tw = isTw(a) || isTw(b), sh = isShaft(a) || isShaft(b), s0 = r.s0, s1 = r.s1;

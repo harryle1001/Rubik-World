@@ -39,7 +39,11 @@ export function createInterior(ctx, opt) {
   });
 
   // ---------- dựng ----------
-  function ensureMats() { if (stoneMat) return; stoneMat = stoneMaterial(lookChoice()); glowMat = new THREE.MeshBasicMaterial({ vertexColors: true }); }
+  // ánh sáng trong nhà: cộng thêm màu × uLift (đèn nến/đuốc khắp lâu đài) → ban đêm vẫn rõ, ban ngày bớt tối góc khuất
+  const LIFT = { value: 0.2 };
+  const lifted = (m, key) => { const prev = m.onBeforeCompile; m.onBeforeCompile = (sh, r) => { if (prev) prev.call(m, sh, r); sh.uniforms.uLift = LIFT; sh.fragmentShader = 'uniform float uLift;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n totalEmissiveRadiance += diffuseColor.rgb * uLift;'); }; m.customProgramCacheKey = () => 'academy-int-' + key; m.needsUpdate = true; return m; };
+  function ensureMats() { if (stoneMat) return; const look = lookChoice(); stoneMat = lifted(stoneMaterial(look), 'stone-' + look); glowMat = new THREE.MeshBasicMaterial({ vertexColors: true }); }
+  const kitMats = new Map(), kitMat = m => { if (!kitMats.has(m)) kitMats.set(m, lifted(m.clone(), 'kit')); return kitMats.get(m); };
   function buildCoreOnce() {
     if (core) return; ensureMats();
     core = buildCore({ stoneMat, glowMat }); root.add(core.group); scene.add(root); live = true;
@@ -51,7 +55,7 @@ export function createInterior(ctx, opt) {
     const { kit } = furnish(k, y, B);
     const m1 = new THREE.Mesh(B.stone.build(), stoneMat), m2 = new THREE.Mesh(B.glow.build(), glowMat);
     for (const m of [m1, m2]) { m.matrixAutoUpdate = false; F.group.add(m); }
-    for (const [name, list] of Object.entries(kit)) placeKit(F.group, name, list, { shadow: false }).then(ims => { for (const im of ims) { im.receiveShadow = false; im.userData.noCamOcc = true; } });
+    for (const [name, list] of Object.entries(kit)) placeKit(F.group, name, list, { shadow: false }).then(ims => { for (const im of ims) { im.receiveShadow = false; im.userData.noCamOcc = true; if (!Array.isArray(im.material)) im.material = kitMat(im.material); } });
     F.group.traverse(o => { if (o.isMesh) { o.castShadow = false; o.receiveShadow = false; } });
     for (const s of F.secrets) if (found.includes(s.def.id)) openSecret(s, true);
     F.group.visible = false; root.add(F.group); floors.set(k, F);
@@ -137,6 +141,7 @@ export function createInterior(ctx, opt) {
   function update(dt) {
     if (!live) return;
     const T = Date.now() / 1000, st = core.update(T); syncTops();
+    LIFT.value = 0.18 + 0.34 * (ctx.sky && ctx.sky.state ? ctx.sky.state.night || 0 : 0);
     const inside = stream(false);
     if (!inside) { if (performance.now() - lastIn > 60000 && !player.vehicle) disposeAll(); return; }
     lastIn = performance.now();
