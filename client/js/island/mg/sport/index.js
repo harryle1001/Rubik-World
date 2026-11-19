@@ -8,10 +8,11 @@ import { races } from './races.js';
 import { shots } from './shots.js';
 import { balloon } from './balloon.js';
 import { cannon } from './cannon.js';
+import { boardRace } from './board-race.js';
 
 export function register(ctx) {
   const G = ctx.miniGames = ctx.miniGames || {};
-  Object.assign(G, olympics, arcade, fishing, races, shots, balloon, cannon);
+  Object.assign(G, olympics, arcade, fishing, races, shots, balloon, cannon, boardRace);
   if (!ctx.playMini) ctx.playMini = (key, opts = {}) => {
     const def = G[key]; if (!def) return null;
     if (ctx._mgCur) ctx._mgCur.stop();

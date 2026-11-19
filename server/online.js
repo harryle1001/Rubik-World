@@ -330,6 +330,13 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
         if (u) { if (!u.ev || u.ev.week !== wk()) u.ev = { week: wk(), pts: 0 }; u.ev.pts += 5; save(u); }
       }
     });
+    // Ván bạc bay: chuyển tiếp trạng thái cưỡi ván + tiến độ đua cho người khác (on, màu viền, đường đua, tiến độ 0..1, thời gian về đích)
+    let lastSb = 0;
+    socket.on('sb', d => {
+      const now = Date.now(); if (!me || !d || now - lastSb < 100) return; lastSb = now;
+      const o = { on: d.on ? 1 : 0 }; if (/^#[0-9a-f]{6}$/i.test(d.c)) o.c = d.c; if (typeof d.k === 'string') o.k = d.k.slice(0, 12).replace(/[^a-z]/g, ''); if (d.p != null) o.p = num(d.p, 0, 1); if (d.f != null) o.f = num(d.f, 0, 9999);
+      if (!me.hidden) socket.broadcast.emit('sb', [me.id, o]);
+    });
     socket.on('disconnect', () => {
       if (!me) return; addPlay(me); leaveParty(me); islanders.delete(socket.id);
       if (u && byUid.get(u.id) === socket.id) { byUid.delete(u.id); for (const f of u.friends || []) pushFriends(f); }

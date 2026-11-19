@@ -16,6 +16,7 @@
 - `client/` đảo 3D (`ocean.html`, `js/island/`) — game duy nhất, mở ở `/`. Game 2D (`client/school/`, `world-2d.html`) chỉ lưu trữ, không liên kết.
 - `client/js/island/story/` cốt truyện 8 chương "Khối Rubik Pha Lê" (data.js nội dung, index.js nhiệm vụ/dẫn đường/đoạn dẫn chuyện, journal.js cấp độ-kỹ năng-danh hiệu-📔 sổ tay, valley.js Thung lũng Rồng); `learn.js` ngân hàng câu hỏi chung + học thích ứng (mọi nơi hỏi câu đều qua đây).
 - `server/index.js` Express + Socket.io (namespace `/island` cho đảo 3D).
+- `client/js/island/silver-board.js` 🏄 Ván bạc bay (phím U) · `mg/sport/board-race.js` đua ván 3 đường · kiểm thử: `node tools/board-test.mjs <thư-mục> [--mobile] [--track=coast|canyon|cloud]`.
 - `client/assets/` model .glb, âm thanh; nguồn ghi trong `client/assets/CREDITS.txt` (chỉ dùng tài nguyên CC0).
 - `.claude/skills/` skill dùng chung: `lowpoly-style`, `open-world-lowpoly` (giới hạn tam giác, instancing, fog, chunk).
 - `docs/` quy trình Blender → .glb, checklist App Store.

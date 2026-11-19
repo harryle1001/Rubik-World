@@ -148,7 +148,7 @@ export function createVehicles(ctx) {
   const onLand = () => sup(pl.pos.x, pl.pos.z, pl.pos.y) > W - 0.3;
   const bring = v => { register(v); if (v.group.parent) v.group.parent.remove(v.group); v.group.position.copy(pl.pos); v.group.rotation.set(0, pl.rot, 0); scene.add(v.group); return v; };
   // lý do không lên xe/khinh khí cầu được lúc này (null = được) → nút mờ + tooltip, bấm thì báo
-  const why = type => cur ? (cur.type === type ? null : '🚶 Xuống phương tiện đang đi trước đã') : pl.frozen ? '⏳ Đang bận' : (ctx.dive && ctx.dive.swimming) || !onLand() ? '🌊 Đang ở dưới nước — lên bờ rồi mới đi ' + (type === 'bike' ? 'xe đạp' : 'khinh khí cầu') : null;
+  const why = type => cur ? (cur.type === type ? null : '🚶 Xuống phương tiện đang đi trước đã') : pl.vehicle ? '🚶 Xuống phương tiện đang đi trước đã' : pl.frozen ? '⏳ Đang bận' : (ctx.dive && ctx.dive.swimming) || !onLand() ? '🌊 Đang ở dưới nước — lên bờ rồi mới đi ' + (type === 'bike' ? 'xe đạp' : 'khinh khí cầu') : null;
   const deny = type => { const r = why(type); if (r) ctx.toast(r, 2200); return !!r; };
   function toggleBike() {
     if (cur && cur.type === 'bike') return dismount();
