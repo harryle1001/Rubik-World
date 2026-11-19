@@ -17,6 +17,7 @@ const fold = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 
 const WEEK = 7 * 864e5, OFF = 4 * 864e5, wk = (t = Date.now()) => Math.floor((t + OFF) / WEEK);   // giống academy/houses.js (tuần bắt đầu thứ Hai)
 const vn = (t = Date.now()) => new Date(t + 7 * 36e5), day = t => vn(t).toISOString().slice(0, 10);
 const HOUSES = ['long', 'phung', 'lan', 'quy'];
+const subjectOf = s => require('./billing').subjectOf(s);
 
 const rnd = n => crypto.randomBytes(n).toString('hex');
 const code6 = () => Array.from(crypto.randomBytes(6), b => CODE_CH[b % 32]).join('');
@@ -48,7 +49,8 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
   const usedMin = u => Math.floor(((u.stats && u.stats.days[day()] || {}).ms || 0) / 60000);
   const timeLeft = u => (u.limitMin > 0 ? u.limitMin - usedMin(u) : Infinity);
   const self = u => ({ id: u.id, name: u.name, role: u.role, code: u.code, classes: (u.classes || []).map(id => { const c = db.get('classes', id); return c && { id, name: c.name }; }).filter(Boolean),
-    limitMin: u.limitMin || 0, usedMin: usedMin(u), progress: u.progress || null });
+    limitMin: u.limitMin || 0, usedMin: usedMin(u), progress: u.progress || null, plan: billing ? billing.entitlement(u) : null });
+  let billing = null, eco = null;   // Gói Phụ huynh (server/billing.js) gắn ở cuối hàm
 
   // ---------- REST ----------
   const api = express.Router();
@@ -56,7 +58,7 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
   const authLimit = rateLimit({ windowMs: 15 * 60e3, limit: 120, standardHeaders: 'draft-7', legacyHeaders: false, message: { error: 'Thử quá nhiều lần, đợi vài phút nhé.' } });   // cả lớp chung 1 IP trường → nới
   api.use(rateLimit({ windowMs: 60e3, limit: 600, standardHeaders: 'draft-7', legacyHeaders: false }));
   const fails = new Map();   // khoá tạm 5 phút sau 8 lần sai mật khẩu của 1 tài khoản
-  function newSession(u) { const tok = rnd(32); db.put('sessions', sha(tok), { uid: u.id, exp: Date.now() + 60 * 864e5 }); return tok; }
+  function newSession(u) { const tok = rnd(32), h = sha(tok); db.put('sessions', h, { h, uid: u.id, exp: Date.now() + 60 * 864e5 }); return tok; }
   function fromToken(tok) {
     if (!tok || typeof tok !== 'string') return null; const s = db.get('sessions', sha(tok)); if (!s) return null;
     if (s.exp < Date.now()) { db.del('sessions', sha(tok)); return null; } const u = user(s.uid); return u && !u.banned ? u : null;
@@ -93,13 +95,19 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
   api.get('/me', auth, (req, res) => res.json({ user: self(req.user) }));
   api.delete('/me', auth, wrap(async (req, res) => {   // quyền xoá dữ liệu (phụ huynh / học sinh): cần mật khẩu
     const u = req.user; if (!(await checkPass(String((req.body || {}).pass || ''), u.hash))) return res.status(401).json({ error: 'Sai mật khẩu.' });
-    for (const f of u.friends || []) { const o = user(f); if (o) { o.friends = o.friends.filter(x => x !== u.id); save(o); } }
-    byName.delete(u.lname); byCode.delete(u.code); db.del('users', u.id); kick(u.id, 'deleted'); res.json({ ok: true });
+    deleteUser(u); res.json({ ok: true });
   }));
+  function deleteUser(u) {   // xoá tài khoản + toàn bộ dữ liệu (tiến độ, thống kê học, phiên đăng nhập, báo cáo do em gửi)
+    for (const f of u.friends || []) { const o = user(f); if (o) { o.friends = o.friends.filter(x => x !== u.id); save(o); } }
+    for (const o of db.all('users')) if ((o.reqs || []).includes(u.id)) { o.reqs = o.reqs.filter(x => x !== u.id); save(o); }
+    for (const r of db.all('reports')) if (r.fromUid === u.id) db.del('reports', r.id);
+    for (const s of db.all('sessions')) if (s.uid === u.id && s.h) db.del('sessions', s.h);
+    byName.delete(u.lname); byCode.delete(u.code); db.del('users', u.id); kick(u.id, 'deleted');
+  }
   api.put('/progress', auth, (req, res) => {
     const b = req.body || {}; if (JSON.stringify(b).length > 280000) return res.status(413).json({ error: 'Dữ liệu quá lớn.' });
     const ls = {}; for (const [k, v] of Object.entries(b.ls || {})) if (/^(island|academy|mg|rs)\./.test(k) && typeof v === 'string') ls[k] = v;
-    req.user.progress = { profile: b.profile && typeof b.profile === 'object' ? b.profile : null, ls, at: +b.at || Date.now() }; save(req.user);
+    req.user.progress = { profile: b.profile && typeof b.profile === 'object' ? b.profile : null, ls, at: +b.at || Date.now() }; if (eco) eco.apply(req.user); save(req.user);
     res.json({ ok: true, at: req.user.progress.at });
   });
   // học sinh vào lớp bằng mã; xem nhiệm vụ học được giao
@@ -110,11 +118,12 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
   });
   api.get('/tasks', auth, (req, res) => {
     const out = []; for (const id of req.user.classes || []) { const c = db.get('classes', id); if (c) for (const t of c.tasks || []) out.push(Object.assign({ cls: c.name }, t, { done: taskProgress(req.user, t) })); }
+    for (const t of req.user.ptasks || []) out.push(Object.assign({ cls: '👪 Bố mẹ giao' }, t, { done: taskProgress(req.user, t) }));
     res.json({ tasks: out });
   });
   function taskProgress(u, t) {
     let n = 0; const d0 = day(t.at), days = (u.stats && u.stats.days) || {};
-    for (const [d, v] of Object.entries(days)) if (d >= d0) n += t.subject === '*' ? (t.kind === 'ok' ? v.ok : v.n) : ((v.subj[t.subject] || [0, 0])[t.kind === 'ok' ? 1 : 0]);
+    for (const [d, v] of Object.entries(days)) if (d >= d0) n += t.subject === '*' ? (t.kind === 'ok' ? v.ok : v.n) : t.by === 'parent' ? Object.entries(v.subj).filter(([k]) => subjectOf(k) === t.subject).reduce((a, [, x]) => a + x[t.kind === 'ok' ? 1 : 0], 0) : ((v.subj[t.subject] || [0, 0])[t.kind === 'ok' ? 1 : 0]);
     return Math.min(n, t.n);
   }
   // ---------- giáo viên ----------
@@ -247,6 +256,7 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
       const s = String(d.s || 'Khác').replace(/[<>\u0000-\u001f]/g, '').slice(0, 24) || 'Khác', ok = !!d.ok, st = ensureStats(u), t = today(u);
       const a = st.subj[s] = st.subj[s] || [0, 0]; a[0]++; if (ok) a[1]++;
       const b = t.subj[s] = t.subj[s] || [0, 0]; b[0]++; if (ok) b[1]++; t.n++; if (ok) t.ok++;
+      const tp = String(d.t || '').replace(/[<>|\u0000-\u001f]/g, '').slice(0, 34); if (tp) { t.top = t.top || {}; if (Object.keys(t.top).length < 89 || t.top[s + '|' + tp]) { const c = t.top[s + '|' + tp] = t.top[s + '|' + tp] || [0, 0]; c[0]++; if (ok) c[1]++; } }   // chủ đề (tuỳ trò gửi) → "chủ đề yếu" trong báo cáo
       const keys = Object.keys(st.days); if (keys.length > 60) for (const k of keys.sort().slice(0, keys.length - 60)) delete st.days[k];
       db.touch('users', u.id);
     });
@@ -345,5 +355,9 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
   });
   setInterval(() => { for (const m of islanders.values()) addPlay(m); evTick(); }, 30e3).unref();
   evTick();
-  return { db, island, islanders, hooks };
+  // ---------- Gói Phụ huynh, trang /parent, /admin, cổng thanh toán (server/billing.js) ----------
+  const push = (uid, ev, data) => { const s = sockOf(uid); if (s) s.emit(ev, data); };
+  eco = require('./economy')(api, { auth, user, save, push });   // 🪙 đồng vàng · 💎 kim cương hồng · đồ mở khoá (server/economy.js)
+  billing = require('./billing')(app, api, { db, express, rateLimit, ADMIN_KEY, auth, user, save, hashPass, checkPass, rnd, sha, code6, deleteUser, push, usedMin, taskProgress, eco });
+  return { db, island, islanders, hooks, billing };
 };

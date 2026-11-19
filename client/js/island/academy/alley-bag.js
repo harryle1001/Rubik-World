@@ -1,5 +1,5 @@
 // academy/alley-bag.js — 🎒 TÚI ĐỒ: mọi món mua ở Phố Phép Thuật đều dùng được.
-// Đũa (đổi lõi → đổi màu phép), áo choàng/mũ/chổi (mặc/cởi), thú cưng (gọi/cất), sách cũ (mở câu đố mới, lần đầu đúng +3 xu),
+// Đũa (đổi lõi → đổi màu phép), áo choàng/mũ/chổi (mặc/cởi), thú cưng (gọi/cất), sách cũ (mở câu đố mới, lần đầu đúng +3 đồng vàng),
 // pháo hoa hoá học (bắn màu theo kim loại thật), nhạc cụ (chơi giai điệu ngũ cung), la bàn (kim chỉ Bắc trên màn hình), đồng hồ bỏ túi.
 import * as THREE from 'three';
 import { CAPES, HATS, BROOMS, PETS } from './wear.js';
@@ -41,7 +41,7 @@ export function createBag(ctx, magic) {
   st.solved = st.solved || [];
   const css = () => { if (!document.getElementById('alBagCss')) { const s = document.createElement('style'); s.id = 'alBagCss'; s.textContent = CSS; document.head.appendChild(s); } };
   function ensureBtn() {
-    if (btn || !W()) return; css();
+    if (btn || !W()) return; css(); if (ctx.backpack) { btn = 1; return; }   // 🎒 Cặp sách mới (economy/backpack.js) có nút mở túi phép thuật này
     btn = document.createElement('button'); btn.id = 'alBagBtn'; btn.title = 'Túi đồ'; btn.textContent = '🎒';
     btn.onclick = () => { ctx.sfx && ctx.sfx('ui'); el ? close() : open(); }; document.body.appendChild(btn);
   }
@@ -98,9 +98,9 @@ export function createBag(ctx, magic) {
     if (gad.length) { sec('🧰 Đồ dùng'); gad.forEach(x => row(x.name, x.id === 'compass' ? B('compass', st.compass ? '✔ Đang bật' : 'Bật', st.compass) : x.id === 'watch' ? B('watch', 'Xem giờ') : B('vnmap', 'Xem'))); }
     const books = SHOP_TALK.book.books.map((b, i) => [i, b]).filter(([i]) => has('book' + i)), olds = SHOP_TALK.oldbook.books.map((b, i) => [i, b]).filter(([i]) => has('old' + i));
     if (books.length || olds.length) { sec('📚 Sách'); books.forEach(([i, b]) => row(`📖 ${b[0]}`, B(`read:${i}`, 'Đọc'))); olds.forEach(([i, b]) => row(`📜 ${b[0]}${st.solved.includes(i) ? ' ✔' : ''}`, B(`puz:${i}`, 'Giải đố'))); }
-    if (rows.length === 0) rows.push('<p>Túi còn trống — ghé các tiệm ở Phố Phép Thuật nhé! Mỗi món mua bằng xu + 1 câu đố.</p>');
+    if (rows.length === 0) rows.push('<p>Túi còn trống — ghé các tiệm ở Phố Phép Thuật nhé! Mỗi món mua bằng đồng vàng + 1 câu đố.</p>');
     el = document.createElement('div'); el.id = 'alBag';
-    el.innerHTML = `<h4>🎒 Túi đồ</h4>${rows.join('')}<div style="text-align:right;margin-top:8px"><button data-a="x">Đóng</button></div>`;
+    el.innerHTML = `<h4>✨ Túi phép thuật</h4>${rows.join('')}<div style="text-align:right;margin-top:8px"><button data-a="x">Đóng</button></div>`;
     el.onclick = e => {
       const b = e.target.closest('button'); if (!b) return; ctx.sfx && ctx.sfx('ui');
       const [k, a1, a2] = b.dataset.a.split(':');
@@ -118,7 +118,7 @@ export function createBag(ctx, magic) {
     document.body.appendChild(el);
   }
   if (st.compass) setTimeout(() => setCompass(true), 0);
-  addEventListener('keydown', e => { if (e.key === 'Escape') close(); if (e.code === 'KeyI' && !/INPUT|TEXTAREA/.test(document.activeElement?.tagName)) el ? close() : open(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); if (e.code === 'KeyI' && !ctx.backpack && !/INPUT|TEXTAREA/.test(document.activeElement?.tagName)) el ? close() : open(); });
   function update() {
     if (!btn) ensureBtn();
     if (compass && ctx.player.cam) compass.firstElementChild.nextElementSibling.style.transform = `rotate(${(ctx.player.cam.yaw * 180 / Math.PI - 180).toFixed(1)}deg)`;

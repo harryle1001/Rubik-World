@@ -1,4 +1,4 @@
-// feel.js — "Cảm giác game" (juice): vệt gió khi bay nhanh · rung camera khi tiếp đất cao · xu bay vào HUD + chữ +XP · rung điện thoại
+// feel.js — "Cảm giác game" (juice): vệt gió khi bay nhanh · rung camera khi tiếp đất cao · đồng vàng bay vào HUD + chữ +XP · rung điện thoại
 //   (tuỳ chọn, bảng 🎚️) · màn chuyển mượt khi vào/ra nhà, mini game, dịch chuyển xa · tên vùng mới hiện kiểu điện ảnh (khung đen trên/dưới).
 //   (Bụi khi chạy: player.js · nước bắn khi lội: living.js — đã có, không làm trùng.) Thêm tối đa 1 draw call (vệt gió, chỉ khi bay nhanh).
 import * as THREE from 'three';
@@ -35,11 +35,12 @@ body.fxCine #fxRegion{opacity:1}body.rs-modal #fxRegion,body.fxPhoto #fxRegion,b
   for (const id of ['fxBarT', 'fxBarB']) { const b = document.createElement('div'); b.id = id; b.className = 'fxBar'; document.body.appendChild(b); }
   const reg = document.createElement('div'); reg.id = 'fxRegion'; document.body.appendChild(reg);
 
-  // ---------- xu bay vào HUD + chữ +XP ----------
+  // ---------- đồng vàng bay vào ví HUD + chữ +XP ----------
   const v3 = new THREE.Vector3();
   const playerScreen = () => { v3.copy(player.pos); v3.y += 1.6; v3.project(camera); return [(v3.x + 1) / 2 * innerWidth, (1 - v3.y) / 2 * innerHeight]; };
   function pop(text, cls = '') { const e = document.createElement('div'); e.className = 'fxPop ' + cls; e.textContent = text; layer.appendChild(e); setTimeout(() => e.remove(), 1700); }
   function coins(n) {
+    if (ctx.eco) return ctx.eco.fly('gold', n, null, true);   // ví 🪙/💎 (economy/wallet.js)
     const t = document.getElementById('accChip'), r = t && t.getBoundingClientRect(); if (!r || !r.width) return;
     const [sx, sy] = playerScreen(), tx = r.right - 21, ty = r.top + r.height / 2, k = Math.min(13, Math.max(3, n));
     for (let i = 0; i < k; i++) {
@@ -51,7 +52,7 @@ body.fxCine #fxRegion{opacity:1}body.rs-modal #fxRegion,body.fxPhoto #fxRegion,b
     }
   }
   ctx.reward = (o = {}) => { if (o.coins) { coins(o.coins); pop('+' + o.coins + ' 🪙'); } if (o.xp) setTimeout(() => pop('+' + o.xp + ' XP', 'xp'), o.coins ? 380 : 0); ctx.vibrate([21, 34, 21]); };
-  // tự bắt mọi lần cộng xu / kinh nghiệm / lên cấp (data/account.js) → không phải sửa từng nơi thưởng
+  // tự bắt mọi lần cộng đồng vàng / kinh nghiệm / lên cấp (data/account.js) → không phải sửa từng nơi thưởng
   let last = null;
   const watch = acc => {
     const p = acc.profile; if (!p) { last = null; return; }

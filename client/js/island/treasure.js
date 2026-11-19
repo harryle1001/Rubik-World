@@ -14,7 +14,7 @@ import { pickQuestions } from './quiz-data.js';
 const SAVE = 'island.treasure', INV = 'island.inventory', W = CFG.island.waterLevel;
 const load = k => { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-const LOOT = [   // mỗi rương: 1 vật phẩm + đồng xu theo dãy Fibonacci
+const LOOT = [   // mỗi rương: 1 vật phẩm + đồng vàng theo dãy Fibonacci
   { id: 'ngoc-trai', icon: '🦪', name: 'Ngọc trai' }, { id: 'oc-xa-cu', icon: '🐚', name: 'Vỏ ốc xà cừ' }, { id: 'ngoc-lam', icon: '🔷', name: 'Ngọc lam biển' },
   { id: 'la-ban', icon: '🧭', name: 'La bàn cổ' }, { id: 'sao-vang', icon: '⭐', name: 'Sao biển vàng' },
 ];
@@ -69,7 +69,7 @@ export function createTreasure(ctx) {
   const setOn = (i, on) => { pK[i * 4 + 3] = on; for (let k = 0; k < BUB; k++) pK[(N + i * BUB + k) * 4 + 3] = on ? 1 : 0.25; pg.attributes.aK.needsUpdate = true; };
   C.forEach(c => S.open[c.i] && setOn(c.i, 0.12));
 
-  // ---------- Đồng xu / ngọc bay ra khi mở (34 hạt, chỉ hiện lúc mở) ----------
+  // ---------- Đồng vàng / ngọc bay ra khi mở (34 hạt, chỉ hiện lúc mở) ----------
   const NB = FIB[8], bPos = new Float32Array(NB * 3), bCol = new Float32Array(NB * 3), bV = [];
   for (let k = 0; k < NB; k++) { new THREE.Color(k % 3 ? '#ffd23f' : (k % 2 ? '#7fe3ff' : '#ff8fd8')).toArray(bCol, k * 3); bV.push(new THREE.Vector3()); }
   const bg = new THREE.BufferGeometry(); bg.setAttribute('position', new THREE.BufferAttribute(bPos, 3)); bg.setAttribute('color', new THREE.BufferAttribute(bCol, 3));
@@ -137,7 +137,7 @@ export function createTreasure(ctx) {
     S.open[c.i] = Date.now(); save(SAVE, S); c.target = 1.9; setOn(c.i, 0.12); pop(c);
     const n = opened(), L = LOOT[c.i % LOOT.length], coins = FIB[2 + (c.i % 8)];
     give(L.id, L.icon); give('xu', '🪙', coins);
-    let msg = `🧰 <b>Rương ${n}/${N}</b>: ${L.icon} ${L.name} + 🪙 ${coins} đồng xu cổ!`;
+    let msg = `🧰 <b>Rương ${n}/${N}</b>: ${L.icon} ${L.name} + 🪙 ${coins} đồng vàng cổ!`;
     if (O2_AT.includes(n)) { msg += `<br>🫧 <b>Bình dưỡng khí lớn hơn!</b> Lặn được lâu hơn ${Math.round((O2_STEP - 1) * 100)}%.`; applyO2(); }
     if (n === N) msg += '<br>🏆 <b>Thợ lặn φ!</b> Bạn đã tìm đủ 13 rương — 13 là một số Fibonacci.';
     ctx.toast(msg, 7000); ctx.sfx && ctx.sfx('win'); ctx.player.emote && ctx.player.emote('cheer'); label();
