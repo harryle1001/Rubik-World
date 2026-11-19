@@ -228,6 +228,40 @@ island.on('connection', socket => {
   socket.on('look', d => { if (!me || !d) return; me.look = { cape: lid(d.cape), hat: lid(d.hat) }; socket.broadcast.emit('look', [me.id, me.look]); });
   socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
 });
+// ---------- Đồng Pha Lê (đảo Học viện): mỗi người 1 lô đất, xếp khối pha lê; lưu data/builds.json, mọi người cùng thấy ----------
+// lô 21 × 21 ô × cao 34 tầng; chỉ chủ lô (mã thiết bị ngẫu nhiên, không phải tên) được đặt/phá; tối đa 2584 khối/lô, 34 thao tác/giây
+const BUILD_FILE = path.join(path.dirname(DATA), 'builds.json'), BPLOTS = 10, BW = 21, BH = 34, BMAX = 2584, BCOL = 8;
+let BUILD = { plots: Array.from({ length: BPLOTS }, () => ({ key: null, name: null, blocks: {} })) };
+try { const b = JSON.parse(fs.readFileSync(BUILD_FILE, 'utf8')); if (Array.isArray(b.plots)) b.plots.slice(0, BPLOTS).forEach((p, i) => { BUILD.plots[i] = { key: p.key || null, name: p.name || null, blocks: p.blocks || {} }; }); } catch (e) {}
+let buildDirty = false;
+setInterval(() => { if (!buildDirty) return; buildDirty = false; fs.writeFile(BUILD_FILE, JSON.stringify(BUILD), () => {}); }, 5000);
+const bPublic = () => BUILD.plots.map(p => ({ name: p.name, blocks: p.blocks }));
+island.on('connection', socket => {
+  let key = null, tick = 0, n = 0;
+  const mine = () => BUILD.plots.findIndex(p => p.key && p.key === key);
+  socket.on('build:hello', d => {
+    if (!d || typeof d.key !== 'string' || !/^[a-z0-9]{13,34}$/.test(d.key)) return; key = d.key;
+    socket.emit('build:all', { plots: bPublic(), mine: mine() });
+  });
+  socket.on('build:claim', d => {
+    if (!key || mine() >= 0) return; const i = +(d && d.p);
+    if (!(i >= 0 && i < BPLOTS) || BUILD.plots[i].key) return;
+    BUILD.plots[i] = { key, name: clean(d.name, 18) || 'Bạn nhỏ', blocks: {} }; buildDirty = true;
+    island.emit('build:plot', [i, BUILD.plots[i].name]); socket.emit('build:mine', i);
+  });
+  socket.on('build:set', list => {
+    const i = mine(); if (i < 0 || !Array.isArray(list)) return;
+    const P = BUILD.plots[i], out = [], now = Date.now(); if (now - tick > 1000) { tick = now; n = 0; }
+    if ((n += list.length) > 34) return socket.emit('build:fix', [i, P.blocks]);   // quá nhanh: không nhận, gửi lại trạng thái thật để máy khách khớp
+    for (const it of list.slice(0, 21)) {
+      const idx = +(it && it[0]), c = +(it && it[1]);
+      if (!Number.isInteger(idx) || idx < 0 || idx >= BW * BW * BH || !Number.isInteger(c) || c < 0 || c > BCOL) continue;
+      if (c === 0) delete P.blocks[idx]; else { if (!(idx in P.blocks) && Object.keys(P.blocks).length >= BMAX) continue; P.blocks[idx] = c; }
+      out.push([idx, c]);
+    }
+    if (out.length) { buildDirty = true; island.emit('build:set', [i, out]); }
+  });
+});
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
 server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); });
