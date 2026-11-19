@@ -37,8 +37,11 @@ export const BANK = {
     T('Hướng Mặt Trời mọc?', 'Đông', 'Tây', 'Bắc'), T('Nước có hình chữ S?', 'Việt Nam', 'Nhật Bản', 'Ý'),
   ],
 };
+let provider = null;   // learn.js: ngân hàng chung + thích ứng cho vocab/science/geo (câu có done(ok))
+export const setQuizProvider = f => { provider = f; };
 export function quiz(topic = 'math', level = 1) {
   if (topic === 'mix') topic = pick(['math', 'math', 'vocab', 'science', 'geo']);
+  const P = topic !== 'math' && provider && provider(topic); if (P) return P;
   if (topic === 'math') { const m = mathQ(level); return { q: m.q + ' = ?', a: String(m.a), choices: m.choices.map(String), why: `${m.q} = ${m.a}` }; }
   const t = pick(BANK[topic] || BANK.science);
   return { q: t.q, a: t.a, choices: [t.a, ...t.wrong].sort(() => Math.random() - 0.5), why: t.why || `Đáp án: ${t.a}` };
@@ -46,8 +49,8 @@ export function quiz(topic = 'math', level = 1) {
 // Hiện 3 nút đáp án ở thanh dưới của host; fn(đúng?, đáp án chọn) — gọi 1 lần rồi tự xoá nút
 export function askBar(api, Q, fn, keep = []) {
   api.hud.clearBar(); let done = false;
-  Q.choices.forEach((c, i) => api.hud.button(c, () => { if (done) return; done = true; api.hud.clearBar(); keep.forEach(k => k()); fn(c === Q.a, c); }));
-  return { answer: i => { if (!done && Q.choices[i] != null) { done = true; api.hud.clearBar(); keep.forEach(k => k()); fn(Q.choices[i] === Q.a, Q.choices[i]); } }, get done() { return done; } };
+  Q.choices.forEach((c, i) => api.hud.button(c, () => { if (done) return; done = true; api.hud.clearBar(); keep.forEach(k => k()); Q.done && Q.done(c === Q.a); fn(c === Q.a, c); }));
+  return { answer: i => { if (!done && Q.choices[i] != null) { done = true; api.hud.clearBar(); keep.forEach(k => k()); Q.done && Q.done(Q.choices[i] === Q.a); fn(Q.choices[i] === Q.a, Q.choices[i]); } }, get done() { return done; } };
 }
 // Bảng 3D: câu hỏi (dòng trên) + 3 ô đáp án màu đỏ/vàng/xanh — 1 canvas, 1 draw call. board(w) → { mesh, draw(Q, hi?) }
 export function board(w) {
