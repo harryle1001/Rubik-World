@@ -13,6 +13,7 @@ const RULES = [
   { t: 'số NGUYÊN TỐ', f: n => n > 1 && [2, 3, 5, 7].every(p => n === p || n % p), why: n => n < 2 ? `${n} không phải số nguyên tố` : `${n} = ${[2, 3, 5, 7].find(p => n % p === 0)} × ${n / [2, 3, 5, 7].find(p => n % p === 0)}` },
   { t: 'số > 50', f: n => n > 50, why: n => `${n} ≤ 50` },
 ];
+for (const r of RULES) r.ok = Array.from({ length: 99 }, (_, i) => i + 1).filter(r.f);   // tính sẵn 1 lần (trước: tạo mảng 99 số mỗi lần khối trồi lên)
 
 function startArcade(ctx, { api }) {
   const { root, hud, me } = api, M = api.mat, sfx = api.sfx;
@@ -21,7 +22,7 @@ function startArcade(ctx, { api }) {
   const floor = new THREE.Mesh(new THREE.CylinderGeometry(8.5, 8.5, 0.12, 34), M('#b97a46')); floor.position.y = 0.06; floor.receiveShadow = true; root.add(floor);
   const ring = new THREE.InstancedMesh(new THREE.SphereGeometry(0.16, 8, 6), new THREE.MeshBasicMaterial({ color: '#ffd36e' }), 34); root.add(ring);
   { const o = new THREE.Object3D(); for (let i = 0; i < 34; i++) { const a = i / 34 * Math.PI * 2; o.position.set(Math.cos(a) * 8.2, 0.2, Math.sin(a) * 8.2); o.updateMatrix(); ring.setMatrixAt(i, o.matrix); } }
-  let mode = null, G = null, score = 0, foe = 0, t = 0, over = false, combo = 0;
+  let secShown = -1, mode = null, G = null, score = 0, foe = 0, t = 0, over = false, combo = 0;
   const group = new THREE.Group(); root.add(group);
   const clearMode = () => { for (const o of [...group.children]) { group.remove(o); o.traverse(m => { if (m.geometry && !m.geometry.userData.shared) m.geometry.dispose(); if (m.material && !m.material.userData.shared) { m.material.map && m.material.map.dispose(); m.material.dispose(); } }); } };
   const tweens = []; const tween = (dur, fn) => new Promise(res => tweens.push({ t: 0, dur, fn, res }));
@@ -65,11 +66,11 @@ function startArcade(ctx, { api }) {
     const peak = RIM + 2.4, dur = 1 / PHI;
     await tween(dur, k => { b.position.set(from.x + (to.x - from.x) * k, from.y + (to.y - from.y) * k + Math.sin(Math.PI * k) * (peak - Math.max(from.y, to.y)), from.z + (to.z - from.z) * k); b.rotation.x -= 0.3; });
     if (ok) {
-      combo++; const pts = 10 * Math.min(combo, 5); score += pts; showScore(); sfx('ok'); me.emote('cheer');
+      combo++; const pts = 10 * Math.min(combo, 5); score += pts; showScore(); sfx(combo > 2 ? 'coin' : 'ok'); me.emote('cheer');
       hud.msg(`✅ ${G.q.q} = <b>${G.q.a}</b> · +${pts}${combo > 1 ? ` (chuỗi ×${Math.min(combo, 5)})` : ''}`, 1600);
       await tween(0.35, k => { b.position.y = RIM - k * 1.2; h.net.scale.y = 1 + Math.sin(Math.PI * k) * 0.4; });
     } else {
-      combo = 0; sfx('land'); me.emote('no');
+      combo = 0; sfx('bad'); me.emote('no');
       hud.msg(`❌ ${G.q.q} = <b>${G.q.a}</b>, không phải ${G.q.choices[i]}`, 2200);
       const v = new THREE.Vector3(rnd(-1, 1), 0, 1.6); await tween(0.5, k => { b.position.set(to.x + v.x * k, RIM + Math.sin(Math.PI * k) * 0.8 - k * 1.6, to.z + v.z * k); });
     }
@@ -100,7 +101,7 @@ function startArcade(ctx, { api }) {
     if ((G.spawnT -= dt) <= 0) {
       G.spawnT = rnd(0.45, 0.9) / (1 + score / 200);
       const free = G.cells.filter(c => c.up <= 0.01 && c.life <= 0); if (free.length) {
-        const c = pick(free); c.n = Math.random() < 0.5 ? pick(Array.from({ length: 99 }, (_, i) => i + 1).filter(G.rule.f)) : Math.floor(rnd(1, 100));
+        const c = pick(free); c.n = Math.random() < 0.5 ? pick(G.rule.ok) : Math.floor(rnd(1, 100));
         c.life = rnd(1.4, 2.2); c.hit = false; c.lab.userData.set(String(c.n)); c.lab.visible = true;
       }
     }
@@ -114,7 +115,7 @@ function startArcade(ctx, { api }) {
     const c = G.cells[i]; if (!c || c.hit || c.up < 0.5 || over) return;
     c.hit = true; c.life = 0.25;
     if (G.rule.f(c.n)) { combo++; const pts = 5 * Math.min(combo, 5); score += pts; showScore(); sfx('ok'); hud.msg(`✅ ${c.n} đúng là ${G.rule.t} · +${pts}`, 1100); }
-    else { combo = 0; score = Math.max(0, score - 3); showScore(); sfx('land'); hud.msg(`❌ ${G.rule.why(c.n)} · −3`, 1800); me.emote('no'); }
+    else { combo = 0; score = Math.max(0, score - 3); showScore(); sfx('bad'); hud.msg(`❌ ${G.rule.why(c.n)} · −3`, 1800); me.emote('no'); }
   }
 
   // ---------- Chọn trò / kết thúc ----------
@@ -146,7 +147,7 @@ function startArcade(ctx, { api }) {
     update(dt) {
       for (let i = tweens.length - 1; i >= 0; i--) { const w = tweens[i]; w.t += dt; const k = Math.min(1, w.t / w.dur); w.fn(k); if (k >= 1) { tweens.splice(i, 1); w.res(); } }
       if (!G || over) return;
-      t -= dt; hud.time(Math.max(0, t)); foeTick(dt);
+      t -= dt; if ((Math.max(0, t) | 0) !== secShown) hud.time(secShown = Math.max(0, t) | 0); foeTick(dt);
       if (mode === 'whack') whackUpdate(dt);
       if (t <= 0) finish();
     },
