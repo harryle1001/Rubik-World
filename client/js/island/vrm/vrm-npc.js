@@ -15,7 +15,10 @@ import { ACADEMY } from '../layout.js';
 
 const HOUSE_IDS = ['long', 'phung', 'lan', 'quy'];
 export function createVrmNpc(ctx) {
-  const M = CFG.isMobile, MAX = +(new URLSearchParams(location.search).get('vrmMax') || (M ? 5 : 8)), NEAR = 5, FAR = 21, HY = 2;
+  // điện thoại: mỗi VRM ≈ 12–16 lưới có xương (≈ 16 draw call + pass bóng) → 5 bạn VRM ≈ 80 call, đẩy quảng trường/bay chổi lên 236–266 call
+  // → tối đa 2 bạn trong 13 m (Fibonacci); kho VRM giữ 2×MAX bản đã parse (đi qua lại không parse lại → không khựng); nạp thưa ≥ 3 s/lần
+  const M = CFG.isMobile, MAX = +(new URLSearchParams(location.search).get('vrmMax') || (M ? 2 : 8)), NEAR = 5, FAR = M ? 13 : 21, HY = 2, POOL = M ? MAX * 2 + 1 : MAX, GAP = M ? 3 : 0;
+  let lastLoad = -1e9;
   const st = { on: !weakDevice(), attached: 0, loads: 0, loadMs: 0, n: 0 };
   const reg = []; let seq = 0, loading = false, t = 0;
   const pool = new Map();   // VRM đã tháo, dùng lại theo kiểu (không parse lại)
@@ -43,7 +46,7 @@ export function createVrmNpc(ctx) {
   function attach(e, v) {
     const m = e.hero.model; e.hidden = []; m.traverse(o => { if (o.isMesh && o.visible) { e.hidden.push(o); o.visible = false; } });
     v.model.scale.setScalar(1 / (m.scale.x || 1)); v.model.position.set(0, 0, 0); v.model.rotation.set(0, 0, 0); m.add(v.model);
-    e.saved = e.hero.outlines; e.hero.outlines = v.outlines; for (const o of v.outlines) o.visible = e.hero.outlineOn !== false;
+    e.saved = e.hero.outlines; e.hero.outlines = v.outlines; for (const o of v.outlines) o.visible = e.hero.outlineOn !== false; v._ol = undefined;
     v.model.updateMatrixWorld(true); if (v.vrm.springBoneManager) v.vrm.springBoneManager.reset();
     const ca = e.hero.anim.current; if (ca) v.anim.play(ca.getClip().name, 0);
     e.vrm = v; st.attached++;
@@ -53,10 +56,10 @@ export function createVrmNpc(ctx) {
     v.model.removeFromParent(); for (const o of e.hidden) o.visible = true; e.hidden = [];
     if (e.saved) { e.hero.outlines = e.saved; for (const o of e.saved) o.visible = e.hero.outlineOn !== false; e.saved = null; }
     const list = pool.get(e.key) || []; list.push(v); pool.set(e.key, list);
-    let n = 0; for (const l of pool.values()) n += l.length; if (n > MAX) { for (const [k, l] of pool) if (l.length) { l.shift().dispose(); break; } }
+    let n = 0; for (const l of pool.values()) n += l.length; if (n > POOL) { for (const [k, l] of pool) if (l.length) { l.shift().dispose(); break; } }
   }
   async function load(e) {
-    loading = true; const L = lookOf(e), k = keyOf(L), t0 = performance.now();
+    loading = true; lastLoad = performance.now(); const L = lookOf(e), k = keyOf(L), t0 = performance.now();
     try {
       let v = (pool.get(k) || []).pop();
       if (!v) { v = await loadVrmHero(L, { set: 'mobile', height: Math.max(1.42, Math.min(1.8, e.height * (e.role === 'teacher' ? 1.05 : 1.16) * (L.hScale || 1))) }); st.loads++; st.loadMs = Math.round(performance.now() - t0); }
@@ -73,12 +76,13 @@ export function createVrmNpc(ctx) {
     for (const e of reg) { e.d = st.on && e.hero !== me && !e.fail && inScene(e.hero.model) ? e.hero.model.getWorldPosition(Q).distanceTo(P) : 1e9; }
     const order = reg.filter(e => e.d < FAR + (e.vrm ? HY : 0)).sort((a, b) => a.d - b.d).slice(0, MAX), want = new Set(order);
     for (const e of reg) if (e.vrm && !want.has(e)) detach(e);
-    if (!loading) { const next = order.find(e => !e.vrm); if (next) load(next); }
+    if (!loading && performance.now() - lastLoad > GAP * 1000) { const next = order.find(e => !e.vrm); if (next) load(next); }
     for (const e of reg) if (e.vrm) lod(e);
   }
   function lod(e) {
     const v = e.vrm, near = e.d < NEAR + (v.vrmMode === 'full' ? 1 : 0);
     v.setLod(near ? 'full' : 'lite'); if (v.wandOn !== undefined) v.setWand(v.wandOn);
+    if (M) { const ol = near && e.hero.outlineOn !== false; if (v._ol !== ol) { v._ol = ol; for (const o of v.outlines) o.visible = ol; } }   // điện thoại: viền VRM (thêm 1 lưới có xương mỗi phần) chỉ khi ở gần
     const sh = e.d < 13; if (v._sh !== sh) { v._sh = sh; v.model.traverse(o => { if (o.isMesh && o.userData.cast0 === undefined) o.userData.cast0 = o.castShadow; if (o.isMesh) o.castShadow = sh && o.userData.cast0; }); }
   }
   // tải trước file VRM mobile (mạng) sau khi vào game; parse khi cần
