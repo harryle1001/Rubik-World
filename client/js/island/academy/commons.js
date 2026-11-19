@@ -108,7 +108,7 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
     for (let x = -hw + 2.6; x < hw; x += 4.2) b.box(x - 0.2, x + 0.2, Hr - 0.5, Hr, -hd, hd, wood);                                  // xà trần
     b.box(-hw, hw, 3.1, 3.3, -hd + 0.02, -hd + 0.1, h.col); b.box(-hw, hw, 3.1, 3.3, hd - 0.1, hd - 0.02, h.col);                    // đường viền màu nhà
     // lò sưởi ở tường tây
-    b.box(-hw, -hw + 0.9, 0, 3.4, -2.1, -1.3, stone); b.box(-hw, -hw + 0.9, 0, 3.4, 1.3, 2.1, stone); b.box(-hw, -hw + 0.9, 1.8, 3.4, -1.3, 1.3, stone); b.box(-hw, -hw + 0.06, 0, 1.8, -1.3, 1.3, '#1a1210');   // khung lò + hốc lửa b.box(-hw, -hw + 1.2, 3.4, 3.6, -2.6, 2.6, woodL); b.box(-hw, -hw + 0.7, 3.6, Hr, -1.4, 1.4, stone);
+    b.box(-hw, -hw + 0.9, 0, 3.4, -2.1, -1.3, stone); b.box(-hw, -hw + 0.9, 0, 3.4, 1.3, 2.1, stone); b.box(-hw, -hw + 0.9, 1.8, 3.4, -1.3, 1.3, stone); b.box(-hw, -hw + 0.06, 0, 1.8, -1.3, 1.3, '#1a1210'); b.box(-hw, -hw + 1.2, 3.4, 3.6, -2.6, 2.6, woodL); b.box(-hw, -hw + 0.7, 3.6, Hr, -1.4, 1.4, stone);   // khung lò + hốc lửa + bệ + ống khói
     for (let k = -2; k <= 2; k++) gl.add(new THREE.ConeGeometry(0.21 - Math.abs(k) * 0.03, 0.9 - Math.abs(k) * 0.15, 6), k % 2 ? '#ffb347' : '#ff7a2a', -hw + 0.6, 0.6, k * 0.42);
     gl.add(new THREE.BoxGeometry(0.4, 0.1, 2.4), '#ff5a1a', -hw + 0.6, 0.22, 0);
     // ký túc xá: vách ngăn x = 4,5 (lối giữa 2,6 m) + 4 giường có màn
@@ -134,8 +134,15 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
     for (const x of [-7.6, 0.8]) { const o = new THREE.Mesh(bg, new THREE.MeshToonMaterial({ map: bt, transparent: true, alphaTest: 0.5 })); o.position.set(x, 6.4, -hd + 0.12); g.add(o); }
     // linh vật
     const c = document.createElement('canvas'); c.width = c.height = 256; const k = c.getContext('2d'), rg = k.createRadialGradient(128, 128, 21, 128, 128, 128);
-    rg.addColorStop(0, h.col2 + 'cc'); rg.addColorStop(1, h.col2 + '00'); k.fillStyle = rg; k.fillRect(0, 0, 256, 256); k.font = '160px "Noto Color Emoji",system-ui'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(h.icon, 128, 140);
-    const ms = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false })); ms.scale.set(2.6, 2.6, 1); ms.position.set(-4.2, 2.3, hd - 1.6); g.add(ms); R.mascot = ms;
+    rg.addColorStop(0, h.col2 + 'aa'); rg.addColorStop(1, h.col2 + '00'); k.fillStyle = rg; k.fillRect(0, 0, 256, 256);
+    const ms = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false })); ms.scale.set(3.4, 3.4, 1); ms.position.set(-4.2, 2.1, hd - 1.6); g.add(ms);   // hào quang
+    // linh vật = model CC0 trên bệ (v2, thay emoji): Long = rồng (Quaternius), Phụng = đại bàng tô màu phượng (Quaternius), Lân = hươu gạc (kỳ lân Việt có gạc), Quy = rùa
+    const MS = { long: ['kit/qn_dragon', 1.6, 0], phung: ['kit/qn_eagle', 1.3, 0.45], lan: ['kit/qn_stag_statue', 1.5, 0.35], quy: ['rua', 0.9, 0.15] }[h.id] || ['rua', 1, 0];
+    const mg = new THREE.Group(); mg.position.set(-4.2, 0.92, hd - 1.6); mg.rotation.y = Math.PI; g.add(mg); R.mascot = mg;
+    loadModel(MS[0]).then(m => { if (!m || room !== R) return; const bb = new THREE.Box3().setFromObject(m), sz = bb.getSize(new THREE.Vector3()), s = MS[1] / Math.max(sz.y, sz.x * 0.6, sz.z * 0.6);
+      m.scale.setScalar(s); m.position.set(-(bb.min.x + bb.max.x) / 2 * s, -bb.min.y * s, -(bb.min.z + bb.max.z) / 2 * s);
+      if (MS[2]) m.traverse(o => { if (o.isMesh && o.material && o.material.color) { o.material = o.material.clone(); o.material.color.lerp(new THREE.Color(h.col), MS[2]); } });
+      mg.add(m); });
     // bảng tin
     const bc = document.createElement('canvas'); bc.width = 512; bc.height = 384; R.board = bc; R.boardTex = new THREE.CanvasTexture(bc); R.boardTex.colorSpace = THREE.SRGBColorSpace;
     const bo = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 1.85), new THREE.MeshBasicMaterial({ map: R.boardTex })); bo.position.set(-3.4, 2.1, -hd + 0.16); g.add(bo); drawBoard(R);
@@ -199,7 +206,7 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
       room.g.visible = inR;
       if (inR) {   // giữ trong tường
         p.x = Math.max(room.e.x - hw + 0.45, Math.min(room.e.x + hw - 0.45, p.x)); p.z = Math.max(room.e.z - hd + 0.45, Math.min(room.e.z + hd - 0.45, p.z));
-        room.mascot.position.y = 2.3 + Math.sin(t * 1.3) * 0.08;
+        room.mascot.position.y = 0.92 + Math.max(0, Math.sin(t * 1.3)) * 0.13; room.mascot.rotation.y = Math.PI + Math.sin(t * 0.4) * 0.5;   // linh vật nhún + ngoái nhìn
       }
     }
     for (const e of E) if (e.g.visible) { const k = opening && opening.e === e ? Math.min(1, (performance.now() - opening.t0) / 1300) : Math.max(0, e.open - dt); e.open = k; e.mov.userData.anim(e.mov, k, t); }

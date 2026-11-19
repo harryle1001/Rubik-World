@@ -333,8 +333,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   function slots() {
     const Hh = L.hall, ht = 1.6, Lb = L.library, lt = 1.2, X = L.box, fu = X.u1 - L.T, a0 = X.u0 + L.T, S = [];
     const add = (room, axis, f, n, a, y, w, h, kind, dark = 0, door = null) => S.push({ room, axis, f, n, a, y: Y + y, w, h, kind, dark, door });
-    for (const u of [-80, -72, -64]) { add('hall', 'v', Hh.v0 + ht, 1, u, 3.4, 1.3, 2.1, 'p'); add('hall', 'v', Hh.v1 - ht, -1, u, 3.4, 1.3, 2.1, 'p'); }
-    add('hall', 'u', Hh.u0 + ht, 1, 0, 8.1, 5.5, 3.4, 'L');                                         // tranh lớn sau bục giáo viên
+    // v4: Đại sảnh không treo tranh nữa — thay bằng kính màu + kiến trúc phép (hall-magic.js)
     for (const v of [62, 72, 82]) add('lib', 'u', Lb.u0 + lt, 1, v, 5.6, 1.3, 2.1, 'p', 1);         // trên bàn đọc
     add('lib', 'v', Lb.v0 + lt, 1, (Lb.u0 + Lb.u1) / 2, 7.6, 1.3, 2.1, 'p', 1); add('lib', 'v', Lb.v1 - lt, -1, (Lb.u0 + Lb.u1) / 2, 7.6, 1.3, 2.1, 'p', 1);   // trên kệ sách
     for (const [kk, sg] of [[10, 1], [16, 1], [24, 1], [10, -1], [24, -1]]) add('cor', 'v', -32 * sg, sg, a0 + 10.1 + 4.2 * kk, 2.75, 1.3, 2.1, 'p', 0, kk === 16 ? 'lib' : null);   // giữa 2 cửa sổ dãy ngăn (Darwin: cửa bí mật → thư viện)

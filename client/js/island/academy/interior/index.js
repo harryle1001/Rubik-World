@@ -118,7 +118,7 @@ export function createInterior(ctx, opt) {
     const [wx, wz] = toWorld(x, z); player.teleport(wx, wz, yOf(k) + yOff); player.cam.yaw = face + Math.PI; player.snapCamera && player.snapCamera();
     stream(true);
   }
-  const enter = (where = 'hall') => fade(() => { const e = EXITS.find(q => q.id === where) || EXITS[0]; const [x, z] = e.at; go(e.k, x + Math.sin(e.face) * 2.6, z + Math.cos(e.face) * 2.6, e.face); ctx.toast(`🏰 <b>${FLOORS[e.k].name}</b> · ${where === 'balcony' ? 'Tháp Chính — cầu thang xoắn xuống các tầng' : 'Sảnh trong lâu đài'}. Tìm <b>giếng cầu thang xoay</b> ở giữa và ${SECRETS.length} lối bí mật nhé!`, 6000); });
+  const enter = (where = 'hall') => fade(() => { const e = EXITS.find(q => q.id === where) || EXITS[0]; const [x, z] = e.at; go(e.k, x + Math.sin(e.face) * 4.2, z + Math.cos(e.face) * 4.2, e.face); ctx.toast(`🏰 <b>${FLOORS[e.k].name}</b> · ${where === 'balcony' ? 'Tháp Chính — cầu thang xoắn xuống các tầng' : 'Sảnh trong lâu đài'}. Tìm <b>giếng cầu thang xoay</b> ở giữa và ${SECRETS.length} lối bí mật nhé!`, 6000); });
   const leave = id => fade(() => { const t = opt.exitTo(id); if (!t) return; player.teleport(t[0], t[1], t[2]); player.cam.yaw = t[3]; player.snapCamera && player.snapCamera(); setActive([]); cur = null; for (const F of floors.values()) F.group.visible = false; });
 
   // ---------- tải tầng theo vị trí ----------

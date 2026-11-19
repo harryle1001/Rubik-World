@@ -168,5 +168,34 @@ export function furnish(k, y, B) {
       break;
     }
   }
+  // ---------- v2: đồ CC0 KayKit Dungeon (đuốc tường, rương vàng, thùng, kệ nến, kiếm khiên, cờ) cho các phòng còn trống ----------
+  const torchRow = (x0, x1, z, ry, dy = 2.6) => { for (let x = x0; x <= x1; x += 8) put('kk_torch_mounted', x, z, 1.2, ry, dy); };
+  switch (k) {
+    case -2: for (const [x, z] of [[11, 45], [27, 52]]) put('kk_chest_gold', x, z, 1.3, PI); put('kk_trunk_large_A', 11, 50, 1.4, H); put('kk_trunk_large_A', 27, 44, 1.4, -H); torchRow(4, 28, 36.3, 0); break;
+    case -1:
+      for (const [x, z] of [[26.5, 15], [26.5, 10.5]]) put('kk_keg_decorated', x, z, 1.1, -H); put('kk_barrel_large', 2, 24, 1, 0.4); put('kk_crates_stacked', 27, 1.5, 1, 0.3);
+      for (const x of [7, 22]) { put('kk_plate_stack', x - 2, 9, 1, 0, 1.3); put('kk_plate_food_A', x + 2, 17, 1, 0, 1.3); }
+      put('kk_shelves', 5, 0.5, 1.3, 0); put('kk_shelves', 24, 0.5, 1.3, 0); torchRow(64, 88, 0.3, 0); torchRow(62, 78, 54.7, PI); put('kk_shelf_small_candles', 70, 54.6, 1.3, PI, 1.4);
+      break;
+    case 0:
+      for (const x of [6, 12, 18, 24]) put('kk_sword_shield', x, 24.6, 1.3, PI, 1.6);
+      torchRow(31, 59, 54.7, PI); torchRow(35, 55, 0.3, 0); for (const [x, b] of [[31.5, 'red'], [57.5, 'blue']]) put('kk_banner_patternA_' + b, x, 54.8, 1.2, PI, 3.6);
+      put('kk_candle_triple', 74.5, 7.5, 1, 0, 0.55);
+      break;
+    case 1: put('kk_candle_triple', 13.5, 9, 1, 0, 1.2); put('kk_candle_triple', 16, 15, 1, 0, 1.2); torchRow(31, 59, 0.3, 0); put('kk_shelf_small_candles', 2, 30.3, 1.3, 0, 1.5); break;
+    case 2:
+      for (const x of [3.5, 10.5, 18, 25, 66, 74]) put('kk_trunk_large_A', x, 50.3, 1.1, PI);
+      for (const x of [35, 44.5, 54]) put('kk_candle_triple', x + 0.6, 6, 0.8, 0, 1.05);
+      put('kk_shelves', 62, 1, 1.3, 0); put('kk_shelves', 87, 12, 1.3, -H); torchRow(31, 59, 54.7, PI);
+      break;
+    case 3:
+      // linh vật CC0 trên bệ ở 4 phòng nhà: rồng · hươu gạc (kỳ lân Việt) · rùa · đại bàng (phượng)
+      for (const [id, x0, x1, m, sc, bn] of [['hLong', 0, 14, 'qn_dragon', 1.1, 'red'], ['hLan', 14, 29, 'qn_stag_statue', 1, 'green'], ['hQuy', 60, 70, '../rua', 0.8, 'yellow'], ['hPhung', 70, 80, 'qn_eagle', 1.3, 'blue']]) {
+        const cx = (x0 + x1) / 2 + 2.6; S.add(new THREE.CylinderGeometry(0.75, 0.9, 1.0, 10), '#8c8478', cx, y + 0.5, 52.6); S.add(new THREE.CylinderGeometry(0.85, 0.85, 0.1, 10), GOLD, cx, y + 1.05, 52.6);
+        put(m, cx, 52.6, sc, PI, 1.1); put('kk_banner_patternA_' + bn, x0 + 1.6, 54.8, 1.2, PI, 3.4);
+      }
+      torchRow(6, 24, 24.7, PI); put('kk_candle_triple', 23, 5.6, 0.9, 0, 1.0);
+      break;
+  }
   return { kit };
 }

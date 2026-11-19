@@ -113,7 +113,7 @@ export function create(ctx, magic, { toWorld, L, Y }) {
             #include <colorspace_fragment>
           }`,
       })));
-      ceil.position.set(0, Y + Hh.h - 0.15, (Hh.u0 + Hh.u1) / 2); ceil.frustumCulled = false; hall.add(ceil);
+      ceil.position.set(0, Y + Hh.h - 0.15, (Hh.u0 + Hh.u1) / 2); ceil.frustumCulled = false; ceil.name = 'hall-sky-ceiling'; hall.add(ceil);
     }
 
     // ---------- 🛡️ áo giáp: thân (1 call) + mũ (1 call) ----------
