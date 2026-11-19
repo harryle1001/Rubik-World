@@ -7,6 +7,7 @@ import { CFG } from './config.js';
 import { gradientMap, addOutline } from './style.js';
 import { mergeGeos } from './terrain.js';
 import { TOWN_Y, BLOCKS, EXTRA } from './layout.js';
+import { placeKit } from './kit.js';
 
 const AIR = EXTRA.find(e => e.id === 'K').r;                // khu sân bay [x0,z0,x1,z1]
 const RWY = { x0: AIR[0] + 6, x1: AIR[2] - 6, z: AIR[3] - 13, w: 12 }; // đường băng chạy theo trục x
@@ -144,18 +145,35 @@ export function createAircraft(ctx) {
     p.push(part(box(L + 1, 0.05, RWY.w + 1.2), '#e9e4d6', cx, GY + 0.015, RWY.z));                    // lề sáng
     for (let x = RWY.x0 + 14; x < RWY.x1 - 14; x += 7) p.push(part(box(3.6, 0.02, 0.4), '#fafafa', x, GY + 0.07, RWY.z)); // vạch giữa
     for (const e of [RWY.x0 + 3, RWY.x1 - 3]) for (let i = -4; i <= 4; i++) if (i) p.push(part(box(4, 0.02, 0.6), '#fafafa', e, GY + 0.07, RWY.z + i * 1.2)); // vạch ngưỡng
+    for (const s of [-1, 1]) p.push(part(box(L - 2, 0.02, 0.24), '#fafafa', cx, GY + 0.07, RWY.z + s * (RWY.w / 2 - 0.5)));  // vạch biên 2 bên
+    for (const [e, d] of [[RWY.x0, 1], [RWY.x1, -1]]) {
+      for (const s of [-1, 1]) p.push(part(box(8, 0.02, 1.3), '#fafafa', e + d * 26, GY + 0.07, RWY.z + s * 2.6));              // vạch điểm ngắm
+      for (let k = 0; k < 3; k++) for (const s of [-1, 1]) for (const j of [0, 1]) p.push(part(box(3.4, 0.02, 0.36), '#fafafa', e + d * (39 + k * 8), GY + 0.07, RWY.z + s * (2.4 + j * 0.8))); // vạch chạm bánh 3·2·2
+      // số hiệu đường băng (09 / 27) vẽ bằng 7 đoạn sơn — đọc từ hướng hạ cánh
+      const SEG = { 0: 'abcdef', 2: 'abdeg', 7: 'abc', 9: 'abcdfg' }, P = { a: [0, 0, 1], b: [0.7, -0.8], c: [0.7, -2.4], d: [0, -3.2, 1], e: [-0.7, -2.4], f: [-0.7, -0.8], g: [0, -1.6, 1] };
+      [...(d > 0 ? '09' : '27')].forEach((ch, n) => { for (const c of SEG[ch]) { const [lx, ly, hz] = P[c];   // lx: sang phải người đọc, ly: lên (xa hơn)
+        p.push(part(box(hz ? 0.3 : 1.6, 0.02, hz ? 1.4 : 0.3), '#fafafa', e + d * (17.2 + ly), GY + 0.07, RWY.z + d * ((n ? 1.2 : -1.2) + lx))); } });
+    }
     p.push(part(box(70, 0.05, 16), '#8d8f94', AIR[0] + 45, GY + 0.025, AIR[1] + 12));                 // sân đỗ
     p.push(part(box(8, 0.05, RWY.z - AIR[1] - 20), '#8d8f94', AIR[0] + 45, GY + 0.025, (AIR[1] + 20 + RWY.z) / 2)); // đường lăn
     for (let x = AIR[0] + 14; x < AIR[0] + 78; x += 3) p.push(part(box(1.4, 0.02, 0.25), '#f2c94c', x, GY + 0.06, AIR[1] + 20)); // vạch vàng
-    // nhà chứa máy bay mái vòm (2 cái)
-    for (const hx of [AIR[0] + 20, AIR[0] + 42]) {
-      p.push(part(new THREE.CylinderGeometry(7, 7, 16, 14, 1, false, 0, Math.PI), '#4f6b4a', hx, GY, AIR[1] + 4, Math.PI / 2, 0, Math.PI / 2));
-      p.push(part(box(13.4, 6.6, 0.3), '#e8dcc0', hx, GY + 3.3, AIR[1] - 4.1));
-      p.push(part(box(9, 5.4, 0.2), '#2a2a2e', hx, GY + 2.7, AIR[1] + 12.05));                          // cửa lớn mở
-      p.push(part(box(13.6, 1, 0.4), '#e8dcc0', hx, GY + 6.0, AIR[1] + 12.1));
-      for (const s of [-1, 1]) p.push(part(box(2.2, 5.6, 0.4), '#e8dcc0', hx + s * 5.6, GY + 2.8, AIR[1] + 12.1));
-      ctx.boxes && ctx.boxes.push({ x0: hx - 7, z0: AIR[1] - 4.2, x1: hx + 7, z1: AIR[1] + 12, top: GY + 7 });
-    }
+    for (const hx of [AIR[0] + 20, AIR[0] + 42, AIR[0] + 64]) { p.push(part(box(0.25, 0.02, 6), '#f2c94c', hx, GY + 0.06, AIR[1] + 15)); p.push(part(box(3, 0.02, 0.25), '#f2c94c', hx, GY + 0.06, AIR[1] + 18)); } // vạch dẫn chỗ đỗ (chữ T)
+    // nhà chứa máy bay + kho bảo dưỡng: model CC0 Kenney City Kit Industrial (cửa quay ra đường băng), va chạm như cũ
+    for (const hx of [AIR[0] + 20, AIR[0] + 42]) ctx.boxes && ctx.boxes.push({ x0: hx - 7, z0: AIR[1] - 4.2, x1: hx + 7, z1: AIR[1] + 12, top: GY + 10.5 });
+    ctx.boxes && ctx.boxes.push({ x0: AIR[0] + 53.4, z0: AIR[1] - 5, x1: AIR[0] + 62.6, z1: AIR[1] + 5.6, top: GY + 6.5 });
+    const K = (n, l, sh = false) => placeKit(scene, n, l, { shadow: sh });
+    K('air_hangar', [[AIR[0] + 20, GY, AIR[1] + 4, 12.3, Math.PI], [AIR[0] + 42, GY, AIR[1] + 4, 12.3, Math.PI]], true);
+    K('air_hangar_b', [[AIR[0] + 58, GY, AIR[1] + 0.3, 8.9, Math.PI]], true);
+    K('air_fuel_tank', [[AIR[0] + 5, GY, AIR[1] + 1, 6.2, Math.PI / 2], [AIR[0] + 9.2, GY, AIR[1] + 1, 6.2, Math.PI / 2]], true);
+    K('air_container_a', [[AIR[0] + 5, GY, AIR[1] + 10, 6.8, Math.PI / 2], [AIR[0] + 5, GY + 2.4, AIR[1] + 10, 6.8, Math.PI / 2 + 0.06]]);
+    K('air_container_c', [[AIR[0] + 5, GY, AIR[1] + 13, 6.8, Math.PI / 2]]);
+    K('vehicle_tractor', [[AIR[0] + 30.5, GY, AIR[1] + 17, 1.5, -0.4]]);
+    K('vehicle_truck_flat', [[AIR[0] + 52.5, GY, AIR[1] + 15, 1.7, Math.PI / 2]]);
+    K('vehicle_firetruck', [[AIR[0] + 76, GY, AIR[1] + 11, 1.8, Math.PI]]);
+    K('vehicle_van', [[AIR[0] + 84, GY, AIR[1] + 13, 1.6, Math.PI / 2], [AIR[0] + 108.5, GY, AIR[1] + 13.5, 1.6, -Math.PI / 2]]);
+    K('vehicle_delivery', [[AIR[0] + 66, GY, AIR[1] + 8.5, 1.6, Math.PI]]);
+    K('prop_traffic_cone', [[AIR[0] + 16, GY, AIR[1] + 25, 1], [AIR[0] + 24, GY, AIR[1] + 25, 1], [AIR[0] + 38, GY, AIR[1] + 25, 1], [AIR[0] + 46, GY, AIR[1] + 25, 1]]);
+    K('prop_light_apron', [AIR[0] + 10, AIR[0] + 31, AIR[0] + 53, AIR[0] + 79].map(x => [x, GY, AIR[1] + 5.2, 12, Math.PI / 2]));
     // tháp điều khiển
     const tx = AIR[0] + 70, tz = AIR[1] + 5;
     p.push(part(cyl(2.2, 2.6, 11, 10), '#efe6d0', tx, GY + 5.5, tz)); p.push(part(cyl(2.3, 2.3, 0.4, 10), '#c8302a', tx, GY + 3, tz));
@@ -173,11 +191,9 @@ export function createAircraft(ctx) {
     p.push(part(cyl(1.1, 1.1, 0.2, 16), '#fafafa', tx, GY + 8.5, tz + 2.45, Math.PI / 2)); p.push(part(cyl(1.25, 1.25, 0.15, 16), '#e2b33c', tx, GY + 8.5, tz + 2.38, Math.PI / 2));
     p.push(part(box(0.1, 0.8, 0.05), '#222', tx, GY + 8.75, tz + 2.6)); p.push(part(box(0.6, 0.1, 0.05), '#222', tx + 0.25, GY + 8.5, tz + 2.6));
     ctx.boxes && ctx.boxes.push({ x0: gx - 10, z0: gz - 4.5, x1: gx + 10, z1: gz + 4.5, top: GY + 8 });
-    // ống gió + thùng xăng + bụi cây xén thấp ven sân bay (thế giới mở: không hàng rào)
+    // ống gió + bụi cây xén thấp ven sân bay (thế giới mở: không hàng rào)
     const wx = RWY.x0 + 10, wz = RWY.z - RWY.w / 2 - 5;
     p.push(part(cyl(0.08, 0.1, 5, 6), '#ddd', wx, GY + 2.5, wz));
-    for (let i = 0; i < 5; i++) p.push(part(box(0.6, 0.6, 0.6), '#555', AIR[0] + 58 + (i % 3) * 0.7, GY + 0.3 + (i > 2) * 0.6, AIR[1] + 16));
-    for (let i = 0; i < 4; i++) p.push(part(cyl(0.35, 0.35, 0.9, 8), i % 2 ? '#c8302a' : '#2f6db0', AIR[0] + 62 + i * 0.8, GY + 0.45, AIR[1] + 17));
     for (let x = AIR[0] + 2.5, k = 0; x <= AIR[2] - 2.5; x += 5, k++) {   // khóm xén 3,1 m (≈ 5/φ), chừa lối 1,9 m để đi qua
       p.push(part(box(3.1, 0.55, 0.75), '#4f9a4a', x, GY + 0.28, AIR[3] - 0.5)); p.push(part(box(2.9, 0.14, 0.6), '#63ab50', x, GY + 0.6, AIR[3] - 0.5));
       if (k % 3 === 1) p.push(part(box(0.5, 0.12, 0.5), ['#e85d8a', '#f5c518', '#ffffff'][k % 3], x, GY + 0.7, AIR[3] - 0.5));
@@ -188,6 +204,7 @@ export function createAircraft(ctx) {
     sock.position.set(wx, GY + 4.8, wz); sock.rotation.z = Math.PI / 2; air.add(sock); ctx._sock = sock;
     // đèn viền đường băng (sáng hơn về đêm)
     const lp = []; for (let x = RWY.x0; x <= RWY.x1; x += 8) for (const s of [-1, 1]) lp.push(part(new THREE.SphereGeometry(0.18, 6, 4), x === RWY.x0 || x + 8 > RWY.x1 ? '#ff5a3a' : '#ffe08a', x, GY + 0.2, RWY.z + s * (RWY.w / 2 + 0.4)));
+    for (let x = AIR[0] + 16; x < AIR[0] + 76; x += 6) for (const z of [AIR[1] + 4.3, AIR[1] + 19.7]) lp.push(part(new THREE.SphereGeometry(0.13, 6, 4), '#5aa8ff', x, GY + 0.16, z)); // đèn biên đường lăn (xanh lam)
     air.add(meshOf(lp, lampMat, false));
     // biển tên sân bay (chữ vẽ bằng canvas)
     const cv = document.createElement('canvas'); cv.width = 512; cv.height = 96; const g2 = cv.getContext('2d');
