@@ -48,6 +48,7 @@ import { createTrain } from './island/train/index.js';
 import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
 import { register as registerSport } from './island/mg/sport/index.js';
+import { register as registerVisit } from './island/mg/visit/index.js';
 
 // chỉ báo tải (Rubik xoay góc trái dưới) + màn che lúc vào game: tạo đầu tiên để bắt mọi lượt tải model/âm thanh
 const loading = createLoader();
@@ -129,11 +130,12 @@ const schoolYard = createSchoolYard(ctx); // sân trường: vườn rau học s
 const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + tiết học ngay trong lớp + chip giờ học góc HUD (lessons.js)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
+registerVisit(ctx); // mini game 3D ghé thăm: Tham quan nhà, BBQ, Trung tâm thương mại, Coach Ru (mg/visit/) — sau registerArts (gắn cửa Nông trại vào garden)
 const mounts = createMounts(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
-// menu ☰ (góc phải trên, cạnh 🗺️): Menu trường + ☀️ Ánh sáng; chọn xong hoặc chạm ra ngoài thì tự đóng
+// menu ☰ (góc phải trên, cạnh 🗺️): 🎮 Mini game + ☀️ Ánh sáng; chọn xong hoặc chạm ra ngoài thì tự đóng
 {
   const more = document.getElementById('bMore'), menu = document.getElementById('moreMenu');
   const show = on => { menu.hidden = !on; more.setAttribute('aria-expanded', on); };
@@ -268,5 +270,5 @@ else Q.level = CFG.isMobile ? 1 : 0; // điện thoại: bắt đầu ở mức 
 applyQuality();
 
 // ---------- Cache để mở nhanh/offline ----------
-// đăng ký SAU khi trường sẵn sàng + 5 s: lúc cài, service worker tải sẵn ~2 MB (trường 2D, thú, âm thanh) — không tranh băng thông lúc vào game
+// đăng ký SAU khi trường sẵn sàng + 5 s: lúc cài, service worker tải sẵn ~2 MB (đảo 3D, thú, âm thanh) — không tranh băng thông lúc vào game
 if ('serviceWorker' in navigator && !window.ISLAND_SERVER) { const sw = setInterval(() => { if (!school.ready) return; clearInterval(sw); setTimeout(() => navigator.serviceWorker.register('/sw.js').catch(() => {}), 5000); }, 1000); }
