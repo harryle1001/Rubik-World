@@ -46,7 +46,7 @@ const spots = [
   ['Bờ biển', `p.teleport(${L.beach}); cam(${Math.PI * 0.75 + Math.PI})`, 4000],
   ['Lặn biển', `p.teleport(${L.sea}); cam(0); dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyQ' })); setTimeout(() => dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyQ' })), 2500)`, 6000],
   ['Đêm mưa (cổng trường)', `p.teleport(${L.spawn}); cam(-Math.PI/2+0.75); c.sky.state.lock = 22; c.weather.set('rain', true)`, 6000],
-  ['Khinh khí cầu', `c.sky.state.lock = 13; c.weather.set('clear', true); p.teleport(${L.spawn}); c.vehicles.toggleBalloon()`, 12000],
+  ['Khinh khí cầu', `c.sky.state.lock = 13; c.weather.set('clear', true); p.teleport(${L.spawn}); c.account.profile && c.account.profile.own && c.account.profile.own.push('ride-balloon'); c.vehicles.toggleBalloon()`, 12000],
   ['Bay máy bay', `c.vehicles.riding && c.vehicles.toggleBalloon(); p.vehicle = null; p.teleport(${L.air}); c.aircraft.board()`, 14000],
 ];
 const rows = [];
