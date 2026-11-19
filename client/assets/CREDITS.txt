@@ -134,3 +134,9 @@ tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — h
 models/alley/wiz-hat.glb, wiz-cape.glb  mũ + áo choàng tách từ models/hero-mage.glb (KayKit Adventurers, CC0 — xem trên), tô màu bằng code
 models/alley/broom.glb  "Medieval Tools Pack" — System G6, OpenGameArt, CC0 — https://opengameart.org/content/medieval-tools-pack (chuyển .blend → .glb bằng bpy)
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
+
+Làng Phù Thuỷ Nhỏ — xây nhà bằng phép "Dựng Lên!" (client/js/island/academy/village*.js): không tải thêm tệp mới.
+  Mảnh xây dùng lại model CC0 đã có ở trên: models/alley/* (Kenney Fantasy Town Kit 2.0: planks, wall, wall-wood, wall-door,
+  wall-window-glass, roof-high, roof-point, stairs-stone, wall-block, lantern) và models/kit/* (Kenney Fence/Nature/Furniture Kit:
+  fence_picket, plant_tree_town, plant_bush_round, furn_table, furn_chair, furn_bookshelf_full, furn_couch). Màu texture bảng màu
+  được nướng sang màu đỉnh để gộp cả lô thành 1 lưới. Khối Rubik (6 màu chuẩn), nền lô, biển tên: dựng/vẽ bằng code.
