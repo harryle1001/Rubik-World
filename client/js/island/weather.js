@@ -1,11 +1,13 @@
-// weather.js — Thời tiết: nắng, mây nhiều, mưa, giông (chớp + sấm), sương mù buổi sớm, gió, cầu vồng sau mưa.
+// weather.js — Thời tiết: nắng, mây nhiều, mưa, giông (chớp + sấm), sương mù buổi sớm, gió, cầu vồng sau mưa
+//   + như bản 2D: mưa phùn, trời nổi gió, nắng nóng, mưa đá, tuyết (phủ trắng nền), bão tuyết · chọn theo MÙA (tỷ lệ như 2D), lá/cỏ đổi màu theo mùa.
 // - Mọi giá trị (mây, mưa, gió, sương, độ ướt) chuyển mượt về giá trị đích của kiểu thời tiết hiện tại.
 // - Mưa: 1 LineSegments chạy hoàn toàn trên GPU quanh camera (1 draw call, không tốn CPU); số hạt giảm theo ctx.qualityLevel.
 // - Mặt đất ướt sẫm màu + vũng nước loang gợn sóng: vá shader các nền đất (MeshToonMaterial màu theo đỉnh).
 // - Âm thanh mưa/gió/sấm tự tổng hợp bằng Web Audio (không dùng file).
-// - Gỡ lỗi: ctx.weather.set('clear' | 'cloudy' | 'rain' | 'storm' | 'fog') · ?weather=rain trên URL
+// - Gỡ lỗi: ctx.weather.set('clear' | 'cloudy' | 'rain' | 'storm' | 'fog' | 'drizzle' | 'windy' | 'hot' | 'hail' | 'snow' | 'blizzard') · ?weather=snow&season=dong trên URL
 import * as THREE from 'three';
-import { WIND } from './terrain.js';
+import { WIND, SEASON_GLSL } from './terrain.js';
+import { seasonOf } from './data/clock.js';
 import { PHI } from './layout.js';
 
 // đích của từng kiểu: c mây · r mưa · w gió · f sương · bolt sét
@@ -15,8 +17,23 @@ const TYPES = {
   rain:   { c: 0.85, r: 0.75, w: 0.5, f: 0.25 },
   storm:  { c: 1, r: 1, w: 1, f: 0.35, bolt: true },
   fog:    { c: 0.3, r: 0, w: 0, f: 1 },
+  // như bản 2D: mưa phùn, gió, nắng nóng, mưa đá, tuyết, bão tuyết (dùng chung hạt mưa: đổi tốc độ rơi, độ dài vệt, màu)
+  drizzle:  { c: 0.6, r: 0.32, w: 0.2, f: 0.18 },
+  windy:    { c: 0.3, r: 0, w: 1, f: 0 },
+  hot:      { c: 0, r: 0, w: 0.05, f: 0, hot: 1 },
+  hail:     { c: 0.9, r: 0.62, w: 0.6, f: 0.2, hail: 1 },
+  snow:     { c: 0.7, r: 0.55, w: 0.25, f: 0.22, snow: 1 },
+  blizzard: { c: 1, r: 1, w: 1, f: 0.5, snow: 1 },
 };
-const NEXT = { clear: [['clear', 3], ['cloudy', 5]], cloudy: [['rain', 4], ['clear', 3], ['storm', 2]], rain: [['clear', 5], ['cloudy', 2], ['storm', 2]], storm: [['rain', 6], ['clear', 3]], fog: [['clear', 1]] };
+// tỷ lệ thời tiết theo mùa (lấy theo bản 2D W_WEIGHTS; bão/siêu bão/lốc/sấm sét → giông; tuyết chỉ mùa đông)
+const SEASON_W = {
+  xuan: { clear: 0.38, cloudy: 0.08, rain: 0.18, drizzle: 0.12, windy: 0.1, fog: 0.08, storm: 0.04, hail: 0.03 },
+  ha:   { clear: 0.33, hot: 0.12, cloudy: 0.08, rain: 0.13, storm: 0.22, windy: 0.07, hail: 0.02, fog: 0.03 },
+  thu:  { clear: 0.36, windy: 0.2, rain: 0.13, drizzle: 0.06, storm: 0.14, fog: 0.04, cloudy: 0.07 },
+  dong: { clear: 0.22, windy: 0.18, drizzle: 0.1, snow: 0.16, blizzard: 0.07, fog: 0.12, rain: 0.06, hail: 0.05, cloudy: 0.04 },
+};
+const SEASON_V = { xuan: [0, 0, 1], ha: [0, 0, 0], thu: [1, 0, 0], dong: [0.25, 0.6, 0] };   // → WIND.uSeason (terrain.js)
+const SEASON_NAME = { xuan: '🌸 Mùa xuân', ha: '☀️ Mùa hạ', thu: '🍂 Mùa thu', dong: '❄️ Mùa đông' };
 const FACT = {
   cloudy: '☁️ Mây là hơi nước bốc lên cao, gặp lạnh ngưng tụ thành vô số giọt nước li ti.',
   rain: '🌧️ Giọt nước trong mây nhập lại lớn dần, nặng quá thì rơi xuống thành mưa.',
@@ -25,33 +42,39 @@ const FACT = {
   clear: '☀️ Trời quang: nắng làm nước ao hồ bốc hơi — vòng tuần hoàn của nước lại bắt đầu.',
   rainbow: '🌈 Cầu vồng có 7 màu (đỏ, cam, vàng, lục, lam, chàm, tím) do ánh sáng mặt trời bị khúc xạ qua giọt nước.',
   wind: '🍃 Gió là không khí chuyển động: chỗ nóng không khí bay lên, không khí mát tràn tới thế chỗ.',
+  drizzle: '🌦️ Mưa phùn: hạt rất nhỏ (dưới 0,5 mm) rơi chậm, hay gặp cuối đông – đầu xuân ở miền Bắc khi gió mùa đông bắc gặp không khí ẩm từ biển.',
+  windy: '💨 Gió thổi từ nơi áp suất cao tới nơi áp suất thấp. Gió càng mạnh, sóng biển càng cao — nhìn cây cỏ nghiêng là biết hướng gió!',
+  hot: '🥵 Nắng nóng: trên 35 °C. Nhớ uống đủ nước, đội mũ và tránh nắng gắt buổi trưa nhé!',
+  hail: '🧊 Mưa đá: luồng gió mạnh trong mây giông đẩy giọt nước lên cao, đông thành đá, lớn dần rồi rơi xuống.',
+  snow: '❄️ Tuyết: hơi nước đóng băng thành tinh thể 6 cánh khi trời dưới 0 °C. Ở Việt Nam, tuyết đôi khi rơi trên đỉnh Fansipan, Mẫu Sơn.',
+  blizzard: '🌨️ Bão tuyết: tuyết dày kèm gió mạnh, tầm nhìn rất kém — gặp bão tuyết thì ở trong nhà cho an toàn!',
 };
-const NAME = { clear: '☀️ Nắng đẹp', cloudy: '☁️ Trời nhiều mây', rain: '🌧️ Trời mưa', storm: '⛈️ Giông bão', fog: '🌫️ Sương mù' };
+const NAME = { clear: '☀️ Nắng đẹp', cloudy: '☁️ Trời nhiều mây', rain: '🌧️ Trời mưa', storm: '⛈️ Giông bão', fog: '🌫️ Sương mù', drizzle: '🌦️ Mưa phùn', windy: '💨 Trời nổi gió', hot: '🥵 Nắng nóng', hail: '🧊 Mưa đá', snow: '❄️ Tuyết rơi', blizzard: '🌨️ Bão tuyết' };
 const DROPS = [3200, 2200, 1400, 700]; // số hạt mưa theo mức chất lượng
 const lerp = (a, b, k) => a + (b - a) * k;
 
 export function createWeather(ctx) {
   let sndT = 0;
   const { scene, camera, sky } = ctx;
-  const cur = { c: 0, r: 0, w: 0, f: 0, wet: 0, bow: 0 }, st = { type: 'clear', t: 120, flash: 0, boltT: 6, bowT: 0, told: new Set() };
-  const fogBase = { near: scene.fog.near, far: scene.fog.far }, grey = new THREE.Color('#8a94a3'), fogGrey = new THREE.Color('#c9d1d8'), white = new THREE.Color('#ffffff');
+  const cur = { c: 0, r: 0, w: 0, f: 0, wet: 0, bow: 0, snow: 0, hail: 0, hot: 0, cov: 0 }, fallSp = { v: 0.85 }, PART = { fall: 0 }, st = { type: 'clear', t: 120, flash: 0, boltT: 6, bowT: 0, told: new Set() };
+  const hotCol = new THREE.Color('#ffd9a0'), fogBase = { near: scene.fog.near, far: scene.fog.far }, grey = new THREE.Color('#8a94a3'), fogGrey = new THREE.Color('#c9d1d8'), white = new THREE.Color('#ffffff');
 
   // ---------- Mưa: hạt mưa quấn quanh camera, rơi trên GPU ----------
   const N = DROPS[0], a = new Float32Array(N * 2 * 4);
   for (let i = 0; i < N; i++) { const x = Math.random(), z = Math.random(), ph = Math.random(), th = Math.random(); const tq = Math.floor(th * 100) * 2; a.set([x, z, ph, tq], i * 8); a.set([x, z, ph, tq + 1], i * 8 + 4); } // w: ngưỡng(0..99)*2 + (0 đầu / 1 đuôi)
   const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 2 * 3), 3)); rg.setAttribute('a', new THREE.BufferAttribute(a, 4));
-  const RU = { uCam: { value: new THREE.Vector3() }, uTime: { value: 0 }, uRain: { value: 0 }, uWind: { value: new THREE.Vector2() }, uLight: { value: 1 } };
+  const RU = { uCam: { value: new THREE.Vector3() }, uTime: { value: 0 }, uRain: { value: 0 }, uWind: { value: new THREE.Vector2() }, uLight: { value: 1 }, uFall: { value: 0 }, uTail: { value: 0.7 }, uSnow: { value: 0 }, uHail: { value: 0 } };
   const rain = new THREE.LineSegments(rg, new THREE.ShaderMaterial({
     uniforms: RU, transparent: true, depthWrite: false, fog: false,
-    vertexShader: `uniform vec3 uCam; uniform float uTime, uRain; uniform vec2 uWind; attribute vec4 a; varying float vA;
+    vertexShader: `uniform vec3 uCam; uniform float uTime, uRain, uFall, uTail, uSnow; uniform vec2 uWind; attribute vec4 a; varying float vA;
       void main(){ const float S = 34., H = 22.; float tail = mod(a.w, 2.), th = floor(a.w * .5 + .001) / 100.;
-        float fall = fract(a.z - uTime * 0.85);                    // 0..1 trong 1 chu kỳ rơi (~18 m/s)
+        float fall = fract(a.z - uFall);                           // 0..1 trong 1 chu kỳ rơi (mưa ~18 m/s · tuyết chậm · mưa đá nhanh)
         vec3 p = vec3(uCam.x + (fract(a.x - uCam.x / S + .5) - .5) * S, uCam.y + (fall - .45) * H, uCam.z + (fract(a.y - uCam.z / S + .5) - .5) * S);
-        p.xz += uWind * (fall - .5) * 4.;
-        p.y += tail * 0.7; p.xz -= uWind * tail * 0.18;            // vệt mưa nghiêng theo gió
-        vA = step(th, uRain) * (0.25 + 0.75 * tail) * smoothstep(0., .15, fall);
+        p.xz += uWind * (fall - .5) * 4.; p.xz += vec2(sin(uTime * 1.3 + a.x * 40.), cos(uTime * 1.1 + a.y * 40.)) * uSnow * .6;   // bông tuyết chao lượn
+        p.y += tail * uTail; p.xz -= uWind * tail * 0.18 * uTail;            // vệt mưa nghiêng theo gió
+        vA = step(th, uRain) * mix(0.25 + 0.75 * tail, 1., uSnow) * smoothstep(0., .15, fall);
         gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.); }`,
-    fragmentShader: 'uniform float uLight; varying float vA; void main(){ gl_FragColor = vec4(vec3(0.78,0.84,0.94) * uLight, vA * 0.65); }',
+    fragmentShader: 'uniform float uLight, uSnow, uHail; varying float vA; void main(){ gl_FragColor = vec4(mix(vec3(0.78,0.84,0.94), vec3(1.), max(uSnow, uHail)) * uLight, vA * mix(0.65, 0.95, max(uSnow, uHail))); }',
   }));
   rain.frustumCulled = false; rain.visible = false; scene.add(rain);
 
@@ -74,7 +97,7 @@ export function createWeather(ctx) {
   bow.frustumCulled = false; bow.visible = false; bow.renderOrder = 1; scene.add(bow);
 
   // ---------- Mặt đất ướt + vũng nước (vá shader nền đất) ----------
-  const WET = { uWet: { value: 0 }, uRainNow: { value: 0 }, uWT: WIND.uTime, uCloudSh: { value: 0 } }; // uCloudSh: bóng mây trôi trên mặt đất
+  const WET = { uWet: { value: 0 }, uRainNow: { value: 0 }, uWT: WIND.uTime, uCloudSh: { value: 0 }, uSeason: WIND.uSeason, uSnowCov: { value: 0 } };   // uSnowCov: tuyết phủ trắng mặt hướng lên // uCloudSh: bóng mây trôi trên mặt đất
   const patched = new Set(); let scanT = 0, scans = 0;
   function patchGrounds() {
     scene.traverse(o => {
@@ -84,7 +107,9 @@ export function createWeather(ctx) {
       m.onBeforeCompile = sh => {
         Object.assign(sh.uniforms, WET);
         sh.vertexShader = 'varying highp vec3 vWP; varying float vUp;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n vWP = (modelMatrix * vec4(transformed, 1.)).xyz; vUp = normalize(mat3(modelMatrix) * objectNormal).y;');
-        sh.fragmentShader = 'uniform float uWet, uRainNow, uCloudSh; uniform highp float uWT; varying highp vec3 vWP; varying float vUp;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+        sh.fragmentShader = 'uniform float uWet, uRainNow, uCloudSh, uSnowCov; uniform highp float uWT; varying highp vec3 vWP; varying float vUp;\n' + SEASON_GLSL + '\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+          diffuseColor.rgb = seasonCol(diffuseColor.rgb, .5);   // cỏ nền ngả vàng (thu) / nhạt (đông) — nhẹ hơn lá cây
+          if (uSnowCov > 0.01) diffuseColor.rgb = mix(diffuseColor.rgb, vec3(.93, .96, 1.), uSnowCov * smoothstep(.55, .9, vUp) * (.75 + .25 * sin(vWP.x * .7 + sin(vWP.z * .6) * 2.)));
           if (uCloudSh > 0.01) {   // bóng mây: vệt tối mềm trôi theo gió
             vec2 cq = vWP.xz * 0.018 + vec2(uWT * 0.035, uWT * 0.012);
             float cn = sin(cq.x * 1.7 + sin(cq.y * 1.3) * 1.9) * sin(cq.y * 1.9 + sin(cq.x * 0.9) * 2.2);
@@ -124,14 +149,18 @@ export function createWeather(ctx) {
   // ---------- Đổi kiểu thời tiết ----------
   function set(type, quiet) {
     if (!TYPES[type]) return; const was = st.type; st.type = type; st.t = 70 + Math.random() * 80;
-    if ((was === 'rain' || was === 'storm') && (type === 'clear' || type === 'cloudy')) st.bowT = 45; // mưa tạnh → có thể có cầu vồng
+    if (/rain|storm|drizzle/.test(was) && (type === 'clear' || type === 'cloudy')) st.bowT = 45; // mưa tạnh → có thể có cầu vồng
     if (quiet || !ctx.toast) return;
     ctx.toast(`${NAME[type]}<br><small>${FACT[type]}</small>`, 6000);
   }
   function pick() {
     const h = sky.state.hour; if (st.type === 'clear' && h > 4.8 && h < 7.5 && Math.random() < 0.7) return 'fog'; // sương sớm
-    const list = NEXT[st.type]; let s = list.reduce((a, [, w]) => a + w, 0) * Math.random(); for (const [k, w] of list) if ((s -= w) <= 0) return k; return 'clear';
+    const W = SEASON_W[season()]; let s = Math.random(); for (const k in W) if ((s -= W[k]) <= 0) return k; return 'clear';
   }
+  // mùa: theo lịch thật (data/clock.js) · gỡ lỗi: ?season=thu hoặc ctx.weather.setSeason('dong')
+  let seasonLock = new URLSearchParams(location.search).get('season'); if (!SEASON_W[seasonLock]) seasonLock = null;
+  const season = () => seasonLock || (ctx.school && ctx.school.clock ? ctx.school.clock.season : seasonOf());
+  let lastSeason = null;
   const q = new URLSearchParams(location.search).get('weather'); if (TYPES[q]) { set(q, true); Object.assign(cur, TYPES[q]); }
 
   // ---------- Mỗi khung hình (gọi SAU sky.update) ----------
@@ -140,10 +169,17 @@ export function createWeather(ctx) {
     if ((st.t -= dt) <= 0) set(pick());
     const T = TYPES[st.type], k = Math.min(1, dt / 8), kr = Math.min(1, dt / 5);
     cur.c = lerp(cur.c, T.c, k); cur.r = lerp(cur.r, T.r, kr); cur.w = lerp(cur.w, T.w, k); cur.f = lerp(cur.f, T.f, Math.min(1, dt / 12));
-    cur.wet = cur.r > 0.15 ? Math.min(1, cur.wet + dt / 25 * cur.r) : Math.max(0, cur.wet - dt / 90);
+    cur.snow = lerp(cur.snow, T.snow ? 1 : 0, kr); cur.hail = lerp(cur.hail, T.hail ? 1 : 0, kr); cur.hot = lerp(cur.hot, T.hot ? 1 : 0, k);
+    const rainy = cur.r * (1 - cur.snow);   // tuyết không làm ướt nền mà phủ trắng (tan dần ~2 phút)
+    cur.wet = rainy > 0.15 ? Math.min(1, cur.wet + dt / 25 * rainy) : Math.max(0, cur.wet - dt / 90);
+    cur.cov = cur.snow > 0.5 && cur.r > 0.2 ? Math.min(1, cur.cov + dt / 34 * cur.r) : Math.max(0, cur.cov - dt / 120);
+    // mùa: màu lá/cỏ chuyển dần (WIND.uSeason dùng chung cho cây, cỏ, nền)
+    const sn = season(), sv = SEASON_V[sn], us = WIND.uSeason.value; us.set(lerp(us.x, sv[0], Math.min(1, dt / 3)), lerp(us.y, sv[1], Math.min(1, dt / 3)), lerp(us.z, sv[2], Math.min(1, dt / 3)));
+    if (sn !== lastSeason) { if (lastSeason && ctx.toast) ctx.toast(SEASON_NAME[sn], 4000); lastSeason = sn; }
     const L = ctx.qualityLevel || 0, S = sky, day = 1 - S.state.night;
 
     // ánh sáng & màu trời (sky.js vừa đặt theo giờ, ở đây chỉ phủ thêm thời tiết)
+    if (cur.hot > 0.01) { S.sun.intensity *= 1 + 0.15 * cur.hot; S.U.uHor.value.lerp(hotCol, cur.hot * 0.3 * day); }   // nắng nóng: chân trời vàng hắt, nắng gắt
     S.sun.intensity *= 1 - 0.6 * cur.c; S.hemi.intensity *= 1 + 0.15 * cur.c * day; // trời âm u: nắng yếu nhưng ánh sáng tán xạ từ mây bù lại (không quá tối cho trẻ)
     S.U.uTop.value.lerp(grey, cur.c * 0.6 * day); S.U.uHor.value.lerp(grey, cur.c * 0.45 * day); S.U.uSunCol.value.multiplyScalar(1 - cur.c * 0.9);
     S.cloudMat.color.copy(S.state.cloudTint).multiplyScalar(1 - cur.c * 0.45); S.cloudMat.emissiveIntensity *= 1 - cur.c * 0.6;
@@ -159,9 +195,10 @@ export function createWeather(ctx) {
 
     // mưa
     rain.visible = cur.r > 0.01 && !ctx.indoor; RU.uRain.value = cur.r; RU.uTime.value = t; RU.uCam.value.copy(camera.position); RU.uLight.value = 0.45 + 0.55 * day;
+    fallSp.v = lerp(0.85, 0.12, cur.snow) + 0.4 * cur.hail; PART.fall += dt * fallSp.v; RU.uFall.value = PART.fall % 1000; RU.uTail.value = lerp(lerp(0.7, 0.06, cur.snow), 0.14, cur.hail); RU.uSnow.value = cur.snow; RU.uHail.value = cur.hail;
     RU.uWind.value.set(WIND.uGust.value.x, WIND.uGust.value.y).multiplyScalar(cur.w * 2.2 * (1 + WIND.uGust.value.z * 0.5)); // hướng gió + cơn giật (living.js)
     rg.setDrawRange(0, DROPS[L] * 2);   // (trước đây dòng này nằm lẫn trong chú thích → luôn vẽ đủ 3200 hạt ở mọi mức)
-    WET.uWet.value = cur.wet; WET.uRainNow.value = cur.r; { const wm = ctx.terrain.water && ctx.terrain.water.mat; if (wm && wm.uniforms.uCloudR) wm.uniforms.uCloudR.value = (ctx.qualityLevel || 0) >= 2 ? 0 : 0.236 + cur.c * 0.5; }   // ⚡ Mượt (mức ≥ 2): tắt mây phản chiếu, bóng mây
+    WET.uSnowCov.value = cur.cov; WET.uWet.value = cur.wet; WET.uRainNow.value = cur.r; { const wm = ctx.terrain.water && ctx.terrain.water.mat; if (wm && wm.uniforms.uCloudR) wm.uniforms.uCloudR.value = (ctx.qualityLevel || 0) >= 2 ? 0 : 0.236 + cur.c * 0.5; }   // ⚡ Mượt (mức ≥ 2): tắt mây phản chiếu, bóng mây
     WET.uCloudSh.value = (ctx.qualityLevel || 0) >= 2 ? 0 : day * (1 - S.state.low * 0.6) * (0.1 + cur.c * 0.22) * (1 - cur.r * 0.8);
     if ((scanT -= dt) <= 0 && scans < 25) { scanT = 3; scans++; patchGrounds(); } // nền thị trấn dựng sau → quét vài lần
 
@@ -195,9 +232,10 @@ export function createWeather(ctx) {
     const A = sound();
     if (A && (sndT -= dt) <= 0) { sndT = 1 / PHI ** 5;
       const now = A.ac.currentTime, p = ctx.player && ctx.player.pos, under = p && ctx.grid && ctx.grid.near(p.x, p.z).boxes.some(b => p.x > b.x0 && p.x < b.x1 && p.z > b.z0 && p.z < b.z1 && b.top > p.y + 1.5) ? 0.5 : 1; // dưới mái: tiếng mưa nhỏ hơn
-      A.rain.g.gain.setTargetAtTime(cur.r * 0.22 * under, now, 0.4); A.rainLow.g.gain.setTargetAtTime(cur.r * 0.12, now, 0.4);
+      const rs = cur.r * (1 - cur.snow) * (1 + cur.hail * 0.8);   // tuyết rơi êm; mưa đá lộp độp to hơn
+      A.rain.g.gain.setTargetAtTime(rs * 0.22 * under, now, 0.4); A.rainLow.g.gain.setTargetAtTime(rs * 0.12, now, 0.4);
       A.wind.g.gain.setTargetAtTime(cur.w * cur.w * 0.18 * (0.7 + 0.3 * Math.sin(t * 0.7)), now, 0.5); A.wind.fl.frequency.setTargetAtTime(260 + 260 * cur.w + 120 * Math.sin(t * 0.43), now, 0.5);
     }
   }
-  return { update, set, cur, st, get type() { return st.type; } };
+  return { update, set, cur, st, get type() { return st.type; }, get season() { return season(); }, setSeason: s => { seasonLock = SEASON_W[s] ? s : null; } };
 }

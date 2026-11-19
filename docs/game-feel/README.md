@@ -32,3 +32,9 @@ Trước khi sửa: draw call trung vị 214 (mức 3).
 - 🙈 Ẩn nút (chạm để hiện lại), 📸 lưu PNG về máy: khung viền 1/φ⁶, dải chữ = viền·φ², logo game + tên vùng + ngày + tên người chơi; tiếng màn trập, chớp sáng.
 - 0 draw call thêm. Thoát: ✖ hoặc Esc.
 ![](4-che-do-chup.png) ![](4-anh-luu.png)
+
+## 5. Thời tiết như bản 2D + theo mùa (`weather.js`, `terrain.js`)
+- Thêm: 🌦️ mưa phùn · 💨 trời nổi gió · 🥵 nắng nóng · 🧊 mưa đá · ❄️ tuyết (phủ trắng nền, mái; tan ~2 phút) · 🌨️ bão tuyết — dùng lại hạt mưa (đổi tốc độ rơi, độ dài vệt, màu, chao lượn), mỗi kiểu kèm 1 câu kiến thức.
+- Thời tiết chọn theo mùa thật (tỷ lệ như bản 2D; tuyết chỉ mùa đông). Lá cây, cỏ, nền đổi màu: xuân xanh non · thu vàng cam · đông nhạt sương giá.
+- 0 draw call thêm. Gỡ lỗi: `?weather=snow&season=dong`, `__island.weather.setSeason('thu')`.
+![](5-tuyet-mua-dong.png)
