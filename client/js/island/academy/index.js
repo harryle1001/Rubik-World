@@ -19,6 +19,7 @@ import { create as createPaintings } from './paintings.js';   // tranh biết c�
 import { create as createCreatures } from './creatures.js';   // sinh vật kỳ ảo
 import { create as createTree } from './tree.js';             // cây cổ thụ biết nói
 import { L as CL } from './castle.js';
+import { createForest } from './forest.js';                // rừng phép thuật (thuỳ tây)
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 
@@ -103,6 +104,8 @@ export function createAcademy(ctx) {
     scene.add(kg); ctx.colliders.push({ x: shop[0], z: shop[1], r: 1.6 });
   }
 
+  const forest = ctx.forest = createForest(ctx);
+
   // ---------- tải / dỡ theo khoảng cách ----------
   const far = createFar(ctx);
   let isle = null, planted = false; const boxes = ctx.boxes = ctx.boxes || [];
@@ -120,6 +123,7 @@ export function createAcademy(ctx) {
     ferry.update(dt);
     stream(); far.update();
     if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); for (const x of extras) x.update(dt, t); }
+    forest.update(dt, performance.now() / 1000);
     magic.update(dt); spells.update(dt); content.update(dt, performance.now() / 1000);
     if (ferry.riding || player.vehicle) return;
     const pp = player.pos;
@@ -140,5 +144,5 @@ export function createAcademy(ctx) {
     }
     if (qu > QUAY.u0 - 2 && qu < QUAY.u0 + QUAY.w + 4 && qv > -3 && qv < QUAY.v1 + 3 && Math.abs(pp.y - QUAY.y) < 2) ctx.offer('⛵ Đi thuyền về đảo Rubik', () => ferry.start(-1), 8);
   }
-  return { update, far, ferry, magic, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) }, shop };
+  return { update, far, ferry, magic, forest, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) }, shop };
 }

@@ -5,16 +5,17 @@ import { CFG } from '../config.js';
 import { matV, mat } from '../sample/palette.js';
 import { Batch } from './geo.js';
 import { buildCastle } from './castle.js';
-import { ROT, C, ISLE, PLAT, QUAY, RUNWAY, heightLocal, toWorld, plateauDist, isleDist, LAKE, quayY } from './plan.js';
+import { ROT, C, ISLE, PLAT, QUAY, RUNWAY, heightLocal, toWorld, plateauDist, isleDist, forestDist, LAKE, quayY } from './plan.js';
 
 const COL = {
   sand: new THREE.Color('#d9c8a6'), grass: new THREE.Color('#7fbf5e'), grassD: new THREE.Color('#5a9a48'),
-  rock: new THREE.Color('#77736d'), rockD: new THREE.Color('#5a5752'), moss: new THREE.Color('#5f7352'), top: new THREE.Color('#a39d92'), bed: new THREE.Color('#b8a98a'),
+  rock: new THREE.Color('#77736d'), fmoss: new THREE.Color('#4f7a5e'), rockD: new THREE.Color('#5a5752'), moss: new THREE.Color('#5f7352'), top: new THREE.Color('#a39d92'), bed: new THREE.Color('#b8a98a'),
 };
 
-function terrainGeo() {
-  const st = CFG.isMobile ? 4.2 : 3.4, U0 = ISLE.u - ISLE.hu - 21, U1 = ISLE.u + ISLE.hu + 21, V = ISLE.hv + 21;
-  const nu = Math.ceil((U1 - U0) / st), nv = Math.ceil(2 * V / st), w = nv + 1, H = new Float32Array((nu + 1) * w);
+// lưới địa hình (x = v, z = u). Mặc định: cả đảo; rừng phép thuật (forest.js) gọi với dải v riêng, cùng bước + cùng gốc u → mép nối khít
+export const GRID = { st: CFG.isMobile ? 4.2 : 3.4, U0: ISLE.u - ISLE.hu - 21, V: ISLE.hv + 21 };
+export function terrainGeo(V0 = -GRID.V, nv = Math.ceil(2 * GRID.V / GRID.st), U0 = GRID.U0, nu = Math.ceil((ISLE.u + ISLE.hu + 21 - U0) / GRID.st)) {
+  const st = GRID.st, V = -V0, w = nv + 1, H = new Float32Array((nu + 1) * w);
   const pos = new Float32Array((nu + 1) * w * 3), col = new Float32Array((nu + 1) * w * 3), c = new THREE.Color();
   for (let j = 0; j <= nu; j++) for (let i = 0; i <= nv; i++) {
     const u = U0 + j * st, v = -V + i * st, [x, z] = toWorld(u, v), k = j * w + i;
@@ -23,10 +24,12 @@ function terrainGeo() {
   const at = (j, i) => H[Math.min(nu, Math.max(0, j)) * w + Math.min(nv, Math.max(0, i))];
   for (let j = 0; j <= nu; j++) for (let i = 0; i <= nv; i++) {
     const h = at(j, i), sl = Math.hypot(at(j + 1, i) - at(j - 1, i), at(j, i + 1) - at(j, i - 1)) / (2 * st), u = U0 + j * st, v = -V + i * st;
+    const fd = forestDist(u, v);
     if (h < 0.2) c.copy(COL.bed);
-    else if (h < 2.2) c.copy(COL.sand);
+    else if (h < 2.2 && fd > -8) c.copy(COL.sand);
     else c.copy(COL.grass).lerp(COL.grassD, Math.min(1, (h - 2) / 21));
     if (plateauDist(u, v) < -2) c.copy(COL.top);
+    else if (h > 0.2 && fd < -8) c.lerp(COL.fmoss, 0.55);   // nền rừng phép thuật: rêu xanh ánh tím
     c.lerp(COL.rock, Math.min(1, Math.max(0, (sl - 0.7) * 1.6))); if (sl > 2) { c.lerp(COL.rockD, 0.5); const m = Math.sin(u * 0.37 + v * 0.23) * Math.sin(h * 0.61); if (m > 0.3) c.lerp(COL.moss, 0.55); }   // vách phong hoá, mảng rêu
     col.set([c.r, c.g, c.b], (j * w + i) * 3);
   }
