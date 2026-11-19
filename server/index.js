@@ -22,6 +22,10 @@ app.disable('x-powered-by');
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 if (process.env.FORCE_HTTPS === '1') app.use((req, res, next) => (req.secure || req.path === '/api/health' ? next() : res.redirect(301, 'https://' + req.headers.host + req.originalUrl)));
 app.get('/teacher', (req, res) => res.sendFile(path.join(ROOT, 'client', 'teacher.html')));
+app.get('/parent', (req, res) => res.sendFile(path.join(ROOT, 'client', 'parent.html')));   // Gói Phụ huynh: đăng ký, liên kết con, mua gói, báo cáo học tập
+app.get('/admin', (req, res) => res.sendFile(path.join(ROOT, 'client', 'admin.html')));     // chủ game: doanh thu, đối soát, mã giảm giá, giấy phép trường
+app.get(['/privacy', '/terms'], (req, res) => res.sendFile(path.join(ROOT, 'client', 'legal.html')));
+app.get('/lib/chart.js', (req, res) => { res.set('Cache-Control', 'public, max-age=604800'); res.sendFile(path.join(ROOT, 'node_modules', 'chart.js', 'dist', 'chart.umd.min.js')); });
 app.get('/sw.js', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'sw.js')); });
 app.get('/manifest.webmanifest', (req, res) => { res.type('application/manifest+json'); res.sendFile(path.join(ROOT, 'client', 'manifest.webmanifest')); });
 // Nén brotli/gzip (zlib có sẵn của Node, không thêm thư viện): JS, HTML, model .glb (meshopt được thiết kế để nén tiếp),
