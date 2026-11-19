@@ -7,6 +7,7 @@ import { PHI } from './plan.js';
 
 export const COL = { wall: '#9f9a92', wallD: '#7f7a73', roof: '#3f4a56', roofG: '#4f6f66', wood: '#6e4a30', woodL: '#a8744a', floor: '#8d857a', pave: '#b3aca0' };
 const lerp = (a, b, t) => a + (b - a) * t;
+const GLASS = ['#ff7a6a', '#ffd25a', '#7ad0ff', '#a88aff', '#6ae0a8', '#ff9ad8'];   // kính màu cửa sổ (v2): ngày tối mờ, đêm phát sáng
 
 // ô cửa sổ nhọn Gothic: thân 1,2 × 3 m + chóp tháp 4 mặt; dẹt theo pháp tuyến tường
 const PYR_U = new THREE.ConeGeometry(0.85, 0.95, 4).rotateY(Math.PI / 4).scale(1, 1, 0.14), PYR_V = new THREE.ConeGeometry(0.85, 0.95, 4).rotateY(Math.PI / 4).scale(0.14, 1, 1);
@@ -33,8 +34,9 @@ export function makeKit(B, { far = false, Y, ground }) {
   // cửa sổ trên mặt tường: axis 'u' = mặt vuông góc trục u (tường chạy dọc v)
   const winAt = (axis, fixed, side, a, y0, w = 1.2, hh = 3) => {
     if (!win) return; const f = fixed + side * (far ? 0.6 : 0.1);
-    if (axis === 'u') { win.box(a - w / 2, a + w / 2, y0, y0 + hh, f - 0.07, f + 0.07, '#ffffff'); win.add(PYR_U, '#ffffff', a, y0 + hh + 0.47, f); }
-    else { win.box(f - 0.07, f + 0.07, y0, y0 + hh, a - w / 2, a + w / 2, '#ffffff'); win.add(PYR_V, '#ffffff', f, y0 + hh + 0.47, a); }
+    const k = Math.abs(Math.round(a * 0.7 + y0 * 1.3 + fixed)) % GLASS.length, c0 = far ? '#ffffff' : GLASS[k], c1 = far ? '#ffffff' : GLASS[(k + 2) % GLASS.length];   // kính màu (2 sắc / ô)
+    if (axis === 'u') { win.box(a - w / 2, a + w / 2, y0, y0 + hh * 0.62, f - 0.07, f + 0.07, c0); win.box(a - w / 2, a + w / 2, y0 + hh * 0.62, y0 + hh, f - 0.07, f + 0.07, c1); win.add(PYR_U, far ? '#ffffff' : '#ffd27a', a, y0 + hh + 0.47, f); }
+    else { win.box(f - 0.07, f + 0.07, y0, y0 + hh * 0.62, a - w / 2, a + w / 2, c0); win.box(f - 0.07, f + 0.07, y0 + hh * 0.62, y0 + hh, a - w / 2, a + w / 2, c1); win.add(PYR_V, far ? '#ffffff' : '#ffd27a', f, y0 + hh + 0.47, a); }
   };
   // instancing (gần) hoặc gộp vào khối (bóng xa)
   const put = (kind, geo, col, x, y, z, ry = 0, rx = 0, rz = 0, sx = 1) => { if (far) wall.add(geo, col, x, y, z, ry, rx, rz, sx); else inst[kind].push([x, y, z, rx, ry, rz, sx]); };

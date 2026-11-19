@@ -163,7 +163,7 @@ export function stoneMaterial(look) {
   m.customProgramCacheKey = () => 'academy-stone-b';
   return m;
 }
-export const lookChoice = () => { let v = new URLSearchParams(location.search).get('castle'); try { if (v) localStorage.setItem('academy.look', v); else v = localStorage.getItem('academy.look'); } catch (e) {} return v === 'b' ? 'b' : 'a'; };
+export const lookChoice = () => { let v = new URLSearchParams(location.search).get('castle'); try { if (v) localStorage.setItem('academy.look', v); else v = localStorage.getItem('academy.look'); } catch (e) {} return v === 'a' ? 'a' : 'b'; };   // v2: mặc định vân đá + rêu (B); ?castle=a để về toon thuần
 
 /** Lâu đài gần: trả về { group, boxes (thế giới), deckY(u,v), update(dt, t, playerPos) } */
 export function buildCastle(ctx) {
@@ -176,7 +176,7 @@ export function buildCastle(ctx) {
   const merl = instMesh(MERLON, C_WALL_D, inst.merlon, stone), arch = instMesh(ARCH_GEO, C_WALL, inst.arch, stone);   // răng cưa · nhịp vòm (instancing)
   g.add(merl, arch);
   add(B.glow.build(), mat('lampGlow'), false);
-  const winMat = new THREE.MeshBasicMaterial({ color: '#2a3440' }), DAY = new THREE.Color('#2a3440'), NIGHT = new THREE.Color('#ffd98a');
+  const winMat = new THREE.MeshBasicMaterial({ color: '#3a4250', vertexColors: true, toneMapped: false }), DAY = new THREE.Color('#3a4250'), NIGHT = new THREE.Color('#ffffff');   // kính màu: ngày sẫm, đêm sáng rực
   add(B.win.build(), winMat, false);
   add(B.glass.build(), new THREE.MeshToonMaterial({ color: '#9fd9c4', transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false }), false);
   // cờ đuôi nheo trên chóp tháp lớn

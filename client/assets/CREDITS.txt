@@ -134,3 +134,13 @@ tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — h
 models/alley/wiz-hat.glb, wiz-cape.glb  mũ + áo choàng tách từ models/hero-mage.glb (KayKit Adventurers, CC0 — xem trên), tô màu bằng code
 models/alley/broom.glb  "Medieval Tools Pack" — System G6, OpenGameArt, CC0 — https://opengameart.org/content/medieval-tools-pack (chuyển .blend → .glb bằng bpy)
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
+
+Học viện Pha Lê v2 (academy/exterior.js, broom.js, life.js, commons.js, interior/furnish.js):
+models/kit/kk_*.glb (đuốc gắn tường, cờ 4 màu, rương vàng, thùng, kệ nến, kiếm khiên, cột hoa văn, đĩa thức ăn, bàn tiệc…)
+  KayKit – Dungeon Remastered 1.0 (Kay Lousberg, www.kaylousberg.com), CC0 1.0 — LICENSE.txt trong gói: "Creative Commons Zero, CC0"
+  Lấy qua cdn.jsdelivr.net/gh/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0; nén Meshopt (gltf-transform).
+models/kit/qn_dragon.glb  Quaternius – LowPoly Animated Monsters (Dragon), CC0 — https://opengameart.org/content/lowpoly-animated-monsters
+  (bản OBJ tĩnh → GLB bằng obj2gltf, giản lược meshopt, cao 1,6 m) — máng xối đầu rồng (tô màu đá) + linh vật Nhà Long
+models/kit/qn_eagle.glb   Quaternius – Animal Pack Vol.2 (Eagle), CC0 — https://opengameart.org/content/animated-animales-low-poly — linh vật Nhà Phụng (tô màu nhà)
+models/kit/qn_stag_statue.glb  bản tĩnh (bỏ xương/animation) của kit/stag.glb (Quaternius, CC0 — xem trên) — linh vật Nhà Lân (kỳ lân Việt có gạc)
+Còn lại dựng khối trong code: cầu kéo, xích, khung cổng sắt, bậc tường thành, đồng hồ mặt trời, sân bay chổi, vòng bay, cột cờ, đèn ông sao, đèn lồng.
