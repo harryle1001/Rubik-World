@@ -157,7 +157,8 @@ export function createBrooms(ctx) {
   const btn = document.getElementById('bBroom');
   if (btn) btn.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); summon(); });
   addEventListener('keydown', e => { if (e.repeat || ctx.freeCam || ctx.mapOpen || document.body.classList.contains('rs-modal') || /INPUT|TEXTAREA/.test(document.activeElement?.tagName)) return; if (e.code === 'KeyJ') summon(); });
-  if (ctx.spells && ctx.spells.register) ctx.spells.register({ id: 'goi-choi', name: 'Gọi Chổi!', icon: '🧹', cast: summon });
+  if (ctx.spells && ctx.spells.hooks) ctx.spells.hooks.broom = () => summon();   // sau ghép: phép "Gọi Chổi!" có sẵn trong vòng phép (spellbook.js) gọi vào đây
+  else if (ctx.spells && ctx.spells.register) ctx.spells.register({ id: 'goi-choi', name: 'Gọi Chổi!', icon: '🧹', cast: summon });
 
   // chổi tạm (gọi tới) biến mất sau khi xuống 1,6 s; chổi đặt sẵn đứng chờ
   function update(dt) {

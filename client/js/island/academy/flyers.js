@@ -152,7 +152,7 @@ export function createFlyers(ctx, magic) {
   }
   { const bar = document.querySelector('.vbtns'), w = document.getElementById('bWhistle');
     if (bar) { const b = document.createElement('button'); b.id = 'bFlyer'; b.title = 'Gọi bạn bay (thú bay đã làm quen)'; b.textContent = '🪽'; b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); callMenu(); }); bar.insertBefore(b, w ? w.nextSibling : null); } }
-  const spell = { id: 'goi-ban-bay', name: 'Gọi Bạn Bay!', icon: '🪽', desc: 'Gọi thú bay đã làm quen bay tới', cast: callMenu };
+  const spell = { id: 'goi-ban-bay', name: 'Gọi bạn bay', say: 'Gọi Bạn Bay!', order: 9, cost: 8, cd: 5, learn: 'gọi thú bay đã làm quen bay tới (Bãi Thú Bay).', icon: '🪽', desc: 'Gọi thú bay đã làm quen bay tới', cast: callMenu };
   let spelled = false;
 
   // ---------- mỗi khung ----------

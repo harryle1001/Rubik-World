@@ -264,9 +264,11 @@ export function createSpellbook(ctx, magic) {
       N.send('liftReq', { to: best[0] }); api.aim = best[1].h.root.position.clone().setY(best[1].h.root.position.y + 1);
       api.toast(`🤝 <b>Nâng Bạn!</b> ${best[1].name} bay lên rồi sẽ hạ xuống nhẹ nhàng.`, 3000);
     } });
-  const hookOr = (key, msg) => api => { const h = ctx.spells.hooks[key]; if (typeof h === 'function') return h(api); window.dispatchEvent(new CustomEvent('spell:' + key, { detail: api })); api.toast(msg, 3500); };
-  register({ id: 'broom', name: 'Gọi chổi', icon: '🧹', say: 'Gọi Chổi!', order: 7, cost: 8, cd: 5, learn: 'gọi chổi bay tới (sắp có).', cast: hookOr('broom', '🧹 <b>Gọi Chổi!</b> Chổi bay đang được các thầy cô chế tạo — sắp có nhé!') });
-  register({ id: 'build', name: 'Dựng lên', icon: '🏗️', say: 'Dựng Lên!', order: 8, cost: 8, cd: 5, learn: 'mở chế độ xây nhà (sắp có).', cast: hookOr('build', '🏗️ <b>Dựng Lên!</b> Chế độ xây nhà sắp mở — chuẩn bị ý tưởng ngôi nhà mơ ước nhé!') });
+  const hookOr = (key, msg, prev) => api => { const h = ctx.spells.hooks[key] || prev;   // sau ghép: brooms.js gắn hooks.broom; village.js đã đăng ký sẵn cast của 'build'
+    if (typeof h === 'function') return h(api); window.dispatchEvent(new CustomEvent('spell:' + key, { detail: api })); api.toast(msg, 3500); };
+  register({ id: 'broom', name: 'Gọi chổi', icon: '🧹', say: 'Gọi Chổi!', order: 7, cost: 8, cd: 5, learn: 'gọi chổi bay tới để cưỡi (phím J / nút 🧹).', cast: hookOr('broom', '🧹 <b>Gọi Chổi!</b> Chổi bay đang được các thầy cô chế tạo — sắp có nhé!') });
+  const b0 = magic.getSpell('build');
+  register({ id: 'build', name: 'Dựng lên', icon: '🏗️', say: 'Dựng Lên!', order: 8, cost: 8, cd: 5, ...(b0 ? {} : { learn: 'mở chế độ xây nhà (sắp có).' }), cast: hookOr('build', '🏗️ <b>Dựng Lên!</b> Chế độ xây nhà sắp mở — chuẩn bị ý tưởng ngôi nhà mơ ước nhé!', b0 && b0.cast) });
 
   // ---------- sau mỗi lần niệm: hô, tia sáng, gửi mạng ----------
   magic.onCast((s, api, ok) => {
