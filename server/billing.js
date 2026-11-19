@@ -39,6 +39,7 @@ module.exports = function setupBilling(app, api, o) {
   // ---------- chỉ mục ----------
   const byLogin = new Map(), kidParents = new Map(), byLic = new Map();
   const linkKid = (pid, uid) => { if (!kidParents.has(uid)) kidParents.set(uid, new Set()); kidParents.get(uid).add(pid); };
+  const aff = require('./affiliate')(app, { db, express, ADMIN_KEY });   // Gợi ý cho con (liên kết giới thiệu, chỉ cho người lớn)
   for (const p of db.all('parents')) { byLogin.set(p.login, p); for (const k of p.kids || []) linkKid(p.id, k); }
   for (const l of db.all('licenses')) byLic.set(l.code, l);
   const parent = id => db.get('parents', id);
@@ -180,7 +181,7 @@ module.exports = function setupBilling(app, api, o) {
   fam.get('/kids/:uid/report', pauth, (req, res) => {
     const u = kidOf(req, res); if (!u) return; const e = entitlement(u);
     if (!e.on) return res.status(402).json({ error: 'Báo cáo học tập thuộc Gói Phụ huynh (hoặc trong thời gian dùng thử).', locked: true, preview: { name: u.name, todayMin: usedMin(u) } });
-    res.json({ report: report(u, Math.max(0, Math.min(8, +req.query.week || 0))) });
+    const rep = report(u, Math.max(0, Math.min(8, +req.query.week || 0))); res.json({ report: rep, suggest: aff.forReport(rep), affNote: require('./affiliate').NOTE });
   });
   const reportHtml = r => `<h2 style="margin:0 0 8px">📊 Tuần ${r.from.slice(8)}/${r.from.slice(5, 7)} – ${r.to.slice(8)}/${r.to.slice(5, 7)}: ${esc(r.name)}</h2>
     <p>⏱️ <b>${r.total.min} phút</b> chơi & học · ✏️ <b>${r.total.n} câu</b> (đúng ${r.total.ok}${r.total.n ? ', ' + Math.round(r.total.ok / r.total.n * 100) + '%' : ''})</p>
@@ -322,7 +323,7 @@ module.exports = function setupBilling(app, api, o) {
       }
       if (v.getUTCDay() === 0 && v.getUTCHours() >= 20 && (p.notify || { weekly: true }).weekly && p.weekly !== wkKey && (p.kids || []).length) {
         p.weekly = wkKey; db.put('parents', p.id, p);
-        const reps = (p.kids || []).map(user).filter(u => u && entitlement(u).on).map(u => reportHtml(report(u)));
+        const reps = (p.kids || []).map(user).filter(u => u && entitlement(u).on).map(u => { const r = report(u); return reportHtml(r) + aff.emailHtml(r); });
         if (reps.length) mail(to, 'Tóm tắt học tập tuần này', reps.join('<hr style="border:0;border-top:1px solid #eee;margin:21px 0">') + '<p>Xem biểu đồ chi tiết ở trang Phụ huynh.</p>');
       }
     }

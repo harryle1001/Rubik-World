@@ -172,7 +172,7 @@ ${posts().length ? `<section style="padding-top:0"><div class="w"><h2>Góc phụ
     // quảng cáo trong bài: tối đa 2 vị trí — sau đoạn thứ 5 (nếu bài đủ dài) và cuối bài
     let html = p.html; const parts = html.split('</p>');
     if (ADS && parts.length > 8) { parts[4] += '</p>' + adSlot(); html = parts.map((x, i) => (i === 4 || i === parts.length - 1 ? x : x + '</p>')).join(''); }
-    const sugg = aff && aff.blogBlock ? aff.blogBlock(p.tags) : '';
+    const A = require('./affiliate').current, sugg = A ? A.blogBlock(p.tags) : '';
     const body = `<article class="art"><p class="crumb"><a href="/gioi-thieu">${NAME}</a> › <a href="/blog">Góc phụ huynh</a></p><div class="meta">${vnDate(p.date)}${p.tags.length ? ' · ' + esc(p.tags.join(', ')) : ''}</div><h1>${esc(p.title)}</h1>
 ${p.cover ? `<img src="${esc(p.cover)}" width="987" height="555" alt="" fetchpriority="high">` : ''}${html}
 ${sugg}<div class="card" style="margin-top:34px"><h3>Cho con thử Đảo Rubik</h3><p>Miễn phí, chạy trên trình duyệt điện thoại. Không quảng cáo trong game.</p><p style="margin-top:13px"><a class="b gold sm" href="/">▶ Chơi ngay</a> <a class="b sm" href="/parent">Trang Phụ huynh</a></p></div>${adSlot()}</article>`;

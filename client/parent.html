@@ -24,6 +24,7 @@ label.ck{display:flex;gap:8px;align-items:flex-start;font-weight:600;line-height
 .b:hover{background:var(--pri2)}.b.sec{background:#efe3cc;color:var(--ink)}.b.red{background:#f3c7bd;color:#6a1a0a}.b.gold{background:var(--acc);color:#2a1a0a}.b.sm{padding:5px 13px;font-size:13px}.b:disabled{opacity:.5;cursor:default}
 .msg{min-height:21px;color:var(--bad);font:700 13px system-ui;margin-top:8px}.ok{color:var(--pri2)}
 .hid{display:none!important}
+.aff{display:grid;grid-template-columns:repeat(auto-fill,minmax(233px,1fr));gap:8px}.aff a{display:block;padding:13px 21px;border:2px solid var(--line);border-radius:13px;color:var(--ink);text-decoration:none;background:#fff}.aff a:hover{border-color:var(--gold)}.aff small{display:block;color:var(--mute);font-size:13px}
 .ad{display:none;margin:34px auto;max-width:728px;text-align:center}.ads-on .ad{display:block}.ad>span{display:block;font:700 11px system-ui;letter-spacing:1px;text-transform:uppercase;color:var(--mute);margin-bottom:5px}
 .hero{display:grid;grid-template-columns:1.618fr 1fr;gap:34px;align-items:center}
 @media(max-width:760px){.hero{grid-template-columns:1fr}h1{font-size:28px}}
@@ -110,7 +111,7 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:21px}
     </div>
   </section>
 <div id="adWrap"><!--AD--></div></main>
-<footer>Trường Rubik · <a href="/privacy">Bảo mật</a> · <a href="/terms">Điều khoản</a> · Không quảng cáo · Không lootbox</footer>
+<footer>Trường Rubik · <a href="/privacy">Bảo mật</a> · <a href="/terms">Điều khoản</a> · <a href="/gioi-thieu">Giới thiệu</a> · <a href="/blog">Góc phụ huynh</a> · Game không quảng cáo, không lootbox</footer>
 <dialog id="dPay"><div class="in" id="payIn"></div></dialog>
 <dialog id="dAsk"><div class="in"><h2 id="askT"></h2><p id="askP" class="mute"></p><label for="askPw">Nhập mật khẩu phụ huynh để xác nhận</label><input id="askPw" type="password" autocomplete="current-password"><div class="row" style="margin-top:13px"><button class="b sec" id="askNo">Huỷ</button><button class="b red" id="askYes">Xác nhận</button></div><div class="msg" id="askMsg"></div></div></dialog>
 <script src="/lib/chart.js" defer></script><script src="/site/site.js" defer></script>
@@ -172,7 +173,8 @@ async function loadKid() {
     <div class="charts" style="margin-top:21px"><div><h3 style="margin-top:0">Thời gian & số câu mỗi ngày</h3><div class="cbox"><canvas id="c1" aria-label="Biểu đồ thời gian mỗi ngày"></canvas></div></div><div><h3 style="margin-top:0">Tỉ lệ đúng theo môn</h3><div class="cbox"><canvas id="c2" aria-label="Biểu đồ tỉ lệ đúng theo môn"></canvas></div></div></div>
     <div class="tw" style="margin-top:21px"><table><tr><th>Môn</th><th>Số câu</th><th>Đúng</th><th>Sai</th><th>Tỉ lệ đúng</th></tr>${R.subjects.map(s => `<tr><td><b style="color:${COLORS[s.subject]}">●</b> ${esc(s.subject)}</td><td>${s.n}</td><td>${s.ok}</td><td>${s.n - s.ok}</td><td>${s.n ? Math.round(s.ok / s.n * 100) + '%' : '—'}</td></tr>`).join('')}</table></div>
     <h3>💡 Chủ đề cần luyện thêm</h3>${R.weak.length ? R.weak.map(w => `<span class="pill w">${esc(w.topic)} · ${w.ok}/${w.n} đúng (${w.pct}%)</span>`).join('') : '<small>Chưa có chủ đề nào dưới 70% (cần ít nhất 3 câu mỗi chủ đề).</small>'}
-    <h3>🏆 Thành tích tuần</h3>${R.achievements.length ? R.achievements.map(a => `<span class="pill g">${esc(a)}</span>`).join('') : '<small>Tuần này chưa có thành tích — cùng con đặt mục tiêu nhỏ nhé!</small>'}`;
+    <h3>🏆 Thành tích tuần</h3>${R.achievements.length ? R.achievements.map(a => `<span class="pill g">${esc(a)}</span>`).join('') : '<small>Tuần này chưa có thành tích — cùng con đặt mục tiêu nhỏ nhé!</small>'}
+    ${(r.suggest || []).length ? `<h3>🎁 Gợi ý cho con <small>· theo phần cần luyện</small></h3><div class="aff">${r.suggest.map(p => `<a href="${esc(p.href)}" rel="sponsored nofollow noopener" target="_blank"><b>${esc(p.title)}</b><small>${p.subject === '*' ? 'Gợi ý chung' : 'Môn ' + esc(p.subject)} · ${esc(p.shop)} ↗</small></a>`).join('')}</div><p class="mute" style="margin-top:8px">🔗 ${esc(r.affNote)}</p>` : ''}`;
   const go = () => { if (!window.Chart) return setTimeout(go, 89); Chart.defaults.font.family = 'system-ui'; Chart.defaults.color = '#7a6a58';
     const days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
     charts.push(new Chart($('#c1'), { data: { labels: R.days.map((d, i) => days[i] + ' ' + f(d.d)), datasets: [{ type: 'bar', label: 'Phút chơi', data: R.days.map(d => d.min), backgroundColor: '#3fb8a8', borderRadius: 8, yAxisID: 'y' }, { type: 'line', label: 'Câu đúng', data: R.days.map(d => d.ok), borderColor: '#f0a23a', backgroundColor: '#f0a23a', tension: .382, yAxisID: 'y1' }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'phút' } }, y1: { beginAtZero: true, position: 'right', grid: { display: false }, title: { display: true, text: 'câu' } } } } }));
