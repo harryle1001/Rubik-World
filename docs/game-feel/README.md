@@ -25,3 +25,10 @@ Trước khi sửa: draw call trung vị 214 (mức 3).
 - ⚡ Mượt (mức ≥ 2): tắt mây phản chiếu và bóng mây (trước chỉ tắt ở mức 3).
 - Đo ⚡ Mượt tại cổng trường: 213 draw call (trước 214) — 0 draw call thêm.
 ![](3-may-phan-chieu.png)
+
+## 4. Chế độ chụp ảnh 📷 (`js/island/photo.js`, menu ☰ hoặc phím O)
+- Dừng thời gian (ocean.js bỏ qua mọi cập nhật thế giới, chỉ vẽ), camera xoay quanh tự do: kéo/chụm/lăn chuột, WASD dời, Q/E lên-xuống.
+- 7 bộ lọc (Gốc, Rực rỡ, Ấm áp, Mát lạnh, Hoài cổ, Đen trắng, Điện ảnh) chỉnh thẳng uniform hậu kỳ → ảnh lưu đúng màu lọc.
+- 🙈 Ẩn nút (chạm để hiện lại), 📸 lưu PNG về máy: khung viền 1/φ⁶, dải chữ = viền·φ², logo game + tên vùng + ngày + tên người chơi; tiếng màn trập, chớp sáng.
+- 0 draw call thêm. Thoát: ✖ hoặc Esc.
+![](4-che-do-chup.png) ![](4-anh-luu.png)

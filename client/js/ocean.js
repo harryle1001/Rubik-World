@@ -33,6 +33,7 @@ import { createSkyshow } from './island/skyshow.js';
 import { createDive } from './island/dive.js';
 import { createPerf } from './island/perf.js';
 import { createFeel } from './island/feel.js';
+import { createPhoto } from './island/photo.js';
 import { createAutoQ, SK } from './island/autoq.js';
 import { createMiniGameHost } from './island/mg/host.js';
 import { createAccountHud } from './island/account-hud.js';
@@ -131,6 +132,7 @@ const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + ti
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 const mounts = createMounts(ctx);
+const photo = createPhoto(ctx); // 📷 chế độ chụp ảnh: dừng thời gian, camera tự do, bộ lọc, lưu ảnh có khung logo (photo.js)
 const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, xu bay vào HUD, màn chuyển, tên vùng điện ảnh (feel.js)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
@@ -172,6 +174,7 @@ const perf = ctx.perf = createPerf(ctx); // cắt vật nhỏ ở xa, viền, ng
 window.__island = ctx; Object.assign(ctx, { sky, post });
 renderer.setAnimationLoop(() => {
   const dt = stepDt(clock.getDelta()); // dt ổn định (motion.js): làm mượt khi FPS dao động, giới hạn bước
+  if (ctx.photoMode) { photo.update(dt); post.render(); stats.frame(); return; }   // 📷 chụp ảnh: thế giới đứng yên, chỉ camera tự do
   if (!ctx.freeCam) player.update(dt); // freeCam: camera tự do để gỡ lỗi
   physics.update(dt);
   terrain.update(dt, clock.elapsedTime, player.pos);
