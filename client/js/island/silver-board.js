@@ -204,6 +204,7 @@ body.sb-on #sbHud{display:block}body.mg-on #sbHud{display:none!important}body.mg
 
   function summon(force) {
     if (on) return true;
+    if (!force && ctx.eco && !ctx.eco.owns('board-bac')) { ctx.eco.locked('board-bac'); return false; }   // 🔒 mở khoá ở 🛒 Cửa hàng (economy/); đua ván (mini game) vẫn mượn ván miễn phí
     if (player.vehicle) { ctx.toast('🚶 Xuống phương tiện đang đi trước đã, rồi gọi ván nhé!', 2500); return false; }
     if (!force && (player.frozen || ctx.freeCam || document.body.classList.contains('rs-modal'))) return false;   // đang mở bảng / đoạn dẫn chuyện / chụp ảnh
     if (!force && ctx.dive && ctx.dive.diving) { ctx.toast('🤿 Đang lặn — nổi lên mặt nước rồi gọi ván nhé!', 2500); return false; }

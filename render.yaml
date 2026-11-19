@@ -19,6 +19,33 @@ services:
         generateValue: true
       - key: FORCE_HTTPS
         value: "1"
+      # Gói Phụ huynh — xem docs/payments.md. Chưa có khoá: cổng chạy chế độ GIẢ LẬP. Khoá bí mật đặt ở tab Environment (sync: false).
+      - key: PUBLIC_URL
+        sync: false
+      - key: MOMO_PARTNER_CODE
+        sync: false
+      - key: MOMO_ACCESS_KEY
+        sync: false
+      - key: MOMO_SECRET_KEY
+        sync: false
+      - key: ZALOPAY_APP_ID
+        sync: false
+      - key: ZALOPAY_KEY1
+        sync: false
+      - key: ZALOPAY_KEY2
+        sync: false
+      - key: VNPAY_TMN_CODE
+        sync: false
+      - key: VNPAY_HASH_SECRET
+        sync: false
+      - key: VIETQR_BANK_BIN
+        sync: false
+      - key: VIETQR_ACCOUNT_NO
+        sync: false
+      - key: VIETQR_ACCOUNT_NAME
+        sync: false
+      - key: SMTP_URL
+        sync: false
       - key: DATABASE_URL
         fromDatabase:
           name: truong-rubik-db

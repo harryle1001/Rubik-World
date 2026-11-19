@@ -1,7 +1,7 @@
 // mg/meta.js — LỚP CHUNG CHO MỌI MINI GAME 3D (gắn vào host.js, game không phải sửa gì):
 //   🎚️ cấp độ Dễ/Vừa/Khó (api.level 1–3, api.lv 'easy'|'medium'|'hard'; cờ vua/caro/vây dùng nút riêng, chung khoá 'mg.<key>.level')
 //   🏆 bảng xếp hạng: máy này (localStorage 'mg.lb.<key>') + toàn trường (server /island 'mgScore'/'mgTop' nếu có mạng)
-//   🏅 13 huy hiệu (Fibonacci) · 📋 3 nhiệm vụ mini game mỗi ngày · 🪙 xu + 🏰 điểm nhà Tứ Linh mỗi ván
+//   🏅 13 huy hiệu (Fibonacci) · 📋 3 nhiệm vụ mini game mỗi ngày · 🪙 đồng vàng + 🏰 điểm nhà Tứ Linh mỗi ván
 //   🤝 2 người: bạn khác (net.js) lại gần người đang chơi → "✋ Chơi cùng" → chủ khu đồng ý → cùng chơi, đấu điểm trực tiếp
 //      (game hỗ trợ lượt đi chung như cờ caro dùng api.peer: send(d) / on(fn) / host)
 //   Câu hỏi học tập theo lớp 1–9: quiz.js / quick-quiz.js đọc QZ (lớp từ 'island.grade', cấp độ đẩy ±1 lớp).
@@ -42,10 +42,10 @@ export function createMeta(ctx, host, $) {
   const gname = k => ((ctx.miniGames[k] && ctx.miniGames[k].name) || k);
   let cur = null;   // { key, api, peer, peerScore }
 
-  // ---------- Thưởng: xu + điểm nhà ----------
+  // ---------- Thưởng: đồng vàng + điểm nhà ----------
   function pay(coins, house, why) {
     let s = '';
-    if (coins && ctx.account && ctx.account.addCoins && ctx.account.addCoins(coins)) s += ` · 🪙 +${coins} xu`;
+    if (coins && ctx.account && ctx.account.addCoins && ctx.account.addCoins(coins)) s += ` · 🪙 +${coins} đồng vàng`;
     if (house && ctx.houses && ctx.houses.addPoints) { try { ctx.houses.addPoints(house, why); s += ` · 🏰 +${house} điểm nhà`; } catch (e) {} }
     return s;
   }
@@ -82,7 +82,7 @@ export function createMeta(ctx, host, $) {
     if (!D.done && D.list.every(q => q.n >= q.need)) { D.done = true; P.dailyDone++; keep(); msg += `<br>🎉 Xong cả 3 nhiệm vụ hôm nay!${pay(21, 8, 'nhiệm vụ mini game')}`; }
     save('mg.daily', D); return msg;
   }
-  const dailyHtml = () => { const D = daily(); return `<div class="meta">📋 <b>Nhiệm vụ mini game hôm nay</b>${D.list.map(q => `<br>${q.n >= q.need ? '✅' : '⬜'} ${esc(q.t)} (${q.n}/${q.need})`).join('')}${D.done ? '<br>🎉 Đã xong hôm nay!' : '<br>Thưởng: 🪙 8 xu + 🏰 5 điểm nhà mỗi việc, xong cả 3 thêm 21 xu'}</div>`; };
+  const dailyHtml = () => { const D = daily(); return `<div class="meta">📋 <b>Nhiệm vụ mini game hôm nay</b>${D.list.map(q => `<br>${q.n >= q.need ? '✅' : '⬜'} ${esc(q.t)} (${q.n}/${q.need})`).join('')}${D.done ? '<br>🎉 Đã xong hôm nay!' : '<br>Thưởng: 🪙 8 đồng vàng + 🏰 5 điểm nhà mỗi việc, xong cả 3 thêm 21 đồng vàng'}</div>`; };
   const badgesHtml = () => `<div class="mgBadges">${BADGES.map(b => `<div class="${P.badges[b[0]] ? '' : 'off'}" title="${esc(b[3])}"><b>${b[1]}</b>${esc(b[2])}</div>`).join('')}</div>`;
 
   // ---------- Bảng xếp hạng ----------

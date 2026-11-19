@@ -199,6 +199,19 @@ Rừng Thiên Định (client/js/island/zone-destiny.js, destiny-plan.js, destin
   Hươu trắng: models/animal-deer.glb (Quaternius – Ultimate Animated Animals, CC0) nhuộm trắng bằng code.
   Âm thanh: amb-river, amb-birds, amb-birds2, amb-crickets (đã ghi nguồn ở trên); chuông gió tổng hợp bằng WebAudio (ctx.note).
   Vách đá, cây Thiên Định, đền đá, cầu khỉ, công, cổng đá, dây leo, thác, sương, tia nắng: dựng bằng khối cơ bản + shader tự viết.
+Thế giới đại dương (client/js/island/sea/): đội tàu thuyền, làng chài, phà, cá heo/cá voi
+models/kit/boat_cargo.glb (tàu chở hàng container), models/kit/boat_ferry.glb (phà sàn phẳng)
+  Kenney – Watercraft Kit 2.0 (ship-cargo-a, ship-cargo-c), CC0 1.0 — https://opengameart.org/content/watercraft-kit
+  (License.txt trong gói: "Creative Commons Zero, CC0"). Chuẩn hoá bằng tools/kit/process.mjs (gộp mesh, texture bảng màu 128 px, nén Meshopt).
+  Dùng lại model đã có: boat_liner, boat_sail_a/b, boat_speed_a/e, prop_buoy, prop_buoy_flag, dock_hut, prop_stall_red/green, barrel, barrels, fish (Kenney, CC0), rua.glb (tự tạo).
+  Thuyền thúng, ghe đánh cá có mắt thuyền, cá heo, cá voi, hải âu, cầu tàu, nhà sàn, lưới, giàn phơi, lồng bè: dựng khối trong code (không có model CC0 phù hợp);
+  còi tàu tổng hợp bằng Web Audio; ngư dân dùng bộ người có sẵn (characters.js).
+
+🎒 Cặp sách · 🛒 Cửa hàng · 🪙/💎 ví (js/island/economy/) — dùng lại model CC0 đã có, không tải thêm:
+  models/alley/stall-red.glb → quầy 🛒 trước cổng Trường Rubik
+  audio/sfx-coin.mp3, sfx-gem.mp3 → âm thanh đồng vàng / kim cương bay vào ví
+  Biểu tượng 🪙 đồng vàng & 💎 kim cương hồng: SVG vẽ riêng cho dự án (js/island/economy/wallet.js), CC0.
+  Ba lô đeo lưng: khối đơn giản dựng bằng code (chưa có model CC0 ba lô phù hợp) — thay khi có.
 Hải đăng Mũi Sóng (client/js/island/lighthouse/): chỉ dùng lại model CC0 đã có — kit/rock_shore_a·b·c, rock_wide, house_suburb_a_warm,
   boat_row, boat_row_small, boat_fishing, barrels, crate, chest, prop_buoy, prop_lantern, prop_lantern_hanging, prop_crate_carrots,
   prop_crate_tomatoes, plant_bush_small, plant_beach_grass, furn_table_small, furn_chair_wood, furn_cabinet, furn_table_round,

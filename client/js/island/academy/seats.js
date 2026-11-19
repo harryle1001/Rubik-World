@@ -1,7 +1,7 @@
 // academy/seats.js — NGỒI ĐƯỢC MỌI GHẾ + BÀN GIÁO VIÊN (v4)
 //  🪑 Ghế băng 4 bàn dài Đại sảnh (2 bên mỗi bàn, cả chiều dài) + 12 ghế bàn đọc Thư Viện (nội thất tầng 1): lại gần → "Ngồi xuống".
 //     Khi ngồi: 📖 Đọc sách (sách hiện trên bàn, 1 điều thú vị) · 🍲 Ăn (đĩa món Việt hiện ra, +năng lượng) · ✍️ Viết bài (câu hỏi → điểm nhà) · 🚶 Đứng dậy.
-//  🦉 Thư cú: ngồi một lúc (hoặc sau mỗi việc, ngẫu nhiên) có cú bay qua cửa sổ, thả thư xuống bàn: thư nhà, thư thầy cô (+xu), lời khen, đố vui.
+//  🦉 Thư cú: ngồi một lúc (hoặc sau mỗi việc, ngẫu nhiên) có cú bay qua cửa sổ, thả thư xuống bàn: thư nhà, thư thầy cô (+đồng vàng), lời khen, đố vui.
 //  🧑‍🏫 Bàn giáo viên trên bục: 7 thầy cô (điện thoại 5) ngồi hàng dài nhìn xuống sảnh, đội mũ màu; học sinh ngồi bàn dưới (life.js).
 import * as THREE from 'three';
 import { loadHero, STUDENTS } from '../characters.js';

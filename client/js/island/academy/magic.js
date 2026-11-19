@@ -228,6 +228,7 @@ export function createMagic(ctx) {
   }
   function cast() {
     if (!st.wand || player.vehicle) return; const s = cur(); if (!s) return;
+    if (ctx.premium && !ctx.premium.allow('magic')) return;
     if (cds[s.id] > 0) { ctx.toast(`⏳ ${s.icon} <b>${s.name}</b> đang hồi phép: ${cds[s.id].toFixed(1)} giây`, 1600); return; }
     if (st.mana < costOf(s)) { ctx.toast('🔋 Hết năng lượng phép! Bấm <b>📚 +34</b> và trả lời đúng 1 câu để nạp.', 3500); return; }
     cds[s.id] = cdOf(s); player.emote && player.emote('interact');

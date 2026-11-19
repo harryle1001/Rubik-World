@@ -123,7 +123,7 @@ export function createMiniGameHost(ctx) {
   const host = { active: null, key: null };
   const G0 = k => ((ctx.miniGames[k] && ctx.miniGames[k].name) || k).replace(/^\P{L}+/u, '');
   let S = null;   // trạng thái phiên chơi hiện tại
-  const meta = createMeta(ctx, host, $);   // cấp độ, xếp hạng, huy hiệu, nhiệm vụ ngày, xu + điểm nhà, 2 người (meta.js)
+  const meta = createMeta(ctx, host, $);   // cấp độ, xếp hạng, huy hiệu, nhiệm vụ ngày, đồng vàng + điểm nhà, 2 người (meta.js)
 
   // ---------- Tìm chỗ đặt khu chơi: đất phẳng, không đè nhà/cây, xoắn ốc theo góc vàng (2π/φ²) quanh cửa ----------
   const groundAt = (x, z) => Math.max(ctx.terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, 99) : -99);
@@ -284,6 +284,7 @@ export function createMiniGameHost(ctx) {
   // ---------- Vào / ra ----------
   function begin(key, door, opts = {}) {
     const G = ctx.miniGames[key]; if (!G) return false;
+    if (ctx.premium && !ctx.premium.allow('mg', { key, name: G.name })) return false;   // một phần mini game miễn phí (FREE_MG ở server)
     if (host.active) host.exit(true);
     const P = ctx.player, R = G.radius || 13, dx = door ? door.x : P.pos.x, dz = door ? door.z : P.pos.z;
     let sp = opts.spot ? opts.spot.slice() : G.inPlace ? [P.pos.x, P.pos.z, 0] : spotCache.get(key + ':' + Math.round(dx) + ':' + Math.round(dz));   // inPlace: game tự dùng thế giới quanh nhân vật (câu cá)

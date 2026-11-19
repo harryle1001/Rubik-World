@@ -537,7 +537,8 @@ export function createAircraft(ctx) {
     if (player.vehicle) return;
     let best = null, bd = 5.5;
     for (const pl of planes) if (pl.parked) { const d = Math.hypot(pl.group.position.x - pp.x, pl.group.position.z - pp.z); if (d < bd && Math.abs(pl.group.position.y - pp.y) < 4) { bd = d; best = pl; } }
-    if (best) ctx.offer(best.label || (best.label = '✈️ Lái máy bay ' + best.style.name), best.boardFn || (best.boardFn = () => board(best)), 7);
+    const lic = !ctx.eco || ctx.eco.owns('ride-plane');   // 🔒 Bằng lái máy bay mua ở 🛒 Cửa hàng (economy/catalog.js)
+    if (best) ctx.offer(lic ? best.label || (best.label = '✈️ Lái máy bay ' + best.style.name) : '✈️ Lái máy bay 🔒', lic ? best.boardFn || (best.boardFn = () => board(best)) : () => ctx.eco.locked('ride-plane'), 7);
   }
 
   return { update, planes, birds: NB, board: (i = 0) => board(planes[i]), land, eject, get autoCount() { return auto.length; }, get plane() { return me; }, get flying() { return !!me; }, get phase() { return phase; }, get yaw() { return yaw; }, set yaw(v) { yaw = v; } };

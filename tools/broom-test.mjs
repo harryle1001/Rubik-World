@@ -26,7 +26,7 @@ const tp = (u, v, y) => page.evaluate(([u, v, y]) => import('/js/island/academy/
 
 if (PART === 'broom') {
   // 1) Gọi chổi ở thị trấn, bay lên, chụp tư thế
-  for (let k = 0; k < 8 && !(await page.evaluate(() => __island.vehicles.riding === 'broom')); k++) { await page.evaluate(() => { document.activeElement && document.activeElement.blur(); if (!__island.player.frozen) __island.brooms.summon(); }); await wait(1500); }
+  for (let k = 0; k < 8 && !(await page.evaluate(() => __island.vehicles.riding === 'broom')); k++) { await page.evaluate(() => { document.activeElement && document.activeElement.blur(); if (__island.eco && !__island.eco.owns('broom-tap')) __island.account.profile.own.push('broom-tap'); if (!__island.player.frozen) __island.brooms.summon(); }); await wait(1500); }
   log.push('riding ' + await page.evaluate(() => __island.vehicles.riding));
   if (MOBILE) { await page.locator('#bUp').dispatchEvent('pointerdown'); await wait(2500); await page.locator('#bUp').dispatchEvent('pointerup'); }
   else await key('Space', 2500);
@@ -57,7 +57,7 @@ if (PART === 'match' || PART === 'practice') {
   const [OX, OZ] = await page.evaluate(() => import('/js/island/academy/plan.js').then(P => P.toWorld(-34, 172)));
   await page.evaluate(([x, z]) => __island.player.teleport(x, z - 21, 26), [OX, OZ]); await wait(9000);
   await page.waitForFunction(() => __island.pitch, null, { timeout: 60000 });
-  for (let k = 0; k < 8 && !(await page.evaluate(() => __island.vehicles.riding === 'broom')); k++) { await page.evaluate(() => { document.activeElement && document.activeElement.blur(); if (!__island.player.frozen) __island.brooms.summon(); }); await wait(1500); }
+  for (let k = 0; k < 8 && !(await page.evaluate(() => __island.vehicles.riding === 'broom')); k++) { await page.evaluate(() => { document.activeElement && document.activeElement.blur(); if (__island.eco && !__island.eco.owns('broom-tap')) __island.account.profile.own.push('broom-tap'); if (!__island.player.frozen) __island.brooms.summon(); }); await wait(1500); }
   await page.evaluate(([x, z]) => { __island.player.teleport(x, z - 21, 26); __island.player.cam.yaw = Math.PI; }, [OX, OZ]); await wait(4000);
   if (PART === 'match') {
     for (let k = 0; k < 6 && !(await page.evaluate(() => !!__island.pitch.match)); k++) { await page.evaluate(() => __island.pitch.start('att', 180)); await wait(3000); }

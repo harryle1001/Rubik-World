@@ -1,7 +1,7 @@
 // academy/broom.js — SÂN BAY CHỔI (thiết kế nguyên bản): sân cỏ bầu dục trên bậc đá nhô khỏi vách phía đông, nhìn xuống hồ.
 //  · Sân 68 × 42 m (bán trục 34 × 21, tỉ lệ ≈ φ), vạch trắng, 4 khán đài tháp màu 4 nhà + cờ KayKit, cầu đá 6 m nối mép cao nguyên.
 //  · Mini game "Bay chổi luyện tập": cưỡi chổi (chổi tập của trường nếu chưa mua) bay qua 8 vòng sáng; vòng 3 và 6 là "vòng câu hỏi":
-//    chổi lơ lửng chờ em trả lời (Toán / Khoa học). Về đích: điểm theo thời gian + câu đúng → xu + điểm nhà.
+//    chổi lơ lửng chờ em trả lời (Toán / Khoa học). Về đích: điểm theo thời gian + câu đúng → đồng vàng + điểm nhà.
 //  · Điều khiển: cần gạt/WASD lái · ⬆ (Space) lên · ⬇ (C) xuống. Chổi = player.vehicle (fly) như khinh khí cầu.
 // Draw call: sân + khán đài 1 · vòng 1 (instancing) · mũi tên 1 · cờ 4 · chổi 1.
 import * as THREE from 'three';
