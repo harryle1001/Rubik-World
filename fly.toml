@@ -1,0 +1,26 @@
+# Fly.io: `fly launch --copy-config` rồi `fly volumes create rubik_data --size 1 --region sin` và `fly deploy` (xem docs/deploy.md)
+app = "truong-rubik"
+primary_region = "sin"
+
+[build]
+
+[env]
+  DATA_DIR = "/data"
+  FORCE_HTTPS = "1"
+
+[[mounts]]
+  source = "rubik_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    method = "GET"
+    path = "/api/health"

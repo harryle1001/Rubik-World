@@ -56,7 +56,7 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
   };
   ctx.stars = () => load(INV, {}).sao?.n || 0;
   ctx.book = () => load(BOOK, []);
-  const logQ = (subj, ok) => { const b = load(BOOK, []), d = today(), last = b[b.length - 1]; if (last && last.d === d && last.s === subj) { last.k++; last.ok += ok ? 1 : 0; } else b.push({ t: Date.now(), d, s: subj, k: 1, ok: ok ? 1 : 0, note: (bank?.subjects[subj]?.name || subj) }); while (b.length > 89) b.shift(); save(BOOK, b); };
+  const logQ = (subj, ok) => { dispatchEvent(new CustomEvent('rw-learn', { detail: { s: (bank?.subjects?.[subj]?.name || subj), ok } })); const b = load(BOOK, []), d = today(), last = b[b.length - 1]; if (last && last.d === d && last.s === subj) { last.k++; last.ok += ok ? 1 : 0; } else b.push({ t: Date.now(), d, s: subj, k: 1, ok: ok ? 1 : 0, note: (bank?.subjects[subj]?.name || subj) }); while (b.length > 89) b.shift(); save(BOOK, b); };
 
   addEventListener('keydown', e => {
     if (el.hidden || e.repeat) return;
