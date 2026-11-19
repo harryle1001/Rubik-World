@@ -376,7 +376,7 @@ export function buildNorth(k) {
     for (const [x2, y2, col] of D.TENTS) {
       const [tx, tz] = P(x2, y2); if (!free(tx, tz, 2)) continue; const face = Math.atan2(x - tx, z - tz);
       addKit('tent', tx, Y, tz, 3.0, face, col); const fx = tx + Math.sin(face) * 2.4, fz = tz + Math.cos(face) * 2.4;
-      if (free(fx, fz, 1.2)) { addKit('campfire', fx, Y, fz, 2.2, 0); DG.cyl(0.2, 0.2, 1.4, fx + Math.cos(face) * 1.2, Y + 0.2, fz - Math.sin(face) * 1.2, '#7a5230', 6, face, 0, Math.PI / 2); DG.follow(null).glow(() => DG.cone(0.22, 0.5, fx, Y + 0.05, fz, '#ffb347', 5)); }
+      if (free(fx, fz, 1.2)) { addKit('campfire', fx, Y, fz, 2.2, 0); (ctx.fires = ctx.fires || []).push([fx, fz]); DG.cyl(0.2, 0.2, 1.4, fx + Math.cos(face) * 1.2, Y + 0.2, fz - Math.sin(face) * 1.2, '#7a5230', 6, face, 0, Math.PI / 2); DG.follow(null).glow(() => DG.cone(0.22, 0.5, fx, Y + 0.05, fz, '#ffb347', 5)); }
     }
   }
   if (R.picnic) {

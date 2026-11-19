@@ -236,7 +236,7 @@ export function buildExtraZones(ctx, k) {
       }); };
       const [fx, fz] = P(-19, 0);
       for (const [a, c, r] of [[-20, -6, 2.4], [-12, 5, 2.8], [-27, 5, 2.2]]) hut(cx + a, cz + c, r, Math.atan2(fx - cx - a, fz - cz - c));
-      kit('camp_fire_stones', fx, Y, fz, 3.2, 0); for (let i = 0; i < 3; i++) b.cone(0.35 - i * 0.08, 0.9 - i * 0.2, fx + (i - 1) * 0.25, Y + 0.05, fz + (i % 2) * 0.2, i % 2 ? '#ffd36e' : '#f28c38', 5);
+      kit('camp_fire_stones', fx, Y, fz, 3.2, 0); (ctx.fires = ctx.fires || []).push([fx, fz]); for (let i = 0; i < 3; i++) b.cone(0.35 - i * 0.08, 0.9 - i * 0.2, fx + (i - 1) * 0.25, Y + 0.05, fz + (i % 2) * 0.2, i % 2 ? '#ffd36e' : '#f28c38', 5);
       for (let i = 0; i < 4; i++) { const a = i / 4 * 6.28 + 0.4; kit('log', fx + Math.cos(a) * 2.4, Y, fz + Math.sin(a) * 2.4, 2.2, a + Math.PI / 2); }
       // ---- chòi quan sát (mái cong) ----
       const [wx, wz] = P(44, 26);
