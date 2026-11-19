@@ -12,7 +12,7 @@ const mergeParts = p => mergeGeos(p);
 
 // ---------- Thú 4 chân dựng bằng khối ----------
 // o: len (dài thân), leg (chiều cao chân), bw/bh (rộng/cao thân), neck [dài, góc], head [rộng, cao, dài], col, col2 (bờm/móng)
-function quad(o) {
+export function quad(o) {
   const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
   const y0 = o.leg, parts = [];
   parts.push(box(o.bw, o.bh, o.len, o.col, 0, y0 + o.bh / 2, 0));
@@ -53,7 +53,7 @@ function ostrich() {
   return { group: g, body, legs, back: 1.62, saddleZ: -0.05, biped: true };
 }
 // Phượng hoàng: cánh vỗ, đuôi lông dài, phát sáng nhẹ
-function phoenix() {
+export function phoenix() {
   const g = new THREE.Group(), body = new THREE.Group(); g.add(body);
   const mat = new THREE.MeshToonMaterial({ vertexColors: true, gradientMap, emissive: '#ff4a10', emissiveIntensity: 0.28 });
   const sph = new THREE.SphereGeometry(0.6, 9, 7); sph.scale(0.9, 0.8, 1.6);

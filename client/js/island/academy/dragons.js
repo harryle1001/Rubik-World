@@ -352,7 +352,7 @@ export function createDragons(ctx, magic) {
       if (st.egg && st.egg.k !== kind) { ctx.offer(`🥚 Trứng ${S.name} (em đang chăm trứng ${SPECIES[st.egg.k].name})`, () => ctx.toast(`Chăm xong trứng <b>${SPECIES[st.egg.k].name}</b> trước đã nhé!`, 2200), 7); break; }
       const E = st.egg; ctx.offer(E ? `🥚 Chăm trứng ${S.name} (${E.f + E.w + E.q}/5)` : `🥚 Nhận chăm trứng ${S.name}`, () => eggCard(i), 7); break;
     }
-    if (inV && clock - showT > 34 && Math.hypot(u - VALLEY.u, v - VALLEY.v) < VALLEY.r && night() < 0.55) ctx.offer('🎆 Xem rồng biểu diễn', show, 4);
+    if (inV && clock - showT > 34 && Math.hypot(u - VALLEY.u, v - VALLEY.v) < VALLEY.r && night() < 0.55) ctx.offer('🎆 Xem rồng biểu diễn', show, 2);
   }
   return { update, see, get loaded() { return !!D; }, state: st, show, spawnPet, fx, center: [cx, cz] };
 }

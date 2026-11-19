@@ -31,6 +31,7 @@ import { createLake } from './forest-lake.js';             // hồ trong rừng
 import { createLife } from './forest-life.js';             // sinh vật phép thuật
 import { createSecrets } from './forest-secrets.js';       // 13 bí mật, Bà Gạo kể cổ tích, nguyên liệu Pha Chế, bản đồ rừng
 import { createDragons } from './dragons.js';              // Thung Lũng Rồng: rồng hiền, trứng rồng, rồng con thú cưng
+import { createFlyers } from './flyers.js';                // thú bay cưỡi được: Ngựa có cánh, Chim Lạc, Phượng Hoàng, Rồng Lửa lớn
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 const CLASS_AT = [['class0', 'cls-light'], ['class1', 'cls-shape'], ['class1b', 'cls-creature'], ['potion', 'cls-brew']];   // điểm neo lớp (interior/plan.js) → lớp phép thuật (classes/index.js)
@@ -144,6 +145,7 @@ export function createAcademy(ctx) {
   forest.plug(ctx.forestLife = createLife(ctx, forest, magic));
   forest.plug(ctx.forestSecrets = createSecrets(ctx, forest, magic));
   const dragons = ctx.dragons = createDragons(ctx, magic);
+  const flyers = ctx.flyers = createFlyers(ctx, magic);
 
   // ---------- tải / dỡ theo khoảng cách ----------
   const far = createFar(ctx);
@@ -164,7 +166,7 @@ export function createAcademy(ctx) {
     stream(); far.update();
     if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); for (const x of extras) x.update(dt, t); }
     forest.update(dt, performance.now() / 1000);
-    dragons.update(dt, performance.now() / 1000);
+    dragons.update(dt, performance.now() / 1000); flyers.update(dt);
     magic.update(dt); wear.update(dt); spells.update(dt); content.update(dt, performance.now() / 1000); interior.update(dt);
     if (ferry.riding || player.vehicle) return;
     const pp = player.pos;
