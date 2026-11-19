@@ -13,10 +13,10 @@ import { label, PHI } from './common.js';
 import { startLight } from './light.js';
 import { startBrew } from './brew.js';
 import { startShape } from './shape.js';
-//import { startAstro } from './astro.js';
+import { startAstro } from './astro.js';
 //import { startCreature } from './creature.js';
 //import { startHerb, domeStatus } from './herb.js';
-const startAstro = null, startHerb = null, domeStatus = null;   // (tạm) lớp còn lại thêm ở các commit sau
+const startHerb = null, domeStatus = null;   // (tạm) lớp còn lại thêm ở các commit sau
 
 // lớp: [khoá, tên, tâm phòng (u, v), cửa (u, v, pháp tuyến nu, nv), hàm chơi]
 const ROOMS = [
