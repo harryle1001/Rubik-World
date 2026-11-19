@@ -150,7 +150,7 @@ export function createLearn(ctx) {
   document.head.appendChild(css);
   let card = null, keyFn = null, frz = false;
   addEventListener('keydown', e => { if (!card || !keyFn) return; if (/^[1-9]$/.test(e.key) || e.code === 'Enter') { e.stopImmediatePropagation(); keyFn(e); } }, true);
-  const open = () => { if (!card) { card = document.createElement('div'); card.id = 'lnCard'; document.body.appendChild(card); } frz = ctx.player.frozen; ctx.player.frozen = true; return card; };
+  const open = () => { if (!card) { card = document.createElement('div'); card.id = 'lnCard'; document.body.appendChild(card); frz = ctx.player.frozen; } ctx.player.frozen = true; return card; };
   const close = () => { if (card) { card.remove(); card = null; keyFn = null; ctx.player.frozen = frz; } };
   function chooseGrade(then) {
     const c = open(), g0 = grade();

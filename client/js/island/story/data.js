@@ -45,6 +45,17 @@ export const CHAPTERS = [
       { type: 'cond', at: [-318, 0], r: 0, text: 'Bơi ra biển và lặn sâu 2 m (nút lặn / phím Q)', test: c => !!(c.dive && c.dive.diving && c.dive.depth > 2), hint: 'Đi xuống nước, bấm lặn. Để ý thanh dưỡng khí!' },
     ],
     shard: [-322, 8], underwater: true, outro: [['rua', 'Cháu lặn giỏi lắm! Mảnh Lam là màu của biển và bầu trời.'], ['mu', 'Bà… bà sang Học viện Pha Lê học phép tàng hình đây! Không ai thấy bà đâu!'], ['ru', 'Học viện ở đảo xa phía tây bắc. Ra bến đi thuyền đèn lồng nhé!']] },
+
+  { id: 4, name: 'Mảnh Tím', region: 'Học viện Pha Lê', icon: '🏰', col: '#a78bfa', subj: 'Tiếng Anh', xp: 89, sao: 13, title: 'Pháp sư tập sự',
+    intro: [['ru', 'Từ đây Cú Thần Pha Lê sẽ dẫn đường cho em. Tôi chờ ở trường nhé!'], ['cu', 'Hoo-hoo! Welcome! Ở Học viện, câu thần chú nào cũng có tiếng Anh đấy.']],
+    tasks: [
+      { type: 'goto', at: PIER, r: 8, text: 'Ra bến thuyền đèn lồng (bờ tây bắc)' },
+      { type: 'goto', at: QUAYP, r: 21, text: 'Đi thuyền tới Học viện Pha Lê' },
+      { type: 'cond', at: HALL, r: 0, text: 'Nhận đũa phép trong Đại sảnh', test: c => !!(c.magic && c.magic.hasWand), hint: 'Leo đường mòn lên lâu đài, vào Đại sảnh bấm E.' },
+      { type: 'quiz', who: 'cu', at: YARD, s: ['ta'], n: 5, need: 3, text: 'Thi tiếng Anh với Cú Thần', lines: [['cu', 'Spell = thần chú, wand = đũa phép. Ready? Let’s go!']] },
+      { type: 'cond', at: YARD, r: 0, text: 'Niệm thử 1 phép (nút ✨ / phím F)', test: (c, S) => S.castN > 0, hint: 'Hết năng lượng thì bấm 📚 để nạp.' },
+    ],
+    shard: YARD, shardOff: [5, 5], outro: [['cu', 'Excellent! Mảnh Tím — màu của phép thuật!'], ['mu', 'Bà chưa học được tàng hình… nên bà trốn vào Rừng Phép Thuật!'], ['cu', 'Rừng ở thuỳ đất phía tây đảo. Ta sẽ dạy em một phép mới.']] },
 ];
 
 let EGG = () => 0;

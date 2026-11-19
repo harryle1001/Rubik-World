@@ -115,7 +115,9 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
   const pbGeo = new THREE.CylinderGeometry(0.06, 0.21, 5, 6, 1, true); pbGeo.translate(0, 2.5, 0);
   const pbeams = new THREE.InstancedMesh(pbGeo, beamMat, MAXP); pbeams.frustumCulled = false; scene.add(pbeams);
   let pts = [], labels = [];   // [x, y, z] vị trí vật nhặt của nhiệm vụ hiện tại
-  const labelSprite = t => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); g.font = 'bold 96px system-ui'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 13; g.strokeStyle = '#2a1d3c'; g.strokeText(t, 64, 70); g.fillStyle = '#ffd23f'; g.fillText(t, 64, 70); const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthWrite: false })); s.scale.set(1.2, 1.2, 1); scene.add(s); return s; };
+  // chữ nổi trên vật nhặt: 5 sprite dựng sẵn, vẽ lại canvas khi đổi nhiệm vụ (không huỷ vật liệu → không lỗi khi biên dịch trước shader)
+  const LBL = Array.from({ length: MAXP }, () => { const c = document.createElement('canvas'); c.width = c.height = 128; const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthWrite: false })); sp.scale.set(1.2, 1.2, 1); sp.visible = false; scene.add(sp); return sp; });
+  const labelSprite = (t, i) => { const sp = LBL[i], c = sp.material.map.image, g = c.getContext('2d'); g.clearRect(0, 0, 128, 128); g.font = 'bold 96px system-ui'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 13; g.strokeStyle = '#2a1d3c'; g.strokeText(t, 64, 70); g.fillStyle = '#ffd23f'; g.fillText(t, 64, 70); sp.material.map.needsUpdate = true; return sp; };
   function spread(at, n, r, water = false) {   // vị trí theo xoắn ốc hướng dương (góc vàng), bỏ chỗ vướng nhà / dưới nước
     const out = [];
     for (let k = 0; out.length < n && k < 89; k++) {
@@ -129,21 +131,22 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
     return out;
   }
   function buildPicks() {
-    labels.forEach(s => { scene.remove(s); s.material.map.dispose(); s.material.dispose(); }); labels = []; pts = [];
+    LBL.forEach(sp => sp.visible = false); labels = []; pts = [];
     const T = task(); if (!T || T.type !== 'collect') return;
     pts = spread(P(T.at), T.n, T.spread || 13); pickMat.color.set(T.col || '#9ad8ff');
-    if (T.labels) labels = T.labels.map(labelSprite);
+    if (T.labels) labels = T.labels.slice(0, MAXP).map(labelSprite);
   }
 
   // ---------- mục tiêu niệm phép (cây pha lê xám → 7 màu) ----------
   let casts = [];
   const castGeo = new THREE.OctahedronGeometry(0.89, 0); castGeo.scale(1, PHI * PHI, 1);
-  function clearCasts() { for (const c of casts) { scene.remove(c.m); c.m.material.dispose(); ctx.magic && ctx.magic.removeTarget(c.T); } casts = []; }
+  const CM = Array.from({ length: 3 }, () => { const m = new THREE.Mesh(castGeo, new THREE.MeshLambertMaterial({ color: '#8a8a8a', flatShading: true })); m.visible = false; scene.add(m); return m; });   // dựng sẵn, dùng lại
+  function clearCasts() { for (const c of casts) { c.m.visible = false; ctx.magic && ctx.magic.removeTarget(c.T); } casts = []; }
   function buildCasts() {
     clearCasts(); const T = task(); if (!T || T.type !== 'cast' || !ctx.magic) return;
-    if (T.boss) { const T0 = ctx.magic.addTarget({ spell: T.spell, pos: boss.group.position.clone().setY(boss.group.position.y + 1.6), reach: 13, done: () => false, onCast: api => { boss.colorize(); api.burst(boss.group.position.clone().setY(boss.group.position.y + 2), new THREE.Vector3(0, 1, 0), '#ff6fae', 55, 5, 1); advance(); } }); casts.push({ m: new THREE.Object3D(), T: T0 }); return; }
+    if (T.boss) { const T0 = ctx.magic.addTarget({ spell: T.spell, pos: boss.group.position.clone().setY(boss.group.position.y + 1.6), reach: 13, done: () => false, onCast: api => { boss.colorize(); api.burst(boss.group.position.clone().setY(boss.group.position.y + 2), new THREE.Vector3(0, 1, 0), '#ff6fae', 55, 5, 1); advance(); } }); const o = new THREE.Object3D(); o.visible = false; casts.push({ m: o, T: T0 }); return; }
     for (const [x, y, z] of spread(P(T.at), T.n, T.spread || 13)) {
-      const m = new THREE.Mesh(castGeo, new THREE.MeshLambertMaterial({ color: '#8a8a8a', flatShading: true })); m.position.set(x, y + 1.6, z); scene.add(m);
+      const m = CM[casts.length]; if (!m) break; m.material.color.set('#8a8a8a'); m.position.set(x, y + 1.6, z); m.visible = true;
       const c = { m, lit: false }; c.T = ctx.magic.addTarget({ spell: T.spell, pos: m.position, reach: 13, done: () => c.lit, onCast: api => {
         c.lit = true; m.material.color.setHSL((casts.indexOf(c) / 3 + 0.02) % 1, 0.85, 0.6); api.burst(m.position.clone(), new THREE.Vector3(0, 1, 0), '#' + m.material.color.getHexString(), 34, 4, 1);
         ctx.sfx && ctx.sfx('ok'); S().prog++; save(); ctx.toast(`🌈 Cây pha lê có màu trở lại! ${S().prog}/${T.n}`, 2500); if (S().prog >= T.n) advance();
@@ -188,14 +191,15 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
     const C = chap(); if (!C) return null; const T = task();
     if (!T) return shardPos ? [shardPos[0], shardPos[2]] : null;
     if (T.type === 'collect') { const left = pts.filter((_, i) => !(S().got || []).includes(i)); if (!left.length) return P(T.at); const p = player.pos; left.sort((a, b) => Math.hypot(a[0] - p.x, a[2] - p.z) - Math.hypot(b[0] - p.x, b[2] - p.z)); return [left[0][0], left[0][2]]; }
-    if (T.type === 'cast') { const c = casts.find(c => !c.lit && c.m.parent); if (c) return [c.m.position.x, c.m.position.z]; }
+    if (T.type === 'cast' && T.boss) return [boss.group.position.x, boss.group.position.z];
+    if (T.type === 'cast') { const c = casts.find(c => !c.lit && c.m.visible); if (c) return [c.m.position.x, c.m.position.z]; }
     return P(T.at);
   };
   function enterTask() {
     const s = S(); s.prog = 0; s.got = [];
     const T = task(); if (T && T.type === 'cond' && /bí mật/.test(T.text)) s.eggs0 = ctx.eggs ? Object.keys(ctx.eggs.found || {}).length : 0;
     if (T && T.type === 'cond' && /phép/.test(T.text)) s.castN = 0;
-    if (T && T.give === 'rainbow') addRainbow();
+    if ((T && T.give === 'rainbow') || s.ch > 4 || (s.ch === 4 && s.ti >= 1)) addRainbow();   // đã học (kể cả khi tải lại giữa chừng)
     npc.visible = false; if (T && (T.type === 'talk' || T.type === 'quiz') && T.who !== 'mu' && T.who !== 'rong') { drawNpc(T.who); const [x, z] = P(T.at); npc.position.set(x, gy(x, z) + 2.6, z); npc.visible = true; }
     buildPicks(); buildCasts(); placeShard(); save(); render();
   }
@@ -206,7 +210,7 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
     else { enterTask(); ctx.toast(`✅ Xong! Tiếp theo: <b>${esc(task().text)}</b>`, 4000); }
   }
   async function takeShard() {
-    const s = S(), C = chap(); shard.visible = false; shardPos = null; busy = true;
+    const s = S(), C = chap(); shard.visible = false; shardPos = null; if (!C) return; busy = true;
     ctx.sfx && ctx.sfx('win'); player.emote && player.emote('cheer');
     await say(C.outro, { cine: true, target: [player.pos.x, player.pos.z - 10] });
     journal.addXP(C.xp, C.name); ctx.reward && ctx.reward(C.sao, `Cốt truyện: ${C.name}`); journal.giveTitle(C.title);
@@ -308,7 +312,7 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
       shard.position.set(shardPos[0], shardPos[1] + Math.sin(t * 2) * 0.15, shardPos[2]); shard.rotation.set(t * 0.618, t * 2 * Math.PI / PHI / 2, 0);
       const dd = Math.hypot(p.x - shardPos[0], p.z - shardPos[2]), dy = Math.abs(p.y - shardPos[1]);
       if (dd < 2 && dy < 3 && !busy) takeShard();
-    } else if (!shardPos && C && s.ti >= C.tasks.length && s.started) placeShard();
+    } else if (!shardPos && C && s.ti >= C.tasks.length && s.started && !busy) placeShard();
     if (npc.visible && (npcT -= dt) <= 0) { npcT = 1; npc.position.y = gy(npc.position.x, npc.position.z) + 2.6; }
     if (ctx.magic) { const m = ctx.magic.mana; if (mana0 != null && m < mana0 - 1) s.castN = (s.castN | 0) + 1; mana0 = m; }   // niệm phép = năng lượng tụt
     // nhiệm vụ hiện tại
