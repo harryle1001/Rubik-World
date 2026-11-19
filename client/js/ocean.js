@@ -18,6 +18,7 @@ import { SPAWN, landDist, blocked, ISLAND_R, TEMPLE_C } from './island/layout.js
 import { createVehicles } from './island/vehicles.js';
 import { createAircraft } from './island/aircraft.js';
 import { createMounts } from './island/mounts.js';
+import { createBrooms } from './island/brooms.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
@@ -138,6 +139,7 @@ registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá
 registerVisit(ctx); // mini game 3D ghé thăm: Tham quan nhà, BBQ, Trung tâm thương mại, Coach Ru (mg/visit/) — sau registerArts (gắn cửa Nông trại vào garden)
 const mounts = createMounts(ctx);
 const vrmNpc = ctx.vrmNpc = createVrmNpc(ctx); ctx.playerVrm = createPlayerVrm(ctx); ctx.creator = createCreator(ctx); // nhân vật anime VRM: NPC gần (LOD), người chơi (nạp sau), 🎨 trình tạo nhân vật (vrm/)
+const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp đảo (nút 🧹 / phím J), giá chổi ở Sân Đại Sảnh Học viện
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -190,6 +192,7 @@ renderer.setAnimationLoop(() => {
   aircraft.update(dt, clock.elapsedTime);
   mounts.update(dt);
   vrmNpc.update(dt);
+  brooms.update(dt);
   academy.update(dt);
   spells.update(dt); // sau thị trấn/học viện: Bay Lên cộng độ cao lên người đã đặt vị trí
   train.update(dt);

@@ -226,7 +226,7 @@ island.on('connection', socket => {
   });
   socket.on('m', d => {
     const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
-    me.x = num(d.x, -150, 150); me.y = num(d.y, -20, 60); me.z = num(d.z, -150, 150); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);
+    me.x = num(d.x, -3000, 3000); me.y = num(d.y, -20, 300); me.z = num(d.z, -3000, 3000); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);   // thế giới rộng ~1,7 km (Học viện Pha Lê, bay chổi tới 233 m)
     socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
   });
   // ---------- phép thuật (spellbook.js): chỉ chuyển tiếp hiệu ứng, kiểm tra dữ liệu; không có phép gây hại ----------
@@ -255,7 +255,16 @@ island.on('connection', socket => {
   });
   socket.on('house:get', (name, ack) => { if (typeof ack !== 'function') return; const h = HOUSES[String(name || '')]; ack(h ? { name, pieces: h.pieces, at: h.at } : null); });
   socket.on('house:list', (_, ack) => { if (typeof ack !== 'function') return; ack(Object.entries(HOUSES).map(([name, h]) => ({ name, n: h.pieces.length, at: h.at })).sort((a, b) => b.at - a.at).slice(0, 55)); });
+  // Săn Cầu Vàng (academy/pitch.js): phòng 'sky' — người vào trước làm chủ trận (mô phỏng NPC + bóng), server chỉ chuyển tiếp
+  socket.on('skJoin', () => { if (!me || sky.has(socket.id)) return; sky.add(socket.id); socket.join('sky'); skyRoom(); });
+  socket.on('skLeave', () => { if (sky.delete(socket.id)) { socket.leave('sky'); skyRoom(); } });
+  let skT = 0;
+  socket.on('skState', d => { const now = Date.now(); if ([...sky][0] !== socket.id || now - skT < 60) return; skT = now; if (JSON.stringify(d || 0).length < 4096) socket.to('sky').volatile.emit('skState', d); });
+  socket.on('skAct', d => { const host = [...sky][0]; if (!sky.has(socket.id) || !host || host === socket.id || !d || typeof d.a !== 'string') return; island.to(host).emit('skAct', { id: socket.id, a: d.a.slice(0, 8), d: Array.isArray(d.d) ? d.d.slice(0, 3).map(v => num(v, -1, 1)) : null }); });
+  socket.on('disconnect', () => { if (sky.delete(socket.id)) skyRoom(); });
 });
+const sky = new Set();
+const skyRoom = () => island.to('sky').emit('skRoom', { host: [...sky][0] || null, ids: [...sky].slice(0, 8) });
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
 server.listen(PORT, () => { console.log(`Server game đang chạy tại http://localhost:${PORT}`); console.log(`Mã chủ game (để bật chế độ Sửa): ${ADMIN_KEY}  ·  lưu ở data/admin.json hoặc đặt biến môi trường ADMIN_KEY`); });

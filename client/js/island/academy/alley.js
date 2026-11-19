@@ -368,7 +368,7 @@ function createShop(ctx, magic) {
       }
     } else if (id === 'robe') { gear('cape', CAPES, 21); gear('hat', HATS, 13); }
     else if (id === 'pet') gear('pet', PETS, 21);
-    else if (id === 'broom') { gear('broom', BROOMS.slice(0, 1), 34); gear('broom', BROOMS.slice(1), 55); }
+    else if (id === 'broom') BROOMS.forEach(b => gear('broom', [b], b.price));   // đeo lưng + cưỡi bằng nút 🧹 (brooms.js)
     else if (id === 'sweet') { use('Kẹo Nổ Lách Tách', 3, 13, '🍬'); use('Bánh Mây Bồng Bềnh', 5, 21, '🧁'); use('Sô-cô-la Ếch Nhảy', 8, 34, '🍫'); }
     else if (id === 'herb') { use('Trà bạc hà', 3, 13, '🍵'); use('Bình thuốc lá lốt', 5, 21, '🧪'); use('Mật ong rừng U Minh', 8, 34, '🍯'); }
     else if (id === 'book') SHOP_TALK.book.books.forEach((b, i) => { const own = W.own('book' + i); L.push({ name: `📖 ${b[0]}`, price: 5, state: own ? 'own' : 'buy', act: st => st === 'buy' ? buy(id, 5, b[0], () => { W.give('book', 'book' + i); setTimeout(() => ctx.toast(`📖 <b>${b[0]}</b><br>${b[1]}`, 9000), 1000); }) : ctx.toast(`📖 <b>${b[0]}</b><br>${b[1]}`, 9000) }); });
