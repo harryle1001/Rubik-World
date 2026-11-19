@@ -13,6 +13,8 @@ const WORLD_FILE = path.join(ROOT, 'data', 'world.json');
 const ADMIN_FILE = path.join(ROOT, 'data', 'admin.json');
 const app = express();
 app.get('/sw.js', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'sw.js')); });
+// Trang gốc mở thẳng Đảo Rubik 3D (game duy nhất; game 2D client/school/ chỉ còn lưu trữ, không liên kết)
+app.get(['/', '/index.html'], (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'ocean.html')); });
 app.get('/manifest.webmanifest', (req, res) => { res.type('application/manifest+json'); res.sendFile(path.join(ROOT, 'client', 'manifest.webmanifest')); });
 // Nén brotli/gzip (zlib có sẵn của Node, không thêm thư viện): JS, HTML, model .glb (meshopt được thiết kế để nén tiếp),
 // wasm… Nén 1 lần rồi giữ trong bộ nhớ (theo thời điểm sửa file). three.module.js 1,27 MB → ~0,25 MB qua mạng.

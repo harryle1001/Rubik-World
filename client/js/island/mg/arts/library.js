@@ -3,7 +3,7 @@
 //  • Chạm một ngăn giá → bước tới gần; chạm sách thật (gáy sáng) → sách bay ra bàn đọc, mở trang, lật trang;
 //    trên trang sách hiện một cảnh 3D nhỏ minh hoạ câu chuyện (dựng bằng khối low-poly).
 //  • 🔎 Truy tìm sách: thủ thư đọc câu đố gợi ý, bé tìm đúng cuốn trên giá (sai 2 lần → ngăn đúng sáng lên).
-// Nội dung sách lấy nguyên từ trường 2D (client/school/js/games/reader-books*.js, data/books-text.js) qua iframe.
+// Nội dung sách: island/data/books.js + books-text.js (books.js nạp).
 import * as THREE from 'three';
 import { loadBooks, bookText } from './books.js';
 import { createStage, mesh, T, play, labelSprite, textTex, store, PHI } from './stage.js';

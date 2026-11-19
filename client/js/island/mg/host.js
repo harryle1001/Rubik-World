@@ -1,7 +1,7 @@
 // mg/host.js — KHUNG CHUNG MINI GAME 3D (dùng cho cả 3 nhóm game).
 // Mỗi mini game là một "khu chơi" 3D đặt NGAY TRONG thế giới (sân/phòng cạnh toà nhà): camera bay mượt vào, nhân vật người chơi
 // xuất hiện và có hoạt ảnh, NPC học sinh/thầy cô làm đối thủ/cổ vũ, HUD gọn (điểm, thời gian, kỷ lục, nút Thoát), Esc để thoát,
-// thoát xong trả người chơi về đúng chỗ đứng trước cửa. Không còn mini game 2D: cửa chưa có bản 3D chỉ báo "Sắp mở" (school-town.js).
+// thoát xong trả người chơi về đúng chỗ đứng trước cửa. Không có màn hình/game riêng: mọi cửa đều có bản 3D chơi tại chỗ.
 //
 // ===== CÁCH ĐĂNG KÝ (mỗi nhóm 1 file register) =====
 //   // mg/<nhom>/index.js
@@ -35,11 +35,12 @@
 //   Sự kiện chạm: down(e) trả true = game "giữ" ngón tay này (move/up gửi cho game); ngược lại host dùng để xoay camera
 //   (nếu api.orbit) và gửi tap(e) khi chạm nhẹ không kéo.
 //
-// ===== BẢNG ÁNH XẠ CỬA → KHOÁ GAME (door.n trong RS.doors() của trường 2D) =====
-// Khoá ổn định, KHÔNG đổi tên. Nhóm nào làm game nào thì đăng ký đúng khoá đó; chưa đăng ký → cửa báo "Sắp mở".
+// ===== BẢNG ÁNH XẠ CỬA → KHOÁ GAME (door.n trong data/map.js DOORS) =====
+// Khoá ổn định, KHÔNG đổi tên. Nhóm nào làm game nào thì đăng ký đúng khoá đó; mọi cửa trong data/map.js đều đã có game.
 //   Nhóm 1 (board, phiên này): chess, caro, go, rubik
 //   Nhóm 2 (thể thao/arcade/câu cá): olympics, football, basketball, skate, patin, ski, kart, animal-race, balloon, arcade, missile, fishing, fishing-boat
 //   Nhóm 3 (nghệ thuật/tri thức):    music, art, library, reader, academy, telescope, zen, garden
+//   Nhóm 4 (ghé thăm, mg/visit/): house-tour, bbq, mall, coach (cửa riêng khai báo bằng doors:[…] trong đăng ký)
 export const DOOR_KEYS = [
   // --- nhóm 1: cờ & Rubik ---
   [/^Khu cờ vua|^Bàn cờ Ikigai|Thầy Đức · Lớp cờ vua|Ông Tư · Cờ vua/, 'chess'],

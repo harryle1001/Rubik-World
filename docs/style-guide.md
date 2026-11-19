@@ -83,7 +83,7 @@ Vàng φ (`brass`) ≤ 1/13 khung hình. Độ bão hoà ≤ 0,62; màu sáng nh
 
 ## 8. Cách chụp kiểm tra (bắt buộc trước mỗi commit khu)
 
-1. `node server/index.js`, mở `http://localhost:3000/ocean.html` bằng Playwright (Chromium có sẵn, cờ `--use-angle=swiftshader`), trong iframe `/school/` bấm **"Chỉ xem, chưa chơi"** (`#lgGuest`).
+1. `node server/index.js`, mở `http://localhost:3000/` (đảo 3D) bằng Playwright (Chromium có sẵn, cờ `--use-angle=swiftshader`); nếu bảng tài khoản `#accBox` hiện thì bấm **"Chơi khách"**.
 2. Khoá chất lượng cao: `__island.quality = () => {}`.
 3. Khoá giờ: `Object.defineProperty(__island.sky.state, 'hour', { get: () => H, set() {}, configurable: true })` với H = 8.5 · 13 · 17.67 · 22.
 4. Mỗi giờ chụp 2 góc, cùng vị trí trước/sau:
