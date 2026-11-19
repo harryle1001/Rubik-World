@@ -142,7 +142,7 @@ export function createRide(ctx, { consist }) {
     // chưa lên tàu: lời mời ở sân ga (cạnh thân tàu)
     if (player.vehicle) return;
     const P = PARK[st.at], pp = player.pos, pS = at((P.lo + P.hi) / 2);
-    if ((pp.x - pS.x) ** 2 + (pp.z - pS.z) ** 2 < 55 * 55 && Math.abs(pp.y - P.top) < 1.6) ctx.offer(`🚂 Lên tàu (${fmt(Math.floor(sky.state.hour) + 1)} → ${st.at === 'A' ? PARK.B.name : PARK.A.name})`, board, 9);
+    if ((pp.x - pS.x) ** 2 + (pp.z - pS.z) ** 2 < 55 * 55 && Math.abs(pp.y - P.top) < 1.6) ctx.offer(`🚂 Lên tàu${st.at === 'A' && ctx.premium && !ctx.premium.on() ? ' 🔒' : ''} (${fmt(Math.floor(sky.state.hour) + 1)} → ${st.at === 'A' ? PARK.B.name : PARK.A.name})`, board, 9);
   }
   // tàu đang đỗ ở ga xa, người chơi ở ga kia (đi thuyền/máy bay sang) → chuyển tàu về ga gần khi không ai thấy
   function relocate(stn) { if (st.aboard || st.phase === 'run' || st.at === stn) return; st.at = stn; st.dir = stn === 'A' ? 1 : -1; st.sHead = headFor(stn, st.dir); consist.place(st.sHead, st.dir); }
