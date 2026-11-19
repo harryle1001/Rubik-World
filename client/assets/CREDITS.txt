@@ -102,3 +102,14 @@ models/kit/qn_*.glb (cây tán, bạch dương, thông, dừa, bụi, bụi qu�
   (License.txt trong gói: "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"). Tải từ OpenGameArt (quaternius.com chỉ dẫn link Google Drive).
   Đã chuyển OBJ → GLB bằng tools/kit/obj2glb.mjs: giản lược meshopt (cây ≤ 260 tam giác, LOD ≤ 140, bụi/hoa/cỏ ≤ 90), pháp tuyến phẳng, nén Meshopt.
   Không tải được (bị chặn mạng trong môi trường làm việc): kenney.nl, poly.pizza, github.com (trang web/API) — KayKit lấy qua cdn.jsdelivr.net/gh.
+
+models/kit/ đợt đồ hoạ CC0 3 — Sân bay (air_hangar, air_hangar_b, air_fuel_tank, air_container_a/c, vehicle_tractor, vehicle_truck_flat, vehicle_van, vehicle_delivery, prop_light_apron)
+  Kenney (https://kenney.nl), CC0 1.0 — License.txt trong từng gói: "Creative Commons Zero, CC0":
+    City Kit (Industrial) 2.0  https://opengameart.org/content/city-kit-industrial  (building-j, building-i, detail-tank, shipping-container-a/c)
+    Car Kit 3.1                https://opengameart.org/content/car-kit               (tractor, truck-flat, van, delivery)
+    City Kit (Roads) 2.2       https://opengameart.org/content/city-kit-roads        (light-square-double)
+  Chuẩn hoá bằng tools/kit/process.mjs (gộp mesh, texture 128 px, nén Meshopt).
+
+models/kit/prop_bin.glb (thùng rác) — đợt đồ hoạ CC0 4
+  Kenney Furniture Kit, CC0 1.0 (License.txt: "Creative Commons Zero, CC0") — https://opengameart.org/content/furniture-kit
+  Chuyển OBJ → GLB bằng tools/kit/obj2glb.mjs. Đợt 4 dùng thêm model đã có: prop_bench, prop_planter, prop_stall_red/green, prop_crate_*, prop_signpost (Kenney, CC0).
