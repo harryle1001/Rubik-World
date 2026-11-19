@@ -6,4 +6,7 @@ export const races = {
   skate: R('🛹 Trượt ván phép tính', { topic: 'math', speed: 8, ride: 'sport_skateboard', rideSize: 0.9, rideH: 0.12, ground: '#a7adb5', side: '#86c46e', obst: 'cone', obstColor: '#ff8a3d',
     decor: [['plant_bush_round', 1.3, 8], ['prop_lamppost', 3.4, 17]],
     title: '🛹 Lái vào làn có <b>đáp án đúng</b> · vuốt lên để nhảy qua nón!', fact: 'Ván trượt chạy được lâu vì bánh xe ít ma sát. Khi trượt, luôn đội mũ bảo hiểm và đeo bọc gối nhé!' }),
+  patin: R('⛸️ Trượt patin tiếng Anh', { topic: 'vocab', speed: 7.5, ground: '#6fc3c9', side: '#f3d9e6', line: '#fff6c8', obst: 'cone', obstColor: '#ff7aa8',
+    decor: [['plant_flower_yellow', 0.9, 5], ['prop_lamppost', 3.4, 17]],
+    title: '⛸️ Lái vào làn có <b>nghĩa tiếng Anh đúng</b> · vuốt lên để nhảy!', fact: 'Giày patin có bánh xe nhỏ nên dễ mất thăng bằng: hơi khuỵu gối, người nghiêng về trước và luôn đeo mũ bảo hiểm.' }),
 };

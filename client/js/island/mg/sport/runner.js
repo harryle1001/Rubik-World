@@ -71,7 +71,7 @@ export function runner(ctx, api, C) {
     hud.clearBar();
     if (C.mode === 'lane') { hud.button('◀', () => steer(-1)); if (C.jump) hud.button('⤴ Nhảy', jump); hud.button('▶', () => steer(1)); }
   }
-  const info = () => { const rank = 1 + rivals.filter(r => r.d > S.d).length; hud.info(`🏁 ${Math.min(C.goal, Math.round(S.d))}/${C.goal} m · Hạng ${rank}/${rivals.length + 1}`); hud.score(S.score); return rank; };
+  const info = () => { const rank = 1 + rivals.filter(r => r.d > S.d).length; hud.info(`🏁 ${Math.min(C.goal, Math.round(S.d))}m · Hạng ${rank}`); hud.score(S.score); return rank; };
 
   // ---------- Câu hỏi ----------
   function arm(G, s) {
