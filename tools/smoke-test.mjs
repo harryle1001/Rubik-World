@@ -23,6 +23,8 @@ console.log(`Tải xong sau ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 const acc = page.locator('#accBox:not([hidden])');
 await acc.waitFor({ timeout: 13000 }).catch(() => {});   // bảng hiện trễ sau khi đảo dựng xong
 if (await acc.count()) { const b = acc.getByText(/Chơi khách/); if (await b.count()) await b.first().click({ force: true, timeout: 5000 }).catch(() => {}); }
+await page.evaluate(() => { const g = document.querySelector('#accBox:not([hidden]) [data-a="guest"]'); if (g) g.click(); });   // dự phòng: click Playwright có thể treo khi GPU giả lập ~1 s/khung
+for (let k = 0, calm = 0; k < 40 && calm < 8; k++) { await page.waitForTimeout(700); const busy = await page.evaluate(() => { const s = document.querySelector('[data-s]'); if (s && s.offsetParent) s.click(); const n = document.querySelector('#stSay button.nx'); if (n && n.offsetParent) n.click(); return document.body.classList.contains('st-cut') || !!__island.freeCam || __island.player.frozen; }); calm = busy ? 0 : calm + 1; }   // bỏ qua đoạn dẫn chuyện mở đầu (story/: camera điện ảnh)
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => fails.push('nhân vật vẫn bị khoá (player.frozen) 30 s sau khi đóng bảng đăng nhập'));
 await page.waitForTimeout(500);
 // bọc đo: thời gian JS từng module + renderer.info mỗi khung
