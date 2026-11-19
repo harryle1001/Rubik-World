@@ -50,7 +50,7 @@ export function startBrew(ctx, { api }) {
   for (let i = 1; i <= 8; i++) { const t = new THREE.Mesh(new THREE.BoxGeometry(i % 4 ? 0.12 : 0.24, 0.025, 0.02), new THREE.MeshBasicMaterial({ color: '#3b2a1e' })); t.position.set(0, 0.05 + i * 0.2, 0.23); tube.add(t); }
   const fill = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 1, 13).translate(0, 0.5, 0), new THREE.MeshBasicMaterial({ color: '#334' })); fill.position.y = 0.05; fill.scale.y = 0.001; tube.add(fill);
   const tl = label('Ống đong ⅛ cốc', 2.2); tl.position.set(0, 2.2, 0); tube.add(tl);
-  prop(api, 'prop_workbench', -1.9, 0.12, -1.9, 1, 0); prop(api, 'prop_crate_bottles', -2.2, 1.05, -1.9, 0.8, 0.4); prop(api, 'furn_shelf_big', 3.2, 0.12, -3.6, 1, -0.5);
+  prop(api, 'prop_workbench', -1.9, 0.12, -1.9, 3, 0); prop(api, 'prop_crate_bottles', -2.2, 1.05, -1.9, 0.8, 0.4); prop(api, 'furn_shelf_big', 3.2, 0.12, -3.6, 1, -0.5);
 
   let ri = 0, mix = {}, heated = false, stirred = false, score = 0, tries = 0, busy = false, time = 0, done = false, stirT = 0;
   const herbLent = {};
