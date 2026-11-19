@@ -1,0 +1,62 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Đồng phục phù thuỷ Tứ Linh</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>html,body{margin:0;height:100%;background:#cfe6f2;overflow:hidden;font:14px system-ui}
+#info{position:fixed;left:8px;top:6px;color:#123;background:#fffc;padding:5px 9px;border-radius:8px;max-width:640px}
+#cap{position:fixed;left:0;right:0;bottom:13px;text-align:center;font:700 21px/1.3 system-ui;color:#2a1e2c;text-shadow:0 1px 0 #fff8}</style>
+<script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script></head><body>
+<div id="info">Đang nạp…</div><div id="cap"></div>
+<script type="module">
+// Trang xem / chụp ảnh đồng phục (docs/vrm-chars). ?view=one&base=hair-m&house=long&hat=1&glasses=round&wand=1 | group | teacher | stats
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { loadVrmHero, HAIR, EYES } from './js/island/vrm/vrm-hero.js';
+import { PALETTE } from './js/island/vrm/vrm-outfit.js';
+import { HOUSE } from './js/island/academy/houses-data.js';
+
+const PHI = 1.618033988749895, Q = new URLSearchParams(location.search), VIEW = Q.get('view') || 'one', SET = Q.get('set') || 'full';
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+r.setPixelRatio(Math.min(devicePixelRatio, 2)); r.setSize(innerWidth, innerHeight); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.1; document.body.appendChild(r.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#cfe6f2'); scene.fog = new THREE.Fog('#cfe6f2', 13, 55);
+scene.add(new THREE.HemisphereLight('#e0f0ff', '#b9a57c', 1.15));
+const sun = new THREE.DirectionalLight('#fff0d8', 2.3); sun.position.set(-4, 8, 7); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -6, right: 6, top: 6, bottom: -2 }); sun.shadow.bias = -0.0004; scene.add(sun);
+// sân lát đá + tường đá Học viện (greybox)
+const toon = c => new THREE.MeshLambertMaterial({ color: c });
+const add = (g, c, x, y, z) => { const m = new THREE.Mesh(g, toon(c)); m.position.set(x, y, z); m.receiveShadow = m.castShadow = true; scene.add(m); return m; };
+const fl = add(new THREE.CircleGeometry(21, 64), '#d8d0bf', 0, 0, 0); fl.rotation.x = -Math.PI / 2;
+for (let i = 1; i <= 5; i++) { const ring = add(new THREE.RingGeometry(i * PHI - 0.02, i * PHI + 0.02, 96), '#c3b9a4', 0, 0.002, 0); ring.rotation.x = -Math.PI / 2; }
+add(new THREE.BoxGeometry(34, 7, 0.8), '#e9dfcb', 0, 3.5, -7); for (let i = -6; i <= 6; i++) { add(new THREE.BoxGeometry(1.1, 1.1 * PHI * 1.4, 0.2), '#8fb4cf', i * 2.6, 3.2, -6.55); add(new THREE.BoxGeometry(0.5, 7.2, 0.5), '#d6c9ae', i * 2.6 + 1.3, 3.6, -6.4); }
+
+const look = id => ({ base: Q.get('base') || 'shino', house: id, hair: Q.get('hair') || null, eye: Q.get('eye') || null, skin: +(Q.get('skin') || 0), hat: Q.get('hat') === '1', glasses: Q.get('glasses') || 'none', wand: Q.get('wand') !== '0' });
+const people = [];
+if (VIEW === 'one') people.push(look(Q.get('house') || 'long'));
+if (VIEW === 'group') ['long', 'phung', 'lan', 'quy'].forEach((h, i) => { people.push({ base: 'hair-m', house: h, hair: HAIR[[0, 1, 5, 2][i]], eye: EYES[i], skin: i % 3, hat: i % 2 === 0, glasses: ['none', 'round', 'none', 'square'][i], wand: true }); people.push({ base: i % 2 ? 'shibu' : 'shino', house: h, hair: HAIR[[2, 4, 3, 7][i]], eye: EYES[(i + 2) % 6], skin: (i + 1) % 3, hat: i % 2 === 1, glasses: ['round', 'none', 'square', 'none'][i], wand: true }); });
+if (VIEW === 'teacher') people.push({ base: 'fumiriya', role: 'teacher', hat: true, glasses: 'square', wand: true, hair: '#3a2e2a' }, { base: 'fumiriya', role: 'teacher', hat: false, wand: true, hair: '#c8ccd8', glasses: 'round' });
+const heroes = [], t0 = performance.now();
+for (const L of people) heroes.push(await loadVrmHero(L, { set: SET, height: L.base === 'fumiriya' ? 1.8 : L.base === 'hair-m' ? 1.66 : 1.56 }));
+const gap = VIEW === 'group' ? 0.95 : 1.1;
+heroes.forEach((h, i) => { h.model.position.set((i - (heroes.length - 1) / 2) * gap, 0, VIEW === 'group' ? -Math.abs(i - 3.5) * 0.12 : 0); h.model.rotation.y = VIEW === 'group' ? -(i - 3.5) * 0.06 : 0; scene.add(h.model); h.model.traverse(o => { if (o.isMesh) o.castShadow = true; }); h.anim.play(Q.get('anim') || 'Idle', 0); });
+const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.05, 100), ctl = new OrbitControls(cam, r.domElement);
+const H = Math.max(...heroes.map(h => h.height)), W = heroes.length * gap;
+const dist = Math.max(H * 0.62 / Math.tan(Math.PI / 12), (W / 2 + 0.4) / (Math.tan(Math.PI / 12) * cam.aspect));
+const yaw = +(Q.get('yaw') || 0.0), cy = H * 0.52;
+cam.position.set(Math.sin(yaw) * dist, cy + 0.25, Math.cos(yaw) * dist); ctl.target.set(0, cy, 0); ctl.update();
+const cap = document.getElementById('cap');
+if (VIEW === 'one') { const h = HOUSE[Q.get('house') || 'long']; cap.textContent = `${h.icon} ${h.name} · ${heroes[0].look.base === 'hair-m' ? 'Học sinh nam' : 'Học sinh nữ'}`; }
+else if (VIEW === 'teacher') cap.textContent = '🧙 Thầy cô Học viện Pha Lê';
+else cap.textContent = '🐉 Long · 🦚 Phụng · 🦄 Lân · 🐢 Quy';
+if (Q.get('cap') === '0') cap.hidden = true;
+// đo: draw call / tam giác của 1 người (không bóng)
+function measure() { r.shadowMap.enabled = false; r.info.autoReset = false; r.info.reset(); r.render(scene, cam); const c = r.info.render.calls, tr = r.info.render.triangles; r.info.autoReset = true; r.shadowMap.enabled = true; return { calls: c, tris: tr }; }
+const empty = (() => { const vis = heroes.map(h => h.model.visible); heroes.forEach(h => h.model.visible = false); const e = measure(); heroes.forEach((h, i) => h.model.visible = vis[i]); return e; })();
+const all = measure();
+window.stats = { n: heroes.length, perCalls: (all.calls - empty.calls) / heroes.length, perTris: Math.round((all.tris - empty.tris) / heroes.length), loadMs: Math.round(performance.now() - t0), heroes: heroes.map(h => ({ base: h.look.base, tris: h.tris, prims: h.prims, ms: h.loadMs })) };
+document.getElementById('info').textContent = `${SET} · ${heroes.length} người · ${window.stats.perCalls} draw call/người · ${window.stats.perTris}▲/người · nạp ${window.stats.loadMs} ms`;
+if (Q.get('ui') === '0') document.getElementById('info').hidden = true;
+const clock = new THREE.Clock(); let T = 0;
+window.step = (n, dt = 1 / 30) => { for (let k = 0; k < n; k++) for (const h of heroes) h.anim.update(dt); r.render(scene, cam); };
+addEventListener('resize', () => { cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); r.setSize(innerWidth, innerHeight); });
+if (Q.get('still') !== '1') r.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), 0.05); for (const h of heroes) h.anim.update(dt); ctl.update(); r.render(scene, cam); });
+window.ready = true;
+</script></body></html>
