@@ -41,6 +41,9 @@ function compressed(dir, prefix = '') {
     res.set('Content-Length', c.body.length); res.end(req.method === 'HEAD' ? undefined : c.body);
   };
 }
+// Cửa hàng đồ thật cho phụ huynh (/shop, /admin) + mã đổi quà trong game (server/shop.js)
+app.get(['/admin', '/admin/'], (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'shop', 'admin.html')); });
+require('./shop')(app, { ROOT, adminKey: () => ADMIN_KEY });
 app.use(compressed(path.join(ROOT, 'client')));
 app.use(express.static(path.join(ROOT, 'client')));
 app.use('/assets', express.static(path.join(ROOT, 'public', 'assets')));

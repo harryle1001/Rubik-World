@@ -9,3 +9,7 @@ services:
     envVars:
       - key: ADMIN_KEY      # game owner key for edit mode; set your own secret value in the Render dashboard
         sync: false
+      - key: TRUST_PROXY    # Render đứng sau 1 proxy → lấy đúng IP người dùng để giới hạn dò mã quà
+        value: "1"
+      - key: SHOP_PAY_MODE  # 'mock' = thanh toán giả lập để thử; đặt 'off' khi bán thật nếu chưa gắn cổng MoMo/ZaloPay/VNPay
+        value: "off"
