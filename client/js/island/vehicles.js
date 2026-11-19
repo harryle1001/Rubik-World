@@ -126,7 +126,7 @@ export function createVehicles(ctx) {
     v.onMount && v.onMount();
     if (v.type === 'balloon') { ctx.sfx('burner'); say(v, `${ICON.balloon} Bay lên ngắm toàn cảnh! <b>Space/⬆</b> lên · <b>C/⬇</b> xuống · chạm đất bấm <b>E</b> để rời`, 4500); }
     else if (v.type === 'bike') { ctx.sfx('bell'); myStyle = v.style; try { localStorage.setItem('island.bike', myStyle); } catch (e) {} say(v, `🚲 <b>${v.info.name}</b> (${v.info.from})<br>${v.info.fact}<br><small><b>Shift</b> nhanh · <b>V</b> đổi xe · <b>R</b> chuông · <b>E</b> xuống</small>`, 5500); }
-    else if (v.type === 'boat') { ctx.sfx('splash'); say(v, '⛵ Chèo thuyền ra biển! Cập bờ rồi bấm <b>E</b> để lên bờ'); }
+    else if (v.type === 'boat') { ctx.sfx('splash'); say(v, v.hello || '⛵ Chèo thuyền ra biển! Cập bờ rồi bấm <b>E</b> để lên bờ', v.hello ? 7000 : 3500); }   // v.hello: thuyền buồm / ca nô (sea/pilot.js)
     else if (v.hello) say(v, v.hello, 5500);
     setUI();
   }
@@ -253,12 +253,13 @@ export function createVehicles(ctx) {
     } else if (cur.type === 'boat') {
       rowT += dt * (0.8 + Math.min(1, sp / 3) * 2.2) * (sp > 0.3 ? 1 : 0.25);
       for (let i = 0; i < cur.oars.length; i++) { const o = cur.oars[i], s = i ? 1 : -1; o.rotation.y = s * Math.sin(rowT * 2) * 0.55; o.rotation.z = s * (Math.cos(rowT * 2) * 0.18 - 0.05); }
-      if (sp > 0.6 && Math.sin(rowT * 2) > 0.95 && splashT < clock) { splashT = clock + 0.5; ctx.sfx('splash'); }
+      if (cur.oars.length && sp > 0.6 && Math.sin(rowT * 2) > 0.95 && splashT < clock) { splashT = clock + 0.5; ctx.sfx('splash'); }
       // dập dềnh + nghiêng ra ngoài khi rẽ + ngóc mũi khi tăng tốc (lò xo, không giật)
       roll = damp(roll, THREE.MathUtils.clamp(wr * sp * 0.025, -0.12, 0.12), rollSt, T.soft, dt); pitch = damp(pitch, THREE.MathUtils.clamp(-acc * 0.04, -0.08, 0.06), pitchSt, T.slow, dt);
       pl.root.rotation.z = Math.sin(clock * 1.3 + p.x) * 0.05 + roll; pl.root.rotation.x = Math.sin(clock * 1.7 + p.z) * 0.035 + pitch;
       if (sp > 0.5 && (wakeT -= dt) <= 0) { wakeT = 0.07; const i = wi++ % NW, r = pl.rot; wp[i * 3] = p.x - Math.sin(r) * 1.6 + (Math.random() - 0.5) * 0.5; wp[i * 3 + 1] = W + 0.05; wp[i * 3 + 2] = p.z - Math.cos(r) * 1.6 + (Math.random() - 0.5) * 0.5; wl[i] = 1; wg.attributes.position.needsUpdate = true; }
       if ((scanT -= dt) <= 0) { scanT = 0.25; landPt = findAround(landOK, 1.2, 3.6); }
+      cur.tick && cur.tick(dt, sp);   // thuyền buồm theo gió, ca nô (sea/pilot.js): tốc độ, nghiêng theo sóng thật
       if (landPt) ctx.offer('🏝️ Lên bờ', goLand, 4);
     } else if (cur.type === 'balloon') {
       const burning = lift > 0.5; cur.flame.visible = burning || Math.random() < 0.05; cur.flame.scale.set(1, (burning ? 1 : 0.4) * (0.8 + Math.random() * 0.4), 1);
