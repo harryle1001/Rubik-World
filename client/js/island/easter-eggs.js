@@ -213,6 +213,7 @@ export function createEasterEggs(ctx) {
   function placeWear() {
     const h = player.hero; if (!h || !player.root) return;
     const head = h.head, chest = h.model.getObjectByName('chest') || head;
+    if (h.isVrm && wear.cape) wear.cape.visible = false;   // nhân vật anime đã có áo choàng đồng phục
     if (wear.hat && wear.hat.visible && head) { head.getWorldPosition(_wv); player.root.worldToLocal(_wv); wear.hat.position.set(_wv.x, _wv.y + 0.25 * (h.height || 1.65) / 1.65, _wv.z); }
     if (wear.cape && wear.cape.visible && chest) { chest.getWorldPosition(_wv); player.root.worldToLocal(_wv); wear.cape.position.set(_wv.x, _wv.y + 0.12, _wv.z); }
   }

@@ -35,7 +35,9 @@ export function createWear(ctx) {
   async function mount(slot, id) {
     const hero = ctx.player.hero; if (!hero) return;
     if (parts[slot]) { parts[slot].removeFromParent(); parts[slot] = null; }
-    ids[slot] = id; if (!id) return;
+    ids[slot] = id;
+    if (hero.isVrm && slot === 'cape') { const it = CAPES.find(x => x.id === id); if (hero.fit && hero.fit.setRobe) hero.fit.setRobe(it ? it.col : null); return; }   // nhân vật anime: một áo choàng duy nhất (vrm-outfit.js) đổi màu
+    if (!id) return;
     const M = MOUNT[slot], bone = hero.model.getObjectByName(M.bone), src = await loadModel(M.file);
     if (!src || !bone || ids[slot] !== id) return;
     const item = [...CAPES, ...HATS, ...BROOMS].find(x => x.id === id);

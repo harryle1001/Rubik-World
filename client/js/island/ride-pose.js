@@ -31,9 +31,11 @@ function solve(A, B, C, T, pole) {
 }
 
 const RIG = new WeakMap();
-function rigOf(model) {
+const VB = { upperarm: 'UpperArm', lowerarm: 'LowerArm', wrist: 'Hand', upperleg: 'UpperLeg', lowerleg: 'LowerLeg', foot: 'Foot' };
+function rigOf(model, hero) {
   let r = RIG.get(model); if (r) return r;
-  const g = n => model.getObjectByName(n), side = s => ({ arm: [g('upperarm' + s), g('lowerarm' + s), g('wrist' + s)], leg: [g('upperleg' + s), g('lowerleg' + s), g('foot' + s)] });
+  const H = hero && hero.isVrm && hero.vrm.humanoid;   // nhân vật anime: xương thật của VRM (được chép lại từ xương chuẩn hoá mỗi khung → IK không cộng dồn)
+  const g = H ? n => { const m = /^(\w+?)([lr])$/.exec(n); return m ? H.getRawBoneNode((m[2] === 'l' ? 'left' : 'right') + VB[m[1]]) : H.getRawBoneNode(n); } : n => model.getObjectByName(n), side = s => ({ arm: [g('upperarm' + s), g('lowerarm' + s), g('wrist' + s)], leg: [g('upperleg' + s), g('lowerleg' + s), g('foot' + s)] });
   r = { l: side('l'), r: side('r'), spine: g('spine') };
   r.ok = [...r.l.arm, ...r.l.leg, ...r.r.arm, ...r.r.leg].every(Boolean);
   r.bones = [r.spine, ...r.l.arm, ...r.l.leg, ...r.r.arm, ...r.r.leg].filter(Boolean); r.pre = r.bones.map(b => b.quaternion.clone()); r.post = r.bones.map(() => new THREE.Quaternion(2, 0, 0, 0));
@@ -48,7 +50,7 @@ function pick(ref, bone, obj, pts, T) {
 const T = new THREE.Vector3();
 
 export function ridePose(hero, ref, R) {
-  if (!hero || !R) return; const rig = rigOf(hero.model); if (!rig.ok) return;
+  if (!hero || !R) return; const rig = rigOf(hero.model, hero); if (!rig.ok) return;
   // xương không có track animation (mixer không ghi đè) → trả về tư thế trước khi IK, tránh cộng dồn mỗi khung
   const B = rig.bones; for (let i = 0; i < B.length; i++) { const q = B[i].quaternion; if (q.equals(rig.post[i])) q.copy(rig.pre[i]); else rig.pre[i].copy(q); }
   ref.updateMatrixWorld(true); ref.getWorldQuaternion(_rq);

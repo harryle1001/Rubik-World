@@ -134,3 +134,20 @@ tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — h
 models/alley/wiz-hat.glb, wiz-cape.glb  mũ + áo choàng tách từ models/hero-mage.glb (KayKit Adventurers, CC0 — xem trên), tô màu bằng code
 models/alley/broom.glb  "Medieval Tools Pack" — System G6, OpenGameArt, CC0 — https://opengameart.org/content/medieval-tools-pack (chuyển .blend → .glb bằng bpy)
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
+
+Nhân vật anime xem thử (client/assets/vrm/, trang client/vrm-preview.html — CHƯA dùng trong game; chi tiết docs/vrm-preview/LICENSES.md):
+  pixiv Inc. / VRoid Studio sample models, CC0 (meta VRM: licenseName "CC0"): Sendagaya Shino, Sendagaya Shibu, Sakurada Fumiriya,
+    HairSample_Female, HairSample_Male, Vita, Vivi — tải qua bản sao github.com/madjin/vrm-samples.
+  AvatarSample_A — pixiv Inc. / VRoid, điều khoản riêng "VRoid Studio sample model" (cho thương mại, chỉnh sửa; meta: commercial Allow).
+  Seed-san — VirtualCast, Inc., VRM Public License 1.0 (thương mại doanh nghiệp, sửa + phân phối lại; BẮT BUỘC ghi tên) — github.com/vrm-c/vrm-specification.
+  Olivia (100Avatars R1) — Polygonal Mind, CC0 — qua github.com/ToxSam/open-source-avatars (tệp trên arweave.net).
+  Thư viện @pixiv/three-vrm 3.5.5 (MIT). Đã thu nhỏ texture + nén meshopt bằng tools/vrm-slim.mjs.
+
+Nhân vật anime TRONG GAME (đảo 3D, client/js/island/vrm/): mẫu CC0 — Victoria Rubin, Vivi, Sendagaya Shino (học sinh nữ),
+  HairSample_Male (học sinh nam), Sakurada Fumiriya (thầy cô); pixiv Inc. / VRoid, CC0 (meta VRM licenseName "CC0").
+  Kiểu tóc ghép thêm từ Sendagaya Shibu, Darkness Shibu, Vita (CC0, cùng nguồn madjin/vrm-samples vroid/beta/).
+  Bản trong client/assets/vrm/{full,mobile}/ làm lại từ file gốc bằng tools/vrm-slim.mjs --hq --meshopt (texture WebP).
+  @pixiv/three-vrm 3.5.5 (MIT, © pixiv Inc.) chép vào client/js/vendor/three-vrm.module.min.js (+ three-vrm.LICENSE.txt), không dùng CDN.
+  Đồng phục phù thuỷ Tứ Linh (áo choàng, mũ trùm, khăn sọc, cà vạt, mũ chóp, kính, đũa): dựng bằng code trong vrm-outfit.js
+  (không có phụ kiện CC0 khớp xương VRoid để lấy sẵn) — thiết kế nguyên bản của dự án.
+  Animation: 14 clip KayKit Adventurers (CC0, Kay Lousberg) chuyển sang xương humanoid VRM (vrm-anim.js).
