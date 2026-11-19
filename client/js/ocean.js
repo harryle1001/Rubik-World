@@ -209,7 +209,7 @@ renderer.setAnimationLoop(() => {
   // biên dịch ĐÚNG biến thể: cảnh vẽ vào render target hậu kỳ (warm()). Sau đó: mỗi 5 s, nếu cảnh có vật mới (khu/model nạp thêm,
   // đèn đêm bật…) → biên dịch trước phần mới.
   if (!ctx.warmed && school.ready && (player.hero || player.heroFailed) && (ctx.warmT = (ctx.warmT || 0) + dt) > 0.382) { ctx.warmed = true; ctx.warmT = 0; const wj = loading.begin('Chuẩn bị hình ảnh'); loading.end(bootJob); warm().finally(() => { loading.end(wj); requestAnimationFrame(() => requestAnimationFrame(() => loading.lift())); }); setTimeout(() => loading.lift(), 8000); }   // máy chậm: tối đa 8 s rồi mở màn che
-  else if (ctx.warmed && (ctx.warmT += dt) > 5) { ctx.warmT = 0; const sig = scene.children.length + ':' + perf.list.length + ':' + (sky.state.night > 0.5); if (sig !== ctx.warmSig) { ctx.warmSig = sig; warm(); } }
+  else if (ctx.warmed && (ctx.warmT += dt) > 5) { ctx.warmT = 0; const sig = scene.children.length + ':' + perf.list.length + ':' + (sky.state.night > 0.5); if (sig !== ctx.warmSig && !ctx.mgActive) { ctx.warmSig = sig; warm(); } }   // đang chơi mini game: không biên dịch đồ của game (thoát game dispose vật liệu giữa lúc compileAsync → lỗi isReady)
   // bóng đổ thưa (điện thoại): vẽ lại bản đồ bóng mỗi 2 khung (cây/nhà đứng yên; người/xe ở 30 Hz vẫn mượt) → pass bóng tốn ½
   if (CFG.isMobile) { renderer.shadowMap.autoUpdate = false; if ((ctx.shF = (ctx.shF || 0) + 1) % 2 === 1) renderer.shadowMap.needsUpdate = true; }
   if (!worldMap.open && !loading.veil) post.render(); // bản đồ / màn che lúc vào game phủ kín → không vẽ 3D (dồn CPU cho nạp nhân vật, dựng thị trấn)

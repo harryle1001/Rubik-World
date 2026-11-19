@@ -124,6 +124,7 @@ body.rs-modal #questHud,body.mg-on #questHud{display:none}`;
       t += dt; const p = ctx.player.pos;
       // ô nhiệm vụ nằm ngay dưới hàng chip (đồng hồ · tài khoản · FPS — account-hud.js), hàng chip có thể xuống dòng trên điện thoại
       if ((zT2 -= dt) <= 0) { zT2 = 0.5; const r = document.getElementById('chipRow'); if (r && r.offsetHeight) { const b = Math.round(r.getBoundingClientRect().bottom + 8) + 'px'; if (el.style.top !== b) el.style.top = b; } }   // hàng chip ẩn (mini game, bảng) → giữ chỗ cũ
+      gems.visible = beams.visible = !ctx.mgActive; if (ctx.mgActive) return;   // đang chơi mini game: cột sáng không lọt vào khung chơi
       // pha lê: xoay 1/φ vòng/s, nhấp nhô; tới gần (≤ 1,6 m) là nhặt
       for (let i = 0; i < GEMS_N; i++) {
         const live = gemLeft(i);

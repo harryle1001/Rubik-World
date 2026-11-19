@@ -56,8 +56,8 @@ export function startArtMusic(ctx, opts = {}) {
 
   // ---------- Xưởng: sàn gỗ tròn, tường vòng cung, cửa sổ, 3 trạm cách nhau 2π/3 trên vòng R = 13 ----------
   const R = 13, ST = { paint: 0, clay: 1, music: 2 }, ang = k => -Math.PI / 2 + k * 2 * Math.PI / 3, stPos = k => new THREE.Vector3(Math.cos(ang(k)) * R * 0.62, 0, Math.sin(ang(k)) * R * 0.62);
-  const floor = new THREE.Mesh(new THREE.CylinderGeometry(R + 3, R + 3, 0.4, 34), T('#c9965f')); floor.position.y = -0.2; scene.add(floor);
-  const rug = new THREE.Mesh(new THREE.CylinderGeometry(R / PHI, R / PHI, 0.05, 34), T('#d8584a')); rug.position.y = 0.03; scene.add(rug);
+  const floor = new THREE.Mesh(new THREE.CylinderGeometry(R + 3, R + 3, 0.4, 34), T('#c9965f')); floor.position.y = -0.14; scene.add(floor);   // mặt sàn cao 6 cm: che vệt đường/lối đi của thế giới bên dưới
+  const rug = new THREE.Mesh(new THREE.CylinderGeometry(R / PHI, R / PHI, 0.05, 34), T('#d8584a')); rug.position.y = 0.085; scene.add(rug);
   const wall = new THREE.Mesh(new THREE.CylinderGeometry(R + 3, R + 3, 8, 34, 1, true), T('#f6ead2', { side: THREE.BackSide })); wall.position.y = 4; scene.add(wall);
   for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2 + 0.2, w = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.6 * PHI), T('#9fd4f0')); w.position.set(Math.cos(a) * (R + 2.9), 4, Math.sin(a) * (R + 2.9)); w.lookAt(0, 4, 0); scene.add(w); }
   const signs = [], sign = (t, k) => { const sp = labelSprite(t, { size: 0.8 }); sp.position.copy(stPos(k)).setY(6.2); scene.add(sp); signs[k] = sp; };

@@ -116,7 +116,8 @@ export class DetailGrid extends Batch {
   // chi tiết thường hiện trong radius/√φ + nửa ô (~75 m); khối phát sáng (đèn đêm) giữ tầm xa cũ để không "tắt" đột ngột
   update(p, radius = 60) {
     const r = radius + this.cell * 0.7, rb = radius * 0.786 + this.cell * 0.7;
-    for (const q of this.list) { const d = Math.hypot(q.x - p.x, q.z - p.z); q.grp.visible = d < r; const b = q.grp.children[0]; if (b && b.receiveShadow) b.visible = d < rb; }
+    for (const q of this.list) { if (DetailGrid.skip && DetailGrid.skip(q.x, q.z, this.cell * 0.72)) { q.grp.visible = false; continue; }   // ô chồng lên khu mini game đang chơi (mg/host.js)
+      const d = Math.hypot(q.x - p.x, q.z - p.z); q.grp.visible = d < r; const b = q.grp.children[0]; if (b && b.receiveShadow) b.visible = d < rb; }
   }
 }
 // vật liệu cho chi tiết: toon tô màu đỉnh + phát sáng (không cần đèn thật)
