@@ -135,6 +135,7 @@ await page.waitForTimeout(3000); await tp(-150, -287);
 await cine('23-toan-canh-khoi-nui', [-88, 46, -208], [-150, 6, -287]);
 await cine('24-toan-canh-thung-lung', [-146, 55, -232], [-183, 6, -292]);
 await tp(-110, -238); await cine('25-nhin-tu-bai-cu-rua', [-96, 4.2, -231], [-128, 7, -275]);
+await setHour(9); await page.waitForTimeout(3000); await tp(-172, -276); await cine('26-tia-nang-xuyen-tan', [-158, 7, -292], [-190, 9, -280]); await cine('27-cay-thien-dinh-ho-guong', [-196, 7.5, -297], [-172, 11, -272]); await setHour(10.5);
 
 log('Lỗi console:', errors.length ? errors.slice(0, 8) : 'không');
 if (errors.length) fails.push(errors.length + ' lỗi console');

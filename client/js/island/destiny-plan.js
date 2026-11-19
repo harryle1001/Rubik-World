@@ -62,13 +62,13 @@ export function platDist(x, z) {
 }
 export const bowlR = (x, z) => Math.hypot(x - O[0], z - O[1]);
 // có thuộc khối núi ẩn không (m: nới rộng) — bản đồ dùng để giấu
-export const destinyAt = (x, z, m = 0) => x > -232 - m && x < -78 + m && z < -250 + m && (platDist(x, z) < m + 3 || bowlR(x, z) < BOWL.out + m);
+export const destinyAt = (x, z, m = 0) => x > -232 - m && x < -78 + m && z < -231 + m && (platDist(x, z) < m + 3 || bowlR(x, z) < BOWL.out + m);
 export const inBowl = (x, z, m = 0) => bowlR(x, z) < BOWL.rin + m;
 export const onPlateau = (x, z, m = 0) => platDist(x, z) < m;
 
 // Độ cao khối núi ẩn: trả về độ cao mới (hoặc out nếu ngoài vùng)
 export function destinyHeight(x, z, out) {
-  if (x > -76 || x < -234 || z > -246) return out;
+  if (x > -76 || x < -234 || z > -231 || (z > -246 && x > -132)) return out;   // thung lũng lấn tới z −234; cao nguyên chỉ tới −254 (chừa bãi cụ Rùa)
   let h = -99, inside = false;
   const dP = platDist(x, z);
   if (dP < 4) {
