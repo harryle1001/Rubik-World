@@ -145,7 +145,7 @@ export function createMagic(ctx) {
       if (b.dataset.go !== undefined) {
         const was = !!st.wand; st.wand = { wood: w, core: c }; save('academy.wand', st.wand); paint(); closeCard(); refresh();
         burst(player.pos.clone().setY(player.pos.y + 1.2), up, CORES.find(x => x.id === c).col, 34, 3, 1);
-        ctx.toast(was ? '🪄 Đã đổi đũa mới!' : `🪄 Đũa <b>${WOODS.find(x => x.id === w).name}</b> lõi pha lê <b>${CORES.find(x => x.id === c).name}</b> là của em! ${CFG.isMobile ? 'Bấm ✨ để niệm phép.' : 'Phím <b>F</b> để niệm phép, <b>1–6</b> đổi phép.'}`, 6000);
+        ctx.toast(was ? '🪄 Đã đổi đũa mới!' : `🪄 Đũa <b>${WOODS.find(x => x.id === w).name}</b> lõi pha lê <b>${CORES.find(x => x.id === c).name}</b> là của em! ${CFG.isMobile ? 'Bấm ✨ để niệm phép.' : 'Phím <b>F</b> để niệm phép, <b>1–9</b> niệm nhanh, chuột để nhắm.'}`, 6000);
       }
     };
   }
