@@ -61,17 +61,25 @@ export function createVrmNpc(ctx) {
       let v = (pool.get(k) || []).pop();
       if (!v) { v = await loadVrmHero(L, { set: 'mobile', height: Math.max(1.42, Math.min(1.8, e.height * (e.role === 'teacher' ? 1.05 : 1.16) * (L.hScale || 1))) }); st.loads++; st.loadMs = Math.round(performance.now() - t0); }
       v.npc = true; v.setWand(!!L.wand);
-      const ok = st.on && inScene(e.hero.model) && e.d < FAR + HY && st.attached < MAX;
+      const ok = st.on && inScene(e.hero.model) && e.d < FAR + HY && st.attached < cap;
       if (ok) { e.key = k; attach(e, v); } else { const l = pool.get(k) || []; l.push(v); pool.set(k, l); }
     } catch (err) { console.warn('VRM NPC', err); e.fail = true; }
     loading = false;
   }
   const P = new THREE.Vector3(), Q = new THREE.Vector3();
+  // Điện thoại: số NPC anime tự co theo draw call thật của khung (≤ 233): đo 1 khung mỗi giây, vượt → bớt 1 VRM (về chibi), dư nhiều → thêm lại
+  let cap = MAX, capT = 0;
+  function budget(dt) {
+    if (!M || !ctx.post || (capT += dt) < 1) return; capT = 0;
+    const I = ctx.renderer.info, ar = I.autoReset, post = ctx.post, r = post.render;
+    post.render = function () { post.render = r; I.autoReset = false; I.reset(); r.call(this); const c = I.render.calls; I.autoReset = ar; if (c > 233 && cap > 0) cap--; else if (c < 178 && cap < MAX) cap++; };
+  }
   function update(dt) {
+    budget(dt);
     t += dt; if (t < 0.25) { for (const e of reg) if (e.vrm) lod(e); return; } t = 0;
     const me = ctx.player && ctx.player.hero; P.copy(ctx.player ? ctx.player.pos : ctx.camera.position);
     for (const e of reg) { e.d = st.on && e.hero !== me && !e.fail && inScene(e.hero.model) ? e.hero.model.getWorldPosition(Q).distanceTo(P) : 1e9; }
-    const order = reg.filter(e => e.d < FAR + (e.vrm ? HY : 0)).sort((a, b) => a.d - b.d).slice(0, MAX), want = new Set(order);
+    const order = reg.filter(e => e.d < FAR + (e.vrm ? HY : 0)).sort((a, b) => a.d - b.d).slice(0, cap), want = new Set(order);
     for (const e of reg) if (e.vrm && !want.has(e)) detach(e);
     if (!loading) { const next = order.find(e => !e.vrm); if (next) load(next); }
     for (const e of reg) if (e.vrm) lod(e);
