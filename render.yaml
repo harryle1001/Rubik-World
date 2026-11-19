@@ -29,6 +29,12 @@ services:
         sync: false
       - key: CONTACT_EMAIL
         sync: false
+      - key: AFF_SHOPEE         # mẫu link affiliate có {url} — docs/ads.md
+        sync: false
+      - key: AFF_TIKI
+        sync: false
+      - key: AFF_FAHASA
+        sync: false
       - key: MOMO_PARTNER_CODE
         sync: false
       - key: MOMO_ACCESS_KEY
