@@ -1,11 +1,13 @@
 // academy/houses.js — 4 NHÀ TỨ LINH: lễ chọn nhà ở Đại sảnh (quả cầu Tứ Linh, 5 câu hỏi tính cách), cờ nhà, ánh sáng màu nhà,
 // khăn quàng + áo choàng màu nhà cho nhân vật. Lưu vào tài khoản (data/account.js: profile.house); đổi nhà được 1 lần.
 // Khung cắm (index.js): create(ctx, magic, { toWorld, toLocal, L, Y }) → { build(), unbuild(), update(dt, t), api }.
-// Hiệu năng: Đại sảnh thêm 1 khối gộp + 4 cờ + quả cầu + cột sáng (chỉ hiện trong 55 m quanh sảnh); khăn + áo = 1 mesh gắn xương ngực.
+// Điểm nhà: ⭐ thầy cô / mini game (ctx.reward) +8 mỗi sao, câu hỏi phép (magic.ask) +3, câu đố lối vào +5, nhiệm vụ ngày +13/21;
+// điểm tính theo tuần (thứ Hai làm lại), các nhà khác = học sinh NPC mô phỏng (tới khi có máy chủ). Bảng xếp hạng = 4 đồng hồ cát pha lê ở Đại sảnh.
+// Hiệu năng: Đại sảnh thêm 1 khối gộp + 4 cờ + quả cầu + cột sáng + kính + cát (instancing) + bảng điểm (chỉ hiện trong 55 m quanh sảnh); khăn + áo = 1 mesh gắn xương ngực.
 import * as THREE from 'three';
 import { Batch } from './geo.js';
 import { toon } from '../style.js';
-import { HOUSES, HOUSE, SORT_Q, SORT_N } from './houses-data.js';
+import { HOUSES, HOUSE, SORT_Q, SORT_N, TASKS, PTS } from './houses-data.js';
 import { HALL_HOUSE } from './plan.js';
 
 const PHI = 1.618, NEAR = 55;
@@ -43,6 +45,51 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   }
   const saveRec = r => { const a = acc(); if (a) { a.profile.house = r; a.save(); } else save('academy.house', r); };
 
+  // ---------- điểm nhà (theo tuần, bắt đầu thứ Hai) ----------
+  const WEEK = 7 * 864e5, OFF = 4 * 864e5, wk = () => Math.floor((Date.now() + OFF) / WEEK), day = () => new Date().toISOString().slice(0, 10);
+  const fresh = r => { if (r.week !== wk()) { r.week = wk(); r.pts = 0; } if (!r.daily || r.daily.day !== day()) r.daily = { day: day(), ask: 0, star: 0, riddle: 0, got: {} }; return r; };
+  const hash = s => { let h = 2166136261; for (const c of String(s)) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0; return h; };
+  function totals() {   // các bạn NPC mỗi nhà góp đều đặn theo giờ trong tuần (mô phỏng) + điểm em góp cho nhà mình
+    const hrs = ((Date.now() + OFF) % WEEK) / 36e5, r = rec(), out = {};
+    for (const h of HOUSES) { const k = hash(h.id + wk()); out[h.id] = Math.floor(21 + k % 55 + hrs * (2 + (k >> 8) % 3) * (0.9 + 0.1 * Math.sin(hrs * 0.3 + k))); }
+    if (r && r.id && r.week === wk()) out[r.id] += r.pts | 0;
+    return out;
+  }
+  const ranking = () => { const t = totals(); return HOUSES.map(h => ({ h, n: t[h.id] })).sort((a, b) => b.n - a.n); };
+  let lastToast = 0, dirty = true;
+  function addPts(p, why) {
+    const r = rec(); if (!r || !r.id || !p) return; fresh(r); r.pts = (r.pts | 0) + p; r.total = (r.total | 0) + p; saveRec(r); dirty = true;
+    const h = HOUSE[r.id], now = performance.now(); if (now - lastToast > 1300) { lastToast = now; setTimeout(() => ctx.toast(`${h.icon} +${p} điểm cho <b>${h.name}</b>${why ? ' · ' + why : ''}`, 2600), 1900); }
+    api.rooms && api.rooms.redraw();
+  }
+  function event(kind, n = 1) { const r = rec(); if (!r || !r.id) return; fresh(r); r.daily[kind] = (r.daily[kind] | 0) + n; saveRec(r); addPts((PTS[kind] || 0) * n); }
+  function claim(k) {
+    const r = rec(); if (!r || !r.id) return; fresh(r); const T = TASKS.find(t => t[0] === k); if (!T || r.daily.got[k] || (r.daily[k] | 0) < T[2]) return;
+    r.daily.got[k] = 1; saveRec(r); addPts(T[3], 'nhiệm vụ nhà'); ctx.sfx && ctx.sfx('win');
+  }
+  function showTasks() {
+    const r = rec(); if (!r || !r.id) return ctx.toast('🔮 Em chưa có Nhà — tới Quả cầu Tứ Linh ở Đại sảnh nhé!', 3500); fresh(r);
+    const h = HOUSE[r.id], R = ranking(), me = R.findIndex(x => x.h.id === r.id) + 1;
+    openCard(`<h4>📋 Bảng tin ${h.name} ${h.icon}</h4><div>Điểm tuần: <b>${R[me - 1].n}</b> · hạng <b>${me}/4</b> · em góp <b>${r.pts | 0}</b></div>
+      <div class="ch">${TASKS.map(([k, t, need, pts]) => { const v = Math.min(need, r.daily[k] | 0), done = !!r.daily.got[k];
+        return `<button data-k="${k}" ${done || v < need ? 'disabled' : ''} class="${done ? 'ok' : ''}">${t}<br><small>${done ? '✅ Đã nhận' : v >= need ? `🎁 Bấm để nhận +${pts}` : `${v}/${need} · thưởng +${pts}`}</small></button>`; }).join('')}</div>
+      <div style="font-size:12px;opacity:.75;margin-top:6px">Mỗi ⭐ thầy cô / mini game: +${PTS.star} · câu hỏi phép đúng: +${PTS.ask} · câu đố lối vào: +${PTS.riddle}. Nhiệm vụ làm mới mỗi ngày.</div>
+      <div class="ft"><button data-x>Đóng</button></div>`, b => { if (b.dataset.x !== undefined) return closeCard(); if (b.dataset.k) { claim(b.dataset.k); showTasks(); } });
+  }
+  function showRank() {
+    const R = ranking(), id = houseId(), max = R[0].n || 1;
+    openCard(`<h4>⏳ Đồng hồ cát 4 Nhà — tuần này</h4>${R.map((x, i) => `<div class="hb" style="margin:6px 0"><span class="sw" style="background:${x.h.col}"></span><b style="flex:1">${['🥇', '🥈', '🥉', '4.'][i]} ${x.h.icon} ${x.h.name}${x.h.id === id ? ' (nhà em)' : ''}</b>${x.n}</div><div class="pg"><i style="width:${x.n / max * 100}%;background:${x.h.col}"></i></div>`).join('')}
+      <div style="font-size:12px;opacity:.75">Điểm làm lại mỗi thứ Hai. Học, chơi mini game, giải đố để cát pha lê nhà em dâng cao!</div><div class="ft"><button data-x>Đóng</button></div>`, () => closeCard());
+  }
+  function boardLines(id) {
+    const h = HOUSE[id], r = rec(), R = ranking(), me = R.findIndex(x => x.h.id === id) + 1; if (r && r.id === id) fresh(r);
+    return [`“${h.motto}”`, `⏳ Điểm tuần: ${R[me - 1].n} · hạng ${me}/4 · em góp ${r && r.id === id ? r.pts | 0 : 0}`, 'Nhiệm vụ hôm nay:',
+      ...TASKS.map(([k, t, need, pts]) => { const v = r && r.daily ? Math.min(need, r.daily[k] | 0) : 0, got = r && r.daily && r.daily.got[k]; return `${got ? '✅' : v >= need ? '🎁' : '▫️'} ${t.replace(/^\S+ /, '')} ${got ? '' : `${v}/${need} (+${pts})`}`; })];
+  }
+  // nối nguồn điểm: sao (teacher-quiz / mini game) và câu hỏi phép (cây đa, tranh, sinh vật, lối vào…)
+  const ask0 = magic.ask; magic.ask = (q, onRight, title) => ask0(q, () => { event('ask'); onRight && onRight(); }, title);
+  const hookReward = () => { if (ctx.reward && !ctx.reward.__house) { const f = ctx.reward; ctx.reward = Object.assign((n, note) => { const o = f(n, note); event('star', Math.max(1, n | 0)); return o; }, { __house: 1 }); } };
+
   // ---------- thẻ hỏi đáp ----------
   let card = null;
   const closeCard = () => { if (card) { card.remove(); card = null; } };
@@ -76,7 +123,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   }
 
   // ---------- Đại sảnh: bệ + quả cầu, 4 cờ nhà (cuộn → rủ xuống), cột sáng + vầng sáng màu nhà ----------
-  let g = null, orb = null, banners = [], beam = null, wash = null, fx = 0, fxCol = new THREE.Color();
+  let g = null, orb = null, banners = [], beam = null, wash = null, fx = 0, fxCol = new THREE.Color(), glassM = null, sand = null, plaque = null, plaqueC = null, tRank = 0;
   const [ou, ov] = HALL_HOUSE.orb;
   function build() {
     if (g) return;
@@ -85,6 +132,19 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     b.cyl(ov, Y, ou, 0.62, 0.34, stone, 8, 0.55); b.cyl(ov, Y + 0.34, ou, 0.3, 0.8, stone, 8, 0.24); b.cyl(ov, Y + 1.14, ou, 0.42, 0.12, gold, 8);   // bệ cầu
     const bu = Hh.u0 + 1.75, top = Y + 13;
     for (const v of HALL_HOUSE.banner) { b.cyl(v, top, bu, 0.07, 0.07, gold, 6); b.add(new THREE.CylinderGeometry(0.06, 0.06, 3.9, 6), wood, v, top + 0.1, bu, 0, 0, Math.PI / 2); for (const s of [-1, 1]) b.add(new THREE.SphereGeometry(0.11, 6, 4), gold, v + s * 1.95, top + 0.1, bu); }
+    // 4 đồng hồ cát pha lê: khung gỗ + kính (lathe) + cát màu nhà (instancing 8: bầu dưới = điểm, bầu trên = phần còn lại)
+    const prof = [[0.5, 0], [0.52, 0.1], [0.52, 1.05], [0.12, 1.62], [0.12, 1.78], [0.52, 2.35], [0.52, 3.3], [0.5, 3.4]].map(([r, y]) => new THREE.Vector2(r, y));
+    const gl = new Batch();
+    for (const [u, v] of HALL_HOUSE.glass) {
+      b.cyl(v, Y, u, 0.72, 0.21, wood, 8); b.cyl(v, Y + 3.61, u, 0.72, 0.21, wood, 8); b.cyl(v, Y + 3.82, u, 0.21, 0.21, gold, 8);
+      for (let k = 0; k < 3; k++) { const a = k / 3 * 6.283 + 0.5; b.cyl(v + Math.cos(a) * 0.62, Y + 0.21, u + Math.sin(a) * 0.62, 0.05, 3.4, gold, 5); }
+      gl.add(new THREE.LatheGeometry(prof, 13), '#cfefff', v, Y + 0.21, u);
+    }
+    glassM = new THREE.Mesh(gl.build(), new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.28, depthWrite: false })); g.add(glassM);
+    sand = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.43, 0.43, 1, 13).translate(0, 0.5, 0), new THREE.MeshBasicMaterial({ color: '#ffffff' }), 8);
+    HOUSES.forEach((h, i) => { const c = new THREE.Color(h.col).lerp(new THREE.Color(h.col2), 0.25); sand.setColorAt(i * 2, c); sand.setColorAt(i * 2 + 1, c); }); g.add(sand);
+    plaqueC = document.createElement('canvas'); plaqueC.width = 512; plaqueC.height = 128; plaque = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(plaqueC), depthWrite: false }));
+    plaque.scale.set(6.5, 1.62, 1); plaque.position.set(0, Y + 5.2, Hh.u0 + 2.2); g.add(plaque); dirty = true;
     const m = new THREE.Mesh(b.build(), toon('#ffffff', { vertexColors: true })); m.castShadow = true; g.add(m);
     orb = new THREE.Mesh(new THREE.IcosahedronGeometry(0.42, 1), new THREE.MeshBasicMaterial({ color: '#ffffff' })); orb.position.set(ov, Y + 1.72, ou); g.add(orb);
     const bg = new THREE.PlaneGeometry(3.4, 5.5).translate(0, -2.75, 0);
@@ -127,10 +187,26 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     root.add(wearMesh); root.updateMatrixWorld(true); if (chest) chest.attach(wearMesh);
   }
 
+  const _o = new THREE.Object3D();
+  function drawRank() {
+    const t = totals(), R = ranking(), max = Math.max(89, R[0].n * 1.13);
+    HOUSES.forEach((h, i) => {
+      const [u, v] = HALL_HOUSE.glass[i], k = Math.min(1, t[h.id] / max);
+      _o.position.set(v, Y + 0.31, u); _o.scale.set(1, 0.02 + 0.95 * k, 1); _o.updateMatrix(); sand.setMatrixAt(i * 2, _o.matrix);                  // cát đã rơi = điểm
+      _o.position.set(v, Y + 0.21 + 2.35, u); _o.scale.set(1, 0.02 + 0.93 * (1 - k), 1); _o.updateMatrix(); sand.setMatrixAt(i * 2 + 1, _o.matrix);   // cát còn ở bầu trên
+    });
+    sand.instanceMatrix.needsUpdate = true;
+    const k = plaqueC.getContext('2d'); k.clearRect(0, 0, 512, 128); k.fillStyle = 'rgba(20,16,34,.86)'; k.beginPath(); k.roundRect(4, 4, 504, 120, 21); k.fill();
+    k.font = 'bold 21px system-ui'; k.fillStyle = '#ffe3a0'; k.textAlign = 'center'; k.fillText('⏳ ĐIỂM 4 NHÀ TUẦN NÀY', 256, 30);
+    R.forEach((x, i) => { const cx = 64 + i * 128; k.fillStyle = x.h.col; k.beginPath(); k.roundRect(cx - 58, 44, 116, 74, 13); k.fill(); k.fillStyle = '#fff'; k.font = 'bold 17px system-ui'; k.fillText(`${['🥇', '🥈', '🥉', '4'][i]} ${x.h.name.replace('Nhà ', '')}`, cx, 70); k.font = 'bold 26px system-ui'; k.fillText(x.n, cx, 104); });
+    plaque.material.map.needsUpdate = true;
+  }
+
   // ---------- mỗi khung ----------
   let hallHi = false;
   function update(dt, t) {
     if (wearFor !== houseId()) wear();
+    hookReward();
     if (wearMesh) wearMesh.visible = !player.vehicle;
     if (!g) return;
     const [hx, hz] = toWorld((Hh.u0 + Hh.u1) / 2, 0), near = Math.hypot(player.pos.x - hx, player.pos.z - hz) < NEAR; g.visible = near;
@@ -139,6 +215,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
     // quả cầu: chưa có nhà → đổi màu qua 4 nhà; có nhà → màu nhà mình
     if (id) orb.material.color.set(HOUSE[id].col).lerp(new THREE.Color(HOUSE[id].col2), 0.5 + 0.5 * Math.sin(t * 2)); else orb.material.color.set(HOUSES[Math.floor(t / 1.3) % 4].col);
     orb.rotation.y = t * 0.6; orb.position.y = Y + 1.72 + Math.sin(t * 1.6) * 0.06;
+    if ((tRank -= dt) <= 0 || dirty) { tRank = 3; dirty = false; drawRank(); }
     for (const o of banners) { const want = id ? 1 : 0.04; if (o.userData.t > 0) o.userData.t -= dt; else o.userData.k += (want - o.userData.k) * Math.min(1, dt * 1.6); o.scale.y = o.userData.k; o.rotation.x = Math.sin(t * 1.3 + o.position.x) * 0.03; }
     if (fx > 0) { fx -= dt; const a = Math.min(1, fx / 1.3) * Math.min(1, (5 - fx) * 2); beam.visible = wash.visible = fx > 0; beam.material.opacity = 0.55 * a; wash.material.opacity = 0.21 * a; beam.rotation.y += dt; }
     // gợi ý ở quả cầu
@@ -151,8 +228,9 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
       if (!id) ctx.offer('🔮 Lễ chọn Nhà (Quả cầu Tứ Linh)', ceremony, 10);
       else if ((r.changes | 0) < 1) ctx.offer(`🔁 Đổi nhà (còn 1 lần) · ${HOUSE[id].icon}`, changeHouse, 7);
     }
+    if (player.pos.y < Y + 3 && HALL_HOUSE.glass.some(([u, v]) => Math.hypot(qu - u, qv - v) < 2.6)) ctx.offer('⏳ Bảng điểm 4 Nhà', showRank, 8);
   }
-  const api = { houseId, rec, saveRec, openCard, closeCard, get card() { return card; }, ceremony };
+  const api = { houseId, rec, saveRec, openCard, closeCard, get card() { return card; }, ceremony, event, totals, ranking, showTasks, showRank, boardLines };
   ctx.houses = api;
   return { build, unbuild, update, api };
 }
