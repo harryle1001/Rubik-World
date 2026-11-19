@@ -9,13 +9,14 @@ import * as THREE from 'three';
 const KEY = 'island.sound', DIR = '/assets/audio/', ACTIVE = 55; // chỉ phát nguồn trong bán kính ACTIVE m (nhẹ máy)
 const STEPS = { grass: ['step-leaves01', 'step-leaves02'], sand: ['step-sandl1', 'step-sandr1', 'step-sandl2', 'step-sandr2'], wood: ['step-wood01', 'step-wood02', 'step-wood03'], stone: ['step-stone01', 'step-stonel1', 'step-stoner1'], gravel: ['step-gravel'], mud: ['step-mud02'] };
 const STEP_VOL = { grass: 0.35, sand: 0.55, wood: 0.75, stone: 0.6, gravel: 0.5, mud: 0.5 };
-const SFX = { jump: ['sfx-dash'], land: ['sfx-land'], open: ['sfx-level-up'], win: ['sfx-gem', 'sfx-coin'], ui: ['sfx-ui'], ok: ['sfx-confirm'] };
+const SFX = { jump: ['sfx-dash'], land: ['sfx-land'], open: ['sfx-level-up'], win: ['sfx-gem', 'sfx-coin'], ui: ['sfx-ui'], ok: ['sfx-confirm'], coin: ['sfx-coin'] };
 // Âm thanh tổng hợp bằng Web Audio (không cần file): chuông xe đạp, mái chèo khua nước, lửa khinh khí cầu
 const noiseBurst = (ac, out, dur, type, freq, vol, q = 1) => { const n = ac.sampleRate * dur | 0, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(), t = ac.currentTime; s.buffer = b; f.type = type; f.frequency.value = freq; f.Q.value = q; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + dur * 0.15); g.gain.exponentialRampToValueAtTime(0.001, t + dur); s.connect(f).connect(g).connect(out); s.start(t); };
 const SYNTH = {
   bell: (ac, out) => { for (const t0 of [0, 0.16]) for (const [f, v] of [[2350, 0.22], [3480, 0.1], [5900, 0.04]]) { const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + t0; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.004); g.gain.exponentialRampToValueAtTime(0.001, t + 0.8); o.connect(g).connect(out); o.start(t); o.stop(t + 0.85); } },
   splash: (ac, out) => noiseBurst(ac, out, 0.4, 'bandpass', 900 + Math.random() * 400, 0.35, 0.8),
   burner: (ac, out) => noiseBurst(ac, out, 0.9, 'lowpass', 420, 0.45),
+  bad: (ac, out) => { const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime; o.type = 'triangle'; o.frequency.setValueAtTime(330, t); o.frequency.exponentialRampToValueAtTime(196, t + 0.32); g.gain.setValueAtTime(0.18, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.38); o.connect(g).connect(out); o.start(t); o.stop(t + 0.4); },   // trả lời sai (mini game)
 };
 const VOL = { jump: 0.3, land: 0.5, open: 0.7, win: 0.7, ui: 0.4, ok: 0.5 };
 
