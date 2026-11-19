@@ -18,6 +18,7 @@ export const BROOM_TYPES = [
   { id: 'broom-tre', name: 'Chổi Tre Gió Lộng', col: '#9cb85a', speed: 17, boost: PHI, climb: 10, fact: 'Tre rỗng ruột nên nhẹ mà vẫn chắc — bay nhanh hơn chổi gỗ.' },
   { id: 'broom-vang', name: 'Chổi bay cán vàng', col: '#e0b040', speed: 21, boost: PHI, climb: 13, fact: 'Cán mạ vàng, lông chổi chải thẳng: lướt gió rất nhanh.' },
   { id: 'broom-sao', name: 'Chổi Sao Băng', col: '#8a7cff', speed: 21, boost: 2, climb: 13, fact: 'Nhanh nhất học viện: tăng tốc gấp đôi như sao băng vụt qua bầu trời.' },
+  { id: 'broom-cauvong', name: 'Chổi Cầu Vồng', col: '#e8508a', speed: 21, boost: PHI, climb: 13, fact: 'Quà từ khối Rubik thật: cầu vồng có 7 màu vì ánh sáng trắng bị giọt nước mưa tách ra.' },
 ];
 export const BROOM = Object.fromEntries(BROOM_TYPES.map(b => [b.id, b]));
 const HOVER = 0.82, ALT = 55, ALT_CAP = 233, GAP = 0.45;   // chổi lơ lửng 0,82 m · tối đa 55 m trên mặt đất · trần 233 m

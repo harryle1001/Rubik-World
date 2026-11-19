@@ -113,10 +113,10 @@ module.exports = function mountShop(app, { ROOT, adminKey }) {
     if (limited('rd:' + ip, 8, 3600e3) || limited('rd:*', 144, 60e3)) return res.status(429).json({ err: 'Em nhập sai nhiều lần quá. Đợi 1 tiếng rồi nhờ bố mẹ kiểm tra lại mã trên thẻ nhé!' });
     const c = norm(req.body && req.body.code), who = clean(req.body && req.body.name, 20) || 'Khách';
     const rec = c.length === 12 && S.codes[hashCode(c)];
-    if (!rec) { hit('rd:' + ip); hit('rd:*'); return res.status(404).json({ err: 'Mã chưa đúng. Kiểm tra lại từng chữ trên thẻ nhé (không có chữ O và I).' }); }
-    if (rec.used) { hit('rd:' + ip); return res.status(409).json({ err: 'Mã này đã được dùng rồi. Mỗi mã chỉ dùng được 1 lần.' }); }
+    if (!rec) { hit('rd:' + ip); hit('rd:*'); return res.json({ ok: false, err: 'Mã chưa đúng. Kiểm tra lại từng chữ trên thẻ nhé (không có chữ O và I).' }); }
+    if (rec.used) { hit('rd:' + ip); return res.json({ ok: false, err: 'Mã này đã được dùng rồi. Mỗi mã chỉ dùng được 1 lần.' }); }
     rec.used = { at: Date.now(), by: who }; save();
-    res.json({ reward: rec.r, ...REWARDS[rec.r] });
+    res.json({ ok: true, reward: rec.r, ...REWARDS[rec.r] });   // sai/đã dùng trả 200 + ok:false (không làm bẩn console game)
   });
 
   // ---------- QUẢN LÝ (/admin, cần ADMIN_KEY trong header x-admin-key) ----------

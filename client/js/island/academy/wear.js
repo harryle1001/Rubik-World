@@ -7,14 +7,16 @@ import { loadModel, loadAnimated, animator } from '../models.js';
 export const CAPES = [
   { id: 'cape-do', name: 'Đỏ thẫm', col: '#9b2335' }, { id: 'cape-lam', name: 'Lam đêm', col: '#24346b' }, { id: 'cape-luc', name: 'Lục rừng', col: '#2f6b45' },
   { id: 'cape-tim', name: 'Tím sao', col: '#5b3a8e' }, { id: 'cape-vang', name: 'Vàng nghệ', col: '#c9962a' }, { id: 'cape-den', name: 'Đen tuyền', col: '#26232b' },
+  { id: 'cape-hoangkim', name: '✨ Hoàng Kim Rubik', col: '#e3b23c', excl: true },   // excl: chỉ nhận bằng mã quà in kèm đồ thật (server/shop-data.js REWARDS), không bán
 ];
 export const HATS = [{ id: 'hat-tim', name: 'Mũ tím sao', col: '#6b4aa8' }, { id: 'hat-lam', name: 'Mũ lam đêm', col: '#2a3f7a' }, { id: 'hat-do', name: 'Mũ đỏ thẫm', col: '#8e2433' }];
-export const BROOMS = [{ id: 'broom', name: 'Chổi bay gỗ sồi', col: '#9a6a3e', price: 34 }, { id: 'broom-tre', name: 'Chổi Tre Gió Lộng', col: '#9cb85a', price: 44 }, { id: 'broom-vang', name: 'Chổi bay cán vàng', col: '#e0b040', price: 55 }, { id: 'broom-sao', name: 'Chổi Sao Băng', col: '#8a7cff', price: 89 }];   // cưỡi được (brooms.js): 13 · 17 · 21 · 21×2 m/s
+export const BROOMS = [{ id: 'broom', name: 'Chổi bay gỗ sồi', col: '#9a6a3e', price: 34 }, { id: 'broom-tre', name: 'Chổi Tre Gió Lộng', col: '#9cb85a', price: 44 }, { id: 'broom-vang', name: 'Chổi bay cán vàng', col: '#e0b040', price: 55 }, { id: 'broom-sao', name: 'Chổi Sao Băng', col: '#8a7cff', price: 89 }, { id: 'broom-cauvong', name: '✨ Chổi Cầu Vồng', col: '#e8508a', price: 0, excl: true }];   // cưỡi được (brooms.js): 13 · 17 · 21 · 21×2 m/s
 export const PETS = [
   { id: 'pet-meo', name: 'Mèo mướp', model: 'animal-cat', size: 0.5, walk: 'Walk', run: 'Run', idle: 'Idle' },
   { id: 'pet-cun', name: 'Cún Shiba', model: 'animal-shiba', size: 0.62, walk: 'Walk', run: 'Gallop', idle: 'Idle' },
   { id: 'pet-cao', name: 'Cáo nhỏ', model: 'animal-fox', size: 0.6, walk: 'Walk', run: 'Gallop', idle: 'Idle' },
   { id: 'pet-ech', name: 'Ếch xanh', model: 'animal-frog', size: 0.32, walk: 'Frog_Jump', run: 'Frog_Jump', idle: 'Frog_Idle' },
+  { id: 'pet-nai', name: '✨ Nai Sao', model: 'animal-deer', size: 0.89, walk: 'Walk', run: 'Gallop', idle: 'Idle', excl: true },
 ];
 const load = () => { try { return JSON.parse(localStorage.getItem('academy.wear')) || null; } catch (e) { return null; } };
 const clean = n => n.split('|').pop();
@@ -85,5 +87,6 @@ export function createWear(ctx) {
     R.position.y += (Math.min(gy, pp.y + 0.6) - R.position.y) * Math.min(1, dt * 10);
     pet.anim.update(dt);
   }
-  return { update, give, equip, own, get eq() { return st.eq; } };
+  const keep = id => { if (!own(id)) { st.own.push(id); save(); } };   // vật phẩm không mặc được (vd 'rubik-vang' từ mã quà)
+  return { update, give, equip, own, keep, get eq() { return st.eq; } };
 }

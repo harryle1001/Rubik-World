@@ -59,7 +59,7 @@ export function createBuilder(ctx, magic, V0) {
   }
   function act(a) {
     if (a === 'rot') { st.rot = (st.rot + 1) & 3; ctx.sfx && ctx.sfx('ui'); }
-    else if (a === 'col') st.col = (st.col + 1) % RUBIK.length;
+    else if (a === 'col') st.col = (st.col + 1) % (RUBIK.length - ((ctx.account && ctx.account.hasItem('rubik-vang')) || (ctx.wear && ctx.wear.own('rubik-vang')) ? 0 : 1));   // màu vàng kim cuối dãy: chỉ khi có mã quà
     else if (a === 'up') st.k = Math.min(LEVELS - 1, st.k + 1);
     else if (a === 'dn') st.k = Math.max(0, st.k - 1);
     else if (a === 'er') st.erase = !st.erase;

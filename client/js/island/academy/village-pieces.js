@@ -12,7 +12,7 @@ import { VILLAGE } from './plan.js';
 export const S = VILLAGE.S;                                    // 1 ô = 3,4 m (cao 1 tầng cũng 3,4 m)
 export const LEVELS = 5;                                       // 5 tầng (Fibonacci)
 export const MAX_PIECES = 377;                                 // tối đa mảnh / lô (Fibonacci)
-export const RUBIK = ['#f4f4f4', '#ffd500', '#ff5800', '#c41e3a', '#0051ba', '#009e60'];   // trắng, vàng, cam, đỏ, lam, lục
+export const RUBIK = ['#f4f4f4', '#ffd500', '#ff5800', '#c41e3a', '#0051ba', '#009e60', '#e3b23c'];   // trắng, vàng, cam, đỏ, lam, lục + VÀNG KIM (chỉ khi có quà 'rubik-vang' từ mã in kèm đồ thật)
 // kind: cell (đặt giữa ô) | edge (cạnh ô: tường, cửa, rào). fit: unit (mô-đun 1×1 Kenney phóng S) | h (cao h m, giữ tỷ lệ) |
 //   floor | stairs | tower | edgekit (model rào dài bất kỳ → dài đúng 1 cạnh ô). solid: floor/ramp/block (đi lên được), wall (chắn).
 export const PIECES = [

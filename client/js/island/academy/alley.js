@@ -12,6 +12,7 @@ import { loadHero } from '../characters.js';
 import { WOODS, CORES } from './magic.js';
 import { CAPES, HATS, BROOMS, PETS } from './wear.js';
 import { SHOP_TALK } from './alley-shops.js';
+import { buildShowcase, createCaseUI } from './showcase.js';   // tủ kính Rubik: lời nhắn phụ huynh + QR cửa hàng + nhập mã quà
 
 const S = 3.4;                                                   // 1 ô module Kenney = 3,4 m (cửa ≈ 2 m)
 const V_CASTLE = 117, V_WALL = 135.2;                            // mặt ngoài dãy đông lâu đài · mặt trong tường thành
@@ -242,27 +243,38 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
       });
       ctx.colliders.push({ x: p.x, z: p.z, r: 0.35, alley: true });
     });
-    built = { g, boxes, houses, lamps, stalls, meshes, keepers, fx };
+    // ---------- tủ kính Rubik (chân tháp phụ, phía tây, quay ra lối) ----------
+    const cu = -34, cp = W(cu, vc(cu) - hw(cu) + 0.2, 0); cp.y = gy(...toLocal(cp.x, cp.z));
+    const sc = buildShowcase(g, cp, Math.atan2(...(() => { const e = W(cu, vc(cu), 0).sub(cp); return [e.x, e.z]; })()));
+    sc.p = cp; ctx.colliders.push({ x: cp.x, z: cp.z, r: 1.1, alley: true });
+    built = { g, boxes, houses, lamps, stalls, meshes, keepers, fx, sc };
   }
 
   function unbuild() {
     if (!built) return;
     for (const b of built.boxes) { const k = ctx.boxes.indexOf(b); if (k >= 0) ctx.boxes.splice(k, 1); }
     for (let i = ctx.colliders.length - 1; i >= 0; i--) if (ctx.colliders[i].alley) ctx.colliders.splice(i, 1);
-    shop.close();
+    shop.close(); caseUI.close();
     ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); });
     built = null;
   }
 
   const center = () => W((U0 + U1) / 2, vc(-30), Y);
   const shop = createShop(ctx, magic);
+  const GIFT_SLOT = { 'cape-hoangkim': 'cape', 'pet-nai': 'pet', 'broom-cauvong': 'broom' };
+  const caseUI = createCaseUI(ctx, id => {   // vật phẩm độc quyền từ mã quà (đồ thật) — không bán bằng xu
+    if (GIFT_SLOT[id] && ctx.wear) { ctx.wear.give(GIFT_SLOT[id], id); ctx.toast(id === 'broom-cauvong' ? '🧹 Đã đeo <b>Chổi Cầu Vồng</b> — bấm nút 🧹 để cưỡi!' : '✨ Đã mặc/gọi vật phẩm mới! Đổi lại ở tiệm trong Phố Phép Thuật.', 4500); }
+    else if (id === 'rubik-vang') { ctx.wear && ctx.wear.keep(id); ctx.account && ctx.account.addItem(id); ctx.toast('🏆 Mở <b>Dựng Lên!</b> ở nhà em, chọn khối Rubik rồi đổi màu tới <b>vàng</b> nhé!', 5000); }
+  });
   function update(dt) {
     if (!built) return;
     const vis = ctx.camera.position.distanceTo(center()) < 233; built.g.visible = vis; if (!vis) return;
     NIGHT.value = ctx.sky && ctx.sky.state ? Math.min(1, ctx.sky.state.night * 1.4) : 0;
     built.fx.update(dt, NIGHT.value);
     if (glowWin) glowWin.material.color.setRGB(0.16 + NIGHT.value * 0.84, 0.11 + NIGHT.value * 0.69, 0.08 + NIGHT.value * 0.37);
-    const pp = ctx.player.pos;
+    const pp = ctx.player.pos, sc = built.sc;
+    sc.spin(performance.now() / 1000);
+    if (Math.hypot(pp.x - sc.p.x, pp.z - sc.p.z) < 3.4 && !ctx.player.vehicle) ctx.offer('🧊 Xem tủ kính Rubik', caseUI.open, 8);
     for (const k of built.keepers) {
       if (!k.hero) continue;
       const d = Math.hypot(pp.x - k.p.x, pp.z - k.p.z);
@@ -357,7 +369,7 @@ function createShop(ctx, magic) {
   // danh sách hàng mỗi tiệm: [{ name, col?, price, state: 'buy' | 'own' | 'on' | 'free', act() }]
   function items(id) {
     const W = wear(), eq = W.eq, L = [];
-    const gear = (slot, list, price) => list.forEach(x => L.push({ name: x.name, col: x.col, price, state: eq[slot] === x.id ? 'on' : W.own(x.id) ? 'own' : 'buy', act: st => st === 'buy' ? buy(id, price, x.name, () => W.give(slot, x.id)) : (W.equip(slot, eq[slot] === x.id ? null : x.id), open(cur, true)) }));
+    const gear = (slot, list, price) => list.filter(x => !x.excl || W.own(x.id)).forEach(x => L.push({ name: x.name, col: x.col, price: x.excl ? 0 : price, state: eq[slot] === x.id ? 'on' : W.own(x.id) ? 'own' : 'buy', act: st => st === 'buy' ? buy(id, price, x.name, () => W.give(slot, x.id)) : (W.equip(slot, eq[slot] === x.id ? null : x.id), open(cur, true)) }));
     const use = (name, price, gain, icon) => L.push({ name: `${icon} ${name} (+${gain} năng lượng phép)`, price, state: 'buy', act: () => buy(id, price, name, () => magic.setMana(magic.mana + gain)) });
     if (id === 'wand') {
       if (!magic.hasWand) L.push({ name: '🪄 Cây đũa đầu tiên của em', price: 0, state: 'free', act: () => { close(); magic.chooseWand(true); } });
