@@ -1,4 +1,4 @@
-// tutorial.js — Hướng dẫn chơi lần đầu cho học sinh nhỏ tuổi: 3 bước ngắn, chữ to, có thể bỏ qua; chỉ hiện 1 lần (localStorage 'island.tut').
+// tutorial.js — Hướng dẫn chơi cho học sinh nhỏ tuổi: 3 bước ngắn, chữ to, có thể bỏ qua. KHÔNG tự bật: chỉ mở bằng nút ❓ Hướng dẫn (menu ☰).
 // Bước 1 Đi lại (tự sang bước khi em đã đi được 5 m) · Bước 2 Vào lớp học/mini game · Bước 3 Xe, thú cưỡi, bản đồ (nút nhấp nháy để chỉ chỗ).
 // Mở lại: ctx.tutorial.show(). Tỷ lệ vàng: thẻ rộng 377 px, chữ 13 → 21 → 34 px (×φ), bo góc 21 px, chuyển cảnh 0,618 s.
 const KEY = 'island.tut';
@@ -48,18 +48,12 @@ export function createTutorial(ctx) {
     ctx.sfx && ctx.sfx('ui');
   }
   function go(k) { if (k >= STEPS.length) return done(); i = k; start = null; moved = 0; render(); el.classList.add('on'); }
-  function done() { i = -1; el.classList.remove('on'); glowOff(); try { localStorage.setItem(KEY, '1'); } catch (e) {} ctx.toast && ctx.toast('🌟 Chúc em khám phá vui! Mở lại hướng dẫn: nút <b>❓</b> trong bảng ☀️', 3000); }
-  const seen = () => { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } };
-  // chờ đảo nạp xong (trường + nhân vật) rồi mới hiện
-  let waitT = 0;
+  function done() { i = -1; el.classList.remove('on'); glowOff(); try { localStorage.setItem(KEY, '1'); } catch (e) {} }
   return {
     show: () => go(0),
     get open() { return i >= 0; },
     update(dt) {
-      if (i < 0) {
-        if (waitT >= 0 && !seen() && ctx.school && ctx.school.gate && ctx.player && ctx.player.hero) { waitT += dt; if (waitT > 1.618) { waitT = -1; go(0); } }
-        return;
-      }
+      if (i < 0) return;
       if (i === 0) {   // bước 1: tự sang bước 2 khi em đã đi được 5 m (Fibonacci)
         const p = ctx.player.pos; if (!start) start = { x: p.x, z: p.z };
         moved = Math.hypot(p.x - start.x, p.z - start.z); if (moved > 5) go(1);

@@ -20,6 +20,7 @@ import { createAircraft } from './island/aircraft.js';
 import { createGlider } from './island/glider.js';
 import { createMounts } from './island/mounts.js';
 import { createBrooms } from './island/brooms.js';
+import { createSilverBoard } from './island/silver-board.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
@@ -55,6 +56,7 @@ import { createSpellbook } from './island/spellbook.js';
 import { createTrain } from './island/train/index.js';
 import { createRegions } from './island/regions/index.js';
 import { createDestiny } from './island/zone-destiny.js';
+import { createLighthouse } from './island/lighthouse/index.js';
 // mini game 3D: mỗi nhóm 1 dòng import register (xem mg/host.js)
 import { createVrmNpc } from './island/vrm/vrm-npc.js';
 import { createPlayerVrm } from './island/vrm/player-vrm.js';
@@ -126,6 +128,7 @@ const academy = ctx.academy = createAcademy(ctx); // Học viện Pha Lê: đả
 const spells = ctx.spells = createSpellbook(ctx, academy.magic); // đũa phép dùng khắp thế giới: hô thần chú, phép mới, đồng bộ mạng, áo choàng chủ game
 const train = ctx.train = createTrain(ctx); // Tàu Pha Lê: tàu hơi nước từ ga bờ tây bắc qua đảo Đồi Thông, hầm, cầu cạn vòm đá tới cao nguyên Học viện
 const regions = ctx.regions = createRegions(ctx); // 4 vùng mới: Núi Tuyết (cầu), Làng Cổ (cầu), Quần đảo San Hô (thuyền), Thành phố Tương lai (thuyền + đường băng) — tải theo chunk
+const lighthouse = ctx.lighthouse = createLighthouse(ctx); // Hải đăng Mũi Sóng: đảo đá tây nam 233 m ngoài khơi, tháp 34 m đi vào được (144 bậc), chùm sáng quét đêm, ông Bảy gác đèn
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
@@ -137,7 +140,11 @@ const events = ctx.events = createEvents(ctx); if (/[?&]test\b/.test(location.se
 const destiny = createDestiny(ctx); // Rừng Thiên Định: khu rừng ẩn ngoài vịnh bắc, lối mòn bí mật, cây ước nguyện (zone-destiny.js)
 const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms, draw call, tam giác, bộ nhớ… // 👤 đăng nhập / khách / Lưu đăng nhập, xu & vật phẩm (data/account.js)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
-const tutorial = ctx.tutorial = createTutorial(ctx); // hướng dẫn chơi lần đầu: 3 bước, bỏ qua được (tutorial.js)
+const tutorial = ctx.tutorial = createTutorial(ctx); // ❓ hướng dẫn chơi: chỉ mở khi bấm (menu ☰), không tự bật (tutorial.js)
+// 🎬 clip mở đầu (lần đầu vào game, sau đăng nhập): tải lười intro.js; xem lại ở menu ☰. ?test bỏ qua (thêm &intro để thử)
+ctx.intro = { open: false, tick: null, play: (o = {}) => ctx.intro.open ? null : document.body.classList.contains('st-cut') || ctx.mgActive ? ctx.toast('🎬 Xem lại clip sau khi xong đoạn hội thoại / trò chơi nhé!') : import('./island/intro.js').then(m => m.playIntro(ctx, o)).catch(e => { console.warn('intro', e); ctx.intro.open = false; }) };
+{ const Q = location.search, iv = setInterval(() => { if (loading.veil || !ctx.warmed) return; const a = ctx.account, box = document.getElementById('accBox'); if (!a || !a.profile || (box && !box.hidden) || document.body.classList.contains('rs-modal')) return; clearInterval(iv);
+  let seen = !!a.profile.introSeen; try { seen = seen || localStorage.getItem('island.intro') === '1'; } catch (e) {} if ((!seen && !/[?&]test\b/.test(Q)) || /[?&]intro\b/.test(Q)) ctx.intro.play({ first: true }); }, 300); }
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
 const ambience = ctx.ambience = createAmbience(ctx); // đèn đêm, đom đóm, khói bếp, sương thấp, cá, xe rao, âm thanh theo giờ, chỉnh màu
 const sealife = ctx.sealife = createSealife(ctx); // thế giới biển: san hô, đàn cá, sứa, rùa, cá đuối, cá heo, Bách khoa biển
@@ -160,6 +167,7 @@ const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp
 const photo = createPhoto(ctx); // 📷 chế độ chụp ảnh: dừng thời gian, camera tự do, bộ lọc, lưu ảnh có khung logo (photo.js)
 const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, xu bay vào HUD, màn chuyển, tên vùng điện ảnh (feel.js)
 const glider = createGlider(ctx); // Diều Lượn Rubik: rơi từ cao tự bung, cột khí nóng, 3·5·8 vòng, nút đỏ nhảy khỏi máy bay (glider.js)
+const silverBoard = ctx.silverBoard = createSilverBoard(ctx); // 🏄 Ván bạc bay (phím U) + đua ván (mg/sport/board-race.js)
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -172,6 +180,8 @@ player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2);
   addEventListener('pointerdown', e => { if (!menu.hidden && !menu.contains(e.target) && e.target !== more) show(false); }, true);
 }
 document.getElementById('bMenu').onclick = () => school.menu();
+{ const m = document.getElementById('moreMenu'), add = (id, t, fn) => { const b = document.createElement('button'); b.id = id; b.textContent = t; b.onclick = fn; m.appendChild(b); };
+  add('bHelp', '❓ Hướng dẫn', () => tutorial.show()); add('bIntro', '🎬 Xem lại clip mở đầu', () => ctx.intro.play()); }
 
 // Đồ trang trí (Quaternius/Kenney CC0): khu cắm trại, hoa, nấm, gốc cây, pha lê quanh đền (khu I rừng & đền, layout.js)
 {
@@ -215,10 +225,12 @@ renderer.setAnimationLoop(() => {
   vrmNpc.update(dt);
   brooms.update(dt);
   glider.update(dt);
+  silverBoard.update(dt);
   academy.update(dt);
   spells.update(dt); // sau thị trấn/học viện: Bay Lên cộng độ cao lên người đã đặt vị trí
   train.update(dt);
   regions.update(dt);
+  lighthouse.update(dt);
   sky.update(dt, camera, player.pos);
   weather.update(dt, clock.elapsedTime);
   eggs.update(dt, clock.elapsedTime);
@@ -241,6 +253,7 @@ renderer.setAnimationLoop(() => {
   ctx.flushOffer();
   brightness.update();
   tutorial.update(dt);
+  if (ctx.intro.tick) ctx.intro.tick();   // 🎬 clip mở đầu: camera điện ảnh (sau mọi cập nhật, trước khi vẽ)
   perf.update(dt);
   unfreezeGuard(dt);
   // biên dịch trước mọi shader của thế giới (song song nếu GPU hỗ trợ KHR_parallel_shader_compile) khi trường dựng xong
@@ -272,7 +285,7 @@ function unfreezeGuard(dt) {
 
 // ---------- Chất lượng tự động: mức (0..3) + độ phân giải động (logic trong autoq.js) ----------
 // mức 0: đầy đủ · 1: tắt bloom, giảm độ phân giải · 2: không MSAA, cỏ/cây chi tiết gần hơn, bóng nhỏ · 3: tắt bóng đổ
-const AQ = createAutoQ({ low: CFG.quality.lowFps, high: CFG.quality.highFps, prl: [pr, Math.min(pr, 1.15), 1.0, 0.85] }), Q = AQ.q;
+const AQ = createAutoQ({ low: CFG.quality.lowFps, high: CFG.quality.highFps, prl: [pr, Math.min(pr, 1.15), 1.0, 0.85], step: CFG.isMobile ? 2 : 1, crit: CFG.isMobile ? 1.618 : 2.618 }), Q = AQ.q;
 let qLock = false, appliedL = -1; const cheapMSAA = renderer.extensions.has('WEBGL_multisampled_render_to_texture');
 const base = { grass: terrain.state.grassDist, tree: terrain.state.treeDist };
 function applyQuality() {

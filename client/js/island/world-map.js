@@ -112,6 +112,8 @@ body.rs-modal #bMap{display:none}`;
     if (ctx.eggs && ctx.eggs.spots) for (const q of ctx.eggs.spots()) if (!q.hide) L.push({ n: q.n, x: q.x, z: q.z, ic: q.ic, spot: true });
     { const t = ctx.story && ctx.story.state().started && ctx.story.target(); if (t) L.push({ n: '🧩 Nhiệm vụ cốt truyện', x: t[0], z: t[1], ic: '🧩' }); }   // story/: điểm cần tới tiếp theo
     if (ctx.glider) for (const q of ctx.glider.spots()) L.push({ n: q.n, x: q.x, z: q.z, ic: q.ic });   // bệ lượn 🪁 (glider.js)
+    // mốc do phần khác đăng ký (ctx.mapPlaces: hải đăng…); mốc ngoài khung bản đồ → ghim ở mép gần nhất kèm ghi chú q.far
+    for (const q of ctx.mapPlaces || []) { const x = Math.max(B.x0 + 13, Math.min(B.x1 - 13, q.x)), z = Math.max(B.z0 + 13, Math.min(B.z1 - 13, q.z)), out = x !== q.x || z !== q.z; L.push({ n: out && q.far ? `${q.n} (${q.far})` : q.n, x, z, ic: q.ic }); }
     const sc = ctx.school; if (!sc) return L;
     if (sc.gate) L.push({ n: 'Cổng trường', x: sc.gate[0], z: sc.gate[1], ic: '🏫' });
     const RS = sc.RS;

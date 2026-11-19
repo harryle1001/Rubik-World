@@ -2,7 +2,7 @@
 // - Rơi từ trên cao (> 5 m hoặc > 1 s) → diều TỰ BUNG; bấm Nhảy giữa không trung để bung/thu.
 // - Lượn: ⬅➡ rẽ · ⬆ chúc xuống tăng tốc · ⬇ ngẩng lên giảm tốc; cột khí nóng (lửa trại, ống khói, vách đón gió — có hạt bay lên) nâng người lên; gió weather.js đẩy trôi nhẹ.
 // - Thử thách: 3 bệ lượn với 3 · 5 · 8 vòng (Fibonacci), kỷ lục quãng lượn xa (localStorage), điểm lượn trên bản đồ M, thẻ kiến thức lực nâng / lực cản / trọng lực.
-// - Nút đỏ khi lái máy bay (phím X / U): nhảy ra → rơi tự do 1 s → bung diều; máy bay tự lái về đường băng (aircraft.eject).
+// - Nút đỏ khi lái máy bay (phím X): nhảy ra → rơi tự do 1 s → bung diều; máy bay tự lái về đường băng (aircraft.eject).
 //   Thay cho dù tròn parachute.js cũ (đã gộp vào đây): giữ thử thách "đáp trúng đích" ở các bãi ctx.chuteTargets (vòng 13 · 8 · 3 m → 1–3 ⭐) và ctx.chute.active.
 // Tự chứa: ocean.js gọi createGlider(ctx) và glider.update(dt, t) SAU player.update/aircraft.update. player.js chỉ hỏi self.glide { on, steer, sink, camAdd }.
 import * as THREE from 'three';
@@ -251,7 +251,7 @@ export function createGlider(ctx) {
   document.head.appendChild(css);
   const hud = document.createElement('div'); hud.id = 'glHud'; hud.innerHTML = '<span>🪁</span><i><b></b></i><span class="t"></span>'; document.body.appendChild(hud);
   const hudBar = hud.querySelector('b'), hudTxt = hud.querySelector('.t');
-  const bEject = document.createElement('button'); bEject.id = 'bEject'; bEject.hidden = true; bEject.title = 'Nhảy khỏi máy bay, bung diều lượn (X / U)'; bEject.innerHTML = '<span>🪁</span>Nhảy ra' + (hasTouch ? '' : ' (X)'); document.body.appendChild(bEject);
+  const bEject = document.createElement('button'); bEject.id = 'bEject'; bEject.hidden = true; bEject.title = 'Nhảy khỏi máy bay, bung diều lượn (X)'; bEject.innerHTML = '<span>🪁</span>Nhảy ra' + (hasTouch ? '' : ' (X)'); document.body.appendChild(bEject);
   // bãi đáp trúng đích (regions/ ghi ctx.chuteTargets): vòng đỏ trắng 13 · 8 · 3 m + cột sáng, chỉ hiện khi đang rơi/lượn sau khi nhảy khỏi máy bay
   const H0 = (x, z) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, 999) : -99);
   let targets = [], tMesh = null, tBest = 0; try { tBest = +localStorage.getItem(T_KEY) || 0; } catch (e) {}
@@ -289,7 +289,7 @@ export function createGlider(ctx) {
     } else ctx.toast(`🪁 Tiếp đất an toàn sau khi lượn <b>${Math.round(d)} m</b>!${nt ? ` Bãi đáp gần nhất: <b>${nt.t.name}</b> (cách ${Math.round(nt.d)} m) — lần sau nhắm vòng đỏ trắng để nhận ⭐.` : ''}`, 5500);
   }
   bEject.addEventListener('pointerdown', e => { e.preventDefault(); eject(); });
-  addEventListener('keydown', e => { if ((e.code === 'KeyX' || e.code === 'KeyU') && !e.repeat) eject(); });
+  addEventListener('keydown', e => { if (e.code === 'KeyX' && !e.repeat) eject();   // U đã là phím Ván bạc bay });
   const bJump = document.getElementById('bJump'); let jumpLb = '';
   const setJump = s => { if (bJump && jumpLb !== s) { jumpLb = s; bJump.textContent = s || 'Nhảy'; } };
 
