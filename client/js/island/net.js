@@ -70,5 +70,5 @@ export function createNet(ctx) {
       o.h.legL.rotation.x = Math.sin(o.phase) * a; o.h.legR.rotation.x = -Math.sin(o.phase) * a; o.h.armL.rotation.x = -Math.sin(o.phase) * a; o.h.armR.rotation.x = Math.sin(o.phase) * a;
     }
   }
-  return { update, others, get connected() { return !!(sock && sock.connected); } };
+  return { update, others, get sock() { return sock; }, get connected() { return !!(sock && sock.connected); } };
 }

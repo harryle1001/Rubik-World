@@ -208,6 +208,9 @@ io.on('connection', socket => {
 });
 // ---------- Đảo Rubik 3D (ocean.html): namespace riêng /island, chỉ đồng bộ vị trí người chơi ----------
 const island = io.of('/island'), islanders = new Map();
+const HOUSES_FILE = path.join(ROOT, 'data', 'houses.json'); let HOUSES = {}, housesDirty = false;
+try { HOUSES = JSON.parse(fs.readFileSync(HOUSES_FILE, 'utf8')) || {}; } catch (e) {}
+setInterval(() => { if (!housesDirty) return; housesDirty = false; fs.mkdir(path.dirname(HOUSES_FILE), { recursive: true }, () => fs.writeFile(HOUSES_FILE, JSON.stringify(HOUSES), () => {})); }, 3000);
 const num = (v, lo, hi) => (Number.isFinite(+v) ? Math.max(lo, Math.min(hi, +v)) : 0);
 island.on('connection', socket => {
   let me = null, last = 0;
@@ -224,6 +227,17 @@ island.on('connection', socket => {
     socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
   });
   socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
+  // Làng Phù Thuỷ Nhỏ (academy/village.js): mỗi tên 1 ngôi nhà; lần lưu đầu "giữ chỗ" bằng mã máy (token) → người khác không ghi đè được
+  socket.on('house:save', (d, ack) => {
+    const cb = typeof ack === 'function' ? ack : () => {};
+    if (!d || typeof d.name !== 'string' || typeof d.token !== 'string' || !Array.isArray(d.pieces)) return cb({ err: 'Dữ liệu nhà không hợp lệ.' });
+    const name = d.name.trim().slice(0, 20), tok = d.token.slice(0, 64); if (!name) return cb({ err: 'Thiếu tên.' });
+    const old = HOUSES[name]; if (old && old.token !== tok) return cb({ err: 'Tên này đã có nhà của một bạn khác trên máy khác — nhà em chỉ lưu trên máy này.' });
+    const pieces = d.pieces.slice(0, 377).filter(p => Array.isArray(p) && p.length === 6 && typeof p[0] === 'string' && p[0].length < 13 && p.slice(1).every(n => Number.isInteger(n) && n >= 0 && n < 13));
+    HOUSES[name] = { token: tok, pieces, at: Date.now() }; housesDirty = true; cb({ ok: true });
+  });
+  socket.on('house:get', (name, ack) => { if (typeof ack !== 'function') return; const h = HOUSES[String(name || '')]; ack(h ? { name, pieces: h.pieces, at: h.at } : null); });
+  socket.on('house:list', (_, ack) => { if (typeof ack !== 'function') return; ack(Object.entries(HOUSES).map(([name, h]) => ({ name, n: h.pieces.length, at: h.at })).sort((a, b) => b.at - a.at).slice(0, 55)); });
 });
 setInterval(() => io.emit('leaderboard', leaderboard()), 3000);
 setInterval(() => io.to('vuon').emit('plots', plots), 5000);
