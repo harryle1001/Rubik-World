@@ -12,15 +12,15 @@ const G = 9.8, TERM = 34, OPEN_T = 0.8, RINGS = [13, 8, 3], BEST_KEY = 'rs.chute
 
 export function createParachute(ctx) {
   const { scene, camera, player, terrain } = ctx, W = CFG.island.waterLevel, mobile = CFG.isMobile;
-  // ---------- nút 🪂 (điện thoại: ô trái cột nút, 84 px; máy tính: góc phải dưới + phím J) ----------
+  // ---------- nút 🪂 (điện thoại: ô trái cột nút, 84 px; máy tính: góc phải dưới + phím U — J là gọi chổi) ----------
   const css = document.createElement('style');
   css.textContent = `#bChute{position:fixed;z-index:27;right:calc(max(16px,env(safe-area-inset-right)) + 97px);bottom:max(18px,env(safe-area-inset-bottom));width:84px;height:84px;border-radius:50%;border:3px solid #fff;background:#e0503ee6;color:#fff;font:800 13px/1.15 system-ui;touch-action:none;-webkit-user-select:none;user-select:none;box-shadow:0 5px 13px #0006;cursor:pointer}
 #bChute i{display:block;font-style:normal;font-size:30px;line-height:1}#bChute.open{background:#3f8a73e6}
 @media (pointer:fine){#bChute{right:max(16px,env(safe-area-inset-right));bottom:calc(max(13px,env(safe-area-inset-bottom)) + 89px);width:89px;height:89px}}body.rs-modal #bChute{display:none}`;
   document.head.appendChild(css);
   const btn = document.createElement('button'); btn.id = 'bChute'; btn.hidden = true; document.body.appendChild(btn);
-  const setBtn = (on, open) => { if (btn.hidden === !on && btn._o === open) return; btn.hidden = !on; btn._o = open; btn.className = open ? 'open' : ''; btn.innerHTML = `<i>🪂</i>${open ? 'Bung dù' : 'Thả dù'}${mobile ? '' : ' (J)'}`; };
-  const keys = new Set(); addEventListener('keydown', e => { keys.add(e.code); if (e.code === 'KeyJ' && !e.repeat) press(); }); addEventListener('keyup', e => keys.delete(e.code)); addEventListener('blur', () => keys.clear());
+  const setBtn = (on, open) => { if (btn.hidden === !on && btn._o === open) return; btn.hidden = !on; btn._o = open; btn.className = open ? 'open' : ''; btn.innerHTML = `<i>🪂</i>${open ? 'Bung dù' : 'Thả dù'}${mobile ? '' : ' (U)'}`; };
+  const keys = new Set(); addEventListener('keydown', e => { keys.add(e.code); if (e.code === 'KeyU' && !e.repeat) press(); }); addEventListener('keyup', e => keys.delete(e.code)); addEventListener('blur', () => keys.clear());
   btn.addEventListener('pointerdown', e => { e.preventDefault(); press(); });
 
   // ---------- dù cánh vòm 9 ô màu Rubik + dây ----------
