@@ -118,3 +118,6 @@ Toà học tập 3 tầng & sân trường (client/js/island/school-interior.js,
   furn_* (KayKit Furniture Bits), school_desk/school_chair/school_chalkboard, music_*, vehicle_bicycle (OpenGameArt CC0),
   sport_hoop/sport_bench/sport_ball_basket, farm_carrot/farm_corn, prop_crate_tomatoes, prop_bucket/prop_shovel/prop_bench, fence_picket_low (Kenney/Quaternius CC0).
   Bản đồ Việt Nam, bảng phấn, tranh học sinh, biển tên: vẽ bằng canvas trong code.
+4 Nhà Tứ Linh của Học viện (academy/houses*.js, commons.js): không thêm tệp mới.
+  Nội thất phòng sinh hoạt chung dùng lại kit/furn_* (Kenney Furniture Kit, CC0) + qn_bush_berry (Quaternius, CC0) đã ghi ở trên, tô màu nhà bằng shader;
+  rùa thần = models/rua.glb (tự tạo); linh vật/cờ vẽ bằng canvas với emoji của phông hệ thống; lối vào, giường, lò sưởi, đồng hồ cát dựng khối trong code.

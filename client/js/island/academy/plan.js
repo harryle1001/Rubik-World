@@ -108,3 +108,17 @@ export function heightLocal(u, v, x, z) {
 export function heightAt(x, z) { const [u, v] = toLocal(x, z); return heightLocal(u, v, x, z); }
 
 export const BASE_Y = PLAT.y;
+
+// ---------- 4 NHÀ TỨ LINH (houses.js) — dời vị trí chỉ cần sửa ở đây ----------
+// lối vào bí mật ở 4 góc sân (sát mặt trong dãy bao, gần 4 tháp góc): [u, v, hướng mặt (rad, 0 = +u)]
+// phòng sinh hoạt chung = "không gian phép" ngay trên lối vào, cao POCKET m (dịch chuyển vào/ra như cầu thang tháp thiên văn)
+// phòng 21 × 13 × 8 m (21/13 ≈ 13/8 ≈ φ); tải hình khi cách lối vào < 89 m
+export const HOUSE_AT = {
+  long: [21, -108.5, Math.PI / 2],     // sân tây, góc trước — cánh cửa đá
+  quy: [-89, -108.5, Math.PI / 2],     // sân tây, góc sau — thác nước
+  phung: [21, 108.5, -Math.PI / 2],    // sân đông, góc trước — bức tranh đố toán
+  lan: [-70, 108.5, -Math.PI / 2],     // sân đông, góc sau — cây cổ thụ
+};
+export const HOUSE_ROOM = { y: 233, w: 21, d: 13, h: 8, load: 89 };
+// Đại sảnh: quả cầu Tứ Linh (lễ chọn nhà) ở lối giữa trước bục; 4 đồng hồ cát pha lê 2 bên bục; 4 cờ nhà trên tường sau
+export const HALL_HOUSE = { orb: [CASTLE_L.hall.u0 + 6.5, 0], glass: [[CASTLE_L.hall.u0 + 3, -7.9], [CASTLE_L.hall.u0 + 6, -7.9], [CASTLE_L.hall.u0 + 3, 7.9], [CASTLE_L.hall.u0 + 6, 7.9]], banner: [-7, -2.6, 2.6, 7] };

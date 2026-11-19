@@ -76,6 +76,14 @@ export function createAccount() {
   acc.addItem = id => { if (!acc.profile || acc.profile.inv[id]) return; acc.profile.inv[id] = Date.now(); acc.save(); emit(); };   // như 2D: inv[id] = lúc nhận
   acc.hasItem = id => !!(acc.profile && acc.profile.inv[id]);
   acc.needExp = needExp;
+  // Nhà Tứ Linh (academy/houses.js): profile.house = { id, at, changes, pts (tuần), week, total, daily }; đổi nhà được 1 lần
+  Object.defineProperty(acc, 'house', { get: () => acc.profile && acc.profile.house && acc.profile.house.id || null });
+  acc.setHouse = id => {
+    const p = acc.profile; if (!p) return false; const h = p.house;
+    if (h && h.id) { if (h.id === id || (h.changes | 0) >= 1) return false; h.changes = (h.changes | 0) + 1; h.id = id; h.pts = 0; }
+    else p.house = { id, at: Date.now(), changes: 0, pts: 0, week: 0, total: 0, daily: null };
+    acc.save(); emit(); return true;
+  };
   setInterval(() => acc.save(), 30000);
   addEventListener('pagehide', () => acc.save());
   return acc;
