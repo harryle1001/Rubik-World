@@ -5,6 +5,7 @@
 // Tỷ lệ vàng: bàn 9 ô × φ m ≈ 13 m (Fibonacci), quân dẹt cao 1/φ³, điểm sao (hoshi) 5 điểm, camera 21 m.
 import * as THREE from 'three';
 import { PHI } from '../../layout.js';
+import { quickQuiz } from '../quick-quiz.js';
 
 const N = 9, C = PHI, TOP = 0.42, KOMI = 6.5;
 const pos = (i, j) => [(i - (N - 1) / 2) * C, (j - (N - 1) / 2) * C];
@@ -37,17 +38,18 @@ function score(B) {
   return { b, w: w + KOMI };
 }
 // AI đơn giản cho người mới: ưu tiên bắt quân, cứu nhóm bị atari, tránh tự đặt vào atari, chiếm điểm sao / gần quân
-function aiMove(B, prevKey, level) {
+function aiMove(B, prevKey, level, who = 'w') {
+  const foe = who === 'w' ? 'b' : 'w';
   let best = null, bv = -1e9;
   for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
-    const r = tryMove(B, i, j, 'w', prevKey); if (!r) continue;
+    const r = tryMove(B, i, j, who, prevKey); if (!r) continue;
     let v = r.captured.length * 30;
     const me = group(r.B, i, j); if (me.libs.size === 1) v -= 40; else v += Math.min(me.libs.size, 4) * 2;
-    for (const [a, b] of nb(i, j)) { if (B[a][b] === 'w' && group(B, a, b).libs.size === 1) v += 25; if (B[a][b] === 'b') { const g = group(r.B, a, b); if (g.libs.size === 1) v += 12; v += 3; } }
+    for (const [a, b] of nb(i, j)) { if (B[a][b] === who && group(B, a, b).libs.size === 1) v += 25; if (B[a][b] === foe) { const g = group(r.B, a, b); if (g.libs.size === 1) v += 12; v += 3; } }
     const edge = Math.min(i, j, N - 1 - i, N - 1 - j); v += edge === 0 ? -6 : edge === 2 ? 4 : 0;
     // không lấp mắt của chính mình
-    if (nb(i, j).every(([a, b]) => B[a][b] === 'w')) v -= 30;
-    v += Math.random() * (level === 'easy' ? 14 : 4);
+    if (nb(i, j).every(([a, b]) => B[a][b] === who)) v -= 30;
+    v += Math.random() * ({ easy: 34, medium: 8, hard: 0 }[level] ?? 34);   // Dễ: hay đi lạc, trẻ dễ bắt quân
     if (v > bv) { bv = v; best = { i, j, r, v }; }
   }
   return best && best.v > -20 ? best : null;   // không còn nước tốt → bỏ lượt
@@ -72,7 +74,7 @@ export function startGo(ctx, { api }) {
   const libM = new THREE.InstancedMesh(new THREE.CircleGeometry(0.22, 12).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#7ee07a', transparent: true, opacity: 0.85, depthWrite: false }), N * N); libM.count = 0; libM.frustumCulled = false; root.add(libM);
   const _o = new THREE.Object3D();
 
-  let B, prevKey = null, turn = 'b', over = false, busy = false, passes = 0, capB = 0, capW = 0, t0 = 0, lastMv = null;
+  let secShown = -1, B, prevKey = null, turn = 'b', over = false, busy = false, passes = 0, capB = 0, capW = 0, t0 = 0, lastMv = null;
   function draw() {
     let nb_ = 0, nw = 0;
     for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) { const v = B[i][j]; if (!v) continue; const [x, z] = pos(i, j); _o.position.set(x, TOP, z); _o.rotation.set(0, 0, 0); _o.scale.setScalar(1); _o.updateMatrix(); (v === 'b' ? Bk : Wt).setMatrixAt(v === 'b' ? nb_++ : nw++, _o.matrix); }
@@ -115,7 +117,7 @@ export function startGo(ctx, { api }) {
   function finish() {
     over = true; const s = score(B), win = s.b > s.w, t = Math.round(performance.now() / 1000 - t0);
     if (win) { me.emote('cheer'); ba && ba.say('Cháu giỏi lắm!'); } else ba && ba.emote('cheer');
-    api.end({ score: win ? Math.round((s.b - s.w) * 10 + capB * 5 + (level === 'medium' ? 89 : 34)) : null, save: win, title: win ? '⚫ Đen thắng — Em thắng!' : '⚪ Trắng thắng ván này',
+    api.end({ score: win ? Math.round((s.b - s.w) * 10 + capB * 5 + ({ medium: 89, hard: 144 }[level] || 34)) : null, save: win, title: win ? '⚫ Đen thắng — Em thắng!' : '⚪ Trắng thắng ván này',
       text: `Đếm điểm: Đen ${s.b} · Trắng ${s.w} (đã cộng ${KOMI} điểm bù cho Trắng vì đi sau). Bắt được ${capB} quân, ${Math.floor(t / 60)} phút ${t % 60} giây. Cờ vây là trò chơi chiếm đất cổ nhất thế giới — hơn 2.500 năm!` });
   }
   // ---------- Chạm ----------
@@ -126,7 +128,13 @@ export function startGo(ctx, { api }) {
     const i = Math.round(_p.x / C + (N - 1) / 2), j = Math.round(_p.z / C + (N - 1) / 2); return i >= 0 && j >= 0 && i < N && j < N ? [i, j] : null;
   }
   // ---------- HUD ----------
-  [['easy', '🙂 Dễ'], ['medium', '🤔 Vừa']].forEach(([lv, t]) => { const b = hud.button(t, () => { if (level === lv) return; level = lv; try { localStorage.setItem('mg.go.level', lv); } catch (e) {} api.restart(); }); b.classList.toggle('on', level === lv); });
+  [['easy', '🙂 Dễ'], ['medium', '🤔 Vừa'], ['hard', '🔥 Khó']].forEach(([lv, t]) => { const b = hud.button(t, () => { if (level === lv) return; level = lv; try { localStorage.setItem('mg.go.level', lv); } catch (e) {} api.restart(); }); b.classList.toggle('on', level === lv); });
+  hud.button('💡', async () => {   // gợi ý: trả lời đúng câu hỏi → chấm sáng nước nên đi
+    if (over || busy || turn !== 'b') return; busy = true; const ok = await quickQuiz(api, ['toan', 'khoahoc'], '💡 Trả lời đúng để mở gợi ý'); busy = false; if (!ok || over) return;
+    const m = aiMove(B, prevKey, 'hard', 'b'); if (!m) { hud.msg('💡 Không còn nước tốt — em nên <b>Bỏ lượt</b> để đếm điểm.', 3000); return; }
+    const [x, z] = pos(m.i, m.j); _o.position.set(x, TOP + 0.02, z); _o.scale.setScalar(1.6); _o.updateMatrix(); libM.setMatrixAt(0, _o.matrix); libM.count = 1; libM.instanceMatrix.needsUpdate = true;
+    hud.msg(m.r.captured.length ? `💡 Đặt ở chấm xanh để <b>bắt ${m.r.captured.length} quân</b>!` : '💡 Thử đặt ở chấm xanh: giữ nhiều khí, vây đất rộng.', 3000);
+  }, 'sm');
   hud.button('✋ Bỏ lượt', pass);
   hud.button('🧮 Đếm thử', () => { if (!B) return; const s = score(B); hud.msg(`Nếu dừng bây giờ: Đen <b>${s.b}</b> · Trắng <b>${s.w}</b> (gồm quân trên bàn + đất vây kín + ${KOMI} bù).`, 3500); });
   // ---------- Nhân vật ----------
@@ -138,7 +146,7 @@ export function startGo(ctx, { api }) {
   reset();
   return {
     tap(e) { const p = ptAt(e); if (p) play(p[0], p[1]); },
-    update() { if (!over && t0) hud.time(performance.now() / 1000 - t0); if (mark.visible) mark.material.color.setHSL(0.0, 0.7, 0.5 + Math.sin(performance.now() / 300) * 0.1); },
+    update() { if (!over && t0) { const s = performance.now() / 1000 - t0 | 0; if (s !== secShown) hud.time(secShown = s); } if (mark.visible) mark.material.color.setHSL(0.0, 0.7, 0.5 + Math.sin(performance.now() / 300) * 0.1); },
     dispose() { over = true; },
   };
 }
