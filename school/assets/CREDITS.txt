@@ -85,3 +85,7 @@ v64p · Hành tinh + biển/đảo + mây pixel (js/ext/v64p-sea.js, js/ext/v64p
   Biển và đảo nhỏ: tiny-swords Terrain (Water màu nước, Foam, Rocks, Ground Grass/Sand/Elevation, Bridge), Resources/Trees,
     Buildings/House (Blue/Red/Yellow), Deco 03/06/09 (Pixel Frog, CC0). Không dùng lính, vũ khí, cháy nổ.
   Mây pixel: ninja-adventure/FX/Particle/Clouds.png (Pixel-boy & AAA, CC0), tô màu và ghép hình bằng code.
+v64s · Khu trường kiểu Ninja Adventure (js/ext/v64s-*.js)
+  Dùng tile nền/nhà/cây/nước/ruộng/chi tiết sàn + 28 nhân vật (Actor/Characters) của Ninja Adventure (CC0) và cây thông
+  Tiny Swords Resources/Trees/Tree.png (CC0). Toà nhà ghép kiểu 9 mảnh từ tile nhà NA; cổng, sân bóng rổ, khu vui chơi,
+  ô tô, ghế đá, đèn đường vẽ thêm bằng code theo bảng màu NA. Không dùng nhạc/âm thanh, lính, vũ khí.

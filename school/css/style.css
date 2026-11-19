@@ -1762,3 +1762,9 @@ body.v60tTps #v34Swipe{opacity:.55}
 
 /* v64m: bản đồ Puny World — giữ điểm ảnh sắc nét */
 #v32MapCv,#miniCv{image-rendering:pixelated}
+/* v64s: chọn nhân vật Ninja Adventure ở khu trường mới */
+#v64sPick h2{font:800 18px Nunito,'Be Vietnam Pro',sans-serif}
+#v64sPick .v64sRow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+#v64sPick .v64sCh{width:56px;height:56px;min-width:44px;border-radius:12px;border:2px solid rgba(255,255,255,.25);background:#2a2f4a;display:grid;place-items:center;font:700 22px Nunito,sans-serif;cursor:pointer;padding:0}
+#v64sPick .v64sCh canvas{width:48px;height:48px;image-rendering:pixelated}
+#v64sPick .v64sCh.on{border-color:#ffd23f;box-shadow:0 0 0 2px #ffd23f inset}
