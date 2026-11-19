@@ -385,7 +385,7 @@ export function createSchoolInterior(ctx) {
   async function setTeacher(name) {
     if (teacherName === name || !crew.heroes[0]) return; teacherName = name;
     const h = await loadHero('student-female-c', 1.62, teacherLook(name)); if (!h) return;
-    const old = crew.heroes[0].h; scene.remove(old.model); h.npc = true; h.model.visible = old.model.visible; scene.add(h.model); crew.heroes[0] = { h, st: {} };
+    const old = crew.heroes[0].h; scene.remove(old.model); h.npc = true; scene.add(h.model); crew.heroes[0] = { h, st: {} }; placeCrew(crew.room, crew.mode);
   }
   function placeCrew(room, mode) {
     crew.room = room; crew.mode = mode;

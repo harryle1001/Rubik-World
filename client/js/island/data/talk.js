@@ -100,9 +100,10 @@ export const TIMETABLE = [   // index = thứ (0 = Thứ 2)
 ];
 export const LESSON = {
   rubikdien: { name: 'Rubik / Lắp ráp điện', icon: '🧊', room: null },
-  toan: { name: 'Toán', icon: '➗', room: 'rubik', teacher: 'Cô Hà' },
-  tv: { name: 'Tiếng Việt', icon: '📖', room: 'hall', teacher: 'Cô Ngọc' },
-  kh: { name: 'Khoa học', icon: '🔬', room: 'elec', teacher: 'Cô Xuân' },
-  lsdl: { name: 'Lịch sử – Địa lý', icon: '🌏', room: 'hall', teacher: 'Cô Ngọc' },
+  toan: { name: 'Toán', icon: '➗', room: 'p5a', teacher: 'Cô Hà' },
+  tv: { name: 'Tiếng Việt', icon: '📖', room: 'p5a', teacher: 'Cô Ngọc' },
+  kh: { name: 'Khoa học', icon: '🔬', room: 'plab', teacher: 'Cô Xuân' },
+  lsdl: { name: 'Lịch sử – Địa lý', icon: '🌏', room: 'p5b', teacher: 'Cô Ngọc' },
 };
-export const ROOM_NAME = { rubik: 'Lớp Rubik', hall: 'Hội trường lớn', elec: 'Lớp lắp ráp điện' };
+// phòng học văn hoá ở Toà học tập (school-interior.js; vào qua cửa Văn phòng, cầu thang lên tầng 2)
+export const ROOM_NAME = { rubik: 'Lớp Rubik', hall: 'Hội trường lớn', elec: 'Lớp lắp ráp điện', p5a: 'Lớp 5A (Toà học tập, tầng 2)', p5b: 'Lớp 5B (Toà học tập, tầng 2)', plab: 'Phòng thí nghiệm (Toà học tập, tầng 2)' };

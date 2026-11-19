@@ -37,8 +37,8 @@ export function createLessons(ctx) {
     ctx.toast(`📅 <b>${DOWN[dow()]}</b> · Thời khoá biểu<br>${rows}<br><small>Đúng giờ vào đúng lớp để học ngay trong phòng.</small>`, 6000); ctx.sfx && ctx.sfx('ui');
   };
   // ---------- Phòng học: khu R của bản đồ trường + điểm bảng (giữa phòng, sát tường trong) ----------
-  const roomAt = (x, z) => { const RS = schoolSource(ctx), q = to2(x, z); if (!RS || !q || !RS.regionAt) return null; try { return RS.regionAt(q[0], q[1]); } catch (e) { return null; } };
-  const boardOf = id => { const RS = schoolSource(ctx), r = RS && RS.R && RS.R[id]; if (!r) return null; const [x, z] = to3(r.x + r.w / 2, r.y + r.h * 0.38); return new THREE.Vector3(x, TOWN_Y + 2.6, z); };
+  const roomAt = (x, z) => { const SI = ctx.schoolInterior && ctx.schoolInterior.roomAt(x, z); if (SI !== undefined) return SI; const RS = schoolSource(ctx), q = to2(x, z); if (!RS || !q || !RS.regionAt) return null; try { return RS.regionAt(q[0], q[1]); } catch (e) { return null; } };
+  const boardOf = id => { const SI = ctx.schoolInterior && ctx.schoolInterior.boardOf(id); if (SI) return SI; const RS = schoolSource(ctx), r = RS && RS.R && RS.R[id]; if (!r) return null; const [x, z] = to3(r.x + r.w / 2, r.y + r.h * 0.38); return new THREE.Vector3(x, TOWN_Y + 2.6, z); };
   let t = 0, last = '', lastKey = null, inside = false, active = false;
   return {
     update(dt) {
@@ -50,7 +50,7 @@ export function createLessons(ctx) {
       // chuông vào tiết
       if (key !== lastKey) { lastKey = key; if (L && L.room && !load(DONE, []).includes(key) && !document.body.classList.contains('rs-modal')) { ctx.sfx && ctx.sfx('open'); ctx.toast(`🔔 <b>${c.label}: ${L.icon} ${L.name}</b> ở <b>${ROOM_NAME[L.room]}</b>.<br>Vào lớp đúng giờ để học và nhận ⭐ nhé!`, 4500); } }
       // vào đúng phòng đúng tiết → tiết học (chỉ khi mới bước vào; đóng giữa chừng thì ra rồi vào lại để học tiếp)
-      const p = ctx.player.pos, here = L && L.room && !ctx.player.vehicle && Math.abs(p.y - TOWN_Y) < 2.6 && roomAt(p.x, p.z) === L.room;
+      const p = ctx.player.pos, here = L && L.room && !ctx.player.vehicle && (Math.abs(p.y - TOWN_Y) < 2.6 || ctx.indoor) && roomAt(p.x, p.z) === L.room;
       if (here && !inside && !active && ctx.teacherQuiz && !ctx.teacherQuiz.open() && !load(DONE, []).includes(key)) {
         const at = boardOf(L.room); if (at) {
           active = true; const g = load('island.grade', 0) || 3;

@@ -124,7 +124,7 @@ const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây r
 const quests = ctx.questsMod = createQuests(ctx); // bảng nhiệm vụ hằng ngày 📋: 3 khu · 3 câu đố · 5 pha lê → thưởng (quests.js)
 const teacherQuiz = createTeacherQuiz(ctx); // nói chuyện với 21 bạn & thầy cô, nhiệm vụ nhỏ, chủ trò mini game — bong bóng 3D (teacher-quiz.js, data/talk.js)
 const schoolInterior = ctx.schoolInterior = createSchoolInterior(ctx); // Toà học tập 3 tầng: vào qua cửa Văn phòng, lớp học/phòng chức năng, tiết học có thầy cô & bạn (school-interior.js)
-const lessons = createLessons(ctx); // thời khoá biểu 3D + tiết học ngay trong lớp + chip giờ học góc HUD (lessons.js)
+const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + tiết học ngay trong lớp + chip giờ học góc HUD (lessons.js)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 const mounts = createMounts(ctx);
