@@ -21,6 +21,7 @@ import { create as createTree } from './tree.js';             // cây cổ thụ
 import { create as createHouses } from './houses.js';         // 4 nhà Tứ Linh: lễ chọn nhà, khăn áo màu nhà, điểm nhà
 import { create as createCommons } from './commons.js';       // 4 lối vào bí mật + phòng sinh hoạt chung
 import { create as createClasses } from './classes/index.js'; // lớp học phép thuật (mini game) + nhà kính
+import { create as createWonders } from './wonders.js';       // phép thuật khắp nơi: trần trời, giáp, sách bay, ma, cú, tượng, cửa, nhạc nước
 import { L as CL } from './castle.js';
 import { createInterior } from './interior/index.js';   // nội thất 7 tầng (không gian phép trên cao)
 
@@ -90,7 +91,7 @@ export function createAcademy(ctx) {
   // ---------- đũa phép: Tiệm Đũa Pha Lê cạnh cầu tàu đảo chính ----------
   const magic = ctx.magic = createMagic(ctx);
   const spells = createSpells(ctx, magic, { toWorld, L: CL, Y: BASE }), content = createContent(ctx, magic, { toWorld, L: CL, Y: BASE });
-  const extras = [createPaintings, createCreatures, createTree, createHouses, createCommons, createClasses].map(f => f(ctx, magic, { toWorld, toLocal, L: CL, Y: BASE }));   // mỗi mô-đun 1 file riêng
+  const extras = [createPaintings, createCreatures, createTree, createHouses, createCommons, createClasses, createWonders].map(f => f(ctx, magic, { toWorld, toLocal, L: CL, Y: BASE }));   // mỗi mô-đun 1 file riêng
   const shop = pw(pr0 - 5, -7), shopY = base(shop[0], shop[1]);
   {
     const b = new Batch(), wood = '#a8744a', woodD = '#6e4a30';
