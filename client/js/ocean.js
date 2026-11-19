@@ -63,6 +63,10 @@ import { register as regBoard } from './island/mg/board/index.js';
 import { register as registerArts } from './island/mg/arts/index.js';
 import { register as registerSport } from './island/mg/sport/index.js';
 import { register as registerVisit } from './island/mg/visit/index.js';
+import { createWallet } from './island/economy/wallet.js';
+import { createBackpack } from './island/economy/backpack.js';
+import { createShop } from './island/economy/shop.js';
+import { createPickups } from './island/economy/pickups.js';
 
 // chỉ báo tải (Rubik xoay góc trái dưới) + màn che lúc vào game: tạo đầu tiên để bắt mọi lượt tải model/âm thanh
 const loading = createLoader();
@@ -136,7 +140,7 @@ ctx.premium = createPremium(ctx); // Gói Phụ huynh: khoá nhẹ nhàng + cổ
 const events = ctx.events = createEvents(ctx); if (/[?&]test\b/.test(location.search)) window.__ctx = ctx;   // kiểm thử tự động
  // 🧰 săn kho báu thứ Bảy, 🧹 giải bay chổi Chủ nhật (events.js, lịch do server)
 // ↑ social.js: 👥 bạn bè mã 6 ký tự, 😊 biểu cảm + câu mẫu (không chat tự do), nhóm, lời mời, chặn/báo cáo, sự kiện, lớp (social.js)
-const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms, draw call, tam giác, bộ nhớ… // 👤 đăng nhập / khách / Lưu đăng nhập, xu & vật phẩm (data/account.js)
+const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms, draw call, tam giác, bộ nhớ… // 👤 đăng nhập / khách / Lưu đăng nhập, đồng vàng & vật phẩm (data/account.js)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
 const tutorial = ctx.tutorial = createTutorial(ctx); // hướng dẫn chơi lần đầu: 3 bước, bỏ qua được (tutorial.js)
 const dive = createDive(ctx); // bơi & lặn biển, dưỡng khí, góc nhìn dưới nước (ctx.dive, ctx.underwater)
@@ -159,7 +163,9 @@ const mounts = ctx.mounts = createMounts(ctx);
 const vrmNpc = ctx.vrmNpc = createVrmNpc(ctx); ctx.playerVrm = createPlayerVrm(ctx); ctx.creator = createCreator(ctx); // nhân vật anime VRM: NPC gần (LOD), người chơi (nạp sau), 🎨 trình tạo nhân vật (vrm/)
 const brooms = ctx.brooms = createBrooms(ctx); // 🧹 chổi bay cưỡi khắp đảo (nút 🧹 / phím J), giá chổi ở Sân Đại Sảnh Học viện
 const photo = createPhoto(ctx); // 📷 chế độ chụp ảnh: dừng thời gian, camera tự do, bộ lọc, lưu ảnh có khung logo (photo.js)
-const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, xu bay vào HUD, màn chuyển, tên vùng điện ảnh (feel.js)
+const feel = ctx.feel = createFeel(ctx); // juice: vệt gió, rung camera tiếp đất, đồng vàng bay vào ví HUD, màn chuyển, tên vùng điện ảnh (feel.js)
+// 🪙 đồng vàng · 💎 kim cương hồng (ví HUD) · 🎒 cặp sách 4 ngăn (B/I) · 🛒 cửa hàng (quầy trước cổng trường, Phố Phép Thuật) · ✨ nhặt đồ (economy/)
+const wallet = createWallet(ctx), backpack = createBackpack(ctx), shop = createShop(ctx), pickups = ctx.pickups = createPickups(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
@@ -215,6 +221,7 @@ renderer.setAnimationLoop(() => {
   mounts.update(dt);
   vrmNpc.update(dt);
   brooms.update(dt);
+  backpack.update(dt); shop.update(dt); pickups.update(dt);
   academy.update(dt);
   spells.update(dt); // sau thị trấn/học viện: Bay Lên cộng độ cao lên người đã đặt vị trí
   train.update(dt);

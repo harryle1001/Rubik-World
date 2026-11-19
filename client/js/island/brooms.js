@@ -18,6 +18,7 @@ export const BROOM_TYPES = [
   { id: 'broom-tre', name: 'Chổi Tre Gió Lộng', col: '#9cb85a', speed: 17, boost: PHI, climb: 10, fact: 'Tre rỗng ruột nên nhẹ mà vẫn chắc — bay nhanh hơn chổi gỗ.' },
   { id: 'broom-vang', name: 'Chổi bay cán vàng', col: '#e0b040', speed: 21, boost: PHI, climb: 13, fact: 'Cán mạ vàng, lông chổi chải thẳng: lướt gió rất nhanh.' },
   { id: 'broom-sao', name: 'Chổi Sao Băng', col: '#8a7cff', speed: 21, boost: 2, climb: 13, fact: 'Nhanh nhất học viện: tăng tốc gấp đôi như sao băng vụt qua bầu trời.' },
+  { id: 'board-bac', name: 'Ván Bạc Bay', col: '#dfe6f0', speed: 21, boost: PHI, climb: 13, board: true, fact: 'Bạc phản xạ ánh sáng tốt nhất trong mọi kim loại — tấm ván sáng loáng giữa trời.' },   // 💎 đồ đặc biệt (model ván trượt Kenney CC0)
 ];
 export const BROOM = Object.fromEntries(BROOM_TYPES.map(b => [b.id, b]));
 const HOVER = 0.82, ALT = 55, ALT_CAP = 233, GAP = 0.45;   // chổi lơ lửng 0,82 m · tối đa 55 m trên mặt đất · trần 233 m
@@ -26,9 +27,10 @@ const HOVER = 0.82, ALT = 55, ALT_CAP = 233, GAP = 0.45;   // chổi lơ lửng 
 export function makeBroomMesh(type) {
   const g = new THREE.Group(), T = BROOM[type] || BROOM_TYPES[0];
   const inner = new THREE.Group(); inner.position.set(0, HOVER, -0.12); inner.rotation.x = -0.07; g.add(inner);   // mũi chổi hơi ngóc lên
-  loadModel('alley/broom').then(m => {
-    if (!m) return; m.position.set(0, 0, 0); m.scale.setScalar(1.6); m.rotation.set(0, Math.PI, 0);   // cán hướng ra trước (+z), lông chổi phía sau
-    m.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.color.set(T.col).lerp(new THREE.Color('#ffffff'), 0.35); o.castShadow = true; } });
+  loadModel(T.board ? 'kit/sport_skateboard' : 'alley/broom').then(m => {
+    if (!m) return; m.position.set(0, 0, 0); m.scale.setScalar(T.board ? 1.3 : 1.6); m.rotation.set(0, T.board ? Math.PI / 2 : Math.PI, 0);   // cán hướng ra trước (+z), lông chổi phía sau; ván: mũi ra trước
+    if (T.board) { inner.rotation.x = 0; m.position.y = -0.62; }
+    m.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.color.set(T.col).lerp(new THREE.Color('#ffffff'), 0.35); if (T.board) { o.material.metalness = 0.62; o.material.roughness = 0.24; } o.castShadow = true; } });
     inner.add(m);
   });
   if (type === 'broom-sao') {   // đuôi sao lấp lánh (1 mesh nhỏ)
@@ -80,8 +82,10 @@ export function holdPose(model, root, k = 1) {
 
 export function createBrooms(ctx) {
   const V = ctx.vehicles, pl = ctx.player, { terrain, scene } = ctx, W = CFG.island.waterLevel;
-  const own = id => id === 'broom-tap' || !!(ctx.wear && ctx.wear.own && ctx.wear.own(id));
-  const chosen = () => { const e = ctx.wear && ctx.wear.eq && ctx.wear.eq.broom; return e && BROOM[e] && own(e) ? e : 'broom-tap'; };
+  // 🔒 chổi / Ván Bạc Bay mở khoá ở 🛒 Cửa hàng (economy/) hoặc Xưởng Chổi Bay; chổi đặt sẵn ở Sân Đại Sảnh ai cũng cưỡi thử được
+  const own = id => ctx.eco ? ctx.eco.owns(id) : id === 'broom-tap' || !!(ctx.wear && ctx.wear.own && ctx.wear.own(id));
+  let pick = null;
+  const chosen = () => { const e = pick || (ctx.wear && ctx.wear.eq && ctx.wear.eq.broom); if (e && BROOM[e] && own(e)) return e; return [...BROOM_TYPES].reverse().map(b => b.id).find(own) || null; };
   const ground = (x, z) => Math.max(terrain.heightAt(x, z), ctx.groundExtra ? ctx.groundExtra(x, z, 999) : -99, W);
   function roofAt(x, z, m) {   // như aircraft.js: nóc hộp cao nhất trong bán kính m
     const L = ctx.grid ? ctx.grid.near(x, z).boxes : (ctx.boxes || []); let top = -99;
@@ -109,9 +113,9 @@ export function createBrooms(ctx) {
   function make(type) {
     const T = BROOM[type] || BROOM_TYPES[0], group = makeBroomMesh(type);
     const v = { type: 'broom', kind: type, name: T.name, group, r: 2.4, far: 89, side: 1.3, takeoff: 0.8,
-      label: `🧹 Cưỡi ${T.name}`, bye: '🧹 Xuống chổi',
-      hello: `🧹 <b>${T.name}</b> — ${T.fact}<br><small>Bay: <b>WASD</b>/cần điều khiển · <b>Space/⬆</b> lên · <b>C/⬇</b> xuống · <b>Shift/Nhanh</b> tăng tốc · chạm đất bấm <b>E</b> để xuống</small>`,
-      mode: { speed: T.speed, boost: T.boost, turn: 2.6, accel: 1.6, fly: true, climb: T.climb, lift: 0, maxAlt: ALT, anim: 'drive', seat: HOVER + 0.05, seatZ: 0.02, camAdd: 2.5 },
+      label: T.board ? `🛹 Lướt ${T.name}` : `🧹 Cưỡi ${T.name}`, bye: T.board ? '🛹 Xuống ván' : '🧹 Xuống chổi',
+      hello: `${T.board ? '🛹' : '🧹'} <b>${T.name}</b> — ${T.fact}<br><small>Bay: <b>WASD</b>/cần điều khiển · <b>Space/⬆</b> lên · <b>C/⬇</b> xuống · <b>Shift/Nhanh</b> tăng tốc · chạm đất bấm <b>E</b> để xuống</small>`,
+      mode: { speed: T.speed, boost: T.boost, turn: 2.6, accel: 1.6, fly: true, climb: T.climb, lift: 0, maxAlt: ALT, anim: T.board ? 'idle' : 'drive', seat: T.board ? HOVER - 0.5 : HOVER + 0.05, seatZ: 0.02, camAdd: 2.5 },
       onMount() { prev.copy(pl.pos); wearCape(); ctx.sfx && ctx.sfx('ok'); },
       onDismount() { if (cape) cape.visible = false; if (v.temp) v.gone = 1.6; },
       tick(dt, sp, st) {
@@ -134,7 +138,7 @@ export function createBrooms(ctx) {
         prev.copy(p);
         // tư thế: nghiêng vào cua, chúi mũi khi lao xuống / ngóc khi bay lên; tay nắm cán
         pl.root.rotation.z = st.lean * 1.3; pl.root.rotation.x = THREE.MathUtils.clamp(-pl.vy * 0.035, -0.3, 0.3) + (st.fast ? 0.06 : 0);
-        const hero = pl.hero; if (hero) holdPose(hero.model, pl.root);
+        const hero = pl.hero; if (hero && !T.board) holdPose(hero.model, pl.root);
         group.userData.inner.position.y = HOVER + (st.grounded ? Math.sin(t * 2.4) * 0.03 : Math.sin(t * 1.3) * 0.05);
         if (cape) { const U = cape.userData.U; U.uT.value = t; U.uS.value += (Math.min(1, sp / 21) - U.uS.value) * Math.min(1, dt * 3); }
       } };
@@ -143,14 +147,16 @@ export function createBrooms(ctx) {
   const park = (type, x, z, ry, y) => { const v = make(type); v.group.position.set(x, y ?? ground(x, z), z); v.group.rotation.y = ry; return V.register(v); };
 
   // chổi đặt sẵn: giá chổi ở Sân Đại Sảnh Học viện (5 loại, mũi hướng ra cổng) — ai cũng cưỡi thử được
-  BROOM_TYPES.forEach((b, i) => { const [x, z] = toWorld(13, -21 + i * 10.5); park(b.id, x, z, 0, BASE_Y + 0.6); });
+  BROOM_TYPES.filter(b => !b.board).forEach((b, i) => { const [x, z] = toWorld(13, -21 + i * 10.5); park(b.id, x, z, 0, BASE_Y + 0.6); });
 
   // gọi chổi (nút 🧹 / phím G / phép): lên chổi đang chọn; đang cưỡi chổi → xuống
-  function summon() {
+  function summon(type0) {
+    if (typeof type0 === 'string') { if (!own(type0)) return ctx.eco && ctx.eco.locked(type0); pick = type0; }
     if (V.riding === 'broom') return V.dismount();
     if (V.current) return ctx.toast('🚶 Xuống phương tiện đang đi trước đã', 2200);
     if (pl.frozen || (ctx.dive && ctx.dive.swimming)) return ctx.toast('🌊 Lên bờ rồi mới gọi chổi nhé', 2200);
-    const type = chosen(), v = make(type); v.temp = true;
+    const type = chosen(); if (!type) return ctx.eco ? ctx.eco.locked('broom-tap') : null;
+    const v = make(type); v.temp = true;
     v.group.position.copy(pl.pos); v.group.rotation.set(0, pl.rot, 0); V.register(v); V.mount(v);
     if (type === 'broom-tap' && !own('broom')) setTimeout(() => ctx.toast('🧹 Mua chổi nhanh hơn ở <b>Xưởng Chổi Bay</b> — Phố Phép Thuật (Học viện Pha Lê)', 3500), 5800);
   }

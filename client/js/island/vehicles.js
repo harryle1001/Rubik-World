@@ -1,6 +1,6 @@
 // vehicles.js — Hệ thống cưỡi/đi phương tiện dùng chung: 🚲 20 kiểu xe đạp (bikes.js), ⛵ thuyền chèo, khinh khí cầu,
 // và thú cưỡi / phượng hoàng (mounts.js đăng ký qua ctx.vehicles.register).
-// Phím: E tương tác (lên/xuống mọi thứ) · B xe đạp · V đổi kiểu xe · R chuông · T khinh khí cầu (F: đũa phép Học viện Pha Lê) · H huýt sáo gọi thú cưỡi (mounts.js)
+// Phím: E tương tác (lên/xuống mọi thứ) · X xe đạp (B/I: 🎒 cặp sách) · V đổi kiểu xe · R chuông · T khinh khí cầu (F: đũa phép Học viện Pha Lê) · H huýt sáo gọi thú cưỡi (mounts.js)
 //       Shift chạy nhanh · khi bay: Space lên, C/Ctrl xuống. Điện thoại: các nút cạnh Chạy/Nhảy.
 import * as THREE from 'three';
 import { BLOCKS } from './layout.js';
@@ -108,7 +108,7 @@ export function createVehicles(ctx) {
   let cur = null, mine = { bike: null, boat: null, balloon: null }, lean = 0, rowT = 0, wakeT = 0, bellT = 0, lift = 0, takeoff = 0, burnT = 0;
   let myStyle = +(localStorage.getItem('island.bike') || 0);
   const ui = id => document.getElementById(id);
-  function dimUI() { for (const [id, k] of [['bBike', 'bike'], ['bBalloon', 'balloon']]) { const r = why(k), b = ui(id); b.classList.toggle('off', !!r); b.title = r ? r.replace(/^\S+ /, '') : k === 'bike' ? 'Xe đạp (B)' : 'Khinh khí cầu (T)'; } }
+  function dimUI() { for (const [id, k] of [['bBike', 'bike'], ['bBalloon', 'balloon']]) { const r = why(k), b = ui(id); b.classList.toggle('off', !!r); b.title = r ? r.replace(/^\S+ /, '') : k === 'bike' ? 'Xe đạp (X)' : 'Khinh khí cầu (T)'; } }
   function setUI() {
     const t = cur && cur.type, fly = cur && cur.mode.fly;
     ui('bBike').textContent = t === 'bike' ? '🚶' : '🚲'; ui('bBalloon').innerHTML = t === 'balloon' ? '🚶' : ICON.balloon;
@@ -150,22 +150,29 @@ export function createVehicles(ctx) {
   // lý do không lên xe/khinh khí cầu được lúc này (null = được) → nút mờ + tooltip, bấm thì báo
   const why = type => cur ? (cur.type === type ? null : '🚶 Xuống phương tiện đang đi trước đã') : pl.frozen ? '⏳ Đang bận' : (ctx.dive && ctx.dive.swimming) || !onLand() ? '🌊 Đang ở dưới nước — lên bờ rồi mới đi ' + (type === 'bike' ? 'xe đạp' : 'khinh khí cầu') : null;
   const deny = type => { const r = why(type); if (r) ctx.toast(r, 2200); return !!r; };
-  function toggleBike() {
+  // 🔒 phương tiện cần mở khoá ở 🛒 Cửa hàng (economy/): xe đạp đi học tặng sẵn; xe/khinh khí cầu đặt sẵn ngoài đường vẫn đi thử được
+  const owns = id => !ctx.eco || ctx.eco.owns(id);
+  function toggleBike(style) {
+    if (Number.isInteger(style) && !owns('bike-' + style)) return ctx.eco.locked('bike-' + style);   // chưa mở khoá: mời ra 🛒 trước
     if (cur && cur.type === 'bike') return dismount();
     if (deny('bike') || !pl.grounded) return;
-    let v = nearest('bike', 4);
-    if (!v) { if (!mine.bike || mine.bike.style !== myStyle) mine.bike = makeBike(myStyle); v = bring(mine.bike); }
+    if (Number.isInteger(style)) myStyle = style;
+    let v = Number.isInteger(style) ? null : nearest('bike', 4);
+    if (!v) { if (!owns('bike-' + myStyle)) myStyle = 0; if (!mine.bike || mine.bike.style !== myStyle) mine.bike = makeBike(myStyle); v = bring(mine.bike); }
     mount(v);
   }
   function nextStyle(d = 1) { // đổi sang kiểu xe khác ngay khi đang đạp
     if (!cur || cur.type !== 'bike') return;
-    const old = cur, nb = makeBike((old.style + d + BIKES.length) % BIKES.length); pl.root.remove(old.group); all.splice(all.indexOf(old), 1);
+    let ns = cur.style; for (let k = 0; k < BIKES.length; k++) { ns = (ns + d + BIKES.length) % BIKES.length; if (owns('bike-' + ns)) break; }
+    if (ns === cur.style) return ctx.toast('🔒 Mở khoá thêm kiểu xe đạp ở <b>🛒 Cửa hàng</b> (nút 🎒 → 🛒)', 3000);
+    const old = cur, nb = makeBike(ns); pl.root.remove(old.group); all.splice(all.indexOf(old), 1);
     if (mine.bike === old) mine.bike = null; register(nb); scene.remove(nb.group); cur = null; pl.vehicle = null;
     nb.group.position.copy(pl.pos); nb.group.rotation.set(0, pl.rot, 0); scene.add(nb.group); mount(nb);
   }
   function toggleBalloon() {
     if (cur && cur.type === 'balloon') return dismount();
     if (deny('balloon') || !pl.grounded) return;
+    if (!owns('ride-balloon') && !nearest('balloon', 6)) return ctx.eco.locked('ride-balloon');
     if (pl.pos.y > 0.9 && Math.max(ctx.groundExtra ? ctx.groundExtra(pl.pos.x, pl.pos.z, pl.pos.y) : -99, boxTop(pl.pos.x, pl.pos.z, pl.pos.y)) > pl.pos.y - 0.3 && (ctx.boxes || []).some(b => pl.pos.x > b.x0 - 3 && pl.pos.x < b.x1 + 3 && pl.pos.z > b.z0 - 3 && pl.pos.z < b.z1 + 3 && b.top > pl.pos.y + 1)) { ctx.toast(`${ICON.balloon} Chỗ này chật quá, ra chỗ trống để thả khinh khí cầu!`, 2200); return; }
     const v = nearest('balloon', 6) || bring(mine.balloon || (mine.balloon = balloon()));
     mount(v);
@@ -187,7 +194,7 @@ export function createVehicles(ctx) {
   addEventListener('keydown', e => {
     if (e.repeat || blocked()) return;
     // T khinh khí cầu (F dành cho đũa phép — academy/magic.js; H huýt sáo gọi thú cưỡi — mounts.js)
-    if (e.code === 'KeyB') toggleBike(); else if (e.code === 'KeyT') toggleBalloon(); else if (e.code === 'KeyR') ring(); else if (e.code === 'KeyV') nextStyle(e.shiftKey ? -1 : 1);
+    if (e.code === 'KeyX') toggleBike(); else if (e.code === 'KeyT') toggleBalloon(); else if (e.code === 'KeyR') ring(); else if (e.code === 'KeyV') nextStyle(e.shiftKey ? -1 : 1);
   });
   const tap = (id, fn) => ui(id).addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); fn(); });
   tap('bBike', toggleBike); tap('bBalloon', toggleBalloon); tap('bBell', ring); tap('bStyle', () => nextStyle(1));

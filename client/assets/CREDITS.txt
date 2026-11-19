@@ -194,3 +194,9 @@ audio/bgm-magic-night.mp3    "Fantasy: Rising Moon" — https://opengameart.org/
 audio/bgm-village.mp3        "Orient: Peace Valley" — https://opengameart.org/content/orient-peace-valley (Làng nổi trên biển)
 audio/bgm-temple-ethnic.mp3  "Asian/Oriental 1" — https://opengameart.org/content/asianoriental1 (Rừng & Đền Tri Thức)
 Lớp nhịp, gió khi bay, chuông trường: tổng hợp bằng Web Audio trong js/island/audio.js (không dùng file).
+
+🎒 Cặp sách · 🛒 Cửa hàng · 🪙/💎 ví (js/island/economy/) — dùng lại model CC0 đã có, không tải thêm:
+  models/kit/sport_skateboard.glb → "Ván Bạc Bay" (tô bạc bằng code) · models/alley/stall-red.glb → quầy 🛒 trước cổng Trường Rubik
+  audio/sfx-coin.mp3, sfx-gem.mp3 → âm thanh đồng vàng / kim cương bay vào ví
+  Biểu tượng 🪙 đồng vàng & 💎 kim cương hồng: SVG vẽ riêng cho dự án (js/island/economy/wallet.js), CC0.
+  Ba lô đeo lưng: khối đơn giản dựng bằng code (chưa có model CC0 ba lô phù hợp) — thay khi có.

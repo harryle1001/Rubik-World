@@ -46,7 +46,7 @@ export const SHOPS = [
   { id: 'bank', name: '🏦 Ngân Hàng Kho Báu', side: 0, u: U1 - 3 },
 ];
 
-// biển biểu tượng nhà thường · bảng giá phấn (chữ tiếng Việt, giá tính bằng xu)
+// biển biểu tượng nhà thường · bảng giá phấn (chữ tiếng Việt, giá tính bằng đồng vàng)
 const ICONS = ['🗝️', '🕯️', '✒️', '🧪', '🧵', '🍞', '🔮', '🪶'];
 const PRICE = ['Táo đỏ 1🪙 · Cà chua 1🪙\nBí ngô 2🪙 · Dưa hấu 3🪙', 'Hôm nay: Cà rốt tươi!\n3 củ = 1🪙', 'Bình lọ thuỷ tinh\n2🪙 một chiếc', 'Giảm giá cho học sinh\nchăm học ✨'];
 const TIME = { value: 0 }, WET = { value: Array.from({ length: 8 }, () => new THREE.Vector3(0, -999, 0)) };
@@ -523,7 +523,7 @@ function glowMat(m, lamp, deq) {   // deq: ma trận giải lượng tử meshop
   m.customProgramCacheKey = () => 'alley-glow' + (lamp ? 'L' : 'W');
 }
 
-// ---------- CỬA HÀNG: thẻ hàng hoá, mỗi lần mua trả lời 1 câu đố học tập; trả bằng xu tài khoản (ctx.account) ----------
+// ---------- CỬA HÀNG: thẻ hàng hoá, mỗi lần mua trả lời 1 câu đố học tập; trả bằng đồng vàng tài khoản (ctx.account) ----------
 const CSS = `#alShop{position:fixed;left:50%;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 76px);transform:translateX(-50%);z-index:27;width:min(92vw,420px);max-height:min(62vh,520px);overflow:auto;background:#141022f2;color:#f7ecd0;border:1px solid #ffe3a066;border-radius:16px;padding:13px 14px;font:600 14px/1.45 system-ui;box-shadow:0 8px 34px #0007}
 #alShop h4{margin:0 0 4px;font:800 16px Georgia,serif;color:#ffe3a0}#alShop .say{font-style:italic;color:#e8dcc0;margin:0 0 8px}#alShop .coin{float:right;font:800 13px system-ui;color:#ffd34d}
 #alShop .it{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #ffffff14}#alShop .it i{width:21px;height:21px;border-radius:50%;flex:none;border:1px solid #fff6}#alShop .it span{flex:1}
@@ -542,11 +542,11 @@ function createShop(ctx, magic) {
   let qi = 0;
   const quiz = id => { const T = SHOP_TALK[id]; qi++; return qi % 2 && T.qs.length ? T.qs[(qi >> 1) % T.qs.length] : T.subj; };
   function buy(id, price, label, grant) {
-    if (!ctx.account) return ctx.toast('Cần đăng nhập hoặc chơi khách để dùng xu.', 3000);
-    if (coins() < price) return ctx.toast(`🪙 Cần <b>${price} xu</b> (em có ${coins()}). Ghé <b>🏦 Ngân Hàng Kho Báu</b> cuối phố giải toán để kiếm thêm xu nhé!`, 5000);
+    if (!ctx.account) return ctx.toast('Cần đăng nhập hoặc chơi khách để dùng đồng vàng.', 3000);
+    if (coins() < price) return ctx.toast(`🪙 Cần <b>${price} đồng vàng</b> (em có ${coins()}). Ghé <b>🏦 Ngân Hàng Kho Báu</b> cuối phố giải toán để kiếm thêm đồng vàng nhé!`, 5000);
     const k = cur; close();
     magic.ask(quiz(id), () => {
-      if (!ctx.account.addCoins(-price)) return ctx.toast('Không đủ xu.', 2500);
+      if (!ctx.account.addCoins(-price)) return ctx.toast('Không đủ đồng vàng.', 2500);
       grant(); ctx.sfx && ctx.sfx('coin'); ctx.toast(`🛍️ Đã mua <b>${label}</b>! −${price} 🪙`, 3500);
       if (k) setTimeout(() => open(k, true), 900);
     }, `🛍️ Trả lời đúng để mua <b>${label}</b> (${price} 🪙)`);
@@ -586,7 +586,7 @@ function createShop(ctx, magic) {
       L.push({ name: `🧮 Thử thách kho báu: giải toán nhận +5 🪙 (còn ${left}/8 lượt hôm nay)`, price: 0, state: left > 0 ? 'free' : 'own', act: () => {
         if (bankLeft() <= 0) return ctx.toast('🏦 Hôm nay hết lượt rồi — mai quay lại nhé!', 3500);
         const k = cur; close();
-        magic.ask('toan', () => { bankUse(); ctx.account && ctx.account.addCoins(5); ctx.sfx && ctx.sfx('coin'); ctx.toast(`🏦 Kho báu mở! <b>+5 🪙</b> (còn ${bankLeft()} lượt hôm nay)`, 3500); if (k) setTimeout(() => open(k, true), 900); }, '🏦 Thử thách kho báu — giải đúng để nhận xu');
+        magic.ask('toan', () => { bankUse(); ctx.account && ctx.account.addCoins(5); ctx.sfx && ctx.sfx('coin'); ctx.toast(`🏦 Kho báu mở! <b>+5 🪙</b> (còn ${bankLeft()} lượt hôm nay)`, 3500); if (k) setTimeout(() => open(k, true), 900); }, '🏦 Thử thách kho báu — giải đúng để nhận đồng vàng');
       } });
     }
     return L;
@@ -599,10 +599,10 @@ function createShop(ctx, magic) {
     if (k.hero && !again) { k.hero.happyUntil = performance.now() + 1500; const a = k.hero.anim; if (a.has('wave')) { a.play('wave', 0.2, true); setTimeout(() => a.play(k.hero.set.idle, 0.3), 1500); } }
     const L = items(k.sh.id);
     el = document.createElement('div'); el.id = 'alShop';
-    el.innerHTML = `<span class="coin">🪙 ${coins()}</span><h4>${k.sh.name}</h4><p class="say">${T.who}: “${T.lines[k.line]}”</p>` +
+    el.innerHTML = `<span class="coin">🪙 ${coins()} đồng vàng</span><h4>${k.sh.name}</h4><p class="say">${T.who}: “${T.lines[k.line]}”</p>` +
       L.map((x, i) => `<div class="it">${x.col ? `<i style="background:${x.col}"></i>` : ''}<span>${x.name}</span><button data-i="${i}" class="${x.state === 'buy' ? 'buy' : x.state === 'on' ? 'on' : ''}">${x.state === 'buy' ? `${x.price} 🪙` : x.state === 'on' ? '✔ Đang dùng' : x.state === 'free' ? 'Nhận' : x.state === 'own' ? (k.sh.id === 'book' ? 'Đọc' : k.sh.id === 'bank' ? 'Hết lượt' : 'Dùng') : ''}</button></div>`).join('') +
-      `<div class="ft"><small>Mỗi món: trả lời đúng 1 câu đố 📚</small><button data-x>Đóng</button></div>`;
-    el.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.x !== undefined) return close(); const x = L[+b.dataset.i]; if (x) { ctx.sfx && ctx.sfx('ui'); x.act(x.state); } };
+      `<div class="ft"><small>Mỗi món: trả lời đúng 1 câu đố 📚</small>${ctx.shop ? '<button data-big>🛒 Cửa hàng lớn</button>' : ''}<button data-x>Đóng</button></div>`;
+    el.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.x !== undefined) return close(); if (b.dataset.big !== undefined) { close(); return ctx.shop.open(['pet'].includes(k.sh.id) ? 'pet' : k.sh.id === 'broom' ? 'ride' : 'wear'); } const x = L[+b.dataset.i]; if (x) { ctx.sfx && ctx.sfx('ui'); x.act(x.state); } };
     document.body.appendChild(el);
   }
   addEventListener('keydown', e => { if (e.key === 'Escape') close(); });

@@ -1,5 +1,5 @@
 // account-hud.js — Lớp HUD đăng nhập của đảo 3D (thay hộp đăng nhập của game 2D trong iframe trước đây).
-// Chip góc phải trên: 👤 tên · Lv · 🪙 xu → bấm mở bảng: Đăng nhập / Tạo tài khoản / Chơi khách, ô "Lưu đăng nhập".
+// Chip góc trên: 👤 tên · Lv (ví 🪙 đồng vàng · 💎 kim cương ở chip riêng — economy/wallet.js) → bấm mở bảng: Đăng nhập / Tạo tài khoản / Chơi khách, ô "Lưu đăng nhập".
 // Đã lưu đăng nhập → vào thẳng. Kích thước theo φ: bo góc 13/21, đệm 13/21, chữ 13/16/21.
 import { createAccount } from './data/account.js';
 import { CREDIT } from './loader.js';
@@ -32,7 +32,7 @@ body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
       <details style="margin-bottom:13px;font:600 13px system-ui"><summary>🏫 Trường em có mã Trường Rubik?</summary><div class="row" style="margin-top:8px"><input type="text" id="accLic" maxlength="6" placeholder="Mã trường" style="flex:1 1 55%;text-transform:uppercase"><button data-a="lic">Nhập</button></div><div class="msg"></div></details>`; };
   const render = () => {
     const p = acc.profile;
-    chip.innerHTML = p ? `${acc.guest ? '🙂' : '👤'} ${esc(acc.name)} · Lv ${p.level} · 🪙 <b>${p.money | 0}</b>` : '👤 Đăng nhập';
+    chip.innerHTML = p ? `${acc.guest ? '🙂' : '👤'} ${esc(acc.name)} · Lv <b>${p.level}</b>` : '👤 Đăng nhập';   // ví 🪙/💎 là chip riêng (economy/wallet.js)
     if (p && !acc.guest) { ctx.playerName = acc.name; try { localStorage.setItem('island.name', acc.name); } catch (e) {} }
   };
   acc.onChange(render);
@@ -40,12 +40,11 @@ body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
   const open = () => {
     const p = acc.profile;
     if (p && !acc.guest) {
-      const items = Object.keys(p.inv || {}).length;
       box.innerHTML = `<div class="card"><h3>👤 ${esc(acc.name)}</h3><p>${acc.cloud ? `☁️ Tiến độ lưu trên máy chủ trường — chơi máy nào cũng được.${acc.user ? ` Mã bạn bè: <b style="letter-spacing:2px">${esc(acc.user.code)}</b>` : ''}` : `Tài khoản lưu trên máy này${acc.migrated ? ' (đã chuyển từ Trường Rubik 2D)' : ''}.`}</p>
-        <div class="stat"><div>Cấp độ<b>${p.level}</b></div><div>Xu<b>🪙 ${p.money | 0}</b></div><div>Kinh nghiệm<b>${p.exp | 0}/${acc.needExp(p.level)}</b></div><div>Vật phẩm<b>🎒 ${items}</b></div></div>
+        <div class="stat"><div>Cấp độ<b>${p.level}</b></div><div>Ví<b>🪙 ${p.money | 0} · 💎 ${p.gems | 0}</b></div><div>Kinh nghiệm<b>${p.exp | 0}/${acc.needExp(p.level)}</b></div><div>Cặp sách<b>🎒 ${Object.values(p.bag || {}).reduce((a, n) => a + n, 0)}/${p.cap || 21}</b></div></div>
         ${acc.cloud ? planHtml() : ''}<div class="row"><button class="pri" data-a="close">Chơi tiếp</button><button data-a="out">Đăng xuất</button></div></div>`;
     } else {
-      box.innerHTML = `<div class="card"><h3 class="brand"><img src="/icons/logo.svg" alt="">Đảo Rubik</h3><p>${acc.online ? '☁️ Đăng nhập để lưu tiến độ lên máy chủ trường và chơi cùng bạn bè. Không cần email.' : 'Đăng nhập để lưu cấp độ, xu và đồ của bạn.'} Đừng dùng tên thật đầy đủ hay mật khẩu dùng ở nơi khác nhé.</p>
+      box.innerHTML = `<div class="card"><h3 class="brand"><img src="/icons/logo.svg" alt="">Đảo Rubik</h3><p>${acc.online ? '☁️ Đăng nhập để lưu tiến độ lên máy chủ trường và chơi cùng bạn bè. Không cần email.' : 'Đăng nhập để lưu cấp độ, đồng vàng và đồ của bạn.'} Đừng dùng tên thật đầy đủ hay mật khẩu dùng ở nơi khác nhé.</p>
         <form id="accForm" autocomplete="on" onsubmit="return false"><label for="accName">Tên đăng nhập</label><input type="text" id="accName" name="username" maxlength="20" autocomplete="username" value="${esc(acc.lastName())}">
         <label for="accPass">Mật khẩu <small style="font-weight:600;opacity:.6">(ít nhất 6 ký tự)</small></label><input type="password" id="accPass" name="password" maxlength="40" autocomplete="current-password">
         <label class="rem"><input type="checkbox" id="accKeep" ${acc.nameRemembered() ? 'checked' : ''}> Nhớ tên đăng nhập (lần sau không phải gõ lại)</label>

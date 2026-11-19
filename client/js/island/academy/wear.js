@@ -51,11 +51,12 @@ export function createWear(ctx) {
     const hero = ctx.player.hero; if (!hero) return;
     if (parts[slot]) { parts[slot].removeFromParent(); parts[slot] = null; }
     ids[slot] = id;
-    if (hero.isVrm && slot === 'cape') { const it = CAPES.find(x => x.id === id); if (hero.fit && hero.fit.setRobe) hero.fit.setRobe(it ? it.col : null); return; }   // nhân vật anime: một áo choàng duy nhất (vrm-outfit.js) đổi màu
+    if (hero.isVrm && slot === 'hat') return;   // nhân vật anime: mũ chóp của bộ VRM (look.hat — economy/backpack.js qua ctx.onWearHat)
+    if (hero.isVrm && slot === 'cape') { const it = CAPES.find(x => x.id === id) || (ctx.eco && ctx.eco.ITEM[id]); if (hero.fit && hero.fit.setRobe) hero.fit.setRobe(it ? it.col : null); return; }   // nhân vật anime: một áo choàng duy nhất (vrm-outfit.js) đổi màu
     if (!id) return;
     const M = MOUNT[slot], bone = hero.model.getObjectByName(M.bone), src = await loadModel(M.file);
     if (!src || !bone || ids[slot] !== id) return;
-    const item = [...CAPES, ...HATS, ...BROOMS].find(x => x.id === id);
+    const item = [...CAPES, ...HATS, ...BROOMS].find(x => x.id === id) || (ctx.eco && ctx.eco.ITEM[id]) || { col: '#888' };
     const g = new THREE.Group(); g.add(src); src.position.set(0, 0, 0); src.rotation.set(0, 0, 0); src.scale.setScalar(1);
     g.position.fromArray(M.p); g.rotation.set(...M.r); [].concat(M.s).length > 1 ? g.scale.fromArray(M.s) : g.scale.setScalar(M.s); tint(g, item.col);
     bone.add(g); parts[slot] = g;
@@ -73,7 +74,7 @@ export function createWear(ctx) {
   }
   function equip(slot, id) {
     if (slot === 'pet') { st.eq.pet = id; spawnPet(id); }
-    else { st.eq[slot] = id; mount(slot, id); }
+    else { st.eq[slot] = id; mount(slot, id); if (slot === 'hat' && ctx.onWearHat) ctx.onWearHat(!!id); }
     save(); if (ctx.net && ctx.net.sendLook) ctx.net.sendLook();
   }
   const own = id => st.own.includes(id);
