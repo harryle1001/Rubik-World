@@ -328,7 +328,7 @@ export function createMiniGameHost(ctx) {
     api.root.traverse(o => {
       if (o.isSkinnedMesh) {   // nhân vật dùng chung geometry (cache) → không dispose; nhưng xương (bone texture) + vật liệu chi tiết là riêng từng NPC
         if (o.skeleton && !o.skeleton.__gone) { o.skeleton.__gone = true; o.skeleton.dispose(); }
-        if (o.material && !o.userData.outline && !o.material.userData.shared && o.material.userData.blink) o.material.dispose(); return; }
+        if (o.material && !Array.isArray(o.material) && !o.userData.outline && !o.material.userData.shared && o.material.userData.blink) o.material.dispose(); return; }
       if (o.geometry && !o.geometry.userData.shared) o.geometry.dispose();
       for (const m of [].concat(o.material || [])) { if (m.userData && m.userData.shared) continue; if (m.map && !m.map.userData.shared) m.map.dispose(); m.dispose(); }
     });
