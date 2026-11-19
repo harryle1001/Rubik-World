@@ -102,3 +102,9 @@ models/kit/qn_*.glb (cây tán, bạch dương, thông, dừa, bụi, bụi qu�
   (License.txt trong gói: "CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"). Tải từ OpenGameArt (quaternius.com chỉ dẫn link Google Drive).
   Đã chuyển OBJ → GLB bằng tools/kit/obj2glb.mjs: giản lược meshopt (cây ≤ 260 tam giác, LOD ≤ 140, bụi/hoa/cỏ ≤ 90), pháp tuyến phẳng, nén Meshopt.
   Không tải được (bị chặn mạng trong môi trường làm việc): kenney.nl, poly.pizza, github.com (trang web/API) — KayKit lấy qua cdn.jsdelivr.net/gh.
+
+Phố Phép Thuật (đảo Học viện Pha Lê, client/js/island/academy/alley.js):
+models/alley/*.glb (tường, cửa, cửa sổ, mái, ống khói, cờ, đèn lồng, sạp, xe đẩy, đài phun nước, cột…)
+  Kenney – Fantasy Town Kit 2.0, CC0 1.0 — https://opengameart.org/content/fantasy-town-kit (License.txt trong gói: "Creative Commons Zero, CC0")
+  Đã nén Meshopt, texture bảng màu 128 px (tools/kit/process.mjs); đổi màu vữa → kem, mái → đá xám, gỗ → gỗ sẫm bằng tools/kit/recolor.mjs.
+tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — https://ambientcg.com/view?id=PavingStones070 (thu 512 px, giảm bão hoà)
