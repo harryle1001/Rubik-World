@@ -80,20 +80,20 @@ function thungGeo() {
 // flip: model có mũi quay về −z. lights: [x, y, z, 'w'|'r'|'g'|'y']
 const WIN = (n, x, y, z0, z1) => Array.from({ length: n }, (_, i) => [x, y, z0 + (z1 - z0) * i / (n - 1), 'y']);
 const KIND = {
-  liner: { model: 'boat_liner', flip: 1, s: 3, len: 45, dy: -0.3, sp: 6.5, wake: 6, horn: [98, 123], name: 'Tàu du lịch',
-    lights: [[0, 24, 6, 'w'], [-6, 8, 5, 'r'], [6, 8, 5, 'g'], [0, 12, -20, 'w'], ...WIN(MOB ? 5 : 8, -6.6, 6.2, -15, 15), ...WIN(MOB ? 5 : 8, 6.6, 6.2, -15, 15), ...WIN(MOB ? 3 : 5, -5.6, 10.5, -10, 10), ...WIN(MOB ? 3 : 5, 5.6, 10.5, -10, 10)] },
-  cargo: { model: 'boat_cargo', flip: 1, s: 4.2, len: 44, dy: -0.4, sp: 4.6, wake: 7, horn: [73, 110], name: 'Tàu chở hàng',
-    lights: [[0, 15, -16, 'w'], [-7.5, 7, -14, 'r'], [7.5, 7, -14, 'g'], [0, 8, 20, 'w'], [0, 12, -18, 'y']] },
-  ferry: { model: 'boat_ferry', flip: 1, s: 2.1, len: 22, dy: -0.2, sp: 8, wake: 4, horn: [147, 185], name: 'Phà',
-    lights: [[0, 6.2, -7, 'w'], [-3.8, 3.2, -6, 'r'], [3.8, 3.2, -6, 'g'], [-3.6, 2.6, 6, 'y'], [3.6, 2.6, 6, 'y'], [0, 4.4, -7.5, 'y']] },
-  sailA: { model: 'boat_sail_a', flip: 1, s: 2, len: 7.5, dy: -0.12, sp: 3.4, wake: 1.3, name: 'Thuyền buồm', lights: [[0, 9.3, 0, 'w'], [-1.2, 1.2, 1, 'r'], [1.2, 1.2, 1, 'g']] },
-  sailB: { model: 'boat_sail_b', flip: 1, s: 2, len: 8, dy: -0.12, sp: 3.0, wake: 1.3, name: 'Thuyền buồm', lights: [[0, 8.8, 0, 'w'], [-1.2, 1.2, 1, 'r'], [1.2, 1.2, 1, 'g']] },
-  speed: { model: 'boat_speed_a', flip: 1, s: 2, len: 6.7, dy: -0.1, sp: 13, wake: 2.4, bow: 0.1, name: 'Ca nô', lights: [[0, 2.6, -1, 'w'], [-1.3, 1.4, 1.5, 'r'], [1.3, 1.4, 1.5, 'g']] },
+  liner: { model: 'boat_liner', flip: 1, s: 3, len: 45, dy: -0.9, sp: 6.5, wake: 6, horn: [98, 123], name: 'Tàu du lịch',
+    lights: [[0, 27.2, 6, 'w'], [-7.5, 7, 9, 'r'], [7.5, 7, 9, 'g'], [0, 9, -22.6, 'w'], ...WIN(MOB ? 5 : 8, -7.45, 5.2, -15, 15), ...WIN(MOB ? 5 : 8, 7.45, 5.2, -15, 15), ...WIN(MOB ? 3 : 6, -7.4, 8.6, -12, 12), ...WIN(MOB ? 3 : 6, 7.4, 8.6, -12, 12)] },
+  cargo: { model: 'boat_cargo', flip: 1, s: 4.2, len: 44, dy: -1.0, sp: 4.6, wake: 7, horn: [73, 110], name: 'Tàu chở hàng',
+    lights: [[0, 14.8, -15, 'w'], [-8.5, 5.5, -12, 'r'], [8.5, 5.5, -12, 'g'], [0, 6.5, 22.4, 'w'], [-5, 10.5, -10.4, 'y'], [5, 10.5, -10.4, 'y'], [0, 10.5, -10.4, 'y']] },
+  ferry: { model: 'boat_ferry', flip: 1, s: 2.1, len: 22, dy: -0.45, sp: 8, wake: 4, horn: [147, 185], name: 'Phà',
+    lights: [[0, 5.9, -7, 'w'], [-4.3, 2.4, -6, 'r'], [4.3, 2.4, -6, 'g'], [-4.3, 2.2, 5, 'y'], [4.3, 2.2, 5, 'y'], [0, 2.6, 11.2, 'w'], [-2.2, 4.2, -2.6, 'y'], [2.2, 4.2, -2.6, 'y']] },
+  sailA: { model: 'boat_sail_a', flip: 1, s: 2, len: 7.5, dy: -0.4, sp: 3.4, wake: 1.3, name: 'Thuyền buồm', lights: [[0, 9.7, 0, 'w'], [-1.95, 1.1, 1, 'r'], [1.95, 1.1, 1, 'g']] },
+  sailB: { model: 'boat_sail_b', flip: 1, s: 2, len: 8, dy: -0.4, sp: 3.0, wake: 1.3, name: 'Thuyền buồm', lights: [[0, 9.2, 0, 'w'], [-1.95, 1.1, 1, 'r'], [1.95, 1.1, 1, 'g']] },
+  speed: { model: 'boat_speed_a', flip: 1, s: 2, len: 6.7, dy: -0.35, sp: 13, wake: 2.4, bow: 0.1, name: 'Ca nô', lights: [[0, 3.2, -1.6, 'w'], [-1.95, 1.2, 1.5, 'r'], [1.95, 1.2, 1.5, 'g']] },
   ghe: { geo: gheGeo, s: 1, len: 8, dy: 0.42, sp: 4.2, wake: 1.8, name: 'Ghe đánh cá',
-    lights: [[0, 4.4, -2.2, 'w'], [-1.3, 1.5, -1.3, 'r'], [1.3, 1.5, -1.3, 'g'], [0, 2.6, 0.2, 'y'], [0, 2.9, 1.2, 'y'], [0, 3.3, 2.2, 'y'], [0, 2.5, -2.3, 'y']] },
-  buoyR: { model: 'prop_buoy', s: 1.3, len: 1.2, dy: -0.75, sp: 0, wake: 0, name: 'Phao tiêu', lights: [[0, 1.7, 0, 'r']] },
-  buoyG: { model: 'prop_buoy_flag', s: 1.3, len: 1.2, dy: -0.75, sp: 0, wake: 0, name: 'Phao cờ', lights: [[0, 1.7, 0, 'g']] },
-  thung: { geo: thungGeo, s: 1, len: 2, dy: -0.1, sp: 1.1, wake: 0, name: 'Thuyền thúng', lights: [[0, 1.0, 0, 'y']] },
+    lights: [[0, 4.5, -2.2, 'w'], [-1.66, 1.25, -1.3, 'r'], [1.66, 1.25, -1.3, 'g'], [0.5, 2.5, -0.4, 'y'], [-0.4, 2.7, 0.6, 'y'], [0.4, 2.9, 1.6, 'y'], [0, 3.1, 2.6, 'y'], [0, 1.7, -1.2, 'y']] },
+  buoyR: { model: 'prop_buoy', s: 1.3, len: 1.2, dy: -0.75, sp: 0, wake: 0, name: 'Phao tiêu', lights: [[0, 2.55, 0, 'r']] },
+  buoyG: { model: 'prop_buoy_flag', s: 1.3, len: 1.2, dy: -0.75, sp: 0, wake: 0, name: 'Phao cờ', lights: [[0, 2.55, 0, 'g']] },
+  thung: { geo: thungGeo, s: 1, len: 2, dy: -0.1, sp: 1.1, wake: 0.7, name: 'Thuyền thúng', lights: [[0, 1.15, 0, 'y']] },
 };
 const LCOL = { w: [1, 0.97, 0.88], r: [1, 0.16, 0.12], g: [0.2, 1, 0.42], y: [1, 0.78, 0.36] };
 
@@ -143,12 +143,12 @@ export function createFleet(ctx) {
   // ----- đèn đêm: 1 Points cho cả đội -----
   let NL = 0; for (const v of vessels) { v.l0 = NL; NL += v.K.lights.length; }
   const lg = new THREE.BufferGeometry(), lp = new Float32Array(NL * 3), lc = new Float32Array(NL * 3), ls = new Float32Array(NL);
-  for (const v of vessels) v.K.lights.forEach((q, j) => { lc.set(LCOL[q[3]], (v.l0 + j) * 3); ls[v.l0 + j] = (q[3] === 'y' ? 0.9 : 1.25) * Math.min(2.2, 0.8 + v.K.len / 34); });
+  for (const v of vessels) v.K.lights.forEach((q, j) => { lc.set(LCOL[q[3]], (v.l0 + j) * 3); ls[v.l0 + j] = (q[3] === 'y' ? 1.15 : 1.5) * Math.min(2.4, 0.9 + v.K.len / 30); });
   lg.setAttribute('position', new THREE.BufferAttribute(lp, 3)); lg.setAttribute('color', new THREE.BufferAttribute(lc, 3)); lg.setAttribute('sz', new THREE.BufferAttribute(ls, 1));
   const LU = { uOn: { value: 0 }, uPx: { value: 1 } };
   const lights = new THREE.Points(lg, new THREE.ShaderMaterial({ uniforms: LU, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    vertexShader: 'attribute vec3 color; attribute float sz; uniform float uPx; varying vec3 vC; void main(){ vC = color; vec4 mv = modelViewMatrix * vec4(position, 1.); gl_Position = projectionMatrix * mv; gl_PointSize = clamp(sz * uPx * 1.1 / -mv.z, 2.5, 34.); }',
-    fragmentShader: 'uniform float uOn; varying vec3 vC; void main(){ float d = length(gl_PointCoord - .5) * 2.; float a = smoothstep(1., .0, d); gl_FragColor = vec4(vC * (a * a * 1.4 + smoothstep(.35, 0., d)) * uOn, 1.); }' }));
+    vertexShader: 'attribute vec3 color; attribute float sz; uniform float uPx; varying vec3 vC; void main(){ vC = color; vec4 mv = modelViewMatrix * vec4(position, 1.); gl_Position = projectionMatrix * mv; gl_PointSize = clamp(sz * uPx * 1.25 / -mv.z, 3., 40.); }',
+    fragmentShader: 'uniform float uOn; varying vec3 vC; void main(){ float d = length(gl_PointCoord - .5) * 2.; float a = smoothstep(1., .0, d); gl_FragColor = vec4(vC * (a * a * 1.1 + smoothstep(.4, 0., d) * 1.3) * uOn, 1.); }' }));
   lights.frustumCulled = false; lights.visible = false; lights.name = 'sea-lights'; lights.renderOrder = 4; scene.add(lights);
 
   // ----- sóng đuôi tàu: bọt trắng dạng tấm bám đúng mặt sóng (dùng lại uniform sóng của ocean-water.js), 1 draw call -----
@@ -158,13 +158,13 @@ export function createFleet(ctx) {
   const aA = new THREE.InstancedBufferAttribute(wA, 4), aB = new THREE.InstancedBufferAttribute(wB, 4); aA.setUsage(THREE.DynamicDrawUsage); aB.setUsage(THREE.DynamicDrawUsage);
   wgeo.setAttribute('aA', aA); wgeo.setAttribute('aB', aB); wgeo.instanceCount = WN;
   const wake = new THREE.Mesh(wgeo, new THREE.ShaderMaterial({ transparent: true, depthWrite: false, fog: true,
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uLight: { value: 1 } }]),
-    vertexShader: `uniform highp float uTime; uniform float uWaveN, uAmp; uniform vec4 uWA[5], uWB[5]; uniform sampler2D uH; uniform vec2 uMin, uSize;
-      attribute vec4 aA, aB; varying vec2 vUv; varying float vK;
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uLight: { value: 1 }, uNow: { value: 0 } }]),   // uNow: đồng hồ mô phỏng (cộng dt) → bọt già đi đúng nhịp phát kể cả khi tụt khung hình
+    vertexShader: `uniform highp float uTime, uNow; uniform float uWaveN, uAmp; uniform vec4 uWA[5], uWB[5]; uniform sampler2D uH; uniform vec2 uMin, uSize;
+      attribute vec4 aA, aB; varying vec2 vUv; varying float vK, vS;
 #include <fog_pars_vertex>
       float depthAt(vec2 p){ vec2 uv = (p - uMin) / uSize; if (uv.x < 0. || uv.x > 1. || uv.y < 0. || uv.y > 1.) return 8.; return max(0., 8. - texture2D(uH, uv).r * 255. / 12.); }
       void main(){
-        float age = uTime - aB.x, k = clamp(age / aB.w, 0., 1.); vK = age < 0. ? 1. : k; vUv = uv;
+        float age = uNow - aB.x, k = clamp(age / aB.w, 0., 1.); vK = age < 0. ? 1. : k; vUv = uv; vS = fract(aA.x * 0.37 + aA.y * 0.11);
         float sz = aB.y + aB.z * age; vec2 c = aA.xy + aA.zw * (1. - exp(-age * 0.6)) / 0.6;
         vec3 w = vec3(c.x + position.x * sz, 0.04, c.y + position.z * sz); vec2 p = w.xz;
         float att = (0.12 + 0.88 * smoothstep(0.3, 13., depthAt(p))) * uAmp;
@@ -172,22 +172,23 @@ export function createFleet(ctx) {
         vec4 mvPosition = viewMatrix * vec4(w, 1.); gl_Position = projectionMatrix * mvPosition;
 #include <fog_vertex>
       }`,
-    fragmentShader: `uniform float uLight; varying vec2 vUv; varying float vK;
+    fragmentShader: `uniform float uLight; varying vec2 vUv; varying float vK, vS;
 #include <fog_pars_fragment>
-      void main(){ vec2 q = vUv - .5; float d = length(q) * 2.; float n = sin(q.x * 31. + vK * 5.) * sin(q.y * 27. - vK * 3.) * .5 + .5;
-        float a = smoothstep(1., .35, d) * (1. - vK) * (1. - vK) * (.55 + .45 * n) * smoothstep(0., .06, vK + .02); if (a < .01) discard;
-        gl_FragColor = vec4(vec3(.96, .99, 1.) * uLight, a * .8);
+      void main(){ vec2 q = (vUv - .5) * 2.; float ang = atan(q.y, q.x), d = length(q) + 0.16 * sin(ang * 3. + vS * 6.28 + vK * 2.) + 0.09 * sin(ang * 7. - vS * 11. - vK * 3.);
+        float holes = smoothstep(.25, .75, vK) * (0.5 + 0.5 * sin(q.x * 9. + vS * 20.) * sin(q.y * 8. - vS * 13.));   // bọt tan dần thành mảng thưa
+        float a = smoothstep(1., .45, d) * (1. - vK) * (1. - vK) * (1. - 0.6 * holes) * smoothstep(0., .05, vK + .015); if (a < .01) discard;
+        gl_FragColor = vec4(vec3(.96, .99, 1.) * uLight, a * .66);
 #include <fog_fragment>
       }` }));
   for (const k of ['uTime', 'uWaveN', 'uAmp', 'uWA', 'uWB', 'uH', 'uMin', 'uSize']) wake.material.uniforms[k] = WU[k];
   wake.frustumCulled = false; wake.renderOrder = 2; wake.name = 'sea-wake'; scene.add(wake);
-  let wi = 0, wDirty = false;
-  function puff(x, z, vx, vz, size, grow, life) { const i = wi++ % WN, o = i * 4; wA[o] = x; wA[o + 1] = z; wA[o + 2] = vx; wA[o + 3] = vz; wB[o] = WU.uTime.value; wB[o + 1] = size; wB[o + 2] = grow; wB[o + 3] = life; wDirty = true; }
+  let wi = 0, wDirty = false, now = 0;
+  function puff(x, z, vx, vz, size, grow, life) { const i = wi++ % WN, o = i * 4; wA[o] = x; wA[o + 1] = z; wA[o + 2] = vx; wA[o + 3] = vz; wB[o] = now; wB[o + 1] = size; wB[o + 2] = grow; wB[o + 3] = life; wDirty = true; }
   // bọt chữ V phía sau 1 thân tàu (dùng chung cho thuyền người chơi lái: pilot.js)
   function emitWake(x, z, h, sp, width, len) {
-    const fx = Math.sin(h), fz = Math.cos(h), rx = fz, rz = -fx, bx = x - fx * len * 0.46, bz = z - fz * len * 0.46, lat = sp * 0.34, life = Math.min(8, 2.2 + width * 0.8);
-    puff(bx, bz, -fx * sp * 0.08, -fz * sp * 0.08, width * 0.9, width * 0.22, life);                                              // bọt chân vịt
-    for (const s of [-1, 1]) puff(bx + rx * s * width * 0.4, bz + rz * s * width * 0.4, rx * s * lat, rz * s * lat, width * 0.55, width * 0.3, life * 0.8);   // 2 vệt chéo
+    const fx = Math.sin(h), fz = Math.cos(h), rx = fz, rz = -fx, bx = x - fx * len * 0.46, bz = z - fz * len * 0.46, lat = sp * 0.34, life = Math.min(11, 2.6 + width * 1.2);
+    puff(bx, bz, -fx * sp * 0.08, -fz * sp * 0.08, width * 1.25, width * 0.2, life);                                              // bọt chân vịt
+    for (const s of [-1, 1]) puff(bx + rx * s * width * 0.4, bz + rz * s * width * 0.4, rx * s * lat, rz * s * lat, width * 0.75, width * 0.34, life * 0.85);   // 2 vệt chéo
   }
 
   // ----- còi tàu (tổng hợp) -----
@@ -283,6 +284,7 @@ export function createFleet(ctx) {
         p.im.instanceMatrix.needsUpdate = true;
       }
     }
+    now += dt; wake.material.uniforms.uNow.value = now;
     if (wDirty) { aA.needsUpdate = true; aB.needsUpdate = true; wDirty = false; }
     wake.material.uniforms.uLight.value = 0.35 + 0.65 * (1 - st.night);
     // đèn: bật dần lúc chạng vạng / trời giông tối
