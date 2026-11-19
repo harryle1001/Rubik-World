@@ -19,6 +19,7 @@ import { create as createPaintings } from './paintings.js';   // tranh biết c�
 import { create as createCreatures } from './creatures.js';   // sinh vật kỳ ảo
 import { create as createTree } from './tree.js';             // cây cổ thụ biết nói
 import { L as CL } from './castle.js';
+import { createInterior } from './interior/index.js';   // nội thất 7 tầng (không gian phép trên cao)
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
 
@@ -103,6 +104,27 @@ export function createAcademy(ctx) {
     scene.add(kg); ctx.colliders.push({ x: shop[0], z: shop[1], r: 1.6 });
   }
 
+  // ---------- nội thất lâu đài: cửa phép ở đại sảnh, cổng chính, ban công tháp thiên văn ----------
+  const Hh0 = CL.hall, A0 = CL.astro, face = (du, dv) => Math.atan2(du * F[0] + dv * S[0], du * F[1] + dv * S[1]);
+  const DOORS = {   // [u, v, y, hướng mặt cửa (u, v)] ngoài lâu đài
+    hall: [Hh0.u0 + 1.7, -7.2, BASE, 1, 0], gate: [CL.box.u1 - CL.T - 0.05, -14, BASE, -1, 0], balcony: [A0.u + A0.r2 + 0.05, A0.v, BASE + A0.h1, 1, 0],
+  };
+  const interior = createInterior(ctx, { OX: C[0] - 44.5, OZ: C[1] - 27.5, exitTo: id => { const d = DOORS[id]; if (!d) return null; const [x, z] = toWorld(d[0] + d[3] * 2.4, d[1] + d[4] * 2.4); return [x, z, d[2], face(d[3], d[4]) + Math.PI]; } });
+  let doorG = null;
+  const buildDoors = () => {
+    const b = new Batch(), gl = new Batch();
+    for (const [u, v, y, du, dv] of Object.values(DOORS)) {
+      const g0 = new Batch(); g0.box(-1.6, 1.6, 0, 4.9, -0.1, 0.12, '#6e4a30'); g0.box(-0.05, 0.05, 0, 4.6, 0.12, 0.18, '#3a2a1a'); g0.gable(-1.9, 1.9, -0.25, 0.3, 4.9, 1.3, '#4f6f66');
+      const gg = new Batch(); gg.box(-1.85, -1.6, 0, 4.9, -0.05, 0.2, '#9fe6ff'); gg.box(1.6, 1.85, 0, 4.9, -0.05, 0.2, '#9fe6ff'); gg.box(-0.3, 0.3, 3.6, 4.2, 0.12, 0.22, '#e6b0ff');
+      const [x, z] = toWorld(u, v), r = face(du, dv);
+      b.list.push(g0.build().rotateY(r).translate(x, y, z)); gl.list.push(gg.build().rotateY(r).translate(x, y, z));
+    }
+    const g = new THREE.Group(); g.name = 'academy-interior-doors';
+    g.add(new THREE.Mesh(b.build(), matV()), new THREE.Mesh(gl.build(), new THREE.MeshBasicMaterial({ vertexColors: true })));
+    for (const m of g.children) m.matrixAutoUpdate = false;
+    scene.add(g); return g;
+  };
+
   // ---------- tải / dỡ theo khoảng cách ----------
   const far = createFar(ctx);
   let isle = null, planted = false; const boxes = ctx.boxes = ctx.boxes || [];
@@ -114,13 +136,14 @@ export function createAcademy(ctx) {
     else if (isle && d > UNLOAD) { spells.unbuild(); content.unbuild(); for (const x of extras) x.unbuild(); for (const b of isle.castle.boxes) { const k = boxes.indexOf(b); if (k >= 0) boxes.splice(k, 1); } isle.dispose(); isle = null; }
     far.moundOn = !isle;
     if (isle) isle.castle.group.visible = far.dist < 296 + 89;
+    if (isle && !doorG) doorG = buildDoors(); if (doorG) doorG.visible = !!isle;
   }
 
   function update(dt) {
     ferry.update(dt);
     stream(); far.update();
     if (isle) { const t = performance.now() / 1000; isle.castle.update(dt, t, player.pos); isle.atmos.update(dt, t); for (const x of extras) x.update(dt, t); }
-    magic.update(dt); spells.update(dt); content.update(dt, performance.now() / 1000);
+    magic.update(dt); spells.update(dt); content.update(dt, performance.now() / 1000); interior.update(dt);
     if (ferry.riding || player.vehicle) return;
     const pp = player.pos;
     if (Math.hypot(pp.x - shop[0], pp.z - shop[1]) < 4.2) ctx.offer(magic.hasWand ? '🪄 Đổi đũa phép' : '🪄 Chọn đũa phép (miễn phí)', () => magic.chooseWand(!magic.hasWand), 9);
@@ -138,7 +161,8 @@ export function createAcademy(ctx) {
         ctx.offer('🪄 Nhận đũa phép', () => magic.chooseWand(true), 9);
       }
     }
+    if (isle && !interior.inside) for (const [id, [u, v, y]] of Object.entries(DOORS)) if (Math.hypot(qu - u, qv - v) < 3.2 && Math.abs(pp.y - y) < 2.5) ctx.offer(id === 'balcony' ? '🚪 Vào Tháp Chính (cầu thang xoắn xuống các tầng)' : '🚪 Vào trong lâu đài (7 tầng)', () => interior.enter(id), 8.5);
     if (qu > QUAY.u0 - 2 && qu < QUAY.u0 + QUAY.w + 4 && qv > -3 && qv < QUAY.v1 + 3 && Math.abs(pp.y - QUAY.y) < 2) ctx.offer('⛵ Đi thuyền về đảo Rubik', () => ferry.start(-1), 8);
   }
-  return { update, far, ferry, magic, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) }, shop };
+  return { update, far, ferry, magic, interior, anchors: interior.anchors, get loaded() { return !!isle; }, pier: { end: pierEnd, start: pw(pr0, 0) }, shop };
 }
