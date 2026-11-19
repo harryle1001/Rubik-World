@@ -89,6 +89,13 @@ export function createAudio(ctx) {
     s.connect(g).connect(listener.getInput()); s.start();
   };
 
+  // Nốt nhạc gõ (đàn đá / marimba tổng hợp): f Hz, vol 0..1 — nhạc nước học viện
+  ctx.note = (f, vol = 0.1, dur = 0.7) => {
+    if (!on || listener.context.state !== 'running' || vol < 0.004) return;
+    const ac = listener.context, t = ac.currentTime + 0.01;
+    for (const [m, v] of [[1, 1], [4, 0.18]]) { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f * m; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol * v, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0005, t + dur / m); o.connect(g).connect(listener.getInput()); o.start(t); o.stop(t + dur + 0.05); }
+  };
+
   // Huýt sáo (tổng hợp): semis = các nốt tính theo nửa cung so với nốt gốc, mỗi thú cưỡi một giai điệu riêng
   ctx.whistle = (semis, base = 1175) => {
     if (!on || listener.context.state !== 'running') return;
