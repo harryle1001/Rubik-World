@@ -35,11 +35,12 @@ if (VIEW === 'group') ['long', 'phung', 'lan', 'quy'].forEach((h, i) => { people
 if (VIEW === 'teacher') people.push({ base: 'fumiriya', role: 'teacher', hat: true, glasses: 'square', wand: true, hair: '#3a2e2a' }, { base: 'fumiriya', role: 'teacher', hat: false, wand: true, hair: '#c8ccd8', glasses: 'round' });
 const heroes = [], t0 = performance.now();
 for (const L of people) heroes.push(await loadVrmHero(L, { set: SET, height: L.base === 'fumiriya' ? 1.8 : L.base === 'hair-m' ? 1.66 : 1.56 }));
+if (Q.get('lod') === 'lite') for (const h of heroes) { h.setLod('lite'); for (const o of h.outlines) o.visible = false; }   // như NPC 5–21 m trong game
 const gap = VIEW === 'group' ? 0.95 : 1.1;
 heroes.forEach((h, i) => { h.model.position.set((i - (heroes.length - 1) / 2) * gap, 0, VIEW === 'group' ? -Math.abs(i - 3.5) * 0.12 : 0); h.model.rotation.y = VIEW === 'group' ? -(i - 3.5) * 0.06 : 0; scene.add(h.model); h.model.traverse(o => { if (o.isMesh) o.castShadow = true; }); h.anim.play(Q.get('anim') || 'Idle', 0); });
 const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.05, 100), ctl = new OrbitControls(cam, r.domElement);
 const H = Math.max(...heroes.map(h => h.height)), W = heroes.length * gap;
-const dist = Math.max(H * 0.62 / Math.tan(Math.PI / 12), (W / 2 + 0.4) / (Math.tan(Math.PI / 12) * cam.aspect));
+const dist = Math.max(H * 0.56 / Math.tan(Math.PI / 12), (W / 2 + 0.4) / (Math.tan(Math.PI / 12) * cam.aspect));
 const yaw = +(Q.get('yaw') || 0.0), cy = H * 0.52;
 cam.position.set(Math.sin(yaw) * dist, cy + 0.25, Math.cos(yaw) * dist); ctl.target.set(0, cy, 0); ctl.update();
 const cap = document.getElementById('cap');

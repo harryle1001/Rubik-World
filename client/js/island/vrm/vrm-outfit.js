@@ -223,12 +223,12 @@ export function dressVrm(vrm, model, opt = {}) {
     const u = new THREE.Vector3(1, 0, 0).cross(dir).normalize(), vv = new THREE.Vector3().crossVectors(dir, u), Lw = 0.32 * S, wood = [0.42, 0.27, 0.16], hand = [0.25, 0.15, 0.09], tip = [0.75, 0.92, 1];
     const n = 6; for (let i = 0; i < n; i++) { const t0 = i / n, t1 = (i + 1) / n, r0 = lerp(0.0095, 0.005, t0) * S, r1 = lerp(0.0095, 0.005, t1) * S, c = i < 2 ? hand : wood;
       for (let k = 0; k < 6; k++) { const a0 = 2 * Math.PI * k / 6, a1 = 2 * Math.PI * (k + 1) / 6, P = (t, r, a) => grip.clone().addScaledVector(dir, (t - 0.2) * Lw).addScaledVector(u, r * Math.cos(a)).addScaledVector(vv, r * Math.sin(a)); const p = [P(t0, r0, a0), P(t1, r1, a0), P(t1, r1, a1), P(t0, r0, a1)].map(q => N.v(q.x, q.y, q.z, w, c)); N.quad(p[0], p[3], p[2], p[1]); } }
-    N.box(grip.clone().addScaledVector(dir, 0.8 * Lw + 0.008 * S), u, vv, dir, 0.006 * S, 0.006 * S, 0.01 * S, w, tip);
+    T.box(grip.clone().addScaledVector(dir, 0.8 * Lw + 0.008 * S), u, vv, dir, 0.006 * S, 0.006 * S, 0.01 * S, w);   // đầu đũa màu viền nhà
   }
 
   // ---- lưới + vật liệu ----
   const skel = new THREE.Skeleton(bones), group = [];
-  const pal = PALETTE[opt.house] || PALETTE.long, matA = mtoon(pal.robe, S, true), matT = mtoon(pal.trim, S, false), matN = mtoon('#ffffff', S, false, true);
+  const pal = PALETTE[opt.house] || PALETTE.long, matA = mtoon(pal.robe, S, true), matT = mtoon(pal.trim, S, false), matN = mtoon('#6b4528', S, false);   // gỗ đũa
   const mk = (sk, mats, name) => { if (!sk.idx.length) return null; const g = sk.geometry(); if (mats.length > 1) { g.addGroup(0, g.index.count, 0); g.addGroup(0, g.index.count, 1); } const me = new THREE.SkinnedMesh(g, mats.length > 1 ? mats : mats[0]); me.name = name; me.frustumCulled = false; me.castShadow = name === 'robe'; model.add(me); me.updateMatrixWorld(true); me.bind(skel, me.matrixWorld); group.push(me); return me; };
   parts.robe = mk(A, matA, 'robe'); parts.trim = mk(T, matT, 'trim'); parts.wand = mk(N, matN, 'wand');
   const tris = group.reduce((s, me) => s + me.geometry.index.count / 3, 0);

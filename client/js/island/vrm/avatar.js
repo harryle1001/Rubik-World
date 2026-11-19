@@ -21,7 +21,7 @@ export const houseOf = (ctx, a) => (ctx.account && ctx.account.house) || a.house
 // máy yếu → giữ nhân vật chibi (ít RAM / ít nhân CPU / ?low / chất lượng tự hạ xuống thấp nhất)
 export function weakDevice() {
   const q = new URLSearchParams(location.search);
-  if (q.has('vrm')) return q.get('vrm') === '0';
+  if (q.has('novrm')) return true; if (q.has('vrm')) return q.get('vrm') === '0';   // ?novrm hoặc ?vrm=0: luôn chibi
   if (q.has('low')) return true;
   const mem = navigator.deviceMemory, cores = navigator.hardwareConcurrency;
   return (mem && mem <= 2) || (cores && cores <= 2);

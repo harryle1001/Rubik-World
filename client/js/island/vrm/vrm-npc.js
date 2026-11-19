@@ -81,6 +81,6 @@ export function createVrmNpc(ctx) {
     const sh = e.d < 13; if (v._sh !== sh) { v._sh = sh; v.model.traverse(o => { if (o.isMesh && o.userData.cast0 === undefined) o.userData.cast0 = o.castShadow; if (o.isMesh) o.castShadow = sh && o.userData.cast0; }); }
   }
   // tải trước file VRM mobile (mạng) sau khi vào game; parse khi cần
-  const iv = setInterval(() => { if (!ctx.warmed) return; clearInterval(iv); if (st.on) for (const id of ['shino', 'shibu', 'hair-m', 'fumiriya']) prefetch(id, 'mobile'); }, 1000);
+  const iv = setInterval(() => { if (!ctx.warmed) return; clearInterval(iv); const c = navigator.connection; if (st.on && !(c && (c.saveData || /2g|3g/.test(c.effectiveType || '')))) for (const id of ['shino', 'shibu', 'hair-m']) prefetch(id, 'mobile'); }, 1000);   // mạng yếu / tiết kiệm dữ liệu: chỉ tải khi gặp
   return Object.assign(st, { update, reg, setOn(on) { st.on = on; if (!on) for (const e of reg) detach(e); } });
 }

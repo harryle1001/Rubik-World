@@ -38,6 +38,13 @@ export async function loadVrmHero(look = {}, opt = {}) {
   vrm.scene.scale.setScalar(1); model.scale.setScalar(1);
   const { clips, statics } = await vrmClips(vrm, base + set);
   for (const [b, q] of statics) b.quaternion.copy(q);
+  // ngón tay khép nhẹ (KayKit không có xương ngón): gập quanh trục trước–sau theo hệ thế giới, VRM 0.x đảo dấu z → tay cầm đũa tự nhiên
+  { const vf = vrm.meta.metaVersion === '0' ? -1 : 1, Zq = new THREE.Vector3(0, 0, 1), Xq = new THREE.Vector3(1, 0, 0);
+    for (const [side, sg] of [['left', -1], ['right', 1]]) for (const f of ['Index', 'Middle', 'Ring', 'Little', 'Thumb']) ['Proximal', 'Intermediate', 'Distal'].forEach((j, k) => {
+      const b = vrm.humanoid.getNormalizedBoneNode(side + f + j); if (!b) return;
+      const a = f === 'Thumb' ? [0.25, 0.35, 0.3][k] : [0.7, 0.85, 0.6][k] * (f === 'Index' ? 0.85 : 1);
+      if (f === 'Thumb') b.quaternion.setFromAxisAngle(Xq, -a * 0.8); else b.quaternion.setFromAxisAngle(Zq, sg * a * vf);
+    }); }
   // khung bọc ngoài để code cũ đặt vị trí/xoay/scale (model) mà không đè phép xoay 180° của VRM 0.x
   const outer = new THREE.Group(); outer.name = 'vrm-hero'; outer.add(model); model.scale.setScalar(height / nat);
   outer.updateMatrixWorld(true); if (vrm.springBoneManager) vrm.springBoneManager.setInitState();
