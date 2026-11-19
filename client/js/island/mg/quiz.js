@@ -1,5 +1,6 @@
 // mg/quiz.js — Ngân hàng câu hỏi ngắn dùng chung cho mini game 3D (1 câu ≤ 1 dòng, 3 đáp án, có lời giải thích).
 // quiz(topic, level) → { q, a, choices, why }   topic: 'math' | 'vocab' | 'science' | 'geo' | 'mix'
+import * as THREE from 'three';
 import { mathQ, pick } from './sport/kit.js';
 
 const T = (q, a, w1, w2, why = '') => ({ q, a, wrong: [w1, w2], why });
@@ -47,4 +48,12 @@ export function askBar(api, Q, fn, keep = []) {
   api.hud.clearBar(); let done = false;
   Q.choices.forEach((c, i) => api.hud.button(c, () => { if (done) return; done = true; api.hud.clearBar(); keep.forEach(k => k()); fn(c === Q.a, c); }));
   return { answer: i => { if (!done && Q.choices[i] != null) { done = true; api.hud.clearBar(); keep.forEach(k => k()); fn(Q.choices[i] === Q.a, Q.choices[i]); } }, get done() { return done; } };
+}
+// Bảng 3D: câu hỏi (dòng trên) + 3 ô đáp án màu đỏ/vàng/xanh — 1 canvas, 1 draw call. board(w) → { mesh, draw(Q, hi?) }
+export function board(w) {
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 320; const k = cv.getContext('2d'), tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, w * 320 / 1024), new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide }));
+  const draw = (Q, hi = -1) => { k.clearRect(0, 0, 1024, 320); k.fillStyle = 'rgba(27,22,38,.92)'; k.beginPath(); k.roundRect(8, 8, 1008, 130, 40); k.fill(); k.fillStyle = '#ffd36e'; k.font = 'bold 72px system-ui'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(Q.q, 512, 76, 980);
+    Q.choices.forEach((c, i) => { const x = 8 + i * 339; k.globalAlpha = hi < 0 || hi === i ? 1 : 0.35; k.fillStyle = ['#e8453c', '#f2b134', '#3fa36b'][i]; k.beginPath(); k.roundRect(x, 152, 330, 160, 34); k.fill(); k.fillStyle = '#fff'; k.font = 'bold 76px system-ui'; k.fillText(c, x + 165, 236, 310); }); k.globalAlpha = 1; tex.needsUpdate = true; };
+  return { mesh, draw };
 }

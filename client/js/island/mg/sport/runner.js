@@ -6,7 +6,7 @@
 // Điều khiển: chạm nửa trái/phải màn hình (hoặc ◀ ▶, A/D, mũi tên) đổi làn · vuốt lên / ⤴ / Space nhảy.
 import * as THREE from 'three';
 import { PHI, clamp, rnd, pick, batch, textSprite } from './kit.js';
-import { quiz, askBar } from '../quiz.js';
+import { quiz, askBar, board } from '../quiz.js';
 import { prop, anim } from '../props.js';
 import { placeKit } from '../../kit.js';
 
@@ -41,10 +41,7 @@ export function runner(ctx, api, C) {
   // ---------- Cổng đáp án: 1 cổng dùng lại, chữ (câu hỏi + 3 đáp án) vẽ chung 1 canvas → 2 draw call ----------
   const gates = [0].map(() => {
     const g = new THREE.Group(), b = batch(); b.box(0.3, 4, 0.3, -LANE * 1.6, 0, 0, '#3d8fd9'); b.box(0.3, 4, 0.3, LANE * 1.6, 0, 0, '#3d8fd9');
-    g.add(b.mesh()); const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 320; const k = cv.getContext('2d'), tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
-    const board = new THREE.Mesh(new THREE.PlaneGeometry(LANE * 3.4, LANE * 3.4 * 320 / 1024), new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide })); board.position.set(0, 4 + 0.6, 0); g.add(board);
-    const draw = Q => { k.clearRect(0, 0, 1024, 320); k.fillStyle = 'rgba(27,22,38,.92)'; k.beginPath(); k.roundRect(8, 8, 1008, 130, 40); k.fill(); k.fillStyle = '#ffd36e'; k.font = 'bold 72px system-ui'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText(Q.q, 512, 76, 980);
-      Q.choices.forEach((c, i) => { const x = 8 + i * 339; k.fillStyle = ['#e8453c', '#f2b134', '#3fa36b'][i]; k.beginPath(); k.roundRect(x, 152, 330, 160, 34); k.fill(); k.fillStyle = '#fff'; k.font = 'bold 76px system-ui'; k.fillText(c, x + 165, 236, 310); }); tex.needsUpdate = true; };
+    g.add(b.mesh()); const { mesh: bd, draw } = board(LANE * 3.4); bd.position.set(0, 4 + 0.6, 0); g.add(bd);
     g.visible = false; world.add(g); return { g, draw, s: 0, Q: null, done: true };
   });
   // ---------- Nhân vật, xe, bạn đua ----------

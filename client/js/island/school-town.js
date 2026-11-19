@@ -193,6 +193,7 @@ export function createSchoolTown(ctx) {
     if (town.info && Math.abs(town.info.x - p.x) + Math.abs(town.info.z - p.z) < 5) ctx.offer('📜 Đọc bảng φ & π', showInfo, 1);
     // nhãn tên cửa: 1 sprite dùng lại (trước: mỗi cửa mới tạo canvas + texture + vật liệu, không giải phóng → giật + rò bộ nhớ GPU)
     if (best !== nearDoor) { nearDoor = best; if (best) nameTag = label(best.d.n, best.x, TOWN_Y + 2.6, best.z, 0.8, nameTag); else if (nameTag) nameTag.visible = false; }
+    if (nameTag && ctx.mgActive) nameTag.visible = false;   // đang chơi mini game: không hiện nhãn cửa
     updatePeople(dt);
   }
   ctx.school = town;
