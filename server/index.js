@@ -220,8 +220,15 @@ island.on('connection', socket => {
   });
   socket.on('m', d => {
     const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
-    me.x = num(d.x, -150, 150); me.y = num(d.y, -20, 60); me.z = num(d.z, -150, 150); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);
+    me.x = num(d.x, -1500, 1500); me.y = num(d.y, -20, 150); me.z = num(d.z, -1500, 1500); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 20);
     socket.broadcast.volatile.emit('m', [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)]);
+  });
+  // Ván bạc bay: chuyển tiếp trạng thái cưỡi ván + tiến độ đua cho người khác (on, màu viền, đường đua, tiến độ 0..1, thời gian về đích)
+  let lastSb = 0;
+  socket.on('sb', d => {
+    const now = Date.now(); if (!me || !d || now - lastSb < 100) return; lastSb = now;
+    const o = { on: d.on ? 1 : 0 }; if (/^#[0-9a-f]{6}$/i.test(d.c)) o.c = d.c; if (typeof d.k === 'string') o.k = d.k.slice(0, 12).replace(/[^a-z]/g, ''); if (d.p != null) o.p = num(d.p, 0, 1); if (d.f != null) o.f = num(d.f, 0, 9999);
+    socket.broadcast.emit('sb', [me.id, o]);
   });
   socket.on('disconnect', () => { if (!me) return; islanders.delete(socket.id); island.emit('left', socket.id); });
 });

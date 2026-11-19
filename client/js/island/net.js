@@ -14,7 +14,7 @@ function nameTag(text) {
 }
 
 export function createNet(ctx) {
-  const others = new Map(); let sock = null;
+  const others = new Map(); let sock = null; const extra = [];   // extra: sự kiện thêm của phần khác (vd. 'sb' ván bạc) — gắn khi socket sẵn sàng
   const status = document.getElementById('online');
   const setStatus = () => { if (status) status.textContent = sock && sock.connected ? `👥 ${others.size + 1} người trên đảo` : '⚪ Chơi một mình'; };
 
@@ -38,7 +38,7 @@ export function createNet(ctx) {
   s.onload = () => {
     sock = window.io(server + '/island', { transports: ['websocket', 'polling'] });
     sock.on('connect', () => { for (const id of [...others.keys()]) remove(id); sock.emit('join', { name: ctx.playerName, hue: ctx.hue }); setStatus(); });
-    sock.on('disconnect', setStatus);
+    sock.on('disconnect', setStatus); for (const [ev, fn] of extra) sock.on(ev, fn);
     sock.on('players', list => list.forEach(add));
     sock.on('joined', add);
     sock.on('left', remove);
@@ -70,5 +70,5 @@ export function createNet(ctx) {
       o.h.legL.rotation.x = Math.sin(o.phase) * a; o.h.legR.rotation.x = -Math.sin(o.phase) * a; o.h.armL.rotation.x = -Math.sin(o.phase) * a; o.h.armR.rotation.x = Math.sin(o.phase) * a;
     }
   }
-  return { update, others, get connected() { return !!(sock && sock.connected); } };
+  return { update, others, get connected() { return !!(sock && sock.connected); }, emit(ev, d) { if (sock && sock.connected) sock.emit(ev, d); }, on(ev, fn) { extra.push([ev, fn]); if (sock) sock.on(ev, fn); } };
 }
