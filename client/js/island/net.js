@@ -30,7 +30,7 @@ function bubble(text, big) {
 export function createNet(ctx) {
   const others = new Map(); let sock = null; const subs = {};   // subs: mô-đun khác nghe sự kiện (spellbook.js: phép, áo choàng…)
   const fire = (ev, d) => { for (const f of subs[ev] || []) { try { f(d); } catch (e) { console.warn(e); } } };
-  const on = (ev, fn) => { (subs[ev] = subs[ev] || []).push(fn); if (sock && !['connect', 'disconnect'].includes(ev) && !sock.hasListeners(ev)) sock.on(ev, d => fire(ev, d)); };
+  const on = (ev, fn) => { (subs[ev] = subs[ev] || []).push(fn); if (sock && !['connect', 'disconnect'].includes(ev) && subs[ev].length === 1) sock.on(ev, d => fire(ev, d)); };   // sau ghép: không dùng hasListeners — sự kiện net.js đã tự nghe (look, mg, hello…) vẫn tới được mô-đun khác
   const bubbles = [];
   const net = { others, info: null, on, get sock() { return sock; } };
   // hiện bong bóng trên đầu người (id = socket id; id của mình → nhân vật của mình)
