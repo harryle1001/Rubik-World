@@ -34,6 +34,11 @@ export const QUAY = { u0: PLAT.u + PLAT.hu, w: 8, v0: -89, v1: 21, v2: -13, land
 QUAY.ymid = QUAY.y + (QUAY.y_top - QUAY.y) * 89 / (89 + QUAY.v2 - QUAY.v0);   // độ cao chiếu nghỉ (2 nhánh cùng dốc)
 export const DOCK = [QUAY.u0 + QUAY.w + 5, 10];                          // chỗ thuyền cập bến (u, v)
 export const RUNWAY = { u: ISLE.u - ISLE.hu + 45, hw: 6.5, hl: 116.5, y: 5 };   // đường băng 233 × 13 m chạy theo trục v, sau lâu đài
+// LÀNG PHÙ THUỶ NHỎ (village.js): 5 lô đất xây nhà bằng phép "Dựng Lên!" ở góc đông nam, giữa hồ và mép đảo.
+// lô 6 × 10 ô, ô 3,4 m (= ô module Kenney ở Phố Phép Thuật) → 20,4 × 34 m (34/21 ≈ φ); lối giữa 2 lô 5,6 m; nền phẳng cao 5 m
+export const VILLAGE = { u0: 143, v0: 34, ni: 6, nj: 10, S: 3.4, n: 5, gap: 5.6, y: 5, pad: 5, blend: 13 };
+VILLAGE.lw = VILLAGE.ni * VILLAGE.S; VILLAGE.ll = VILLAGE.nj * VILLAGE.S; VILLAGE.u1 = VILLAGE.u0 + VILLAGE.ll; VILLAGE.v1 = VILLAGE.v0 + VILLAGE.n * (VILLAGE.lw + VILLAGE.gap) - VILLAGE.gap;
+export const villageDist = (u, v) => { const V = VILLAGE, du = Math.max(V.u0 - V.pad - u, u - V.u1 - V.pad, 0), dv = Math.max(V.v0 - V.pad - v, v - V.v1 - V.pad, 0); return Math.hypot(du, dv); };
 export const CASTLE = { u0: -106, u1: 38, hv: 116.5 };                   // khung lâu đài 144 × 233 m (233/144 ≈ φ)
 // mặt bằng lâu đài (dùng ở castle.js / kit.js)
 export const CASTLE_L = {
@@ -126,6 +131,7 @@ export function heightLocal(u, v, x, z) {
     if (u > PLAT.u + PLAT.hu && ch > 0) h = lerp(h, LAKE_Y, ch);
     if (dP < 5) h = lerp(PLAT.y + n * 0.6, LAKE_Y, smooth(0, 5, dP));
   } else if (u > 0 && Math.abs(v) < INLET + 8) h = lerp(h, LAKE_Y - 2, 1 - smooth(INLET, INLET + 8, Math.abs(v)));
+  const dV = villageDist(u, v); if (dV < VILLAGE.blend) h = lerp(VILLAGE.y, h, smooth(0, VILLAGE.blend, dV));   // nền làng phẳng
   const q = quayY(u, v); if (q !== null) h = q - 0.3;                    // dốc/bến: mặt đá riêng (groundExtra), đất thấp hơn 0,3 m
   return Math.max(h, hF);
 }

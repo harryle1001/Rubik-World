@@ -75,5 +75,5 @@ export function createNet(ctx) {
     }
   }
   const send = (ev, d) => { if (sock && sock.connected) sock.emit(ev, d); };
-  return { update, others, send, on, get connected() { return !!(sock && sock.connected); } };
+  return { update, others, send, on, get sock() { return sock; }, get connected() { return !!(sock && sock.connected); } };
 }

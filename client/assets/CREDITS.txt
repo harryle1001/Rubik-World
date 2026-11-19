@@ -151,3 +151,8 @@ Nhân vật anime TRONG GAME (đảo 3D, client/js/island/vrm/): mẫu CC0 — V
   Đồng phục phù thuỷ Tứ Linh (áo choàng, mũ trùm, khăn sọc, cà vạt, mũ chóp, kính, đũa): dựng bằng code trong vrm-outfit.js
   (không có phụ kiện CC0 khớp xương VRoid để lấy sẵn) — thiết kế nguyên bản của dự án.
   Animation: 14 clip KayKit Adventurers (CC0, Kay Lousberg) chuyển sang xương humanoid VRM (vrm-anim.js).
+Làng Phù Thuỷ Nhỏ — xây nhà bằng phép "Dựng Lên!" (client/js/island/academy/village*.js): không tải thêm tệp mới.
+  Mảnh xây dùng lại model CC0 đã có ở trên: models/alley/* (Kenney Fantasy Town Kit 2.0: planks, wall, wall-wood, wall-door,
+  wall-window-glass, roof-high, roof-point, stairs-stone, wall-block, lantern) và models/kit/* (Kenney Fence/Nature/Furniture Kit:
+  fence_picket, plant_tree_town, plant_bush_round, furn_table, furn_chair, furn_bookshelf_full, furn_couch). Màu texture bảng màu
+  được nướng sang màu đỉnh để gộp cả lô thành 1 lưới. Khối Rubik (6 màu chuẩn), nền lô, biển tên: dựng/vẽ bằng code.
