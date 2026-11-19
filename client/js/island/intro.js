@@ -177,7 +177,7 @@ export async function playIntro(ctx, { first = false } = {}) {
     if (t >= 16.6) {
       const k = (t - 16.6) / (END - 16.6), hd = P.pos.clone(); hd.y += lerp(0.6, 1.3, ease((t - 19.8) / 1.5));
       if (t > 19.8) play('idle', 0.5); if (t > 21.4 && t < 21.6) { play('cheer', 0.25, true); sfx('open'); }
-      const a = save.rot + Math.PI * (0.25 + 1.2 * ease(k)), r = lerp(2.6, 9, ease(k)), y = lerp(0.9, 4.2, ease(k));
+      const a = save.rot + Math.PI * (0.25 + 0.95 * ease(k)), r = lerp(2.6, 7, ease(k)), y = lerp(0.9, 5.5, ease(k));
       camera.up.set(0, 1, 0); camera.position.set(hd.x + Math.sin(a) * r, hd.y + y, hd.z + Math.cos(a) * r); camera.lookAt(hd);
     }
     drawSwirl();
