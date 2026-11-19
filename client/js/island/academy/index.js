@@ -31,6 +31,7 @@ import { createLake } from './forest-lake.js';             // hồ trong rừng
 import { createLife } from './forest-life.js';             // sinh vật phép thuật
 import { createSecrets } from './forest-secrets.js';       // 13 bí mật, Bà Gạo kể cổ tích, nguyên liệu Pha Chế, bản đồ rừng
 import { createDragons } from './dragons.js';              // Thung Lũng Rồng: rồng hiền, trứng rồng, rồng con thú cưng
+import { createBestiary } from './bestiary.js';            // 📖 Bách khoa sinh vật (thần thoại + động vật thật)
 import { createFlyers } from './flyers.js';                // thú bay cưỡi được: Ngựa có cánh, Chim Lạc, Phượng Hoàng, Rồng Lửa lớn
 
 const LOAD = 351, UNLOAD = 610, PIER_Y = 1.6;
@@ -144,6 +145,7 @@ export function createAcademy(ctx) {
   forest.plug(ctx.forestLake = createLake(ctx, forest));
   forest.plug(ctx.forestLife = createLife(ctx, forest, magic));
   forest.plug(ctx.forestSecrets = createSecrets(ctx, forest, magic));
+  ctx.bestiary = createBestiary(ctx);
   const dragons = ctx.dragons = createDragons(ctx, magic);
   const flyers = ctx.flyers = createFlyers(ctx, magic);
 
