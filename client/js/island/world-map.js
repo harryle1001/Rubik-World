@@ -109,6 +109,8 @@ body.rs-modal #bMap{display:none}`;
     for (const e of EXTRA) L.push({ n: e.name.toUpperCase(), x: (e.r[0] + e.r[2]) / 2, z: (e.r[1] + e.r[3]) / 2, big: 2 });
     for (const t of TEMPLES) L.push({ n: t.name, x: t.x, z: t.z, ic: '⛩️' });
     if (ctx.eggs && ctx.eggs.spots) for (const q of ctx.eggs.spots()) if (!q.hide) L.push({ n: q.n, x: q.x, z: q.z, ic: q.ic, spot: true });
+    // mốc do phần khác đăng ký (ctx.mapPlaces: hải đăng…); mốc ngoài khung bản đồ → ghim ở mép gần nhất kèm ghi chú q.far
+    for (const q of ctx.mapPlaces || []) { const x = Math.max(B.x0 + 13, Math.min(B.x1 - 13, q.x)), z = Math.max(B.z0 + 13, Math.min(B.z1 - 13, q.z)), out = x !== q.x || z !== q.z; L.push({ n: out && q.far ? `${q.n} (${q.far})` : q.n, x, z, ic: q.ic }); }
     const sc = ctx.school; if (!sc) return L;
     if (sc.gate) L.push({ n: 'Cổng trường', x: sc.gate[0], z: sc.gate[1], ic: '🏫' });
     const RS = sc.RS;

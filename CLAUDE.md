@@ -14,6 +14,7 @@
 
 ## Bản đồ dự án
 - `client/` website + game 2D (Phaser) + đảo 3D (`ocean.html`, `js/island/`).
+- `client/js/island/lighthouse/` Hải đăng Mũi Sóng (đảo đá tây nam, tháp 34 m vào được, ông Bảy gác đèn): `plan.js` số đo + mặt đi, `build.js` dựng hình, `keeper.js` nhiệm vụ, `index.js` nối vào thế giới.
 - `server/index.js` Express + Socket.io (namespace `/island` cho đảo 3D).
 - `client/assets/` model .glb, âm thanh; nguồn ghi trong `client/assets/CREDITS.txt` (chỉ dùng tài nguyên CC0).
 - `.claude/skills/` skill dùng chung: `lowpoly-style`, `open-world-lowpoly` (giới hạn tam giác, instancing, fog, chunk).

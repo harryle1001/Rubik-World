@@ -134,3 +134,8 @@ tex/cobble.jpg  "Paving Stones 070" — ambientCG (Lennart Demes), CC0 1.0 — h
 models/alley/wiz-hat.glb, wiz-cape.glb  mũ + áo choàng tách từ models/hero-mage.glb (KayKit Adventurers, CC0 — xem trên), tô màu bằng code
 models/alley/broom.glb  "Medieval Tools Pack" — System G6, OpenGameArt, CC0 — https://opengameart.org/content/medieval-tools-pack (chuyển .blend → .glb bằng bpy)
 Thú cưng đi theo dùng lại animal-*.glb (Quaternius, CC0) ở trên.
+Hải đăng Mũi Sóng (client/js/island/lighthouse/): chỉ dùng lại model CC0 đã có — kit/rock_shore_a·b·c, rock_wide, house_suburb_a_warm,
+  boat_row, boat_row_small, boat_fishing, barrels, crate, chest, prop_buoy, prop_lantern, prop_lantern_hanging, prop_crate_carrots,
+  prop_crate_tomatoes, plant_bush_small, plant_beach_grass, furn_table_small, furn_chair_wood, furn_cabinet, furn_table_round,
+  furn_bookshelf_full (Kenney / KayKit / Quaternius, CC0 — xem trên) và models/rua.glb (rùa biển). Tháp, cầu thang, thấu kính, bọt sóng,
+  hải âu, chùm sáng dựng bằng code (không có model CC0 đi vào được); còi sương mù tổng hợp bằng WebAudio. Không tải thêm tài nguyên mới.

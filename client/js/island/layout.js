@@ -162,3 +162,8 @@ export const SPAWN = [GATE3[0] - 7, GATE3[1]];
 // ===== HỌC VIỆN PHA LÊ: đảo riêng ngoài khơi hướng tây bắc (sau Rừng & Đền Tri Thức) =====
 // Khoảng nước giữa 2 bờ 610 m (Fibonacci) → tâm đảo cách tâm thế giới ISLAND_R + 610 + 233 ≈ 1 148 m. Chi tiết: academy/plan.js
 export const ACADEMY = (() => { const ang = zoneAngle(7), r = ISLAND_R + 610 + 233; return { ang, r, c: polar(r, ang), name: 'Học viện Pha Lê' }; })();
+
+// ===== HẢI ĐĂNG MŨI SÓNG: đảo đá nhỏ ngoài khơi hướng tây nam =====
+// Hướng = hướng bắc quay ngược một GÓC VÀNG (2π/φ² ≈ 137,5°) → tránh Học viện (tây bắc), Làng nổi (đông nam);
+// khoảng nước từ bờ tới chân tháp 233 m (Fibonacci) → tâm đảo cách tâm thế giới ISLAND_R + 233 = 538 m. Chi tiết: lighthouse/plan.js
+export const LIGHTHOUSE = (() => { const ang = zoneAngle(0) - 2 * PI / (PHI * PHI), r = ISLAND_R + 233; return { ang, r, c: polar(r, ang), name: 'Hải đăng Mũi Sóng' }; })();
