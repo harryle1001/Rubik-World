@@ -5,13 +5,8 @@
 import * as THREE from 'three';
 import { PHI, rnd, pick, batch, crowd } from './kit.js';
 import { quiz, askBar, board } from '../quiz.js';
-import { prop } from '../props.js';
+import { prop, tweens } from '../props.js';
 
-function tweens() {
-  const list = []; const t = (dur, fn) => new Promise(res => list.push({ t: 0, dur, fn, res }));
-  t.update = dt => { for (let i = list.length - 1; i >= 0; i--) { const w = list[i]; w.t += dt; const k = Math.min(1, w.t / w.dur); w.fn(k); if (k >= 1) { list.splice(i, 1); w.res(); } } };
-  t.clear = () => { list.length = 0; }; return t;
-}
 const arc = (o, a, b, h, k) => o.position.set(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k + Math.sin(Math.PI * k) * h, a.z + (b.z - a.z) * k);
 
 // ======================= ⚽ BÓNG ĐÁ: SÚT PHẠT ĐỀN =======================

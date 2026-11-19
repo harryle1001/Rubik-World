@@ -23,3 +23,9 @@ export async function anim(parent, name, height = 1) {
   g.scene.traverse(o => { if (o.isMesh) o.castShadow = true; });
   return { obj: w, anim: animator(g.scene, g.animations, clean) };
 }
+// Hiệu ứng theo thời gian (chạy trong update của game): tw(giây, k => …) → Promise; tw.update(dt) mỗi khung, tw.clear() khi thoát
+export function tweens() {
+  const list = []; const t = (dur, fn) => new Promise(res => list.push({ t: 0, dur, fn, res }));
+  t.update = dt => { for (let i = list.length - 1; i >= 0; i--) { const w = list[i]; w.t += dt; const k = Math.min(1, w.t / w.dur); w.fn(k); if (k >= 1) { list.splice(i, 1); w.res(); } } };
+  t.clear = () => { list.length = 0; }; return t;
+}
