@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thanh toán — Rubik World</title>
+<link rel="icon" href="/shop/img/logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shop/shop.css">
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/shop/"><img src="/shop/img/logo.svg" alt=""><span>Rubik World<small>Cửa hàng cho phụ huynh</small></span></a></div></header>
+<div class="gate" id="gate" hidden><div class="box"><img src="/shop/img/logo.svg" alt=""><h1>Khu vực dành cho phụ huynh</h1><p>Nếu con đang chơi, hãy nhờ bố mẹ mở trang này nhé!</p><div class="q" id="gq"></div><form id="gf"><input id="ga" inputmode="numeric" autocomplete="off" aria-label="Kết quả phép tính" placeholder="Nhập số"><div class="err" id="ge"></div><button class="btn pri" style="margin-top:13px">Tiếp tục</button></form></div></div>
+<main class="doc wrap"><h1>💳 Cổng thanh toán (giả lập)</h1><p class="note">Đây là <b>trang thử nghiệm</b> thay cho MoMo / ZaloPay / VNPay: không có tiền thật được trừ. Khi bán thật, chủ shop gắn cổng thanh toán và tắt chế độ giả lập (<code>SHOP_PAY_MODE=off</code>).</p><div id="out">Đang tải…</div></main>
+<script src="/shop/shop.js"></script>
+<script>
+(() => {
+  const { gate, api, vnd, esc } = RW, q = new URLSearchParams(location.search), id = q.get('id'), t = q.get('t'), out = document.getElementById('out');
+  const show = o => { out.innerHTML = o.paid ? `<p style="font-size:42px;margin:0">✅</p><h2>Đã thanh toán ${vnd(o.total)}</h2><p>Đơn <b>${esc(o.id)}</b> đã được ghi nhận. Email xác nhận đã gửi (nếu có email).</p><a class="btn pri" href="/shop/don.html?id=${encodeURIComponent(o.id)}&t=${encodeURIComponent(t)}" style="text-decoration:none">Xem đơn hàng</a>`
+    : `<p>Đơn <b>${esc(o.id)}</b> · Số tiền <b>${vnd(o.total)}</b></p><button class="btn gold" id="ok">Xác nhận thanh toán (giả lập)</button> <a class="btn" href="/shop/don.html?id=${encodeURIComponent(o.id)}&t=${encodeURIComponent(t)}" style="text-decoration:none">Huỷ</a><div class="err" id="e"></div>`;
+    const b = document.getElementById('ok'); if (b) b.onclick = () => { b.disabled = true; api(`/api/shop/pay/mock/${encodeURIComponent(id)}?t=${encodeURIComponent(t)}`, {}).then(show).catch(e => { document.getElementById('e').textContent = e.message; b.disabled = false; }); }; };
+  gate(() => api(`/api/shop/order/${encodeURIComponent(id)}?t=${encodeURIComponent(t)}`).then(show).catch(e => { out.innerHTML = `<p class="err">${esc(e.message)}</p>`; }));
+})();
+</script>
+</body>
+</html>

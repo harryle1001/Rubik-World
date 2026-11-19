@@ -13,7 +13,7 @@ self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c =>
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  if(e.request.method !== 'GET' || url.origin !== location.origin || url.pathname.startsWith('/socket.io/') || url.pathname.startsWith('/school/')) return; // live game traffic never cached
+  if(e.request.method !== 'GET' || url.origin !== location.origin || url.pathname.startsWith('/socket.io/') || url.pathname.startsWith('/school/') || url.pathname.startsWith('/api/') || url.pathname === '/admin') return; // live game traffic never cached
   if(e.request.mode === 'navigate'){ e.respondWith(fetch(e.request).then(r => { const c = r.clone(); caches.open(CACHE).then(k => k.put(e.request, c)); return r; }).catch(() => caches.match(e.request).then(r => r || caches.match('/ocean.html')).then(r => r || caches.match('/offline.html')))); return; }
   e.respondWith(caches.match(e.request).then(hit => { const net = fetch(e.request).then(r => { if(r.ok){ const c = r.clone(); caches.open(CACHE).then(k => k.put(e.request, c)); } return r; }).catch(() => hit); return hit || net; }));
 });

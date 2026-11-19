@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cửa hàng Rubik World — dành cho phụ huynh</title>
+<meta name="description" content="Khối Rubik, sách bài tập, áo và huy hiệu 4 nhà Tứ Linh. Mỗi sản phẩm kèm mã quà mở vật phẩm độc quyền trong game Đảo Rubik.">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="/shop/img/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shop/shop.css">
+</head>
+<body>
+<div class="gate" id="gate" hidden>
+  <div class="box">
+    <img src="/shop/img/logo.svg" alt="">
+    <h1>Khu vực dành cho phụ huynh</h1>
+    <p>Cửa hàng bán đồ thật và cần thanh toán. Nếu con đang chơi, hãy nhờ bố mẹ mở trang này nhé!</p>
+    <div class="q" id="gq"></div>
+    <form id="gf"><input id="ga" inputmode="numeric" autocomplete="off" aria-label="Kết quả phép tính" placeholder="Nhập số"><div class="err" id="ge"></div><button class="btn pri" style="margin-top:13px">Vào cửa hàng</button></form>
+  </div>
+</div>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="/shop/"><img src="/shop/img/logo.svg" alt=""><span>Rubik World<small>Cửa hàng cho phụ huynh</small></span></a>
+  <span class="sp"></span>
+  <button class="btn cartBtn" id="cartBtn" aria-label="Giỏ hàng">🛒 Giỏ <b id="cartN" hidden>0</b></button>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Đồ chơi trí tuệ thật — <em>mở quà trong game</em></h1>
+      <p>Khối Rubik, sách bài tập, đồ 4 nhà Tứ Linh. Mỗi sản phẩm kèm <b>thẻ mã quà</b>: con nhập trong Đảo Rubik để nhận áo choàng, thú cưng, chổi bay hay khối Rubik vàng độc quyền. Không bán vật phẩm ảo, không hộp quà ngẫu nhiên.</p>
+      <ul class="perks"><li>🚚 Giao toàn quốc, miễn phí từ <span id="freeShip">500.000đ</span></li><li>💵 Nhận hàng rồi trả tiền (COD)</li><li>↩️ Đổi trả 7 ngày</li></ul>
+    </div>
+    <div class="art"><img src="/shop/img/rubik-3.svg" alt="Khối Rubik 3×3"></div>
+  </section>
+  <nav class="cats" id="cats" aria-label="Danh mục"></nav>
+  <section class="grid" id="grid" aria-live="polite"></section>
+</main>
+
+<footer class="site"><div class="wrap cols">
+  <div><h4>Rubik World</h4>Đồ chơi trí tuệ & học liệu cho học sinh tiểu học, gắn với game giáo dục Đảo Rubik.</div>
+  <div><h4>Chính sách</h4><a href="/shop/chinh-sach.html#giao-hang">Giao hàng</a><a href="/shop/chinh-sach.html#doi-tra">Đổi trả & hoàn tiền</a><a href="/shop/chinh-sach.html#thanh-toan">Thanh toán</a><a href="/shop/chinh-sach.html#bao-mat">Bảo mật thông tin</a><a href="/shop/chinh-sach.html#ma-qua">Mã quà trong game</a></div>
+  <div><h4>Tra cứu</h4><a href="/shop/don.html">Xem lại đơn hàng</a></div>
+</div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Giỏ hàng"><header><h2 id="dTitle">Giỏ hàng</h2><button class="btn" id="dClose" aria-label="Đóng">✕</button></header><div class="in" id="dIn"></div><footer id="dFoot"></footer></aside>
+<div class="toast" id="toast"></div>
+<script src="/shop/shop.js"></script>
+</body>
+</html>

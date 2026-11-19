@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Quản lý cửa hàng — Rubik World</title>
+<link rel="icon" href="/shop/img/logo.svg">
+<link rel="stylesheet" href="/shop/shop.css">
+<style>
+  .tabs { display: flex; gap: 8px; padding: 13px 0; overflow-x: auto; }
+  .tabs .on { background: var(--ink); color: var(--bg); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--card); border-radius: 13px; overflow: hidden; box-shadow: var(--shadow); }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink2); }
+  td input, td select, td textarea, .f input, .f select { padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); width: 100%; min-width: 60px; }
+  .tw { overflow-x: auto; margin-bottom: 34px; }
+  .f { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; align-items: end; background: var(--card); padding: 13px; border-radius: 13px; box-shadow: var(--shadow); margin-bottom: 21px; }
+  .f label { font-size: 12px; color: var(--ink2); display: grid; gap: 4px; }
+  .pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; background: var(--line); }
+  .pill.moi { background: #ffe8a3; color: #3a2a00; } .pill.da-tt { background: #c8ecd4; color: #0f3a20; } .pill.huy { background: #f4cbc6; color: #4a0f08; }
+  pre.codes { background: var(--card); padding: 13px; border-radius: 13px; max-height: 340px; overflow: auto; font-size: 14px; }
+  .sm { font-size: 12px; color: var(--ink2); }
+  .btn.s { padding: 4px 13px; min-height: 34px; font-size: 14px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="brand" href="/shop/"><img src="/shop/img/logo.svg" alt=""><span>Quản lý cửa hàng<small>Rubik World</small></span></a><span class="sp"></span><button class="btn s" id="out" hidden>Đăng xuất</button></div></header>
+<main class="wrap">
+  <form id="login" class="f" style="margin-top:34px;max-width:420px"><label>Mã chủ game (ADMIN_KEY)<input id="key" type="password" autocomplete="current-password"></label><button class="btn pri">Vào</button><div class="err" id="lErr"></div></form>
+  <div id="app" hidden>
+    <nav class="tabs"><button class="btn s on" data-t="orders">📦 Đơn hàng</button><button class="btn s" data-t="products">🧊 Sản phẩm & tồn kho</button><button class="btn s" data-t="codes">🎁 Mã đổi quà</button></nav>
+    <section id="orders"></section><section id="products" hidden></section><section id="codes" hidden></section>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+<script src="/shop/shop.js"></script>
+<script>
+(() => {
+  const { vnd, esc, toast } = RW, $ = id => document.getElementById(id);
+  let KEY = ''; try { KEY = sessionStorage.getItem('rw.admin') || ''; } catch (e) {}
+  let D = null;
+  const call = (method, u, body) => fetch(u, { method, headers: { 'x-admin-key': KEY, 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined }).then(async r => { const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.err || 'Lỗi ' + r.status); return j; });
+  async function load() {
+    try { D = await call('GET', '/api/admin/shop'); } catch (e) { $('lErr').textContent = e.message; $('login').hidden = false; $('app').hidden = true; return; }
+    try { sessionStorage.setItem('rw.admin', KEY); } catch (e) {}
+    $('login').hidden = true; $('app').hidden = false; $('out').hidden = false; renderOrders(); renderProducts(); renderCodes();
+  }
+  $('login').onsubmit = e => { e.preventDefault(); KEY = $('key').value.trim(); load(); };
+  $('out').onclick = () => { try { sessionStorage.removeItem('rw.admin'); } catch (e) {} location.reload(); };
+  document.querySelector('.tabs').onclick = e => { const b = e.target.closest('[data-t]'); if (!b) return; document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b)); for (const t of ['orders', 'products', 'codes']) $(t).hidden = t !== b.dataset.t; };
+  const dl = async (u, name) => { const r = await fetch(u, { headers: { 'x-admin-key': KEY } }); if (!r.ok) return toast('Không tải được.'); const a = document.createElement('a'); a.href = URL.createObjectURL(await r.blob()); a.download = name; a.click(); };
+
+  function renderOrders() {
+    const st = Object.entries(D.status).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+    const sum = D.orders.filter(o => o.status !== 'huy').reduce((s, o) => s + o.total, 0);
+    $('orders').innerHTML = `<p>${D.orders.length} đơn · doanh thu (trừ đơn huỷ) <b>${vnd(sum)}</b> · <button class="btn s" id="csvGhn">⬇ CSV cho GHN</button> <button class="btn s" id="csvGhtk">⬇ CSV cho GHTK</button> <span class="sm">(đơn “Mới đặt” + “Đã thanh toán”)</span></p>
+      <div class="tw"><table><tr><th>Mã đơn</th><th>Người nhận</th><th>Sản phẩm</th><th>Tiền</th><th>Trạng thái</th><th>Vận đơn</th></tr>${D.orders.map(o => `<tr data-id="${esc(o.id)}">
+      <td><b>${esc(o.id)}</b><br><span class="sm">${new Date(o.at).toLocaleString('vi-VN')}</span></td>
+      <td>${esc(o.name)}<br>${esc(o.phone)}<br><span class="sm">${esc(o.address)}, ${esc(o.province)}${o.email ? '<br>' + esc(o.email) : ''}${o.note ? '<br>📝 ' + esc(o.note) : ''}</span></td>
+      <td>${o.items.map(i => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td>
+      <td>${vnd(o.total)}<br><span class="sm">${esc(o.payName)}</span><br>${o.paid ? '✅ đã trả' : `<button class="btn s" data-paid>Đánh dấu đã trả</button>`}</td>
+      <td><span class="pill ${o.status}">${esc(o.statusName)}</span><br><select data-st>${st.replace(`value="${o.status}"`, `value="${o.status}" selected`)}</select></td>
+      <td><input data-tr value="${esc(o.tracking || '')}" placeholder="mã vận đơn"><button class="btn s" data-ship="ghn">GHN</button><button class="btn s" data-ship="ghtk">GHTK</button></td></tr>`).join('')}</table></div>`;
+    $('csvGhn').onclick = () => dl('/api/admin/shop/orders.csv?to=ghn', 'don-ghn.csv'); $('csvGhtk').onclick = () => dl('/api/admin/shop/orders.csv?to=ghtk', 'don-ghtk.csv');
+    const tbl = $('orders');
+    const upd = (id, body) => call('POST', `/api/admin/shop/order/${encodeURIComponent(id)}`, body).then(() => { toast('Đã lưu'); load(); }).catch(e => toast(e.message));
+    tbl.onchange = e => { const tr = e.target.closest('tr[data-id]'); if (!tr) return; if (e.target.matches('[data-st]')) upd(tr.dataset.id, { status: e.target.value }); if (e.target.matches('[data-tr]')) upd(tr.dataset.id, { tracking: e.target.value }); };
+    tbl.onclick = e => { const tr = e.target.closest('tr[data-id]'); if (!tr) return;
+      if (e.target.matches('[data-paid]')) upd(tr.dataset.id, { paid: true });
+      if (e.target.matches('[data-ship]')) call('POST', `/api/admin/shop/order/${encodeURIComponent(tr.dataset.id)}/ship`, { to: e.target.dataset.ship }).then(r => { toast('Đã tạo vận đơn ' + r.tracking); load(); }).catch(e => toast(e.message)); };
+  }
+  function renderProducts() {
+    const cats = D.cats.map(([k, v]) => `<option value="${k}">${v}</option>`).join(''), rw = '<option value="">— không —</option>' + Object.entries(D.rewards).map(([k, v]) => `<option value="${k}">${v.icon} ${v.name}</option>`).join('');
+    const sel = (html, v) => html.replace(`value="${v}"`, `value="${v}" selected`);
+    $('products').innerHTML = `<p class="sm">Sửa trực tiếp rồi bấm 💾. Ảnh: đường dẫn /shop/img/… hoặc https://… (ảnh vuông 1:1, ≥ 800 px). Tồn kho tự trừ khi có đơn, cộng lại khi huỷ.</p>
+      <div class="tw"><table><tr><th>Ảnh</th><th>Mã / Tên / Mô tả</th><th>Danh mục</th><th>Giá (đ)</th><th>Tồn kho</th><th>Mã quà kèm</th><th>Bán</th><th></th></tr>${[...D.products, { id: '', name: '', cat: 'rubik', price: 0, stock: 0, desc: '', img: '', reward: '', active: true, isNew: true }].map(p => `<tr data-p>
+      <td>${p.img ? `<img src="${esc(p.img)}" width="55" height="55" style="border-radius:8px">` : '➕'}<input data-k="img" value="${esc(p.img)}" placeholder="ảnh"></td>
+      <td><input data-k="id" value="${esc(p.id)}" ${p.isNew ? 'placeholder="ma-san-pham"' : 'readonly'}><input data-k="name" value="${esc(p.name)}" placeholder="Tên"><textarea data-k="desc" rows="2" placeholder="Mô tả">${esc(p.desc)}</textarea></td>
+      <td><select data-k="cat">${sel(cats, p.cat)}</select></td><td><input data-k="price" type="number" value="${p.price}"></td><td><input data-k="stock" type="number" value="${p.stock}"></td>
+      <td><select data-k="reward">${sel(rw, p.reward || '')}</select></td><td><input data-k="active" type="checkbox" ${p.active ? 'checked' : ''} style="width:auto"></td>
+      <td><button class="btn s" data-save>💾</button>${p.isNew ? '' : `<button class="btn s" data-del>🗑</button>`}</td></tr>`).join('')}</table></div>`;
+    $('products').onclick = e => { const tr = e.target.closest('tr[data-p]'); if (!tr) return; const v = {}; tr.querySelectorAll('[data-k]').forEach(i => v[i.dataset.k] = i.type === 'checkbox' ? i.checked : i.value);
+      if (e.target.matches('[data-save]')) call('PUT', '/api/admin/shop/product', v).then(() => { toast('Đã lưu sản phẩm'); load(); }).catch(e => toast(e.message));
+      if (e.target.matches('[data-del]') && confirm('Xoá sản phẩm ' + v.id + '? (Có thể tắt ô “Bán” thay vì xoá)')) call('DELETE', '/api/admin/shop/product/' + encodeURIComponent(v.id)).then(load); };
+  }
+  function renderCodes() {
+    $('codes').innerHTML = `<form class="f" id="gen"><label>Vật phẩm trong game<select id="gR">${Object.entries(D.rewards).map(([k, v]) => `<option value="${k}">${v.icon} ${v.name}</option>`).join('')}</select></label><label>Số mã<input id="gN" type="number" value="55" min="1" max="2584"></label><label>Ghi chú lô (vd: lô hộp Rubik 3×3 tháng 12)<input id="gNote"></label><button class="btn gold">Tạo mã</button></form>
+      <div id="gOut"></div>
+      <div class="tw"><table><tr><th>Lô</th><th>Vật phẩm</th><th>Số mã</th><th>Đã dùng</th><th>Ghi chú</th><th>Ngày tạo</th></tr>${D.batches.slice().reverse().map(b => `<tr><td>${esc(b.id)}</td><td>${esc((D.rewards[b.reward] || {}).name)}</td><td>${b.count}</td><td>${b.used}</td><td>${esc(b.note)}</td><td>${new Date(b.at).toLocaleDateString('vi-VN')}</td></tr>`).join('')}</table></div>`;
+    $('gen').onsubmit = e => { e.preventDefault(); call('POST', '/api/admin/shop/codes', { reward: $('gR').value, count: +$('gN').value, note: $('gNote').value }).then(r => {
+      const csv = '﻿ma_qua,vat_pham,lo\r\n' + r.codes.map(c => `${c},${r.reward},${r.batch}`).join('\r\n'), url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      $('gOut').innerHTML = `<p class="note">⚠️ Đây là lần DUY NHẤT thấy mã gốc (server chỉ giữ bản băm). Tải file để in thẻ: <a class="btn s" download="ma-qua-${r.batch}.csv" href="${url}">⬇ ma-qua-${r.batch}.csv</a></p><pre class="codes">${r.codes.join('\n')}</pre>`;
+      call('GET', '/api/admin/shop').then(d => { D = d; renderCodesTable(); });
+    }).catch(e => toast(e.message)); };
+  }
+  const renderCodesTable = () => { const out = $('gOut').innerHTML; renderCodes(); $('gOut').innerHTML = out; };
+  if (KEY) load();
+})();
+</script>
+</body>
+</html>
