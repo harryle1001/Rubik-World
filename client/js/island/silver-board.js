@@ -152,7 +152,7 @@ export function createSilverBoard(ctx) {
 #sbCtl .b{background:#d8632acc}#sbCtl .u{background:#3d8f4acc}#sbCtl .d{background:#3d6fb0cc}#sbCtl .x{font-size:15px}
 body.sb-on #sbCtl{display:grid}body.sb-on .btns,body.sb-on .vbtns{display:none!important}@media (pointer:fine){body.sb-on #sbCtl{display:none}}
 #sbHud{position:fixed;top:calc(max(12px,env(safe-area-inset-top)) + 89px);left:50%;transform:translateX(-50%);z-index:26;padding:6px 13px;border-radius:16px;background:#0f1a2acc;color:#eaf6ff;font:700 13px system-ui;display:none;white-space:nowrap;border:1px solid #bfe6ff55;cursor:pointer}
-body.sb-on #sbHud{display:block}body.mg-on #sbHud{display:none!important}body.mg-on #sbCtl .b,body.mg-on #sbCtl .x{visibility:hidden}
+body.sb-on #sbHud{display:block}body.mg-on #sbHud{display:none!important}body.mg-on #sbCtl .b,body.mg-on #sbCtl .x{visibility:hidden}body.sb-lobby #sbCtl{display:none!important}
 @media (pointer:coarse){body.sb-on #bAct{bottom:calc(max(16px,env(safe-area-inset-bottom)) + 134px)}#sbHud{left:auto;right:max(12px,env(safe-area-inset-right));transform:none;top:calc(max(12px,env(safe-area-inset-top)) + 134px)}}`; document.head.appendChild(css);
   const ctl = document.createElement('div'); ctl.id = 'sbCtl';
   ctl.innerHTML = '<button data-k="flip" title="Lộn vòng (Q)">🔄</button><button data-k="spin" title="Xoay 360° (Z)">🌀</button><button data-k="off" class="x" title="Xuống ván (U)">✕🏄</button><button data-k="down" class="d" title="Hạ thấp (C)">⬇</button><button data-k="up" class="u" title="Bay lên (Space)">⬆</button><button data-k="boost" class="b" title="Tăng tốc (Shift)">🚀</button>';

@@ -180,13 +180,13 @@ function start(ctx, { api, track: want }) {
 
   // ---------- sảnh chọn đường + bảng kỷ lục ----------
   function lobby() {
-    state = 'lobby'; board.S.hold = true; api.hud.clearBar(); api.hud.time(null); api.hud.info(`🏆 Cúp: ${cupPoints()} điểm`);
+    state = 'lobby'; board.S.hold = true; document.body.classList.add('sb-lobby'); api.hud.clearBar(); api.hud.time(null); api.hud.info(`🏆 Cúp: ${cupPoints()} điểm`);
     api.hud.msg(`🏁 <b>Đua ván bạc</b> — chọn đường đua. Bay qua <b>cổng sáng</b>, lấy <b>mũi tên tăng tốc</b>, né <b>đá</b>, vào <b>cổng có đáp án đúng</b>!<br><small>Về nhất 🥇 3 · nhì 🥈 2 · ba 🥉 1 điểm cúp → mở màu viền ván mới.</small>`, 0);
     for (const k of ORDER) { const T = TRACKS[k]; api.hud.button(`${T.name}<br><small>${best[k] ? '🏆 ' + fmt(best[k]) : T.hint}${cups[k] ? ' ' + CUP[cups[k]] : ''}</small>`, () => choose(k), k === (want || 'coast') ? 'pri' : ''); }
     const cb = api.hud.button(`🎨 ${board.color.name}`, b => { b.innerHTML = `🎨 ${board.nextColor().name}`; const nx = BOARD_COLORS.find(c => cupPoints() < c.need); if (nx) api.hud.msg(`🔒 Màu <b>${nx.name}</b> cần ${nx.need} điểm cúp (em có ${cupPoints()}).`, 3000); }, 'sm'); cb.title = 'Đổi màu viền ván';
   }
   function choose(k) {
-    if (state !== 'lobby' || !TRACKS[k]) return; id = k; tr = TRACKS[k]; state = 'load'; loadT = 0; api.hud.clearBar(); api.hud.title(tr.name);
+    if (state !== 'lobby' || !TRACKS[k]) return; id = k; tr = TRACKS[k]; state = 'load'; loadT = 0; document.body.classList.remove('sb-lobby'); api.hud.clearBar(); api.hud.title(tr.name);
     api.hud.msg(`${tr.name} · đang bay tới vạch xuất phát…`, 0); sample();
     at(0); board.S.free = true; board.S.hold = true; board.S.noBoost = true; board.place(o3.x, Math.max(o3.y, board.floorAt(o3.x, o3.z) + 1), o3.z, o3.yaw);
   }
@@ -267,7 +267,7 @@ function start(ctx, { api, track: want }) {
     board.apply();   // host vừa ghi đè tư thế nhân vật (actor) → đặt lại tư thế lướt ván
   }
   function dispose() {
-    const S = board.S; S.hold = S.free = S.noBoost = false; S.assistY = S.steer = S.auto = S.onTrick = null;
+    document.body.classList.remove('sb-lobby'); const S = board.S; S.hold = S.free = S.noBoost = false; S.assistY = S.steer = S.auto = S.onTrick = null;
     if (board.riding) board.place(home.x, home.y, home.z, home.yaw);
     ctx.net && ctx.net.emit && ctx.net.emit('sb', { on: 1, k: '' }); ctx.boardRace = null;
   }
