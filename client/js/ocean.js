@@ -45,6 +45,8 @@ import { createLoader } from './island/loader.js';
 import { createStats } from './island/stats.js';
 import { createTeacherQuiz } from './island/teacher-quiz.js';
 import { createQuests } from './island/quests.js';
+import { createLearn } from './island/learn.js';
+import { createStory } from './island/story/index.js';
 import { createLessons } from './island/lessons.js';
 import { createSchoolInterior } from './island/school-interior.js';
 import { createSchoolYard } from './island/school-yard.js';
@@ -141,11 +143,13 @@ const sealife = ctx.sealife = createSealife(ctx); // thế giới biển: san h�
 const treasure = ctx.treasure = createTreasure(ctx); // 13 rương kho báu dưới đáy biển + câu đố biển + mảnh bản đồ (HUD 🧰)
 const skyshow = ctx.skyshow = createSkyshow(ctx); // chòm sao thật, mưa sao băng, mây ti, chế độ ngắm trời ⭐ (skyshow.js)
 const living = ctx.living = createLiving(ctx); // gió giật, cỏ rẽ, cây rung + lá rơi, nước bắn, dấu chân, côn trùng, nhặt rác (living.js)
+const learn = createLearn(ctx); // ngân hàng câu hỏi chung + học thích ứng (lớp, tỉ lệ đúng, ôn câu sai) — dùng cho mọi nơi (learn.js)
 const quests = ctx.questsMod = createQuests(ctx); // bảng nhiệm vụ hằng ngày 📋: 3 khu · 3 câu đố · 5 pha lê → thưởng (quests.js)
 const teacherQuiz = createTeacherQuiz(ctx); // nói chuyện với 21 bạn & thầy cô, nhiệm vụ nhỏ, chủ trò mini game — bong bóng 3D (teacher-quiz.js, data/talk.js)
 const schoolInterior = ctx.schoolInterior = createSchoolInterior(ctx); // Toà học tập 3 tầng: vào qua cửa Văn phòng, lớp học/phòng chức năng, tiết học có thầy cô & bạn (school-interior.js)
 const schoolYard = createSchoolYard(ctx); // sân trường: vườn rau học sinh trồng (tưới → thu hoạch ⭐), nhà xe đạp (school-yard.js)
 const lessons = ctx.lessons = createLessons(ctx); // thời khoá biểu 3D + tiết học ngay trong lớp + chip giờ học góc HUD (lessons.js)
+const story = createStory(ctx); // cốt truyện 8 chương "Khối Rubik Pha Lê": nhiệm vụ, dẫn đường, đoạn dẫn chuyện, sổ tay, cấp độ, kỹ năng (story/)
 registerArts(ctx); // mini game 3D nhóm Mỹ thuật · Thư viện · Thiên văn (mg/arts/)
 registerSport(ctx); // mini game 3D nhóm Thể thao: Olympics, Arcade, Câu cá (mg/sport/)
 registerVisit(ctx); // mini game 3D ghé thăm: Tham quan nhà, BBQ, Trung tâm thương mại, Coach Ru (mg/visit/) — sau registerArts (gắn cửa Nông trại vào garden)
@@ -229,6 +233,8 @@ renderer.setAnimationLoop(() => {
   lessons.update(dt);
   quests.update(dt);
   feel.update(dt);
+  learn.update();
+  story.update(dt);
   ctx.flushOffer();
   brightness.update();
   tutorial.update(dt);

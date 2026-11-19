@@ -15,7 +15,7 @@ export function quickQuiz(api, subjects = ['toan'], title = '🧠 Câu hỏi nha
     q.choices.forEach((c, i) => {
       const b = document.createElement('button'); b.type = 'button'; b.textContent = c; b.style.margin = '0';
       b.onclick = () => {
-        const ok = i === q.a; api.onQuiz && api.onQuiz(ok); dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject || 'Mini game', ok } })); box.querySelectorAll('button').forEach((x, k) => { x.disabled = true; if (k === q.a) x.className = 'pri'; });
+        const ok = i === q.a; q.done && q.done(ok); api.onQuiz && api.onQuiz(ok); dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject || 'Mini game', ok } })); box.querySelectorAll('button').forEach((x, k) => { x.disabled = true; if (k === q.a) x.className = 'pri'; });
         api.sfx(ok ? 'ok' : 'bad');
         const p = document.createElement('p'); p.innerHTML = ok ? '✅ <b>Chính xác!</b>' : `❌ Chưa đúng. ${q.explain || ''}`; card.appendChild(p);
         setTimeout(() => { card.hidden = true; res(ok); }, ok ? 900 : 2600);
