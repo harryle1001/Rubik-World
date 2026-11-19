@@ -104,7 +104,7 @@ export function createPlayer(ctx) {
     let ix = input.x, iz = input.z;
     if (keys.has('KeyA') || keys.has('ArrowLeft')) ix -= 1; if (keys.has('KeyD') || keys.has('ArrowRight')) ix += 1;
     if (keys.has('KeyW') || keys.has('ArrowUp')) iz -= 1; if (keys.has('KeyS') || keys.has('ArrowDown')) iz += 1;
-    const mag = self.frozen ? 0 : Math.min(1, Math.hypot(ix, iz)), n = Math.hypot(ix, iz) || 1;
+    const mag = self.frozen ? 0 : Math.min(1, Math.hypot(ix, iz)), n = Math.hypot(ix, iz) || 1; self.mag = mag;   // độ ga (vehicles.js: thả ga thì ngừng đạp)
     const running = input.run || keys.has('ShiftLeft') || keys.has('ShiftRight') || (input.x * input.x + input.z * input.z > 0.9);
     const D = ctx.dive, swim = !V && D && D.swimming;   // bơi/lặn (dive.js)
     const sp = (V ? V.speed : swim ? D.speed : running ? P.run : P.walk) * mag;

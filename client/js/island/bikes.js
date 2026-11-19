@@ -77,12 +77,17 @@ export function makeBike(idx) {
   if (S.bamboo) for (const [p, q] of [[C, ST], [C, H], [A, C]]) for (const t of [0.33, 0.66]) parts.push(paint(at(new THREE.CylinderGeometry(0.05, 0.05, 0.03, 5), p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t, p[2] + (q[2] - p[2]) * t), '#8a6a2a'));
   // yên + ghi đông
   if (!S.recumb && !S.velo) parts.push(box(S.cruiser ? 0.26 : 0.2, 0.06, 0.3, S.fixie ? '#20c0e0' : DARK, ...saddle));
+  let steer = null, grips = null;
   if (!S.uni) {
-    const bw = S.cruiser || S.upright ? 0.36 : S.bmx ? 0.34 : 0.3, by = bar[1] + 0.06, bz = bar[2] - 0.05;
+    const bw = S.cruiser || S.upright ? 0.36 : S.bmx ? 0.34 : 0.3, by = bar[1] + 0.06, bz = bar[2] - 0.05, i0 = parts.length, up = S.upright || S.cruiser ? 0.06 : 0, bk = S.upright || S.cruiser ? 0.12 : 0;
     if (S.drop) { T([-0.2, by, bz], [0.2, by, bz], 0.022, METAL); for (const s of [-1, 1]) { T([s * 0.2, by, bz], [s * 0.2, by - 0.12, bz + 0.12], 0.022, METAL); T([s * 0.2, by - 0.12, bz + 0.12], [s * 0.2, by - 0.18, bz - 0.02], 0.022, METAL); } }
     else { T([-bw, by + (S.upright || S.cruiser ? 0.06 : 0), bz - (S.upright || S.cruiser ? 0.12 : 0)], [0, by, bz], 0.022, METAL); T([0, by, bz], [bw, by + (S.upright || S.cruiser ? 0.06 : 0), bz - (S.upright || S.cruiser ? 0.12 : 0)], 0.022, METAL); }
     if (S.bmx) T([0, by, bz], [0, by - 0.18, bz + 0.05], 0.03, METAL);
     parts.push(paint(at(new THREE.CylinderGeometry(0.035, 0.035, 0.05, 6).rotateX(Math.PI / 2), 0.2, by + 0.03, bz), '#f2c14e')); // chuông
+    // ghi đông tách thành nhóm riêng xoay quanh cổ lái (rẽ thì tay lái xoay, tay bám theo); điểm nắm = tay cầm (trong hệ nhóm lái)
+    const bm = mesh(parts.splice(i0)); bm.position.set(0, -by, -bz); steer = new THREE.Group(); steer.position.set(0, by, bz); steer.add(bm); g.add(steer);
+    const gx = S.drop ? 0.2 : bw * 0.84, gy = S.drop ? 0 : up * 0.84, gz = S.drop ? 0.03 : -bk * 0.84;
+    grips = [new THREE.Vector3(gx, gy, gz), new THREE.Vector3(-gx, gy, gz)];
   }
   if (S.basket) parts.push(box(0.4, 0.26, 0.3, '#d9b46a', 0, 0.84, zF + 0.16), box(0.42, 0.04, 0.32, '#b88a40', 0, 0.98, zF + 0.16));
   if (S.rack) parts.push(box(0.22, 0.03, 0.4, DARK, 0, 0.72, zB + 0.04));
@@ -99,5 +104,11 @@ export function makeBike(idx) {
   g.add(cr);
   addOutline(g);
   mode = { speed: CFG.player.run * 1.35 * (S.sp || 1), boost: 1.35, turn: S.uni ? 3.5 : trike ? 3.6 : 5, accel: 2.6, anim: S.recumb || S.velo ? 'sit' : 'drive', seat: saddle[1] - 0.44 - (S.recumb || S.velo ? 0.12 : 0), seatZ: saddle[2] + 0.04, camAdd: S.penny ? 2.5 : 1.5 };
-  return { type: 'bike', style: idx % BIKES.length, info: S, group: g, wheels, crank: cr, mode, lean: !trike && !S.uni, tris: tris(g), r: 2.6, label: `🚲 Lên xe: ${S.name} (${S.from})` };
+  // tư thế lái (ride-pose.js): tay nắm ghi đông (xe 1 bánh: dang tay giữ thăng bằng) · chân bám bàn đạp · thân nghiêng tới
+  const ride = { hand: steer || g, hands: grips || [new THREE.Vector3(0.62, saddle[1] + 0.3, 0.05), new THREE.Vector3(-0.62, saddle[1] + 0.3, 0.05)], foot: cr,
+    feet: [new THREE.Vector3(0.15, 0.03, 0.17), new THREE.Vector3(-0.15, 0.03, -0.17)], ankle: new THREE.Vector3(0, 0.07, -0.04),
+    lean: S.drop ? 0.5 : S.fixie ? 0.42 : S.bmx || S.mtb ? 0.3 : S.recumb || S.velo ? -0.15 : S.upright || S.cruiser || S.uni ? 0.06 : 0.18,
+    gear: S.uni || S.penny ? 1 : S.bmx ? 2.2 : S.drop || S.fixie ? 3.2 : 2.6, fixed: !!(S.uni || S.penny || S.fixie), drive: S.uni || S.penny ? 0 : S.rickshaw ? 1 : wheels.length - 1, steer };
+  if (!trike && !S.uni && wheels[0]) wheels[0].m.rotation.order = 'YXZ', ride.fork = wheels[0].m;   // bánh trước xoay theo tay lái
+  return { type: 'bike', style: idx % BIKES.length, info: S, group: g, wheels, crank: cr, mode, ride, lean: !trike && !S.uni, tris: tris(g), r: 2.6, label: `🚲 Lên xe: ${S.name} (${S.from})` };
 }
