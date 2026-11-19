@@ -22,6 +22,13 @@ services:
       # Gói Phụ huynh — xem docs/payments.md. Chưa có khoá: cổng chạy chế độ GIẢ LẬP. Khoá bí mật đặt ở tab Environment (sync: false).
       - key: PUBLIC_URL
         sync: false
+      # Quảng cáo chỉ ở trang người lớn (/gioi-thieu, /blog, /parent) — để trống = TẮT. Xem docs/ads.md
+      - key: ADSENSE_CLIENT
+        sync: false
+      - key: ADSENSE_SLOT
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false
       - key: MOMO_PARTNER_CODE
         sync: false
       - key: MOMO_ACCESS_KEY

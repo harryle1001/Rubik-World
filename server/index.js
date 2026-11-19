@@ -22,7 +22,6 @@ app.disable('x-powered-by');
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 if (process.env.FORCE_HTTPS === '1') app.use((req, res, next) => (req.secure || req.path === '/api/health' ? next() : res.redirect(301, 'https://' + req.headers.host + req.originalUrl)));
 app.get('/teacher', (req, res) => res.sendFile(path.join(ROOT, 'client', 'teacher.html')));
-app.get('/parent', (req, res) => res.sendFile(path.join(ROOT, 'client', 'parent.html')));   // Gói Phụ huynh: đăng ký, liên kết con, mua gói, báo cáo học tập
 app.get('/admin', (req, res) => res.sendFile(path.join(ROOT, 'client', 'admin.html')));     // chủ game: doanh thu, đối soát, mã giảm giá, giấy phép trường
 app.get(['/privacy', '/terms'], (req, res) => {   // văn bản pháp lý: docs/*.md → HTML gọn (tiêu đề, danh sách, đậm, liên kết)
   const md = fs.readFileSync(path.join(ROOT, 'docs', req.path === '/terms' ? 'terms.md' : 'privacy-policy.md'), 'utf8'), e = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

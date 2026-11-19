@@ -2,7 +2,7 @@
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Trường Rubik · Phụ huynh</title>
 <meta name="description" content="Theo dõi việc học của con, giới hạn giờ chơi và mở Gói Phụ huynh Trường Rubik.">
-<meta name="robots" content="noindex"><meta name="theme-color" content="#1b1626">
+<meta name="robots" content="noindex"><!--ADMETA--><meta name="theme-color" content="#1b1626">
 <style>
 /* φ: chữ 13/16/21/34/55 · khoảng 8/13/21/34/55 · bo 13/21 · cột 987 = 610·φ · thẻ gói tỉ lệ 1:φ */
 :root{--bg:#f6f0e4;--card:#fff;--ink:#2e2418;--mute:#7a6a58;--line:#e6dccb;--pri:#3fb8a8;--pri2:#2c8f82;--acc:#f0a23a;--bad:#c8502c;--night:#1b1626;--gold:#c9a24a}
@@ -24,6 +24,7 @@ label.ck{display:flex;gap:8px;align-items:flex-start;font-weight:600;line-height
 .b:hover{background:var(--pri2)}.b.sec{background:#efe3cc;color:var(--ink)}.b.red{background:#f3c7bd;color:#6a1a0a}.b.gold{background:var(--acc);color:#2a1a0a}.b.sm{padding:5px 13px;font-size:13px}.b:disabled{opacity:.5;cursor:default}
 .msg{min-height:21px;color:var(--bad);font:700 13px system-ui;margin-top:8px}.ok{color:var(--pri2)}
 .hid{display:none!important}
+.ad{display:none;margin:34px auto;max-width:728px;text-align:center}.ads-on .ad{display:block}.ad>span{display:block;font:700 11px system-ui;letter-spacing:1px;text-transform:uppercase;color:var(--mute);margin-bottom:5px}
 .hero{display:grid;grid-template-columns:1.618fr 1fr;gap:34px;align-items:center}
 @media(max-width:760px){.hero{grid-template-columns:1fr}h1{font-size:28px}}
 .ticks{list-style:none;padding:0;margin:0 0 13px}.ticks li{padding:3px 0 3px 29px;position:relative}.ticks li:before{content:"✦";position:absolute;left:5px;color:var(--gold)}
@@ -58,7 +59,7 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:21px}
     <div class="card hero">
       <div><h1>Đồng hành cùng con trên Đảo Rubik</h1>
         <p class="mute" style="font-size:16px">Game mở thế giới cho học sinh tiểu học: vừa khám phá vừa học Toán, Tiếng Việt, Tiếng Anh, Khoa học, Sử–Địa.</p>
-        <ul class="ticks"><li><b>Báo cáo học tập hằng tuần</b>: môn nào giỏi, chủ đề nào cần luyện, thời gian chơi</li><li>Đặt <b>giới hạn giờ chơi</b> và <b>giao nhiệm vụ học</b> cho con</li><li><b>Không quảng cáo</b>, không vật phẩm may rủi, không chat tự do</li><li>Dùng thử <b id="trialD">7</b> ngày toàn bộ nội dung — không cần thẻ</li></ul></div>
+        <ul class="ticks"><li><b>Báo cáo học tập hằng tuần</b>: môn nào giỏi, chủ đề nào cần luyện, thời gian chơi</li><li>Đặt <b>giới hạn giờ chơi</b> và <b>giao nhiệm vụ học</b> cho con</li><li>Trong game <b>không quảng cáo</b>, không vật phẩm may rủi, không chat tự do</li><li>Dùng thử <b id="trialD">7</b> ngày toàn bộ nội dung — không cần thẻ</li></ul></div>
       <div>
         <div class="tabs"><button data-t="in" class="on">Đăng nhập</button><button data-t="up">Tạo tài khoản</button></div>
         <label for="lg">Email hoặc số điện thoại</label><input id="lg" autocomplete="username" inputmode="email" maxlength="80">
@@ -108,11 +109,11 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:21px}
       <h3>Xoá tài khoản phụ huynh</h3><p class="mute">Xoá thông tin đăng nhập của bạn. Lịch sử giao dịch được giữ ẩn danh theo quy định kế toán.</p><button class="b red sm" id="bDelMe">Xoá tài khoản phụ huynh…</button>
     </div>
   </section>
-</main>
+<div id="adWrap"><!--AD--></div></main>
 <footer>Trường Rubik · <a href="/privacy">Bảo mật</a> · <a href="/terms">Điều khoản</a> · Không quảng cáo · Không lootbox</footer>
 <dialog id="dPay"><div class="in" id="payIn"></div></dialog>
 <dialog id="dAsk"><div class="in"><h2 id="askT"></h2><p id="askP" class="mute"></p><label for="askPw">Nhập mật khẩu phụ huynh để xác nhận</label><input id="askPw" type="password" autocomplete="current-password"><div class="row" style="margin-top:13px"><button class="b sec" id="askNo">Huỷ</button><button class="b red" id="askYes">Xác nhận</button></div><div class="msg" id="askMsg"></div></div></dialog>
-<script src="/lib/chart.js" defer></script>
+<script src="/lib/chart.js" defer></script><script src="/site/site.js" defer></script>
 <script>
 const $ = s => document.querySelector(s), esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const money = n => Number(n).toLocaleString('vi-VN') + 'đ', dd = t => new Date(t).toLocaleDateString('vi-VN');
@@ -138,7 +139,7 @@ $('#pw').onkeydown = e => { if (e.key === 'Enter') $('#bGo').click(); };
 $('#bOut').onclick = () => logout();
 // ---------- trang chính ----------
 function render(me) {
-  ME = me; show('main'); $('#who').textContent = me.name || me.login;
+  ME = me; show('main'); $('#adWrap').classList.toggle('hid', !!(me.sub && me.sub.until > Date.now()));   // đã mua gói → không hiện quảng cáo $('#who').textContent = me.name || me.login;
   const s = me.sub; $('#subLine').innerHTML = s && s.until > Date.now() ? `Gói <b>${esc((me.plans.find(p => p.id === s.plan) || {}).name)}</b> còn hiệu lực đến <b>${dd(s.until)}</b> (không tự gia hạn)` : `Chưa có gói · mỗi con được dùng thử ${me.trialDays} ngày khi liên kết`;
   $('#kids').innerHTML = me.kids.length ? me.kids.map(k => `<button class="kid${cur === k.uid ? ' on' : ''}" data-u="${k.uid}"><b>🧒 ${esc(k.name)}</b>${badge(k.plan)}<br><small>Cấp ${k.level} · hôm nay ${k.todayMin} phút${k.limitMin ? ' / ' + k.limitMin : ''}${k.last ? ' · chơi gần nhất ' + dd(k.last) : ''}</small></button>`).join('') : '<p class="mute">Chưa liên kết con nào.</p>';
   document.querySelectorAll('.kid').forEach(b => b.onclick = () => { cur = b.dataset.u; render(ME); loadKid(); });

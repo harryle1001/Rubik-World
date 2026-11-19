@@ -189,6 +189,15 @@ ${sugg}<div class="card" style="margin-top:34px"><h3>Cho con thử Đảo Rubik<
     const urls = [['/gioi-thieu', today, '1.0'], ['/', today, '0.8'], ['/blog', (posts()[0] || {}).date || today, '0.8'], ...posts().map(p => ['/blog/' + p.slug, p.date || today, '0.6']), ['/parent', today, '0.5'], ['/teacher', today, '0.4'], ['/privacy', today, '0.2'], ['/terms', today, '0.2']];
     res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(([p, d, pr]) => `<url><loc>${esc(u + p)}</loc><lastmod>${d}</lastmod><priority>${pr}</priority></url>`).join('\n')}\n</urlset>\n`);
   });
+  // ads.txt: chỉ khi đã bật AdSense (f08c47fec0942fa0 = mã xác thực cố định của Google)
+  app.get('/ads.txt', (req, res) => (ADS ? res.type('text/plain').send(`google.com, ${ADS.replace(/^ca-/, '')}, DIRECT, f08c47fec0942fa0\n`) : res.status(404).type('text/plain').send('')));
+  // /parent: chèn 1 khung quảng cáo cuối trang (ẩn với gia đình đã mua gói — xem parent.html)
+  const PARENT = path.join(ROOT, 'client', 'parent.html');
+  app.get('/parent', (req, res) => {
+    let h = fs.readFileSync(PARENT, 'utf8');
+    h = h.replace('<!--ADMETA-->', ADS ? `<meta name="rubik-ads" content="${esc(ADS)}">` : '').replace('<!--AD-->', adSlot());
+    res.set('Cache-Control', 'no-cache'); res.type('html').send(h);
+  });
   app.get('/play', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(ROOT, 'client', 'ocean.html')); });   // đường dẫn dễ nhớ vào game (giống "/")
   return { posts, adSlot, ADS };
 };
