@@ -24,7 +24,7 @@ const newSalt = () => { const a = new Uint8Array(12); crypto.getRandomValues(a);
 export const newProfile = (name, look = null) => ({ name, look, level: 1, exp: 0, money: 30, inv: { bike1: Date.now() }, equip: { bike: 'bike1' }, books: {}, fish: {}, stats: { games: 0, catches: 0, read: 0, medals: 0 }, created: Date.now(), cdo: {} });
 // ---------- đồng bộ server ----------
 const API = (window.ISLAND_SERVER || '') + '/api', TOK = 'island.token', TOKN = 'island.tokenName';
-const NOSYNC = /^island\.(accounts|guest|migrated|sound|bright|stats|mapOpts|rememberName|token|tokenName|name|cloud\..*|lockDay)$/;
+const NOSYNC = /^island\.(accounts|guest|migrated|sound|bright|stats|mapOpts|rememberName|token|tokenName|name|tut|cloud\..*|lockDay)$/;
 const SYNC = k => /^(island|academy|mg|rs)\./.test(k) && !NOSYNC.test(k);
 export const getToken = () => { try { return sessionStorage.getItem(TOK) || localStorage.getItem(TOK) || ''; } catch (e) { return ''; } };
 function setToken(t, name, remember) { try { for (const S of [localStorage, sessionStorage]) { S.removeItem(TOK); S.removeItem(TOKN); } if (t) { const S = remember ? localStorage : sessionStorage; S.setItem(TOK, t); S.setItem(TOKN, name); } } catch (e) {} }

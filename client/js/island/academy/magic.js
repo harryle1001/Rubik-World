@@ -109,7 +109,7 @@ export function createMagic(ctx) {
       const b = e.target.closest('button'); if (!b) return;
       if (b.dataset.x !== undefined) return closeCard();
       const i = +b.dataset.i; if (Number.isNaN(i) || c.dataset.done) return; c.dataset.done = 1;
-      const ok = i === q.a; b.classList.add(ok ? 'ok' : 'no'); c.querySelector(`[data-i="${q.a}"]`).classList.add('ok');
+      const ok = i === q.a; dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject || 'Học viện', ok } })); b.classList.add(ok ? 'ok' : 'no'); c.querySelector(`[data-i="${q.a}"]`).classList.add('ok');
       ctx.sfx && ctx.sfx(ok ? 'coin' : 'no');
       c.insertAdjacentHTML('beforeend', `<div style="margin-top:6px">${ok ? '✅ Chính xác! ' : '💡 '}${q.explain || ''}</div>`);
       if (ok) setTimeout(() => { closeCard(); onRight && onRight(); }, 1400); else setTimeout(closeCard, 3400);

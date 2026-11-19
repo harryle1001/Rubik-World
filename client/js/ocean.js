@@ -35,6 +35,7 @@ import { createPerf } from './island/perf.js';
 import { createAutoQ, SK } from './island/autoq.js';
 import { createMiniGameHost } from './island/mg/host.js';
 import { createAccountHud } from './island/account-hud.js';
+import { createSocial } from './island/social.js';
 import { createLoader } from './island/loader.js';
 import { createStats } from './island/stats.js';
 import { createTeacherQuiz } from './island/teacher-quiz.js';
@@ -113,6 +114,8 @@ const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lă
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
 const accountHud = createAccountHud(ctx);
+const social = ctx.social = createSocial(ctx);
+// ↑ social.js: 👥 bạn bè mã 6 ký tự, 😊 biểu cảm + câu mẫu (không chat tự do), nhóm, lời mời, chặn/báo cáo, sự kiện, lớp (social.js)
 const stats = ctx.stats = createStats(ctx); // nút 📊 FPS (phím P): FPS, ms, draw call, tam giác, bộ nhớ… // 👤 đăng nhập / khách / Lưu đăng nhập, xu & vật phẩm (data/account.js)
 const brightness = ctx.brightness = createBrightness(ctx); // nút ☀️ chỉnh độ sáng (phím [ ])
 const tutorial = ctx.tutorial = createTutorial(ctx); // hướng dẫn chơi lần đầu: 3 bước, bỏ qua được (tutorial.js)

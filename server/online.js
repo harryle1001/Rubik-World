@@ -227,7 +227,7 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
     });
     socket.on('m', d => {
       const now = Date.now(); if (!me || !d || now - last < 50) return; last = now; // tối đa 20 lần/giây
-      me.x = num(d.x, -400, 400); me.y = num(d.y, -40, 120); me.z = num(d.z, -400, 400); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 40);
+      me.x = num(d.x, -1800, 1800); me.y = num(d.y, -60, 400); me.z = num(d.z, -1800, 1800); me.r = num(d.r, -10, 10); me.s = num(d.s, 0, 40);
       if (me.hidden) return;
       const pkt = [me.id, +me.x.toFixed(2), +me.y.toFixed(2), +me.z.toFixed(2), +me.r.toFixed(2), +me.s.toFixed(1)];
       if (!me.blockSids.size && !(u && u.blocked && u.blocked.length)) socket.broadcast.volatile.emit('m', pkt);
@@ -316,7 +316,7 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
       if (!me || !d || slow(800)) return;
       if (d.op === 'claim' && EV.kind === 'treasure') {
         const id = d.id | 0; if (id < 0 || id >= EV.n || EV.claimed.has(id)) return;
-        if (Math.hypot(num(d.x, -400, 400) - me.x, num(d.z, -400, 400) - me.z) > 6) return toast('🧭 Lại gần rương hơn nữa nhé!');
+        if (Math.hypot(num(d.x, -1800, 1800) - me.x, num(d.z, -1800, 1800) - me.z) > 6) return toast('🧭 Lại gần rương hơn nữa nhé!');
         EV.claimed.add(id); island.emit('evClaim', { id, by: me.name });
         socket.emit('reward', { coins: 21, house: 8, why: 'Săn kho báu' });
         if (u) { if (!u.ev || u.ev.week !== wk()) u.ev = { week: wk(), pts: 0 }; u.ev.pts += 8; save(u); }
