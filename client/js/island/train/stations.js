@@ -10,7 +10,7 @@ import { matV, mat } from '../sample/palette.js';
 import { loadHero } from '../characters.js';
 import { at, nearest, LEN, S_A0, S_A1, S_A, S_B0, S_B1, S_B, YA, YB, PLAT_H, PLAT_W, PHI } from './route.js';
 
-export const EDGE = 1.6;                                   // mép sân ga cách tim đường 1,6 m (toa rộng 2,6 m)
+export const EDGE = 1.85;                                  // mép sân ga cách tim đường 1,85 m (toa rộng 3,24 m = 2φ)
 export const SIDE_A = -1, SIDE_B = 1;                      // ga đi: sân ga bên phải chiều đi (phía đất liền); ga đến: bên trái (phía lâu đài)
 export const TERRACE_A = 21;                               // nền ga đi rộng tới 21 m tính từ tim đường
 const RAMP = 0.382;                                        // dốc lối lên (1/φ²)

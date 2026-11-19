@@ -6,6 +6,9 @@ import { buildTrack, plantIslet } from './track.js';
 import { buildStations, stationGround } from './stations.js';
 import { createConsist } from './consist.js';
 import { createRide } from './ride.js';
+import { createInterior } from './interior.js';
+import { createTrainSync } from './sync.js';
+import { createCrew } from './crew.js';
 
 export function createTrain(ctx) {
   const { terrain, player } = ctx;
@@ -21,16 +24,22 @@ export function createTrain(ctx) {
   plantIslet(ctx, nearest);
   const stations = buildStations(ctx);
   const consist = createConsist(ctx);
-  const ride = createRide(ctx, { consist });
+  const interior = createInterior(ctx, consist);
+  const ride = createRide(ctx, { consist, interior });
+  const sync = createTrainSync(ctx, { ride, consist, interior });
+  const crew = createCrew(ctx, { consist, interior, cabin: ride.cabin, ride });
+  ride.cabin.state.onSit = seat => ride.net && ride.net.emit({ op: 'sit', id: seat.id });
+  ride.cabin.state.onStand = () => ride.net && ride.net.emit({ op: 'stand' });
   const pA = at(S_A), pB = at(S_B);
   let relT = 0, lastPhase = '';
   function update(dt) {
-    ride.update(dt); track.update(); stations.update(dt);
+    ride.update(dt); crew.update(dt); track.update(); stations.update(dt);
+    const cs = ride.cabin.state; interior.update(dt, cs.mode === 'walk' ? [cs] : []);   // sau khi camera đã đặt: toa có camera ± 1 vẽ nội thất
     if (ride.state.phase !== lastPhase) { if (ride.state.phase === 'run') stations.cheer(); lastPhase = ride.state.phase; }   // học sinh trên sân ga vẫy chào
     if ((relT += dt) > 1) {   // tàu về ga gần người chơi (cả 2 ga đều ngoài tầm mắt: ga gần > 200 m, ga xa > 377 m)
       relT = 0; const p = player.pos, dA = Math.hypot(p.x - pA.x, p.z - pA.z), dB = Math.hypot(p.x - pB.x, p.z - pB.z);
       if (Math.min(dA, dB) > 200 && Math.max(dA, dB) > 377) ride.relocate(dA < dB ? 'A' : 'B');
     }
   }
-  return { update, ride, consist, track, stations };
+  return { update, ride, consist, track, stations, interior, crew, netPose: sync.netPose, placeOther: sync.placeOther };
 }

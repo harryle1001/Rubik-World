@@ -1,25 +1,28 @@
-// train/consist.js — ĐOÀN TÀU PHA LÊ: đầu máy hơi nước xanh lục đậm viền đồng thau + toa than + 4 toa khách gỗ.
+// train/consist.js — ĐOÀN TÀU PHA LÊ: đầu máy hơi nước xanh lục đậm viền đồng thau + toa than + 6 toa khách gỗ rộng 2φ m.
 // Thiết kế nguyên bản: nồi hơi xanh lục 3 đai đồng, ống khói loe, vòm hơi đồng, pha lê lam trên cửa buồng khói,
-// biển tên "TÀU PHA LÊ" trên toa than; toa gỗ tếch, cửa sổ ấm (cao : rộng ≈ φ), ghế đôi 2 bên lối đi, đèn trần.
-// Draw call: đầu máy 1 + đèn 1 + toa than 1 + biển tên 1 + toa khách (instancing) 1 + kính sáng 1 + bánh xe 1 + thanh truyền 1 + khói 1 = 9.
+// biển tên "TÀU PHA LÊ" trên toa than; toa gỗ tếch dài 13 m (Fibonacci), rộng 3,24 m (2φ), 7 cửa sổ mỗi bên cách 1,618 m.
+// Thứ tự toa: khoang riêng ×2 · toa ăn uống · ghế mở ×2 · toa ngắm cảnh mái kính (cuối tàu). Nội thất: coaches.js + interior.js.
+// Draw call: đầu máy 2 + toa than 2 + vỏ toa 1 + mái 1 + mái kính 1 + kính sáng 1 + đèn trần 1 + bánh xe 1 + thanh truyền 1 + khói 1 = 12.
 import * as THREE from 'three';
 import { Batch } from '../academy/geo.js';
 import { matV, mat } from '../sample/palette.js';
 import { toon } from '../style.js';
 import { at, LEN } from './route.js';
 
-// chiều dài thân (m) — đầu máy 10,5 · toa than 5 · toa khách 8 (Fibonacci) · khoảng nối 0,8
-export const CARS = [{ kind: 'loco', len: 10.5 }, { kind: 'tender', len: 5 }, ...[0, 1, 2, 3].map(i => ({ kind: 'coach', len: 8, i }))];
-export const GAP = 0.8, FLOOR = 1.1, WIDTH = 2.6, ROOF = 3.3;
+// chiều dài thân (m) — đầu máy 10,5 · toa than 5 · toa khách 13 (Fibonacci) · khoảng nối 0,8
+export const KINDS = ['compart', 'compart', 'dining', 'open', 'open', 'obs'];
+export const CL = 13;
+export const CARS = [{ kind: 'loco', len: 10.5 }, { kind: 'tender', len: 5 }, ...KINDS.map((type, i) => ({ kind: 'coach', type, len: CL, i }))];
+export const GAP = 0.8, FLOOR = 1.1, WIDTH = 3.24, HW = WIDTH / 2, IN = HW - 0.12, ROOF = 3.6;   // IN: mặt trong vách (nửa bề rộng lòng toa 1,5 m)
 let off = 0; for (const c of CARS) { c.off = off + c.len / 2; off += c.len + GAP; }   // c.off: tâm toa cách đầu tàu (m)
 export const TRAIN_LEN = off - GAP;
 const G = '#2c6455', GD = '#1f463c', K = '#2a2630', KL = '#3a3344', B = '#d4a24a', TEAK = '#8a5a3a', TEAKD = '#6e4a30', CREAM = '#efe3c8', WOOD = '#a8744a';
-export const WIN = { n: 5, w: 0.9, y0: 1.95, y1: 2.95, z: k => -3.2 + k * 1.6 };   // cửa sổ toa: 0,9 × 1,0 m … tâm cách 1,6 m
+export const WIN = { n: 7, w: 0.85, y0: FLOOR + 0.85, y1: FLOOR + 1.95, z: k => (k - 3) * 1.618 };   // cửa sổ toa 0,85 × 1,1 m (≈ 1 : φ^½), tâm cách φ m
 // bánh xe: [z, bán kính] theo toa (hai bên x = ±0.72)
 const WHEELS = {
   loco: { drive: [1.5, -0.2, -1.9], dr: 0.78, pony: [[3.9, 0.42]] },
   tender: [[1.6, 0.42], [0, 0.42], [-1.6, 0.42]],
-  coach: [[3.3, 0.42], [1.9, 0.42], [-1.9, 0.42], [-3.3, 0.42]],
+  coach: [[5.3, 0.42], [3.9, 0.42], [-3.9, 0.42], [-5.3, 0.42]],
 };
 const CYL = { z: 3.9, y: 1.05, x: 1.18 };                 // xi lanh hơi (đầu pít-tông)
 // Batch nhận toạ độ đầu–cuối theo thứ tự bất kỳ (2 bên s = ±1 viết chung một dòng)
@@ -72,53 +75,54 @@ function tenderGeo() {
   b.box(-1.25, 1.25, 2.82, 3.3, 1.4, 2.4, G);                                       // thùng nước
   return b.build();
 }
-function coachGeo() {
-  const b = new Batch2(), L = 4;
-  b.box(-1.1, 1.1, 0.55, FLOOR - 0.12, -L + 0.3, L - 0.3, K);                       // khung gầm
-  for (const z of [-2.6, 2.6]) b.box(-0.95, 0.95, 0.3, 0.62, z - 1.0, z + 1.0, KL);  // giá chuyển hướng
-  b.box(-1.3, 1.3, FLOOR - 0.12, FLOOR, -L, L, TEAKD);                              // sàn
-  b.box(-1.28, 1.28, FLOOR, FLOOR + 0.01, -L + 0.1, L - 0.1, '#7a5a44');            // mặt sàn (thảm)
+function coachGeo() {   // vỏ toa (không mái): gầm, sàn, 2 vách hông có 7 cửa sổ, 2 vách đầu có cửa thông 0,9 × 2,1 m
+  const b = new Batch2(), L = CL / 2;
+  b.box(-1.3, 1.3, 0.55, FLOOR - 0.12, -L + 0.3, L - 0.3, K);                       // khung gầm
+  for (const z of [-4.6, 4.6]) b.box(-0.95, 0.95, 0.3, 0.62, z - 1.0, z + 1.0, KL);  // giá chuyển hướng
+  b.box(-HW, HW, FLOOR - 0.12, FLOOR, -L, L, TEAKD);                                // sàn
+  b.box(-IN, IN, FLOOR, FLOOR + 0.01, -L + 0.1, L - 0.1, '#7a5a44');                // mặt sàn (thảm)
   for (const s of [-1, 1]) {
-    const x0 = s * 1.18, x1 = s * 1.3;
+    const x0 = s * IN, x1 = s * HW;
     b.box(x0, x1, FLOOR, WIN.y0, -L, L, TEAK);                                       // ván dưới cửa sổ
     b.box(x0, x1, WIN.y1, ROOF, -L, L, TEAK);                                        // ván trên
     for (let k = 0; k <= WIN.n; k++) { const za = k === 0 ? -L : WIN.z(k - 1) + WIN.w / 2, zb = k === WIN.n ? L : WIN.z(k) - WIN.w / 2; b.box(x0, x1, WIN.y0, WIN.y1, za, zb, TEAK); }   // trụ giữa cửa sổ
-    b.box(s * 1.3, s * 1.33, WIN.y1 + 0.06, WIN.y1 + 0.14, -L, L, B);                // nẹp đồng dưới mái
-    b.box(s * 1.3, s * 1.33, WIN.y0 - 0.1, WIN.y0, -L, L, TEAKD);                     // bệ cửa sổ
-    b.box(s * 1.31, s * 1.34, 1.3, 1.36, -L + 0.2, L - 0.2, CREAM);                  // chỉ kem
+    b.box(x1, x1 + s * 0.03, WIN.y1 + 0.06, WIN.y1 + 0.14, -L, L, B);                // nẹp đồng dưới mái
+    b.box(x1, x1 + s * 0.03, WIN.y0 - 0.1, WIN.y0, -L, L, TEAKD);                     // bệ cửa sổ
+    b.box(x1 + s * 0.01, x1 + s * 0.04, 1.3, 1.36, -L + 0.2, L - 0.2, CREAM);        // chỉ kem
+    b.box(x0, x0 - s * 0.04, FLOOR, FLOOR + 0.12, -L, L, TEAKD);                     // len chân tường trong
   }
-  // 2 vách đầu toa có cửa thông 0,9 × 2,1 m (đi lại giữa các toa)
+  // 2 vách đầu toa có cửa thông 0,9 × 2,1 m (đi lại giữa các toa) + ống xếp nối toa
   for (const z of [-L, L]) {
-    const z0 = z - 0.06, z1 = z + 0.06;
-    for (const s of [-1, 1]) b.box(s * 0.45, s * 1.3, FLOOR, ROOF, z0, z1, TEAK);
+    const z0 = z - 0.06, z1 = z + 0.06, sg = Math.sign(z);
+    for (const s of [-1, 1]) b.box(s * 0.45, s * HW, FLOOR, ROOF, z0, z1, TEAK);
     b.box(-0.45, 0.45, FLOOR + 2.1, ROOF, z0, z1, TEAK);
-    b.box(-0.55, 0.55, FLOOR, FLOOR + 2.1, z + Math.sign(z) * 0.2, z + Math.sign(z) * 0.4, '#1c1a20');   // ống xếp nối toa (vải)
-    b.box(-0.55, 0.55, FLOOR + 2.1, FLOOR + 2.3, z + Math.sign(z) * 0.06, z + Math.sign(z) * 0.4, '#1c1a20');
-    for (const s of [-1, 1]) b.box(s * 0.55, s * 0.62, FLOOR, FLOOR + 2.3, z + Math.sign(z) * 0.06, z + Math.sign(z) * 0.4, '#1c1a20');
+    b.box(-0.55, 0.55, FLOOR - 0.12, FLOOR, z + sg * 0.06, z + sg * 0.42, '#4a4450');   // tấm nối sàn
+    b.box(-0.55, 0.55, FLOOR + 2.1, FLOOR + 2.3, z + sg * 0.06, z + sg * 0.4, '#1c1a20');
+    for (const s of [-1, 1]) b.box(s * 0.55, s * 0.62, FLOOR, FLOOR + 2.3, z + sg * 0.06, z + sg * 0.4, '#1c1a20');
   }
-  // mái cong (3 mảnh) + mặt trong trần màu kem
-  b.box(-0.8, 0.8, ROOF + 0.32, ROOF + 0.42, -L - 0.1, L + 0.1, KL);
-  for (const s of [-1, 1]) b.add(new THREE.BoxGeometry(0.75, 0.1, 2 * L + 0.2), KL, s * 1.08, ROOF + 0.2, 0, 0, 0, -s * 0.4);
-  b.box(-1.18, 1.18, ROOF - 0.04, ROOF + 0.02, -L + 0.06, L - 0.06, CREAM);
-  // ghế đôi 2 bên lối đi (lối đi 0,9 m), 5 hàng theo cửa sổ, quay về phía đầu toa
-  for (let k = 0; k < WIN.n; k++) {
-    const z = WIN.z(k) - 0.15;
-    for (const s of [-1, 1]) {
-      b.box(s * 0.45, s * 1.15, FLOOR + 0.4, FLOOR + 0.52, z - 0.25, z + 0.25, '#2c6455');   // đệm ngồi xanh
-      b.box(s * 0.45, s * 1.15, FLOOR, FLOOR + 0.4, z - 0.2, z + 0.15, TEAKD);
-      b.box(s * 0.45, s * 1.15, FLOOR + 0.52, FLOOR + 1.25, z - 0.32, z - 0.2, '#2c6455');  // lưng ghế
-      b.box(s * 0.45, s * 1.15, FLOOR + 1.25, FLOOR + 1.32, z - 0.34, z - 0.18, WOOD);
-    }
-  }
-  for (const s of [-1, 1]) b.box(s * 0.7, s * 1.17, ROOF - 0.3, ROOF - 0.26, -L + 0.3, L - 0.3, TEAKD);   // giá để hành lý (trên cửa sổ, cao hơn tầm mắt)
   return b.build();
 }
+function roofGeo() {   // mái cong (3 mảnh) + trần kem bên trong
+  const b = new Batch2(), L = CL / 2;
+  b.box(-0.9, 0.9, ROOF + 0.32, ROOF + 0.42, -L - 0.1, L + 0.1, KL);
+  for (const s of [-1, 1]) b.add(new THREE.BoxGeometry(0.95, 0.1, 2 * L + 0.2), KL, s * 1.3, ROOF + 0.2, 0, 0, 0, -s * 0.4);
+  b.box(-IN, IN, ROOF - 0.04, ROOF + 0.02, -L + 0.06, L - 0.06, CREAM);
+  return b.build();
+}
+function obsRoofGeo() {   // toa ngắm cảnh: khung mái thép mảnh (kính riêng)
+  const b = new Batch2(), L = CL / 2;
+  for (let k = -4; k <= 4; k++) { const z = k * 1.618 * 0.95; b.box(-HW, HW, ROOF + 0.3, ROOF + 0.4, z - 0.05, z + 0.05, B); for (const s of [-1, 1]) b.add(new THREE.BoxGeometry(1.0, 0.08, 0.1), B, s * 1.25, ROOF + 0.16, z, 0, 0, -s * 0.45); }
+  for (const s of [-1, 1]) b.box(s * (HW - 0.1), s * HW, ROOF - 0.05, ROOF + 0.05, -L, L, B);
+  b.box(-0.05, 0.05, ROOF + 0.38, ROOF + 0.44, -L, L, B);
+  return b.build();
+}
+function obsGlassGeo() { const b = new Batch2(), L = CL / 2; b.box(-0.9, 0.9, ROOF + 0.34, ROOF + 0.37, -L, L, '#bfe6f2'); for (const s of [-1, 1]) b.add(new THREE.BoxGeometry(1.0, 0.03, 2 * L), '#bfe6f2', s * 1.25, ROOF + 0.16, 0, 0, 0, -s * 0.45); return b.build(); }
 function coachGlow() {   // kính cửa sổ sáng ấm (nhìn từ ngoài) — ẩn khi camera ở trong toa
   const b = new Batch2();
-  for (const s of [-1, 1]) for (let k = 0; k < WIN.n; k++) b.box(s * 1.24 - 0.01, s * 1.24 + 0.01, WIN.y0, WIN.y1, WIN.z(k) - WIN.w / 2, WIN.z(k) + WIN.w / 2, '#ffe3a0');
+  for (const s of [-1, 1]) for (let k = 0; k < WIN.n; k++) b.box(s * (HW - 0.06) - 0.01, s * (HW - 0.06) + 0.01, WIN.y0, WIN.y1, WIN.z(k) - WIN.w / 2, WIN.z(k) + WIN.w / 2, '#ffe3a0');
   return b.build();
 }
-function coachLamps() { const b = new Batch2(); for (const z of [-2.4, 0, 2.4]) b.box(-0.18, 0.18, ROOF - 0.12, ROOF - 0.04, z - 0.18, z + 0.18, '#ffe3a0'); return b.build(); }
+function coachLamps() { const b = new Batch2(); for (const z of [-4.85, -1.62, 1.62, 4.85]) b.box(-0.18, 0.18, ROOF - 0.12, ROOF - 0.04, z - 0.18, z + 0.18, '#ffe3a0'); return b.build(); }
 function wheelGeo() {   // bánh xe đơn vị (bán kính 1, dày 0,14): vành sắt, 8 nan xanh, trục đồng — trục quay = trục x
   const b = new Batch2();
   b.add(new THREE.TorusGeometry(0.9, 0.1, 4, 16), K, 0, 0, 0, Math.PI / 2);
@@ -148,12 +152,15 @@ export function createConsist(ctx) {
   // toa khách: instancing (thân + kính sáng + đèn trần)
   const NC = coaches.length;
   const coachI = new THREE.InstancedMesh(coachGeo(), mv, NC); coachI.castShadow = true; coachI.receiveShadow = false;   // không nhận bóng: trong toa sáng, không tối om dưới mái
-  const glowI = new THREE.InstancedMesh(coachGlow(), mg, NC), lampI = new THREE.InstancedMesh(coachLamps(), mg, NC);
+  const roofed = coaches.filter(c => c.type !== 'obs'), obs = coaches.filter(c => c.type === 'obs');
+  const roofI = new THREE.InstancedMesh(roofGeo(), mv, roofed.length); roofI.castShadow = true;
+  const obsI = new THREE.InstancedMesh(obsRoofGeo(), mv, obs.length), glassI = new THREE.InstancedMesh(obsGlassGeo(), new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.236, depthWrite: false }), obs.length);
+  const glowI = new THREE.InstancedMesh(coachGlow(), mg, NC), lampI = new THREE.InstancedMesh(coachLamps(), mg, roofed.length);
   // bánh xe + thanh truyền (instancing, ma trận thế giới cập nhật mỗi khung hình)
   const wl = []; for (const c of cars) { const W = c.kind === 'loco' ? [...WHEELS.loco.drive.map(z => [z, WHEELS.loco.dr, 1]), ...WHEELS.loco.pony] : WHEELS[c.kind]; for (const [z, r, drive] of W) for (const s of [-1, 1]) wl.push({ c, z, r, s, drive: !!drive }); }
   const wheelI = new THREE.InstancedMesh(wheelGeo(), mv, wl.length); wheelI.castShadow = true;
   const rodI = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), toon(B, { emissive: '#d4a24a', emissiveIntensity: 0.146 }), 6);
-  for (const o of [coachI, glowI, lampI, wheelI, rodI]) { o.frustumCulled = false; group.add(o); }
+  for (const o of [coachI, roofI, obsI, glassI, glowI, lampI, wheelI, rodI]) { o.frustumCulled = false; group.add(o); }
   ctx.scene.add(group);
 
   // ---------- khói hơi nước: 55 cụm (pool), bay lên, nở to, nhạt dần ----------
@@ -172,14 +179,17 @@ export function createConsist(ctx) {
       const sc = sHead - dir * c.off, h = c.len * 0.32;
       at(Math.min(LEN, Math.max(0, sc + dir * h)), pF); at(Math.min(LEN, Math.max(0, sc - dir * h)), pR);
       const dx = pF.x - pR.x, dz = pF.z - pR.z, dy = pF.y - pR.y, l = Math.hypot(dx, dz) || 1;
-      c.yaw = Math.atan2(dx, dz); const dy0 = c.prevYaw === undefined ? 0 : c.yaw - c.prevYaw; c.curv = Math.atan2(Math.sin(dy0), Math.cos(dy0)); c.prevYaw = c.yaw;
+      c.yaw = Math.atan2(dx, dz); const dy0 = c.prevYaw === undefined ? 0 : c.yaw - c.prevYaw, ds = c.prevS === undefined ? 0 : Math.abs(sc - c.prevS);
+      if (ds > 0.02) { c.curv = Math.atan2(Math.sin(dy0), Math.cos(dy0)) / ds; c.prevYaw = c.yaw; c.prevS = sc; } else if (c.prevS === undefined || ds > 5) { c.curv = 0; c.prevYaw = c.yaw; c.prevS = sc; }   // độ cong (rad/m), không phụ thuộc tốc độ khung hình
       c.o.position.set((pF.x + pR.x) / 2, (pF.y + pR.y) / 2, (pF.z + pR.z) / 2);
       c.o.rotation.set(-Math.atan2(dy, l), c.yaw, c.roll, 'YXZ');
       c.s = sc;
     }
     group.updateMatrixWorld(true);
-    coaches.forEach((c, i) => { coachI.setMatrixAt(i, c.o.matrixWorld); glowI.setMatrixAt(i, i === st.hideGlow ? ZERO : c.o.matrixWorld); lampI.setMatrixAt(i, c.o.matrixWorld); });
-    coachI.instanceMatrix.needsUpdate = glowI.instanceMatrix.needsUpdate = lampI.instanceMatrix.needsUpdate = true;
+    coaches.forEach((c, i) => { coachI.setMatrixAt(i, c.o.matrixWorld); glowI.setMatrixAt(i, hid(i) ? ZERO : c.o.matrixWorld); }); st.moved = true;
+    roofed.forEach((c, i) => { roofI.setMatrixAt(i, c.o.matrixWorld); lampI.setMatrixAt(i, c.o.matrixWorld); });
+    obs.forEach((c, i) => { obsI.setMatrixAt(i, c.o.matrixWorld); glassI.setMatrixAt(i, c.o.matrixWorld); });
+    for (const o of [coachI, roofI, obsI, glassI, glowI, lampI]) o.instanceMatrix.needsUpdate = true;
     posWheels();
   }
   function posWheels() {
@@ -208,7 +218,7 @@ export function createConsist(ctx) {
     st.t += dt; st.speed = speed;
     const da = speed * dt / WHEELS.loco.dr; st.angle += da;
     const k = Math.min(1, speed / 8);
-    cars.forEach((c, i) => { c.roll = Math.sin(st.t * 2.1 + i * 1.3) * 0.012 * k + Math.sin(st.t * 5.3 + i) * 0.004 * k - (c.curv || 0) * speed * 0.9; });
+    cars.forEach((c, i) => { c.roll = Math.sin(st.t * 2.1 + i * 1.3) * 0.012 * k + Math.sin(st.t * 5.3 + i) * 0.004 * k - Math.max(-0.04, Math.min(0.04, (c.curv || 0) * speed * speed * 0.004)); });   // nghiêng vào cua theo gia tốc hướng tâm v²·κ (≤ 0,04 rad)
     // nhịp hơi: 4 lần mỗi vòng bánh dẫn động
     const q = Math.floor(st.angle / (Math.PI / 2)); if (q !== st.chuff) { st.chuff = q; if (speed > 0.2) { onChuff && onChuff(speed); puff(speed, true); } }
     st.idle = (st.idle || 0) + dt; if (speed < 0.2 && st.idle > 0.7) { st.idle = 0; puff(0, false); }
@@ -230,6 +240,8 @@ export function createConsist(ctx) {
     if (big && speed < 4) for (const s of [-1, 1]) { chim.set(s * 1.5, 0.9, CYL.z + 0.6).applyMatrix4(loco.o.matrixWorld); up.set(s * Math.cos(loco.yaw) * 2.6, 0.6, -s * Math.sin(loco.yaw) * 2.6); emit(chim, up, 0.35, 1.6, 1.6); }   // xả hơi ở xi lanh khi khởi động
   }
   // camera ở trong toa i → ẩn kính sáng của toa đó (nhìn xuyên cửa sổ ra ngoài)
-  const setHideGlow = i => { if (st.hideGlow === i) return; st.hideGlow = i; coaches.forEach((c, k) => glowI.setMatrixAt(k, k === i ? ZERO : c.o.matrixWorld)); glowI.instanceMatrix.needsUpdate = true; };
-  return { group, cars, coaches, place, animate, setHideGlow, state: st, smoke };
+  // i: chỉ số toa khách hoặc mảng chỉ số (các toa đang vẽ nội thất)
+  const hid = k => Array.isArray(st.hideGlow) ? st.hideGlow.includes(k) : k === st.hideGlow;
+  const setHideGlow = i => { if (String(st.hideGlow) === String(i)) return; st.hideGlow = i; coaches.forEach((c, k) => glowI.setMatrixAt(k, hid(k) ? ZERO : c.o.matrixWorld)); glowI.instanceMatrix.needsUpdate = true; };
+  return { group, cars, coaches, place, animate, setHideGlow, state: st, smoke, onPlace: [] };
 }
