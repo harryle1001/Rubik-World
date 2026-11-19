@@ -8,6 +8,8 @@ import { loadHero, driveHero, emote, setOutline, lookAtTarget, LOD, actorLod, st
 import { CFG } from './config.js';
 import { toon } from './style.js';
 import { T, damp, dampAngle } from './motion.js';
+import { makeBike } from './bikes.js';
+import { ridePose, rideReset, cadence } from './ride-pose.js';
 
 const V = 'abcdef', SEAT_Y = 0.56; // mặt ghế đá (town-buildings.js: chân 0.42 + mặt 0.14)
 const NPC_NAME = { swim: 'Người tắm biển', surf: 'Bạn lướt sóng', sun: 'Khách du lịch', bike: 'Người đạp xe', camp: 'Bạn cắm trại', picnic: 'Gia đình dã ngoại', fishing: 'Bác câu cá', walk: 'Người đi dạo', kite: 'Bạn thả diều' };
@@ -147,6 +149,10 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       else if (dist < 4 && !sit) face = Math.atan2(p.x - x, p.z - z); // đứng gần → quay về phía người chơi
       if (face !== null) e.yaw = dampAngle(e.yaw, face, e.ky, T.soft, dt, 2 * Math.PI); else e.ky.v = 0; // rẽ mềm, quay tối đa 1 vòng/s
       e.px = x; e.pz = z; const m = e.hero.model, gy = groundY(gx, gz); m.position.set(gx, gy + (e.seat ? SEAT_Y : 0), gz); m.rotation.y = e.yaw; m.visible = !(ctx.mgHide && ctx.mgHide(gx, gz));   // khu mini game: ẩn người đi ngang
+      // người đạp xe: gắn xe đạp thật dưới người (bù tỉ lệ model), nâng người lên yên; bánh + bàn đạp quay theo tốc độ
+      const bk = sit === 'drive' && !a.boat; if (bk && !e.bike) { e.bike = makeBike([0, 2, 4, 5, 7, 15][(e.tick + pool.indexOf(e)) % 6]); e.bike.group.name = 'npc-bike'; m.add(e.bike.group); }
+      if (e.bike) { const B = e.bike, M = B.mode, s = m.scale.x; if (B.group.visible && !bk) rideReset(e.hero); B.group.visible = bk; if (bk) { B.group.scale.setScalar(1 / s); B.group.position.set(0, -M.seat / s, -M.seatZ / s); m.position.y += M.seat;
+        const v = moving ? e.spd : 0; for (const w of B.wheels) w.m.rotation.x += v * dt / w.r; B.crank.rotation.x += cadence(v, B.wheels[B.ride.drive].r, B.ride.gear) * 2 * Math.PI * dt; } }
       // đứng nói chuyện: 2 người đứng yên cách nhau < 1.8 m (kiểm tra thưa, 0.6 s/lần)
       if (doTalk) {
         e.partner = null;
@@ -161,7 +167,8 @@ export function createTownPeople(ctx, { P, Y_MIN, Y_MAX = 1e9, TOWN_Y, POOL }) {
       }
       const dv = e.dv || (e.dv = { speed: 0, grounded: true, walk: 5.5, sitting: false, oneShot: null }); dv.speed = moving ? e.spd : 0; dv.sitting = sit; dv.oneShot = e.st.oneShot; driveHero(e.hero, dv);   // dùng lại 1 đối tượng
       // LOD (characters.js): animation mỗi khung < 13 m (điện thoại), 1/2 khung < 21 m, xa hơn 1/4; viền & bóng đổ chỉ cho người gần
-      if (stepAnim(e.hero.anim, e.an, dist, dt) && dist < LOD.a1) { let lt = null; if (dist < 6 && !e.seat) lt = p; else if (e.partner && dist < 15) { lt = e.lp || (e.lp = { x: 0, z: 0 }); lt.x = e.partner.px; lt.z = e.partner.pz; } lookAtTarget(e.hero, lt, e.st, dt); }
+      const up = stepAnim(e.hero.anim, e.an, dist, dt); if (up && e.bike && e.bike.group.visible) ridePose(e.hero, m, e.bike.ride);   // tư thế đạp xe (sau animation)
+      if (up && dist < LOD.a1) { let lt = null; if (dist < 6 && !e.seat) lt = p; else if (e.partner && dist < 15) { lt = e.lp || (e.lp = { x: 0, z: 0 }); lt.x = e.partner.px; lt.z = e.partner.pz; } lookAtTarget(e.hero, lt, e.st, dt); }
       actorLod(e.hero, m, dist);
       if (dist < bd) { bd = dist; best = e; }
     }
