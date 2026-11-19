@@ -144,7 +144,7 @@ export function buildStations(ctx) {
     ['GA ĐẢO RUBIK', '#1f463c', '#f2dca6'],
     ['GA HỌC VIỆN PHA LÊ', '#1f463c', '#f2dca6', 'bold 46px Georgia, serif'],
     ['🚂 TÀU PHA LÊ\nkhởi hành mỗi giờ tròn (giờ trong game)', '#2a2630', '#f7ecd0', 'bold 30px system-ui'],
-    ['↑ Lâu đài Học viện\n↓ Bến thuyền đèn lồng (men mép cao nguyên)', '#2a2630', '#f7ecd0', 'bold 28px system-ui'],
+    ['⬆ Lâu đài (cửa tây, qua cầu có mái)\n⚓ Bến thuyền · ✈ Đường băng: qua lâu đài', '#2a2630', '#f7ecd0', 'bold 28px system-ui'],
   ];
   const tex = signTex(signs), quads = [];
   for (const s of [S_A - 13, S_A + 13]) quads.push({ i: 0, w: 4.2, h: 1.05, s, lat: SIDE_A * (EDGE + 2.5), y: topA + 3.6, face: 0 });   // biển treo dưới mái vòm

@@ -74,7 +74,7 @@ export function createRide(ctx, { consist }) {
       player.teleport(p.x - p.tz * lat, p.z + p.tx * lat, P.top); player.root.quaternion.identity();
       const vx = p.tx * st.dir * -1 - p.tz * P.side * 0.6, vz = p.tz * st.dir * -1 + p.tx * P.side * 0.6;   // nhìn dọc sân ga (về phía cuối tàu), chếch ra ngoài
       player.cam.yaw = Math.atan2(-vx, -vz); player.snapCamera && player.snapCamera();
-      ctx.toast(st.at === 'B' ? '🏰 Ga <b>Học viện Pha Lê</b>. Đi lên cổng lâu đài, hoặc men mép cao nguyên xuống <b>bến thuyền đèn lồng</b>.' : '🏝️ Ga <b>đảo Rubik</b>. Chúc bạn một ngày vui!', 5000);
+      ctx.toast(st.at === 'B' ? '🏰 Ga <b>Học viện Pha Lê</b>. Đi tới cuối sân ga, rẽ phải vào <b>cửa tây lâu đài</b> (cầu có mái). Bến thuyền ⚓ ở cổng trước, đường băng ✈ ở cổng sau.' : '🏝️ Ga <b>đảo Rubik</b>. Chúc bạn một ngày vui!', 5000);
     });
   }
   function depart() {

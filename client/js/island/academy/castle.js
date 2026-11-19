@@ -35,7 +35,8 @@ function layout(B, far = false) {
   for (const t of L.turrets) K.turret(...t);
   // --- tường thành + 8 tháp canh quanh mép vách ---
   const Cw = L.curtain, Bg0 = L.bridge;
-  K.curtain(Cw, { front: [[-L.gate, L.gate]], back: [[-L.back, L.back]], west: [[Bg0.u - Bg0.w - 1, Bg0.u + Bg0.w + 1]], east: [] });
+  K.curtain(Cw, { front: [[-133.5, -126.5], [-L.gate, L.gate]],   // khe tây: đường Tàu Pha Lê (train/route.js B_V = −130)
+ back: [[-L.back, L.back]], west: [[Bg0.u - Bg0.w - 1, Bg0.u + Bg0.w + 1]], east: [] });
   for (const [u, v] of WATCH.at) K.watch(u, v, WATCH.r, WATCH.h);
   // --- cầu cạn nhiều nhịp vòm: đường băng → cổng sau (nhánh A dọc v, nhánh B dọc u) ---
   const vw = VIA.w, yA0 = ground(VIA.uA, VIA.vA0) + 0.3, sl = (Y - yA0) / (-vw - VIA.vA0 + VIA.uB1 - VIA.uA - vw), yC = yA0 + (-vw - VIA.vA0) * sl;
@@ -100,14 +101,15 @@ function layout(B, far = false) {
   // --- cầu đá có mái 89 m + Tháp Gió ---
   const Bg = L.bridge, bu = Bg.u, w = Bg.w;
   wall.box(Bg.v1, Bg.v0, Y - 1.2, Y, bu - w, bu + w, C_WALL);                                                     // mặt cầu
-  for (const s of [-1, 1]) wall.box(Bg.v1, Bg.v0, Y, Y + 1.1, bu + s * w - 0.25, bu + s * w + 0.25, C_WALL_D);       // lan can
+  const vRail = -L.curtain.hv;   // lan can chỉ ngoài tường thành: trong tường là lối đi bộ từ ga Tàu Pha Lê vào cửa tây
+  for (const s of [-1, 1]) wall.box(Bg.v1, vRail, Y, Y + 1.1, bu + s * w - 0.25, bu + s * w + 0.25, C_WALL_D);       // lan can
   K.arches('v', Bg.v1 + 6.5, Bg.v0, bu, Y, Y, w);                                                                    // nhịp vòm + trụ xuống đáy hồ
   if (!far) for (let v = Bg.v0 - 8; v > Bg.v1 + 3; v -= 13) for (const s of [-1, 1]) wall.box(v - 0.3, v + 0.3, Y + 1.1, Y + 5, bu + s * w - 0.3, bu + s * w + 0.3, C_WOOD);   // cột mái
   roof.gable(Bg.v1, Bg.v0, bu - w - 0.8, bu + w + 0.8, Y + 5, 3.1, C_ROOF_G);
   if (!far) wall.box(Bg.v1, Bg.v0, Y + 4.85, Y + 5, bu - w - 0.6, bu + w + 0.6, C_WOOD);   // trần gỗ dưới mái
   const [tu, tv, tr] = Bg.tower; tower(tu, tv, tr, 21, tr * PHI ** 3, C_ROOF_G, true);
   wall.cyl(tv, -4, tu, tr * 1.05, Y + 1, C_WALL_D, seg);                                                                 // chân Tháp Gió từ đáy hồ lên
-  if (!far) for (const s of [-1, 1]) solid(bu + s * w - 0.25, bu + s * w + 0.25, Bg.v1 + 6, Bg.v0, Y + 1.1);
+  if (!far) for (const s of [-1, 1]) solid(bu + s * w - 0.25, bu + s * w + 0.25, Bg.v1 + 6, vRail, Y + 1.1);
   // --- sân luyện đũa: vòng lát + 5 bia tập ---
   if (!far) {
     const Yd = L.yard;

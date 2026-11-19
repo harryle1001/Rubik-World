@@ -12,14 +12,14 @@ export const N = [-D[1], D[0]];                          // ngang (trùng trục
 export const aN = (a, n) => [D[0] * a + N[0] * n, D[1] * a + N[1] * n];
 export const toAN = (x, z) => [x * D[0] + z * D[1], x * N[0] + z * N[1]];
 const polar = (r, deg) => [r * Math.cos(deg * Math.PI / 180), r * Math.sin(deg * Math.PI / 180)];
-// Học viện: (u, v) cục bộ → (a, n): a = |C| − u, n = v
-const acad = (u, v) => aN(L0 - u, v);
+// Học viện: (u, v) cục bộ của academy/plan.js (lâu đài thẳng trục: u = +z, v = +x) → thế giới
+const acad = (u, v) => [C[0] + v, C[1] + u];
 
 // ---------- mốc chính ----------
 export const GAUGE = 1.435, RAIL_Y = 0.16;               // khổ ray chuẩn; mặt ray cao hơn mặt đá ballast 0,16 m
-export const YA = 2.6, YB = 34.85;                       // cao độ mặt ray ở ga đi (kè biển) và ga đến (cao nguyên 34 m)
+export const YA = 2.6, YB = 55.6;                        // cao độ mặt ray ở ga đi (kè biển) và ga đến (cao nguyên 55 m, plan.js PLAT.y)
 export const PLAT_H = 0.9, PLAT_W = 5, PLAT_L = 55;      // sân ga cao 0,9 m trên mặt ray, rộng 5 m, dài 55 m
-export const B_V = -134;                                  // ga đến: đường ray chạy dọc u ở v = −134 (cách tháp góc 11 m)
+export const B_V = -130;                                  // ga đến: ray dọc u ở v = −130, giữa dãy tây lâu đài (−116,5) và tường thành (−136)
 export const ISLET = { c: aN(455, -240), r: 89 + 21, hill: aN(507, -236), hr: 70, peak: 47 };   // đảo Đồi Thông
 
 // Điểm điều khiển (thế giới, xz) — đường cong Catmull-Rom qua các điểm
@@ -38,11 +38,11 @@ const CTRL = [
   aN(525, -232),                         // 11 trong hầm
   aN(600, -212),                         // 12 ra hầm → cầu cạn
   aN(760, -170),                         // 13 giữa eo biển
-  acad(240, -139),                       // 14 tới bờ Học viện
-  acad(150, B_V),                        // 15 đồi trước hồ
-  acad(60, B_V),                         // 16 qua hồ, chạm mép cao nguyên
-  acad(-21, B_V),                        // 17 cuối sân ga đến
-  acad(-40, B_V),                        // 18 chắn cuối ray
+  acad(262, -52),                        // 14 tới bờ Học viện
+  acad(178, -124),                       // 15 đồi trước hồ
+  acad(95, B_V),                         // 16 qua hồ, chạm mép vách (u 55), qua khe tường thành (u 46)
+  acad(-34, B_V),                        // 17 cuối sân ga đến (gần cửa tây lâu đài u −55)
+  acad(-47, B_V),                        // 18 chắn cuối ray (cách cầu có mái 5 m)
 ];
 
 // ---------- Catmull-Rom (centripetal) thuần, lấy mẫu đều theo chiều dài ----------
