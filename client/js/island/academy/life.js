@@ -12,6 +12,7 @@ import { placeKit } from '../kit.js';
 import { loadHero, STUDENTS } from '../characters.js';
 import { CFG } from '../config.js';
 import { toon } from '../style.js';
+import { dressWizard } from './practice.js';
 
 const PI = Math.PI;
 const Q = (q, choices, explain) => ({ q, choices, a: 0, explain });
@@ -74,11 +75,11 @@ export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
     buildFest();
     ctx.scene.add(G);
     // học sinh
-    const n = MOB ? 5 : 8;
+    const n = MOB ? 6 : 13;   // v3: đông học sinh hơn, đội mũ phù thủy màu nhà
     for (let i = 0; i < n; i++) {
       const kid = { i, hero: null, pos: new THREE.Vector3(), tgt: null, mode: 'free', yaw: 0, clip: '', seat: null, hide: false, wait: Math.random() * 3 };
       const [x, z] = W(-5 - (i % 4) * 4, -8 + Math.floor(i / 4) * 16); kid.pos.set(x, Y, z); kids.push(kid);
-      loadHero(STUDENTS[(i * 5) % STUDENTS.length], 1.32 + (i % 3) * 0.06).then(h => { if (!G) return; kid.hero = h; h.npc = true; h.model.position.copy(kid.pos); G.add(h.model); play(kid, 'idle'); });
+      loadHero(STUDENTS[(i * 5) % STUDENTS.length], 1.32 + (i % 3) * 0.06).then(h => { if (!G) return; kid.hero = h; h.npc = true; h.model.position.copy(kid.pos); G.add(h.model); play(kid, 'idle'); dressWizard(h, ['#c8302c', '#3a6fc4', '#3f8a4c', '#7a4fb0'][i % 4]); });
     }
     // Ma Cụ Đồ (đêm): người lớn mờ ảo bay lơ lửng cạnh đài phun nước
     loadHero('student-male-a', 1.7, { role: 'old', old: true, shirt: '#cfe6ff', pants: '#a8c4e8' }).then(h => {
@@ -148,8 +149,8 @@ export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
 
   // ---------- mỗi khung hình ----------
   const o3 = new THREE.Object3D(); let lastPh = null, tale = 0;
-  const lineSpot = i => [POLE[0] - 6 - Math.floor(i / 4) * 1.6, -2.4 + (i % 4) * 1.6];   // hàng chào cờ: 2 hàng × 4, quay mặt về cột (+u)
-  const seatSpot = i => { const v = [-7.5, -5.5, -3.2, -1.2, 1.2, 3.2, 5.5, 7.5][i % 8]; return [H.u0 + 11 + (i % 3) * 5, v]; };
+  const lineSpot = i => [POLE[0] - 6 - Math.floor(i / 5) * 1.6, -3.2 + (i % 5) * 1.6];   // hàng chào cờ: 2 hàng × 4, quay mặt về cột (+u)
+  const seatSpot = i => { const v = [-7.5, -5.5, -3.2, -1.2, 1.2, 3.2, 5.5, 7.5][i % 8]; return [H.u0 + 11 + (i % 5) * 4.2, v]; };
   const doorSpot = i => i % 2 ? [H.u1 - 1.5, -5.3] : [L.box.u1 - L.T - 0.5, -14];
   function play(kid, c) { if (!kid.hero || kid.clip === c) return; const set = kid.hero.set, clip = set[c] || set.idle; kid.hero.anim.play(clip, 0.25); kid.clip = c; }
   function update(dt, t) {
