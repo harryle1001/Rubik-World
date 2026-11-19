@@ -284,6 +284,7 @@ export function createMiniGameHost(ctx) {
   // ---------- Vào / ra ----------
   function begin(key, door, opts = {}) {
     const G = ctx.miniGames[key]; if (!G) return false;
+    if (ctx.premium && !ctx.premium.allow('mg', { key, name: G.name })) return false;   // một phần mini game miễn phí (FREE_MG ở server)
     if (host.active) host.exit(true);
     const P = ctx.player, R = G.radius || 13, dx = door ? door.x : P.pos.x, dz = door ? door.z : P.pos.z;
     let sp = opts.spot ? opts.spot.slice() : G.inPlace ? [P.pos.x, P.pos.z, 0] : spotCache.get(key + ':' + Math.round(dx) + ':' + Math.round(dz));   // inPlace: game tự dùng thế giới quanh nhân vật (câu cá)
