@@ -14,6 +14,8 @@ const PLANS = {
   year: { id: 'year', name: 'Gói năm', price: +env.PRICE_YEAR || 499000, days: +env.DAYS_YEAR || 365, seats: 1 },
   family: { id: 'family', name: 'Gói gia đình (2–4 con)', price: +env.PRICE_FAMILY || 799000, days: +env.DAYS_FAMILY || 365, seats: +env.FAMILY_SEATS || 4 },
 };
+// 💎 gói kim cương hồng (đồ trang trí đặc biệt trong game): GEM_PACKS="số_kim_cương:giá_đồng,…" — giá tiền thật hiện rõ trước khi trả
+const GEM_PACKS = (env.GEM_PACKS || '21:10000,55:22000,144:49000').split(',').map(s => s.split(':').map(Number)).filter(([g, p]) => g > 0 && p >= 1000).map(([gems, price]) => ({ id: 'gem-' + gems, gems, price }));
 const TRIAL_DAYS = env.TRIAL_DAYS != null ? +env.TRIAL_DAYS : 7, MAX_KIDS = 4;
 // nội dung miễn phí (client/js/island/premium.js đọc từ /api/me): mini game miễn phí & số chương cốt truyện miễn phí
 const FREE = { chapters: +env.FREE_CHAPTERS || 2, mg: (env.FREE_MG || 'rubik,caro,fishing,fishing-boat,garden,library,reader-books,royal-library,quiz').split(',').map(s => s.trim()).filter(Boolean) };
@@ -124,6 +126,20 @@ module.exports = function setupBilling(app, api, o) {
     res.json({ ok: true });
   }));
 
+  // ---------- 💎 kim cương hồng: đơn tạo trong game SAU cổng phụ huynh, người lớn trả trên trang của cổng thanh toán ----------
+  const gemLimit = rateLimit({ windowMs: 15 * 60e3, limit: 13, standardHeaders: 'draft-7', legacyHeaders: false, message: { error: 'Thử lại sau ít phút nhé.' } });
+  api.get('/gems/packs', (req, res) => res.json({ packs: GEM_PACKS, gateways: gwPub() }));
+  api.post('/gems/checkout', o.auth, gemLimit, wrap(async (req, res) => {
+    const u = req.user, b = req.body || {}, P = GEM_PACKS.find(p => p.id === b.pack), G = GATEWAYS[b.gateway];
+    if (!P || !G) return res.status(400).json({ error: 'Chọn gói kim cương và cách thanh toán.' });
+    let transfer; do transfer = code6(); while (db.all('orders').some(x => x.transfer === transfer));
+    const x = { id: 'G' + Date.now().toString(36).toUpperCase() + rnd(2).toUpperCase(), kind: 'gems', uid: u.id, pid: 'kid:' + u.id, login: u.name, plan: 'gems', gems: P.gems, base: P.price, amount: P.price, gateway: G.id, status: 'pending', created: Date.now(), transfer, info: `Kim cuong hong x${P.gems}` };
+    const B = baseUrl(req), urls = { ret: gw => `${B}/pay/return/${gw}?order=${x.id}`, ipn: gw => `${B}/pay/ipn/${gw}`, sim: q => `${B}/pay/sim/${q.id}` };
+    let r; try { r = await G.create(x, urls, req.ip); } catch (e) { console.error('[pay]', e.message); return res.status(502).json({ error: 'Cổng thanh toán đang bận, thử lại sau nhé.' }); }
+    db.put('orders', x.id, x); res.json(Object.assign({ order: orderPub(x), mode: G.mode() }, r));
+  }));
+  api.get('/gems/orders/:id', o.auth, (req, res) => { const x = db.get('orders', req.params.id); if (!x || x.uid !== req.user.id) return res.status(404).json({ error: 'Không thấy đơn.' }); res.json({ order: orderPub(x), wallet: o.eco ? o.eco.out(o.eco.wallet(req.user)) : null }); });
+
   // ---------- liên kết con: con tạo mã trong game (hết hạn 30 phút), phụ huynh nhập + đồng ý ----------
   api.post('/link-code', o.auth, (req, res) => {
     const u = req.user; for (const c of db.all('linkcodes')) if (c.uid === u.id || c.exp < Date.now()) db.del('linkcodes', c.code);
@@ -188,7 +204,7 @@ module.exports = function setupBilling(app, api, o) {
     ${r.weak.length ? `<p style="margin-top:13px"><b>Cần luyện thêm:</b> ${r.weak.map(w => esc(w.topic) + ` (${w.pct}%)`).join(', ')}</p>` : ''}${r.achievements.length ? `<p><b>Thành tích:</b> ${r.achievements.map(esc).join(' · ')}</p>` : ''}`;
 
   // ---------- mua gói ----------
-  function orderPub(x) { return { id: x.id, plan: x.plan, planName: (PLANS[x.plan] || {}).name || x.plan, amount: x.amount, base: x.base, coupon: x.coupon || null, gateway: x.gateway, status: x.status, created: x.created, paidAt: x.paidAt || 0, transfer: x.gateway === 'bank' ? 'RUBIK ' + x.transfer : null, until: x.until || 0 }; }
+  function orderPub(x) { return { id: x.id, plan: x.plan, planName: (PLANS[x.plan] || {}).name || x.info || x.plan, amount: x.amount, base: x.base, coupon: x.coupon || null, gateway: x.gateway, status: x.status, created: x.created, paidAt: x.paidAt || 0, transfer: x.gateway === 'bank' ? 'RUBIK ' + x.transfer : null, until: x.until || 0 }; }
   function priceFor(plan, code) {
     const P = PLANS[plan]; let amount = P.price, c = null;
     if (code) { c = db.get('coupons', String(code).trim().toUpperCase()); if (!c || (c.until && c.until < Date.now()) || (c.max && (c.used | 0) >= c.max) || (c.plans && c.plans.length && !c.plans.includes(plan))) return { error: 'Mã giảm giá không dùng được.' }; amount = Math.max(1000, Math.round(amount * (100 - (c.pct | 0)) / 100) - (c.off | 0)); }
@@ -212,6 +228,7 @@ module.exports = function setupBilling(app, api, o) {
   // kích hoạt gói (idempotent) — gọi từ IPN đã xác thực chữ ký hoặc chủ game xác nhận chuyển khoản
   async function fulfill(x, txn, by) {
     if (x.status === 'paid') return 'dup';
+    if (x.kind === 'gems') return fulfillGems(x, txn, by);
     const p = parent(x.pid), P = PLANS[x.plan]; x.status = 'paid'; x.paidAt = Date.now(); x.txn = txn || null; x.by = by;
     if (p) {
       const now = Date.now(), cur = p.sub && p.sub.until > now ? p.sub.until : now;
@@ -222,6 +239,13 @@ module.exports = function setupBilling(app, api, o) {
     }
     if (x.coupon) { const c = db.get('coupons', x.coupon); if (c) { c.used = (c.used | 0) + 1; db.put('coupons', c.code, c); } }
     db.put('orders', x.id, x); return 'ok';
+  }
+  // 💎 đơn kim cương: cộng vào ví của con (server/economy.js) + biên nhận gửi các phụ huynh đã liên kết
+  function fulfillGems(x, txn, by) {
+    x.status = 'paid'; x.paidAt = Date.now(); x.txn = txn || null; x.by = by; db.put('orders', x.id, x);
+    if (o.eco) o.eco.grantGems(x.uid, x.gems, x.id);
+    for (const pid of kidParents.get(x.uid) || []) { const p = parent(pid); if (p) mail(isEmail(p.login) ? p.login : p.email, `Biên nhận ${x.id} — ${x.gems} kim cương hồng`, `<p>Cảm ơn bạn đã ủng hộ Trường Rubik! 💛</p><p>Đơn <b>${esc(x.id)}</b>: <b>${x.gems} 💎 kim cương hồng</b> cho tài khoản của con — <b>${money(x.amount)}</b> (${GATEWAYS[x.gateway].name}).</p><p style="font-size:13px;color:#7a6a58">Kim cương chỉ dùng đổi đồ trang trí đặc biệt; không có vật phẩm may rủi. Cần hoàn tiền: trả lời trong 7 ngày.</p>`); }
+    return 'ok';
   }
   async function onIpn(gw, payload) {   // → { code: 'ok'|'bad'|'notfound'|'amount'|'dup'|'failed' }
     const v = GATEWAYS[gw].verify(payload); if (v.bad) return { code: 'bad' };
@@ -236,14 +260,16 @@ module.exports = function setupBilling(app, api, o) {
   pay.post('/ipn/momo', wrap(async (req, res) => { const r = await onIpn('momo', req.body); if (r.code === 'bad') return res.status(400).json({ error: 'invalid signature' }); res.status(204).end(); }));
   pay.post('/ipn/zalopay', wrap(async (req, res) => { const r = await onIpn('zalopay', req.body); res.json(r.code === 'bad' ? { return_code: -1, return_message: 'mac not equal' } : { return_code: r.code === 'dup' ? 2 : 1, return_message: r.code === 'dup' ? 'already processed' : 'success' }); }));
   pay.get('/ipn/vnpay', wrap(async (req, res) => { const r = await onIpn('vnpay', req.query); res.json({ ok: { RspCode: '00', Message: 'Confirm Success' }, failed: { RspCode: '00', Message: 'Confirm Success' }, bad: { RspCode: '97', Message: 'Invalid Checksum' }, notfound: { RspCode: '01', Message: 'Order not found' }, dup: { RspCode: '02', Message: 'Order already confirmed' }, amount: { RspCode: '04', Message: 'Invalid amount' } }[r.code]); }));
-  pay.get('/return/:gw', (req, res) => { const id = String(req.query.order || req.query.orderId || req.query.vnp_TxnRef || '').replace(/[^\w]/g, '').slice(0, 40); res.redirect(302, '/parent#order=' + id); });   // trang kết quả hỏi trạng thái đơn ở server (chỉ IPN kích hoạt gói)
+  pay.get('/return/:gw', (req, res) => { const id = String(req.query.order || req.query.orderId || req.query.vnp_TxnRef || '').replace(/[^\w]/g, '').slice(0, 40), x = db.get('orders', id);
+    if (x && x.kind === 'gems') return res.type('html').send(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trường Rubik</title><body style="margin:0;background:#f6f0e4;font:16px/1.618 system-ui;display:grid;place-items:center;min-height:100vh;padding:16px;box-sizing:border-box;text-align:center"><div style="background:#fff;border-radius:21px;padding:34px;max-width:377px"><div style="font-size:55px">${x.status === 'paid' ? '💎' : '⏳'}</div><h2>${x.status === 'paid' ? 'Đã nhận thanh toán' : 'Đang chờ xác nhận'}</h2><p>Đơn ${esc(x.id)} · ${esc(x.info)} · <b>${money(x.amount)}</b></p><p>Bố mẹ có thể đóng trang này và quay lại game — kim cương tự vào ví của bé.</p></div></body>`);
+    res.redirect(302, '/parent#order=' + id); });   // trang kết quả hỏi trạng thái đơn ở server (chỉ IPN kích hoạt gói)
   // trang giả lập cổng thanh toán (chỉ khi cổng ở chế độ 'sim')
   pay.get('/sim/:id', (req, res) => {
     const x = db.get('orders', req.params.id); if (!x || !GATEWAYS[x.gateway] || GATEWAYS[x.gateway].mode() !== 'sim' || x.gateway === 'bank') return res.status(404).send('Không có đơn giả lập.');
     const G = GATEWAYS[x.gateway];
     res.type('html').send(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Giả lập ${G.name}</title><meta name="robots" content="noindex">
 <body style="margin:0;background:#f6f0e4;font:16px/1.618 system-ui;display:grid;place-items:center;min-height:100vh;padding:16px;box-sizing:border-box"><div style="background:#fff;border-radius:21px;padding:34px;max-width:377px;width:100%;box-shadow:0 8px 34px #0002;text-align:center">
-<div style="font-size:13px;font-weight:800;color:#c8502c;letter-spacing:1px">CHẾ ĐỘ GIẢ LẬP — KHÔNG TRỪ TIỀN THẬT</div><h2 style="margin:8px 0">${G.icon} ${G.name}</h2><p>Đơn <b>${esc(x.id)}</b><br>${esc(PLANS[x.plan].name)}<br><b style="font-size:34px">${money(x.amount)}</b></p>
+<div style="font-size:13px;font-weight:800;color:#c8502c;letter-spacing:1px">CHẾ ĐỘ GIẢ LẬP — KHÔNG TRỪ TIỀN THẬT</div><h2 style="margin:8px 0">${G.icon} ${G.name}</h2><p>Đơn <b>${esc(x.id)}</b><br>${esc(x.kind === 'gems' ? x.info : PLANS[x.plan].name)}<br><b style="font-size:34px">${money(x.amount)}</b></p>
 <form method="post"><button name="r" value="ok" style="width:100%;padding:13px;border:0;border-radius:13px;background:#3fb8a8;color:#fff;font:800 16px system-ui;margin-bottom:8px;cursor:pointer">✅ Thanh toán thành công</button><button name="r" value="fail" style="width:100%;padding:13px;border:0;border-radius:13px;background:#efe3cc;font:800 16px system-ui;cursor:pointer">❌ Huỷ / thất bại</button></form>
 <p style="font-size:13px;color:#7a6a58">Nút bấm gửi một IPN có chữ ký giống hệt cổng thật tới máy chủ (đi qua đúng bước kiểm tra chữ ký).</p></div></body>`);
   });
@@ -271,6 +297,10 @@ module.exports = function setupBilling(app, api, o) {
   const adm = express.Router();
   adm.use(express.json({ limit: '20kb' }), rateLimit({ windowMs: 15 * 60e3, limit: 300, standardHeaders: 'draft-7', legacyHeaders: false }));
   adm.use((req, res, next) => safeEq(String(req.headers['x-admin-key'] || '').trim().toUpperCase(), String(ADMIN_KEY).toUpperCase()) ? next() : res.status(401).json({ error: 'Sai mã chủ game.' }));
+  adm.post('/gems', (req, res) => {   // chủ game tặng kim cương hiếm: { name, gems }
+    const b = req.body || {}, n = Math.max(1, Math.min(377, b.gems | 0)), u = db.all('users').find(x => x.lname === String(b.name || '').trim().toLowerCase());
+    if (!u || !o.eco) return res.status(404).json({ error: 'Không thấy học sinh.' }); o.eco.grantGems(u.id, n, 'gift'); res.json({ ok: true });
+  });
   adm.get('/summary', (req, res) => {
     const now = Date.now(), orders = db.all('orders'), paid = orders.filter(x => x.status === 'paid'), users = db.all('users').filter(u => u.role !== 'teacher');
     const byMonth = {}; for (const x of paid) { const m = vnDay(x.paidAt).slice(0, 7); byMonth[m] = (byMonth[m] || 0) + x.amount; }

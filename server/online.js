@@ -50,7 +50,7 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
   const timeLeft = u => (u.limitMin > 0 ? u.limitMin - usedMin(u) : Infinity);
   const self = u => ({ id: u.id, name: u.name, role: u.role, code: u.code, classes: (u.classes || []).map(id => { const c = db.get('classes', id); return c && { id, name: c.name }; }).filter(Boolean),
     limitMin: u.limitMin || 0, usedMin: usedMin(u), progress: u.progress || null, plan: billing ? billing.entitlement(u) : null });
-  let billing = null;   // Gói Phụ huynh (server/billing.js) gắn ở cuối hàm
+  let billing = null, eco = null;   // Gói Phụ huynh (server/billing.js) gắn ở cuối hàm
 
   // ---------- REST ----------
   const api = express.Router();
@@ -107,7 +107,7 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
   api.put('/progress', auth, (req, res) => {
     const b = req.body || {}; if (JSON.stringify(b).length > 280000) return res.status(413).json({ error: 'Dữ liệu quá lớn.' });
     const ls = {}; for (const [k, v] of Object.entries(b.ls || {})) if (/^(island|academy|mg|rs)\./.test(k) && typeof v === 'string') ls[k] = v;
-    req.user.progress = { profile: b.profile && typeof b.profile === 'object' ? b.profile : null, ls, at: +b.at || Date.now() }; save(req.user);
+    req.user.progress = { profile: b.profile && typeof b.profile === 'object' ? b.profile : null, ls, at: +b.at || Date.now() }; if (eco) eco.apply(req.user); save(req.user);
     res.json({ ok: true, at: req.user.progress.at });
   });
   // học sinh vào lớp bằng mã; xem nhiệm vụ học được giao
@@ -350,6 +350,7 @@ module.exports = async function setupOnline(app, io, { ADMIN_KEY, express, rateL
   evTick();
   // ---------- Gói Phụ huynh, trang /parent, /admin, cổng thanh toán (server/billing.js) ----------
   const push = (uid, ev, data) => { const s = sockOf(uid); if (s) s.emit(ev, data); };
-  billing = require('./billing')(app, api, { db, express, rateLimit, ADMIN_KEY, auth, user, save, hashPass, checkPass, rnd, sha, code6, deleteUser, push, usedMin, taskProgress });
+  eco = require('./economy')(api, { auth, user, save, push });   // 🪙 đồng vàng · 💎 kim cương hồng · đồ mở khoá (server/economy.js)
+  billing = require('./billing')(app, api, { db, express, rateLimit, ADMIN_KEY, auth, user, save, hashPass, checkPass, rnd, sha, code6, deleteUser, push, usedMin, taskProgress, eco });
   return { db, island, islanders, hooks, billing };
 };
