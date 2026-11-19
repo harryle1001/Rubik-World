@@ -258,20 +258,21 @@ export function createMiniGameHost(ctx) {
     if (ctx.school && ctx.school.labels) for (const l of ctx.school.labels) l.visible = false;
     // vật nhỏ của thế giới lọt vào khu chơi (cột đèn, khung thành, ghế…): ẩn tạm, thoát thì hiện lại
     for (const o of S.hidden || []) o.visible = true; S.hidden = []; for (const [o, list] of S.hiddenInst || []) { for (const [i, m] of list) o.setMatrixAt(i, m); o.instanceMatrix.needsUpdate = true; } S.hiddenInst = [];
-    if (!G.inPlace) { const sp = new THREE.Sphere(), c = new THREE.Vector3(anchor[0], anchor[3], anchor[1]), RR = R * 1.15;
-      scene.traverse(o => { if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || !o.visible || !o.geometry) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
-        if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
-        if (sp.radius < 5 && Math.hypot(sp.center.x - c.x, sp.center.z - c.z) < RR + sp.radius * 0.5 && sp.center.y < c.y + 8 && sp.center.y > c.y - 3) { o.visible = false; S.hidden.push(o); } });
-      // cây, tre, bụi trồng bằng instancing trong khu chơi: thu nhỏ về 0 tạm thời, thoát thì trả lại ma trận cũ
-      S.hiddenInst = []; const m4 = new THREE.Matrix4(), v3 = new THREE.Vector3(), Z = new THREE.Matrix4().makeScale(0, 0, 0);
-      scene.traverse(o => { if (!o.isInstancedMesh || !o.visible) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
-        const saved = []; for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); v3.setFromMatrixPosition(m4).applyMatrix4(o.matrixWorld); if (Math.hypot(v3.x - c.x, v3.z - c.z) < RR + 1 && v3.y < c.y + 8 && v3.y > c.y - 3) { saved.push([i, m4.clone()]); o.setMatrixAt(i, Z); } }
-        if (saved.length) { o.instanceMatrix.needsUpdate = true; S.hiddenInst.push([o, saved]); } }); }
+    if (!G.inPlace) { hideWorld(api, anchor, R); S.rehide = [1.6, 4.2, 8.9]; S.rehideT = 0; }   // chunk thế giới nạp muộn quanh khu chơi → ẩn lại vài lần
     if (!G.inPlace) api.me.place(0, R * 0.5, Math.PI);
     try { const ex = () => host.exit(); S.game = G.start(ctx, { ...opts, key, door, api, onExit: ex, exit: ex }) || {}; }   // mọi nút Thoát của game (stage.js, kit.js) gọi về host.exit
     catch (e) { console.error('[mg] lỗi khởi động', key, e); S.game = {}; host.exit(); return false; }
     S.camNow = null; S.occD = null; return true;
   }
+  function hideWorld(api, anchor, R) { const sp = new THREE.Sphere(), c = new THREE.Vector3(anchor[0], anchor[3], anchor[1]), RR = R * 1.15;
+      scene.traverse(o => { if (!(o.isMesh || o.isSprite) || o.isInstancedMesh || o.isSkinnedMesh || !o.visible || !o.geometry) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;   // + nhãn chữ (Sprite) của thế giới
+        if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); sp.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);
+        if (sp.radius < 5 && Math.hypot(sp.center.x - c.x, sp.center.z - c.z) < RR + sp.radius * 0.5 && sp.center.y < c.y + 8 && sp.center.y > c.y - 3) { o.visible = false; S.hidden.push(o); } });
+      // cây, tre, bụi trồng bằng instancing trong khu chơi: thu nhỏ về 0 tạm thời, thoát thì trả lại ma trận cũ
+      const m4 = new THREE.Matrix4(), v3 = new THREE.Vector3(), Z = new THREE.Matrix4().makeScale(0, 0, 0);
+      scene.traverse(o => { if (!o.isInstancedMesh || !o.visible) return; for (let q = o; q; q = q.parent) if (q === api.root || q === ctx.player.root) return;
+        const saved = []; for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, m4); if (m4.elements[0] === 0 && m4.elements[5] === 0) continue; v3.setFromMatrixPosition(m4).applyMatrix4(o.matrixWorld); if (Math.hypot(v3.x - c.x, v3.z - c.z) < RR + 1 && v3.y < c.y + 8 && v3.y > c.y - 3) { saved.push([i, m4.clone()]); o.setMatrixAt(i, Z); } }
+        if (saved.length) { o.instanceMatrix.needsUpdate = true; S.hiddenInst.push([o, saved]); } }); }
   function teardown() {
     if (!S || !S.api) return;
     const api = S.api;
@@ -365,6 +366,7 @@ export function createMiniGameHost(ctx) {
     if (!S || !S.api) return;
     const api = S.api;
     for (const a of api.actors) a.update(dt);
+    if (S.rehide && S.rehide.length) { S.rehideT = (S.rehideT || 0) + dt; if (S.rehideT > S.rehide[0]) { S.rehide.shift(); hideWorld(api, api.anchor, S.anchorR); } }
     try { S.game && S.game.update && S.game.update(dt, t); } catch (e) { console.error('[mg]', e); host.exit(); return; }
     if (S && S.api) camUpdate(dt);
   };

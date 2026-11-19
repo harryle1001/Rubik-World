@@ -182,7 +182,7 @@ export function createSchoolTown(ctx) {
   function update(dt, t) {
     if (town.ring) town.ring.material.opacity = 0.55 + 0.35 * Math.sin(t * 3);
     if (town.arch) town.arch.update(ctx.player.pos, t, dt);
-    if (town.labels) { const p = ctx.player.pos; for (const sp of town.labels) if (sp !== nameTag) sp.visible = Math.abs(sp.position.x - p.x) + Math.abs(sp.position.z - p.z) < 70; }   // nhãn chữ chỉ hiện khi ở gần
+    if (town.labels) { const p = ctx.player.pos; for (const sp of town.labels) if (sp !== nameTag) sp.visible = !ctx.mgActive && Math.abs(sp.position.x - p.x) + Math.abs(sp.position.z - p.z) < 70; }   // nhãn chữ chỉ hiện khi ở gần
     // giờ trong ngày theo đồng hồ trường (giờ thật → state.real; nút ☀️ khoá giờ → sky tự giữ) — giờ học, ngày/đêm khớp nhau
     if (ctx.sky) ctx.sky.state.real = ((town.clock.minutes / 60) % 24 + 24) % 24;   // sky.js tua mượt tới giờ này (hoặc giờ khoá)
     if (!town.ready) { data.update(dt); return; }
