@@ -92,8 +92,10 @@ const CSS = `
 #mgHud>*{pointer-events:auto}
 #mgHud .mg-top{position:absolute;left:50%;top:max(var(--g),env(safe-area-inset-top));transform:translateX(-50%);display:flex;gap:var(--g);align-items:center;
   padding:var(--g) var(--G);border-radius:21px;background:#1b1626c4;box-shadow:0 5px 21px #0005;white-space:nowrap;max-width:calc(100vw - 16px);box-sizing:border-box}
+#mgHud .mg-name{flex:0 1 auto;min-width:0}
 #mgHud .mg-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
-#mgHud .mg-chip{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;padding:3px var(--g);border-radius:13px;background:#ffffff1f;font:800 13px system-ui;font-variant-numeric:tabular-nums}
+#mgHud .mg-chip{flex:none;padding:3px var(--g);border-radius:13px;background:#ffffff1f;font:800 13px system-ui;font-variant-numeric:tabular-nums}
+#mgHud .mg-info{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
 #mgHud .mg-chip b{font-size:16px;color:#ffd36e}
 #mgHud .mg-x{flex:none;min-height:40px;border:0;border-radius:13px;padding:var(--g) var(--G);background:#e0564a;color:#fff;font:800 13px system-ui;cursor:pointer}
 #mgHud .mg-msg{position:absolute;left:50%;top:calc(max(var(--g),env(safe-area-inset-top)) + 55px);transform:translateX(-50%);max-width:min(92vw,520px);text-align:center;
