@@ -76,7 +76,7 @@ async function spot(name, prep, { wait = 3500, walkS = 3, snap = false } = {}) {
   if (!walkS) await T(2500);
   const m = await measure();
   const row = { name, ...m, ...(w || {}), prep: pre };
-  if (w && w.moved < Math.max(0.4, 5.5 * w.sim * 0.25)) row.stuck = true;
+  if (w && w.sim >= 0.4 && w.moved < 5.5 * w.sim * 0.25) row.stuck = true;   // khung quá chậm (sim < 0,4 s) → không kết luận
   if (m && m.pos[1] < -4 && !/Lặn|biển/.test(name)) row.fell = true;
   rows.push(row); log(name, JSON.stringify(row));
   if (snap) await shot(name.replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase());
@@ -154,17 +154,20 @@ await ev(() => { if (__island.player.frozen && __island.mg && __island.mg.active
 // ---------- 6. NPC ----------
 const talks = [];
 await ev(() => { __island.player.vehicle = null; __island.player.teleport(...window.__sp); }); await T(6000);
-for (let i = 0; i < 3; i++) {
-  step = 'NPC ' + (i + 1);
-  const r = await ev(async i => { const c = __island, P = c.townPeople || []; const me = c.player.pos, list = P.filter(e => e.a && e.px != null && !e.seat).sort((a, b) => Math.hypot(a.px - me.x, a.pz - me.z) - Math.hypot(b.px - me.x, b.pz - me.z)); const e = list[i];
-    if (!e) return { err: 'không có NPC trong pool' }; c.player.vehicle = null; c.player.teleport(e.px + 1.6, e.pz + 0.4); return { at: [Math.round(e.px), Math.round(e.pz)] }; }, i);
-  await T(2500);
+for (let i = 0, tried = 0; talks.length < 3 && tried < 13; tried++) {   // chỉ bấm khi nút hành động là 💬 (tránh bấm nhầm 🏁 đua ván, 🛒…)
+  step = 'NPC ' + (talks.length + 1);
+  const r = await ev(async i => { const c = __island, P = c.townPeople || []; const me = window.__sp, list = P.filter(e => e.a && e.px != null && !e.seat).sort((a, b) => Math.hypot(a.px - me[0], a.pz - me[1]) - Math.hypot(b.px - me[0], b.pz - me[1])); const e = list[i];
+    if (!e) return { err: 'hết NPC trong pool' }; c.player.vehicle = null; c.player.teleport(e.px + 1.2, e.pz + 0.3); return { at: [Math.round(e.px), Math.round(e.pz)] }; }, tried);
+  if (!r || r.err) { talks.push(r || { err: 'evaluate' }); break; }
+  await T(2000);
   const lab = await ev(() => { const b = document.getElementById('bAct'); return b && !b.hidden ? b.textContent.trim() : null; });
-  await page.keyboard.press('KeyE'); await T(2500);
-  const open = await ev(() => __island.teacherQuiz && __island.teacherQuiz.open());
-  if (i === 0) await shot('npc');
-  await ev(() => __island.teacherQuiz && __island.teacherQuiz.close()); await T(500);
-  talks.push({ ...r, label: lab, open }); log('NPC', i + 1, JSON.stringify(talks.at(-1)));
+  if (!lab || !/^💬/.test(lab)) continue;
+  const v0 = await ev(() => [...document.body.querySelectorAll('div,section')].filter(e => e.offsetParent && getComputedStyle(e).position === 'fixed').length);
+  await ev(() => document.getElementById('bAct').click()); await T(2500);
+  const open = await ev(v0 => ({ tq: !!(__island.teacherQuiz && __island.teacherQuiz.open()), hold: !!__island.talkHold, panels: [...document.body.querySelectorAll('div,section')].filter(e => e.offsetParent && getComputedStyle(e).position === 'fixed').length - v0 }), v0);
+  if (talks.length === 0) await shot('npc');
+  await ev(() => { __island.teacherQuiz && __island.teacherQuiz.close(); }); await page.keyboard.press('Escape'); await T(600);
+  talks.push({ ...r, label: lab, open: open && (open.tq || open.hold || open.panels > 0), detail: open }); log('NPC', talks.length, JSON.stringify(talks.at(-1)));
 }
 // ---------- 7. Tàu Pha Lê → Học viện ----------
 step = 'Tàu Pha Lê';
