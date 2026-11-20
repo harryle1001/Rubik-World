@@ -220,7 +220,7 @@ export function create(ctx, magic, { toWorld }) {
   function stepMatch(dt, t) {
     const m = M; if (!m || m.loading) return;
     if (m.ending !== undefined) { if ((m.ending -= dt) <= 0) endMatch(); return; }
-    if (m.paused) { if (!document.getElementById('mgCard')) m.paused = false; else return; }
+    if (m.paused) { if (!document.querySelector('#mgCard,#rwQ:not([hidden])')) m.paused = false; else return; }
     for (const r of m.riders) if (r.remote) { const o = ctx.net && ctx.net.others.get(r.remote); if (o) { r.pos.copy(o.h.root.position); if (!r.rb || r.rb.parent !== o.h.root) { r.rb = makeBroomMesh('broom'); r.rb.position.y = -0.85; o.h.root.add(r.rb); } } }   // bạn trên mạng: thêm chổi dưới chân
     if (net.client) { net.follow(dt, t); if (M) hudTick(dt, t); return; }   // khách: hiển thị theo chủ trận
     m.t += dt; m.left -= dt;

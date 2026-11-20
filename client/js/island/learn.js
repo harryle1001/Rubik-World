@@ -8,6 +8,7 @@
 //  · câu đến hạn ôn được ưu tiên (xác suất 1/φ ≈ 62 %) → câu sai được nhắc lại cho tới khi nhớ.
 // API: ctx.learn = { pick(s, o), record(item, ok), ask(o) → Promise<bool>, askSet(o) → Promise<{ok, n}>, grade, stats(), SUBJ }
 import { SUBJECTS, setProvider } from './quiz-data.js';
+import { qcard } from './quiz-ui.js';
 import { BANK, setQuizProvider } from './mg/quiz.js';
 
 export const SUBJ = {
@@ -146,17 +147,19 @@ export function createLearn(ctx) {
 #lnCard .ch{display:grid;grid-template-columns:1fr 1fr;gap:5px}#lnCard .ch button{min-height:44px;padding:5px 8px;border-radius:13px;border:2px solid transparent;background:#f1e6cf;font-weight:700;font-size:14px;color:#3a2a1a}
 #lnCard .ch button.ok{background:#c9efc9;border-color:#3fa36b}#lnCard .ch button.bad{background:#ffd0c8;border-color:#d2553f}
 #lnCard .ex{margin:8px 0 0;font-size:13px}#lnCard .nx{display:block;width:100%;min-height:44px;margin-top:8px;border:0;border-radius:21px;background:#f0a23a;color:#2a1a0a;font-weight:800;font-size:15px}
+#lnCard .x{width:34px;height:34px;border-radius:50%;border:0;background:#3a2a1a1a;font:900 16px system-ui;color:#5a4a3a}
 #lnCard .gs{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}#lnCard .gs button{min-height:44px;border-radius:8px;border:2px solid #e2cfa6;background:#fff;font-weight:800;font-size:16px;padding:0;color:#5a3a12}`;
   document.head.appendChild(css);
   let card = null, keyFn = null, frz = false;
-  addEventListener('keydown', e => { if (!card || !keyFn) return; if (/^[1-9]$/.test(e.key) || e.code === 'Enter') { e.stopImmediatePropagation(); keyFn(e); } }, true);
+  addEventListener('keydown', e => { if (!card || !keyFn) return; if (/^[1-9]$/.test(e.key) || e.code === 'Enter' || e.code === 'Escape') { e.stopImmediatePropagation(); keyFn(e); } }, true);
   const open = () => { if (!card) { card = document.createElement('div'); card.id = 'lnCard'; document.body.appendChild(card); frz = ctx.player.frozen; } ctx.player.frozen = true; return card; };
   const close = () => { if (card) { card.remove(); card = null; keyFn = null; ctx.player.frozen = frz; } };
-  function chooseGrade(then) {
+  function chooseGrade(then, onX) {
     const c = open(), g0 = grade();
-    c.innerHTML = `<div class="hd">🎒<span><b>Em học lớp mấy?</b> Câu hỏi sẽ vừa sức em.</span></div><div class="gs">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(g => `<button data-g="${g}" style="${g === g0 ? 'background:#f0a23a' : ''}">${g}</button>`).join('')}</div>`;
+    c.innerHTML = `<div class="hd">🎒<span><b>Em học lớp mấy?</b> Câu hỏi sẽ vừa sức em.</span><button class="x" aria-label="Đóng">✕</button></div><div class="gs">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(g => `<button data-g="${g}" style="${g === g0 ? 'background:#f0a23a' : ''}">${g}</button>`).join('')}</div>`;
     const go = g => { setGrade(g); ctx.sfx && ctx.sfx('ui'); then(); };
-    c.querySelectorAll('[data-g]').forEach(b => b.onclick = () => go(+b.dataset.g)); keyFn = e => /^[1-9]$/.test(e.key) && go(+e.key);
+    const x = () => { close(); onX && onX(); }; c.querySelector('.x').onclick = x;
+    c.querySelectorAll('[data-g]').forEach(b => b.onclick = () => go(+b.dataset.g)); keyFn = e => e.code === 'Escape' ? x() : /^[1-9]$/.test(e.key) && go(+e.key);
   }
   // askSet: n câu liên tiếp, cần đúng need câu (mặc định: n câu, cần ⌈n/φ⌉)
   function askSet(o = {}) {
@@ -165,22 +168,16 @@ export function createLearn(ctx) {
       let i = 0, right = 0;
       const step = () => {
         if (i >= n) { close(); return res({ ok: right >= need, n: right }); }
-        const subj = [].concat(o.s || 'toan'), s = subj[i % subj.length], x = pick(s, { tag: o.tag }), sh = shuffled(x), c = open();
-        c.innerHTML = `<div class="hd">${o.ava || SUBJ[x.s].i}<span><b>${esc(o.title || 'Câu hỏi')}</b> · ${SUBJ[x.s].n}${x.review ? ' <i class="rv">🔁 ôn lại</i>' : ''}</span><button class="gr" data-gr>Lớp ${grade() || '?'} ✎</button></div>
-          ${n > 1 ? `<div class="dots">${Array.from({ length: n }, (_, k) => k < i ? '●' : k === i ? '◉' : '○').join('')} · cần đúng ${need}/${n}</div>` : ''}
-          <h3>${esc(x.q)}</h3><div class="ch">${sh.ch.map((t, k) => `<button data-k="${k}">${k + 1}. ${esc(t)}</button>`).join('')}</div>`;
-        c.dataset.a = sh.a;   // (kiểm thử tự động)
-        c.querySelector('[data-gr]').onclick = () => chooseGrade(step);
-        const answer = k => {
-          if (c.dataset.done) return; c.dataset.done = 1; const ok = k === sh.a; if (ok) right++;
-          c.querySelectorAll('[data-k]').forEach((b, j) => { b.disabled = true; if (j === sh.a) b.className = 'ok'; else if (j === k) b.className = 'bad'; });
-          record(x, ok); ctx.sfx && ctx.sfx(ok ? 'ok' : 'bad'); if (ok && ctx.player.emote) ctx.player.emote('cheer');
-          c.insertAdjacentHTML('beforeend', `<p class="ex">${ok ? '✅ <b>Chính xác!</b> ' : `💡 <b>Chưa đúng.</b> Đáp án: <b>${esc(x.c[0])}</b>. `}${esc(x.e || '')}${ok ? '' : '<br><small>🔁 Câu này sẽ được hỏi lại để em nhớ lâu.</small>'}</p><button class="nx">${i + 1 < n ? 'Câu tiếp ▶' : 'Xong ▶'}</button>`);
-          const nx = () => { delete c.dataset.done; i++; step(); }; c.querySelector('.nx').onclick = nx; keyFn = e => e.code === 'Enter' && nx();
-        };
-        c.querySelectorAll('[data-k]').forEach(b => b.onclick = () => answer(+b.dataset.k)); keyFn = e => { const k = +e.key - 1; if (k >= 0 && k < sh.ch.length) answer(k); };
+        const subj = [].concat(o.s || 'toan'), s = subj[i % subj.length], x = pick(s, { tag: o.tag }), sh = shuffled(x); close();
+        const qq = qcard({ ava: o.ava || SUBJ[x.s].i, title: esc(o.title || 'Câu hỏi'), chip: SUBJ[x.s].n + (x.review ? ' · 🔁 ôn lại' : ''), lock: ctx.player,
+          head: `<button class="chip" data-gr>Lớp ${grade() || '?'} ✎</button>`, onHead: e => { e.querySelector('[data-gr]').onclick = () => { qq.skip = true; qq.close(); chooseGrade(step, quit); }; },
+          dots: n > 1 ? `${Array.from({ length: n }, (_, k) => k < i ? '●' : k === i ? '◉' : '○').join('')} · cần đúng ${need}/${n}` : '',
+          q: esc(x.q), choices: sh.ch.map(esc), a: sh.a, explain: esc(x.e || '') + '', next: i + 1 < n ? 'Câu tiếp ▶' : 'Xong ▶',
+          onPick: ok => { if (ok) right++; record(x, ok); ctx.sfx && ctx.sfx(ok ? 'ok' : 'bad'); if (ok && ctx.player.emote) ctx.player.emote('cheer'); return ok ? '' : '<br><small>🔁 Câu này sẽ được hỏi lại để em nhớ lâu.</small>'; } });
+        qq.then(r => { if (qq.skip) return; if (!r) return res({ ok: false, n: right, closed: true }); i++; step(); });
       };
-      grade() ? step() : chooseGrade(step);
+      const quit = () => res({ ok: false, n: right, closed: true });
+      grade() ? step() : chooseGrade(step, quit);
     }));
   }
   const ask = o => askSet(Object.assign({ n: 1, need: 1 }, o)).then(r => r.ok);

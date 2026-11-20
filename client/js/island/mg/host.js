@@ -84,6 +84,7 @@ import { PHI, TOWN_Y } from '../layout.js';
 import { gradientMap } from '../style.js';
 import { DetailGrid } from '../decor.js';
 import { createMeta } from './meta.js';
+import { closeQ } from '../quiz-ui.js';
 import { loadHero, driveHero, emote as emoteHero } from '../characters.js';
 
 const CSS = `
@@ -245,7 +246,7 @@ export function createMiniGameHost(ctx) {
       time: s => chip('.mg-time', s == null ? null : `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`),
       msg: (html, ms = 3000) => { const m = $('.mg-msg'); m.innerHTML = html; m.style.opacity = html ? 1 : 0; clearTimeout(msgT); if (html && ms > 0) msgT = setTimeout(() => m.style.opacity = 0, ms); },
       button: (label, fn, cls = '') => { const b = document.createElement('button'); b.type = 'button'; b.innerHTML = label; if (cls) b.className = cls; b.onclick = e => { e.stopPropagation(); ctx.audio && ctx.audio.start && ctx.audio.start(); fn(b); }; $('.mg-bar').appendChild(b); return b; },
-      clearBar: () => { $('.mg-bar').innerHTML = ''; },
+      clearBar: () => { $('.mg-bar').innerHTML = ''; closeQ('bar'); },
       title: t => { $('.mg-name').textContent = t; },   // đổi tên trên thanh host (vd môn đang thi)
       info: html => { const c = $('.mg-info'); c.hidden = !html; c.innerHTML = html || ''; },   // chip tự do (điểm dạng chữ của game có HUD riêng)
     };
@@ -321,6 +322,7 @@ export function createMiniGameHost(ctx) {
         if (saved.length) { o.instanceMatrix.needsUpdate = true; S.hiddenInst.push([o, saved]); } }); }
   function teardown() {
     if (!S || !S.api) return;
+    closeQ();   // câu hỏi đang treo (khung chung) đóng theo game
     const api = S.api;
     try { S.game && S.game.dispose && S.game.dispose(); } catch (e) { console.warn(e); }
     for (const [t, type, fn, o] of api.listeners) t.removeEventListener(type, fn, o);

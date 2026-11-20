@@ -10,6 +10,7 @@
 import * as THREE from 'three';
 import { emote } from './characters.js';
 import { to3, TOWN_Y } from './layout.js';
+import { qcard, closeQ } from './quiz-ui.js';
 import { personaOf, PERSONA, PLACES, GAME_INTRO, schoolSource } from './data/talk.js';
 
 const SUBJ = ['toan', 'tv', 'kh', 'lsdl'], GRADE = 'island.grade', SEEN = 'island.tq.seen', INV = 'island.inventory', BOOK = 'island.book', DONE = 'island.talk.done';
@@ -46,7 +47,8 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
   document.head.appendChild(css);
   const el = document.createElement('div'); el.id = 'tQuiz'; el.hidden = true; document.body.appendChild(el);
   let who = null, next = null;   // next: hành động của nút E / Enter ở bước hiện tại
-  const close = () => { ctx.talkHold = null; if (who && who.onClose) { const f = who.onClose; who.onClose = null; f(); } el.hidden = true; who = null; next = null; };
+  let asking = false;
+  const close = () => { if (asking) { asking = false; closeQ(); } ctx.talkHold = null; if (who && who.onClose) { const f = who.onClose; who.onClose = null; f(); } el.hidden = true; who = null; next = null; };
 
   // ---------- Thưởng ⭐ + Sổ học tập ----------
   ctx.reward = (n, note) => {
@@ -100,17 +102,19 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
   }
   // 1 câu hỏi (đã xáo) → done(ok); nhãn nút tiếp theo do người gọi đặt
   function askQ(q, chip, done, after) {
-    next = null;
-    el.innerHTML = `${head(chip)}<h3>${esc(q.q)}</h3><div class="ch">${q.c.map((t, k) => `<button data-k="${k}"><i>${k + 1}</i>${esc(t)}</button>`).join('')}</div>`;
-    bindHead();
-    el.querySelectorAll('[data-k]').forEach(b => b.onclick = () => {
-      const k = +b.dataset.k, ok = k === q.a;
-      el.querySelectorAll('[data-k]').forEach((x, j) => { x.disabled = true; if (j === q.a) x.className = 'ok'; else if (j === k) x.className = 'bad'; });
-      const r = done(ok) || {};
-      el.insertAdjacentHTML('beforeend', `<p class="ex">${ok ? `✅ <b>Chính xác!</b>${r.prize ? ' ' + r.prize : ''} ${esc(q.e)}` : `💡 <b>Chưa đúng.</b> Đáp án: <b>${esc(q.c[q.a])}</b>. ${esc(q.e)}`}</p>${row(after[0], after[1])}`);
-      bindRow(after[2], after[3]);
-      if (ok) { ctx.sfx && ctx.sfx('ok'); ctx.player.emote && ctx.player.emote('cheer'); if (who?.e?.hero) emote(who.e.hero, who.e.st, 'cheer'); }
-      else { ctx.sfx && ctx.sfx('bad'); if (who?.e?.hero) emote(who.e.hero, who.e.st, 'no'); }
+    next = null; asking = true; el.hidden = true; const w = who;
+    qcard({ ava: w.ava || '💬', title: esc(w.title), chip, tone: el.className === 'board' ? 'board' : '', lock: ctx.player,
+      head: w.grade ? `<button class="chip" data-grade>Lớp ${load(GRADE, 0) || '?'} ✎</button>` : '', onHead: e => { const c = e.querySelector('[data-grade]'); if (c) c.onclick = () => { closeQ(); asking = false; if (who === w) { el.hidden = false; chooseGrade(w.redo || close); } }; },
+      q: esc(q.q), choices: q.c.map(esc), a: q.a, explain: esc(q.e), next: after[0], alt: after[1],
+      onPick: ok => {
+        const r = done(ok) || {};
+        if (ok) { ctx.sfx && ctx.sfx('ok'); ctx.player.emote && ctx.player.emote('cheer'); if (who?.e?.hero) emote(who.e.hero, who.e.st, 'cheer'); }
+        else { ctx.sfx && ctx.sfx('bad'); if (who?.e?.hero) emote(who.e.hero, who.e.st, 'no'); }
+        return r.prize || '';
+      } }).then(r => {
+      if (!asking || who !== w) return; asking = false;
+      if (!r) return close();   // ✕ / Esc: đóng hẳn, không phạt; lần sau hỏi lại
+      el.hidden = false; (r.alt ? (after[3] || close) : after[2])();
     });
   }
   // câu đố theo môn & lớp (vòng lặp "Câu khác"); đúng liền 3 câu → thưởng thêm 1 ⭐
@@ -233,7 +237,7 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
     };
     sayLines([`Cả lớp ngồi ngay ngắn nhé! Tiết ${title} bắt đầu.`, `Hôm nay mình làm ${n} câu — trả lời trên bảng nha.`], step, '▶ Làm bài luôn');
   }
-  ctx.teacherQuiz = { talk, intro, lesson, open: () => !el.hidden, close, task: () => task };
+  ctx.teacherQuiz = { talk, intro, lesson, open: () => !el.hidden || asking, close, task: () => task };
 
   // ---------- Bám bong bóng theo đầu NPC / điểm 3D (chiếu toạ độ 3D → màn hình) ----------
   const v = new THREE.Vector3();
@@ -268,6 +272,7 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
           if (a && a.visible !== false) { const [x, z] = posOf(a); marker.position.set(x, groundY(x, z) + 2.6 + Math.sin(spin * 2.618) * 0.13, z); marker.visible = true; } else marker.visible = false;
         }
       }
+      if (asking) return;
       if (!el.hidden && who) { place(); if (who) ctx.offer(next ? (el.querySelector('.go')?.textContent || '▶ Tiếp') : '👋 Tạm biệt', next || close, 9); return; }   // đang nói: nút E = bước tiếp (không mở nhầm cửa gần đó)
       const n = ctx.nearNpc; if (!n || ctx.player.vehicle || ctx.player.frozen) return;
       const nm = shortName(n.name);

@@ -4,6 +4,7 @@
 // Kích thước theo Fibonacci/φ: bảng rộng ≤ 377 px, bo 21, đệm 13/21, chữ 16 · 16φ ≈ 21 (tiêu đề), nút cao 55.
 // api (index.js): { aim(bearing|null), flash(on), dirToMain, distMain, tide() } — điều khiển đèn thật trên tháp trong lúc chơi.
 import { PHI } from '../layout.js';
+import { qcard } from '../quiz-ui.js';
 
 const LS = 'lighthouse.v1';
 export const load = () => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { return {}; } };
@@ -90,10 +91,10 @@ export function createKeeper(ctx, api) {
   function quiz(title, qs, end, i = 0) {
     if (i >= qs.length) return end();
     const Q = qs[i], order = Q.o.map((t, k) => [t, k]).sort(() => Math.random() - 0.5);
-    page(`${title} <small style="font:700 14px system-ui;opacity:.6">${i + 1}/${qs.length}</small>`, (Q.pre || '') + `<b>${Q.q}</b>`, order.map(([t, k]) => ({ t, f: btn => {
-      if (k !== Q.a) { btn.classList.add('no'); btn.disabled = true; sfx('bad'); return; }
-      sfx('ok'); page(title, `✅ <b>Đúng rồi!</b> ${Q.why}`, [{ t: i + 1 < qs.length ? 'Câu tiếp ➜' : 'Xong ➜', cls: 'p', f: () => quiz(title, qs, end, i + 1) }]);
-    } })));
+    show(false);   // khung câu hỏi chung (quiz-ui.js): câu hỏi ngay trên đáp án, ✕/Esc thoát không mất gì
+    qcard({ ava: '👴', title, chip: `${i + 1}/${qs.length}`, q: (Q.pre || '') + Q.q, choices: order.map(o => o[0]), a: order.findIndex(o => o[1] === Q.a), explain: Q.why, retry: true,
+      next: i + 1 < qs.length ? 'Câu tiếp ➜' : 'Xong ➜', lock: ctx.player, onPick: ok => { sfx(ok === false ? 'bad' : 'ok'); } })
+      .then(r => { if (r) quiz(title, qs, end, i + 1); });
   }
   const reward = (id, stars, note, text) => { const first = finish(id, stars, note); page('🎉 Hoàn thành!', text + (first ? `<br><br>⭐ <b>+${stars} sao</b>` : '') + (first && doneAll() ? '<br><br>🏅 Cháu đã làm đủ 5 việc: ông phong cháu là <b>Người gác đèn nhí</b>!' : ''), [{ t: '⬅ Về gặp ông Bảy', cls: 'p', f: () => menu() }]); };
 

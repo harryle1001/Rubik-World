@@ -119,10 +119,10 @@ export function createCrew(ctx, { consist, interior, cabin, ride }) {
       if (n === 8) setTimeout(() => ctx.toast('🏅 <b>Sành ăn Tàu Pha Lê</b>: đã gọi 8 món (8 là số Fibonacci)!', 5000), 2600);
       closeMenu();
     };
-    if (ctx.magic && ctx.magic.ask) { player.frozen = true; ctx.magic.ask(it.subj, pay, `🛒 Trả lời đúng để nhận <b>${it.e} ${it.n}</b> (${it.p} 🪙)`); setTimeout(() => { if (!document.getElementById('mgCard')) { player.frozen = false; T.busy = false; } }, 400); watchCard(); }
+    if (ctx.magic && ctx.magic.ask) { player.frozen = true; ctx.magic.ask(it.subj, pay, `🛒 Trả lời đúng để nhận <b>${it.e} ${it.n}</b> (${it.p} 🪙)`); setTimeout(() => { if (!document.querySelector('#mgCard,#rwQ:not([hidden])')) { player.frozen = false; T.busy = false; } }, 400); watchCard(); }
     else pay();
   }
-  function watchCard() { const id = setInterval(() => { if (!document.getElementById('mgCard')) { clearInterval(id); if (menu.hidden) { player.frozen = false; T.busy = false; } } }, 300); }
+  function watchCard() { const id = setInterval(() => { if (!document.querySelector('#mgCard,#rwQ:not([hidden])')) { clearInterval(id); if (menu.hidden) { player.frozen = false; T.busy = false; } } }, 300); }
   function chime() {   // tiếng ly tách chạm khay (tổng hợp, nhỏ)
     const L = ctx.audio && ctx.audio.listener; if (!L || L.context.state !== 'running') return; const ac = L.context, t = ac.currentTime;
     for (const [f, d] of [[2637, 0], [3520, 0.09]]) { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.06, t + d + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.5); o.connect(g).connect(L.getInput()); o.start(t + d); o.stop(t + d + 0.55); }

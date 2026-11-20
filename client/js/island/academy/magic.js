@@ -8,6 +8,7 @@
 // - Mỗi phép gắn kiến thức; "mục tiêu" (đèn tắt, tảng đá, cửa khoá…) đăng ký bằng addTarget() → phép tác động khi đứng gần.
 import * as THREE from 'three';
 import { pickQuestions } from '../quiz-data.js';
+import { qcard } from '../quiz-ui.js';
 import { CFG } from '../config.js';
 import { HOUSE } from './houses-data.js';
 
@@ -115,17 +116,10 @@ export function createMagic(ctx) {
   function ask(q, onRight, title = '📚 Trả lời đúng để nạp năng lượng phép') {
     if (typeof q === 'string' || Array.isArray(q)) q = pickQuestions([].concat(q), 1)[0];
     { const ord = q.choices.map((_, i) => i).sort(() => Math.random() - 0.5); q = { ...q, choices: ord.map(i => q.choices[i]), a: ord.indexOf(q.a) }; }   // xáo đáp án
-    const c = openCard(`<h4>${title}</h4><div>${q.icon ? q.icon + ' ' : ''}${q.q}</div><div class="ch">${q.choices.map((t, i) => `<button data-i="${i}">${t}</button>`).join('')}</div><div style="text-align:right;margin-top:6px"><button data-x>Đóng</button></div>`);
-    c.dataset.a = q.a;   // (kiểm thử tự động)
-    c.onclick = e => {
-      const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.x !== undefined) return closeCard();
-      const i = +b.dataset.i; if (Number.isNaN(i) || c.dataset.done) return; c.dataset.done = 1;
-      const ok = i === q.a; q.done && q.done(ok); dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject || 'Học viện', ok } })); b.classList.add(ok ? 'ok' : 'no'); c.querySelector(`[data-i="${q.a}"]`).classList.add('ok');
-      ctx.sfx && ctx.sfx(ok ? 'coin' : 'no');
-      c.insertAdjacentHTML('beforeend', `<div style="margin-top:6px">${ok ? '✅ Chính xác! ' : '💡 '}${q.explain || ''}</div>`);
-      if (ok) setTimeout(() => { closeCard(); onRight && onRight(); }, 1400); else setTimeout(closeCard, 3400);
-    };
+    closeCard();
+    qcard({ ava: '🪄', title, chip: q.icon || '', q: q.q, choices: q.choices, a: q.a, explain: q.explain || '', next: false, ms: [1400, 3400],
+      onPick: ok => { q.done && q.done(ok); dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject || 'Học viện', ok } })); ctx.sfx && ctx.sfx(ok ? 'coin' : 'no'); } })
+      .then(r => { if (r && r.ok) onRight && onRight(); });
   }
   function recharge() { const s = cur(); ask(s ? s.subjects : ['khoahoc', 'toan'], () => { setMana(st.mana + GAIN); ctx.toast(`✨ +${GAIN} năng lượng phép!`, 1800); }); }
   hud.querySelector('#mgkRe').onclick = recharge;

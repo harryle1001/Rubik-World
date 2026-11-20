@@ -4,6 +4,7 @@
 // đom đóm, chòm sao, xoắn ốc…), vòng mây (InstancedMesh), đồ tĩnh gộp 1 mesh, bia chữ, cá voi, ông Bụt, hoa hướng dương.
 // Gỡ lỗi: __island.eggs (found, give(id), cubes, fireworks(), whale(), reset()).
 import * as THREE from 'three';
+import { qcard } from './quiz-ui.js';
 import { gradientMap } from './style.js';
 import { mergeGeos } from './terrain.js';
 import { PHI, FIB, TOWN_Y, TEMPLE_C, EXTRA, GARDEN_LOTS, HOUSE_LOTS, HOUSE_V1, HOUSE_D, lotToWorld, rectDist } from './layout.js';
@@ -474,17 +475,12 @@ export function createEasterEggs(ctx) {
     later(1.2, () => riddle());
   }
   function riddle() {
-    const R = RIDDLES[Math.floor(Math.random() * RIDDLES.length)]; player.frozen = true;
-    book.innerHTML = `<div class="card"><h3>🧙 Ông Bụt hiện lên</h3><p>"Vì sao con khóc? Trả lời đúng câu đố này, ta sẽ cho con một điều ước!"</p><p><b>${R.q}</b></p><div class="ch">${R.c.map((c, k) => `<button data-k="${k}">${c}</button>`).join('')}</div><p class="ex"></p></div>`;
-    book.hidden = false;
-    book.querySelectorAll('[data-k]').forEach(b => b.onclick = () => {
-      const k = +b.dataset.k, ok = k === R.a; book.querySelectorAll('[data-k]').forEach((x, j) => { x.disabled = true; if (j === R.a) x.className = 'ok'; else if (j === k) x.className = 'bad'; });
-      book.querySelector('.ex').innerHTML = `${ok ? '✅ Giỏi lắm!' : '💡 Chưa đúng rồi.'} ${R.ex}<br><button class="x" id="eggX">${ok ? 'Nhận điều ước ✨' : 'Lần sau thử lại nhé'}</button>`;
-      book.querySelector('#eggX').onclick = () => {
-        close(); later(0.4, () => { sparkle(but.position.x, but.position.y, but.position.z, 55, '#fff4c8', 2); butOn = false; but.visible = false; });
-        if (ok) { give('but', '✨ Điều ước: hạt giống ở vườn trường sẽ lớn nhanh gấp đôi!'); S.fast = 1; save(); }
-      };
-    });
+    const R = RIDDLES[Math.floor(Math.random() * RIDDLES.length)];
+    qcard({ ava: '🧙', title: 'Ông Bụt hiện lên', q: `<small style="font-weight:500">"Vì sao con khóc? Trả lời đúng câu đố này, ta sẽ cho con một điều ước!"</small><br>${R.q}`, choices: R.c, a: R.a, explain: R.ex, next: 'Tiếp ▶', lock: player })
+      .then(r => {
+        later(0.4, () => { sparkle(but.position.x, but.position.y, but.position.z, 55, '#fff4c8', 2); butOn = false; but.visible = false; });
+        if (r && r.ok) { give('but', '✨ Điều ước: hạt giống ở vườn trường sẽ lớn nhanh gấp đôi!'); S.fast = 1; save(); }
+      });
   }
 
   // ================= CHÒM SAO (đêm, kính thiên văn) =================

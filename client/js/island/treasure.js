@@ -5,6 +5,7 @@
 //   Mảnh bản đồ trên bãi cát vịnh nông chỉ đường tới rương đầu tiên; có bản đồ → la bàn chỉ rương gần nhất. HUD "🧰 x/13" mở Sổ biển.
 // Lưu tiến độ: localStorage 'island.treasure'. Vị trí rương: ctx.sealife.slots (sealife.js).
 import * as THREE from 'three';
+import { qcard } from './quiz-ui.js';
 import { Batch } from './decor.js';
 import { PHI, FIB, PI, LAGOON, blocked } from './layout.js';
 import { CFG } from './config.js';
@@ -115,23 +116,14 @@ export function createTreasure(ctx) {
   const book = document.createElement('div'); book.id = 'seaBook'; book.hidden = true; document.body.appendChild(book);
   const hud = document.createElement('button'); hud.id = 'bSea'; hud.title = 'Sổ biển: rương kho báu & Bách khoa biển';
   (document.querySelector('.topbtns') || document.body).appendChild(hud);
-  const busy = () => !quiz.hidden || !book.hidden;
+  let asking = false; const busy = () => asking || !quiz.hidden || !book.hidden;
   let o2Hold = null; const freeze = on => { ctx.player.frozen = on; o2Hold = on && ctx.dive ? ctx.dive.oxygen : null; };   // đang đọc câu đố/sổ: giữ nguyên dưỡng khí
 
   function ask(c) {
-    const q = pickQuestions(['bien'], 1)[0]; freeze(true); quiz.hidden = false; ctx.sfx && ctx.sfx('ui');
-    delete quiz.dataset.tried; quiz.innerHTML = `<div class="card"><p class="sub">🧰 Rương kho báu số ${c.i + 1} · ${c.s.zone.icon} ${c.s.zone.name}</p><h3>${q.q}</h3>
-      <div class="ch">${q.choices.map((t, k) => `<button data-k="${k}">${t}</button>`).join('')}</div><p class="ex">Trả lời đúng để mở rương nhé!</p><button class="later">Để sau</button></div>`;
-    const close = () => { quiz.hidden = true; freeze(false); };
-    quiz.querySelector('.later').onclick = close;
-    quiz.querySelectorAll('.ch button').forEach(b => b.onclick = () => {
-      const k = +b.dataset.k, ex = quiz.querySelector('.ex'); if (!quiz.dataset.tried) { quiz.dataset.tried = 1; const ok = k === q.a; dispatchEvent(new CustomEvent('rw-learn', { detail: { s: 'Biển', ok } })); }
-      if (k !== q.a) { b.className = 'bad'; b.disabled = true; ex.innerHTML = `💡 <b>Gợi ý:</b> ${q.hint || 'Đọc kỹ câu hỏi rồi thử lại nhé!'} Thử lại nào!`; ctx.sfx && ctx.sfx('ui'); return; }
-      quiz.querySelectorAll('.ch button').forEach((x, j) => { x.disabled = true; if (j === q.a) x.className = 'ok'; });
-      ex.innerHTML = `✅ <b>Chính xác!</b> ${q.explain}<br><button class="go">🎁 Mở rương</button>`;
-      quiz.querySelector('.later').remove();
-      ex.querySelector('.go').onclick = () => { close(); openChest(c); };
-    });
+    const q = pickQuestions(['bien'], 1)[0]; asking = true; freeze(true); ctx.sfx && ctx.sfx('ui');   // khung câu hỏi chung; ✕/Esc = để sau
+    qcard({ ava: '🧰', title: `Rương kho báu số ${c.i + 1}`, chip: `${c.s.zone.icon} ${c.s.zone.name}`, q: q.q, choices: q.choices, a: q.a, explain: q.explain, retry: true, hint: q.hint || '', next: '🎁 Mở rương',
+      onPick: ok => { if (ok != null) dispatchEvent(new CustomEvent('rw-learn', { detail: { s: 'Biển', ok } })); ctx.sfx && ctx.sfx(ok === false ? 'ui' : 'ok'); } })
+      .then(r => { asking = false; freeze(false); if (r && r.ok) openChest(c); });
   }
   function openChest(c) {
     S.open[c.i] = Date.now(); save(SAVE, S); c.target = 1.9; setOn(c.i, 0.12); pop(c);

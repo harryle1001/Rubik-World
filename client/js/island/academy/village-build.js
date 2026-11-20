@@ -19,6 +19,7 @@ const CSS = `
 #vb .act{justify-content:space-between}#vb .act button{flex:1 1 auto}#vb .gem{color:#9fe6ff}
 #vbSay{position:fixed;left:50%;top:34%;transform:translate(-50%,-50%);z-index:28;pointer-events:none;font:900 34px Georgia,serif;color:#ffe3a0;text-shadow:0 0 13px #a78bfa,0 3px 0 #3a2a6a;opacity:0;transition:opacity .2s,transform .6s}
 #vbSay.go{opacity:1;transform:translate(-50%,-80%)}
+body.vb-on #rwQ{bottom:calc(var(--vbh,190px) + 16px);max-height:calc(100vh - var(--vbh,190px) - 34px)}
 body.vb-on #mgCard{bottom:calc(var(--vbh,190px) + 16px);max-height:calc(100vh - var(--vbh,190px) - 34px);overflow:auto;box-sizing:border-box}
 body.vb-on .btns,body.vb-on #bAct,body.vb-on #bSpell,body.vb-on #lessonChip{display:none!important}
 @media (max-width:420px){#vb .pal button{width:60px;height:62px}#vb button{font-size:12px;padding:4px 6px}}`;

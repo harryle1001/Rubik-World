@@ -4,6 +4,7 @@
 //  🧹 Chủ nhật — Giải bay chổi: 8 vòng quanh cổng trường (bán kính 55 m ≈ 34·φ), qua vòng 0 → bấm giờ, qua 1…7 theo thứ tự rồi về vòng 0.
 // Hiệu năng: rương = 1 InstancedMesh + 1 InstancedMesh cột sáng; vòng = 8 mesh dùng chung 1 hình (torus 34 đoạn).
 import * as THREE from 'three';
+import { qcard } from './quiz-ui.js';
 import { SPAWN, ISLAND_R, blocked } from './layout.js';
 import { pickQuestions } from './quiz-data.js';
 
@@ -36,16 +37,11 @@ export function createEvents(ctx) {
   }
   let asking = false;
   function ask(c) {   // học lồng vào chơi: đúng 1 câu mới mở được rương
-    if (asking) return; asking = true; ctx.player.frozen = true;
-    const q = pickQuestions(['toan', 'khoahoc', 'bien'], 1)[0], box = document.createElement('div'); box.id = 'evQ';
-    box.style.cssText = 'position:fixed;inset:0;z-index:42;display:grid;place-items:center;background:#0a1222b3;padding:13px;font:16px/1.5 system-ui';
-    box.innerHTML = `<div style="width:min(100%,377px);background:#fff8ec;color:#3a2a1a;border-radius:21px;padding:21px;border-top:8px solid #d9a43a"><small>🧰 Rương sự kiện · ${q.icon || ''} ${q.subject}</small><h3 style="margin:8px 0 13px;font-size:21px">${q.q}</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${q.choices.map((t, i) => `<button data-i="${i}" style="padding:13px 8px;border:0;border-radius:13px;background:#efe3cc;font:700 15px system-ui;cursor:pointer">${t}</button>`).join('')}</div><p class="ex" style="min-height:21px;font-size:13px"></p></div>`;
-    document.body.appendChild(box);
-    const done = () => { box.remove(); asking = false; ctx.player.frozen = false; };
-    box.onclick = e => { const b = e.target.closest('button'); if (!b || box.dataset.d) return; box.dataset.d = 1; const ok = +b.dataset.i === q.a;
-      dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject, ok } })); b.style.background = ok ? '#9be3a0' : '#f3c7bd';
-      box.querySelector('.ex').innerHTML = ok ? '✅ Chính xác! Rương mở…' : `💡 ${q.explain || 'Chưa đúng, lần sau nhé!'}`; ctx.sfx && ctx.sfx(ok ? 'ok' : 'bad');
-      setTimeout(() => { done(); if (ok) net.emit('ev', { op: 'claim', id: c.id, x: ctx.player.pos.x, z: ctx.player.pos.z }); }, ok ? 900 : 2600); };
+    if (asking) return; asking = true;
+    const q = pickQuestions(['toan', 'khoahoc', 'bien'], 1)[0];
+    qcard({ ava: '🧰', title: 'Rương sự kiện', chip: `${q.icon || ''} ${q.subject}`, q: q.q, choices: q.choices, a: q.a, explain: q.explain || '', next: false, lock: ctx.player,
+      onPick: ok => { dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject, ok } })); ctx.sfx && ctx.sfx(ok ? 'ok' : 'bad'); return ok ? 'Rương mở…' : ''; } })
+      .then(r => { asking = false; if (r && r.ok) net.emit('ev', { op: 'claim', id: c.id, x: ctx.player.pos.x, z: ctx.player.pos.z }); });
   }
   // ---------- 🧹 giải bay chổi ----------
   function buildRings() {

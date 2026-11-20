@@ -2,6 +2,7 @@
 // quiz(topic, level) → { q, a, choices, why }   topic: 'math' | 'vocab' | 'science' | 'geo' | 'mix'
 import * as THREE from 'three';
 import { mathQ, pick } from './sport/kit.js';
+import { qcard, esc } from '../quiz-ui.js';
 
 const T = (q, a, w1, w2, why = '') => ({ q, a, wrong: [w1, w2], why });
 export const BANK = {
@@ -63,8 +64,10 @@ export function quiz(topic = 'math', level = 1) {
 export function askBar(api, Q, fn, keep = []) {
   api.hud.clearBar(); let done = false;
   const hit = c => { api.onQuiz && api.onQuiz(c === Q.a); Q.done && Q.done(c === Q.a); fn(c === Q.a, c); };   // api.onQuiz: nhiệm vụ / huy hiệu (meta.js)
-  Q.choices.forEach((c, i) => api.hud.button(c, () => { if (done) return; done = true; api.hud.clearBar(); keep.forEach(k => k()); hit(c); }));
-  return { answer: i => { if (!done && Q.choices[i] != null) { done = true; api.hud.clearBar(); keep.forEach(k => k()); hit(Q.choices[i]); } }, get done() { return done; } };
+  const P = qcard({ tag: 'bar', ava: '🧠', title: 'Trả lời để chơi tiếp', q: esc(Q.q), choices: Q.choices.map(esc), a: Q.choices.indexOf(Q.a), instant: true,
+    colors: Q.choices.length === 3 ? ['#e8453c', '#f2b134', '#3fa36b'] : null, onClose: () => api.exit(),   // ✕ trên khung = thoát mini game
+    onPick: (ok, k) => { if (done) return; done = true; keep.forEach(f => f()); hit(Q.choices[k]); } });
+  return { answer: i => { if (!done && Q.choices[i] != null) P.pick(i); }, get done() { return done; } };
 }
 // Bảng 3D: câu hỏi (dòng trên) + 3 ô đáp án màu đỏ/vàng/xanh — 1 canvas, 1 draw call. board(w) → { mesh, draw(Q, hi?) }
 export function board(w) {

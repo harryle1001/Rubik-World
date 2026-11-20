@@ -143,7 +143,7 @@ export function createBroom(ctx, magic, { Y, toWorld, toLocal }) {
         run.wait = true; player.frozen = true; const tq = performance.now();
         const resume = ok => { if (!run) return; run.wait = false; player.frozen = false; run.q += (performance.now() - tq) / 1000; if (ok) run.ok++; };
         magic.ask(k === 2 ? 'toan' : 'khoahoc', () => resume(true), '🧹 Vòng câu hỏi — trả lời để bay tiếp');
-        const chk = setInterval(() => { if (!document.getElementById('mgCard')) { clearInterval(chk); if (run && run.wait) resume(false); } }, 300);
+        const chk = setInterval(() => { if (!document.querySelector('#mgCard,#rwQ:not([hidden])')) { clearInterval(chk); if (run && run.wait) resume(false); } }, 300);
       } else ctx.toast(`✨ Qua vòng ${run.i}/${RINGS.length}!`, 1500);
       run.prev = null; return;
     }

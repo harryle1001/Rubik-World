@@ -7,6 +7,7 @@
 // Hiệu năng: ẩn khi cách người chơi > 377 m (trừ khi đang được gọi/cưỡi); hoạt ảnh đứng yên 1/3 khung khi > 89 m.
 import * as THREE from 'three';
 import { Batch } from './geo.js';
+import { qcard } from '../quiz-ui.js';
 import { matV } from '../sample/palette.js';
 import { toon } from '../style.js';
 import { quad, phoenix } from '../mounts.js';
@@ -120,20 +121,12 @@ export function createFlyers(ctx, magic) {
   }
   function feed(F) {
     const ch = F.D.food.map((t, i) => ({ t, ok: i === 0 })).sort(() => Math.random() - 0.5);
-    const card = document.createElement('div'); card.id = 'mgCard';
-    card.innerHTML = `<h4>🍎 ${F.name} thích ăn gì?</h4><div class="ch">${ch.map((c, i) => `<button data-i="${i}">${c.t}</button>`).join('')}</div><div style="text-align:right;margin-top:6px"><button data-x>Đóng</button></div>`;
-    document.getElementById('mgCard')?.remove(); document.body.appendChild(card);
-    card.onclick = e => {
-      const b = e.target.closest('button'); if (!b) return; if (b.dataset.x !== undefined) return card.remove();
-      const c = ch[+b.dataset.i]; if (!c || card.dataset.done) return; card.dataset.done = 1;
-      b.classList.add(c.ok ? 'ok' : 'no'); card.querySelectorAll('[data-i]').forEach((x, i) => ch[i].ok && x.classList.add('ok'));
-      card.insertAdjacentHTML('beforeend', `<div style="margin-top:6px">${c.ok ? '✅ Ngon quá! ' : '💡 '}${F.D.why}</div>`); ctx.sfx && ctx.sfx(c.ok ? 'coin' : 'no');
-      setTimeout(() => {
-        card.remove();
+    qcard({ ava: '🍎', title: `${F.name} thích ăn gì?`, q: `Chọn món cho <b>${F.name}</b> ăn để kết bạn:`, choices: ch.map(c => c.t), a: ch.findIndex(c => c.ok), explain: F.D.why, next: false, ms: [1500, 3200],
+      onPick: ok => { ctx.sfx && ctx.sfx(ok ? 'coin' : 'no'); } }).then(r => {
+      if (!r) return; const c = { ok: r.ok };
         if (c.ok) { st.bond.push(F.key); save(); link(); ctx.whistle && ctx.whistle(F.tune); ctx.sfx && ctx.sfx('win'); pl.emote && pl.emote('cheer'); ctx.toast(`🎉 <b>${F.name}</b> đã là bạn bay của em! Bấm <b>E</b> để cưỡi.<br>Ở xa thì <b>huýt sáo (H)</b> hoặc bấm nút <b>🪽</b> để gọi — đây là giai điệu riêng của bạn ấy.`, 6500); }
         else { F.cool = clock + 8; }
-      }, c.ok ? 1500 : 3200);
-    };
+    });
   }
 
   // ---------- gọi: nối vào huýt sáo của mounts.js + nút 🪽 + phép ----------

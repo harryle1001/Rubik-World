@@ -1,6 +1,7 @@
 // temple.js — Đền Tri Thức: bia đá câu đố trước cổng. Giải đúng đủ số câu → cổng phép tan, mở rương nhận vật phẩm.
 // Thêm đền mới: thêm 1 dòng vào TEMPLES. Câu đố lấy từ quiz-data.js.
 import * as THREE from 'three';
+import { qcard } from './quiz-ui.js';
 import { toon, addOutline } from './style.js';
 import { loadModel } from './models.js';
 import { pickQuestions } from './quiz-data.js';
@@ -98,14 +99,10 @@ function buildUI() {
         el.innerHTML = `<div class="card"><div class="big">${ok ? '🔓' : '🔒'}</div><h3>${ok ? 'Giỏi quá! Cổng phép đã tan.' : `Đúng ${right}/${qs.length} câu. Cần đúng hết để mở cổng.`}</h3><button id="qOk">${ok ? 'Vào đền' : 'Thử lại sau'}</button></div>`;
         el.querySelector('#qOk').onclick = () => { el.hidden = true; ui.open = false; cb(ok); }; return;
       }
-      const q = qs[i];
-      el.innerHTML = `<div class="card"><p class="sub">${T.name} · ${q.icon} ${q.subject} · Câu ${i + 1}/${qs.length}</p><h3>${q.q}</h3><div class="ch">${q.choices.map((c, k) => `<button data-k="${k}">${c}</button>`).join('')}</div><p class="ex"></p></div>`;
-      el.querySelectorAll('.ch button').forEach(b => b.onclick = () => {
-        const k = +b.dataset.k, ok = k === q.a; if (ok) right++; q.done && q.done(ok); dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject, ok } })); 
-        el.querySelectorAll('.ch button').forEach((x, j) => { x.disabled = true; if (j === q.a) x.className = 'ok'; else if (j === k) x.className = 'bad'; });
-        el.querySelector('.ex').innerHTML = `${ok ? '✅ Chính xác!' : '💡 Chưa đúng.'} ${q.explain}<br><button id="qNext">Tiếp</button>`;
-        el.querySelector('#qNext').onclick = () => { i++; show(); };
-      });
+      const q = qs[i]; el.hidden = true;   // khung câu hỏi chung (quiz-ui.js); ✕/Esc = thôi, quay lại sau
+      qcard({ ava: '⛩️', title: T.name, chip: `${q.icon} ${q.subject} · ${i + 1}/${qs.length}`, q: q.q, choices: q.choices, a: q.a, explain: q.explain, next: i + 1 < qs.length ? 'Câu tiếp ▶' : 'Xem kết quả ▶',
+        onPick: ok => { if (ok) right++; q.done && q.done(ok); dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject, ok } })); } })
+        .then(r => { if (!r) { ui.open = false; return cb(false); } el.hidden = false; i++; show(); });
     };
     show();
   };

@@ -232,7 +232,7 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
   async function doQuiz(T) {
     busy = true; if (T.lines && !S().prog) { await say(T.lines, {}); S().prog = 1; }
     const W0 = WHO[T.who] || WHO.ru, r = await ctx.learn.askSet({ s: T.s, tag: T.tag, n: T.n, need: T.need, title: `${W0.n}`, ava: W0.i });
-    busy = false;
+    busy = false; if (r.closed) return ctx.toast('👋 Tạm dừng thử thách — quay lại bất cứ lúc nào nhé!', 2600);
     if (r.ok) { ctx.toast(`🎉 Đúng ${r.n}/${T.n} câu — qua thử thách!`, 3000); advance(); }
     else ctx.toast(`💪 Đúng ${r.n}/${T.n} câu, cần ${T.need}. Ôn lại rồi thử lần nữa nhé — câu sai sẽ được hỏi lại!`, 5000);
   }

@@ -9,6 +9,7 @@ import * as THREE from 'three';
 import { loadModel } from '../../models.js';
 import { Batch } from '../geo.js';
 import { matV } from '../../sample/palette.js';
+import { qcard, closeQ } from '../../quiz-ui.js';
 
 export const PHI = (1 + Math.sqrt(5)) / 2;
 export const ROOM_R = 8;
@@ -51,32 +52,16 @@ export async function teacher(api, kind, name, look, lines, at = [-3.4, -R_T]) {
 const R_T = ROOM_R - 2.2;
 export const wait = ms => new Promise(r => setTimeout(r, ms));
 
-const CSS = `#mgHud .cl-q{position:absolute;left:50%;bottom:calc(max(13px,env(safe-area-inset-bottom)) + 62px);transform:translateX(-50%);width:min(94vw,520px);padding:13px;border-radius:21px;background:#fff6dff2;color:#3b2a1e;border:3px solid #7a5a2e;box-shadow:0 8px 34px #0006;text-align:center}
-#mgHud .cl-q p{margin:0 0 8px;font:700 16px/1.45 system-ui}#mgHud .cl-q .o{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-#mgHud .cl-q button{min-height:44px;padding:8px;border-radius:13px;border:2px solid #7a5a2e;background:#efe3cc;color:#3b2a1e;font:700 15px/1.3 system-ui;cursor:pointer;touch-action:manipulation}
-#mgHud .cl-q button.ok{background:#7fd36a;border-color:#2f7a2a}#mgHud .cl-q button.no{background:#f19a8f;border-color:#a83a2e}
-#mgHud .cl-q .ex{margin-top:8px;font:600 14px/1.45 system-ui}
-@media (max-height:500px){#mgHud .cl-q{bottom:56px;padding:8px}#mgHud .cl-q p{font-size:14px}}`;
-let cssOn = false;
 /** q = { q, choices, a, explain } → Promise<boolean>; xáo thứ tự lựa chọn */
 export function ask(api, q) {
-  if (!cssOn) { const s = document.createElement('style'); s.textContent = CSS; document.head.appendChild(s); cssOn = true; }
-  const hud = document.getElementById('mgHud'), box = document.createElement('div'); box.className = 'cl-q';
   const order = q.choices.map((_, i) => i).sort(() => Math.random() - 0.5);
-  box.innerHTML = `<p>${q.q}</p><div class="o">${order.map(i => `<button type="button" data-i="${i}">${q.choices[i]}</button>`).join('')}</div>`;
-  hud.appendChild(box);
-  return new Promise(res => {
-    box.onclick = e => {
-      const bt = e.target.closest('button'); if (!bt || box.dataset.done) return; e.stopPropagation(); box.dataset.done = 1;
-      const ok = +bt.dataset.i === q.a; dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject || 'Học viện', ok } })); bt.classList.add(ok ? 'ok' : 'no'); if (!ok) box.querySelector(`[data-i="${q.a}"]`).classList.add('ok');
-      api.sfx(ok ? 'win' : 'ui'); if (q.explain) box.insertAdjacentHTML('beforeend', `<div class="ex">${ok ? '✅' : '💡'} ${q.explain}</div>`);
-      setTimeout(() => { box.remove(); res(ok); }, q.explain ? 3400 : 1300);
-    };
-  });
+  return qcard({ tag: 'class', ava: '🧑‍🏫', title: 'Câu hỏi của thầy cô', q: q.q, choices: order.map(i => q.choices[i]), a: order.indexOf(q.a), explain: q.explain || '', next: false, ms: [1300, 3400],
+    onClose: () => api.exit(),   // ✕ = rời lớp học
+    onPick: ok => { dispatchEvent(new CustomEvent('rw-learn', { detail: { s: q.subject || 'Học viện', ok } })); api.sfx(ok ? 'win' : 'ui'); } }).then(r => !!(r && r.ok));
 }
 
 /** gỡ câu hỏi còn treo (gọi trong dispose của game) */
-export const cleanup = () => document.querySelectorAll('#mgHud .cl-q').forEach(e => e.remove());
+export const cleanup = () => { document.querySelectorAll('#mgHud .cl-q').forEach(e => e.remove()); closeQ('class'); };
 
 /** HOOK điểm nhà Tứ Linh — để trống khi chưa có hệ thống nhà (nhánh academy-houses). */
 export function addHousePoints(ctx, n, reason) { try { if (ctx.houses && ctx.houses.addPoints) return ctx.houses.addPoints(n, reason); } catch (e) { console.warn(e); } return null; }
