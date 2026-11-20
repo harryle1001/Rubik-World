@@ -82,7 +82,7 @@ const hasThree = await B(() => !!window.THREE);
 if (!hasThree) await B(async () => { window.THREE = await import('three'); });
 const all = await B(() => __ct.targets());
 // trộn: lấy xoay vòng theo loại để đủ loại + nhiều khu
-const byKind = {}; for (const t of all) (byKind[t.kind] = byKind[t.kind] || []).push(t);
+const byKind = {}, seenT = new Set(); for (const t of all) { const id = t.name + ':' + t.i + ':' + Math.round(t.x); if (seenT.has(id)) continue; seenT.add(id); (byKind[t.kind] = byKind[t.kind] || []).push(t); }
 const pick = []; for (let r = 0; pick.length < N * 3 && r < 12; r++) for (const k in byKind) if (byKind[k][r]) pick.push(byKind[k][r]);
 console.log('vật tìm được:', all.length, Object.keys(byKind).map(k => k + '×' + byKind[k].length).join(' '));
 
@@ -118,8 +118,10 @@ for (const t of pick) {
   }, t);
   if (prep.skip) { res.push({ ...t, skip: prep.skip }); continue; }
   // 1) chạy thẳng vào vật 2,4 s
-  await B(p => { const c = __island, P = c.player; P.teleport(p.sx, p.sz); P.setRot(Math.atan2(p.ux, p.uz)); c.player.cam.yaw = Math.atan2(-p.ux, -p.uz); c.player.snapCamera(); }, prep);
-  await page.waitForTimeout(400);
+  const ready = await B(async ([t, p]) => { const c = __island, P = c.player, C = c.collide; P.teleport(p.sx, p.sz); P.setRot(Math.atan2(p.ux, p.uz)); c.player.cam.yaw = Math.atan2(-p.ux, -p.uz); c.player.snapCamera();
+    await new Promise(r => setTimeout(r, 400)); C.scan(); await new Promise(r => setTimeout(r, 200)); C.scan(); for (let k = 0; k < 4; k++) { C.plan(); C.work(300); }
+    let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4]) if (__ct.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, p.gy, p.gy)) blk++; return blk > 0; }, [t, prep]);
+  if (!ready) { res.push({ ...t, skip: 'vật vừa bị gỡ/nạp lại (vùng đổi cấp chi tiết)' }); continue; }
   await B(([t, p]) => { __ct.drive = { t0: performance.now(), dur: 2.4, gx: t.x, gz: t.z, cx: t.x, cz: t.z, ux: p.ux, uz: p.uz, maxS: -99, minClear: 9, minDist: 99 }; __ct.d1 = __ct.drive; }, [t, prep]);
   await page.waitForFunction(() => __ct.d1.done, null, { timeout: 60000 });
   const d1 = await B(() => { const d = __ct.d1; return { maxS: d.maxS, minClear: d.minClear, minDist: d.minDist }; });
