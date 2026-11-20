@@ -103,7 +103,7 @@ for (const t of pick) {
     P.teleport(t.x + 7, t.z + 7, T.sup(t.x + 7, t.z + 7)); await new Promise(r => setTimeout(r, 2500)); C.scan(); await new Promise(r => setTimeout(r, 300)); C.scan(); for (let k = 0; k < 6; k++) { C.plan(); C.work(400); await new Promise(r => setTimeout(r, 30)); }
     // vật có chặn không (ô chặn trong 0,7 m quanh tâm)
     let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4, 0.7]) if (T.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, gy, gy)) blk++;
-    if (!blk) return { skip: 'không có ô chặn (vật thấp ≤ 0,4 m hoặc chưa nạp)', gy };
+    if (!blk) return { skip: 'không có ô chặn (vật thấp ≤ 0,3 m hoặc chưa nạp)', gy };
     // bán kính vật theo hướng: chọn hướng tiếp cận mà đường tới & điểm sau lưng vật đều trống, mặt đất phẳng
     for (let k = 0; k < 16; k++) {
       const a = k * Math.PI / 8 + 0.2, ux = Math.cos(a), uz = Math.sin(a);
@@ -153,9 +153,10 @@ for (const t of pick) {
 // chi phí JS/khung khi đi lại (collide.js: quét + nạp chunk + tra va chạm + camera)
 const cost = await B(async () => { const T = __ct, P = __island.player, wait = gs => new Promise(r => { const g0 = T.gt, f = () => T.gt - g0 >= gs ? r() : setTimeout(f, 100); f(); });
   P.teleport(-65, 9, T.sup(-65, 9)); await wait(1); const C = __island.collide; for (let k = 0; k < 40; k++) { C.scan(); C.plan(); C.work(500); }   // khu này đã nạp xong (như sau vài giây chơi)
-  const m = () => ({ total: +(T.ms / T.frames).toFixed(4), lookup: +((T.ms - T.msBg) / T.frames).toFixed(4), background: +(T.msBg / T.frames).toFixed(4), frames: T.frames });
-  T.ms = T.msBg = 0; T.frames = 0; await wait(4); const idle = m();
-  T.ms = T.msBg = 0; T.frames = 0; T.drive = { dur: 8, gx: -65, gz: 60, cx: 1e5, cz: 1e5, ux: 0, uz: 1, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0 }; await wait(8); const walk = m();
+  // máy thử ~4–6 khung/s: việc nền định kỳ (quét mỗi 0,8 s) dồn vào ít khung → quy đổi thêm "ms mỗi giây ÷ 60" = mức trên máy 60 khung/s
+  let w0 = performance.now(); const m = () => { const sec = (performance.now() - w0) / 1000; return { perFrame: +(T.ms / T.frames).toFixed(4), lookupPerFrame: +((T.ms - T.msBg) / T.frames).toFixed(4), bgMsPerSec: +(T.msBg / sec).toFixed(3), at60fps: +((T.ms - T.msBg) / T.frames + Math.min(T.msBg / T.frames, T.msBg / sec / 60 + (T.msBg > 0 ? 0 : 0))).toFixed(4), frames: T.frames, fps: +(T.frames / sec).toFixed(1) }; };
+  T.ms = T.msBg = 0; T.frames = 0; w0 = performance.now(); await wait(4); const idle = m();
+  T.ms = T.msBg = 0; T.frames = 0; w0 = performance.now(); T.drive = { dur: 8, gx: -65, gz: 60, cx: 1e5, cz: 1e5, ux: 0, uz: 1, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0 }; await wait(8); const walk = m();
   return { idle, walk, stats: C.stats() }; });
 const done = res.filter(r => r.ok !== undefined), pass = done.filter(r => r.ok).length;
 const summary = { mobile: MOBILE, tested: done.length, pass, kinds: [...new Set(done.map(r => r.kind))], skipped: res.filter(r => r.skip).length, cost, errors: errors.slice(0, 10) };
