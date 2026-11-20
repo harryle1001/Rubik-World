@@ -31,9 +31,12 @@ await B(() => {
   for (const k of ['update', 'resolve', 'camClear']) { const f = C[k]; C[k] = function () { const t = performance.now(); const r = f.apply(this, arguments); T.ms += performance.now() - t; return r; }; }
   const sup = (x, z, y = 99) => Math.max(c.terrain.heightAt(x, z), c.groundExtra ? c.groundExtra(x, z, y) : -99);
   T.sup = sup; T.W = W;
+  // chặn = ô lưới collide.js HOẶC vòng tròn cũ ctx.colliders (cây terrain.js…) — đúng những gì player.js dùng
+  T.blk = (x, z, y, g) => C.blocked(x, z, y, g) || (c.grid ? c.grid.near(x, z).cols : c.colliders).some(q => Math.hypot(q.x - x, q.z - z) < q.r);
   // khoảng cách từ (x, z) tới ô chặn gần nhất (chân y)
   T.clear = (x, z, y) => { let best = 9; const g = sup(x, z, y + 0.3); for (let cj = Math.floor((z - 1) / C.CS); cj <= Math.floor((z + 1) / C.CS); cj++) for (let ci = Math.floor((x - 1) / C.CS); ci <= Math.floor((x + 1) / C.CS); ci++) {
-    const cx = (ci + 0.5) * C.CS, cz = (cj + 0.5) * C.CS; if (!C.blocked(cx, cz, y, g)) continue; const qx = Math.max(ci * C.CS, Math.min(x, ci * C.CS + C.CS)), qz = Math.max(cj * C.CS, Math.min(z, cj * C.CS + C.CS)); best = Math.min(best, Math.hypot(x - qx, z - qz)); } return best; };
+    const cx = (ci + 0.5) * C.CS, cz = (cj + 0.5) * C.CS; if (!C.blocked(cx, cz, y, g)) continue; const qx = Math.max(ci * C.CS, Math.min(x, ci * C.CS + C.CS)), qz = Math.max(cj * C.CS, Math.min(z, cj * C.CS + C.CS)); best = Math.min(best, Math.hypot(x - qx, z - qz)); }
+    for (const q of (c.grid ? c.grid.near(x, z).cols : c.colliders)) best = Math.min(best, Math.hypot(q.x - x, q.z - z) - q.r); return best; };
   // vòng điều khiển: mỗi khung đặt cần điều khiển hướng tới đích (bù góc camera); ghi nhật ký
   const loop = () => {
     T.frames++; const D = T.drive;
@@ -86,21 +89,20 @@ for (const t of pick) {
     const c = __island, C = c.collide, T = __ct, P = c.player;
     P.vehicle && c.vehicles && c.vehicles.exit && c.vehicles.exit();
     const gy = T.sup(t.x, t.z); if (!(gy > T.W + 0.3)) return { skip: 'dưới nước' };
-    P.teleport(t.x + 7, t.z + 7); for (let k = 0; k < 6; k++) { C.plan(); C.work(400); await new Promise(r => setTimeout(r, 30)); }
+    P.teleport(t.x + 7, t.z + 7); await new Promise(r => setTimeout(r, 3600)); for (let k = 0; k < 6; k++) { C.plan(); C.work(400); await new Promise(r => setTimeout(r, 30)); }
     // vật có chặn không (ô chặn trong 0,7 m quanh tâm)
-    let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4, 0.7]) if (C.blocked(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, gy, gy)) blk++;
+    let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4, 0.7]) if (T.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, gy, gy)) blk++;
     if (!blk) return { skip: 'không có ô chặn (vật thấp ≤ 0,4 m hoặc chưa nạp)', gy };
     // bán kính vật theo hướng: chọn hướng tiếp cận mà đường tới & điểm sau lưng vật đều trống, mặt đất phẳng
     for (let k = 0; k < 16; k++) {
       const a = k * Math.PI / 8 + 0.2, ux = Math.cos(a), uz = Math.sin(a);
-      let rc = 0; for (let r = 0; r < 3; r += 0.1) if (C.blocked(t.x - ux * r, t.z - uz * r, gy, gy)) rc = r;   // mép vật phía người tới
-      let rb = 0; for (let r = 0; r < 3; r += 0.1) if (C.blocked(t.x + ux * r, t.z + uz * r, gy, gy)) rb = r;
+      let rc = 0; for (let r = 0; r < 3; r += 0.1) if (T.blk(t.x - ux * r, t.z - uz * r, gy, gy)) rc = r;   // mép vật phía người tới
+      let rb = 0; for (let r = 0; r < 3; r += 0.1) if (T.blk(t.x + ux * r, t.z + uz * r, gy, gy)) rb = r;
       const s0 = rc + 3.2, sx = t.x - ux * s0, sz = t.z - uz * s0, gx = t.x + ux * (rb + 2.2), gz = t.z + uz * (rb + 2.2);
       let ok = true;
       for (let r = rc + 0.6; r <= s0 && ok; r += 0.2) { const x = t.x - ux * r, z = t.z - uz * r, h = T.sup(x, z, gy + 0.5); if (Math.abs(h - gy) > 0.35 || T.clear(x, z, h) < 0.45) ok = false; }
       if (!ok) continue; const hg = T.sup(gx, gz, gy + 0.5); if (Math.abs(hg - gy) > 0.35 || T.clear(gx, gz, hg) < 0.5) continue;
       // không có vật cản cũ (cols/boxes) chắn trên đường
-      if ((c.colliders || []).some(q => Math.hypot(q.x - sx, q.z - sz) < q.r + 0.5)) continue;
       // tự đi vòng: có lối bên trái hoặc phải (≤ rc + 1.8 m)
       return { sx, sz, gx, gz, ux, uz, rc, rb, gy };
     }

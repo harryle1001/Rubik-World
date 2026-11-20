@@ -273,7 +273,7 @@ export function createTerrain(scene) {
   plant('rockL', Math.round(CFG.counts.rocks * 0.45), 1.6, 3.6, 0.45, W - 0.3, 2); plant('rockT', Math.round(CFG.counts.rocks * 0.2), 1.4, 2.6, 0.4, W - 0.2, 2);
   plant('pebbles', Math.round(CFG.counts.rocks * 0.6), 2.0, 3.5, 0, W - 0.4, 2);
   // tầng thấp: bụi, bụi quả, cụm hoa, dương xỉ, cỏ cụm, nấm, gốc cây, khúc gỗ (không đổ bóng, chỉ hiện gần) — lấp khoảng trống giữa các khu
-  plant('bush', CFG.isMobile ? 260 : 420, 2.4, 4.2, 0); plant('berry', CFG.isMobile ? 40 : 70, 2.4, 3.4, 0); plant('flowers', CFG.isMobile ? 360 : 600, 1.8, 2.6, 0);
+  plant('bush', CFG.isMobile ? 260 : 420, 2.4, 4.2, 0.1); plant('berry', CFG.isMobile ? 40 : 70, 2.4, 3.4, 0.1);   // bụi ≥ 0,6 m: chặn lõi bụi plant('flowers', CFG.isMobile ? 360 : 600, 1.8, 2.6, 0);
   plant('fern', CFG.isMobile ? 160 : 280, 2.2, 3.4, 0); plant('tuft', CFG.isMobile ? 380 : 700, 2.0, 3.2, 0); plant('mushrooms', 90, 2.2, 3.2, 0);
   plant('stump', 40, 2.4, 3.2, 0.3); plant('log', 28, 2.0, 2.8, 0.5);
   for (const k of Object.keys(under)) addNature(k, under[k]);

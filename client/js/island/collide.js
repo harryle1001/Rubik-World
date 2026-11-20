@@ -12,7 +12,8 @@ export const CS = 0.25;                 // cạnh ô (m)
 const CN = 64, CM = CS * CN, Q = 32;    // ô/chunk · cạnh chunk (16 m) · lượng tử độ cao 1/32 m (Int16)
 export const LOW = 0.4, HEAD = 1.4;     // vật/mép cao ≤ 0,4 m trên chân: bước qua · đáy vật cao hơn đầu 1,4 m: đi dưới
 const GAP = 1.7 * Q, SCAN = 1.618, BUDGET = CFG.isMobile ? 0.6 : 1.2;
-const SKIP_NAME = /^(ground|seafloor|ocean|sky)|water/i, EMPTY_LO = 32767, EMPTY_HI = -32768;
+// nature-*: cây/đá/bụi của terrain.js đổi bản sao theo khoảng cách người chơi → đã có collider tròn riêng (terrain.js), không quét
+const SKIP_NAME = /^(ground|seafloor|ocean|sky|nature-)|water/i, EMPTY_LO = 32767, EMPTY_HI = -32768;
 const ck = (ci, cj) => (ci + 32768) * 65536 + (cj + 32768);
 
 export function createCollide(ctx) {
@@ -134,9 +135,10 @@ export function createCollide(ctx) {
       let s = src.get(o); const sg = sig(o);
       if (!s) { if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); src.set(o, s = { o, sg, seen: scanId, state: 0, moves: 0, b: new Map(), ti: 0 }); continue; }
       s.seen = scanId;
-      if (s.sg !== sg) {   // vừa di chuyển / đổi bản sao: gỡ; di chuyển ≥ 3 lần → vật động (người, xe, thuyền, chim…) bỏ hẳn
+      if (s.sg !== sg) {   // vừa di chuyển / đổi bản sao (cây nạp theo ô đất…): gỡ rồi đăng ký lại; đổi ở 3 lần quét LIÊN TIẾP → vật động (người, xe, thuyền, chim…) bỏ hẳn
         s.sg = sg; if (s.state) unregister(s); if (++s.moves >= 3) { dead.add(o); src.delete(o); } continue;
       }
+      s.moves = 0;
       if (s.state === 0) { s.state = 1; s.ti = 0; pending.push(s); }   // đứng yên qua 2 lần quét → lập chỉ mục
     }
     for (const s of src.values()) if (s.seen !== scanId) { if (s.state) unregister(s); src.delete(s.o); }   // đã gỡ khỏi cảnh / bị ẩn
@@ -220,5 +222,6 @@ export function createCollide(ctx) {
     work(BUDGET);
   }
   const stats = () => { let n = 0, q = 0, idx = 0; for (const s of src.values()) { if (s.state === 2) n++; else if (s.state === 1) q++; for (const b of s.b.values()) idx += b.length; } return { chunks: chunks.size, sources: n, queued: q, idx, want: want.length, kb: chunks.size * CN * CN * 8 / 1024 | 0 }; };
-  return { update, resolve, blocked, camClear, stats, scan, work, plan, cellAt, idx, CS, LOW, HEAD };
+  const debugSrc = o => { const s = src.get(o); return s ? { state: s.state, moves: s.moves, keys: s.b.size, dead: dead.has(o) } : { none: true, dead: dead.has(o) }; };
+  return { debugSrc, update, resolve, blocked, camClear, stats, scan, work, plan, cellAt, idx, CS, LOW, HEAD };
 }
