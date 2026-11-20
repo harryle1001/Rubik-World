@@ -32,7 +32,7 @@ body.rs-modal #accChip,body.mg-on #accChip{display:none}`;
       <details style="margin-bottom:13px;font:600 13px system-ui"><summary>🏫 Trường em có mã Trường Rubik?</summary><div class="row" style="margin-top:8px"><input type="text" id="accLic" maxlength="6" placeholder="Mã trường" style="flex:1 1 55%;text-transform:uppercase"><button data-a="lic">Nhập</button></div><div class="msg"></div></details>`; };
   const render = () => {
     const p = acc.profile;
-    chip.innerHTML = p ? `${acc.guest ? '🙂' : '👤'} ${esc(acc.name)} · Lv <b>${p.level}</b>` : '👤 Đăng nhập';   // ví 🪙/💎 là chip riêng (economy/wallet.js)
+    chip.innerHTML = p ? `<span class="nm">${acc.guest ? '🙂' : '👤'} ${esc(acc.name)} · </span>Lv <b>${p.level}</b>` : '👤 Đăng nhập';   // ví 🪙/💎 là chip riêng (economy/wallet.js)
     if (p && !acc.guest) { ctx.playerName = acc.name; try { localStorage.setItem('island.name', acc.name); } catch (e) {} }
   };
   acc.onChange(render);

@@ -70,6 +70,7 @@ import { register as registerArts } from './island/mg/arts/index.js';
 import { register as registerSport } from './island/mg/sport/index.js';
 import { register as registerVisit } from './island/mg/visit/index.js';
 import { createWallet } from './island/economy/wallet.js';
+import { createHudBar } from './island/hud-bar.js';
 import { createBackpack } from './island/economy/backpack.js';
 import { createShop } from './island/economy/shop.js';
 import { createPickups } from './island/economy/pickups.js';
@@ -95,7 +96,7 @@ const ctx = { scene, camera, renderer, terrain, colliders: terrain.colliders, lo
   // 2 đối tượng dùng luân phiên (không cấp phát mỗi khung: mỗi phần gọi offer mỗi khung)
   const act = document.getElementById('bAct'), slots = [{}, {}]; let best = null, cur = null, si = 0;
   ctx.offer = (label, fn, pri = 0) => { if (!best || pri > best.pri) { best = best || slots[si]; best.label = label; best.fn = fn; best.pri = pri; } };
-  ctx.flushOffer = () => { cur = best; best = null; si ^= 1; const h = !cur || ctx.player.frozen; if (act.hidden !== h) act.hidden = h; if (cur && act._l !== cur.label) { act._l = cur.label; act.innerHTML = cur.label; } };   // nhãn có thể chứa biểu tượng SVG
+  ctx.flushOffer = () => { cur = best; best = null; si ^= 1; const h = !cur || ctx.player.frozen; if (act.hidden !== h) act.hidden = h; if (cur && act._l !== cur.label) { act._l = cur.label; const m = cur.label.match(/^\s*(<svg[\s\S]*?<\/svg>|\p{Extended_Pictographic}\uFE0F?)\s*/u); act.innerHTML = `<i>${m ? m[1] : '✋'}</i><span class="cap">${m ? cur.label.slice(m[0].length) : cur.label}</span>`; } };   // điện thoại: nút tròn nhỏ (biểu tượng) + chú thích nhỏ bên trái   // nhãn có thể chứa biểu tượng SVG
   act.onclick = () => cur && cur.fn();
   addEventListener('keydown', e => { if (e.code === 'KeyE' && cur && !ctx.player.frozen) cur.fn(); });
 }
@@ -183,6 +184,7 @@ const silverBoard = ctx.silverBoard = createSilverBoard(ctx); // 🏄 Ván bạc
 // 🪙 đồng vàng · 💎 kim cương hồng (ví HUD) · 🎒 cặp sách 4 ngăn (B/I) · 🛒 cửa hàng (quầy trước cổng trường, Phố Phép Thuật) · ✨ nhặt đồ (economy/)
 const wallet = createWallet(ctx), backpack = createBackpack(ctx), shop = createShop(ctx), pickups = ctx.pickups = createPickups(ctx);
 document.getElementById('bSchool').onclick = () => school.goSchool();
+createHudBar(ctx); // dải HUD gọn 1 hàng trên cùng + viên nhiệm vụ + menu ☰ (hud-bar.js)
 // Vào game: đứng trước cổng trường (giữa thế giới), camera nhìn về phía cổng
 player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2); player.cam.yaw = -Math.PI / 2 + 0.75; player.cam.pitch = 0.3; player.cam.dist = 11; // nhìn chéo φ: tượng Rubik lệch sang bên, cổng + biển tên trọn khung
 // menu ☰ (góc phải trên, cạnh 🗺️): 🎮 Mini game + ☀️ Ánh sáng; chọn xong hoặc chạm ra ngoài thì tự đóng
@@ -190,7 +192,7 @@ player.teleport(SPAWN[0], SPAWN[1]); player.pos.y = Math.max(player.pos.y, 1.2);
   const more = document.getElementById('bMore'), menu = document.getElementById('moreMenu');
   const show = on => { menu.hidden = !on; more.setAttribute('aria-expanded', on); };
   more.onclick = () => show(menu.hidden);
-  menu.addEventListener('click', e => { if (e.target.closest('button')) show(false); });
+  menu.addEventListener('click', e => { if (e.target.closest('button,[role=button]')) show(false); });
   addEventListener('pointerdown', e => { if (!menu.hidden && !menu.contains(e.target) && e.target !== more) show(false); }, true);
 }
 document.getElementById('bMenu').onclick = () => school.menu();

@@ -18,6 +18,7 @@
 - `client/js/island/sea/` thế giới đại dương: đội tàu thuyền theo tuyến (`fleet.js`), Làng chài Vịnh Én (`village.js`), ngư dân & câu cá (`folk.js`), lái buồm/ca nô/đi phà (`pilot.js`), cá heo – cá voi – sương – giông (`wild.js`); số liệu bố cục ở `site.js`.
 - `client/js/island/economy/` ví 🪙 đồng vàng (kiếm khi chơi) · 💎 kim cương hồng (chỉ nạp qua cổng phụ huynh), 🎒 cặp sách 4 ngăn (B/I), 🛒 cửa hàng, ✨ nhặt đồ; `catalog.js` = giá dùng chung client + `server/economy.js` (máy chủ giữ số dư). Không lootbox.
 - `client/js/island/lighthouse/` Hải đăng Mũi Sóng (đảo đá tây nam, tháp 34 m vào được, ông Bảy gác đèn): `plan.js` số đo + mặt đi, `build.js` dựng hình, `keeper.js` nhiệm vụ, `index.js` nối vào thế giới.
+- `client/js/island/hud-bar.js` dải HUD gọn 1 hàng trên cùng + viên 📜 nhiệm vụ (chạm mở chi tiết) + menu ☰; nút 📷 chụp nhanh (wild/naturalist.js) · kiểm tra bố cục: `node tools/hud-test.mjs docs/shots/hud-compact sau`.
 - `server/index.js` Express + Socket.io (namespace `/island` cho đảo 3D).
 - `client/js/island/silver-board.js` 🏄 Ván bạc bay (phím U) · `mg/sport/board-race.js` đua ván 3 đường · kiểm thử: `node tools/board-test.mjs <thư-mục> [--mobile] [--track=coast|canyon|cloud]`.
 - `client/assets/` model .glb, âm thanh; nguồn ghi trong `client/assets/CREDITS.txt` (chỉ dùng tài nguyên CC0).

@@ -245,7 +245,7 @@ body.rs-modal #tQuiz,body.mg-on #tQuiz{display:none}`;
     if (Math.hypot(hx - p.x, hz - p.z) > (who.far || 6.5)) { ctx.toast && ctx.toast('👋 Tạm biệt! Lại gần và bấm <b>E</b> để nói chuyện tiếp nhé.', 2000); return close(); }
     v.project(ctx.camera);
     const W = innerWidth, H = innerHeight, w = el.offsetWidth, h = el.offsetHeight, ax = (v.x + 1) / 2 * W, ay = v.z > 1 ? 0 : (1 - v.y) / 2 * H;
-    const tb = document.querySelector('.topbtns'), y0 = Math.max(55, tb ? tb.getBoundingClientRect().bottom + 8 : 0);   // điện thoại: hàng nút trên cao hơn
+    const tb = document.getElementById('hudPill') || document.querySelector('.topbtns'), y0 = Math.max(55, tb ? tb.getBoundingClientRect().bottom + 8 : 0);   // điện thoại: hàng nút trên cao hơn
     const x = Math.max(13, Math.min(W - w - 13, ax - w / 2)), top = Math.max(y0, Math.min(H - h - 89, ay - h - 13));   // tránh hàng nút trên và nút dưới (89)
     el.style.transform = `translate(${Math.round(x)}px,${Math.round(top)}px)`;
     el.style.setProperty('--tail', Math.max(21, Math.min(w - 21, ax - x)) + 'px');

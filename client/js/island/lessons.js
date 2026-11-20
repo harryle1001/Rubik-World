@@ -44,7 +44,7 @@ export function createLessons(ctx) {
     update(dt) {
       if ((t -= dt) > 0) return; t = 0.5;
       const c = now(), L = c.subj && LESSON[c.subj], key = c.subj ? `${new Date().toDateString()}#${c.i}` : null;
-      const s = L ? `🕰 <b>${fmt(c.m)}</b> · ${c.label} · ${L.icon} ${L.name}` : `🕰 <b>${fmt(c.m)}</b> · ${c.label}`;
+      const s = L ? `🕰 <b>${fmt(c.m)}</b><span class="lx"> · ${c.label} · ${L.icon} ${L.name}</span>` : `🕰 <b>${fmt(c.m)}</b><span class="lx"> · ${c.label}</span>`;   // .lx: dải HUD gọn chỉ hiện giờ (hud-bar.js)
       if (s !== last) { chip.innerHTML = s; last = s; chip.classList.toggle('on', !!L); }
       const qh = !inRow && document.getElementById('questHud'); if (qh && qh.offsetParent) chip.style.top = Math.round(qh.getBoundingClientRect().bottom + 5) + 'px';
       // chuông vào tiết

@@ -27,9 +27,18 @@ body.rs-modal #bMore,body.rs-modal #moreMenu{display:none}
 @media (max-height:500px) and (orientation:landscape){#moreMenu{top:max(12px,env(safe-area-inset-top));right:calc(max(12px,env(safe-area-inset-right)) + 100px);flex-direction:row;padding:0;background:none;box-shadow:none}#moreMenu button{background:#101a2ee6}}
 #bSound{position:fixed;right:12px;top:10px;width:42px;height:42px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:20px}
 #inv{position:fixed;right:64px;top:20px;color:#fff;font:700 16px system-ui;text-shadow:0 1px 3px #000}
-#bAct{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 97px);max-width:min(62vw,233px);box-sizing:border-box;min-height:52px;line-height:1.2;padding:8px 21px;border-radius:30px;border:2px solid #fff;background:#f0a23a;color:#2a1a0a;font:800 17px system-ui;box-shadow:0 6px 20px #0005}
-@media (pointer:coarse){#bAct::before{content:"✋ "}}
-@media (pointer:fine){#bAct{right:auto;left:50%;transform:translateX(-50%);bottom:max(13px,env(safe-area-inset-bottom));max-width:min(62vw,377px)}}
+#bAct{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 149px);width:52px;height:52px;box-sizing:border-box;padding:0;border-radius:50%;border:2px solid #fff;background:#f0a23a;color:#2a1a0a;font:800 24px/1 system-ui;box-shadow:0 5px 13px #0005;display:flex;align-items:center;justify-content:center}
+#bAct i{font-style:normal;display:flex}#bAct i svg{width:26px;height:26px}
+#bAct .cap{position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);max-width:min(40vw,144px);padding:3px 8px;border-radius:13px;background:#1b1626d9;color:#fff;font:700 12px/1.4 system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+body:has(#bDown:not([hidden])) #bAct .cap{display:none}
+#bCam{position:fixed;z-index:26;right:max(20px,calc(env(safe-area-inset-right) + 4px));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 97px);width:44px;height:44px;box-sizing:border-box;padding:0;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;color:#fff;font-size:21px;line-height:1;touch-action:manipulation;cursor:pointer}
+#bCam.on{background:#f0a23a;border-color:#fff}body.rs-modal #bCam,body.mg-on #bCam,body.st-cut #bCam{display:none}
+@media (pointer:coarse){body .vbtns{top:auto;right:max(20px,calc(env(safe-area-inset-right) + 4px));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 214px)}body .vbtns button{width:44px;height:44px;font-size:21px}body .vbtns #bBell[hidden]{display:none!important}}
+@media (pointer:coarse) and (max-height:799px) and (orientation:portrait){body .vbtns{gap:5px}body .vbtns button{width:40px;height:40px;font-size:19px;margin-right:2px}}
+@media (pointer:coarse) and (max-height:500px) and (orientation:landscape){body .vbtns{display:grid;top:auto;grid-template-rows:repeat(4,44px);grid-auto-flow:column;grid-auto-columns:44px;direction:rtl;right:max(16px,env(safe-area-inset-right));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 97px)}
+#bCam{right:calc(max(16px,env(safe-area-inset-right)) + 180px);bottom:max(18px,env(safe-area-inset-bottom))}#bAct{right:calc(max(16px,env(safe-area-inset-right)) + 232px);bottom:max(18px,env(safe-area-inset-bottom))}}
+@media (pointer:fine){#bAct{right:auto;left:50%;transform:translateX(-50%);bottom:max(13px,env(safe-area-inset-bottom));width:auto;max-width:min(62vw,377px);height:auto;min-height:52px;padding:8px 21px;border-radius:30px;font:800 17px system-ui;gap:5px}#bAct .cap{position:static;transform:none;background:none;color:inherit;padding:0;font:inherit;max-width:none}
+#bCam{right:max(12px,env(safe-area-inset-right));bottom:auto;top:calc(50% - 176px);width:52px;height:52px;font-size:24px}}
 #o2{position:fixed;left:50%;top:calc(max(12px,env(safe-area-inset-top)) + 89px);transform:translate(-50%,-8px);width:min(233px,62vw);height:21px;padding:0 13px 0 34px;border-radius:13px;background:#0b2a40b3;border:2px solid #bff4ff88;box-shadow:0 5px 13px #0004;opacity:0;transition:opacity .4s,transform .4s;pointer-events:none;z-index:26;box-sizing:border-box;display:flex;align-items:center}
 #o2.on{opacity:1;transform:translate(-50%,0)}#o2::before{content:'🫧';position:absolute;left:8px;top:0;font-size:15px;line-height:21px}
 #o2 i{display:block;width:100%;height:8px;border-radius:5px;background:#ffffff26;overflow:hidden}#o2f{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#46e3c6,#7fd0ff);transform-origin:left;transition:transform .2s linear}
@@ -62,7 +71,7 @@ body.rs-modal #bMore,body.rs-modal #moreMenu{display:none}
 <script type="importmap">{"imports":{"three":"/lib/three/build/three.module.js","three/addons/":"/lib/three/examples/jsm/"}}</script>
 </head><body>
 <div class="topbtns"><button id="bSchool" title="Dịch chuyển tới cổng Trường Rubik"><i>🏫</i><span class="lb">Đến trường</span></button></div><button id="bMore" aria-expanded="false" aria-controls="moreMenu" title="Thêm: Mini game, Ánh sáng">☰</button><div id="moreMenu" hidden><button id="bMenu">🎮 Mini game</button></div><div id="info"></div>
-<button id="bAct" hidden></button>
+<button id="bAct" hidden></button><button id="bCam" title="Chụp ảnh: chạm để ngắm con vật gần nhất, chạm lần nữa để chụp">📷</button>
 <div id="o2"><i><b id="o2f"></b></i></div>
 <div id="joy"><div id="knob"></div></div>
 <div class="vbtns"><button id="bStyle" title="Đổi kiểu xe (V)" hidden>🔄</button><button id="bBell" title="Chuông (R)" hidden>🔔</button><button id="bBike" title="Xe đạp (X)">🚲</button><button id="bBalloon" title="Khinh khí cầu (T)"></button><button id="bBroom" title="Chổi bay (J)">🧹</button><button id="bBoard" title="Ván bạc bay (U)">🏄</button><button id="bWhistle" title="Huýt sáo gọi thú cưỡi (H)">🎶</button></div>

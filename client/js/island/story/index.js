@@ -241,11 +241,12 @@ body.st-cut #questHud,body.st-cut #chipRow,body.st-cut #bAct,body.st-cut #info{v
   let lastHud = '';
   function render() {
     const s = S(), C = chap(), on = !!(ctx.account && ctx.account.profile) && s.started;
-    hud.hidden = !on; if (!on) return;
+    hud.hidden = !on; ctx.storyNav = null; if (!on) return;   // ctx.storyNav: viên nhiệm vụ gọn + mũi tên (hud-bar.js)
     let h;
     if (!C) h = `<div class="t">🌈<span>Khối Rubik Pha Lê đã liền!</span><small>8/8</small></div><div class="d">Em là 🏅 Người Giữ Màu. Chạm để mở 📔 Sổ tay.</div>`;
     else {
       const T = task(), tgt = target(), p = player.pos, d = tgt ? Math.hypot(tgt[0] - p.x, tgt[1] - p.z) : 0;
+      ctx.storyNav = { text: T ? T.text : `Nhặt ${C.name}`, tgt: tgt && d > 5 ? tgt : null };
       const sub = T ? (T.type === 'collect' ? ` (${(s.got || []).length}/${T.n})` : T.type === 'cast' && !T.boss ? ` (${s.prog}/${T.n})` : '') : '';
       h = `<div class="t">${C.icon}<span>Ch.${C.id} · ${esc(C.name)}</span><small>${Math.min(s.ti, C.tasks.length)}/${C.tasks.length} · 📔</small></div>
         <div class="k">▸ ${T ? esc(T.text) + sub : `Nhặt ${esc(C.name)} ✨`}</div>

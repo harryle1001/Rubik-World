@@ -131,7 +131,7 @@ export function createNaturalist(ctx) {
   let binoOn = 0, baseFov = 55, aim = null, aimT = 0, shotReq = null; const _v = new THREE.Vector3(), _h = new THREE.Vector3();
   function setBino(z) {
     if (z && (pl.frozen || ctx.underwater || (pl.vehicle && !binoOn))) { if (!binoOn) ctx.toast('🔭 Hãy đứng trên mặt đất (không lái xe, không lặn) để dùng ống nhòm nhé!'); return; }
-    if (z && !binoOn) { baseFov = camera.fov; ctx.toast('🔭 <b>Ống nhòm</b>: kéo màn hình để nhìn quanh, đưa dấu ＋ vào con vật để nhận ra loài, bấm <b>📷 Chụp ảnh</b> để lưu vào Sổ tay.', 6000); }
+    if (z && !binoOn) { baseFov = camera.fov; ctx.toast('🔭 <b>Ống nhòm</b>: kéo màn hình để nhìn quanh, đưa dấu ＋ vào con vật để nhận ra loài, chạm nút <b>📷</b> để chụp lưu vào Sổ tay.', 6000); }
     if (!z && binoOn) { camera.fov = baseFov; camera.updateProjectionMatrix(); if (pl.root) pl.root.visible = true; }
     binoOn = z; bino.hidden = !z; bBino.classList.toggle('on', !!z); bino.querySelectorAll('.zm button').forEach(b => b.classList.toggle('on', +b.dataset.z === z));
   }
@@ -150,7 +150,7 @@ export function createNaturalist(ctx) {
   let hooked = false; const hookPost = () => { const post = ctx.post; if (hooked || !post || !post.render) return; hooked = true; const r0 = post.render; post.render = function () { r0.apply(this, arguments); if (shotReq) { const S = shotReq; shotReq = null; snap(S); } }; };   // ctx.post được gán sau khi các module tạo xong → móc ở khung đầu tiên
   const cvs = document.createElement('canvas'); cvs.width = cvs.height = 96;
   function snap(S) {
-    try { const src = ctx.renderer.domElement, s = Math.min(src.width, src.height) * (binoOn ? 0.62 : 0.34), g = cvs.getContext('2d'); g.drawImage(src, (src.width - s) / 2, (src.height - s) / 2, s, s, 0, 0, 96, 96); D.photo[S.id] = cvs.toDataURL('image/jpeg', 0.72); } catch (e) { D.photo[S.id] = ''; }
+    try { const src = ctx.renderer.domElement, s = Math.min(src.width, src.height) * (binoOn || camOn ? 0.62 : 0.34), g = cvs.getContext('2d'); g.drawImage(src, (src.width - s) / 2, (src.height - s) / 2, s, s, 0, 0, 96, 96); D.photo[S.id] = cvs.toDataURL('image/jpeg', 0.72); } catch (e) { D.photo[S.id] = ''; }
     save(); flash.style.transition = 'none'; flash.style.opacity = 0.8; requestAnimationFrame(() => { flash.style.transition = 'opacity .34s'; flash.style.opacity = 0; });
     const first = !D.seen[S.id]; found(S); if (!first) ctx.toast(`📷 Đã lưu ảnh <b>${S.ic} ${S.name}</b> vào Sổ tay thiên nhiên (${Object.keys(D.photo).length} ảnh).`, 4000); ctx.sfx && ctx.sfx('coin'); checkQuests();
   }
@@ -190,6 +190,7 @@ export function createNaturalist(ctx) {
     hookPost(); if (!wild.ready) return;
     if (ctx.photoMode || ctx.freeCam) { if (binoOn) setBino(0); return; }   // chế độ chụp ảnh tự do (photo.js) / cắt cảnh cốt truyện đang giữ camera
     if (track.on) stepTrack();
+    if (camOn) { stepCam(dt); return; }
     // ống nhòm: camera ra đầu nhân vật, nhìn theo hướng kéo, zoom theo mức; nhận loài ở tâm ngắm
     if (binoOn) {
       if (pl.frozen || ctx.underwater || ctx.mapOpen) { setBino(0); return; }
@@ -200,17 +201,16 @@ export function createNaturalist(ctx) {
       camera.updateMatrixWorld(); if (pl.root) pl.root.visible = false;
       const a = pickAim(0.1, 233), lb = bino.firstChild;
       if (a) { aimT = aim && aim.S === a.S ? aimT + dt : 0; aim = a; lb.hidden = false; const known = D.seen[a.S.id] || aimT > 0.8; const txt = known ? `${a.S.ic} ${a.S.name} · ${Math.round(a.dist)} m<small>${a.S.sci}</small>` : `❓ Đang nhận dạng…<small>giữ yên tâm ngắm</small>`; if (lb._t !== txt) lb.innerHTML = lb._t = txt;
-        if (aimT > 0.8) found(a.S); ctx.offer(`📷 Chụp ảnh ${a.S.name}`, () => { shotReq = a.S; }, 8); }
-      else { aim = null; aimT = 0; lb.hidden = true; ctx.offer('🔭 Cất ống nhòm', () => setBino(0), 2); }
+        if (aimT > 0.8) found(a.S); }
+      else { aim = null; aimT = 0; lb.hidden = true; }
       return;
     }
     if ((scanT -= dt) > 0) { if (N._offer) N._offer(); return; } scanT = 0.5; N._offer = null;
-    const p = pl.pos; let nearFeed = null, nearShot = null, nearCnt = null, fd = 3.6, sd = 13;
+    const p = pl.pos; let nearFeed = null, nearCnt = null, fd = 3.6;
     wild.each((S, x, y, z, r, G, A) => {
       const d = Math.hypot(x - p.x, z - p.z), R = 8 + Math.min(13, S.s * 2) + (y - p.y > 6 ? 21 : 0);
       if (d < R && !D.seen[S.id]) found(S);
       if (S.feed && d < fd && (!A || (!A.mom && A.st !== 'sleep'))) { fd = d; nearFeed = { S, G, A }; }
-      if (d < sd && !D.photo[S.id]) { sd = d; nearShot = S; }
       if (d < 16 && G && !G.counted && !D.done.count && !A?.mom && G.S.k === 'w' && wild.groupCount(G) >= 3) nearCnt = G;
       if (A && d < 21) { if (A.st === 'sleep' && !D.obs.sleep && ++sleepSeen > 4) observe('sleep', S); if (A.mom && A.st === 'follow') observe('young', S); if (A.st === 'dust') observe('dust', S); }
       if (!A && G && d < 21) { if (G.S.k === 'p') observe('wire', S); if (G.nest && G.nestPh === 1) observe('feedchick', S); if (G.nest && G.nestPh === 0) observe('brood', S); if ((S.beh || []).includes('dust')) observe('dust', S); }
@@ -225,10 +225,50 @@ export function createNaturalist(ctx) {
       if (pl.frozen) return;
       if (nearFeed) ctx.offer(`🥕 Cho ${nearFeed.S.name.toLowerCase()} ăn`, () => { const { S, G, A } = nearFeed; wild.feed(G, A); const first = !D.fed[S.id]; D.fed[S.id] = 1; save(); found(S); ctx.toast(`🥕 ${S.ic} <b>${S.name}</b> thích ăn <b>${S.feed}</b>! ${first ? 'Từ giờ đàn này quen hơi bạn, không còn sợ nữa.' : ''}<br>Thức ăn trong tự nhiên: ${S.eat}.`, 6000); ctx.sfx && ctx.sfx('ok'); checkQuests(); nearFeed = null; }, 3);
       else if (nearCnt) ctx.offer(`🔢 Đếm đàn ${nearCnt.S.name.toLowerCase()}`, () => askCount(nearCnt), 1);
-      else if (nearShot) ctx.offer(`📷 Chụp ảnh ${nearShot.name}`, () => { shotReq = nearShot; }, 0);
     };
     N._offer();
   };
+  // ───────── 📷 chụp nhanh: chạm 📷 → camera lia + zoom mượt vào con vật gần nhất trong tầm nhìn (khung ngắm, tên loài); chạm lần nữa: chụp vào Sổ tay ─────────
+  const camUI = mk('div', 'natCam', '<b class="lb"></b><button class="x" title="Thoát">✖</button>'); camUI.hidden = true; document.body.appendChild(camUI);
+  const camCss = document.createElement('style'); camCss.textContent = `#natCam{position:fixed;inset:0;z-index:24;pointer-events:none}
+#natCam::before{content:"";position:absolute;left:50%;top:50%;width:min(62vw,55vh);aspect-ratio:1;transform:translate(-50%,-50%);filter:drop-shadow(0 1px 2px #0009);background:linear-gradient(#fffe,#fffe) 0 0/34px 3px no-repeat,linear-gradient(#fffe,#fffe) 0 0/3px 34px no-repeat,linear-gradient(#fffe,#fffe) 100% 0/34px 3px no-repeat,linear-gradient(#fffe,#fffe) 100% 0/3px 34px no-repeat,linear-gradient(#fffe,#fffe) 0 100%/34px 3px no-repeat,linear-gradient(#fffe,#fffe) 0 100%/3px 34px no-repeat,linear-gradient(#fffe,#fffe) 100% 100%/34px 3px no-repeat,linear-gradient(#fffe,#fffe) 100% 100%/3px 34px no-repeat}
+#natCam .lb{position:absolute;left:50%;bottom:calc(50% + min(31vw,27.5vh) + 13px);transform:translateX(-50%);padding:5px 13px;border-radius:21px;background:#1b1626e6;color:#fff;font:700 15px system-ui;white-space:nowrap;text-align:center}#natCam .lb small{display:block;font:italic 12px system-ui;opacity:.85}
+#natCam .x{position:absolute;right:max(13px,env(safe-area-inset-right));top:calc(max(8px,env(safe-area-inset-top)) + 42px);pointer-events:auto;width:42px;height:42px;border-radius:50%;border:2px solid #fff8;background:#1b1626cc;color:#fff;font-size:18px;cursor:pointer}`; document.head.appendChild(camCss);
+  let camOn = null; const _look = new THREE.Vector3(), _tg = new THREE.Vector3(), _cp = new THREE.Vector3();
+  function pickNear() {   // con vật gần nhất đang ở trong khung nhìn (≤ 55 m)
+    let best = null, bs = 1e9; const cp = camera.position;
+    const test = (S, x, y, z, r, G, A) => { _v.set(x, y, z); const dist = _v.distanceTo(cp); if (dist > 55) return; _v.project(camera); if (_v.z > 1 || Math.abs(_v.x) > 1 || Math.abs(_v.y) > 1) return; const sc = dist * (1 + Math.hypot(_v.x, _v.y)); if (sc < bs) { bs = sc; best = { S, G, A, r: r || 1, x, y, z }; } };
+    wild.each(test);
+    if (ctx.animals) for (const A of ctx.animals.list.concat(ctx.animals.flocks || [])) { if (A.root.visible === false) continue; const S = BY.get(A.S.id), q = A.root.position; if (S) test(S, q.x, q.y + 0.4, q.z, 1, null, A); }
+    return best;
+  }
+  function follow() {   // vị trí mới của con đang ngắm (thú di chuyển)
+    const c = camOn; if (c.A && c.A.root) { const q = c.A.root.position; c.x = q.x; c.y = q.y + 0.4; c.z = q.z; return true; }
+    let ok = false, bd = 1e9; wild.each((S, x, y, z, r, G, A) => { if (S !== c.S || (c.A ? A !== c.A : G !== c.G)) return; const d = Math.hypot(x - c.x, z - c.z); if (d < bd) { bd = d; c.x = x; c.y = y; c.z = z; ok = true; } }); return ok;
+  }
+  function setCam(on) {
+    if (on) { const a = !pl.frozen && !ctx.underwater && !binoOn && pickNear(); if (!a) { if (ctx.photo) ctx.photo.enter(); return; }
+      camOn = a; baseFov = camera.fov; _cp.copy(camera.position); camera.getWorldDirection(_look).multiplyScalar(10).add(camera.position); camUI.hidden = false; camBtn && camBtn.classList.add('on'); found(a.S); ctx.sfx && ctx.sfx('ui'); return; }
+    if (!camOn) return; camOn = null; camUI.hidden = true; camBtn && camBtn.classList.remove('on'); camera.fov = baseFov; camera.updateProjectionMatrix(); if (pl.root) pl.root.visible = true;
+  }
+  function stepCam(dt) {
+    if (pl.frozen || ctx.underwater || ctx.mapOpen || !follow()) return setCam(false);
+    const c = camOn, k = Math.min(1, dt * 3.4); _h.set(pl.pos.x, pl.pos.y + 1.75, pl.pos.z);
+    _tg.set(c.x, c.y + Math.min(1.2, c.r * 0.3), c.z); const dist = _tg.distanceTo(_h); if (dist > 89) return setCam(false);
+    // vật cản giữa mắt và con vật (cột đèn, thân cây… = vòng va chạm 2D): đặt camera vượt qua vật cản cuối cùng, cách con vật ≥ 3 m
+    const ex = _tg.x - _h.x, ez = _tg.z - _h.z, L2 = ex * ex + ez * ez; let tb = 0;
+    for (const o of ctx.colliders) { const ox = o.x - _h.x, oz = o.z - _h.z, t = (ox * ex + oz * ez) / L2; if (t <= 0 || t >= 1) continue; const px = ex * t - ox, pz = ez * t - oz, rr = o.r + 0.4; if (px * px + pz * pz < rr * rr) tb = Math.max(tb, t + (o.r + 0.8) / dist); }
+    _h.lerp(_tg, Math.min(tb, Math.max(0, 1 - Math.max(3, c.r * 2.5) / dist))); _h.y = Math.max(_h.y, _tg.y + 0.5);
+    camera.position.copy(_cp.lerp(_h, k)); _look.lerp(_tg, k); camera.lookAt(_look);   // lia mượt về con vật
+    const fov = Math.max(8, Math.min(baseFov, 2 * Math.atan(Math.max(1.2, c.r * 1.6) / _h.distanceTo(_tg)) * 180 / Math.PI)); camera.fov += (fov - camera.fov) * Math.min(1, dt * 2.6); camera.updateProjectionMatrix();
+    camera.updateMatrixWorld(); if (pl.root) pl.root.visible = false;
+    const txt = `${c.S.ic} ${c.S.name} · ${Math.round(dist)} m<small>${c.S.sci} · chạm 📷 để chụp</small>`; const lb = camUI.firstChild; if (lb._t !== txt) lb.innerHTML = lb._t = txt;
+  }
+  camUI.querySelector('.x').onclick = () => setCam(false);
+  const camBtn = document.getElementById('bCam');
+  N.cam = () => { if (camOn) { shotReq = camOn.S; const S = camOn.S; setTimeout(() => { if (camOn && camOn.S === S) setCam(false); }, 618); } else if (binoOn && aim) shotReq = aim.S; else setCam(true); };
+  if (camBtn) camBtn.onclick = N.cam;
+  addEventListener('keydown', e => { if (e.code === 'Escape' && camOn) setCam(false); });
   N.shoot = S => { shotReq = S; };   // chụp ảnh loài S ở khung hình kế tiếp (nút hành động gọi; tools/wild-test.mjs dùng)
   N.open = open; N.close = close; N.setBino = setBino; N.found = found; N.startTrack = startTrack; N.PHI = PHI;
   return N;
