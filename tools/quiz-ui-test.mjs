@@ -20,7 +20,7 @@ await page.waitForFunction(() => window.__island && __island.school && __island.
 await page.waitForTimeout(1500);
 await page.evaluate(() => { const b = document.querySelector('[data-a="guest"]'); if (b && b.offsetParent) b.click(); });
 await page.waitForTimeout(800); console.log('đã nạp');
-page.setDefaultTimeout(8000);
+page.setDefaultTimeout(60000);
 const cdp = TOUCH ? await page.context().newCDPSession(page) : null;
 const T = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts });
 const pos = () => page.evaluate(() => [__island.player.pos.x, __island.player.pos.z]);
