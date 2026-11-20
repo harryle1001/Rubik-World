@@ -43,6 +43,7 @@ const rows = [];
 async function place(name, open, after) {
   if (ESC || (LITE && !['cot-truyen', 'tiet-hoc', 'hai-dang', 'mg-garden', 'mg-caro-goi-y'].includes(name))) return;
   cur = name; const row = { nơi: name };
+  await clearUi();   // lời dẫn / đoạn phim cốt truyện có thể bật bất cứ lúc nào
   try {
     await open(); await qOpen(); await page.waitForTimeout(400);
     Object.assign(row, await geo());
@@ -83,7 +84,7 @@ if (mgKeys.includes('caro')) await place('mg-caro-goi-y', async () => { await mg
 // 8) ✕ Thoát trên HUD của nhiều mini game
 const exits = [];
 for (const k of ESC ? [] : mgKeys.filter(k => __filter(k)).slice(0, LITE ? 3 : 6)) {
-  cur = 'thoát ' + k; const r = { game: k };
+  cur = 'thoát ' + k; const r = { game: k }; await clearUi();
   try { await mgStart(k); await page.waitForTimeout(1800); await tapAt('#mgHud .mg-x'); await page.waitForTimeout(600);
     r.mg = await page.evaluate(() => !!__island.mg.active); r.frozen = await page.evaluate(() => __island.player.frozen); r.q = await page.evaluate(() => !document.getElementById('rwQ').hidden); r.đi_m = await move(); r.OK = !r.mg && !r.frozen && !r.q && r.đi_m > 0.05 ? '✅' : '❌'; }
   catch (e) { r.err = e.message.slice(0, 400); r.OK = '❌'; }
