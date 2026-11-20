@@ -13,7 +13,8 @@ const CN = 64, CM = CS * CN, Q = 32;    // ô/chunk · cạnh chunk (16 m) · l�
 export const LOW = 0.4, HEAD = 1.4;     // vật/mép cao ≤ 0,4 m trên chân: bước qua · đáy vật cao hơn đầu 1,4 m: đi dưới
 const GAP = 1.7 * Q, SCAN = 1.618, BUDGET = CFG.isMobile ? 0.25 : 0.5;   // ms/khung cho việc nền (lập chỉ mục, vẽ chunk)
 // nature-*: cây/đá/bụi của terrain.js đổi bản sao theo khoảng cách người chơi → đã có collider tròn riêng (terrain.js), không quét
-const SKIP_NAME = /^(ground|seafloor|ocean|sky|nature-)|water/i, EMPTY_LO = 32767, EMPTY_HI = -32768;
+// person-*: người (NPC) đứng/ngồi yên vẫn là vật động — không đăng ký
+const SKIP_NAME = /^(ground|seafloor|ocean|sky|nature-|person)|water/i, EMPTY_LO = 32767, EMPTY_HI = -32768;
 const ck = (ci, cj) => (ci + 32768) * 65536 + (cj + 32768);
 
 export function createCollide(ctx) {

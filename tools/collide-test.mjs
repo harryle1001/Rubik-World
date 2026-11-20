@@ -28,7 +28,8 @@ const B = (fn, a) => page.evaluate(fn, a);
 await B(() => {
   const c = __island, C = c.collide, P = c.player, W = c.CFG ? c.CFG.island.waterLevel : 0;
   const T = window.__ct = { ms: 0, frames: 0, drive: null, log: null };
-  T.gt = 0; { const u = P.update; P.update = function (dt) { T.gt += dt; return u.call(this, dt); }; }   // thời gian TRONG GAME (máy thử chậm: dt bị kẹp)
+  T.gt = 0; T.inside = []; { const tp = P.teleport; P.teleport = function (x, z, y) { const r = tp.apply(this, arguments); const p = P.pos; if (C.blocked(p.x, p.z, p.y, sup(p.x, p.z, p.y)) && T.inside.length < 20) T.inside.push({ tp: [x, z, y], st: new Error().stack.split('\n').slice(2, 5).join(' | ') }); return r; }; } { const u = P.update; P.update = function (dt) { T.gt += dt; const px = P.pos.x, pz = P.pos.z, py = P.pos.y, was = C.blocked(px, pz, py, sup(px, pz, py)); const r = u.call(this, dt);
+    const p = P.pos; if (!was && T.inside.length < 20 && C.blocked(p.x, p.z, p.y, sup(p.x, p.z, p.y))) T.inside.push({ from: [px, pz, py], to: [p.x, p.z, p.y], dt, gFrom: sup(px, pz, py), gTo: sup(p.x, p.z, p.y), veh: !!P.vehicle, grounded: P.grounded }); return r; }; }   // thời gian TRONG GAME (máy thử chậm: dt bị kẹp)
   T.msBg = 0; for (const k of ['update', 'resolve', 'camClear']) { const f = C[k]; C[k] = function () { const t = performance.now(); const r = f.apply(this, arguments), d = performance.now() - t; T.ms += d; if (k === 'update') T.msBg += d; return r; }; }
   const sup = (x, z, y = 99) => Math.max(c.terrain.heightAt(x, z), c.groundExtra ? c.groundExtra(x, z, y) : -99);
   T.sup = sup; T.W = W;
@@ -39,8 +40,9 @@ await B(() => {
     const cx = (ci + 0.5) * C.CS, cz = (cj + 0.5) * C.CS; if (!C.blocked(cx, cz, y, g)) continue; const qx = Math.max(ci * C.CS, Math.min(x, ci * C.CS + C.CS)), qz = Math.max(cj * C.CS, Math.min(z, cj * C.CS + C.CS)); best = Math.min(best, Math.hypot(x - qx, z - qz)); }
     for (const q of (c.grid ? c.grid.near(x, z).cols : c.colliders)) best = Math.min(best, Math.hypot(q.x - x, q.z - z) - q.r); return best; };
   // vòng điều khiển: mỗi khung đặt cần điều khiển hướng tới đích (bù góc camera); ghi nhật ký
+  let lastIn = false;
   const loop = () => {
-    T.frames++; const D = T.drive;
+    T.frames++; { const p = P.pos, inn = C.blocked(p.x, p.z, p.y, sup(p.x, p.z, p.y)); if (inn && !lastIn && T.inside.length < 20) T.inside.push({ frame: [p.x, p.z, p.y], veh: !!P.vehicle, frozen: P.frozen, drive: !!T.drive }); lastIn = inn; } const D = T.drive;
     if (D) {
       const p = P.pos; if (D.g0 == null) D.g0 = T.gt; const t = T.gt - D.g0;
       if (D.wx != null && Math.hypot(D.wx - p.x, D.wz - p.z) < 1.2) D.wx = null;
@@ -145,7 +147,7 @@ for (const t of pick) {
   }
   // xuyên = tâm người vượt quá mặt trước vật (s > -rc + 0.05) ; chạm hợp lệ = cách ô chặn ≥ R0 − 0,03
   const through = Math.min(d1.minClear, d2.minClear) < 0.05, tooClose = Math.min(d1.minClear, d2.minClear) < 0.35 - 0.05, stuck = !free;
-  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), path: d2.L > 1 ? d2.path : undefined, bad: d2.bad, path1: AT.length === 2 ? d1.path : undefined, prep: AT.length === 2 ? prep : undefined, wp: d2.L > 1 ? [prep.sx, prep.sz, prep.wx, prep.wz, prep.gx, prep.gz].map(v => +v.toFixed(1)) : undefined, ok: !through && !tooClose && !stuck, through, tooClose, stuck });
+  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), path: d2.L > 1 ? d2.path : undefined, inside: AT.length === 2 ? await B(() => __ct.inside) : undefined, bad: d2.bad, path1: AT.length === 2 ? d1.path : undefined, prep: AT.length === 2 ? prep : undefined, wp: d2.L > 1 ? [prep.sx, prep.sz, prep.wx, prep.wz, prep.gx, prep.gz].map(v => +v.toFixed(1)) : undefined, ok: !through && !tooClose && !stuck, through, tooClose, stuck });
   console.log(JSON.stringify(res[res.length - 1]));
 }
 // chi phí JS/khung khi đi lại (collide.js: quét + nạp chunk + tra va chạm + camera)
