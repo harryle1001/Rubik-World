@@ -156,7 +156,7 @@ export function createCollide(ctx) {
     want.length = 0; const r = Math.ceil(BUILD / CM), pi = Math.floor(P.x / CM), pj = Math.floor(P.z / CM);
     for (let i = pi - r; i <= pi + r; i++) for (let j = pj - r; j <= pj + r; j++) {
       const key = ck(i, j), d = Math.hypot(Math.max(0, Math.abs((i + 0.5) * CM - P.x) - CM / 2), Math.max(0, Math.abs((j + 0.5) * CM - P.z) - CM / 2));
-      if (d <= BUILD && (!chunks.has(key) || dirty.has(key))) want.push(d * 1e12 + key);
+      if (d <= BUILD && (!chunks.has(key) || dirty.has(key))) want.push(Math.floor(d * 16) * 1e10 + key);
     }
     want.sort((a, b) => a - b);
   }
@@ -175,7 +175,7 @@ export function createCollide(ctx) {
         if (indexStep(s, until)) { s.state = 2; pending.shift(); for (const key of s.b.keys()) if (chunks.has(key)) dirty.add(key); }
         continue;
       }
-      let key = -1; while (want.length) { const w = want.shift(), k = w % 1e12; if (!chunks.has(k) || dirty.has(k)) { key = k; break; } }
+      let key = -1; while (want.length) { const w = want.shift(), k = w % 1e10; if (!chunks.has(k) || dirty.has(k)) { key = k; break; } }
       if (key < 0) return;
       dirty.delete(key); newChunk(key);
       const S = byKey.get(key); bjob = { i: 0, list: S ? [...S].filter(s => s.state === 2).map(s => ({ s, key, p: 0 })) : [] };

@@ -28,6 +28,7 @@ const B = (fn, a) => page.evaluate(fn, a);
 await B(() => {
   const c = __island, C = c.collide, P = c.player, W = c.CFG ? c.CFG.island.waterLevel : 0;
   const T = window.__ct = { ms: 0, frames: 0, drive: null, log: null };
+  T.gt = 0; { const u = P.update; P.update = function (dt) { T.gt += dt; return u.call(this, dt); }; }   // thời gian TRONG GAME (máy thử chậm: dt bị kẹp)
   for (const k of ['update', 'resolve', 'camClear']) { const f = C[k]; C[k] = function () { const t = performance.now(); const r = f.apply(this, arguments); T.ms += performance.now() - t; return r; }; }
   const sup = (x, z, y = 99) => Math.max(c.terrain.heightAt(x, z), c.groundExtra ? c.groundExtra(x, z, y) : -99);
   T.sup = sup; T.W = W;
@@ -41,7 +42,7 @@ await B(() => {
   const loop = () => {
     T.frames++; const D = T.drive;
     if (D) {
-      const p = P.pos, now = performance.now(), t = (now - D.t0) / 1000;
+      const p = P.pos; if (D.g0 == null) D.g0 = T.gt; const t = T.gt - D.g0;
       if (D.wx != null && Math.hypot(D.wx - p.x, D.wz - p.z) < 0.7) D.wx = null;
       const tx = D.wx ?? D.gx, tz = D.wz ?? D.gz; let ux = tx - p.x, uz = tz - p.z; const L0 = Math.hypot(ux, uz) || 1; ux /= L0; uz /= L0; const L = Math.hypot(D.gx - p.x, D.gz - p.z);
       if (D.avoid) {   // đi vòng: chậm lại (vướng) → né sang một bên một lúc
