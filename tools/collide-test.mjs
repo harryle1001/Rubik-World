@@ -42,7 +42,7 @@ await B(() => {
   // vòng điều khiển: mỗi khung đặt cần điều khiển hướng tới đích (bù góc camera); ghi nhật ký
   let lastIn = false;
   const loop = () => {
-    T.frames++; { const p = P.pos, inn = C.blocked(p.x, p.z, p.y, sup(p.x, p.z, p.y)); if (inn && !lastIn && T.inside.length < 20) T.inside.push({ frame: [p.x, p.z, p.y], veh: !!P.vehicle, frozen: P.frozen, drive: !!T.drive }); lastIn = inn; } const D = T.drive;
+    T.frames++; { const p = P.pos, inn = C.blocked(p.x, p.z, p.y, sup(p.x, p.z, p.y)); if (inn && !lastIn && T.inside.length < 20) T.inside.push({ frame: [p.x, p.z, p.y], veh: !!P.vehicle, frozen: P.frozen, drive: !!T.drive, src: C.srcAt(p.x, p.z) }); lastIn = inn; } const D = T.drive;
     if (D) {
       const p = P.pos; if (D.g0 == null) D.g0 = T.gt; const t = T.gt - D.g0;
       if (D.wx != null && Math.hypot(D.wx - p.x, D.wz - p.z) < 1.2) D.wx = null;

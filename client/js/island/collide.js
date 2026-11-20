@@ -231,6 +231,8 @@ export function createCollide(ctx) {
     work(BUDGET);
   }
   const stats = () => { let n = 0, q = 0, idx = 0; for (const s of src.values()) { if (s.state === 2) n++; else if (s.state === 1) q++; for (const b of s.b.values()) idx += b.length; } return { chunks: chunks.size, sources: n, queued: q, idx, want: want.length, kb: chunks.size * CN * CN * 8 / 1024 | 0 }; };
+  // gỡ lỗi: nguồn nào đang chiếm chunk chứa (x, z) (tên, cha, số lần đổi)
+  const srcAt = (x, z) => [...(byKey.get(ck(Math.floor(x / CM), Math.floor(z / CM))) || [])].map(s => { const e = s.o.matrixWorld.elements, bs = s.o.geometry.boundingSphere; return [s.o.name || s.o.type, s.o.parent && s.o.parent.name, s.o.isInstancedMesh ? s.o.count : 'm', bs ? +(Math.hypot(e[12] + bs.center.x - x, e[14] + bs.center.z - z) - bs.radius).toFixed(1) : null]; }).filter(r => r[3] === null || r[3] < 3);
   const debugSrc = o => { const s = src.get(o); return s ? { state: s.state, moves: s.moves, keys: s.b.size, dead: dead.has(o) } : { none: true, dead: dead.has(o) }; };
-  return { debugSrc, update, resolve, blocked, camClear, stats, scan, work, plan, cellAt, idx, CS, LOW, HEAD };
+  return { srcAt, debugSrc, update, resolve, blocked, camClear, stats, scan, work, plan, cellAt, idx, CS, LOW, HEAD };
 }
