@@ -15,12 +15,12 @@ page.on('pageerror', e => errors.push('pageerror: ' + e.message));
 await page.addInitScript(() => { try { localStorage.setItem('island.tut', '1'); localStorage.setItem('island.intro', '1'); localStorage.setItem('island.grade', '3'); } catch (e) {} });
 await page.goto('http://localhost:3000/ocean.html');
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready && __island.player.hero, null, { timeout: 300000 });
-await page.locator('#accBox button[data-a="guest"]').first().click({ timeout: 60000 }).catch(() => {});
+await page.locator('#accBox button[data-a="guest"]').first().click({ timeout: 300000 }).catch(() => {});
 await page.waitForTimeout(500); await page.evaluate(() => document.getElementById('accBox') && document.getElementById('accBox').remove());
 await page.evaluate(() => setInterval(() => { if (document.getElementById('stSay') && document.body.classList.contains('st-cut')) dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape', bubbles: true })); }, 400));
 await page.waitForTimeout(9000);
 await page.waitForFunction(() => !document.body.classList.contains('st-cut') && !__island.freeCam, null, { timeout: 20000 }).catch(() => {});
-await page.waitForFunction(() => !__island.player.frozen && !__island.loading.veil, null, { timeout: 60000 }).catch(() => {});
+await page.waitForFunction(() => !__island.player.frozen && !__island.loading.veil, null, { timeout: 300000 }).catch(() => {});
 await page.evaluate(() => Object.defineProperty(__island.sky.state, 'hour', { get: () => 10, set() {}, configurable: true }));
 const B = (fn, a) => page.evaluate(fn, a);
 
@@ -80,6 +80,9 @@ await B(() => {
 await B(() => { window.THREE = window.THREE; });
 const hasThree = await B(() => !!window.THREE);
 if (!hasThree) await B(async () => { window.THREE = await import('three'); });
+// máy thử không GPU: hạ độ phân giải khi chạy, trả lại lúc chụp
+const lowRes = on => B(on => { const c = __island; c.__pr = c.__pr || c.renderer.getPixelRatio(); c.renderer.setPixelRatio(on ? 0.3 : c.__pr); c.post.setSize(innerWidth, innerHeight); }, on);
+await lowRes(true);
 const all = await B(() => __ct.targets());
 // trộn: lấy xoay vòng theo loại để đủ loại + nhiều khu
 const byKind = {}, seenT = new Set(); for (const t of all) { const id = t.name + ':' + t.i + ':' + Math.round(t.x); if (seenT.has(id)) continue; seenT.add(id); (byKind[t.kind] = byKind[t.kind] || []).push(t); }
@@ -123,19 +126,19 @@ for (const t of pick) {
     let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4]) if (__ct.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, p.gy, p.gy)) blk++; return blk > 0; }, [t, prep]);
   if (!ready) { res.push({ ...t, skip: 'vật vừa bị gỡ/nạp lại (vùng đổi cấp chi tiết)' }); continue; }
   await B(([t, p]) => { __ct.drive = { t0: performance.now(), dur: 2.4, gx: t.x, gz: t.z, cx: t.x, cz: t.z, ux: p.ux, uz: p.uz, maxS: -99, minClear: 9, minDist: 99 }; __ct.d1 = __ct.drive; }, [t, prep]);
-  await page.waitForFunction(() => __ct.d1.done, null, { timeout: 60000 });
+  await page.waitForFunction(() => __ct.d1.done, null, { timeout: 300000 });
   const d1 = await B(() => { const d = __ct.d1; return { maxS: d.maxS, minClear: d.minClear, minDist: d.minDist }; });
-  if (shots < 8 && (shots < 4 || res.length % 3 === 0)) { await page.screenshot({ path: `${OUT}/${String(shots + 1).padStart(2, '0')}-${t.kind.replace(/[^a-zà-ỹ]/gi, '')}${sfx}.png` }); shots++; }
+  if (shots < 8 && (shots < 4 || res.length % 3 === 0)) { await lowRes(false); await page.waitForTimeout(600); await page.screenshot({ path: `${OUT}/${String(shots + 1).padStart(2, '0')}-${t.kind.replace(/[^a-zà-ỹ]/gi, '')}${sfx}.png` }); shots++; await lowRes(true); }
   // 2) đi vòng ra sau vật (≤ 9 s)
   await B(([t, p]) => { __ct.drive = { t0: performance.now(), dur: 9, gx: p.gx, gz: p.gz, cx: t.x, cz: t.z, ux: p.ux, uz: p.uz, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0, wx: p.wx, wz: p.wz }; __ct.d2 = __ct.drive; }, [t, prep]);
-  await page.waitForFunction(() => __ct.d2.done, null, { timeout: 60000 });
+  await page.waitForFunction(() => __ct.d2.done, null, { timeout: 300000 });
   const d2 = await B(() => { const d = __ct.d2; return { L: d.L, minClear: d.minClear, path: d.path.filter((_, i) => i % 4 === 0) }; });
   // chưa tới đích: thử 8 hướng × 0,6 s — "kẹt cứng" chỉ khi KHÔNG hướng nào đi được ≥ 0,3 m
   let free = d2.L <= 1.3;
   if (!free) for (let k = 0; k < 8 && !free; k++) {
     const a0 = await B(() => [__island.player.pos.x, __island.player.pos.z]);
     await B(k => { const p = __island.player.pos, a = k * Math.PI / 4; __ct.drive = { dur: 0.6, gx: p.x + Math.cos(a) * 9, gz: p.z + Math.sin(a) * 9, cx: 1e5, cz: 1e5, ux: 0, uz: 1, maxS: -99, minClear: 9, minDist: 99 }; __ct.d3 = __ct.drive; }, k);
-    await page.waitForFunction(() => __ct.d3.done, null, { timeout: 60000 });
+    await page.waitForFunction(() => __ct.d3.done, null, { timeout: 300000 });
     const a1 = await B(() => [__island.player.pos.x, __island.player.pos.z]); if (Math.hypot(a1[0] - a0[0], a1[1] - a0[1]) > 0.3) free = true;
   }
   // xuyên = tâm người vượt quá mặt trước vật (s > -rc + 0.05) ; chạm hợp lệ = cách ô chặn ≥ R0 − 0,03
