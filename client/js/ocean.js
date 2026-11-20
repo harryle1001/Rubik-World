@@ -24,6 +24,7 @@ import { createSilverBoard } from './island/silver-board.js';
 import { KINDS } from './island/characters.js';
 import { loadModel } from './island/models.js';
 import { createPhysics } from './island/physics.js';
+import { createCollide } from './island/collide.js';
 import { createWeather } from './island/weather.js';
 import { createEasterEggs } from './island/easter-eggs.js';
 import { zenNoPlant } from './island/zone-zen.js';
@@ -138,6 +139,7 @@ const spells = ctx.spells = createSpellbook(ctx, academy.magic); // đũa phép 
 const train = ctx.train = createTrain(ctx); // Tàu Pha Lê: tàu hơi nước từ ga bờ tây bắc qua đảo Đồi Thông, hầm, cầu cạn vòm đá tới cao nguyên Học viện
 const regions = ctx.regions = createRegions(ctx); // 4 vùng mới: Núi Tuyết (cầu), Làng Cổ (cầu), Quần đảo San Hô (thuyền), Thành phố Tương lai (thuyền + đường băng) — tải theo chunk
 const lighthouse = ctx.lighthouse = createLighthouse(ctx); // Hải đăng Mũi Sóng: đảo đá tây nam 233 m ngoài khơi, tháp 34 m đi vào được (144 bậc), chùm sáng quét đêm, ông Bảy gác đèn
+ctx.collide = createCollide(ctx); // lưới va chạm chung mọi vật tĩnh (collide.js)
 const physics = ctx.physics = createPhysics(ctx); // va chạm + đồ vật lăn/đẩy được (bóng, thùng, đá)
 const weather = ctx.weather = createWeather(ctx); // nắng, mây, mưa, giông, sương, gió, cầu vồng
 const eggs = ctx.eggs = createEasterEggs(ctx); // 21 bí mật: khối Rubik vàng, pháo hoa π, cá voi, Tháp Hà Nội… (📖 Sổ bí mật)
@@ -229,6 +231,7 @@ renderer.setAnimationLoop(() => {
   if (ctx.photoMode) { photo.update(dt); post.render(); stats.frame(); return; }   // 📷 chụp ảnh: thế giới đứng yên, chỉ camera tự do
   if (!ctx.freeCam) player.update(dt); // freeCam: camera tự do để gỡ lỗi
   physics.update(dt);
+  ctx.collide.update(dt);
   terrain.update(dt, clock.elapsedTime, player.pos);
   temples.update(dt, clock.elapsedTime);
   audio.update(dt, { night: sky.state.night, school: !!ctx.schoolHours });
