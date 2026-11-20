@@ -92,7 +92,7 @@ for (const k of ESC ? [] : mgKeys.filter(k => __filter(k)).slice(0, LITE ? 3 : 6
 function __filter(k) { return ['rubik', 'caro', 'garden', 'library', 'fishing', 'quiz'].includes(k); }
 // Esc trên máy tính
 console.log('Lỗi console tới đây:', errors.length);
-if (!TOUCH) { cur = 'esc'; await page.evaluate(() => __island.learn.askSet({ s: ['toan'], n: 1 })); await qOpen(); await page.keyboard.press('Escape'); await page.waitForTimeout(300); rows.push({ nơi: 'esc-learn', closed: await page.evaluate(() => !!document.getElementById('rwQ').hidden), frozen: await page.evaluate(() => __island.player.frozen), đi_m: await move() }); }
+if (!TOUCH) { cur = 'esc'; await page.evaluate(() => { __island.learn.askSet({ s: ['toan'], n: 1 }); }); await qOpen(); await page.keyboard.press('Escape'); await page.waitForTimeout(300); rows.push({ nơi: 'esc-learn', closed: await page.evaluate(() => !!document.getElementById('rwQ').hidden), frozen: await page.evaluate(() => __island.player.frozen), đi_m: await move() }); }
 console.log('ESC', JSON.stringify(rows.at(-1))); console.table(rows); console.table(exits);
 console.log('Lỗi console:', errors.length ? errors : 'không có');
 await browser.close();
