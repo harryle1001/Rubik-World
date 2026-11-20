@@ -118,7 +118,8 @@ await ev(() => __island.vehicles.riding && __island.vehicles.toggleBike()); awai
 await spot('Khinh khí cầu', `c.vehicles.toggleBalloon()`, { wait: 8000, walkS: 3, snap: true });
 rows.at(-1).balloon = await ev(() => !!(__island.vehicles.riding && __island.player.vehicle));
 await ev(() => __island.vehicles.riding && __island.vehicles.toggleBalloon()); await T(6000);
-// ---------- 4. Máy bay ----------
+// ---------- 4. Máy bay (chỉ bản máy tính: điện thoại máy ảo quá chậm để tự lái về đường băng) ----------
+if (!MOBILE) {
 const air = L.extra[Object.keys(L.extra).find(k => k.startsWith('K'))];
 await spot('Máy bay cất cánh', `p.vehicle=null; p.teleport(${air}); setTimeout(()=>c.aircraft.board(),800)`, { wait: 14000, walkS: 0, snap: true });
 rows.at(-1).plane = await ev(() => ({ flying: __island.aircraft.flying, phase: __island.aircraft.phase, y: Math.round(__island.player.pos.y) }));
@@ -142,6 +143,7 @@ if (landed) landed.secs = Math.round((Date.now() - tL) / 1000);
 log('Hạ cánh:', JSON.stringify(landed)); rows.push({ name: 'Máy bay hạ cánh', ...landed });
 if (landed && landed.flying) { notes.push(`Máy bay không đáp được sau ${landed.secs} s (${JSON.stringify(landed)})`); await ev(() => __island.aircraft.eject()); await T(3000); }
 rows.at(-1).afterPlane = await ev(() => ({ flying: __island.aircraft.flying, veh: !!__island.player.vehicle }));
+}
 // ---------- 5. Mini game ----------
 const mg = [];
 const keys = await ev(() => { const G = __island.miniGames || {}, seen = new Set(), out = []; for (const [k, g] of Object.entries(G)) { if (seen.has(g)) continue; seen.add(g); out.push(k); } return out; }) || [];
@@ -169,12 +171,15 @@ if (!tr.aboard) { // tới gần sân ga A rồi lên lại
   await ev(() => { const r = __island.train.ride; const c = __island.train.consist.cars[2]; if (c && c.group) __island.player.teleport(c.group.position.x + 3, c.group.position.z); r.board(); }); await T(3000);
   tr.aboard = await ev(() => __island.train.ride.state.aboard);
 }
-await shot('tau-len'); await reset();
-await ev(() => __island.train.ride.depart()); await T(5000);
-tr.run = await measure(); await shot('tau-chay');
-await ev(() => __island.train.ride.seek(142)); await T(9000);
-tr.after = await ev(() => ({ at: __island.train.ride.state.at, aboard: __island.train.ride.state.aboard, phase: __island.train.ride.state.phase, zone: __island.zoneAt ? __island.zoneAt(__island.player.pos.x, __island.player.pos.z) : null, pos: __island.player.pos.toArray().map(Math.round) }));
-if (tr.after && tr.after.aboard) { await ev(() => __island.train.ride.alight()); await T(3000); tr.after2 = await ev(() => ({ aboard: __island.train.ride.state.aboard, pos: __island.player.pos.toArray().map(Math.round) })); }
+await shot('tau-len');
+// chế độ online: máy chủ điều độ giờ khởi hành (~13 s) → chờ như người chơi, rồi bấm "⏭ Tới nơi"
+const trS = () => ev(() => { const r = __island.train.ride, s = r.state; return { at: s.at, phase: s.phase, aboard: s.aboard, online: !!(r.net && r.net.online) }; });
+for (let i = 0; i < 40; i++) { await ev(() => __island.train.ride.depart()); const q = await trS(); if (q && q.phase === 'run') break; await T(1500); }
+tr.dep = await trS(); await reset(); await T(5000); tr.run = await measure(); await shot('tau-chay');
+await ev(() => { const b = [...document.querySelectorAll('button')].find(b => b.offsetParent && /Tới nơi/.test(b.textContent)); if (b) b.click(); __island.train.ride.seek(142); });
+for (let i = 0; i < 40; i++) { await T(1500); const q = await trS(); if (q && q.at === 'B' && !q.aboard) break; }
+tr.after = await ev(() => ({ ...(({ at, aboard, phase }) => ({ at, aboard, phase }))(__island.train.ride.state), zone: __island.zoneAt ? __island.zoneAt(__island.player.pos.x, __island.player.pos.z) : null, pos: __island.player.pos.toArray().map(Math.round) }));
+if (!tr.after || tr.after.at !== 'B' || tr.after.aboard) notes.push('Tàu Pha Lê không tới/không xuống được ga Học viện: ' + JSON.stringify(tr.after));
 log('Tàu:', JSON.stringify(tr));
 await spot('Ga Học viện (xuống tàu, đi bộ)', ``, { wait: 500, snap: false });
 // ---------- 8. Học viện: cổng, sân, đại sảnh, phố, rừng, nhà ----------
