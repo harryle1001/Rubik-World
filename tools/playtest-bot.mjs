@@ -161,7 +161,9 @@ for (const k of QUICK ? keys.slice(0, 3) : keys) {
   if (mg.length === 0 || mg.length % 8 === 0) await shot('mg-' + k);
   await ev(() => __island.mg.exit(true)); await T(700);
   const left = await ev(() => ({ active: !!__island.mg.active, frozen: __island.player.frozen }));
-  mg.push({ k, ok, act, calls: m && m.calls, ms: m && m.ms, exit: left && !left.active && !left.frozen, err: errors.length - e0 });
+  const sbStuck = await ev(() => { const sb = __island.silverBoard; if (!sb || !sb.riding) return false; const before = __island.player.pos.toArray(); __island.player.teleport(before[0] + 30, before[2]); return true; });
+  if (sbStuck) { await T(1200); const moved = await ev(() => __island.player.pos.x); notes.push(`Sau "${k}": vẫn cưỡi ván bạc → dịch chuyển/🏫 Đến trường bị huỷ (x=${Math.round(moved)})`); await ev(() => { const sb = __island.silverBoard; (sb.leave || sb.toggle)(); }); await T(1500); }
+  mg.push({ k, ok, act, sbStuck, calls: m && m.calls, ms: m && m.ms, exit: left && !left.active && !left.frozen, err: errors.length - e0 });
 }
 log('Mini game:', mg.length, 'lỗi mở:', mg.filter(r => !r.ok).map(r => r.k).join(','), 'kẹt thoát:', mg.filter(r => !r.exit).map(r => r.k).join(','));
 await ev(() => { if (__island.player.frozen && __island.mg && __island.mg.active) __island.mg.exit(true); });
