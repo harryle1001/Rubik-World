@@ -42,9 +42,10 @@ await B(() => {
     T.frames++; const D = T.drive;
     if (D) {
       const p = P.pos, now = performance.now(), t = (now - D.t0) / 1000;
-      let ux = D.gx - p.x, uz = D.gz - p.z; const L = Math.hypot(ux, uz) || 1; ux /= L; uz /= L;
+      if (D.wx != null && Math.hypot(D.wx - p.x, D.wz - p.z) < 0.7) D.wx = null;
+      const tx = D.wx ?? D.gx, tz = D.wz ?? D.gz; let ux = tx - p.x, uz = tz - p.z; const L0 = Math.hypot(ux, uz) || 1; ux /= L0; uz /= L0; const L = Math.hypot(D.gx - p.x, D.gz - p.z);
       if (D.avoid) {   // đi vòng: chậm lại (vướng) → né sang một bên một lúc
-        const v = Math.hypot(P.vel.x, P.vel.z); if (v < 1 && t > 0.4) D.side = 0.9; if (D.side > 0) { D.side -= 1 / 60; const px = -uz * D.s, pz = ux * D.s; ux += px * 1.6; uz += pz * 1.6; const l = Math.hypot(ux, uz); ux /= l; uz /= l; }
+        const v = Math.hypot(P.vel.x, P.vel.z); if (v < 1 && t > 0.4 && D.side <= 0) D.side = 0.9; if (D.side > 0) { D.side -= 1 / 60; const px = -uz * D.s, pz = ux * D.s; ux += px * 1.6; uz += pz * 1.6; const l = Math.hypot(ux, uz); ux /= l; uz /= l; }
       }
       const y = c.player.cam.yaw; P.input.x = Math.cos(y) * ux - Math.sin(y) * uz; P.input.z = Math.sin(y) * ux + Math.cos(y) * uz;
       const s = (p.x - D.cx) * D.ux + (p.z - D.cz) * D.uz, cl = T.clear(p.x, p.z, p.y);
@@ -89,22 +90,25 @@ for (const t of pick) {
     const c = __island, C = c.collide, T = __ct, P = c.player;
     P.vehicle && c.vehicles && c.vehicles.exit && c.vehicles.exit();
     const gy = T.sup(t.x, t.z); if (!(gy > T.W + 0.3)) return { skip: 'dưới nước' };
-    P.teleport(t.x + 7, t.z + 7); await new Promise(r => setTimeout(r, 3600)); for (let k = 0; k < 6; k++) { C.plan(); C.work(400); await new Promise(r => setTimeout(r, 30)); }
+    P.teleport(t.x + 7, t.z + 7); C.scan(); await new Promise(r => setTimeout(r, 300)); C.scan(); for (let k = 0; k < 6; k++) { C.plan(); C.work(400); await new Promise(r => setTimeout(r, 30)); }
     // vật có chặn không (ô chặn trong 0,7 m quanh tâm)
     let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4, 0.7]) if (T.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, gy, gy)) blk++;
     if (!blk) return { skip: 'không có ô chặn (vật thấp ≤ 0,4 m hoặc chưa nạp)', gy };
     // bán kính vật theo hướng: chọn hướng tiếp cận mà đường tới & điểm sau lưng vật đều trống, mặt đất phẳng
     for (let k = 0; k < 16; k++) {
       const a = k * Math.PI / 8 + 0.2, ux = Math.cos(a), uz = Math.sin(a);
-      let rc = 0; for (let r = 0; r < 3; r += 0.1) if (T.blk(t.x - ux * r, t.z - uz * r, gy, gy)) rc = r;   // mép vật phía người tới
-      let rb = 0; for (let r = 0; r < 3; r += 0.1) if (T.blk(t.x + ux * r, t.z + uz * r, gy, gy)) rb = r;
+      let rc = 0; for (let r = 0; r < 3; r += 0.1) { if (T.blk(t.x - ux * r, t.z - uz * r, gy, gy)) rc = r; else if (r > rc + 0.3 && rc > 0) break; }   // mép vật phía người tới (vùng chặn liền tâm)
+      let rb = 0; for (let r = 0; r < 3; r += 0.1) { if (T.blk(t.x + ux * r, t.z + uz * r, gy, gy)) rb = r; else if (r > rb + 0.3 && rb > 0) break; }
       const s0 = rc + 3.2, sx = t.x - ux * s0, sz = t.z - uz * s0, gx = t.x + ux * (rb + 2.2), gz = t.z + uz * (rb + 2.2);
       let ok = true;
       for (let r = rc + 0.6; r <= s0 && ok; r += 0.2) { const x = t.x - ux * r, z = t.z - uz * r, h = T.sup(x, z, gy + 0.5); if (Math.abs(h - gy) > 0.35 || T.clear(x, z, h) < 0.45) ok = false; }
       if (!ok) continue; const hg = T.sup(gx, gz, gy + 0.5); if (Math.abs(hg - gy) > 0.35 || T.clear(gx, gz, hg) < 0.5) continue;
       // không có vật cản cũ (cols/boxes) chắn trên đường
-      // tự đi vòng: có lối bên trái hoặc phải (≤ rc + 1.8 m)
-      return { sx, sz, gx, gz, ux, uz, rc, rb, gy };
+      // lối vòng: điểm bên trái hoặc phải vật (cách tâm max(rc, rb) + 1,3 m) trống, phẳng
+      let wx = null, wz = null; const rs = Math.max(rc, rb, 0.4) + 1.3;
+      for (const sd of [1, -1]) { const x = t.x - uz * sd * rs, z = t.z + ux * sd * rs, h = T.sup(x, z, gy + 0.5); if (Math.abs(h - gy) < 0.35 && T.clear(x, z, h) > 0.5) { wx = x; wz = z; break; } }
+      if (wx === null) continue;
+      return { sx, sz, gx, gz, wx, wz, ux, uz, rc, rb, gy };
     }
     return { skip: 'không tìm được hướng tiếp cận trống', gy };
   }, t);
@@ -117,7 +121,7 @@ for (const t of pick) {
   const d1 = await B(() => { const d = __ct.d1; return { maxS: d.maxS, minClear: d.minClear, minDist: d.minDist }; });
   if (shots < 8 && (shots < 4 || res.length % 3 === 0)) { await page.screenshot({ path: `${OUT}/${String(shots + 1).padStart(2, '0')}-${t.kind.replace(/[^a-zà-ỹ]/gi, '')}${sfx}.png` }); shots++; }
   // 2) đi vòng ra sau vật (≤ 9 s)
-  await B(([t, p]) => { __ct.drive = { t0: performance.now(), dur: 9, gx: p.gx, gz: p.gz, cx: t.x, cz: t.z, ux: p.ux, uz: p.uz, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0 }; __ct.d2 = __ct.drive; }, [t, prep]);
+  await B(([t, p]) => { __ct.drive = { t0: performance.now(), dur: 9, gx: p.gx, gz: p.gz, cx: t.x, cz: t.z, ux: p.ux, uz: p.uz, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0, wx: p.wx, wz: p.wz }; __ct.d2 = __ct.drive; }, [t, prep]);
   await page.waitForFunction(() => __ct.d2.done, null, { timeout: 60000 });
   const d2 = await B(() => { const d = __ct.d2; return { L: d.L, minClear: d.minClear }; });
   // xuyên = tâm người vượt quá mặt trước vật (s > -rc + 0.05) ; chạm hợp lệ = cách ô chặn ≥ R0 − 0,03

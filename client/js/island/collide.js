@@ -18,7 +18,7 @@ const ck = (ci, cj) => (ci + 32768) * 65536 + (cj + 32768);
 
 export function createCollide(ctx) {
   const chunks = new Map(), dirty = new Set(), byKey = new Map(), src = new Map(), dead = new WeakSet(), local = new WeakMap();
-  let scanT = 0.5, scanId = 0, clipKey = -1, lastKey = -1, lastCh = null;
+  let scanId = 0, clipKey = -1, lastKey = -1, lastCh = null;
   const _m = new THREE.Matrix4(), _w = new THREE.Matrix4(), stack = [];
 
   // ---------- ghi 1 đoạn độ cao vào ô (x, z) ----------
@@ -142,6 +142,11 @@ export function createCollide(ctx) {
       if (s.state === 0) { s.state = 1; s.ti = 0; pending.push(s); }   // đứng yên qua 2 lần quét → lập chỉ mục
     }
     for (const s of src.values()) if (s.seen !== scanId) { if (s.state) unregister(s); src.delete(s.o); }   // đã gỡ khỏi cảnh / bị ẩn
+    // nguồn chờ lập chỉ mục: gần người chơi trước
+    const P = ctx.player && ctx.player.pos;
+    if (P && pending.length > 1) { for (const q of pending) { const e = q.o.matrixWorld.elements, g = q.o.geometry; if (!g.boundingSphere) g.computeBoundingSphere();
+      q.d = q.o.isInstancedMesh ? 0 : Math.max(0, Math.hypot(e[12] + g.boundingSphere.center.x - P.x, e[14] + g.boundingSphere.center.z - P.z) - g.boundingSphere.radius * Math.hypot(e[0], e[1], e[2])); }
+      pending.sort((a, b) => a.d - b.d); }
   }
   // nạp chunk trong BUILD m quanh người chơi (gần trước), bỏ chunk xa hơn DROP m
   const BUILD = 40, DROP = 72, want = [];
@@ -215,13 +220,13 @@ export function createCollide(ctx) {
     }
     return dist;
   }
-  let planT = 0;
-  function update(dt) {
-    scanT -= dt; if (scanT <= 0) { scanT = SCAN; scan(); return; }
-    if ((planT -= dt) <= 0) { planT = 0.25; plan(); }
+  let nextScan = 0, nextPlan = 0;
+  function update() {   // theo đồng hồ thật (không theo dt bị kẹp khi khung chậm)
+    const now = performance.now();
+    if (now >= nextScan) { nextScan = now + (nextScan ? SCAN * 1000 : 500); scan(); return; }
+    if (now >= nextPlan) { nextPlan = now + 250; plan(); }
     work(BUDGET);
   }
-  const stats = () => { let n = 0, q = 0, idx = 0; for (const s of src.values()) { if (s.state === 2) n++; else if (s.state === 1) q++; for (const b of s.b.values()) idx += b.length; } return { chunks: chunks.size, sources: n, queued: q, idx, want: want.length, kb: chunks.size * CN * CN * 8 / 1024 | 0 }; };
   const debugSrc = o => { const s = src.get(o); return s ? { state: s.state, moves: s.moves, keys: s.b.size, dead: dead.has(o) } : { none: true, dead: dead.has(o) }; };
   return { debugSrc, update, resolve, blocked, camClear, stats, scan, work, plan, cellAt, idx, CS, LOW, HEAD };
 }
