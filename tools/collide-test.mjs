@@ -98,7 +98,7 @@ for (const t of pick) {
     const c = __island, C = c.collide, T = __ct, P = c.player;
     P.vehicle && c.vehicles && c.vehicles.exit && c.vehicles.exit();
     const gy = T.sup(t.x, t.z); if (!(gy > T.W + 0.3)) return { skip: 'dưới nước' };
-    P.teleport(t.x + 7, t.z + 7); await new Promise(r => setTimeout(r, 2500)); C.scan(); await new Promise(r => setTimeout(r, 300)); C.scan(); for (let k = 0; k < 6; k++) { C.plan(); C.work(400); await new Promise(r => setTimeout(r, 30)); }
+    P.teleport(t.x + 7, t.z + 7, T.sup(t.x + 7, t.z + 7)); await new Promise(r => setTimeout(r, 2500)); C.scan(); await new Promise(r => setTimeout(r, 300)); C.scan(); for (let k = 0; k < 6; k++) { C.plan(); C.work(400); await new Promise(r => setTimeout(r, 30)); }
     // vật có chặn không (ô chặn trong 0,7 m quanh tâm)
     let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4, 0.7]) if (T.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, gy, gy)) blk++;
     if (!blk) return { skip: 'không có ô chặn (vật thấp ≤ 0,4 m hoặc chưa nạp)', gy };
@@ -122,7 +122,7 @@ for (const t of pick) {
   }, t);
   if (prep.skip) { res.push({ ...t, skip: prep.skip }); continue; }
   // 1) chạy thẳng vào vật 2,4 s
-  const ready = await B(async ([t, p]) => { const c = __island, P = c.player, C = c.collide; P.teleport(p.sx, p.sz); P.setRot(Math.atan2(p.ux, p.uz)); c.player.cam.yaw = Math.atan2(-p.ux, -p.uz); c.player.snapCamera();
+  const ready = await B(async ([t, p]) => { const c = __island, P = c.player, C = c.collide; P.teleport(p.sx, p.sz, __ct.sup(p.sx, p.sz, p.gy + 0.5)); P.setRot(Math.atan2(p.ux, p.uz)); c.player.cam.yaw = Math.atan2(-p.ux, -p.uz); c.player.snapCamera();
     await new Promise(r => setTimeout(r, 400)); C.scan(); await new Promise(r => setTimeout(r, 200)); C.scan(); for (let k = 0; k < 4; k++) { C.plan(); C.work(300); }
     let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4]) if (__ct.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, p.gy, p.gy)) blk++; if (!blk) return false; for (let r = p.rc + 0.6; r <= p.rc + 3.2; r += 0.2) if (__ct.clear(t.x - p.ux * r, t.z - p.uz * r, p.gy) < 0.45) return 'path'; return true; }, [t, prep]);
   if (ready === 'path') { res.push({ ...t, skip: 'đường tiếp cận bị vật khác chắn (sau khi nạp đủ)' }); continue; }
@@ -145,12 +145,12 @@ for (const t of pick) {
   }
   // xuyên = tâm người vượt quá mặt trước vật (s > -rc + 0.05) ; chạm hợp lệ = cách ô chặn ≥ R0 − 0,03
   const through = Math.min(d1.minClear, d2.minClear) < 0.05, tooClose = Math.min(d1.minClear, d2.minClear) < 0.35 - 0.05, stuck = !free;
-  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), path: d2.L > 1 ? d2.path : undefined, bad: d2.bad, wp: d2.L > 1 ? [prep.sx, prep.sz, prep.wx, prep.wz, prep.gx, prep.gz].map(v => +v.toFixed(1)) : undefined, ok: !through && !tooClose && !stuck, through, tooClose, stuck });
+  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), path: d2.L > 1 ? d2.path : undefined, bad: d2.bad, path1: AT.length === 2 ? d1.path : undefined, prep: AT.length === 2 ? prep : undefined, wp: d2.L > 1 ? [prep.sx, prep.sz, prep.wx, prep.wz, prep.gx, prep.gz].map(v => +v.toFixed(1)) : undefined, ok: !through && !tooClose && !stuck, through, tooClose, stuck });
   console.log(JSON.stringify(res[res.length - 1]));
 }
 // chi phí JS/khung khi đi lại (collide.js: quét + nạp chunk + tra va chạm + camera)
 const cost = await B(async () => { const T = __ct, P = __island.player, wait = gs => new Promise(r => { const g0 = T.gt, f = () => T.gt - g0 >= gs ? r() : setTimeout(f, 100); f(); });
-  P.teleport(-65, 9); await wait(1); const C = __island.collide; for (let k = 0; k < 40; k++) { C.scan(); C.plan(); C.work(500); }   // khu này đã nạp xong (như sau vài giây chơi)
+  P.teleport(-65, 9, T.sup(-65, 9)); await wait(1); const C = __island.collide; for (let k = 0; k < 40; k++) { C.scan(); C.plan(); C.work(500); }   // khu này đã nạp xong (như sau vài giây chơi)
   const m = () => ({ total: +(T.ms / T.frames).toFixed(4), lookup: +((T.ms - T.msBg) / T.frames).toFixed(4), background: +(T.msBg / T.frames).toFixed(4), frames: T.frames });
   T.ms = T.msBg = 0; T.frames = 0; await wait(4); const idle = m();
   T.ms = T.msBg = 0; T.frames = 0; T.drive = { dur: 8, gx: -65, gz: 60, cx: 1e5, cz: 1e5, ux: 0, uz: 1, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0 }; await wait(8); const walk = m();
