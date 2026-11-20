@@ -29,7 +29,7 @@ await B(() => {
   const c = __island, C = c.collide, P = c.player, W = c.CFG ? c.CFG.island.waterLevel : 0;
   const T = window.__ct = { ms: 0, frames: 0, drive: null, log: null };
   T.gt = 0; { const u = P.update; P.update = function (dt) { T.gt += dt; return u.call(this, dt); }; }   // thời gian TRONG GAME (máy thử chậm: dt bị kẹp)
-  for (const k of ['update', 'resolve', 'camClear']) { const f = C[k]; C[k] = function () { const t = performance.now(); const r = f.apply(this, arguments); T.ms += performance.now() - t; return r; }; }
+  T.msBg = 0; for (const k of ['update', 'resolve', 'camClear']) { const f = C[k]; C[k] = function () { const t = performance.now(); const r = f.apply(this, arguments), d = performance.now() - t; T.ms += d; if (k === 'update') T.msBg += d; return r; }; }
   const sup = (x, z, y = 99) => Math.max(c.terrain.heightAt(x, z), c.groundExtra ? c.groundExtra(x, z, y) : -99);
   T.sup = sup; T.W = W;
   // chặn = ô lưới collide.js HOẶC vòng tròn cũ ctx.colliders (cây terrain.js…) — đúng những gì player.js dùng
@@ -50,7 +50,7 @@ await B(() => {
       }
       const y = c.player.cam.yaw; P.input.x = Math.cos(y) * ux - Math.sin(y) * uz; P.input.z = Math.sin(y) * ux + Math.cos(y) * uz;
       // khoảng hở nhỏ nhất dọc đoạn đi được giữa 2 khung (bắt cả trường hợp "nhảy cóc" qua vật khi khung chậm)
-      let cl = 9; const lx = D.lx ?? p.x, lz = D.lz ?? p.z, sn = Math.max(1, Math.ceil(Math.hypot(p.x - lx, p.z - lz) / 0.1)); for (let k = 1; k <= sn; k++) cl = Math.min(cl, T.clear(lx + (p.x - lx) * k / sn, lz + (p.z - lz) * k / sn, p.y)); D.lx = p.x; D.lz = p.z;
+      let cl = 9; const lx = D.lx ?? p.x, lz = D.lz ?? p.z, sn = Math.max(1, Math.ceil(Math.hypot(p.x - lx, p.z - lz) / 0.1)); for (let k = 1; k <= sn; k++) cl = Math.min(cl, T.clear(lx + (p.x - lx) * k / sn, lz + (p.z - lz) * k / sn, p.y)); D.lx = p.x; D.lz = p.z; if (cl < 0.05 && !D.bad) { const C = c.collide, ci = Math.floor(p.x / C.CS), cj = Math.floor(p.z / C.CS), A = C.cellAt(ci, cj), i = C.idx(ci, cj); D.bad = { x: p.x, z: p.z, y: p.y, g: T.sup(p.x, p.z, p.y), terr: c.terrain.heightAt(p.x, p.z), cell: A ? [A[i] / 32, A[i + 1] / 32, A[i + 2] / 32, A[i + 3] / 32] : null, vy: P.vy, grounded: P.grounded, cols: (c.grid ? c.grid.near(p.x, p.z).cols : []).filter(q => Math.hypot(q.x - p.x, q.z - p.z) < q.r + 0.1) }; }
       (D.path = D.path || []).length < 400 && D.path.push([+p.x.toFixed(2), +p.z.toFixed(2)]);
       const s = (p.x - D.cx) * D.ux + (p.z - D.cz) * D.uz;
       D.maxS = Math.max(D.maxS, s); D.minClear = Math.min(D.minClear, cl); D.minDist = Math.min(D.minDist, Math.hypot(p.x - D.cx, p.z - D.cz));
@@ -86,7 +86,8 @@ await lowRes(true);
 const all = await B(() => __ct.targets());
 // trộn: lấy xoay vòng theo loại để đủ loại + nhiều khu
 const byKind = {}, seenT = new Set(); for (const t of all) { const id = t.name + ':' + t.i + ':' + Math.round(t.x); if (seenT.has(id)) continue; seenT.add(id); (byKind[t.kind] = byKind[t.kind] || []).push(t); }
-const pick = []; for (let r = 0; pick.length < N * 3 && r < 12; r++) for (const k in byKind) if (byKind[k][r]) pick.push(byKind[k][r]);
+const AT = (process.argv.find(a => a.startsWith('--at=')) || '').slice(5).split(',').map(Number);
+const pick = AT.length === 2 ? all.filter(t => Math.hypot(t.x - AT[0], t.z - AT[1]) < 0.5).slice(0, 1) : []; if (!pick.length) for (let r = 0; pick.length < N * 3 && r < 12; r++) for (const k in byKind) if (byKind[k][r]) pick.push(byKind[k][r]);
 console.log('vật tìm được:', all.length, Object.keys(byKind).map(k => k + '×' + byKind[k].length).join(' '));
 
 const res = []; let shots = 0;
@@ -123,16 +124,17 @@ for (const t of pick) {
   // 1) chạy thẳng vào vật 2,4 s
   const ready = await B(async ([t, p]) => { const c = __island, P = c.player, C = c.collide; P.teleport(p.sx, p.sz); P.setRot(Math.atan2(p.ux, p.uz)); c.player.cam.yaw = Math.atan2(-p.ux, -p.uz); c.player.snapCamera();
     await new Promise(r => setTimeout(r, 400)); C.scan(); await new Promise(r => setTimeout(r, 200)); C.scan(); for (let k = 0; k < 4; k++) { C.plan(); C.work(300); }
-    let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4]) if (__ct.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, p.gy, p.gy)) blk++; return blk > 0; }, [t, prep]);
+    let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4]) if (__ct.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, p.gy, p.gy)) blk++; if (!blk) return false; for (let r = p.rc + 0.6; r <= p.rc + 3.2; r += 0.2) if (__ct.clear(t.x - p.ux * r, t.z - p.uz * r, p.gy) < 0.45) return 'path'; return true; }, [t, prep]);
+  if (ready === 'path') { res.push({ ...t, skip: 'đường tiếp cận bị vật khác chắn (sau khi nạp đủ)' }); continue; }
   if (!ready) { res.push({ ...t, skip: 'vật vừa bị gỡ/nạp lại (vùng đổi cấp chi tiết)' }); continue; }
   await B(([t, p]) => { __ct.drive = { t0: performance.now(), dur: 2.4, gx: t.x, gz: t.z, cx: t.x, cz: t.z, ux: p.ux, uz: p.uz, maxS: -99, minClear: 9, minDist: 99 }; __ct.d1 = __ct.drive; }, [t, prep]);
   await page.waitForFunction(() => __ct.d1.done, null, { timeout: 300000 });
-  const d1 = await B(() => { const d = __ct.d1; return { maxS: d.maxS, minClear: d.minClear, minDist: d.minDist }; });
+  const d1 = await B(() => { const d = __ct.d1; return { maxS: d.maxS, minClear: d.minClear, minDist: d.minDist, path: d.path }; });
   if (shots < 8 && (shots < 4 || res.length % 3 === 0)) { await lowRes(false); await page.waitForTimeout(600); await page.screenshot({ path: `${OUT}/${String(shots + 1).padStart(2, '0')}-${t.kind.replace(/[^a-zà-ỹ]/gi, '')}${sfx}.png` }); shots++; await lowRes(true); }
   // 2) đi vòng ra sau vật (≤ 9 s)
   await B(([t, p]) => { __ct.drive = { t0: performance.now(), dur: 9, gx: p.gx, gz: p.gz, cx: t.x, cz: t.z, ux: p.ux, uz: p.uz, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0, wx: p.wx, wz: p.wz }; __ct.d2 = __ct.drive; }, [t, prep]);
   await page.waitForFunction(() => __ct.d2.done, null, { timeout: 300000 });
-  const d2 = await B(() => { const d = __ct.d2; return { L: d.L, minClear: d.minClear, path: d.path.filter((_, i) => i % 4 === 0) }; });
+  const d2 = await B(() => { const d = __ct.d2; return { bad: d.bad || __ct.d1.bad, L: d.L, minClear: d.minClear, path: d.path.filter((_, i) => i % 4 === 0) }; });
   // chưa tới đích: thử 8 hướng × 0,6 s — "kẹt cứng" chỉ khi KHÔNG hướng nào đi được ≥ 0,3 m
   let free = d2.L <= 1.3;
   if (!free) for (let k = 0; k < 8 && !free; k++) {
@@ -142,14 +144,17 @@ for (const t of pick) {
     const a1 = await B(() => [__island.player.pos.x, __island.player.pos.z]); if (Math.hypot(a1[0] - a0[0], a1[1] - a0[1]) > 0.3) free = true;
   }
   // xuyên = tâm người vượt quá mặt trước vật (s > -rc + 0.05) ; chạm hợp lệ = cách ô chặn ≥ R0 − 0,03
-  const through = Math.min(d1.minClear, d2.minClear) < 0.05, tooClose = Math.min(d1.minClear, d2.minClear) < 0.35 - 0.03, stuck = !free;
-  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), path: d2.L > 1 ? d2.path : undefined, wp: d2.L > 1 ? [prep.sx, prep.sz, prep.wx, prep.wz, prep.gx, prep.gz].map(v => +v.toFixed(1)) : undefined, ok: !through && !tooClose && !stuck, through, tooClose, stuck });
+  const through = Math.min(d1.minClear, d2.minClear) < 0.05, tooClose = Math.min(d1.minClear, d2.minClear) < 0.35 - 0.05, stuck = !free;
+  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), path: d2.L > 1 ? d2.path : undefined, bad: d2.bad, wp: d2.L > 1 ? [prep.sx, prep.sz, prep.wx, prep.wz, prep.gx, prep.gz].map(v => +v.toFixed(1)) : undefined, ok: !through && !tooClose && !stuck, through, tooClose, stuck });
   console.log(JSON.stringify(res[res.length - 1]));
 }
 // chi phí JS/khung khi đi lại (collide.js: quét + nạp chunk + tra va chạm + camera)
-const cost = await B(async () => { const T = __ct; T.ms = 0; T.frames = 0; const P = __island.player; P.teleport(-65, 9); const t0 = performance.now();
-  T.drive = { t0, dur: 12, gx: 60, gz: 60, cx: 1e5, cz: 1e5, ux: 0, uz: 1, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0 };
-  await new Promise(r => setTimeout(r, 12500)); return { msPerFrame: +(T.ms / T.frames).toFixed(4), frames: T.frames, stats: __island.collide.stats() }; });
+const cost = await B(async () => { const T = __ct, P = __island.player, wait = gs => new Promise(r => { const g0 = T.gt, f = () => T.gt - g0 >= gs ? r() : setTimeout(f, 100); f(); });
+  P.teleport(-65, 9); await wait(1); const C = __island.collide; for (let k = 0; k < 40; k++) { C.scan(); C.plan(); C.work(500); }   // khu này đã nạp xong (như sau vài giây chơi)
+  const m = () => ({ total: +(T.ms / T.frames).toFixed(4), lookup: +((T.ms - T.msBg) / T.frames).toFixed(4), background: +(T.msBg / T.frames).toFixed(4), frames: T.frames });
+  T.ms = T.msBg = 0; T.frames = 0; await wait(4); const idle = m();
+  T.ms = T.msBg = 0; T.frames = 0; T.drive = { dur: 8, gx: -65, gz: 60, cx: 1e5, cz: 1e5, ux: 0, uz: 1, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0 }; await wait(8); const walk = m();
+  return { idle, walk, stats: C.stats() }; });
 const done = res.filter(r => r.ok !== undefined), pass = done.filter(r => r.ok).length;
 const summary = { mobile: MOBILE, tested: done.length, pass, kinds: [...new Set(done.map(r => r.kind))], skipped: res.filter(r => r.skip).length, cost, errors: errors.slice(0, 10) };
 console.log('TÓM TẮT', JSON.stringify(summary));
