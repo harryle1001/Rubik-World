@@ -1,0 +1,1401 @@
+{
+"desk": {
+"loadS": 3.7,
+"rows": [
+{
+"name": "Cổng trường (spawn)",
+"ms": 1722,
+"spikes": 6,
+"maxMs": 2157,
+"calls": 291,
+"tris": 760336,
+"moved": 0.3,
+"sim": 0.15,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Quảng trường",
+"ms": 1968,
+"spikes": 6,
+"maxMs": 2142,
+"calls": 334,
+"tris": 875587,
+"moved": 3.6,
+"sim": 0.15,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Sân trường",
+"ms": 2507,
+"spikes": 6,
+"maxMs": 4395,
+"calls": 306,
+"tris": 706869,
+"moved": 0.3,
+"sim": 0.15,
+"stuck": null,
+"fell": null
+},
+{
+"name": "B Đồi thông & Phố Đà Lạt",
+"ms": 1767,
+"spikes": 6,
+"maxMs": 2152,
+"calls": 233,
+"tris": 685505,
+"moved": 0.3,
+"sim": 0.15,
+"stuck": null,
+"fell": null
+},
+{
+"name": "C Thư viện & Phố mua sắm",
+"ms": 814,
+"spikes": 9,
+"maxMs": 882,
+"calls": 210,
+"tris": 437348,
+"moved": 0.7,
+"sim": 0.3,
+"stuck": null,
+"fell": null
+},
+{
+"name": "D Thể thao & Rubik Kart",
+"ms": 1157,
+"spikes": 7,
+"maxMs": 2833,
+"calls": 145,
+"tris": 293682,
+"moved": 0.5,
+"sim": 0.25,
+"stuck": null,
+"fell": null
+},
+{
+"name": "K Sân bay Cánh Diều",
+"ms": 352,
+"spikes": 14,
+"maxMs": 540,
+"calls": 131,
+"tris": 225961,
+"moved": 2,
+"sim": 0.55,
+"stuck": null,
+"fell": null
+},
+{
+"name": "F Công viên Safari",
+"ms": 296,
+"spikes": 14,
+"maxMs": 409,
+"calls": 124,
+"tris": 201528,
+"moved": 2.5,
+"sim": 0.65,
+"stuck": null,
+"fell": null
+},
+{
+"name": "G Học viện Hoa Phượng",
+"ms": 262,
+"spikes": 17,
+"maxMs": 317,
+"calls": 122,
+"tris": 241127,
+"moved": 2.8,
+"sim": 0.7,
+"stuck": null,
+"fell": null
+},
+{
+"name": "H Resort Biển Xanh",
+"ms": 255,
+"spikes": 17,
+"maxMs": 344,
+"calls": 152,
+"tris": 423220,
+"moved": 2.8,
+"sim": 0.7,
+"stuck": null,
+"fell": null
+},
+{
+"name": "I Rừng & Đền Tri Thức",
+"ms": 468,
+"spikes": 12,
+"maxMs": 1053,
+"calls": 270,
+"tris": 654755,
+"moved": 1.3,
+"sim": 0.45,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Đền Tri Thức",
+"ms": 261,
+"spikes": 17,
+"maxMs": 465,
+"calls": 219,
+"tris": 344459,
+"moved": 2.8,
+"sim": 0.7,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Xe đạp",
+"ms": 433,
+"spikes": 14,
+"maxMs": 862,
+"calls": 286,
+"tris": 764931,
+"moved": 3,
+"sim": 0.55,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Khinh khí cầu",
+"ms": 351,
+"spikes": 14,
+"maxMs": 381,
+"calls": 242,
+"tris": 715564,
+"moved": 1.8,
+"sim": 0.55,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Máy bay cất cánh",
+"ms": 223,
+"spikes": 13,
+"maxMs": 256,
+"calls": 234,
+"tris": 620473,
+"moved": null,
+"sim": null,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Máy bay hạ cánh",
+"ms": null,
+"spikes": null,
+"maxMs": null,
+"calls": null,
+"tris": null,
+"moved": null,
+"sim": null,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Ga Học viện (xuống tàu, đi bộ)",
+"ms": 388,
+"spikes": 12,
+"maxMs": 581,
+"calls": 230,
+"tris": 415316,
+"moved": 2,
+"sim": 0.5,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · cổng lâu đài",
+"ms": 219,
+"spikes": 19,
+"maxMs": 271,
+"calls": 192,
+"tris": 381559,
+"moved": 3.3,
+"sim": 0.8,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · sân trong",
+"ms": 350,
+"spikes": 13,
+"maxMs": 464,
+"calls": 284,
+"tris": 450845,
+"moved": 2,
+"sim": 0.55,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · đại sảnh",
+"ms": 383,
+"spikes": 12,
+"maxMs": 517,
+"calls": 205,
+"tris": 342214,
+"moved": 1.7,
+"sim": 0.45,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · phố phép thuật",
+"ms": 210,
+"spikes": 20,
+"maxMs": 240,
+"calls": 186,
+"tris": 617803,
+"moved": 3.6,
+"sim": 0.85,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · cửa rừng",
+"ms": 157,
+"spikes": 24,
+"maxMs": 212,
+"calls": 136,
+"tris": 215748,
+"moved": 4.7,
+"sim": 1.05,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · trong rừng",
+"ms": 153,
+"spikes": 25,
+"maxMs": 170,
+"calls": 128,
+"tris": 178994,
+"moved": 5,
+"sim": 1.1,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Ban đêm (đổi giờ)",
+"ms": 263,
+"spikes": 10,
+"maxMs": 291,
+"calls": 215,
+"tris": 638681,
+"moved": null,
+"sim": null,
+"stuck": null,
+"fell": null
+}
+],
+"mg": [
+{
+"k": "rubik",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 169,
+"ms": 274,
+"exit": true,
+"err": 0
+},
+{
+"k": "caro",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 113,
+"ms": 283,
+"exit": true,
+"err": 0
+},
+{
+"k": "go",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 106,
+"ms": 167,
+"exit": true,
+"err": 0
+},
+{
+"k": "chess",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 166,
+"ms": 263,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-light",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 216,
+"ms": 870,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-shape",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 211,
+"ms": 1084,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-brew",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 213,
+"ms": 633,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-creature",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 219,
+"ms": 457,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-astro",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 183,
+"ms": 429,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-herb",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 206,
+"ms": 481,
+"exit": true,
+"err": 0
+},
+{
+"k": "art-music",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 220,
+"ms": 313,
+"exit": true,
+"err": 0
+},
+{
+"k": "library",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 112,
+"ms": 316,
+"exit": true,
+"err": 0
+},
+{
+"k": "telescope",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 115,
+"ms": 212,
+"exit": true,
+"err": 0
+},
+{
+"k": "reader",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 212,
+"ms": 347,
+"exit": true,
+"err": 0
+},
+{
+"k": "academy",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 149,
+"ms": 458,
+"exit": true,
+"err": 0
+},
+{
+"k": "zen",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 140,
+"ms": 418,
+"exit": true,
+"err": 0
+},
+{
+"k": "garden",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 161,
+"ms": 355,
+"exit": true,
+"err": 0
+},
+{
+"k": "olympics",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 145,
+"ms": 399,
+"exit": true,
+"err": 0
+},
+{
+"k": "arcade",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 183,
+"ms": 340,
+"exit": true,
+"err": 0
+},
+{
+"k": "fishing",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 190,
+"ms": 330,
+"exit": true,
+"err": 0
+},
+{
+"k": "fishing-boat",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 192,
+"ms": 284,
+"exit": true,
+"err": 0
+},
+{
+"k": "skate",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 223,
+"ms": 664,
+"exit": true,
+"err": 0
+},
+{
+"k": "patin",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 192,
+"ms": 380,
+"exit": true,
+"err": 0
+},
+{
+"k": "ski",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 175,
+"ms": 353,
+"exit": true,
+"err": 0
+},
+{
+"k": "kart",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 139,
+"ms": 393,
+"exit": true,
+"err": 0
+},
+{
+"k": "animal-race",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 197,
+"ms": 371,
+"exit": true,
+"err": 0
+},
+{
+"k": "football",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 189,
+"ms": 344,
+"exit": true,
+"err": 0
+},
+{
+"k": "basketball",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 149,
+"ms": 256,
+"exit": true,
+"err": 0
+},
+{
+"k": "balloon",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 187,
+"ms": 609,
+"exit": true,
+"err": 0
+},
+{
+"k": "missile",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 210,
+"ms": 425,
+"exit": true,
+"err": 0
+},
+{
+"k": "board-race",
+"ok": true,
+"act": true,
+"sbStuck": true,
+"calls": 255,
+"ms": 517,
+"exit": true,
+"err": 0
+},
+{
+"k": "house-tour",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 143,
+"ms": 192,
+"exit": true,
+"err": 0
+},
+{
+"k": "bbq",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 136,
+"ms": 212,
+"exit": true,
+"err": 0
+},
+{
+"k": "mall",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 146,
+"ms": 300,
+"exit": true,
+"err": 0
+},
+{
+"k": "coach",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 173,
+"ms": 236,
+"exit": true,
+"err": 0
+}
+],
+"talks": [
+{
+"at": [
+-55,
+16
+],
+"label": "💬 Nói chuyện với Hoàng Bách",
+"open": false,
+"detail": {
+"story": false,
+"tq": false,
+"hold": false,
+"panels": 0
+}
+},
+{
+"at": [
+-49,
+12
+],
+"label": "💬 Nói chuyện với Nam",
+"open": true,
+"detail": {
+"story": false,
+"tq": true,
+"hold": true,
+"panels": 0
+}
+},
+{
+"at": [
+-51,
+21
+],
+"label": "💬 Nói chuyện với Cô Hà",
+"open": true,
+"detail": {
+"story": false,
+"tq": true,
+"hold": true,
+"panels": 0
+}
+}
+],
+"train": {
+"at": "B",
+"aboard": false,
+"phase": "wait",
+"zone": "Học viện Pha Lê",
+"pos": [
+-938,
+57,
+-841
+]
+},
+"overlaps": {
+"n": 18,
+"overlaps": [],
+"offscreen": []
+},
+"errors": [],
+"http": [],
+"notes": [
+"Sau \"board-race\": vẫn cưỡi ván bạc → dịch chuyển/🏫 Đến trường bị huỷ (x=-66)"
+]
+},
+"mob": {
+"loadS": 3.8,
+"rows": [
+{
+"name": "Cổng trường (spawn)",
+"ms": 373,
+"spikes": 19,
+"maxMs": 513,
+"calls": 171,
+"tris": 514930,
+"moved": 4.5,
+"sim": 0.8,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Quảng trường",
+"ms": 381,
+"spikes": 28,
+"maxMs": 2186,
+"calls": 169,
+"tris": 551930,
+"moved": 12.6,
+"sim": 1.25,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Sân trường",
+"ms": 298,
+"spikes": 29,
+"maxMs": 912,
+"calls": 194,
+"tris": 489214,
+"moved": 10.4,
+"sim": 1.3,
+"stuck": null,
+"fell": null
+},
+{
+"name": "B Đồi thông & Phố Đà Lạt",
+"ms": 203,
+"spikes": 32,
+"maxMs": 668,
+"calls": 137,
+"tris": 272768,
+"moved": 11.9,
+"sim": 1.45,
+"stuck": null,
+"fell": null
+},
+{
+"name": "C Thư viện & Phố mua sắm",
+"ms": 102,
+"spikes": 42,
+"maxMs": 140,
+"calls": 102,
+"tris": 246088,
+"moved": 16.5,
+"sim": 1.95,
+"stuck": null,
+"fell": null
+},
+{
+"name": "D Thể thao & Rubik Kart",
+"ms": 94,
+"spikes": 42,
+"maxMs": 113,
+"calls": 111,
+"tris": 248459,
+"moved": 14.7,
+"sim": 1.95,
+"stuck": null,
+"fell": null
+},
+{
+"name": "K Sân bay Cánh Diều",
+"ms": 85,
+"spikes": 50,
+"maxMs": 116,
+"calls": 118,
+"tris": 201449,
+"moved": 20.5,
+"sim": 2.35,
+"stuck": null,
+"fell": null
+},
+{
+"name": "F Công viên Safari",
+"ms": 79,
+"spikes": 52,
+"maxMs": 104,
+"calls": 102,
+"tris": 148128,
+"moved": 21.4,
+"sim": 2.45,
+"stuck": null,
+"fell": null
+},
+{
+"name": "G Học viện Hoa Phượng",
+"ms": 87,
+"spikes": 47,
+"maxMs": 110,
+"calls": 115,
+"tris": 204869,
+"moved": 19.1,
+"sim": 2.2,
+"stuck": null,
+"fell": null
+},
+{
+"name": "H Resort Biển Xanh",
+"ms": 88,
+"spikes": 44,
+"maxMs": 112,
+"calls": 111,
+"tris": 218020,
+"moved": 17.6,
+"sim": 2.05,
+"stuck": null,
+"fell": null
+},
+{
+"name": "I Rừng & Đền Tri Thức",
+"ms": 120,
+"spikes": 38,
+"maxMs": 204,
+"calls": 214,
+"tris": 320357,
+"moved": 4.9,
+"sim": 1.85,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Đền Tri Thức",
+"ms": 114,
+"spikes": 38,
+"maxMs": 195,
+"calls": 152,
+"tris": 225403,
+"moved": 9.4,
+"sim": 1.85,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Xe đạp",
+"ms": 192,
+"spikes": 30,
+"maxMs": 231,
+"calls": 178,
+"tris": 574491,
+"moved": 9.7,
+"sim": 1.35,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Khinh khí cầu",
+"ms": 168,
+"spikes": 29,
+"maxMs": 351,
+"calls": 166,
+"tris": 538961,
+"moved": 9,
+"sim": 1.3,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Ga Học viện (xuống tàu, đi bộ)",
+"ms": 173,
+"spikes": 29,
+"maxMs": 485,
+"calls": 163,
+"tris": 299117,
+"moved": 8.2,
+"sim": 1.3,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · cổng lâu đài",
+"ms": 114,
+"spikes": 39,
+"maxMs": 443,
+"calls": 153,
+"tris": 257105,
+"moved": 16.2,
+"sim": 1.8,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · sân trong",
+"ms": 176,
+"spikes": 27,
+"maxMs": 553,
+"calls": 189,
+"tris": 283297,
+"moved": 10.2,
+"sim": 1.25,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · đại sảnh",
+"ms": 166,
+"spikes": 30,
+"maxMs": 375,
+"calls": 182,
+"tris": 274004,
+"moved": 11,
+"sim": 1.35,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · phố phép thuật",
+"ms": 146,
+"spikes": 30,
+"maxMs": 169,
+"calls": 179,
+"tris": 524790,
+"moved": 11,
+"sim": 1.35,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · cửa rừng",
+"ms": 76,
+"spikes": 53,
+"maxMs": 93,
+"calls": 111,
+"tris": 139043,
+"moved": 21.9,
+"sim": 2.5,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Học viện · trong rừng",
+"ms": 79,
+"spikes": 53,
+"maxMs": 96,
+"calls": 125,
+"tris": 135471,
+"moved": 14.9,
+"sim": 2.5,
+"stuck": null,
+"fell": null
+},
+{
+"name": "Ban đêm (đổi giờ)",
+"ms": 127,
+"spikes": 20,
+"maxMs": 153,
+"calls": 155,
+"tris": 490552,
+"moved": null,
+"sim": null,
+"stuck": null,
+"fell": null
+}
+],
+"mg": [
+{
+"k": "rubik",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 153,
+"ms": 188,
+"exit": true,
+"err": 0
+},
+{
+"k": "caro",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 118,
+"ms": 147,
+"exit": true,
+"err": 0
+},
+{
+"k": "go",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 98,
+"ms": 94,
+"exit": true,
+"err": 0
+},
+{
+"k": "chess",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 123,
+"ms": 132,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-light",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 188,
+"ms": 442,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-shape",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 181,
+"ms": 565,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-brew",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 198,
+"ms": 490,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-creature",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 199,
+"ms": 365,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-astro",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 152,
+"ms": 349,
+"exit": true,
+"err": 0
+},
+{
+"k": "cls-herb",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 151,
+"ms": 304,
+"exit": true,
+"err": 0
+},
+{
+"k": "art-music",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 174,
+"ms": 118,
+"exit": true,
+"err": 0
+},
+{
+"k": "library",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 81,
+"ms": 164,
+"exit": true,
+"err": 0
+},
+{
+"k": "telescope",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 105,
+"ms": 95,
+"exit": true,
+"err": 0
+},
+{
+"k": "reader",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 183,
+"ms": 146,
+"exit": true,
+"err": 0
+},
+{
+"k": "academy",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 167,
+"ms": 284,
+"exit": true,
+"err": 0
+},
+{
+"k": "zen",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 123,
+"ms": 181,
+"exit": true,
+"err": 0
+},
+{
+"k": "garden",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 149,
+"ms": 210,
+"exit": true,
+"err": 0
+},
+{
+"k": "olympics",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 102,
+"ms": 116,
+"exit": true,
+"err": 0
+},
+{
+"k": "arcade",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 141,
+"ms": 112,
+"exit": true,
+"err": 0
+},
+{
+"k": "fishing",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 133,
+"ms": 98,
+"exit": true,
+"err": 0
+},
+{
+"k": "fishing-boat",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 132,
+"ms": 96,
+"exit": true,
+"err": 0
+},
+{
+"k": "skate",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 190,
+"ms": 404,
+"exit": true,
+"err": 0
+},
+{
+"k": "patin",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 153,
+"ms": 187,
+"exit": true,
+"err": 0
+},
+{
+"k": "ski",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 129,
+"ms": 116,
+"exit": true,
+"err": 0
+},
+{
+"k": "kart",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 117,
+"ms": 133,
+"exit": true,
+"err": 0
+},
+{
+"k": "animal-race",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 171,
+"ms": 150,
+"exit": true,
+"err": 0
+},
+{
+"k": "football",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 150,
+"ms": 191,
+"exit": true,
+"err": 0
+},
+{
+"k": "basketball",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 112,
+"ms": 114,
+"exit": true,
+"err": 0
+},
+{
+"k": "balloon",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 163,
+"ms": 147,
+"exit": true,
+"err": 0
+},
+{
+"k": "missile",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 179,
+"ms": 223,
+"exit": true,
+"err": 0
+},
+{
+"k": "board-race",
+"ok": true,
+"act": true,
+"sbStuck": true,
+"calls": 175,
+"ms": 204,
+"exit": true,
+"err": 0
+},
+{
+"k": "house-tour",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 139,
+"ms": 117,
+"exit": true,
+"err": 0
+},
+{
+"k": "bbq",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 121,
+"ms": 128,
+"exit": true,
+"err": 0
+},
+{
+"k": "mall",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 147,
+"ms": 168,
+"exit": true,
+"err": 0
+},
+{
+"k": "coach",
+"ok": true,
+"act": true,
+"sbStuck": false,
+"calls": 133,
+"ms": 117,
+"exit": true,
+"err": 0
+}
+],
+"talks": [
+{
+"at": [
+-52,
+18
+],
+"label": "💬 Nói chuyện với Khải Bình",
+"open": true,
+"detail": {
+"story": false,
+"tq": true,
+"hold": true,
+"panels": 0
+}
+},
+{
+"at": [
+-52,
+18
+],
+"label": "💬 Nói chuyện với Khải Bình",
+"open": true,
+"detail": {
+"story": false,
+"tq": true,
+"hold": true,
+"panels": 0
+}
+},
+{
+"at": [
+-49,
+19
+],
+"label": "💬 Nói chuyện với Bích",
+"open": true,
+"detail": {
+"story": false,
+"tq": true,
+"hold": true,
+"panels": 0
+}
+}
+],
+"train": {
+"at": "B",
+"aboard": false,
+"phase": "wait",
+"zone": "Học viện Pha Lê",
+"pos": [
+-938,
+57,
+-841
+]
+},
+"overlaps": {
+"n": 19,
+"overlaps": [
+"bFlyer ⟂ bJump",
+"bGaze ⟂ bJump"
+],
+"offscreen": []
+},
+"errors": [],
+"http": [],
+"notes": [
+"Sau \"board-race\": vẫn cưỡi ván bạc → dịch chuyển/🏫 Đến trường bị huỷ (x=-66)"
+]
+}
+}
