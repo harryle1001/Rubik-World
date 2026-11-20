@@ -193,7 +193,7 @@ export function createCollide(ctx) {
   // đẩy vòng tròn bán kính R (tâm nx, nz) ra khỏi các ô chặn; ô đã chồng lên vị trí cũ (ox, oz) thì bỏ qua (vừa lên/xuống xe, dịch chuyển: tự thoát ra được)
   function resolve(ox, oz, nx, nz, y, R, gAt) {
     out.hit = false; let g = null;
-    for (let pass = 0; pass < 2; pass++) {
+    for (let pass = 0; pass < 3; pass++) {
       const i0 = Math.floor((nx - R) / CS), i1 = Math.floor((nx + R) / CS), j0 = Math.floor((nz - R) / CS), j1 = Math.floor((nz + R) / CS); let moved = false;
       for (let cj = j0; cj <= j1; cj++) for (let ci = i0; ci <= i1; ci++) {
         const a = cellAt(ci, cj); if (!a) continue; const i = idx(ci, cj); if (a[i] > a[i + 1] && a[i + 2] > a[i + 3]) continue;
@@ -201,9 +201,11 @@ export function createCollide(ctx) {
         let dx = nx - qx, dz = nz - qz, d2 = dx * dx + dz * dz; if (d2 >= R * R) continue;
         if (g === null) g = gAt ? gAt(nx, nz, y) : y;
         if (!cellBlocks(a, i, y, g)) continue;
-        const px = ox < x0 ? x0 : ox > x0 + CS ? x0 + CS : ox, pz = oz < z0 ? z0 : oz > z0 + CS ? z0 + CS : oz; if ((ox - px) ** 2 + (oz - pz) ** 2 < (R - 0.02) ** 2) continue;
-        let d = Math.sqrt(d2); if (d < 1e-5) { dx = nx - (x0 + CS / 2); dz = nz - (z0 + CS / 2); d = Math.hypot(dx, dz) || 1; d2 = 0; }
-        const k = d2 ? (R - d) / d : (R + CS) / d; nx += dx * k; nz += dz * k; out.hit = moved = true;
+        // vị trí cũ đã chồng ô (vừa lên/xuống xe, dịch chuyển): không cho lún sâu thêm, đi ra thì được
+        const px = ox < x0 ? x0 : ox > x0 + CS ? x0 + CS : ox, pz = oz < z0 ? z0 : oz > z0 + CS ? z0 + CS : oz, dO = Math.sqrt((ox - px) ** 2 + (oz - pz) ** 2), Rc = dO < R - 0.02 ? dO : R;
+        let d = Math.sqrt(d2); if (d >= Rc - 1e-4) continue;
+        if (d < 1e-5) { if (Rc < 1e-3) continue; dx = nx - (x0 + CS / 2); dz = nz - (z0 + CS / 2); d = Math.hypot(dx, dz) || 1; d2 = 0; }
+        const k = d2 ? (Rc - d) / d : (Rc + CS) / d; nx += dx * k; nz += dz * k; out.hit = moved = true;
       }
       if (!moved) break;
     }
