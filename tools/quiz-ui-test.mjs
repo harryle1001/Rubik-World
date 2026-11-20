@@ -8,12 +8,12 @@ const { chromium } = require('playwright');
 const OUT = process.argv[2] || 'docs/shots/quiz-ui', MODE = (process.argv.find(a => a.startsWith('--mode=')) || '--mode=portrait').split('=')[1];
 fs.mkdirSync(OUT, { recursive: true });
 const VP = { portrait: { width: 390, height: 844 }, landscape: { width: 844, height: 390 }, desktop: { width: 1280, height: 720 } }[MODE];
-const TOUCH = MODE !== 'desktop';
+const TOUCH = MODE !== 'desktop', LITE = process.argv.includes('--lite'), ESC = process.argv.includes('--esc-only');
 const errors = []; let cur = 'nạp';
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const page = await browser.newPage(TOUCH ? { viewport: VP, hasTouch: true, isMobile: true, deviceScaleFactor: 1 } : { viewport: VP });
-page.on('console', m => { if (m.type() === 'error') errors.push(`[${cur}] ${m.text().slice(0, 240)}`); });
-page.on('pageerror', e => errors.push(`[${cur}] pageerror: ${e.message}`));
+page.on('console', m => { if (m.type() === 'error') { errors.push(`[${cur}] ${m.text().slice(0, 240)}`); console.log('LỖI', errors.at(-1)); } });
+page.on('pageerror', e => { errors.push(`[${cur}] pageerror: ${e.message}`); console.log('LỖI', errors.at(-1)); });
 await page.addInitScript(() => { try { localStorage.setItem('island.grade', '5'); localStorage.setItem('island.intro', '1'); } catch (e) {} });
 console.log('mở trang', MODE); await page.goto('http://localhost:3000/ocean.html');
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready && __island.player.hero && __island.warmed, null, { timeout: 300000 });
@@ -41,6 +41,7 @@ const tapX = () => tapAt('#rwQ .qx');
 const geo = () => page.evaluate(() => { const q = document.getElementById('rwQ').getBoundingClientRect(), h = document.querySelector('#rwQ .qq').getBoundingClientRect(), c = document.querySelector('#rwQ .ch').getBoundingClientRect(), b = document.querySelector('#rwQ .ch button').getBoundingClientRect(); return { top: Math.round(q.top), bottom: Math.round(innerHeight - q.bottom), w: Math.round(q.width), gapQ: Math.round(c.top - h.bottom), btnH: Math.round(b.height), xBtn: Math.round(document.querySelector('#rwQ .qx').getBoundingClientRect().width) }; });
 const rows = [];
 async function place(name, open, after) {
+  if (ESC || (LITE && !['cot-truyen', 'tiet-hoc', 'hai-dang', 'mg-garden', 'mg-caro-goi-y'].includes(name))) return;
   cur = name; const row = { nơi: name };
   try {
     await open(); await qOpen(); await page.waitForTimeout(400);
@@ -81,7 +82,7 @@ if (mgKeys.includes('caro')) await place('mg-caro-goi-y', async () => { await mg
   async row => { row.vẫn_trong_game = await page.evaluate(() => !!__island.mg.active); await tapAt('#mgHud .mg-x'); await page.waitForTimeout(600); });
 // 8) ✕ Thoát trên HUD của nhiều mini game
 const exits = [];
-for (const k of mgKeys.filter(k => __filter(k)).slice(0, 6)) {
+for (const k of ESC ? [] : mgKeys.filter(k => __filter(k)).slice(0, LITE ? 3 : 6)) {
   cur = 'thoát ' + k; const r = { game: k };
   try { await mgStart(k); await page.waitForTimeout(1800); await tapAt('#mgHud .mg-x'); await page.waitForTimeout(600);
     r.mg = await page.evaluate(() => !!__island.mg.active); r.frozen = await page.evaluate(() => __island.player.frozen); r.q = await page.evaluate(() => !document.getElementById('rwQ').hidden); r.đi_m = await move(); r.OK = !r.mg && !r.frozen && !r.q && r.đi_m > 0.05 ? '✅' : '❌'; }
@@ -90,7 +91,8 @@ for (const k of mgKeys.filter(k => __filter(k)).slice(0, 6)) {
 }
 function __filter(k) { return ['rubik', 'caro', 'garden', 'library', 'fishing', 'quiz'].includes(k); }
 // Esc trên máy tính
+console.log('Lỗi console tới đây:', errors.length);
 if (!TOUCH) { cur = 'esc'; await page.evaluate(() => __island.learn.askSet({ s: ['toan'], n: 1 })); await qOpen(); await page.keyboard.press('Escape'); await page.waitForTimeout(300); rows.push({ nơi: 'esc-learn', closed: await page.evaluate(() => !!document.getElementById('rwQ').hidden), frozen: await page.evaluate(() => __island.player.frozen), đi_m: await move() }); }
-console.table(rows); console.table(exits);
+console.log('ESC', JSON.stringify(rows.at(-1))); console.table(rows); console.table(exits);
 console.log('Lỗi console:', errors.length ? errors : 'không có');
 await browser.close();
