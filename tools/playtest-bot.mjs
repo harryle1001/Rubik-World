@@ -43,7 +43,7 @@ await ev(() => { const c = __island; c.sky.state.lock = 13; if (c.account && c.a
 // bọc đo
 await ev(() => {
   const c = __island, R = c.renderer, P = window.__pt = { reset() { Object.assign(this, { n: 0, calls: 0, tris: 0, frame: 0, raf: 0, spikes: 0, maxF: 0 }); } };
-  P.reset(); R.info.autoReset = false;
+  P.reset(); R.info.autoReset = false; window.__sim = 0; const pu = c.player.update; c.player.update = function (dt) { __sim += dt; return pu.call(this, dt); };
   const r = c.post.render; c.post.render = function () { R.info.reset(); r.call(this); P.n++; P.calls += R.info.render.calls; P.tris += R.info.render.triangles; };
   let last = performance.now(); (function loop() { const n = performance.now(), d = n - last; last = n; P.frame += d; P.raf++; if (d > 50) P.spikes++; P.maxF = Math.max(P.maxF, d); requestAnimationFrame(loop); })();
 });
@@ -53,15 +53,15 @@ const measure = () => ev(() => { const c = __island, P = __pt, n = Math.max(1, P
 const reset = () => ev(() => __pt.reset());
 // đi bộ thật vài giây (phím W / joystick), có thử đổi hướng nếu kẹt
 async function walk(sec = 3) {
-  const p0 = await ev(() => __island.player.pos.toArray());
+  const p0 = await ev(() => { __sim = 0; return __island.player.pos.toArray(); });
   if (MOBILE) {
     await ev(() => { const cv = __island.renderer.domElement, mk = (t, x, y) => cv.dispatchEvent(new PointerEvent(t, { pointerId: 7, pointerType: 'touch', clientX: x, clientY: y, bubbles: true, isPrimary: true }));
       mk('pointerdown', 110, 700); window.__jm = () => mk('pointermove', 110, 640); window.__ju = () => mk('pointerup', 110, 640); __jm(); });
     for (let i = 0; i < sec * 4; i++) { await ev(() => __jm()); await T(250); }
     await ev(() => __ju());
   } else { await page.keyboard.down('KeyW'); await T(sec * 1000); await page.keyboard.up('KeyW'); }
-  const p1 = await ev(() => __island.player.pos.toArray());
-  return p0 && p1 ? { moved: +Math.hypot(p1[0] - p0[0], p1[2] - p0[2]).toFixed(1), dy: +(p1[1] - p0[1]).toFixed(1), y: +p1[1].toFixed(1) } : null;
+  const p1 = await ev(() => [...__island.player.pos.toArray(), __sim, __island.player.frozen, !!__island.player.vehicle]);
+  return p0 && p1 ? { moved: +Math.hypot(p1[0] - p0[0], p1[2] - p0[2]).toFixed(1), sim: +p1[3].toFixed(2), dy: +(p1[1] - p0[1]).toFixed(1), y: +p1[1].toFixed(1), frozen: p1[4], veh: p1[5] } : null;
 }
 async function spot(name, prep, { wait = 3500, walkS = 3, snap = false } = {}) {
   step = name;
@@ -72,7 +72,7 @@ async function spot(name, prep, { wait = 3500, walkS = 3, snap = false } = {}) {
   if (!walkS) await T(2500);
   const m = await measure();
   const row = { name, ...m, ...(w || {}), prep: pre };
-  if (w && w.moved < 1) row.stuck = true;
+  if (w && w.moved < Math.max(0.4, 5.5 * w.sim * 0.25)) row.stuck = true;
   if (m && m.pos[1] < -4 && !/Lặn|biển/.test(name)) row.fell = true;
   rows.push(row); log(name, JSON.stringify(row));
   if (snap) await shot(name.replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase());
@@ -111,10 +111,26 @@ await ev(() => __island.vehicles.riding && __island.vehicles.toggleBalloon()); a
 const air = L.extra[Object.keys(L.extra).find(k => k.startsWith('K'))];
 await spot('Máy bay cất cánh', `p.vehicle=null; p.teleport(${air}); setTimeout(()=>c.aircraft.board(),800)`, { wait: 14000, walkS: 0, snap: true });
 rows.at(-1).plane = await ev(() => ({ flying: __island.aircraft.flying, phase: __island.aircraft.phase, y: Math.round(__island.player.pos.y) }));
-step = 'máy bay hạ cánh'; await ev(() => __island.aircraft.land());
-let landed = null; for (let i = 0; i < 40; i++) { await T(1500); landed = await ev(() => ({ flying: __island.aircraft.flying, phase: __island.aircraft.phase, y: Math.round(__island.player.pos.y) })); if (landed && !landed.flying) break; }
+step = 'máy bay hạ cánh';
+// lái như người chơi: vòng ra xa rồi canh thẳng đường băng Cánh Diều (chạy theo trục x, cất cánh hướng −x), tới gần mới bấm hạ cánh
+// (máy bay chỉ đáp ở chỗ phẳng là đúng thiết kế — aircraft.js)
+const K = await ev(async () => (await import('/js/island/layout.js')).EXTRA.find(e => e.id === 'K').r);
+let landed = null; const tL = Date.now();
+for (let i = 0; i < 150; i++) {
+  landed = await ev(K => { const c = __island, a = c.aircraft, P = c.player.pos, z = K[3] - 13, x1 = K[2] - 6, x0 = K[0] + 6;
+    if (!a.flying) return { flying: false, phase: a.phase, y: Math.round(P.y) };
+    const s = window.__ls = window.__ls || { st: 0 };
+    const tgt = s.st === 0 ? [x1 + 160, z] : [x0, z];   // 0: ra điểm cách đầu đường băng 160 m về phía đông · 1: bay vào dọc đường băng
+    if (s.st === 0 && Math.hypot(tgt[0] - P.x, tgt[1] - P.z) < 25) s.st = 1;
+    const want = Math.atan2(tgt[0] - P.x, tgt[1] - P.z); let dy = want - a.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); a.yaw += dy * 0.4;
+    if (s.st === 1 && P.x < x1 + 60 && a.phase === 'fly') a.land();
+    return { flying: true, phase: a.phase, st: s.st, y: Math.round(P.y), x: Math.round(P.x), z: Math.round(P.z) }; }, K);
+  if (landed && !landed.flying) break; await T(1000);
+}
+if (landed) landed.secs = Math.round((Date.now() - tL) / 1000);
 log('Hạ cánh:', JSON.stringify(landed)); rows.push({ name: 'Máy bay hạ cánh', ...landed });
-if (landed && landed.flying) { notes.push('Máy bay không hạ cánh sau 60 s → eject'); await ev(() => __island.aircraft.eject && __island.aircraft.eject()); await T(3000); }
+if (landed && landed.flying) { notes.push(`Máy bay không đáp được sau ${landed.secs} s (${JSON.stringify(landed)})`); await ev(() => __island.aircraft.eject()); await T(3000); }
+rows.at(-1).afterPlane = await ev(() => ({ flying: __island.aircraft.flying, veh: !!__island.player.vehicle }));
 // ---------- 5. Mini game ----------
 const mg = [];
 const keys = await ev(() => { const G = __island.miniGames || {}, seen = new Set(), out = []; for (const [k, g] of Object.entries(G)) { if (seen.has(g)) continue; seen.add(g); out.push(k); } return out; }) || [];
@@ -133,9 +149,10 @@ log('Mini game:', mg.length, 'lỗi mở:', mg.filter(r => !r.ok).map(r => r.k).
 await ev(() => { if (__island.player.frozen && __island.mg && __island.mg.active) __island.mg.exit(true); });
 // ---------- 6. NPC ----------
 const talks = [];
+await ev(() => { __island.player.vehicle = null; __island.player.teleport(...window.__sp); }); await T(6000);
 for (let i = 0; i < 3; i++) {
   step = 'NPC ' + (i + 1);
-  const r = await ev(async i => { const c = __island, P = c.townPeople || []; const list = P.filter(e => e.a && e.px != null && !e.seat); const e = list[(i * 7) % Math.max(1, list.length)];
+  const r = await ev(async i => { const c = __island, P = c.townPeople || []; const me = c.player.pos, list = P.filter(e => e.a && e.px != null && !e.seat).sort((a, b) => Math.hypot(a.px - me.x, a.pz - me.z) - Math.hypot(b.px - me.x, b.pz - me.z)); const e = list[i];
     if (!e) return { err: 'không có NPC trong pool' }; c.player.vehicle = null; c.player.teleport(e.px + 1.6, e.pz + 0.4); return { at: [Math.round(e.px), Math.round(e.pz)] }; }, i);
   await T(2500);
   const lab = await ev(() => { const b = document.getElementById('bAct'); return b && !b.hidden ? b.textContent.trim() : null; });
