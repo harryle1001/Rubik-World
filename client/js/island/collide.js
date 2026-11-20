@@ -203,13 +203,14 @@ export function createCollide(ctx) {
         let dx = nx - qx, dz = nz - qz, d2 = dx * dx + dz * dz; if (d2 >= R * R) continue;
         if (g === null) g = gAt ? gAt(nx, nz, y) : y;
         if (!cellBlocks(a, i, y, g)) continue;
-        // vị trí cũ đã chồng ô (vừa lên/xuống xe, dịch chuyển): không cho lún sâu thêm, đi ra thì được
-        const px = ox < x0 ? x0 : ox > x0 + CS ? x0 + CS : ox, pz = oz < z0 ? z0 : oz > z0 + CS ? z0 + CS : oz, dO = Math.sqrt((ox - px) ** 2 + (oz - pz) ** 2), Rc = dO < R - 0.02 ? dO : R;
+        // vị trí cũ đã chồng ô (vừa lên/xuống xe, dịch chuyển, ô mới nạp): không cho lún sâu thêm, đi ra thì được
+        const px = ox < x0 ? x0 : ox > x0 + CS ? x0 + CS : ox, pz = oz < z0 ? z0 : oz > z0 + CS ? z0 + CS : oz, dO = Math.sqrt((ox - px) ** 2 + (oz - pz) ** 2), Rc = dO + 0.02 < R ? dO + 0.02 : R;   // đã lấn: mỗi bước đẩy ra thêm ≤ 2 cm (tự thoát êm)
         let d = Math.sqrt(d2); if (d >= Rc - 1e-4) continue;
         if (d < 1e-5) { if (Rc < 1e-3) continue; dx = nx - (x0 + CS / 2); dz = nz - (z0 + CS / 2); d = Math.hypot(dx, dz) || 1; d2 = 0; }
         const k = d2 ? (Rc - d) / d : (Rc + CS) / d; nx += dx * k; nz += dz * k; out.hit = moved = true;
       }
       if (!moved) break;
+      if (pass === 2) { nx = ox; nz = oz; }   // khe hẹp hơn thân người (kẹp giữa 2 vật): không chen vào, đứng lại chỗ cũ
     }
     out.x = nx; out.z = nz; return out;
   }

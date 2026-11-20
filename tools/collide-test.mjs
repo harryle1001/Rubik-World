@@ -52,7 +52,7 @@ await B(() => {
       }
       const y = c.player.cam.yaw; P.input.x = Math.cos(y) * ux - Math.sin(y) * uz; P.input.z = Math.sin(y) * ux + Math.cos(y) * uz;
       // khoảng hở nhỏ nhất dọc đoạn đi được giữa 2 khung (bắt cả trường hợp "nhảy cóc" qua vật khi khung chậm)
-      let cl = 9; const lx = D.lx ?? p.x, lz = D.lz ?? p.z, sn = Math.max(1, Math.ceil(Math.hypot(p.x - lx, p.z - lz) / 0.1)); for (let k = 1; k <= sn; k++) cl = Math.min(cl, T.clear(lx + (p.x - lx) * k / sn, lz + (p.z - lz) * k / sn, p.y)); D.lx = p.x; D.lz = p.z; if (cl < (D.badCl ?? 0.33)) { D.badCl = cl; const C = c.collide, ci = Math.floor(p.x / C.CS), cj = Math.floor(p.z / C.CS), A = C.cellAt(ci, cj), i = C.idx(ci, cj); D.bad = { x: p.x, z: p.z, y: p.y, g: T.sup(p.x, p.z, p.y), terr: c.terrain.heightAt(p.x, p.z), cell: A ? [A[i] / 32, A[i + 1] / 32, A[i + 2] / 32, A[i + 3] / 32] : null, vy: P.vy, grounded: P.grounded, cols: (c.grid ? c.grid.near(p.x, p.z).cols : []).filter(q => Math.hypot(q.x - p.x, q.z - p.z) < q.r + 0.1) }; }
+      let cl = 9; const lx = D.lx ?? p.x, lz = D.lz ?? p.z, sn = Math.max(1, Math.ceil(Math.hypot(p.x - lx, p.z - lz) / 0.1)); for (let k = 1; k <= sn; k++) cl = Math.min(cl, T.clear(lx + (p.x - lx) * k / sn, lz + (p.z - lz) * k / sn, p.y)); D.lx = p.x; D.lz = p.z; if (cl < (D.badCl ?? 0.33)) { D.badCl = cl; D.seg = [lx, lz, p.x, p.z, D === T.d1 ? 1 : 2, T.gt - D.g0]; const C = c.collide, ci = Math.floor(p.x / C.CS), cj = Math.floor(p.z / C.CS), A = C.cellAt(ci, cj), i = C.idx(ci, cj); D.bad = { x: p.x, z: p.z, y: p.y, g: T.sup(p.x, p.z, p.y), terr: c.terrain.heightAt(p.x, p.z), cell: A ? [A[i] / 32, A[i + 1] / 32, A[i + 2] / 32, A[i + 3] / 32] : null, vy: P.vy, grounded: P.grounded, cols: (c.grid ? c.grid.near(p.x, p.z).cols : []).filter(q => Math.hypot(q.x - p.x, q.z - p.z) < q.r + 0.1) }; }
       (D.path = D.path || []).length < 400 && D.path.push([+p.x.toFixed(2), +p.z.toFixed(2)]);
       const s = (p.x - D.cx) * D.ux + (p.z - D.cz) * D.uz;
       D.maxS = Math.max(D.maxS, s); D.minClear = Math.min(D.minClear, cl); D.minDist = Math.min(D.minDist, Math.hypot(p.x - D.cx, p.z - D.cz));
@@ -136,7 +136,7 @@ for (const t of pick) {
   // 2) đi vòng ra sau vật (≤ 9 s)
   await B(([t, p]) => { __ct.drive = { t0: performance.now(), dur: 9, gx: p.gx, gz: p.gz, cx: t.x, cz: t.z, ux: p.ux, uz: p.uz, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0, wx: p.wx, wz: p.wz }; __ct.d2 = __ct.drive; }, [t, prep]);
   await page.waitForFunction(() => __ct.d2.done, null, { timeout: 300000 });
-  const d2 = await B(() => { const d = __ct.d2; return { bad: d.bad || __ct.d1.bad, L: d.L, minClear: d.minClear, path: d.path.filter((_, i) => i % 4 === 0) }; });
+  const d2 = await B(() => { const d = __ct.d2; return { seg: [__ct.d1.seg, d.seg], bad: d.bad || __ct.d1.bad, L: d.L, minClear: d.minClear, path: d.path.filter((_, i) => i % 4 === 0) }; });
   // chưa tới đích: thử 8 hướng × 0,6 s — "kẹt cứng" chỉ khi KHÔNG hướng nào đi được ≥ 0,3 m
   let free = d2.L <= 1.3;
   if (!free) for (let k = 0; k < 8 && !free; k++) {
@@ -147,7 +147,7 @@ for (const t of pick) {
   }
   // xuyên = tâm người vượt quá mặt trước vật (s > -rc + 0.05) ; chạm hợp lệ = cách ô chặn ≥ R0 − 0,03
   const through = Math.min(d1.minClear, d2.minClear) < 0.05, tooClose = Math.min(d1.minClear, d2.minClear) < 0.35 - 0.05, stuck = !free;
-  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), path: d2.L > 1 ? d2.path : undefined, inside: AT.length === 2 ? await B(() => __ct.inside) : undefined, bad: d2.bad, path1: AT.length === 2 ? d1.path : undefined, prep: AT.length === 2 ? prep : undefined, wp: d2.L > 1 ? [prep.sx, prep.sz, prep.wx, prep.wz, prep.gx, prep.gz].map(v => +v.toFixed(1)) : undefined, ok: !through && !tooClose && !stuck, through, tooClose, stuck });
+  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), path: d2.L > 1 ? d2.path : undefined, seg: AT.length === 2 ? d2.seg : undefined, inside: AT.length === 2 ? await B(() => __ct.inside) : undefined, bad: d2.bad, path1: AT.length === 2 ? d1.path : undefined, prep: AT.length === 2 ? prep : undefined, wp: d2.L > 1 ? [prep.sx, prep.sz, prep.wx, prep.wz, prep.gx, prep.gz].map(v => +v.toFixed(1)) : undefined, ok: !through && !tooClose && !stuck, through, tooClose, stuck });
   console.log(JSON.stringify(res[res.length - 1]));
 }
 // chi phí JS/khung khi đi lại (collide.js: quét + nạp chunk + tra va chạm + camera)
