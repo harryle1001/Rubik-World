@@ -163,9 +163,16 @@ export function createPlayer(ctx) {
           if (d > 1e-4) { ux = dx / d; uz = dz / d; pen = R0 - d; } else if (Math.abs(ex) > Math.abs(ez)) { ux = Math.sign(ex) || 1; uz = 0; pen = R0 + H - Math.abs(ex); } else { ux = 0; uz = Math.sign(ez) || 1; pen = R0 + H - Math.abs(ez); }
           const w = ctx.physics.push(b, -ux, -uz, pen, vel); nx += ux * pen * (1 - w); nz += uz * pen * (1 - w);
         }
+        // vật tĩnh bất kỳ (cây, ghế đá, cột đèn, hàng rào, sạp, đồ nội thất…) — lưới chung collide.js: trượt dọc, không xuyên
+        if (ctx.collide) { const r = ctx.collide.resolve(ox, oz, nx, nz, pos.y, R0, sup); nx = r.x; nz = r.z;
+          if (r.hit) for (const c of N.cols) { if (GL && pos.y > terrain.heightAt(c.x, c.z) + (c.h || 8)) continue; const dx = nx - c.x, dz = nz - c.z, rr = c.r + R0, d2 = dx * dx + dz * dz; if (d2 < rr * rr) { const d = Math.sqrt(d2) || 1e-3; nx = c.x + dx / d * rr; nz = c.z + dz / d * rr; } } }
         // vách đất quá cao so với chân → trượt dọc theo vách thay vì leo thẳng lên
         // (sup tra với chân pos.y → sàn treo cao hơn chân > STEP được bỏ qua, đi bên dưới cầu được)
-        if (!(V && V.water) && blocked(ox, oz, nx, nz)) { if (!blocked(ox, oz, nx, oz)) nz = oz; else if (!blocked(ox, oz, ox, nz)) nx = ox; else { nx = ox; nz = oz; } }
+        if (!(V && V.water) && blocked(ox, oz, nx, nz)) { if (!blocked(ox, oz, nx, oz)) nz = oz; else if (!blocked(ox, oz, ox, nz)) nx = ox; else { nx = ox; nz = oz; }
+        }
+        // chốt cuối: trượt dốc/đẩy gốc cây có thể lấn vào vật khác → đẩy lưới lần nữa; còn lấn gốc cây/đá thì đứng lại chỗ cũ (luôn hợp lệ)
+        if (nx !== ox || nz !== oz) { if (ctx.collide) { const r = ctx.collide.resolve(ox, oz, nx, nz, pos.y, R0, sup); nx = r.x; nz = r.z; }
+          for (const c of N.cols) { const rr = c.r + R0 - 0.01, dn = Math.hypot(nx - c.x, nz - c.z); if (dn < rr && dn < Math.hypot(ox - c.x, oz - c.z) - 0.005 && !(GL && pos.y > terrain.heightAt(c.x, c.z) + (c.h || 8))) { nx = ox; nz = oz; break; } } }
       }
       if (V && V.water) { if (sup(nx, nz) > CFG.island.waterLevel - 0.3) { nx = ox; nz = oz; vel.multiplyScalar(0.3); } } // thuyền: chỉ đi trên nước
       else if (V && !fly && sup(nx, nz) < CFG.island.waterLevel - 0.3) { nx = ox; nz = oz; vel.multiplyScalar(-0.5); self.hitWater = true; } // xe đạp: dừng ở mép nước, bật lùi nhẹ (vehicles.js báo)
@@ -279,7 +286,7 @@ export function createPlayer(ctx) {
     }
     // dò tia điểm nhìn → camera (tường, mái hiên, vòm cổng, thân cây…): kéo camera vào trước vật cản, chừa đệm 1/φ² m
     camTo.set(pivot.x + dx * camDist * fit, pivot.y + dy * camDist * fit, pivot.z + dz * camDist * fit);
-    const wc = fly ? camDist * fit : Math.max(Math.min(camDist * fit, occ.clear(pivot, camTo, h.root) - 1 / PHI ** 2), 1); colDist = snapCam ? wc : damp(colDist, wc, colSt, wc < colDist ? T.fast : T.slow, dt); if (colDist > camDist) colDist = camDist;
+    const wc = fly ? camDist * fit : Math.max(Math.min(camDist * fit, occ.clear(pivot, camTo, h.root) - 1 / PHI ** 2, ctx.collide ? ctx.collide.camClear(pivot.x, pivot.y, pivot.z, dx, dy, dz, camDist * fit) : 1e9), 1); colDist = snapCam ? wc : damp(colDist, wc, colSt, wc < colDist ? T.fast : T.slow, dt); if (colDist > camDist) colDist = camDist;
     let cx = pivot.x + dx * colDist, cy = pivot.y + dy * colDist, cz = pivot.z + dz * colDist;
     const need = Math.max(terrain.heightAt(cx, cz) + 0.8, (ctx.groundExtra ? ctx.groundExtra(cx, cz, 99) : -99) + 0.8, D && D.diving ? -99 : CFG.island.waterLevel + 0.5);
     camLift = damp(camLift, Math.max(0, need - cy), liftSt, need - cy > camLift ? T.fast : T.soft, dt); cy = Math.max(cy + camLift, need - 0.3);

@@ -265,6 +265,9 @@ body.sb-on #sbHud{display:block}body.mg-on #sbHud{display:none!important}body.mg
     roll += (ix * 0.62 * (0.3 + 0.7 * sf) - roll) * ease(5, dt);
     const fx = Math.sin(yaw), fz = Math.cos(yaw);
     P.x += fx * spd * dt; P.z += fz * spd * dt;
+    // sát đất (≤ 2,6 m): không xuyên thân cây, cột, tường thấp… (lưới chung collide.js), chia bước ≤ 0,25 m
+    if (ctx.collide && P.y - floorAt(P.x, P.z) < 2.6) { const L = spd * dt, n = Math.max(1, Math.ceil(L / 0.25)); let x = P.x - fx * L, z = P.z - fz * L;
+      for (let k = 0; k < n; k++) { const r = ctx.collide.resolve(x, z, x + fx * L / n, z + fz * L / n, P.y - 0.3, 0.45, null); x = r.x; z = r.z; if (r.hit) spd *= 0.96; } P.x = x; P.z = z; }
     // độ cao: bám mặt đất/mặt nước khi lướt thấp, giữ độ cao khi bay; không bao giờ xuyên đất hay nhà (nhìn trước theo tốc độ)
     const la = Math.max(3, spd * 0.25), fl = Math.max(floorAt(P.x, P.z), floorAt(P.x + fx * la, P.z + fz * la), floorAt(P.x + fx * la * 2.2, P.z + fz * la * 2.2)), minY = fl + HOV;
     if (S.assistY != null) ty += (Math.max(S.assistY + (up ? 3 : dn ? -3 : 0), minY) - ty) * ease(3, dt);
