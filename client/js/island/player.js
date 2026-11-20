@@ -164,7 +164,8 @@ export function createPlayer(ctx) {
           const w = ctx.physics.push(b, -ux, -uz, pen, vel); nx += ux * pen * (1 - w); nz += uz * pen * (1 - w);
         }
         // vật tĩnh bất kỳ (cây, ghế đá, cột đèn, hàng rào, sạp, đồ nội thất…) — lưới chung collide.js: trượt dọc, không xuyên
-        if (ctx.collide) { const r = ctx.collide.resolve(ox, oz, nx, nz, pos.y, R0, sup); nx = r.x; nz = r.z; }
+        if (ctx.collide) { const r = ctx.collide.resolve(ox, oz, nx, nz, pos.y, R0, sup); nx = r.x; nz = r.z;
+          if (r.hit) for (const c of N.cols) { if (GL && pos.y > terrain.heightAt(c.x, c.z) + (c.h || 8)) continue; const dx = nx - c.x, dz = nz - c.z, rr = c.r + R0, d2 = dx * dx + dz * dz; if (d2 < rr * rr) { const d = Math.sqrt(d2) || 1e-3; nx = c.x + dx / d * rr; nz = c.z + dz / d * rr; } } }
         // vách đất quá cao so với chân → trượt dọc theo vách thay vì leo thẳng lên
         // (sup tra với chân pos.y → sàn treo cao hơn chân > STEP được bỏ qua, đi bên dưới cầu được)
         if (!(V && V.water) && blocked(ox, oz, nx, nz)) { if (!blocked(ox, oz, nx, oz)) nz = oz; else if (!blocked(ox, oz, ox, nz)) nx = ox; else { nx = ox; nz = oz; } }

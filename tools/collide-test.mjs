@@ -49,7 +49,10 @@ await B(() => {
         const v = Math.hypot(P.vel.x, P.vel.z); if (v < 1 && t > 0.4 && D.side <= 0) D.side = 0.9; if (D.side > 0) { D.side -= 1 / 60; const px = -uz * D.s, pz = ux * D.s; ux += px * 1.6; uz += pz * 1.6; const l = Math.hypot(ux, uz); ux /= l; uz /= l; }
       }
       const y = c.player.cam.yaw; P.input.x = Math.cos(y) * ux - Math.sin(y) * uz; P.input.z = Math.sin(y) * ux + Math.cos(y) * uz;
-      const s = (p.x - D.cx) * D.ux + (p.z - D.cz) * D.uz, cl = T.clear(p.x, p.z, p.y);
+      // khoảng hở nhỏ nhất dọc đoạn đi được giữa 2 khung (bắt cả trường hợp "nhảy cóc" qua vật khi khung chậm)
+      let cl = 9; const lx = D.lx ?? p.x, lz = D.lz ?? p.z, sn = Math.max(1, Math.ceil(Math.hypot(p.x - lx, p.z - lz) / 0.1)); for (let k = 1; k <= sn; k++) cl = Math.min(cl, T.clear(lx + (p.x - lx) * k / sn, lz + (p.z - lz) * k / sn, p.y)); D.lx = p.x; D.lz = p.z;
+      (D.path = D.path || []).length < 400 && D.path.push([+p.x.toFixed(2), +p.z.toFixed(2)]);
+      const s = (p.x - D.cx) * D.ux + (p.z - D.cz) * D.uz;
       D.maxS = Math.max(D.maxS, s); D.minClear = Math.min(D.minClear, cl); D.minDist = Math.min(D.minDist, Math.hypot(p.x - D.cx, p.z - D.cz));
       if (t > D.dur || (D.avoid && L < 0.8)) { P.input.x = P.input.z = 0; D.done = true; D.end = [p.x, p.z]; D.L = L; T.drive = null; }
     }
@@ -124,10 +127,10 @@ for (const t of pick) {
   // 2) đi vòng ra sau vật (≤ 9 s)
   await B(([t, p]) => { __ct.drive = { t0: performance.now(), dur: 9, gx: p.gx, gz: p.gz, cx: t.x, cz: t.z, ux: p.ux, uz: p.uz, maxS: -99, minClear: 9, minDist: 99, avoid: true, s: 1, side: 0, wx: p.wx, wz: p.wz }; __ct.d2 = __ct.drive; }, [t, prep]);
   await page.waitForFunction(() => __ct.d2.done, null, { timeout: 60000 });
-  const d2 = await B(() => { const d = __ct.d2; return { L: d.L, minClear: d.minClear }; });
+  const d2 = await B(() => { const d = __ct.d2; return { L: d.L, minClear: d.minClear, path: d.path.filter((_, i) => i % 4 === 0) }; });
   // xuyên = tâm người vượt quá mặt trước vật (s > -rc + 0.05) ; chạm hợp lệ = cách ô chặn ≥ R0 − 0,03
-  const through = d1.maxS > -prep.rc + 0.05 + 0.3, tooClose = Math.min(d1.minClear, d2.minClear) < 0.35 - 0.03, stuck = d2.L > 1.0;
-  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), ok: !through && !tooClose && !stuck, through, tooClose, stuck });
+  const through = Math.min(d1.minClear, d2.minClear) < 0.05, tooClose = Math.min(d1.minClear, d2.minClear) < 0.35 - 0.03, stuck = d2.L > 1.0;
+  res.push({ kind: t.kind, name: t.name, x: +t.x.toFixed(1), z: +t.z.toFixed(1), rc: +prep.rc.toFixed(2), maxS: +d1.maxS.toFixed(2), clear: +Math.min(d1.minClear, d2.minClear).toFixed(2), around: +d2.L.toFixed(2), path: d2.L > 1 ? d2.path : undefined, wp: d2.L > 1 ? [prep.sx, prep.sz, prep.wx, prep.wz, prep.gx, prep.gz].map(v => +v.toFixed(1)) : undefined, ok: !through && !tooClose && !stuck, through, tooClose, stuck });
   console.log(JSON.stringify(res[res.length - 1]));
 }
 // chi phí JS/khung khi đi lại (collide.js: quét + nạp chunk + tra va chạm + camera)
