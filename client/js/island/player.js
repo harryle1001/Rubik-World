@@ -169,8 +169,10 @@ export function createPlayer(ctx) {
         // vách đất quá cao so với chân → trượt dọc theo vách thay vì leo thẳng lên
         // (sup tra với chân pos.y → sàn treo cao hơn chân > STEP được bỏ qua, đi bên dưới cầu được)
         if (!(V && V.water) && blocked(ox, oz, nx, nz)) { if (!blocked(ox, oz, nx, oz)) nz = oz; else if (!blocked(ox, oz, ox, nz)) nx = ox; else { nx = ox; nz = oz; }
-          // trượt theo 1 trục có thể lấn vào gốc cây/đá vừa đẩy ra → đẩy lại (chỉ khi vẫn đi được)
-          for (const c of N.cols) { const dx = nx - c.x, dz = nz - c.z, rr = c.r + R0, d2 = dx * dx + dz * dz; if (d2 < rr * rr && !(GL && pos.y > terrain.heightAt(c.x, c.z) + (c.h || 8))) { const d = Math.sqrt(d2) || 1e-3, qx = c.x + dx / d * rr, qz = c.z + dz / d * rr; if (!blocked(ox, oz, qx, qz)) { nx = qx; nz = qz; } else { nx = ox; nz = oz; } } } }
+        }
+        // chốt cuối: trượt dốc/đẩy gốc cây có thể lấn vào vật khác → đẩy lưới lần nữa; còn lấn gốc cây/đá thì đứng lại chỗ cũ (luôn hợp lệ)
+        if (ctx.collide && (nx !== ox || nz !== oz)) { const r = ctx.collide.resolve(ox, oz, nx, nz, pos.y, R0, sup); nx = r.x; nz = r.z;
+          for (const c of N.cols) { const rr = c.r + R0 - 0.01; if ((nx - c.x) ** 2 + (nz - c.z) ** 2 < rr * rr && (ox - c.x) ** 2 + (oz - c.z) ** 2 >= rr * rr && !(GL && pos.y > terrain.heightAt(c.x, c.z) + (c.h || 8))) { nx = ox; nz = oz; break; } } }
       }
       if (V && V.water) { if (sup(nx, nz) > CFG.island.waterLevel - 0.3) { nx = ox; nz = oz; vel.multiplyScalar(0.3); } } // thuyền: chỉ đi trên nước
       else if (V && !fly && sup(nx, nz) < CFG.island.waterLevel - 0.3) { nx = ox; nz = oz; vel.multiplyScalar(-0.5); self.hitWater = true; } // xe đạp: dừng ở mép nước, bật lùi nhẹ (vehicles.js báo)

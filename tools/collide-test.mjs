@@ -50,7 +50,7 @@ await B(() => {
       }
       const y = c.player.cam.yaw; P.input.x = Math.cos(y) * ux - Math.sin(y) * uz; P.input.z = Math.sin(y) * ux + Math.cos(y) * uz;
       // khoảng hở nhỏ nhất dọc đoạn đi được giữa 2 khung (bắt cả trường hợp "nhảy cóc" qua vật khi khung chậm)
-      let cl = 9; const lx = D.lx ?? p.x, lz = D.lz ?? p.z, sn = Math.max(1, Math.ceil(Math.hypot(p.x - lx, p.z - lz) / 0.1)); for (let k = 1; k <= sn; k++) cl = Math.min(cl, T.clear(lx + (p.x - lx) * k / sn, lz + (p.z - lz) * k / sn, p.y)); D.lx = p.x; D.lz = p.z; if (cl < 0.05 && !D.bad) { const C = c.collide, ci = Math.floor(p.x / C.CS), cj = Math.floor(p.z / C.CS), A = C.cellAt(ci, cj), i = C.idx(ci, cj); D.bad = { x: p.x, z: p.z, y: p.y, g: T.sup(p.x, p.z, p.y), terr: c.terrain.heightAt(p.x, p.z), cell: A ? [A[i] / 32, A[i + 1] / 32, A[i + 2] / 32, A[i + 3] / 32] : null, vy: P.vy, grounded: P.grounded, cols: (c.grid ? c.grid.near(p.x, p.z).cols : []).filter(q => Math.hypot(q.x - p.x, q.z - p.z) < q.r + 0.1) }; }
+      let cl = 9; const lx = D.lx ?? p.x, lz = D.lz ?? p.z, sn = Math.max(1, Math.ceil(Math.hypot(p.x - lx, p.z - lz) / 0.1)); for (let k = 1; k <= sn; k++) cl = Math.min(cl, T.clear(lx + (p.x - lx) * k / sn, lz + (p.z - lz) * k / sn, p.y)); D.lx = p.x; D.lz = p.z; if (cl < (D.badCl ?? 0.33)) { D.badCl = cl; const C = c.collide, ci = Math.floor(p.x / C.CS), cj = Math.floor(p.z / C.CS), A = C.cellAt(ci, cj), i = C.idx(ci, cj); D.bad = { x: p.x, z: p.z, y: p.y, g: T.sup(p.x, p.z, p.y), terr: c.terrain.heightAt(p.x, p.z), cell: A ? [A[i] / 32, A[i + 1] / 32, A[i + 2] / 32, A[i + 3] / 32] : null, vy: P.vy, grounded: P.grounded, cols: (c.grid ? c.grid.near(p.x, p.z).cols : []).filter(q => Math.hypot(q.x - p.x, q.z - p.z) < q.r + 0.1) }; }
       (D.path = D.path || []).length < 400 && D.path.push([+p.x.toFixed(2), +p.z.toFixed(2)]);
       const s = (p.x - D.cx) * D.ux + (p.z - D.cz) * D.uz;
       D.maxS = Math.max(D.maxS, s); D.minClear = Math.min(D.minClear, cl); D.minDist = Math.min(D.minDist, Math.hypot(p.x - D.cx, p.z - D.cz));
@@ -98,7 +98,7 @@ for (const t of pick) {
     const c = __island, C = c.collide, T = __ct, P = c.player;
     P.vehicle && c.vehicles && c.vehicles.exit && c.vehicles.exit();
     const gy = T.sup(t.x, t.z); if (!(gy > T.W + 0.3)) return { skip: 'dưới nước' };
-    P.teleport(t.x + 7, t.z + 7); C.scan(); await new Promise(r => setTimeout(r, 300)); C.scan(); for (let k = 0; k < 6; k++) { C.plan(); C.work(400); await new Promise(r => setTimeout(r, 30)); }
+    P.teleport(t.x + 7, t.z + 7); await new Promise(r => setTimeout(r, 2500)); C.scan(); await new Promise(r => setTimeout(r, 300)); C.scan(); for (let k = 0; k < 6; k++) { C.plan(); C.work(400); await new Promise(r => setTimeout(r, 30)); }
     // vật có chặn không (ô chặn trong 0,7 m quanh tâm)
     let blk = 0; for (let a = 0; a < 16; a++) for (const r of [0, 0.2, 0.4, 0.7]) if (T.blk(t.x + Math.cos(a) * r, t.z + Math.sin(a) * r, gy, gy)) blk++;
     if (!blk) return { skip: 'không có ô chặn (vật thấp ≤ 0,4 m hoặc chưa nạp)', gy };
