@@ -9,7 +9,7 @@ import fs from 'fs';
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const arg = k => (process.argv.find(a => a.startsWith('--' + k + '=')) || '').split('=')[1];
-const MOBILE = process.argv.includes('--mobile'), OUT = arg('out'), JSONF = arg('json'), BASE = arg('url') || 'http://localhost:3400';
+const QUICK = process.argv.includes('--quick'), MOBILE = process.argv.includes('--mobile'), OUT = arg('out'), JSONF = arg('json'), BASE = arg('url') || 'http://localhost:3400';
 if (OUT) fs.mkdirSync(OUT, { recursive: true });
 const errors = [], http = [], notes = [], rows = [];
 const log = (...a) => console.log(...a);
@@ -90,6 +90,8 @@ async function spot(name, prep, { wait = 3500, walkS = 3, snap = false } = {}) {
 
 // chờ nhân vật thực sự được cập nhật (điện thoại: hướng dẫn/cảnh mở đầu có thể còn giữ)
 for (let i = 0; i < 40; i++) { const t = await ev(() => { const a = __sim; return new Promise(r => setTimeout(() => r(__sim - a), 1000)); }); if (t > 0) break; await settle(3); }
+const probe = async tag => { const r = await ev(() => { const P = __island.player, o = P.pos.toArray(); P.teleport(o[0] + 30, o[2]); return o; }); await T(1500);
+  const q = await ev(() => __island.player.pos.toArray()); const ok = r && q && Math.abs(q[0] - r[0] - 30) < 6; if (!ok) notes.push(`dịch chuyển hỏng sau "${tag}": ${JSON.stringify([r, q].map(a => a && a.map(Math.round)))}`); log('probe', tag, ok); return ok; };
 // ---------- 1. Các điểm layout.js ----------
 const L = await ev(async () => {
   const l = await import('/js/island/layout.js'); let plaza = null; try { const p = await import('/js/island/sample/plaza.js'); plaza = [p.PLAZA.x, p.PLAZA.z]; } catch (e) {}
@@ -98,30 +100,33 @@ const L = await ev(async () => {
   for (const e of l.EXTRA) if (!e.sea) out.extra[e.id + ' ' + e.name] = [(e.r[0] + e.r[2]) / 2, (e.r[1] + e.r[3]) / 2];
   return out;
 });
-const pts = [['Cổng trường (spawn)', L.spawn, true], ...(L.plaza ? [['Quảng trường', L.plaza]] : []), ['Sân trường', L.school],
+let pts = [['Cổng trường (spawn)', L.spawn, true], ...(L.plaza ? [['Quảng trường', L.plaza]] : []), ['Sân trường', L.school],
   ...Object.entries(L.blocks).filter(([k]) => !k.startsWith('A')).map(([k, c]) => [k, c, k.startsWith('B')]), ...Object.entries(L.extra).map(([k, c]) => [k, c, k.startsWith('F')]), ['Đền Tri Thức', L.temple]];
+if (QUICK) pts = pts.slice(0, 2);
 for (const [name, c, snap] of pts) {
   // chỗ trống: thử tâm rồi lệch dần theo vòng xoắn, chọn điểm không nằm trong hộp va chạm (ctx.boxes) nếu có
   await spot(name, `const [x0,z0]=[${c[0]},${c[1]}]; let best=[x0,z0]; const B=c.boxes||[]; const inBox=(x,z)=>B.some(b=>b&&b.x0!=null&&x>b.x0-1&&x<b.x1+1&&z>b.z0-1&&z<b.z1+1);
-    for(let i=0;i<21;i++){const a=i*2.4,r=i*1.6,x=x0+Math.cos(a)*r,z=z0+Math.sin(a)*r; if(!inBox(x,z)){best=[x,z];break;}} p.vehicle=null; p.teleport(best[0],best[1]); cam(Math.random()*6.28)`, { snap });
+    for(let i=0;i<21;i++){const a=i*2.4,r=i*1.6,x=x0+Math.cos(a)*r,z=z0+Math.sin(a)*r; if(!inBox(x,z)){best=[x,z];break;}} c.vehicles.forceOff(); c.aircraft.flying || (p.vehicle=null); p.teleport(best[0],best[1]); cam(Math.random()*6.28)`, { snap });
 }
 // ---------- 2. Bản đồ M ----------
-step = 'bản đồ M'; await ev(sp => { window.__sp = sp; __island.player.vehicle = null; __island.player.teleport(...sp); }, L.spawn); await T(1500);
+step = 'bản đồ M'; await ev(sp => { window.__sp = sp; __island.vehicles.forceOff(); __island.aircraft.flying || __island.train.ride.state.aboard || (__island.player.vehicle = null); __island.player.teleport(...sp); }, L.spawn); await T(1500);
 await page.keyboard.press('KeyM'); await T(2500);
 const mapOpen = await ev(() => !!(__island.worldMap && (__island.worldMap.open || __island.worldMap.isOpen)) || !![...document.querySelectorAll('[id*=map i],[class*=map i]')].find(e => e.offsetParent && e.getBoundingClientRect().width > 200));
 log('Bản đồ mở:', mapOpen); await shot('ban-do'); await page.keyboard.press('KeyM'); await T(800); await page.keyboard.press('Escape').catch(() => {}); await T(500);
 if (!mapOpen) notes.push('Phím M: không thấy bản đồ mở');
+await probe('bản đồ');
 // ---------- 3. Xe đạp, khinh khí cầu ----------
-await spot('Xe đạp', `p.vehicle=null; p.teleport(${L.spawn}); cam(-Math.PI/2+0.75); setTimeout(()=>c.vehicles.toggleBike(),1200)`, { wait: 4000 });
+await spot('Xe đạp', `c.vehicles.forceOff(); c.aircraft.flying || (p.vehicle=null); p.teleport(${L.spawn}); cam(-Math.PI/2+0.75); setTimeout(()=>c.vehicles.toggleBike(),1200)`, { wait: 4000 });
 rows.at(-1).bike = await ev(() => !!(__island.player.vehicle && __island.vehicles.riding));
 await ev(() => __island.vehicles.riding && __island.vehicles.toggleBike()); await T(1500);
 await spot('Khinh khí cầu', `c.vehicles.toggleBalloon()`, { wait: 8000, walkS: 3, snap: true });
 rows.at(-1).balloon = await ev(() => !!(__island.vehicles.riding && __island.player.vehicle));
 await ev(() => __island.vehicles.riding && __island.vehicles.toggleBalloon()); await T(6000);
+await probe('xe/khinh khí cầu');
 // ---------- 4. Máy bay (chỉ bản máy tính: điện thoại máy ảo quá chậm để tự lái về đường băng) ----------
-if (!MOBILE) {
+if (!MOBILE && !QUICK) {
 const air = L.extra[Object.keys(L.extra).find(k => k.startsWith('K'))];
-await spot('Máy bay cất cánh', `p.vehicle=null; p.teleport(${air}); setTimeout(()=>c.aircraft.board(),800)`, { wait: 14000, walkS: 0, snap: true });
+await spot('Máy bay cất cánh', `c.vehicles.forceOff(); c.aircraft.flying || (p.vehicle=null); p.teleport(${air}); setTimeout(()=>c.aircraft.board(),800)`, { wait: 14000, walkS: 0, snap: true });
 rows.at(-1).plane = await ev(() => ({ flying: __island.aircraft.flying, phase: __island.aircraft.phase, y: Math.round(__island.player.pos.y) }));
 step = 'máy bay hạ cánh';
 // lái như người chơi: vòng ra xa rồi canh thẳng đường băng Cánh Diều (chạy theo trục x, cất cánh hướng −x), tới gần mới bấm hạ cánh
@@ -147,8 +152,8 @@ rows.at(-1).afterPlane = await ev(() => ({ flying: __island.aircraft.flying, veh
 // ---------- 5. Mini game ----------
 const mg = [];
 const keys = await ev(() => { const G = __island.miniGames || {}, seen = new Set(), out = []; for (const [k, g] of Object.entries(G)) { if (seen.has(g)) continue; seen.add(g); out.push(k); } return out; }) || [];
-await ev(() => { __island.player.vehicle = null; __island.player.teleport(...window.__sp); });
-for (const k of keys) {
+await ev(() => { __island.vehicles.forceOff(); __island.aircraft.flying || __island.train.ride.state.aboard || (__island.player.vehicle = null); __island.player.teleport(...window.__sp); });
+for (const k of QUICK ? keys.slice(0, 3) : keys) {
   step = 'mini game ' + k; const e0 = errors.length;
   const ok = await ev(k => { const q = __island.mg.doorOf ? __island.mg.doorOf(k) : null; return !!__island.mg.start(k, q); }, k);
   await T(900); await ev(() => __island.mg.skipFly && __island.mg.skipFly()); await reset(); await T(2200);
@@ -160,10 +165,11 @@ for (const k of keys) {
 }
 log('Mini game:', mg.length, 'lỗi mở:', mg.filter(r => !r.ok).map(r => r.k).join(','), 'kẹt thoát:', mg.filter(r => !r.exit).map(r => r.k).join(','));
 await ev(() => { if (__island.player.frozen && __island.mg && __island.mg.active) __island.mg.exit(true); });
+await probe('mini game');
 // ---------- 7. Tàu Pha Lê → Học viện ----------
 step = 'Tàu Pha Lê'; await settle(20);
 const tr = {};
-await ev(() => { const t = __island.train; __island.player.vehicle = null; t.ride.relocate('A'); });
+await ev(() => { const t = __island.train; __island.vehicles.forceOff(); __island.aircraft.flying || __island.train.ride.state.aboard || (__island.player.vehicle = null); t.ride.relocate('A'); });
 await T(1500);
 tr.board = await ev(() => { __island.train.ride.board(); return true; }); await T(3000);
 tr.aboard = await ev(() => __island.train.ride.state.aboard);
@@ -177,25 +183,26 @@ const trS = () => ev(() => { const r = __island.train.ride, s = r.state; return 
 for (let i = 0; i < 40; i++) { await ev(() => __island.train.ride.depart()); const q = await trS(); if (q && q.phase === 'run') break; await T(1500); }
 tr.dep = await trS(); await reset(); await T(5000); tr.run = await measure(); await shot('tau-chay');
 await ev(() => { const b = [...document.querySelectorAll('button')].find(b => b.offsetParent && /Tới nơi/.test(b.textContent)); if (b) b.click(); __island.train.ride.seek(142); });
-for (let i = 0; i < 40; i++) { await T(1500); const q = await trS(); if (q && q.at === 'B' && !q.aboard) break; }
+for (let i = 0; i < 120; i++) { await T(1500); const q = await trS(); if (q && q.at === 'B' && !q.aboard) break; }   // online: tàu chạy đúng 144 s theo giờ máy chủ
 tr.after = await ev(() => ({ ...(({ at, aboard, phase }) => ({ at, aboard, phase }))(__island.train.ride.state), zone: __island.zoneAt ? __island.zoneAt(__island.player.pos.x, __island.player.pos.z) : null, pos: __island.player.pos.toArray().map(Math.round) }));
 if (!tr.after || tr.after.at !== 'B' || tr.after.aboard) notes.push('Tàu Pha Lê không tới/không xuống được ga Học viện: ' + JSON.stringify(tr.after));
 log('Tàu:', JSON.stringify(tr));
 await spot('Ga Học viện (xuống tàu, đi bộ)', ``, { wait: 500, snap: false });
+await probe('tàu');
 // ---------- 8. Học viện: cổng, sân, đại sảnh, phố, rừng, nhà ----------
 const A = await ev(async () => { const g = await import('/js/island/academy/plan.js'); const W = g.toWorld; const L = g.CASTLE_L, V = g.VILLAGE, F = g.FOREST;
   return { gate: W(g.CASTLE.u1 + 8, 0), yard: W(-20, 0), hall: W((L.hall.u0 + L.hall.u1) / 2, 0), alley: V ? W((V.u0 + V.u1) / 2, V.v0 + 6) : null, forest: W(F.gate[0], F.gate[1] - 13), forestIn: W(F.u + 40, F.v), dock: W(g.DOCK[0], g.DOCK[1]) }; });
 log('Học viện:', JSON.stringify(A));
 if (A) {
   for (const [n, k, snap] of [['Học viện · cổng lâu đài', 'gate', true], ['Học viện · sân trong', 'yard', false], ['Học viện · đại sảnh', 'hall', true], ['Học viện · phố phép thuật', 'alley', true], ['Học viện · cửa rừng', 'forest', false], ['Học viện · trong rừng', 'forestIn', true]]) {
-    if (!A[k]) continue; await spot(n, `p.vehicle=null; p.teleport(${A[k]}); cam(${k === 'gate' ? 'Math.PI' : '0'})`, { wait: 5000, snap });
+    if (!A[k]) continue; await spot(n, `c.vehicles.forceOff(); c.aircraft.flying || (p.vehicle=null); p.teleport(${A[k]}); cam(${k === 'gate' ? 'Math.PI' : '0'})`, { wait: 5000, snap });
   }
   const houses = await ev(() => { const h = __island.academyHouses || __island.houses; return h ? Object.keys(h).slice(0, 8) : null; });
   if (houses) log('nhà Tứ Linh API:', houses.join(','));
 }
 // ---------- 9. Đổi giờ ☀️ ----------
 step = 'đổi giờ';
-await ev(() => { const c = __island; c.sky.state.lock = null; c.player.vehicle = null; c.player.teleport(...window.__sp); });
+await ev(() => { const c = __island; c.sky.state.lock = null; c.vehicles.forceOff(); c.aircraft.flying || c.train.ride.state.aboard || (c.player.vehicle = null); c.player.teleport(...window.__sp); });
 const sun = await ev(() => { const b = [...document.querySelectorAll('button')].find(b => /☀️|🌙|🕐|⏰/.test(b.textContent) && b.offsetParent); if (b) { b.click(); return b.textContent.trim().slice(0, 20); } return null; });
 await T(1500); const sunPanel = await ev(() => [...document.querySelectorAll('button')].filter(b => b.offsetParent && /đêm|tối|Đêm|🌙/.test(b.textContent)).map(b => b.textContent.trim().slice(0, 16)));
 const night = await ev(() => { const b = [...document.querySelectorAll('button')].find(b => b.offsetParent && /đêm|Đêm|🌙/.test(b.textContent)); if (b) { b.click(); return true; } __island.sky.state.lock = 22; return false; });
@@ -204,11 +211,11 @@ await ev(() => { __island.sky.state.lock = 13; });
 
 // ---------- 9b. NPC (cuối cùng: thoại Coach Ru mở chương 1 cốt truyện, giữ nhân vật ở cổng trường) ----------
 const talks = [];
-await ev(() => { __island.player.vehicle = null; __island.player.teleport(...window.__sp); }); await T(6000);
+await ev(() => { __island.vehicles.forceOff(); __island.aircraft.flying || __island.train.ride.state.aboard || (__island.player.vehicle = null); __island.player.teleport(...window.__sp); }); await T(6000);
 for (let i = 0, tried = 0; talks.length < 3 && tried < 13; tried++) {   // chỉ bấm khi nút hành động là 💬 (tránh bấm nhầm 🏁 đua ván, 🛒…)
   step = 'NPC ' + (talks.length + 1);
   const r = await ev(async i => { const c = __island, P = c.townPeople || []; const me = window.__sp, list = P.filter(e => e.a && e.px != null && !e.seat).sort((a, b) => Math.hypot(a.px - me[0], a.pz - me[1]) - Math.hypot(b.px - me[0], b.pz - me[1])); const e = list[i];
-    if (!e) return { err: 'hết NPC trong pool' }; c.player.vehicle = null; c.player.teleport(e.px + 1.2, e.pz + 0.3); return { at: [Math.round(e.px), Math.round(e.pz)] }; }, tried);
+    if (!e) return { err: 'hết NPC trong pool' }; c.vehicles.forceOff(); c.aircraft.flying || c.train.ride.state.aboard || (c.player.vehicle = null); c.player.teleport(e.px + 1.2, e.pz + 0.3); return { at: [Math.round(e.px), Math.round(e.pz)] }; }, tried);
   if (!r || r.err) { talks.push(r || { err: 'evaluate' }); break; }
   await T(2000);
   const lab = await ev(() => { const b = document.getElementById('bAct'); return b && !b.hidden ? b.textContent.trim() : null; });
@@ -222,7 +229,7 @@ for (let i = 0, tried = 0; talks.length < 3 && tried < 13; tried++) {   // chỉ
 }
 // ---------- 10. Nút chồng nhau (điện thoại) ----------
 step = 'nút chồng';
-await ev(() => { const c = __island; c.player.vehicle = null; }); await T(1500);
+await ev(() => { const c = __island; c.vehicles.forceOff(); c.aircraft.flying || c.train.ride.state.aboard || (c.player.vehicle = null); }); await T(1500);
 const overlaps = await ev(() => {
   const els = [...document.querySelectorAll('button, .btn, [role=button]')].filter(e => { if (!e.offsetParent) return false; const s = getComputedStyle(e); if (s.visibility === 'hidden' || +s.opacity < 0.1 || s.pointerEvents === 'none') return false; const r = e.getBoundingClientRect(); return r.width > 8 && r.height > 8 && r.bottom > 0 && r.top < innerHeight; });
   const out = []; for (let i = 0; i < els.length; i++) for (let j = i + 1; j < els.length; j++) { const a = els[i], b = els[j]; if (a.contains(b) || b.contains(a)) continue;
