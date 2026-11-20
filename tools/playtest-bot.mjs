@@ -180,7 +180,7 @@ if (!tr.aboard) { // tới gần sân ga A rồi lên lại
 await shot('tau-len');
 // chế độ online: máy chủ điều độ giờ khởi hành (~13 s) → chờ như người chơi, rồi bấm "⏭ Tới nơi"
 const trS = () => ev(() => { const r = __island.train.ride, s = r.state; return { at: s.at, phase: s.phase, aboard: s.aboard, online: !!(r.net && r.net.online) }; });
-for (let i = 0; i < 40; i++) { await ev(() => __island.train.ride.depart()); const q = await trS(); if (q && q.phase === 'run') break; await T(1500); }
+for (let i = 0; i < 60; i++) { const q = await trS(); if (q && q.phase === 'run') break; if (q && !q.online && i > 3) await ev(() => __island.train.ride.depart()); await T(1500); }   // online: KHÔNG gọi depart() cục bộ (làm rớt chỗ)
 tr.dep = await trS(); await reset(); await T(5000); tr.run = await measure(); await shot('tau-chay');
 await ev(() => { const b = [...document.querySelectorAll('button')].find(b => b.offsetParent && /Tới nơi/.test(b.textContent)); if (b) b.click(); __island.train.ride.seek(142); });
 for (let i = 0; i < 120; i++) { await T(1500); const q = await trS(); if (q && q.at === 'B' && !q.aboard) break; }   // online: tàu chạy đúng 144 s theo giờ máy chủ
