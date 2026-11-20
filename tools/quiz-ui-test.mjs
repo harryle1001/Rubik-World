@@ -16,11 +16,15 @@ page.on('console', m => { if (m.type() === 'error') errors.push(`[${cur}] ${m.te
 page.on('pageerror', e => errors.push(`[${cur}] pageerror: ${e.message}`));
 await page.addInitScript(() => { try { localStorage.setItem('island.grade', '5'); localStorage.setItem('island.intro', '1'); } catch (e) {} });
 console.log('mở trang', MODE); await page.goto('http://localhost:3000/ocean.html');
-await page.waitForFunction(() => window.__island && __island.school && __island.school.ready && __island.player.hero, null, { timeout: 240000 });
+await page.waitForFunction(() => window.__island && __island.school && __island.school.ready && __island.player.hero && __island.warmed, null, { timeout: 300000 });
 await page.waitForTimeout(1500);
 await page.evaluate(() => { const b = document.querySelector('[data-a="guest"]'); if (b && b.offsetParent) b.click(); });
 await page.waitForTimeout(800); console.log('đã nạp');
 page.setDefaultTimeout(60000);
+const clearUi = async () => { for (let k = 0; k < 40; k++) { const busy = await page.evaluate(() => { const g = document.querySelector('#accBox:not([hidden]) [data-a="guest"]'); if (g) g.click();
+  const s = document.querySelector('[data-s]'); if (s && s.offsetParent) s.click(); const n = [...document.querySelectorAll('button')].find(b => b.offsetParent && /^(Tiếp|Bắt đầu|Đi thôi|Hiểu rồi|OK|Đóng)/.test(b.textContent.trim()) && getComputedStyle(b).zIndex !== 'auto'); if (n) n.click();
+  return !!(g || document.body.classList.contains('st-cut') || __island.player.frozen || __island.freeCam); }); if (!busy) return; await page.waitForTimeout(700); } };
+await clearUi();
 for (let i = 0; i < 9 && await page.evaluate(() => !!document.getElementById('stSay')); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(600); }   // bỏ lời dẫn cốt truyện mở màn
 const cdp = TOUCH ? await page.context().newCDPSession(page) : null;
 const T = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts });
