@@ -31,13 +31,16 @@ const t0 = Date.now();
 await page.goto(BASE + '/ocean.html');
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready, null, { timeout: 600000 });
 const loadS = +((Date.now() - t0) / 1000).toFixed(1); log('Tải xong', loadS, 's');
-for (let k = 0, calm = 0; k < 50 && calm < 6; k++) {
+async function settle(max = 50) {   // bấm qua bảng khách / thoại cốt truyện / cảnh phim cho tới khi yên
+for (let k = 0, calm = 0; k < max && calm < 6; k++) {
   await T(700);
   const busy = await ev(() => { const g = document.querySelector('#accBox:not([hidden]) [data-a="guest"]'); if (g) g.click(); const s = document.querySelector('[data-s]'); if (s && s.offsetParent) s.click();
     const n = document.querySelector('#stSay button.nx'); if (n && n.offsetParent) n.click(); for (const b of document.querySelectorAll('button')) if (/^Bỏ qua/.test(b.textContent.trim()) && b.offsetParent) b.click();
     return !!g || document.body.classList.contains('st-cut') || !!__island.freeCam || __island.player.frozen; });
   calm = busy ? 0 : calm + 1;
 }
+}
+await settle();
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => notes.push('nhân vật vẫn khoá 30 s sau khi chơi khách'));
 // Gói Phụ huynh: khách bị khoá học viện/mini game (đúng thiết kế). Ghi lại 1 lần, rồi mở khoá TRONG BOT để kiểm tra nội dung.
 const gate = await ev(() => { const pm = __island.premium; if (!pm) return null; const r = { on: pm.on(), mgFree: pm.free().mg.length }; pm.on = () => true; return r; });
@@ -72,10 +75,12 @@ async function spot(name, prep, { wait = 3500, walkS = 3, snap = false } = {}) {
   const pre = await ev(code => { const c = __island, p = c.player, cam = y => { p.cam.yaw = y; p.cam.pitch = 0.3; p.cam.dist = 11; p.snapCamera && p.snapCamera(); };
     try { (0, eval)('(c,p,cam)=>{' + code + '}')(c, p, cam); } catch (e) { return 'lỗi: ' + e.message; } return 'ok'; }, prep);
   await T(wait); await reset();
+  const tp = await ev(code => { const m = code.match(/p\.teleport\(([-\d.e]+),\s*([-\d.e]+)/); if (!m) return null; const P = __island.player.pos; return +Math.hypot(P.x - +m[1], P.z - +m[2]).toFixed(1); }, prep);
   const w = walkS ? await walk(walkS) : null;
   if (!walkS) await T(2500);
   const m = await measure();
-  const row = { name, ...m, ...(w || {}), prep: pre };
+  const row = { name, ...m, ...(w || {}), prep: pre, tpOff: tp };
+  if (tp != null && tp > 8) row.tpFail = true;
   if (w && w.sim >= 0.4 && w.moved < 5.5 * w.sim * 0.25) row.stuck = true;   // khung quá chậm (sim < 0,4 s) → không kết luận
   if (m && m.pos[1] < -4 && !/Lặn|biển/.test(name)) row.fell = true;
   rows.push(row); log(name, JSON.stringify(row));
@@ -120,12 +125,12 @@ step = 'máy bay hạ cánh';
 // (máy bay chỉ đáp ở chỗ phẳng là đúng thiết kế — aircraft.js)
 const K = await ev(async () => (await import('/js/island/layout.js')).EXTRA.find(e => e.id === 'K').r);
 let landed = null; const tL = Date.now();
-for (let i = 0; i < 150; i++) {
+for (let i = 0; i < 240; i++) {
   landed = await ev(K => { const c = __island, a = c.aircraft, P = c.player.pos, z = K[3] - 13, x1 = K[2] - 6, x0 = K[0] + 6;
     if (!a.flying) return { flying: false, phase: a.phase, y: Math.round(P.y) };
     const s = window.__ls = window.__ls || { st: 0 };
     const tgt = s.st === 0 ? [x1 + 160, z] : [x0, z];   // 0: ra điểm cách đầu đường băng 160 m về phía đông · 1: bay vào dọc đường băng
-    if (s.st === 0 && Math.hypot(tgt[0] - P.x, tgt[1] - P.z) < 25) s.st = 1;
+    if (s.st === 0 && Math.hypot(tgt[0] - P.x, tgt[1] - P.z) < 25) s.st = 1; if (s.st === 1 && P.x < x0 - 30) s.st = 0;   // trượt quá đường băng: vòng lại
     const want = Math.atan2(tgt[0] - P.x, tgt[1] - P.z); let dy = want - a.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); a.yaw += dy * 0.4;
     if (s.st === 1 && P.x < x1 + 60 && a.phase === 'fly') a.land();
     return { flying: true, phase: a.phase, st: s.st, y: Math.round(P.y), x: Math.round(P.x), z: Math.round(P.z) }; }, K);
@@ -164,13 +169,13 @@ for (let i = 0, tried = 0; talks.length < 3 && tried < 13; tried++) {   // chỉ
   if (!lab || !/^💬/.test(lab)) continue;
   const v0 = await ev(() => [...document.body.querySelectorAll('div,section')].filter(e => e.offsetParent && getComputedStyle(e).position === 'fixed').length);
   await ev(() => document.getElementById('bAct').click()); await T(2500);
-  const open = await ev(v0 => ({ tq: !!(__island.teacherQuiz && __island.teacherQuiz.open()), hold: !!__island.talkHold, panels: [...document.body.querySelectorAll('div,section')].filter(e => e.offsetParent && getComputedStyle(e).position === 'fixed').length - v0 }), v0);
+  const open = await ev(v0 => ({ story: !!(document.querySelector('#stSay') && document.querySelector('#stSay').offsetParent), tq: !!(__island.teacherQuiz && __island.teacherQuiz.open()), hold: !!__island.talkHold, panels: [...document.body.querySelectorAll('div,section')].filter(e => e.offsetParent && getComputedStyle(e).position === 'fixed').length - v0 }), v0);
   if (talks.length === 0) await shot('npc');
-  await ev(() => { __island.teacherQuiz && __island.teacherQuiz.close(); }); await page.keyboard.press('Escape'); await T(600);
-  talks.push({ ...r, label: lab, open: open && (open.tq || open.hold || open.panels > 0), detail: open }); log('NPC', talks.length, JSON.stringify(talks.at(-1)));
+  await ev(() => { __island.teacherQuiz && __island.teacherQuiz.close(); }); await settle(30);
+  talks.push({ ...r, label: lab, open: open && (open.tq || open.hold || open.story || open.panels > 0), detail: open }); log('NPC', talks.length, JSON.stringify(talks.at(-1)));
 }
 // ---------- 7. Tàu Pha Lê → Học viện ----------
-step = 'Tàu Pha Lê';
+step = 'Tàu Pha Lê'; await settle(20);
 const tr = {};
 await ev(() => { const t = __island.train; __island.player.vehicle = null; t.ride.relocate('A'); });
 await T(1500);
