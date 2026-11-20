@@ -91,11 +91,11 @@ const CSS = `
 #mgHud{position:fixed;inset:0;z-index:30;pointer-events:none;font:600 13px/1.4 system-ui,sans-serif;color:#fff;--g:8px;--G:13px}
 #mgHud>*{pointer-events:auto}
 #mgHud .mg-top{position:absolute;left:50%;top:max(var(--g),env(safe-area-inset-top));transform:translateX(-50%);display:flex;gap:var(--g);align-items:center;
-  padding:var(--g) var(--G);border-radius:21px;background:#1b1626c4;box-shadow:0 5px 21px #0005;white-space:nowrap;max-width:calc(100vw - 16px)}
+  padding:var(--g) var(--G);border-radius:21px;background:#1b1626c4;box-shadow:0 5px 21px #0005;white-space:nowrap;max-width:calc(100vw - 16px);box-sizing:border-box}
 #mgHud .mg-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
-#mgHud .mg-chip{padding:3px var(--g);border-radius:13px;background:#ffffff1f;font:800 13px system-ui;font-variant-numeric:tabular-nums}
+#mgHud .mg-chip{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;padding:3px var(--g);border-radius:13px;background:#ffffff1f;font:800 13px system-ui;font-variant-numeric:tabular-nums}
 #mgHud .mg-chip b{font-size:16px;color:#ffd36e}
-#mgHud .mg-x{border:0;border-radius:13px;padding:var(--g) var(--G);background:#e0564a;color:#fff;font:800 13px system-ui;cursor:pointer}
+#mgHud .mg-x{flex:none;min-height:40px;border:0;border-radius:13px;padding:var(--g) var(--G);background:#e0564a;color:#fff;font:800 13px system-ui;cursor:pointer}
 #mgHud .mg-msg{position:absolute;left:50%;top:calc(max(var(--g),env(safe-area-inset-top)) + 55px);transform:translateX(-50%);max-width:min(92vw,520px);text-align:center;
   padding:var(--g) var(--G);border-radius:13px;background:#fff6dfee;color:#3b2a1e;font:600 15px/1.45 system-ui;box-shadow:0 5px 21px #0004;opacity:0;transition:opacity .3s;pointer-events:none}
 #mgHud .mg-bar{position:absolute;left:8px;right:8px;bottom:max(13px,env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;justify-content:safe center;gap:var(--g);pointer-events:none}#mgHud .mg-bar>*{pointer-events:auto}
