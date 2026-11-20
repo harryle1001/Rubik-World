@@ -14,12 +14,13 @@ const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=sw
 const page = await browser.newPage(TOUCH ? { viewport: VP, hasTouch: true, isMobile: true, deviceScaleFactor: 1 } : { viewport: VP });
 page.on('console', m => { if (m.type() === 'error') errors.push(`[${cur}] ${m.text().slice(0, 240)}`); });
 page.on('pageerror', e => errors.push(`[${cur}] pageerror: ${e.message}`));
-await page.addInitScript(() => { try { localStorage.setItem('island.grade', '5'); } catch (e) {} });
+await page.addInitScript(() => { try { localStorage.setItem('island.grade', '5'); localStorage.setItem('island.intro', '1'); } catch (e) {} });
 console.log('mở trang', MODE); await page.goto('http://localhost:3000/ocean.html');
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready && __island.player.hero, null, { timeout: 240000 });
 await page.waitForTimeout(1500);
 await page.evaluate(() => { const b = document.querySelector('[data-a="guest"]'); if (b && b.offsetParent) b.click(); });
 await page.waitForTimeout(800); console.log('đã nạp');
+page.setDefaultTimeout(8000);
 const cdp = TOUCH ? await page.context().newCDPSession(page) : null;
 const T = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts });
 const pos = () => page.evaluate(() => [__island.player.pos.x, __island.player.pos.z]);
