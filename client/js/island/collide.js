@@ -227,6 +227,7 @@ export function createCollide(ctx) {
     if (now >= nextPlan) { nextPlan = now + 250; plan(); }
     work(BUDGET);
   }
+  const stats = () => { let n = 0, q = 0, idx = 0; for (const s of src.values()) { if (s.state === 2) n++; else if (s.state === 1) q++; for (const b of s.b.values()) idx += b.length; } return { chunks: chunks.size, sources: n, queued: q, idx, want: want.length, kb: chunks.size * CN * CN * 8 / 1024 | 0 }; };
   const debugSrc = o => { const s = src.get(o); return s ? { state: s.state, moves: s.moves, keys: s.b.size, dead: dead.has(o) } : { none: true, dead: dead.has(o) }; };
   return { debugSrc, update, resolve, blocked, camClear, stats, scan, work, plan, cellAt, idx, CS, LOW, HEAD };
 }
