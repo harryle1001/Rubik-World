@@ -135,14 +135,15 @@ export function createCollide(ctx) {
       if (o.isInstancedMesh && o.count === 0) continue;
       let s = src.get(o); const sg = sig(o);
       if (!s) { if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); src.set(o, s = { o, sg, seen: scanId, state: 0, moves: 0, b: new Map(), ti: 0 }); continue; }
-      s.seen = scanId;
+      s.seen = scanId; if (s.hid) { s.hid = false; if (s.sg === sg) { s.state = 1; s.ti = 0; pending.push(s); continue; } }   // hiện lại, không đổi chỗ: đăng ký ngay
       if (s.sg !== sg) {   // vừa di chuyển / đổi bản sao (cây nạp theo ô đất…): gỡ rồi đăng ký lại; đổi ở 3 lần quét LIÊN TIẾP → vật động (người, xe, thuyền, chim…) bỏ hẳn
         s.sg = sg; if (s.state) unregister(s); if (++s.moves >= 3) { dead.add(o); src.delete(o); } continue;
       }
       s.moves = 0;
       if (s.state === 0) { s.state = 1; s.ti = 0; pending.push(s); }   // đứng yên qua 2 lần quét → lập chỉ mục
     }
-    for (const s of src.values()) if (s.seen !== scanId) { if (s.state) unregister(s); src.delete(s.o); }   // đã gỡ khỏi cảnh / bị ẩn
+    for (const s of src.values()) if (s.seen !== scanId && !s.hid) { if (s.state) unregister(s); s.hid = true; }   // bị ẩn: gỡ, nhớ chỗ (hiện lại đăng ký ngay) · đã gỡ khỏi cảnh: quên
+    for (const s of src.values()) if (s.hid) { let r = s.o; while (r.parent) r = r.parent; if (r !== ctx.scene) src.delete(s.o); }   // nhóm đã rời cảnh (vùng xa gỡ ra): quên hẳn
     // nguồn chờ lập chỉ mục: gần người chơi trước
     const P = ctx.player && ctx.player.pos;
     if (P && pending.length > 1) { for (const q of pending) { const e = q.o.matrixWorld.elements, g = q.o.geometry; if (!g.boundingSphere) g.computeBoundingSphere();
