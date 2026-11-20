@@ -21,6 +21,7 @@ await page.waitForTimeout(1500);
 await page.evaluate(() => { const b = document.querySelector('[data-a="guest"]'); if (b && b.offsetParent) b.click(); });
 await page.waitForTimeout(800); console.log('đã nạp');
 page.setDefaultTimeout(60000);
+for (let i = 0; i < 9 && await page.evaluate(() => !!document.getElementById('stSay')); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(600); }   // bỏ lời dẫn cốt truyện mở màn
 const cdp = TOUCH ? await page.context().newCDPSession(page) : null;
 const T = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts });
 const pos = () => page.evaluate(() => [__island.player.pos.x, __island.player.pos.z]);
@@ -53,6 +54,7 @@ async function place(name, open, after) {
   await page.waitForTimeout(400);
 }
 const V = () => 'new (__island.player.pos.constructor)(__island.player.pos.x + 1.5, __island.player.pos.y + 2, __island.player.pos.z)';
+console.log('trước khi hỏi: đi được m', await move(), 'frozen', await page.evaluate(() => __island.player.frozen));
 // 1) cốt truyện / học thích ứng (learn.askSet)
 await place('cot-truyen', () => page.evaluate(() => { window.__r = null; __island.learn.askSet({ s: ['toan'], n: 3, title: 'Cáo Ru', ava: '🦊' }).then(r => (window.__r = r)); }),
   async row => { await page.waitForTimeout(100); row.kq = await page.evaluate(() => JSON.stringify(window.__r)); });
