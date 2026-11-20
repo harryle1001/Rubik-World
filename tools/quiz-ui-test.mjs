@@ -15,11 +15,11 @@ const page = await browser.newPage(TOUCH ? { viewport: VP, hasTouch: true, isMob
 page.on('console', m => { if (m.type() === 'error') errors.push(`[${cur}] ${m.text().slice(0, 240)}`); });
 page.on('pageerror', e => errors.push(`[${cur}] pageerror: ${e.message}`));
 await page.addInitScript(() => { try { localStorage.setItem('island.grade', '5'); } catch (e) {} });
-await page.goto('http://localhost:3000/ocean.html');
+console.log('mở trang', MODE); await page.goto('http://localhost:3000/ocean.html');
 await page.waitForFunction(() => window.__island && __island.school && __island.school.ready && __island.player.hero, null, { timeout: 240000 });
 await page.waitForTimeout(1500);
 await page.evaluate(() => { const b = document.querySelector('[data-a="guest"]'); if (b && b.offsetParent) b.click(); });
-await page.waitForTimeout(800);
+await page.waitForTimeout(800); console.log('đã nạp');
 const cdp = TOUCH ? await page.context().newCDPSession(page) : null;
 const T = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts });
 const pos = () => page.evaluate(() => [__island.player.pos.x, __island.player.pos.z]);
@@ -47,7 +47,7 @@ async function place(name, open, after) {
     row.đi_m = await move();
     row.OK = row.closed && !row.frozen && !row.mg && row.đi_m > 0.3 ? '✅' : '❌';
   } catch (e) { row.err = e.message.slice(0, 160); row.OK = '❌'; }
-  rows.push(row);
+  rows.push(row); console.log(JSON.stringify(row));
   await page.evaluate(() => { try { __island.mg.exit(true); } catch (e) {} try { __island.teacherQuiz.close(); } catch (e) {} });
   await page.waitForTimeout(400);
 }
@@ -78,7 +78,7 @@ for (const k of mgKeys.filter(k => __filter(k)).slice(0, 6)) {
   try { await mgStart(k); await page.waitForTimeout(1800); const x = page.locator('#mgHud .mg-x'); if (TOUCH) await x.tap(); else await x.click(); await page.waitForTimeout(600);
     r.mg = await page.evaluate(() => !!__island.mg.active); r.frozen = await page.evaluate(() => __island.player.frozen); r.q = await page.evaluate(() => !document.getElementById('rwQ').hidden); r.đi_m = await move(); r.OK = !r.mg && !r.frozen && !r.q && r.đi_m > 0.3 ? '✅' : '❌'; }
   catch (e) { r.err = e.message.slice(0, 120); r.OK = '❌'; }
-  exits.push(r); await page.evaluate(() => { try { __island.mg.exit(true); } catch (e) {} });
+  exits.push(r); console.log(JSON.stringify(r)); await page.evaluate(() => { try { __island.mg.exit(true); } catch (e) {} });
 }
 function __filter(k) { return ['caro', 'garden', 'runner', 'circuit', 'hall', 'go', 'balloon', 'cannon', 'rubik'].includes(k); }
 // Esc trên máy tính
