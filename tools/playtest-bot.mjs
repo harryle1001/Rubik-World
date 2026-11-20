@@ -88,6 +88,8 @@ async function spot(name, prep, { wait = 3500, walkS = 3, snap = false } = {}) {
   return row;
 }
 
+// chờ nhân vật thực sự được cập nhật (điện thoại: hướng dẫn/cảnh mở đầu có thể còn giữ)
+for (let i = 0; i < 40; i++) { const t = await ev(() => { const a = __sim; return new Promise(r => setTimeout(() => r(__sim - a), 1000)); }); if (t > 0) break; await settle(3); }
 // ---------- 1. Các điểm layout.js ----------
 const L = await ev(async () => {
   const l = await import('/js/island/layout.js'); let plaza = null; try { const p = await import('/js/island/sample/plaza.js'); plaza = [p.PLAZA.x, p.PLAZA.z]; } catch (e) {}
@@ -156,24 +158,6 @@ for (const k of keys) {
 }
 log('Mini game:', mg.length, 'lỗi mở:', mg.filter(r => !r.ok).map(r => r.k).join(','), 'kẹt thoát:', mg.filter(r => !r.exit).map(r => r.k).join(','));
 await ev(() => { if (__island.player.frozen && __island.mg && __island.mg.active) __island.mg.exit(true); });
-// ---------- 6. NPC ----------
-const talks = [];
-await ev(() => { __island.player.vehicle = null; __island.player.teleport(...window.__sp); }); await T(6000);
-for (let i = 0, tried = 0; talks.length < 3 && tried < 13; tried++) {   // chỉ bấm khi nút hành động là 💬 (tránh bấm nhầm 🏁 đua ván, 🛒…)
-  step = 'NPC ' + (talks.length + 1);
-  const r = await ev(async i => { const c = __island, P = c.townPeople || []; const me = window.__sp, list = P.filter(e => e.a && e.px != null && !e.seat).sort((a, b) => Math.hypot(a.px - me[0], a.pz - me[1]) - Math.hypot(b.px - me[0], b.pz - me[1])); const e = list[i];
-    if (!e) return { err: 'hết NPC trong pool' }; c.player.vehicle = null; c.player.teleport(e.px + 1.2, e.pz + 0.3); return { at: [Math.round(e.px), Math.round(e.pz)] }; }, tried);
-  if (!r || r.err) { talks.push(r || { err: 'evaluate' }); break; }
-  await T(2000);
-  const lab = await ev(() => { const b = document.getElementById('bAct'); return b && !b.hidden ? b.textContent.trim() : null; });
-  if (!lab || !/^💬/.test(lab)) continue;
-  const v0 = await ev(() => [...document.body.querySelectorAll('div,section')].filter(e => e.offsetParent && getComputedStyle(e).position === 'fixed').length);
-  await ev(() => document.getElementById('bAct').click()); await T(2500);
-  const open = await ev(v0 => ({ story: !!(document.querySelector('#stSay') && document.querySelector('#stSay').offsetParent), tq: !!(__island.teacherQuiz && __island.teacherQuiz.open()), hold: !!__island.talkHold, panels: [...document.body.querySelectorAll('div,section')].filter(e => e.offsetParent && getComputedStyle(e).position === 'fixed').length - v0 }), v0);
-  if (talks.length === 0) await shot('npc');
-  await ev(() => { __island.teacherQuiz && __island.teacherQuiz.close(); }); await settle(30);
-  talks.push({ ...r, label: lab, open: open && (open.tq || open.hold || open.story || open.panels > 0), detail: open }); log('NPC', talks.length, JSON.stringify(talks.at(-1)));
-}
 // ---------- 7. Tàu Pha Lê → Học viện ----------
 step = 'Tàu Pha Lê'; await settle(20);
 const tr = {};
@@ -213,6 +197,24 @@ const night = await ev(() => { const b = [...document.querySelectorAll('button')
 await T(5000); await reset(); await T(2500); const nm = await measure(); rows.push({ name: 'Ban đêm (đổi giờ)', ...nm, sunBtn: sun, clickedNight: night }); await shot('dem');
 await ev(() => { __island.sky.state.lock = 13; });
 
+// ---------- 9b. NPC (cuối cùng: thoại Coach Ru mở chương 1 cốt truyện, giữ nhân vật ở cổng trường) ----------
+const talks = [];
+await ev(() => { __island.player.vehicle = null; __island.player.teleport(...window.__sp); }); await T(6000);
+for (let i = 0, tried = 0; talks.length < 3 && tried < 13; tried++) {   // chỉ bấm khi nút hành động là 💬 (tránh bấm nhầm 🏁 đua ván, 🛒…)
+  step = 'NPC ' + (talks.length + 1);
+  const r = await ev(async i => { const c = __island, P = c.townPeople || []; const me = window.__sp, list = P.filter(e => e.a && e.px != null && !e.seat).sort((a, b) => Math.hypot(a.px - me[0], a.pz - me[1]) - Math.hypot(b.px - me[0], b.pz - me[1])); const e = list[i];
+    if (!e) return { err: 'hết NPC trong pool' }; c.player.vehicle = null; c.player.teleport(e.px + 1.2, e.pz + 0.3); return { at: [Math.round(e.px), Math.round(e.pz)] }; }, tried);
+  if (!r || r.err) { talks.push(r || { err: 'evaluate' }); break; }
+  await T(2000);
+  const lab = await ev(() => { const b = document.getElementById('bAct'); return b && !b.hidden ? b.textContent.trim() : null; });
+  if (!lab || !/^💬/.test(lab)) continue;
+  const v0 = await ev(() => [...document.body.querySelectorAll('div,section')].filter(e => e.offsetParent && getComputedStyle(e).position === 'fixed').length);
+  await ev(() => document.getElementById('bAct').click()); await T(2500);
+  const open = await ev(v0 => ({ story: !!(document.querySelector('#stSay') && document.querySelector('#stSay').offsetParent), tq: !!(__island.teacherQuiz && __island.teacherQuiz.open()), hold: !!__island.talkHold, panels: [...document.body.querySelectorAll('div,section')].filter(e => e.offsetParent && getComputedStyle(e).position === 'fixed').length - v0 }), v0);
+  if (talks.length === 0) await shot('npc');
+  await ev(() => { __island.teacherQuiz && __island.teacherQuiz.close(); }); await settle(30);
+  talks.push({ ...r, label: lab, open: open && (open.tq || open.hold || open.story || open.panels > 0), detail: open }); log('NPC', talks.length, JSON.stringify(talks.at(-1)));
+}
 // ---------- 10. Nút chồng nhau (điện thoại) ----------
 step = 'nút chồng';
 await ev(() => { const c = __island; c.player.vehicle = null; }); await T(1500);
