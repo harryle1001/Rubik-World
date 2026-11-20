@@ -39,6 +39,9 @@ for (let k = 0, calm = 0; k < 50 && calm < 6; k++) {
   calm = busy ? 0 : calm + 1;
 }
 await page.waitForFunction(() => !__island.player.frozen, null, { timeout: 30000 }).catch(() => notes.push('nhân vật vẫn khoá 30 s sau khi chơi khách'));
+// Gói Phụ huynh: khách bị khoá học viện/mini game (đúng thiết kế). Ghi lại 1 lần, rồi mở khoá TRONG BOT để kiểm tra nội dung.
+const gate = await ev(() => { const pm = __island.premium; if (!pm) return null; const r = { on: pm.on(), mgFree: pm.free().mg.length }; pm.on = () => true; return r; });
+log('Gói Phụ huynh (khách):', JSON.stringify(gate));
 await ev(() => { const c = __island; c.sky.state.lock = 13; if (c.account && c.account.profile && c.account.profile.own) c.account.profile.own.push('ride-balloon', 'broom-tap'); });
 // bọc đo
 await ev(() => {
@@ -65,6 +68,7 @@ async function walk(sec = 3) {
 }
 async function spot(name, prep, { wait = 3500, walkS = 3, snap = false } = {}) {
   step = name;
+  await ev(() => { const b = document.getElementById('pmBox'); if (b && !b.hidden) { b.hidden = true; __island.player.frozen = false; window.__pmHit = (window.__pmHit || 0) + 1; } });
   const pre = await ev(code => { const c = __island, p = c.player, cam = y => { p.cam.yaw = y; p.cam.pitch = 0.3; p.cam.dist = 11; p.snapCamera && p.snapCamera(); };
     try { (0, eval)('(c,p,cam)=>{' + code + '}')(c, p, cam); } catch (e) { return 'lỗi: ' + e.message; } return 'ok'; }, prep);
   await T(wait); await reset();
@@ -216,7 +220,7 @@ await shot('hud');
 log('Nút:', JSON.stringify(overlaps));
 
 // ---------- tổng kết ----------
-const res = { mobile: MOBILE, loadS, rows, mg, talks, train: tr, overlaps, errors: [...new Set(errors)], http: [...new Set(http)], notes };
+const res = { mobile: MOBILE, loadS, gate, rows, mg, talks, train: tr, overlaps, errors: [...new Set(errors)], http: [...new Set(http)], notes };
 console.table(rows.map(r => ({ điểm: r.name, ms: r.ms, giật: r.spikes, maxMs: r.maxMs, call: r.calls, 'tam giác': r.tris, đi: r.moved, kẹt: r.stuck ? 'KẸT' : '', rơi: r.fell ? 'RƠI' : '' })));
 if (JSONF) fs.writeFileSync(JSONF, JSON.stringify(res, null, 1));
 log('LỖI CONSOLE:', res.errors.length, '\n' + res.errors.slice(0, 30).join('\n'));
