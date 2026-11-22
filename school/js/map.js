@@ -727,7 +727,7 @@ function drawLabels(){
   const pill = (sx, sy, text, bg, fg) => { ctx.font = (small ? '14px' : '16px') + ' VT323, monospace'; const w = ctx.measureText(text).width + 10; ctx.fillStyle = bg; ctx.fillRect(sx - w/2, sy - 8, w, 16); ctx.fillStyle = fg; ctx.fillText(text, sx, sy); };
   for(const a of agents){
     if(!a.visible || a.inSub) continue;
-    const [sx, sy] = toScreen(a.x, a.y - (a.y > 880 ? 44 : 50) - (a.flying ? a.lift : 0));
+    const [sx, sy] = toScreen(a.x, a.y - (a.y > 880 ? 44 : 50) - (typeof v72Lift === 'function' ? v72Lift(a) : 0) - (a.flying ? a.lift : 0));
     if(sx < -60 || sx > cw+60 || sy < -40 || sy > ch+40) continue;
     if(v35Name(a) && (!small || a === selected || !a.student)) pill(sx, sy, a.name + (a.saoDo && !small ? ' ★' : ''), a === PLAYER ? 'rgba(20,90,60,.9)' : a.student ? 'rgba(15,21,48,.85)' : 'rgba(60,20,70,.88)', '#fff');
     if(a.bubble && realT < a.bubbleT){

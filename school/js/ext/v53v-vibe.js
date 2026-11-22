@@ -134,7 +134,7 @@ function v53vLabels(dl0, args){
   const small = cam.z < .5;
   for(const a of agents){
     if(!a.visible || a.inSub) continue;
-    const top = (a.y > 880 ? 44 : 50)*V53V.K + 4, [sx, sy] = toScreen(a.x, a.y - top - (a.flying ? a.lift : 0));
+    const top = ((a.y > 880 ? 44 : 50) + (typeof v72Lift === 'function' ? v72Lift(a) : 0))*V53V.K + 4, [sx, sy] = toScreen(a.x, a.y - top - (a.flying ? a.lift : 0));
     if(sx < -80 || sx > cw + 80 || sy < -60 || sy > ch + 60) continue;
     let ty = sy;
     if(keepN(a) && (!small || a === selected || !a.student)) ty = v53vPill(a.name + (a.saoDo && !small ? ' ★' : ''), sx, sy, a === PLAYER ? 'rgba(18,110,72,.86)' : a.student ? 'rgba(15,21,48,.72)' : 'rgba(64,24,78,.76)') - 4;
