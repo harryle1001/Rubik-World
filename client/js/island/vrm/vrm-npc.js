@@ -96,7 +96,7 @@ export function createVrmNpc(ctx) {
     if (M) { const ol = near && e.hero.outlineOn !== false; if (v._ol !== ol) { v._ol = ol; for (const o of v.outlines) o.visible = ol; } }   // điện thoại: viền VRM (thêm 1 lưới có xương mỗi phần) chỉ khi ở gần
     const sh = e.d < 13; if (v._sh !== sh) { v._sh = sh; v.model.traverse(o => { if (o.isMesh && o.userData.cast0 === undefined) o.userData.cast0 = o.castShadow; if (o.isMesh) o.castShadow = sh && o.userData.cast0; }); }
   }
-  // tải trước file VRM mobile (mạng) sau khi vào game; parse khi cần
-  const iv = setInterval(() => { if (!ctx.warmed) return; clearInterval(iv); const c = navigator.connection; if (st.on && !(c && (c.saveData || /2g|3g/.test(c.effectiveType || '')))) for (const id of ['victoria', 'vivi', 'hair-m']) prefetch(id, 'mobile'); }, 1000);   // mạng yếu / tiết kiệm dữ liệu: chỉ tải khi gặp
+  // tải trước file VRM mobile (mạng) 5 s SAU khi màn che mở (trước: lúc còn màn che → 3,8 MB tranh băng thông với model khu đang nạp, 4G vào chơi chậm ~3 s); parse khi cần
+  let lift = 0; const iv = setInterval(() => { if (!ctx.warmed || ctx.loading && ctx.loading.veil) { lift = 0; return; } if (++lift < 5) return; clearInterval(iv); const c = navigator.connection; if (st.on && !(c && (c.saveData || /2g|3g/.test(c.effectiveType || '')))) for (const id of ['victoria', 'vivi', 'hair-m']) prefetch(id, 'mobile'); }, 1000);   // mạng yếu / tiết kiệm dữ liệu: chỉ tải khi gặp
   return Object.assign(st, { update, reg, setOn(on) { st.on = on; if (!on) for (const e of reg) detach(e); } });
 }

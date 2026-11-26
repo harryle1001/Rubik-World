@@ -26,8 +26,8 @@ export function createPlayerVrm(ctx) {
     } finally { busy = false; }
   }
   ctx.onAvatar = L => apply(L);
-  // vào game xong (màn che mở) → nạp nhân vật anime
-  const iv = setInterval(() => { if (!ctx.warmed || !P.hero) return; clearInterval(iv); setTimeout(() => apply(loadAvatar(ctx)), 600); }, 300);
+  // vào game xong (màn che đã mở hẳn) → nạp nhân vật anime
+  const iv = setInterval(() => { if (!ctx.warmed || !P.hero || ctx.loading && ctx.loading.veil) return; clearInterval(iv); setTimeout(() => apply(loadAvatar(ctx)), 600); }, 300);
   // đăng nhập tài khoản khác / lễ chọn nhà xong
   if (ctx.account) ctx.account.onChange(() => {
     const L = loadAvatar(ctx), h = houseOf(ctx, L);
