@@ -175,7 +175,7 @@ export function createEasterEggs(ctx) {
     }
     pTop = top; points.visible = top > 0; if (!top) return;
     pg.setDrawRange(0, top); for (const k of ['position', 'aCol', 'aSize']) { const a = pg.attributes[k]; a.clearUpdateRanges(); a.addUpdateRange(0, top * a.itemSize); a.needsUpdate = true; }   // chỉ gửi phần đang dùng lên GPU
-    pMat.uniforms.uScale.value = innerHeight * ctx.renderer.getPixelRatio() * 0.5;
+    pMat.uniforms.uScale.value = ctx.renderer.domElement.height * 0.5;   // = innerHeight·pixelRatio (không đọc innerHeight mỗi khung: ép tính bố cục)
   }
   const burst = (x, y, z, n, col, sp = 12, l = 1.8, size = 0.9) => { for (let i = 0; i < n; i++) { const u = Math.random() * 2 - 1, a = Math.random() * TAU, r = Math.sqrt(1 - u * u), s = sp * (0.6 + Math.random() * 0.4); spawn(x, y, z, r * Math.cos(a) * s, u * s, r * Math.sin(a) * s, l * (0.7 + Math.random() * 0.5), col, size, 3, 1.6, 0); } };
   const sparkle = (x, y, z, n = 21, col = '#ffe58a', r = 1.2) => { for (let i = 0; i < n; i++) spawn(x + (Math.random() - 0.5) * r, y + Math.random() * r, z + (Math.random() - 0.5) * r, (Math.random() - 0.5), 1 + Math.random() * 2, (Math.random() - 0.5), 1 + Math.random(), col, 0.35, 0, 0.5, 13); };

@@ -146,6 +146,7 @@ export function createCollide(ctx) {
     }
     for (const s of src.values()) if (s.seen !== scanId && !s.hid) { if (s.state) unregister(s); s.hid = true; }   // bị ẩn: gỡ, nhớ chỗ (hiện lại đăng ký ngay) · đã gỡ khỏi cảnh: quên
     for (const s of src.values()) if (s.hid) { let r = s.o; while (r.parent) r = r.parent; if (r !== ctx.scene) src.delete(s.o); }   // nhóm đã rời cảnh (vùng xa gỡ ra): quên hẳn
+    { let k = 0; for (const s of pending) if (s.state === 1 && src.get(s.o) === s) pending[k++] = s; pending.length = k; }   // hàng chờ: bỏ nguồn đã gỡ/ẩn (không giữ tham chiếu tới khu đã dỡ)
     // nguồn chờ lập chỉ mục: gần người chơi trước
     const P = ctx.player && ctx.player.pos;
     if (P && pending.length > 1) { for (const q of pending) { const e = q.o.matrixWorld.elements, g = q.o.geometry; if (!g.boundingSphere) g.computeBoundingSphere();

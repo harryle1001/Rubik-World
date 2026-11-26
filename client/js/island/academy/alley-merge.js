@@ -62,7 +62,7 @@ export async function mergeModels(list, root, opts = {}) {
     if (uvs) geo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
     geo.setIndex(new THREE.BufferAttribute(idx, 1)); geo.computeBoundingSphere();
     let mat;
-    if (G.mat) { mat = G.mat.clone(); mat.color.set(0xffffff); const t = G.mat.map.clone(); t.offset.set(0, 0); t.repeat.set(1, 1); t.rotation = 0; t.center.set(0, 0); t.updateMatrix(); t.needsUpdate = true; mat.map = t; }
+    if (G.mat) { mat = G.mat.clone(); mat.color.set(0xffffff); const t = G.mat.map.clone(); t.userData.own = 1; t.offset.set(0, 0); t.repeat.set(1, 1); t.rotation = 0; t.center.set(0, 0); t.updateMatrix(); t.needsUpdate = true; mat.map = t; }
     else mat = opts.flatMat ? opts.flatMat() : new THREE.MeshLambertMaterial();
     mat.vertexColors = true;
     const mesh = new THREE.Mesh(geo, mat); mesh.name = 'alley-merged-' + (G.mat ? 'tex' : 'flat') + (G.parts[0].sh ? '-sh' : ''); mesh.userData.models = [...new Set(G.parts.map(p => p.name))];

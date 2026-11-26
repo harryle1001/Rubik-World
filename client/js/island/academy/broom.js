@@ -13,6 +13,7 @@ import { C } from './plan.js';
 import { loadHero, STUDENTS } from '../characters.js';
 import { dressWizard } from './practice.js';
 import { CFG } from '../config.js';
+import { freeTex, freeAll } from '../free.js';
 
 const PI = Math.PI, AU = 21, AV = 34, PU = 82, PV = 80;   // tâm sân (u, v), bán trục
 const HC = ['#c8302c', '#3a6fc4', '#3f8a4c', '#c9a24a'], BAN = ['red', 'blue', 'green', 'yellow'];
@@ -75,7 +76,7 @@ export function createBroom(ctx, magic, { Y, toWorld, toLocal }) {
   function paint(next) { RINGS.forEach((_, i) => rings.setColorAt(i, col.set(i < next ? '#ffd25a' : i === next ? (QUIZ.has(i) ? '#e6b0ff' : '#7ad0ff') : next < 0 ? (QUIZ.has(i) ? '#b89adf' : '#9fc6e6') : '#5a6a80'))); rings.instanceColor.needsUpdate = true; }
   function unbuild() {
     if (!G) return; if (run) stop(false);
-    ctx.scene.remove(G); G.traverse(o => { if (o.isMesh && !o.isInstancedMesh) o.geometry.dispose(); }); G = null;
+    ctx.scene.remove(G); G.traverse(o => { if (o.isMesh && !o.isInstancedMesh) o.geometry.dispose(); }); freeAll(G); G = null;
     for (const x of boxes) { const i = ctx.boxes.indexOf(x); if (i >= 0) ctx.boxes.splice(i, 1); } boxes = [];
     for (let i = ctx.colliders.length - 1; i >= 0; i--) if (ctx.colliders[i].broom) ctx.colliders.splice(i, 1);
   }

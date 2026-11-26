@@ -7,6 +7,7 @@ import { matV, mat } from '../sample/palette.js';
 import { Batch } from './geo.js';
 import { buildCastle } from './castle.js';
 import { ROT, C, ISLE, PLAT, QUAY, RUNWAY, heightLocal, toWorld, plateauDist, isleDist, forestDist, LAKE, quayY, villageDist } from './plan.js';
+import { freeTex, freeAll } from '../free.js';
 
 const COL = {
   sand: new THREE.Color('#d9c8a6'), grass: new THREE.Color('#7fbf5e'), grassD: new THREE.Color('#5a9a48'),
@@ -123,7 +124,7 @@ export function buildIsland(ctx) {
   group.updateMatrixWorld(true); ctx.scene.add(group);
   return {
     group, castle, land,
-    dispose() { ctx.scene.remove(group); group.traverse(o => o.geometry && o.geometry.dispose()); },
+    dispose() { ctx.scene.remove(group); group.traverse(o => o.geometry && o.geometry.dispose()); freeAll(group); },
   };
 }
 

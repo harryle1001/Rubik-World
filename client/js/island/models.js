@@ -12,10 +12,12 @@ import { texPlugin } from './gltf-tex.js';
 const draco = new DRACOLoader().setDecoderPath('/lib/three/examples/jsm/libs/draco/gltf/');
 const loader = new GLTFLoader().setDRACOLoader(draco).setMeshoptDecoder(MeshoptDecoder).register(texPlugin);   // texture trùng nội dung dùng chung · điện thoại ≤ 512 px (gltf-tex.js)
 const cache = new Map();
+// lưới trong bộ đệm model dùng chung mọi bản sao → đánh dấu: dỡ khu / thoát mini game không dispose (free.js, mg/host.js)
+const share = r => { if (r) r.traverse(o => { if (o.geometry) o.geometry.userData.shared = true; for (const m of [].concat(o.material || [])) if (m) for (const k in m) { const t = m[k]; if (t && t.isTexture) t.userData.shared = true; } }); return r; };
 
 // Nạp 1 model (có cache). Trả về scene của model đã chuyển sang vật liệu toon, hoặc null nếu thiếu file.
 export function loadModel(name) {
-  if (!cache.has(name)) cache.set(name, new Promise(res => loader.load(`/assets/models/${name}.glb`, g => res(toonify(g.scene)), undefined, e => { console.warn('Thiếu model', name, e?.message); res(null); })));
+  if (!cache.has(name)) cache.set(name, new Promise(res => loader.load(`/assets/models/${name}.glb`, g => res(share(toonify(g.scene))), undefined, e => { console.warn('Thiếu model', name, e?.message); res(null); })));
   return cache.get(name).then(m => m && m.clone());
 }
 
@@ -68,7 +70,7 @@ function bakeParts(name, parts) {
   if (parts.some(p => !p.geometry.attributes.normal)) geo.computeVertexNormals();
   geo.computeBoundingSphere();
   const mesh = new THREE.Mesh(geo, new THREE.MeshToonMaterial({ name: 'baked-' + name, color: 0xffffff, vertexColors: true, gradientMap, side: m0.side }));
-  const out = [mesh]; baked.set(name, out); return out;
+  mesh.geometry.userData.shared = true; const out = [mesh]; baked.set(name, out); return out;
 }
 
 // Gộp các SkinnedMesh cùng bộ xương, cùng biến đổi, không texture (thú Quaternius: mỗi vật liệu 1 lưới, 4–7 lưới/con)
@@ -97,7 +99,7 @@ function mergeSkinned(root) {
 // merge: gộp các lưới có xương thành 1 (mergeSkinned) — chỉ cho model không cần ẩn/hiện từng phần (thú).
 const animCache = new Map();
 export function loadAnimated(name, merge = false) {
-  if (!animCache.has(name)) animCache.set(name, new Promise(res => loader.load(`/assets/models/${name}.glb`, g => { toonify(g.scene); if (merge) mergeSkinned(g.scene); res(g); }, undefined, e => { console.warn('Thiếu model', name, e?.message); res(null); })));
+  if (!animCache.has(name)) animCache.set(name, new Promise(res => loader.load(`/assets/models/${name}.glb`, g => { toonify(g.scene); if (merge) mergeSkinned(g.scene); share(g.scene); res(g); }, undefined, e => { console.warn('Thiếu model', name, e?.message); res(null); })));
   return animCache.get(name).then(g => {
     if (!g) return null;
     const scene = cloneSkinned(g.scene); scene.traverse(o => { if (o.isMesh) o.frustumCulled = false; });

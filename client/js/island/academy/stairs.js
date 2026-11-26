@@ -7,6 +7,7 @@ import { Batch } from './geo.js';
 import { mat } from '../sample/palette.js';
 import { stoneMaterial, lookChoice } from './castle.js';
 import { COL } from './kit.js';
+import { freeAll } from '../free.js';
 
 export const STAIR_TOWER = { u: -146, v: -58, R: 13, r0: 9.4, r1: 12.4, FH: 8.4, n: 4, L: 13, rp: 10.9, door: 0.16 };
 const PI = Math.PI, REST = 8, SWING = 5;
@@ -62,7 +63,7 @@ export function createStairs(ctx, { Y, toWorld, toLocal }) {
     for (const f of F) { const g = new THREE.Mesh(fg, stone); g.position.set(T.v + f.p[1], Y + f.k * T.FH, T.u + f.p[0]); g.castShadow = true; G.add(g); f.g = g; }
     ctx.scene.add(G); (ctx.boxes = ctx.boxes || []).push(...boxes);
   }
-  function unbuild() { if (!G) return; ctx.scene.remove(G); G.traverse(o => { if (o.isMesh && o.geometry) o.geometry.dispose(); }); for (const x of boxes) { const i = ctx.boxes.indexOf(x); if (i >= 0) ctx.boxes.splice(i, 1); } boxes = []; G = null; }
+  function unbuild() { if (!G) return; ctx.scene.remove(G); freeAll(G); for (const x of boxes) { const i = ctx.boxes.indexOf(x); if (i >= 0) ctx.boxes.splice(i, 1); } boxes = []; G = null; }
   function update(dt, t) {
     if (!G) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z); G.visible = Math.hypot(cu - T.u, cv - T.v) < 233 && cam.y < 600 && (cu < -92 || cam.y > Y + 21 || Math.abs(cv) > 150); if (!G.visible) return;
     const p = ctx.player.pos, [u, v] = toLocal(p.x, p.z), du = u - T.u, dv = v - T.v, inside = Math.hypot(du, dv) < T.R && p.y > Y - 1 && p.y < Y + 40;

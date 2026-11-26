@@ -29,9 +29,11 @@ const DEPTH = new Map(), NOSPLIT = /[?&]nosplit/.test(location.search);   // ?no
 
 export function createPerf(ctx) {
   const { scene, camera } = ctx, list = [], ins = [], pts = [];
+  // mục giữ theo vật (WeakMap): vật rời cảnh → bỏ khỏi danh sách (không giữ cả khu đã dỡ trong bộ nhớ); gắn lại → lần quét sau đưa vào lại
+  const back = new WeakMap(), keep = (arr, e) => { let a = back.get(e.o); if (!a) back.set(e.o, a = []); a.push([arr, e]); arr.push(e); };
   function register(o) {
     const ud = o.userData; if (ud._pf) return; ud._pf = 1;
-    if (o.isPoints && o.geometry && o.geometry.attributes.position) { pts.push({ o, ver: -1, h: false }); return; }
+    if (o.isPoints && o.geometry && o.geometry.attributes.position) { keep(pts, { o, ver: -1, h: false }); return; }
     if (!(o.isMesh)) return;
     const g = o.geometry; if (!g || !g.attributes.position) return;
     if (CFG.isMobile && o.material) for (const m of [].concat(o.material)) if (m.map && m.map.isCanvasTexture) shrinkCanvas(m.map);   // biển chữ canvas lớn: ½ trên điện thoại (gltf-tex.js)
@@ -47,29 +49,29 @@ export function createPerf(ctx) {
       if (!o.frustumCulled) {   // hình cầu bao theo tư thế hiện tại, nới rộng φ lần (tay chân vung, chạy nhảy)
         try { o.computeBoundingSphere(); o.boundingSphere.radius *= PHI; o.frustumCulled = true; } catch (e) { return; }
       }
-      list.push({ o, kind: ud.outline ? 'outline' : 'skin' }); return;
+      keep(list, { o, kind: ud.outline ? 'outline' : 'skin' }); return;
     }
-    if (ud.outline) { o.frustumCulled = true; list.push({ o, kind: 'outline' }); return; }
+    if (ud.outline) { o.frustumCulled = true; keep(list, { o, kind: 'outline' }); return; }
     // InstancedMesh đang 0 bản sao (đồ tạm ẩn, hiệu ứng chưa chạy…): three vẫn gọi 1 lần vẽ rỗng mỗi khung (+ pass bóng) → ẩn mỗi khung (update)
-    const ie = o.isInstancedMesh ? { o, far: false } : null; if (ie) ins.push(ie);
+    const ie = o.isInstancedMesh ? { o, far: false } : null; if (ie) keep(ins, ie);
     if (!o.frustumCulled) {   // vật cố ý luôn vẽ (bầu trời, nước, hiệu ứng) — giữ nguyên; bộ bản sao di chuyển (chim, thuyền, người LOD…): ẩn khi bản sao gần nhất > 89 m
-      if (ie && o.count <= 4096) list.push(Object.assign(ie, { kind: 'iset', ver: -1, n: -1, P: null, r: 0, min: 89 }));
+      if (ie && o.count <= 4096) keep(list, Object.assign(ie, { kind: 'iset', ver: -1, n: -1, P: null, r: 0, min: 89 }));
       return;
     }
     if (o.isInstancedMesh) {
       if (ud.itemR === undefined) {   // InstancedMesh phủ rộng không rõ cỡ từng vật → xét bóng đổ (điện thoại) + ẩn cả bộ khi mọi bản sao đều xa
         if (CFG.isMobile && o.castShadow && o.count > 0) { if (!g.boundingSphere) g.computeBoundingSphere(); o.getMatrixAt(0, _m); _sc.setFromMatrixScale(_m); if (g.boundingSphere.radius * Math.max(_sc.x, _sc.y, _sc.z) * o.matrixWorld.getMaxScaleOnAxis() < NOSHADOW_R) o.castShadow = false; }
-        if (o.count <= 4096) list.push(Object.assign(ie, { kind: 'iset', ver: -1, n: -1, P: null, r: 0, min: FAR_MIN }));   // bộ rải khắp đảo (vòng mốc, pha lê, đèn…): khung hình luôn chạm hình cầu bao lớn → 1 lần vẽ mỗi khung dù bản sao gần nhất ở rất xa
+        if (o.count <= 4096) keep(list, Object.assign(ie, { kind: 'iset', ver: -1, n: -1, P: null, r: 0, min: FAR_MIN }));   // bộ rải khắp đảo (vòng mốc, pha lê, đèn…): khung hình luôn chạm hình cầu bao lớn → 1 lần vẽ mỗi khung dù bản sao gần nhất ở rất xa
         return;
       }
       if (ud.itemR < NOSHADOW_R) o.castShadow = false;
-      if (ud.itemR < SMALL_R) list.push(Object.assign(ie, { kind: 'inst', r: ud.itemR }));
+      if (ud.itemR < SMALL_R) keep(list, Object.assign(ie, { kind: 'inst', r: ud.itemR }));
       return;
     }
     if (!g.boundingSphere) g.computeBoundingSphere();
     const r = g.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis();
     if (r < NOSHADOW_R) o.castShadow = false;
-    if (r < SMALL_R && !o.isSprite) list.push({ o, kind: 'small', r });
+    if (r < SMALL_R && !o.isSprite) keep(list, { o, kind: 'small', r });
   }
   // quét: chỉ gom vật CHƯA đăng ký (rẻ); đăng ký (tính hình cầu bao…) tối đa 1,5 ms/khung → không dồn vài chục ms vào 1 khung
   const pending = [];
@@ -107,7 +109,7 @@ export function createPerf(ctx) {
   }
   let scanId = 0;
   const scan = () => {
-    const id = ++scanId; scene.traverse(o => { const u = o.userData; u._sc = id; if (!u._pf && !u._pq) { u._pq = 1; pending.push(o); } freezeScan(o);
+    const id = ++scanId; scene.traverse(o => { const u = o.userData; u._sc = id; if (!u._pf && !u._pq) { u._pq = 1; pending.push(o); } else if (u._pfOut) { u._pfOut = 0; const a = back.get(o); if (a) for (const [arr, e] of a) if (!arr.includes(e)) arr.push(e); } freezeScan(o);
       if (u._sp) { if (u._sp.g) splitCheck(o); } else if (u._fz && !u._spq && o.isMesh && !NOSPLIT && canSplit(o)) { u._spq = 1; splitQ.push(o); } });
     for (let i = frozen.length - 1; i >= 0; i--) if (frozen[i].o.userData._sc !== id) unfreeze(i);   // cả nhánh đã gỡ khỏi cảnh: thả ra, không giữ tham chiếu
     for (const o of cand.keys()) if (o.userData._sc !== id) cand.delete(o);
@@ -159,19 +161,19 @@ export function createPerf(ctx) {
     }
     fogByAlt(dt);
     // hạt (Points) đang "cất" dưới đất (mọi điểm y < −50: bụi chân, bọt nước, tia lửa… lúc không dùng) → không vẽ; tính lại khi vị trí đổi
-    for (let i = pts.length - 1; i >= 0; i--) { const e = pts[i], o = e.o; if (!o.parent) { pts[i] = pts[pts.length - 1]; pts.pop(); continue; }
+    for (let i = pts.length - 1; i >= 0; i--) { const e = pts[i], o = e.o; if (!o.parent || o.userData._sc !== scanId) { o.userData._pfOut = 1; pts[i] = pts[pts.length - 1]; pts.pop(); continue; }
       const A = o.geometry.attributes.position; if (!A || A.version === e.ver && !e.dirty) continue; e.ver = A.version;
       const W = o.matrixWorld.elements, n = Math.min(A.count, o.geometry.drawRange.count); let low = n > 0;
       for (let j = 0; j < n && low; j++) if (W[1] * A.getX(j) + W[5] * A.getY(j) + W[9] * A.getZ(j) + W[13] > -50) low = false;
       if (low !== e.h) { e.h = low; hide(o, low); } }
-    for (let i = ins.length - 1; i >= 0; i--) { const e = ins[i], o = e.o; if (!o.parent) { ins[i] = ins[ins.length - 1]; ins.pop(); continue; } const h = e.far || o.count === 0; if (h !== e.h) { e.h = h; hide(o, h); } }
+    for (let i = ins.length - 1; i >= 0; i--) { const e = ins[i], o = e.o; if (!o.parent || o.userData._sc !== scanId) { o.userData._pfOut = 1; ins[i] = ins[ins.length - 1]; ins.pop(); continue; } const h = e.far || o.count === 0; if (h !== e.h) { e.h = h; hide(o, h); } }
     if (!list.length) return;
     const k = (ctx.underwater ? 0.5 : ctx.high ? 1 / PHI : 1) * (ctx.perfScale || 1);   // dưới nước nhìn gần hơn; bay cao/chất lượng thấp: ẩn sớm hơn
     let n = Math.ceil(list.length * Math.min(1, dt / 0.2));   // phần danh sách tỉ lệ thời gian: mỗi vật ~0,2 s xét 1 lần dù FPS cao/thấp
     while (n-- > 0 && list.length) {
       if (cur >= list.length) cur = 0;
       const i = cur++, e = list[i], o = e.o;
-      if (!o.parent) { hide(o, false); list.splice(i, 1); cur--; continue; }   // vật đã bị gỡ khỏi cảnh
+      if (!o.parent || o.userData._sc !== scanId) { hide(o, false); o.userData._pfOut = 1; list.splice(i, 1); cur--; continue; }   // vật đã bị gỡ khỏi cảnh (cả khi cả nhóm cha bị gỡ: lần quét gần nhất không thấy)
       if (e.kind === 'iset') { if (o.count) e.far = nearInst(e) > Math.max(e.min, FAR_K * e.r) * k; continue; }
       const d = near(o);
       if (e.kind === 'inst') { e.far = d > Math.max(FAR_MIN, FAR_K * e.r) * k; continue; }

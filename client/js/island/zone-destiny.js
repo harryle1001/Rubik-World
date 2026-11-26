@@ -383,7 +383,7 @@ export function createDestiny(ctx) {
   const flies = new THREE.Points(ffGeo, ffMat); flies.frustumCulled = false; flies.name = 'dest-fireflies'; scene.add(flies);
   const secBase = ffP.length / 3 - SECRETS.length;
   const hideSpark = () => { const a = ffGeo.attributes.position; SECRETS.forEach(([id], i) => a.setY(secBase + i, st.S.secrets[id] ? -999 : SEC_POS[id][1])); a.needsUpdate = true; };
-  hideSpark(); st.onSync = () => { hideSpark(); mapDirty(); };
+  hideSpark(); let mapFound = !!st.S.found; st.onSync = () => { hideSpark(); if (!!st.S.found !== mapFound) { mapFound = !!st.S.found; mapDirty(); } };   // bản đồ chỉ vẽ lại khi trạng thái tìm ra đổi (account.onChange gọi sync rất thường xuyên → mỗi lần mở bản đồ dựng lại nền ~1 s)
 
   // ----- xuất lưới tĩnh -----
   const mat = toon('#ffffff', { vertexColors: true });

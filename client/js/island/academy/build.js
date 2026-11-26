@@ -6,6 +6,7 @@
 // Hình: mỗi lô 1 InstancedMesh hộp 1 m (texture pha lê vẽ canvas, màu theo instanceColor) → ≤ 10 draw call, ẩn lô ngoài 89 m.
 import * as THREE from 'three';
 import { heightLocal } from './plan.js';
+import { freeTex, freeAll } from '../free.js';
 
 const W = 21, H = 34, MAXB = 2584, NP = 10, U0 = 150, V0 = 46, GAP = 2, COST = 1;
 export const BUILD_SITE = { u0: U0 - 3, u1: U0 + 2 * W + GAP + 3, v0: V0 - 3, v1: V0 + 5 * W + 4 * GAP + 3 };   // island.js: không trồng cây ở đây
@@ -91,7 +92,7 @@ export function create(ctx, magic, { toWorld, toLocal }) {
   function unbuild() {
     if (!built) return; setMode(false);
     for (const L of built.boxes) for (const b of L) { const k = ctx.boxes.indexOf(b); if (k >= 0) ctx.boxes.splice(k, 1); }
-    ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); }); built = null;
+    ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); }); freeAll(built.g); built = null;
   }
   const col = new THREE.Color(), M4 = new THREE.Matrix4();
   function refresh(i) {

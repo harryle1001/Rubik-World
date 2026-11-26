@@ -81,6 +81,7 @@ export function createAudio(ctx) {
     Object.values(STEPS).flat().concat(Object.values(SFX).flat()).forEach(load); // tải trước
   }
   const start = () => { if (!on) return; if (listener.context.state !== 'running') listener.context.resume(); init(); };
+  document.addEventListener('visibilitychange', () => { const ac = listener.context; if (document.hidden) { if (ac.state === 'running') ac.suspend(); } else if (on && ac.state === 'suspended') ac.resume(); });   // ẩn tab/khoá máy: dừng cả bộ trộn âm (đỡ tốn pin), quay lại thì phát tiếp
   addEventListener('pointerdown', start); addEventListener('keydown', start); // bật ở mọi lần chạm (trình duyệt chỉ cho phát âm thanh sau khi người chơi chạm)
   const setOn = v => { on = v; try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {} if (on) start(); listener.setMasterVolume(on ? 1 : 0); ctx.toast && ctx.toast(on ? '🔊 Bật âm thanh' : '🔇 Tắt âm thanh', 1200); };
   addEventListener('keydown', e => { if (e.code === 'KeyN') setOn(!on); });

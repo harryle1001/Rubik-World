@@ -27,7 +27,7 @@ export function createVrmNpc(ctx) {
     const e = { hero, kind, role, height, seed: seq++, vrm: null, key: null, d: 1e9, hidden: [], saved: null };
     const A = hero.anim, play = A.play.bind(A), upd = A.update;
     A.play = (n, fade, once) => { const a = play(n, fade, once); if (e.vrm) e.vrm.anim.play(n, fade, once); return a; };
-    A.update = dt => { upd(dt); if (e.vrm) sync(e, dt); };
+    A.update = dt => { if (e.parked) { e.parked = false; reg.push(e); } upd(dt); if (e.vrm) sync(e, dt); };   // người được gắn lại vào cảnh (hoạt ảnh chạy tiếp) → vào lại danh sách
     reg.push(e); st.n = reg.length;
   });
   const inScene = o => { for (let p = o; p; p = p.parent) { if (p === ctx.scene) return true; if (!p.visible) return false; } return false; };
@@ -80,6 +80,9 @@ export function createVrmNpc(ctx) {
   function update(dt) {
     budget(dt);
     t += dt; if (t < 0.25) { for (const e of reg) if (e.vrm) lod(e); return; } t = 0;
+    // người đã rời cảnh hẳn (khu xa dỡ ra): bỏ khỏi danh sách → không giữ cả nhóm khu đã dỡ trong bộ nhớ
+    for (let i = reg.length - 1; i >= 0; i--) { const e = reg[i]; let r = e.hero.model; while (r.parent) r = r.parent; if (r === ctx.scene) continue; if (e.vrm) detach(e); e.parked = true; reg[i] = reg[reg.length - 1]; reg.pop(); }
+    st.n = reg.length;
     const me = ctx.player && ctx.player.hero; P.copy(ctx.player ? ctx.player.pos : ctx.camera.position);
     for (const e of reg) { e.d = st.on && e.hero !== me && !e.fail && inScene(e.hero.model) ? e.hero.model.getWorldPosition(Q).distanceTo(P) : 1e9; }
     const order = reg.filter(e => e.d < FAR + (e.vrm ? HY : 0)).sort((a, b) => a.d - b.d).slice(0, cap), want = new Set(order);
