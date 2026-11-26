@@ -29,6 +29,7 @@ const css = `
 @media (pointer:coarse){#mgkName,#mgkPick{display:none}}
 #mgk .bar{width:89px;height:10px;border-radius:6px;background:#0007;overflow:hidden;border:1px solid #fff5}#mgk .bar i{display:block;height:100%;background:linear-gradient(90deg,#7fd3ff,#ffe3a0)}
 #mgk button{border:1px solid #fff6;background:#1b1626cc;color:#fff;border-radius:14px;padding:4px 9px;font:700 13px system-ui}
+@media (pointer:coarse){#mgk button{min-height:34px;min-width:34px;border-radius:17px}}
 #mgCard{position:fixed;left:50%;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 76px);transform:translateX(-50%);z-index:27;width:min(92vw,377px);background:#141022ee;color:#f7ecd0;border:1px solid #ffe3a066;border-radius:16px;padding:12px 14px;font:600 14px/1.45 system-ui;box-shadow:0 8px 30px #0006}
 #mgCard h4{margin:0 0 6px;font:800 15px system-ui;color:#ffe3a0}#mgCard .ch{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
 #mgCard button{border:1px solid #fff4;background:#2a2340;color:#fff;border-radius:10px;padding:8px 6px;font:700 14px system-ui}
