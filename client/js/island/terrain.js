@@ -155,7 +155,22 @@ export function createTerrain(scene) {
   // chia thành ô 89×89 mắt lưới (Fibonacci, ~196 m; ô to hơn → ít draw call hơn) (dùng chung thuộc tính đỉnh, chỉ khác chỉ mục) → camera loại bỏ (frustum culling) phần ngoài khung hình;
   // trước đây 1 mesh ~190k tam giác luôn được vẽ toàn bộ
   const ground = new THREE.Group(); ground.name = 'ground'; scene.add(ground);
-  { const gm = groundMat, TS = 89, n = NX + 1, bb = new THREE.Box3(), v = new THREE.Vector3();
+  // LOD mặt đất: ô xa (điểm gần nhất > 55 m; điện thoại ô 55 mắt lưới ≈ 154 m, > 21 m) vẽ lưới thưa 2× (¼ tam giác); mép ô giữ đủ đỉnh (tam giác quạt) → khớp ô bên cạnh dù ô đó mịn hay thưa, không hở
+  const groundLod = [], LOD_G = CFG.isMobile ? 21 : 55;   // m: ô có điểm gần nhất xa hơn → lưới thưa
+  function coarseIdx(tx, tz, ex, ez, n) {
+    const I = [], bx = (ex - tx) >> 1, bz = (ez - tz) >> 1, X = tx + bx * 2, Z = tz + bz * 2, v = (ix, iz) => iz * n + ix;
+    for (let j = 0; j < bz; j++) for (let i = 0; i < bx; i++) {
+      const x0 = tx + i * 2, z0 = tz + j * 2, c = v(x0 + 1, z0 + 1);
+      // cạnh giáp mép ô / dải lẻ (không phải khối thưa) → thêm đỉnh giữa cạnh
+      const N = j === 0, S = j === bz - 1, W = i === 0, E = i === bx - 1;
+      if (!(N || S || W || E)) { I.push(v(x0, z0), v(x0, z0 + 2), v(x0 + 2, z0), v(x0, z0 + 2), v(x0 + 2, z0 + 2), v(x0 + 2, z0)); continue; }
+      const ring = [v(x0, z0)]; if (N) ring.push(v(x0 + 1, z0)); ring.push(v(x0 + 2, z0)); if (E) ring.push(v(x0 + 2, z0 + 1)); ring.push(v(x0 + 2, z0 + 2)); if (S) ring.push(v(x0 + 1, z0 + 2)); ring.push(v(x0, z0 + 2)); if (W) ring.push(v(x0, z0 + 1));
+      for (let k = 0; k < ring.length; k++) I.push(c, ring[(k + 1) % ring.length], ring[k]);
+    }
+    for (let iz = tz; iz < ez; iz++) for (let ix = tx; ix < ex; ix++) if (ix >= X || iz >= Z) { const a = iz * n + ix, b = a + n, c = b + 1, d = a + 1; I.push(a, b, d, b, c, d); }   // dải lẻ cuối ô: lưới mịn
+    return I;
+  }
+  { const gm = groundMat, TS = CFG.isMobile ? 55 : 89, n = NX + 1, bb = new THREE.Box3(), v = new THREE.Vector3();
     for (let tz = 0; tz < NZ; tz += TS) for (let tx = 0; tx < NX; tx += TS) {
       const ex = Math.min(NX, tx + TS), ez = Math.min(NZ, tz + TS), idx = []; bb.makeEmpty();
       for (let iz = tz; iz < ez; iz++) for (let ix = tx; ix < ex; ix++) { const a = iz * n + ix, b = a + n, c = b + 1, d = a + 1; idx.push(a, b, d, b, c, d); }
@@ -163,6 +178,7 @@ export function createTerrain(scene) {
       const tg = new THREE.BufferGeometry(); for (const k of ['position', 'normal', 'color']) tg.setAttribute(k, g.attributes[k]);
       tg.setIndex(idx); tg.boundingBox = bb.clone(); tg.boundingSphere = bb.getBoundingSphere(new THREE.Sphere());
       const m = new THREE.Mesh(tg, gm); m.receiveShadow = true; m.name = 'ground'; ground.add(m);
+      groundLod.push({ m, fine: tg.index, coarse: new THREE.Uint32BufferAttribute(coarseIdx(tx, tz, ex, ez, n), 1), b: tg.boundingBox });
     } }
 
   // đáy biển nối dài ra khơi ngoài lưới địa hình (lặn xa bờ không thấy khoảng trống) — 1 mặt phẳng, thấp hơn đáy sâu nhất 0,3 m
@@ -306,8 +322,10 @@ export function createTerrain(scene) {
     if (!turned) return false;
     view.dx = _d.x / L; view.dz = _d.z / L; view.x = cam.position.x - view.dx * 5; view.z = cam.position.z - view.dz * 5; view.yaw = yaw; view.cos = Math.cos(Math.min(half, Math.PI)); return true;
   }
+  let gT = 0;
   function update(dt, t, player) {
     WIND.uTime.value = t; ocean.update();
+    if (state.camera && (gT += dt) > 0.25) { gT = 0; const cp = state.camera.position; for (const T of groundLod) { const b = T.b, want = Math.hypot(Math.max(b.min.x - cp.x, 0, cp.x - b.max.x), Math.max(b.min.z - cp.z, 0, cp.z - b.max.z)) > LOD_G ? T.coarse : T.fine; if (T.m.geometry.index !== want) T.m.geometry.setIndex(want); } }   // ô xa: lưới thưa
     if (player) WIND.uPlayer.value.copy(player);
     if (player && (viewT += dt) > 0.1) { viewT = 0; if (aim(player)) for (const L of lodSets) if (!L.queued) { L.queued = true; lodQ.push(L); } }   // quay camera → xếp hàng chia lại (mỗi khung 1 loại)
     if ((lodT += dt) > 0.4 && player) {
