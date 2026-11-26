@@ -191,8 +191,8 @@ export function createCollide(ctx) {
   const idx = (ci, cj) => (((cj & 63) << 6) | (ci & 63)) << 2;
   // ô (ci, cj) có chặn thân người đứng ở chân y, nền đích g không? (vật thấp ≤ LOW trên nền: bước qua; đáy cao hơn đầu: đi dưới)
   function cellBlocks(a, i, y, g) {
-    const base = (y > g ? y : g) * Q + LOW * Q, head = (y + HEAD) * Q;
-    return (a[i] <= a[i + 1] && a[i + 1] > base && a[i] < head) || (a[i + 2] <= a[i + 3] && a[i + 3] > base && a[i + 2] < head);
+    const base = (y > g ? y : g) * Q + LOW * Q, head = (y + HEAD) * Q, thin = LOW * Q, top = base + LOW * Q;   // tấm mỏng (lát lối, gờ, bậc ≤ 0,3 m dày) cao hơn chân ≤ 0,6 m → bước qua
+    return (a[i] <= a[i + 1] && a[i + 1] > base && a[i] < head && !(a[i + 1] - a[i] <= thin && a[i + 1] <= top)) || (a[i + 2] <= a[i + 3] && a[i + 3] > base && a[i + 2] < head && !(a[i + 3] - a[i + 2] <= thin && a[i + 3] <= top));
   }
   const out = { x: 0, z: 0, hit: false };
   // đẩy vòng tròn bán kính R (tâm nx, nz) ra khỏi các ô chặn; ô đã chồng lên vị trí cũ (ox, oz) thì bỏ qua (vừa lên/xuống xe, dịch chuyển: tự thoát ra được)
@@ -206,6 +206,7 @@ export function createCollide(ctx) {
         let dx = nx - qx, dz = nz - qz, d2 = dx * dx + dz * dz; if (d2 >= R * R) continue;
         if (g === null) g = gAt ? gAt(nx, nz, y) : y;
         if (!cellBlocks(a, i, y, g)) continue;
+        if (gAt) { const gc = gAt(x0 + CS / 2, z0 + CS / 2, y); if (gc > g && !cellBlocks(a, i, y, gc)) continue; }   // mép bậc thang có mặt đỡ ngay tại ô (bậc kế tiếp trong tầm bán kính) → bước lên, không chặn
         // vị trí cũ đã chồng ô (vừa lên/xuống xe, dịch chuyển, ô mới nạp): không cho lún sâu thêm, đi ra thì được
         const px = ox < x0 ? x0 : ox > x0 + CS ? x0 + CS : ox, pz = oz < z0 ? z0 : oz > z0 + CS ? z0 + CS : oz, dO = Math.sqrt((ox - px) ** 2 + (oz - pz) ** 2), Rc = dO + 0.02 < R ? dO + 0.02 : R;   // đã lấn: mỗi bước đẩy ra thêm ≤ 2 cm (tự thoát êm)
         let d = Math.sqrt(d2); if (d >= Rc - 1e-4) continue;
