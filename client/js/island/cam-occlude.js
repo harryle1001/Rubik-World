@@ -2,19 +2,20 @@
 // Nhẹ cho điện thoại:
 // - chỉ giữ vật TĨNH, TO (bán kính bao ≥ 1 m) trong 55 m quanh điểm nhìn; dựng lại danh sách khi đi xa ≥ 13 m (Fibonacci);
 // - mỗi mesh tĩnh (kể cả khối gộp trường, nhà… hàng chục nghìn tam giác) được lập cây BVH một lần → mỗi tia chỉ thử vài chục tam giác;
+//   cây lập trong toạ độ CỤC BỘ của lưới, tia đổi sang toạ độ cục bộ → vật di chuyển (xe, thuyền, cửa…) không phải lập lại cây mỗi khung;
 // - mặt đất/nước bỏ qua (camera đã tự nâng trên mặt đất); vật mỏng (người, cột đèn…) bỏ qua → camera không co giật khi đi ngang.
 import * as THREE from 'three';
 
 const R = 55, MOVE = 13, MIN_R = 1, LEAF = 8, SKIP_NAME = /ground|ocean|water|sky/i;
 
-// BVH nhỏ (tam giác toạ độ thế giới, chia đôi theo trục dài nhất tại trung bình tâm) — lập 1 lần cho mỗi khối gộp tĩnh
+// BVH nhỏ (tam giác toạ độ cục bộ của lưới, chia đôi theo trục dài nhất tại trung bình tâm) — lập 1 lần cho mỗi lưới (đổi geometry → lập lại)
 function buildIndex(o) {
   const g = o.geometry, pos = g.attributes.position, idx = g.index, n = ((idx ? idx.count : pos.count) / 3) | 0;
   const P = new Float32Array(n * 9), Cn = new Float32Array(n * 3), ids = new Uint32Array(n), v = new THREE.Vector3();
   for (let t = 0; t < n; t++) {
     ids[t] = t;
     for (let k = 0; k < 3; k++) {
-      v.fromBufferAttribute(pos, idx ? idx.getX(t * 3 + k) : t * 3 + k).applyMatrix4(o.matrixWorld);
+      v.fromBufferAttribute(pos, idx ? idx.getX(t * 3 + k) : t * 3 + k);
       const b = t * 9 + k * 3; P[b] = v.x; P[b + 1] = v.y; P[b + 2] = v.z; Cn[t * 3] += v.x / 3; Cn[t * 3 + 1] += v.y / 3; Cn[t * 3 + 2] += v.z / 3;
     }
   }
@@ -35,13 +36,13 @@ function buildIndex(o) {
     build(s, i); L[id] = build(i, e); return id;   // con trái = id + 1, con phải = L[id]
   };
   build(0, n);
-  const e = o.matrixWorld.elements;
-  return { P, ids, box, L, S0, N, stack: new Int32Array(128), tx: e[12], ty: e[13], tz: e[14] };
+  return { P, ids, box, L, S0, N, stack: new Int32Array(128), g };
 }
 
 export function createCamOcclude(ctx) {
   const rc = new THREE.Raycaster(), ray = rc.ray, list = [], at = new THREE.Vector3(1e9, 0, 0), sp = new THREE.Sphere(), dir = new THREE.Vector3(), hits = [];
   const A = new THREE.Vector3(), B = new THREE.Vector3(), C = new THREE.Vector3(), hit = new THREE.Vector3(), idxOf = new WeakMap();
+  const lray = new THREE.Ray(), inv = new THREE.Matrix4(), _e = new THREE.Vector3();   // tia trong toạ độ cục bộ của lưới
   let n0 = -1, skipRoot = null;
   // mái có thể mờ dần khi vào nhà (transparent nhưng còn đặc) → vẫn tính; nước/hạt/kính mờ (depthWrite tắt hoặc mờ < 0,6) thì bỏ
   const solid = m => m && m.visible !== false && !(m.transparent && (m.depthWrite === false || m.opacity < 0.6));
@@ -62,8 +63,9 @@ export function createCamOcclude(ctx) {
     });
   }
   // tia qua BVH: bỏ nhánh có hộp bao không chạm tia hoặc xa hơn điểm chạm tốt nhất
+  //   lray.direction = phần tuyến tính của M⁻¹ nhân hướng thế giới (không chuẩn hoá) → tham số t dọc tia cục bộ = khoảng cách thế giới
   function bvhHit(I, far) {
-    const { P, ids, box, L, S0, N, stack } = I, ox = ray.origin.x, oy = ray.origin.y, oz = ray.origin.z, ix = 1 / ray.direction.x, iy = 1 / ray.direction.y, iz = 1 / ray.direction.z;
+    const ray = lray, { P, ids, box, L, S0, N, stack } = I, ox = ray.origin.x, oy = ray.origin.y, oz = ray.origin.z, ix = 1 / ray.direction.x, iy = 1 / ray.direction.y, iz = 1 / ray.direction.z;
     let best = far, sp = 0; stack[sp++] = 0;
     while (sp) {
       const id = stack[--sp], q = id * 6;
@@ -76,7 +78,7 @@ export function createCamOcclude(ctx) {
       if (L[id] < 0) {
         for (let i = S0[id], e = i + N[id]; i < e; i++) {
           const b = ids[i] * 9; A.set(P[b], P[b + 1], P[b + 2]); B.set(P[b + 3], P[b + 4], P[b + 5]); C.set(P[b + 6], P[b + 7], P[b + 8]);
-          if (ray.intersectTriangle(A, B, C, false, hit)) { const d = hit.distanceTo(ray.origin); if (d > rc.near && d < best) best = d; }
+          if (ray.intersectTriangle(A, B, C, false, hit)) { const d = hit.sub(ray.origin).dot(ray.direction) / ray.direction.lengthSq(); if (d > rc.near && d < best) best = d; }
         }
       } else if (sp < 126) { stack[sp++] = L[id]; stack[sp++] = id + 1; }
     }
@@ -96,9 +98,9 @@ export function createCamOcclude(ctx) {
         const ex = cx - dir.x * t, ey = cy - dir.y * t, ez = cz - dir.z * t; if (ex * ex + ey * ey + ez * ez > it.r * it.r) continue;
         const o = it.o; if (!o.visible || !solid(Array.isArray(o.material) ? o.material[0] : o.material)) continue;   // mái đang mờ (người chơi trong nhà)
         if (it.k === 1) {
-          let I = idxOf.get(o); const e = o.matrixWorld.elements;
-          if (I && (I.tx !== e[12] || I.ty !== e[13] || I.tz !== e[14])) I = null;   // khối gộp bị dời → lập lại cây
+          let I = idxOf.get(o); if (I && I.g !== o.geometry) I = null;   // đổi lưới → lập lại cây
           if (!I) idxOf.set(o, I = buildIndex(o));
+          inv.copy(o.matrixWorld).invert(); lray.origin.copy(from).applyMatrix4(inv); lray.direction.copy(_e.copy(from).add(dir)).applyMatrix4(inv).sub(lray.origin);
           best = bvhHit(I, best); continue;
         }
         let m = o; if (it.k === 2) { tmp.geometry = o.geometry; tmp.material = o.material; tmp.matrixWorld.copy(it.m); m = tmp; }
