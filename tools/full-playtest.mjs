@@ -415,6 +415,7 @@ await run('train', 'Tàu Pha Lê: lên tàu ở ga đảo Rubik → tới ga H�
   if (!lab) throw new Error('không thấy nút 🚂 Lên tàu trên sân ga');
   row.note = lab.slice(0, 40); await T(2500);
   if (!(await ev(() => __island.train.ride.state.aboard))) throw new Error('bấm 🚂 nhưng không lên tàu');
+  for (let i = 0; i < 6 && !(await act(/🪑|Ngồi/, { sec: 2, must: false })); i++) await forward(700);   // tìm ghế trống rồi ngồi (lời nhắc khi lên tàu)
   for (let i = 0; i < 90 && (await ev(() => __island.train.ride.state.phase)) !== 'run'; i++) await T(1500);
   await shot('tau'); 
   let skip = false; for (let i = 0; i < 140; i++) { const st = await ev(() => __island.train.ride.state); if (!st.aboard && i > 3) break; if (st.at === 'B' && st.phase !== 'run') break; if (!skip) skip = !!(await tapText(/Tới nơi|⏭/, 'body', { must: false })); await T(1500); }
