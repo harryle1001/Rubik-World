@@ -25,7 +25,7 @@ const FAR_K = 89, FAR_MIN = 34, OUTLINE_D = 34, SMALL_R = 1.6;   // ngưỡng Fi
 const NOSHADOW_R = CFG.isMobile ? 1 / PHI : 0.5;                  // vật nhỏ hơn: không đổ bóng
 const _m = new THREE.Matrix4(), _sc = new THREE.Vector3();
 const _s = new THREE.Sphere(), _v = new THREE.Vector3();
-const DEPTH = new Map(), NOSPLIT = /[?&]nosplit/.test(location.search);   // ?nosplit: so sánh khi đo
+const SKBS = new WeakMap(), DEPTH = new Map(), NOSPLIT = /[?&]nosplit/.test(location.search);   // ?nosplit: so sánh khi đo
 
 export function createPerf(ctx) {
   const { scene, camera } = ctx, list = [], ins = [], pts = [];
@@ -46,8 +46,9 @@ export function createPerf(ctx) {
       o.customDepthMaterial = DEPTH.get(k) || DEPTH.set(k, new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking })).get(k);   // giống vật liệu mặc định của WebGLShadowMap
     }
     if (o.isSkinnedMesh) {
-      if (!o.frustumCulled) {   // hình cầu bao theo tư thế hiện tại, nới rộng φ lần (tay chân vung, chạy nhảy)
-        try { o.computeBoundingSphere(); o.boundingSphere.radius *= PHI; o.frustumCulled = true; } catch (e) { return; }
+      if (!o.frustumCulled) {   // hình cầu bao theo tư thế hiện tại, nới rộng φ lần (tay chân vung, chạy nhảy); tính 1 lần cho mỗi lưới dùng chung
+        try { let b = SKBS.get(g); if (!b) { o.computeBoundingSphere(); SKBS.set(g, b = o.boundingSphere.clone()); }   // (biến đổi xương từng đỉnh — rất tốn; người cùng kiểu dùng chung lưới)
+          o.boundingSphere = b.clone(); o.boundingSphere.radius *= PHI; o.frustumCulled = true; } catch (e) { return; }
       }
       keep(list, { o, kind: ud.outline ? 'outline' : 'skin' }); return;
     }

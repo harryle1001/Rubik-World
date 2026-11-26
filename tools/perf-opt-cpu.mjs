@@ -22,7 +22,7 @@ const page = await browser.newPage({
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
 // đếm hẹn giờ/listener từ đầu (trang chính, không tính iframe trường 2D)
-await page.addInitScript(() => { if (window.top !== window) return;
+await page.addInitScript(() => { if (window.top !== window) return; try { localStorage.setItem('island.intro', '1'); } catch (e) {}   // bỏ clip mở đầu (chạy giữa lúc đo, cuối clip đưa người chơi về chỗ cũ)
   const T = window.__tm = { iv: new Set(), to: 0, raf: 0, lis: 0, ivSrc: new Map() };
   const si = setInterval, ci = clearInterval, st = setTimeout, ra = requestAnimationFrame, ae = EventTarget.prototype.addEventListener, re = EventTarget.prototype.removeEventListener;
   window.setInterval = function (f, ms, ...a) { const id = si.call(window, f, ms, ...a); T.iv.add(id); T.ivSrc.set(id, ms + 'ms ' + ((new Error().stack || '').split('\n')[2] || '').replace(/.*\/js\//, '').replace(/\)$/, '').trim()); return id; };
@@ -140,7 +140,7 @@ if (LEAK) {
       await page.evaluate(() => { const c = __island, [x, z] = c.__L.village; c.player.teleport(x, z); c.sea.pilot.board(); }); await page.waitForTimeout(1500); await page.evaluate(() => { const c = __island; if (c.sea.pilot.aboard) c.sea.pilot.leave({ land: c.__L.village, name: '' }); }); await page.waitForTimeout(800); },
   };
   const leak = {};
-  for (const [k, fn] of Object.entries(cycles)) { await fn(); const a = await mem(); for (let i = 0; i < 10; i++) await fn(); const b = await mem(); leak[k] = { truoc: a, sau10: b, dHeapMB: +(b.heap - a.heap).toFixed(1), dGeo: b.geo - a.geo, dTex: b.tex - a.tex, dLis: b.lis - a.lis, dIv: b.iv - a.iv }; console.log('rò rỉ', k, JSON.stringify(leak[k])); }
+  for (const [k, fn] of Object.entries(cycles)) { for (let i = 0; i < 5; i++) await fn(); /* 5 vòng khởi động: bộ đệm/pool đầy dần không tính là rò */ const a = await mem(); for (let i = 0; i < 10; i++) await fn(); const b = await mem(); leak[k] = { truoc: a, sau10: b, dHeapMB: +(b.heap - a.heap).toFixed(1), dGeo: b.geo - a.geo, dTex: b.tex - a.tex, dLis: b.lis - a.lis, dIv: b.iv - a.iv }; console.log('rò rỉ', k, JSON.stringify(leak[k])); }
   all.leak = leak;
 }
 if (OUT) fs.writeFileSync(`${OUT}/result.json`, JSON.stringify(all, null, 1));
