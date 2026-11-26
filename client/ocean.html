@@ -23,7 +23,7 @@ canvas{touch-action:none}
 #bMore[aria-expanded=true]{background:#f0a23a;color:#231600}
 #moreMenu{position:fixed;z-index:29;top:calc(max(12px,env(safe-area-inset-top)) + 50px);right:max(12px,env(safe-area-inset-right));display:flex;flex-direction:column;gap:8px;padding:8px;border-radius:21px;background:#101a2ee6;box-shadow:0 6px 18px #0006}
 #moreMenu button{min-height:42px;padding:0 21px;border-radius:21px;border:2px solid #fff6;background:#ffffff14;color:#fff;font:700 15px system-ui;text-align:left;white-space:nowrap;cursor:pointer}
-body.rs-modal #bMore,body.rs-modal #moreMenu{display:none}
+body.rs-modal #bMore,body.rs-modal #moreMenu,body.st-cut #bMore,body.st-cut #moreMenu{display:none}
 @media (max-height:500px) and (orientation:landscape){#moreMenu{top:max(12px,env(safe-area-inset-top));right:calc(max(12px,env(safe-area-inset-right)) + 100px);flex-direction:row;padding:0;background:none;box-shadow:none}#moreMenu button{background:#101a2ee6}}
 #bSound{position:fixed;right:12px;top:10px;width:42px;height:42px;border-radius:50%;border:2px solid #fff8;background:#1b1626aa;font-size:20px}
 #inv{position:fixed;right:64px;top:20px;color:#fff;font:700 16px system-ui;text-shadow:0 1px 3px #000}

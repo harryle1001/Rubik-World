@@ -287,6 +287,7 @@ export function createMiniGameHost(ctx) {
   // ---------- Vào / ra ----------
   function begin(key, door, opts = {}) {
     const G = ctx.miniGames[key]; if (!G) return false;
+    if (document.body.classList.contains('st-cut')) { ctx.toast && ctx.toast('🎬 Xem xong đoạn dẫn chuyện rồi vào chơi nhé!', 2200); return false; }   // thanh điện ảnh che nút ✕ Thoát → kẹt trong game
     if (ctx.premium && !ctx.premium.allow('mg', { key, name: G.name })) return false;   // một phần mini game miễn phí (FREE_MG ở server)
     if (host.active) host.exit(true);
     const P = ctx.player, R = G.radius || 13, dx = door ? door.x : P.pos.x, dz = door ? door.z : P.pos.z;
