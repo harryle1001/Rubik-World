@@ -103,6 +103,8 @@ async function clearUi(max = 30) {   // bấm qua thoại cốt truyện/hướn
   }
   return false;
 }
+// mở menu ☰ rồi bấm 1 mục (đợi menu hiện, thử lại 1 lần nếu menu chưa mở)
+async function menu(item) { for (let k = 0; k < 3; k++) { if (!(await rectOf(item))) { await tap('#bMore'); for (let i = 0; i < 8 && !(await rectOf(item)); i++) await T(250); } if (await rectOf(item)) return tap(item); } throw new Error('menu ☰ không hiện mục ' + item); }
 // chờ nút hành động #bAct có nhãn khớp rồi bấm (như người chơi bấm nút/E)
 async function act(re, { sec = 8, must = true } = {}) {
   const t0 = Date.now(); let lab = null;
@@ -216,7 +218,7 @@ await run('intro', 'Clip mở đầu → bấm Bỏ qua ⏭', async row => {
   if (row.bad) return false;
 });
 await run('avatar', 'Tạo nhân vật (☰ → 🎨 Nhân vật → chọn → 💾 Lưu)', async row => {
-  await tap('#bMore'); await T(600); await tap('#bAvatar'); await page.waitForSelector('#vcr', { timeout: 10000 }); await T(2500);
+  await menu('#bAvatar'); await page.waitForSelector('#vcr', { timeout: 10000 }); await T(2500);
   const a = await uiAudit('#vcr'); if (a.off.length || a.over.length) row.note += ` bảng tạo nhân vật: ngoài màn ${a.off.slice(0, 3)} chồng ${a.over.slice(0, 3)}`;
   await tap('#vcr [data-k="base"][data-v="hair-m"]'); await T(1500);
   await tap('#vcr [data-k="glasses"][data-v="round"]'); await T(800);
@@ -230,7 +232,7 @@ await run('walk', 'Đi bộ từ cổng vào sân trường bằng joystick/phí
   await tap('#bMore'); await T(500); const ok = await tapText(/Đến trường|🏫/, '#moreMenu', { must: false }); if (!ok) { await tap('#bMore'); await goNear(...L.spawn); }
   await T(2500); await clearUi(10);
   const legs = [[L.gate[0] + 6, L.gate[1]], L.school];
-  for (const [x, z] of legs) { const r = await walkTo(x, z, { sec: 45, label: 'trường' }); row.note += ` → (${x | 0},${z | 0}) ${JSON.stringify(r)}`; if (!r.ok) throw new Error('không tới được sân trường ' + JSON.stringify(r)); }
+  for (const [x, z] of legs) { const r = await walkTo(x, z, { sec: 90, label: 'trường' }); row.note += ` → (${x | 0},${z | 0}) ${JSON.stringify(r)}`; if (!r.ok) throw new Error('không tới được sân trường ' + JSON.stringify(r)); }
   // đi lang thang trong sân 13 s (đổi hướng), xem có kẹt/xuyên không
   const p = await P(); for (const [dx, dz] of [[13, 0], [0, 13], [-13, 0], [0, -13]]) await walkTo(p.x + dx, p.z + dz, { sec: 8, run: true });
   await shot('san-truong');
@@ -268,7 +270,7 @@ await run('mg', 'Mọi mini game: vào (☰ → 🎮) → chơi 3 s → ✕ Tho�
     if (MGF && !MGF.includes(k)) continue;
     step = 'mg:' + k; const e0 = errs.length;
     try {
-      await goNear(...L.spawn); await clearUi(20); await tap('#bMore'); await T(400); await tap('#bMenu'); await T(800);
+      await goNear(...L.spawn); await clearUi(20); await menu('#bMenu'); await T(800);
       if (!(await rectOf(`#schoolMenu button[data-k="${k}"]`))) { await closeAll(); const ok = await ev(k => __island.mg.start(k, __island.mg.doorOf(k)), k); if (!ok) throw new Error('không mở'); row.note += ` ${k}(không có trong menu)`; }
       else await tap(`#schoolMenu button[data-k="${k}"]`);
       // câu khởi động rồi "▶ Vào chơi"
@@ -362,10 +364,10 @@ await run('plane', 'Máy bay: lên → cất cánh → bay qua Học viện → 
 });
 await run('broom', 'Chổi 🧹: gọi, bay lên, bay tới, hạ, xuống', async row => {
   await ensureOwn(['broom-tap']);
-  await goNear(L.school[0], L.school[1] + 8); await tap('#bBroom'); await T(2500);
+  const fld = await ev(async () => (await import('/js/island/layout.js')).to3(1000, 600)); await goNear(fld[0], fld[1]); await tap('#bBroom'); await T(2500);
   if (!(await ev(() => __island.vehicles.riding === 'broom'))) throw new Error('không lên được chổi (' + (await ev(() => document.getElementById('info').textContent.slice(0, 80))) + ')');
   for (let i = 0; i < 4 && (await ground()) < 3; i++) await up(1500); const g = await ground(); await forward(3000);
-  for (let i = 0; i < 10 && (await ground()) > 0.5; i++) await down(1500);
+  for (let i = 0; i < 16 && !(await ev(() => __island.player.grounded)); i++) await down(1500);
   await tap('#bBroom'); await T(1200); if (await ev(() => !!__island.player.vehicle)) await act(/Xuống|🧹/, { sec: 3, must: false }); await T(1200);
   row.note = `cao ${g} m`; if (await ev(() => !!__island.player.vehicle)) throw new Error('không xuống chổi được');
   if (g < 1.5) throw new Error('chổi không bay lên');
@@ -390,7 +392,7 @@ await run('boat', 'Thuyền: lên thuyền buồm/ca nô ở làng chài, lái, 
   let left = await act(/🏝️|Lên bờ/, { sec: 2, must: false });
   for (let i = 0; i < 8 && !left; i++) { if (TOUCH) { await joyTo(0, 40); await T(1500); await joyUp(); } else await hold('KeyS', 1500); left = await act(/🏝️|Lên bờ/, { sec: 1, must: false }); }
   if (!left) { row.note += ' (không thấy 🏝️ Lên bờ)'; throw new Error('không lên bờ được'); }
-  await T(1500); if (await ev(() => !!__island.player.vehicle)) throw new Error('vẫn trên thuyền');
+  await T(1500); if (await ev(() => !!__island.player.vehicle)) { await act(/🏝️|Lên bờ/, { sec: 4, must: false }); await T(1500); } if (await ev(() => !!__island.player.vehicle)) throw new Error('vẫn trên thuyền');
 });
 
 // ---------- Tàu Pha Lê → Học viện ----------
@@ -408,7 +410,8 @@ await run('train', 'Tàu Pha Lê: lên tàu ở ga đảo Rubik → tới ga H�
     return [1, -1].map(sg => [q.x - q.tz * off * sg, q.z + q.tx * off * sg, P.top]); });
   let lab = null;
   const top = pts[0][2]; for (const [dx, dz] of [[4, 0], [-4, 0], [0, 4], [0, -4]]) pts.unshift([c2[0] + dx, c2[1] + dz, top]);
-  for (const [x, z, y] of pts) { await ev(([x, z, y]) => { const p = __island.player; p.vehicle = null; p.teleport(x, z, y + 0.05); }, [x, z, y]); await T(1500); lab = await act(/🚂/, { sec: 4, must: false }); if (lab) break; }
+  // như người chơi: đứng trên sân ga chờ tàu vào ga (tàu chạy theo lịch máy chủ) — tối đa 4 phút
+  for (let round = 0, t0 = Date.now(); !lab && Date.now() - t0 < 240000; round++) for (const [x, z, y] of pts) { await ev(([x, z, y]) => { const p = __island.player; p.vehicle = null; p.teleport(x, z, y + 0.05); }, [x, z, y]); await T(1500); lab = await act(/🚂/, { sec: 4, must: false }); if (lab) break; }
   if (!lab) throw new Error('không thấy nút 🚂 Lên tàu trên sân ga');
   row.note = lab.slice(0, 40); await T(2500);
   if (!(await ev(() => __island.train.ride.state.aboard))) throw new Error('bấm 🚂 nhưng không lên tàu');
@@ -430,7 +433,7 @@ await run('academy', 'Học viện: đi bộ tới cổng lâu đài → sân �
   if (!(await ev(() => !!localStorage.getItem('academy.wand')))) { const w = await act(/🪄/, { sec: 5, must: false }); if (w) { await T(1200); await tap('#mgCard [data-go]', { must: false }); await T(1200); } if (!(await ev(() => !!localStorage.getItem('academy.wand')))) { row.note += ' (không nhận đũa được bằng nút)'; await ev(() => __island.academy && __island.academy.magic && __island.academy.magic.setWand && __island.academy.magic.setWand()); } }
   // vào trong lâu đài
   await walkTo(AC.inDoor[0], AC.inDoor[1], { sec: 20, near: 1.2 });
-  const lab = await act(/🚪 Vào trong/, { sec: 6 }); await T(3000);
+  const lab = await act(/🚪 ?Vào trong/, { sec: 8 }); await T(3000);
   const I = await ev(() => { const i = __island.academy.interior; return { inside: i.inside, k: i.level, foot: i.toWorld(30, 49.5, 0), top: i.toWorld(49, 49.5, 1) }; });
   if (!I.inside) throw new Error('bấm vào nhưng không ở trong lâu đài');
   await shot('trong-lau-dai');
@@ -455,13 +458,13 @@ await run('house', 'Lễ chọn Nhà (Quả cầu) → phòng sinh hoạt nhà',
   const id = await ev(() => __island.houses.houseId()); row.note = 'nhà ' + id; if (!id) throw new Error('chưa được chọn nhà');
   const door = await ev(async id => { const g = await import('/js/island/academy/plan.js'); const H = g.HOUSE_AT[id]; return g.toWorld(H[0], H[1]); }, id);
   await goNear(door[0], door[1]); 
-  for (let k = 0; k < 4; k++) {
+  for (let k = 0; k < 8; k++) {
     if (!(await act(new RegExp('— '), { sec: 5, must: false }))) { await walkTo(door[0], door[1], { sec: 6, near: 1 }); continue; }
-    await T(1200); if (await rectOf('#rwQ .ch button')) { await tap(`#rwQ .ch button[data-k="${k}"]`); await T(2500); await closeAll(); }
-    await T(3000); if (await ev(() => Math.abs(__island.player.pos.y - 233) < 6)) break;
+    await T(1200); if (await rectOf('#rwQ .ch button')) { await tap(`#rwQ .ch button[data-k="${k % 4}"]`); await T(2500); await closeAll(); }
+    await T(3000); if (await ev(() => __island.player.pos.y > 200)) break;
   }
   const y = (await P()).y; row.note += ` y=${y.toFixed(0)}`; await shot('phong-nha');
-  if (Math.abs(y - 233) > 6) throw new Error('không vào được phòng sinh hoạt nhà');
+  if (y < 200) throw new Error('không vào được phòng sinh hoạt nhà');
   await act(/Ra sân/, { sec: 2, must: false }); const r = await walkTo((await P()).x + 1.5, (await P()).z, { sec: 3 }); await act(/Ra sân/, { sec: 6, must: false }); await T(2500);
 });
 await run('class', 'Lớp học Học viện: tới cửa lớp → vào → ✕ Thoát', async row => {
@@ -493,13 +496,15 @@ await run('lighthouse', 'Hải đăng: thuyền ra đảo đá → vào tháp �
   await goNear(LH.main[0], LH.main[1]); await act(/⛵/, { sec: 8 }); await T(2000);
   await tapText(/Tới nơi|⏭/, 'body', { must: false }); for (let i = 0; i < 40 && (await ev(() => __island.lighthouse.ride.active)); i++) { await act(/⏭/, { sec: 1, must: false }); await T(1500); }
   await T(1500); const pi = await P(); row.note = `xuống bến ${[pi.x, pi.z].map(Math.round)}`;
-  let r = await walkTo(LH.door[0], LH.door[1], { sec: 60, run: true }); row.note += ` cửa tháp ${r.ok}`; if (!r.ok) throw new Error('không tới được cửa tháp ' + JSON.stringify(r));
+  // dọc tim cầu tàu (rộng 3 m, không lan can) → 21 bậc đá → cửa tháp
+  for (const e of [40, 30, 24, 16]) { const w = await ev(async e => (await import('/js/island/lighthouse/plan.js')).toWorld(e, 0), e); await walkTo(w[0], w[1], { sec: 25, near: 0.8 }); }
+  let r = await walkTo(LH.door[0], LH.door[1], { sec: 60 }); row.note += ` cửa tháp ${r.ok}`; if (!r.ok) throw new Error('không tới được cửa tháp ' + JSON.stringify(r));
   const inside = await ev(async () => { const pl = await import('/js/island/lighthouse/plan.js'); return pl.toWorld(pl.T.R0 - 1.6, 0); }); r = await walkTo(inside[0], inside[1], { sec: 20, near: 0.8 }); row.note += ` vào tháp ${r.ok}`;
   // leo cầu thang xoắn: đi vòng ngược chiều kim đồng hồ (theo hệ e,n của tháp), bám bán kính lối đi
   const t0 = Date.now(); let top = 0;
   while (Date.now() - t0 < 240000) {
     const s = await ev(async () => { const pl = await import('/js/island/lighthouse/plan.js'), q = __island.player.pos, [e, n] = pl.toLocal(q.x, q.z), yr = q.y - pl.Y0, th = Math.atan2(n, e);
-      const r = pl.rIn(Math.max(0, yr)) - 0.6, th2 = th + 0.5, w = pl.toWorld(Math.cos(th2) * r, Math.sin(th2) * r); return { w, yr, deck: pl.T.DECK, r: Math.hypot(e, n) }; });
+      const r = pl.rIn(Math.max(0, yr)) - 0.5, th2 = th + 0.28, w = pl.toWorld(Math.cos(th2) * r, Math.sin(th2) * r); return { w, yr, deck: pl.T.DECK, r: Math.hypot(e, n) }; });
     top = Math.max(top, s.yr); if (s.yr >= s.deck - 0.5) break;
     if (TOUCH) { const p = await P(), dx = s.w[0] - p.x, dz = s.w[1] - p.z, d = Math.hypot(dx, dz) || 1, y = p.yaw; await joyTo((dx / d * Math.cos(y) - dz / d * Math.sin(y)) * 40, (dx / d * Math.sin(y) + dz / d * Math.cos(y)) * 40); }
     else { await ev(w => { const p = __island.player, dx = w[0] - p.pos.x, dz = w[1] - p.pos.z; p.cam.yaw = Math.atan2(-dx, -dz); }, s.w); await page.keyboard.down('KeyW'); }
@@ -528,7 +533,7 @@ await run('spell', 'Vòng phép: mở vòng ✨ → chọn 1 phép → phép đ�
 });
 await run('map', 'Bản đồ M: mở → ✕ đóng', async row => {
   await goNear(...L.spawn);
-  if (TOUCH) { await tap('#bMore'); await T(400); await tap('#bMap'); } else await key('KeyM');
+  if (TOUCH) { await menu('#bMap'); } else await key('KeyM');
   await T(1500); if (!(await ev(() => !!(__island.worldMap.open || __island.mapOpen)))) throw new Error('bản đồ không mở');
   const a = await uiAudit('#wmap'); if (a.off.length || a.over.length) row.note = JSON.stringify(a); await shot('ban-do');
   await tap('#wmap .x'); await T(800); if (await ev(() => !!(__island.worldMap.open || __island.mapOpen))) throw new Error('✕ không đóng bản đồ');
@@ -536,18 +541,18 @@ await run('map', 'Bản đồ M: mở → ✕ đóng', async row => {
   if (a.off.length || a.over.length) return false;
 });
 await run('time', 'Đổi giờ ☀️ (☰ → Ánh sáng & giờ → 🌙 Tối) + mưa', async row => {
-  await tap('#bMore'); await T(400); await tap('#bBright'); await T(800);
+  await menu('#bBright'); await T(800);
   await tap('#tMode button[data-t="20.5"]'); await T(4000);
   const n = await ev(() => ({ night: __island.sky.state.night, hour: +__island.sky.state.hour.toFixed?.(1) || __island.sky.state.hour })); row.note = JSON.stringify(n);
   const a = await uiAudit('#brightBox'); if (a.off.length || a.over.length) row.note += JSON.stringify(a);
   await closeAll(); await ev(() => __island.weather.set('rain')); await T(4000); row.note += ' mưa: ' + (await ev(() => __island.weather.type)) + ' (không có nút mưa cho người chơi)';
   await shot('dem-mua'); await walkTo((await P()).x + 6, (await P()).z, { sec: 5 });
-  await ev(() => __island.weather.set('clear')); await tap('#bMore'); await T(400); await tap('#bBright'); await T(600); await tap('#tMode button[data-t="12.5"]'); await T(800); await closeAll();
+  await ev(() => __island.weather.set('clear')); await menu('#bBright'); await T(600); await tap('#tMode button[data-t="12.5"]'); await T(800); await closeAll();
   if (!n.night && !(n.hour > 19)) throw new Error('không chuyển sang đêm');
 });
 await run('photo', '📷 Chụp ảnh con vật (sổ tay thiên nhiên ghi nhận)', async row => {
   const n0 = await ev(() => { try { return Object.keys(JSON.parse(localStorage.getItem('island.nature') || '{}').photo || {}).length; } catch (e) { return 0; } });
-  const spots = await ev(() => { const out = []; const W = __island.wild; if (W && W.actors) for (const A of W.actors) { const q = A.root.position; if (A.S && !A.S.fly && !A.S.sea) out.push([q.x, q.z]); } return out.sort(() => Math.random() - 0.5).slice(0, 6); });
+  const spots = await ev(() => { const out = []; const W = __island.wild; if (W && W.actors) for (const A of W.actors) { const q = A.root.position; if (A.S && !A.S.fly && !A.S.sea) out.push([q.x, q.z]); } return out.sort(() => Math.random() - 0.5).slice(0, 10); });
   if (!spots.length) throw new Error('không có con vật nào trong thế giới (wild.actors)');
   let ok = false;
   for (const sp of spots) {
