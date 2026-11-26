@@ -76,7 +76,7 @@ Kiểm lại không hỏng chỗ khác: `tools/collide-test.mjs` **40/40** (khô
 | `ui` Rà giao diện lần cuối: nút chồng / tràn / chữ cắt / nút nhỏ | ✅ | ✅ | ✅ |
 
 Mini game: **35/35 vào–chơi–✕ Thoát** ở cả 3 cỡ màn hình (6 lớp Học viện + Đua ván bạc không có trong menu 🎮 → vào bằng `mg.start` qua cửa).
-Không lỗi console/HTTP ở các ca đạt. Không ca nào ghi nhận đi xuyên vật / rơi biển khi đi bộ trên đất liền.
+Không lỗi console/HTTP ở các ca đạt. Không ca nào ghi nhận đứng trong vật (xuyên) hay nhảy vị trí bất thường; xuống nước chỉ xảy ra ở lạch Rừng Thiên Định khi bot lệch khỏi đá bước.
 
 ## Lỗi còn lại (chưa xong — cần phiên sau)
 
@@ -84,7 +84,7 @@ Không lỗi console/HTTP ở các ca đạt. Không ca nào ghi nhận đi xuy�
 |---|---|---|
 | `academy` (cả 3) | Vào được lâu đài (7 tầng) nhưng bot không tới được chân cầu thang đá ở Sảnh đón (y ≈ 1589–1597, cần tới tầng 1 ≈ 1605) | Bot đi thẳng, chưa tìm đường qua cửa/phòng trong lâu đài; "cầu thang xoay" ở giếng giữa đổi lối theo giờ. Cần thêm điểm dẫn đường theo `interior/plan.js` (cửa `dX/dZ`). Chưa thấy lỗi game. |
 | `destiny` (cả 3) | Kẹt quanh đá bước qua lạch / cửa đông Ngã ba Mặt Trời; bot rơi xuống lạch | Đi đúng tim lối thì qua được (đã thử riêng: đá bước → khe dốc lên y 3,25 m). Cửa đông giữa 2 bụi rào r = 1,3 m chỉ rộng ~1,4 m — **nên xem lại cho trẻ dùng joystick** (nới khe hoặc giảm bán kính bụi rào). Khi va vào mép vòng va chạm, luật "chốt cuối" đứng lại chỗ cũ thay vì trượt. |
-| `lighthouse` (máy tính) | Leo tới ~5,6 m / 25,9 m (bậc ~31) rồi kẹt ở mép trong cầu thang sát sàn gác tầng 1 | Điện thoại dọc **đạt** (leo tới đỉnh). Ô va chạm ở mép trong (lan can/dầm sàn gác, cao hơn bậc 0,33 m) chặn khi đi lệch vào trong — nên cho dầm sàn gác `noCollide` hoặc nới 0,06 m dung sai. |
+| `lighthouse` (máy tính) | Leo tới ~5,6 m / 25,9 m (bậc ~31) rồi kẹt ở mép trong cầu thang sát sàn gác tầng 1 | Điện thoại dọc và ngang **đạt** (leo tới đỉnh 144 bậc). Ô va chạm ở mép trong (lan can/dầm sàn gác, cao hơn bậc 0,33 m) chặn khi đi lệch vào trong — nên cho dầm sàn gác `noCollide` hoặc nới 0,06 m dung sai. |
 | `train` (máy tính, dọc) | Lượt cuối: không có 🚂 ở sân ga trong 4 phút (tàu chạy theo lịch máy chủ, đang ở ga kia) / lên tàu nhưng không ngồi thì không đi cùng | Lượt trước đạt (tới ga Học viện, xuống tàu). Đã thêm bước ngồi ghế; cần chạy lại. |
 | `class` (dọc) | Không thấy nút vào lớp tại cửa (đang: không có nút nào) | Lượt khác đạt; nghi lớp học chưa dựng xong (LOD) khi vừa dịch chuyển từ phòng nhà. |
 | `photo` (ngang) | Không có con vật trong tầm 📷 ở 10 điểm ngẫu nhiên | Phụ thuộc giờ/thời tiết (đêm + mưa vừa bật ở ca trước). |
