@@ -9,8 +9,9 @@ export function createAccountHud(ctx) {
   const css = document.createElement('style');
   css.textContent = `#accChip{padding:5px 13px;border-radius:13px;border:2px solid #fff5;background:#1b1626aa;color:#fff;font:700 13px/1.3 system-ui;cursor:pointer;max-width:62vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #accChip b{color:#ffd36e}
-#accBox{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:#0a1222b3;padding:13px}
-#accBox .card{width:min(100%,377px);box-sizing:border-box;background:#fff8ec;color:#3a2a1a;border-radius:21px;padding:21px;border-top:8px solid #f0a23a;box-shadow:0 13px 34px #0008;font:16px/1.5 system-ui}
+#accBox{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:#0a1222b3;padding:13px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#accBox .card{max-height:none;margin:auto 0;width:min(100%,377px);box-sizing:border-box;background:#fff8ec;color:#3a2a1a;border-radius:21px;padding:21px;border-top:8px solid #f0a23a;box-shadow:0 13px 34px #0008;font:16px/1.5 system-ui}
+@media (max-height:500px) and (orientation:landscape){#accBox{place-items:start center}#accBox .card{padding:13px 21px;font-size:14px;line-height:1.35}}
 #accBox h3{margin:0 0 8px;font-size:21px}#accBox h3.brand{display:flex;align-items:center;gap:13px}#accBox h3.brand img{width:34px;height:34px;border-radius:8px;box-shadow:0 3px 8px #0003}#accBox p{margin:0 0 13px;font-size:13px;opacity:.75}
 #accBox label{display:block;font:700 13px system-ui;margin:8px 0 3px}
 #accBox input[type=text],#accBox input[type=password]{width:100%;box-sizing:border-box;padding:10px 13px;border-radius:13px;border:2px solid #d9c6a3;background:#fff;font:600 16px system-ui;color:#3a2a1a}
