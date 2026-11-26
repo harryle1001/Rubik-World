@@ -51,7 +51,7 @@ export function makeKit(B, { far = false, Y, ground }) {
       for (const y of rows) { if (alongV) { winAt('u', u0, -1, a, y); winAt('u', u1, 1, a, y); } else { winAt('v', v0, -1, a, y); winAt('v', v1, 1, a, y); } }
     }
     if (det) {
-      det.box(v0 - 0.4, v1 + 0.4, Y - 1, Y + 1.4, u0 - 0.4, u1 + 0.4, '#6f7466');                                   // chân tường rêu
+      { let s2 = a0; for (const [g0, g1] of [...gaps, [a1, a1]].sort((p, q) => p[0] - q[0])) { const e0 = s2 === a0 ? a0 - 0.4 : s2, e1 = g0 === a1 ? a1 + 0.4 : g0; if (e1 > e0) { if (alongV) det.box(e0, e1, Y - 1, Y + 1.4, u0 - 0.4, u1 + 0.4, '#6f7466'); else det.box(v0 - 0.4, v1 + 0.4, Y - 1, Y + 1.4, e0, e1, '#6f7466'); } s2 = Math.max(s2, g1); } }   // chân tường rêu — bỏ qua lối cửa (trước: gờ 0,95 m chắn cổng chính/lối giữa các sân)
       if (outer) for (let a = a0 + 6.3; a <= a1 - 6; a += 8.4) {                                                     // trụ chống + tháp nhọn nhỏ
         if (gaps.some(([g0, g1]) => a > g0 - 1 && a < g1 + 1)) continue;
         if (alongV) { const f = outer > 0 ? u1 : u0; det.box(a - 0.5, a + 0.5, Y - 2, Y + 15, Math.min(f, f + outer * 1.2), Math.max(f, f + outer * 1.2), COL.wallD); det.cone(a, Y + 15, f + outer * 0.6, 0.55, 2.6, COL.roof); }
@@ -130,7 +130,7 @@ export function makeKit(B, { far = false, Y, ground }) {
       merlons(axis, a0, a1, outer, Y + h, gs);
       const fo = side > 0 ? f1 : f0;
       for (let a = a0 + 4.2; a < a1 - 3; a += 8.4) { if (gs.some(([g0, g1]) => a > g0 - 2 && a < g1 + 2)) continue; if (win) { const f = fo + side * 0.1; if (axis === 'v') win.box(a - 0.17, a + 0.17, Y + 1.6, Y + 3.7, f - 0.07, f + 0.07, '#ffffff'); else win.box(f - 0.07, f + 0.07, Y + 1.6, Y + 3.7, a - 0.17, a + 0.17, '#ffffff'); } }   // khe bắn tên thẳng đứng
-      if (det) { if (axis === 'v') det.box(a0, a1, Y - 1, Y + 0.9, Math.min(f0, f1) - 0.35, Math.max(f0, f1) + 0.35, '#6f7466'); else det.box(Math.min(f0, f1) - 0.35, Math.max(f0, f1) + 0.35, Y - 1, Y + 0.9, a0, a1, '#6f7466'); }   // chân tường rêu
+      if (det) { let s2 = a0; for (const [g0, g1] of [...gs, [a1, a1]].sort((p, q) => p[0] - q[0])) { if (g0 > s2) { if (axis === 'v') det.box(s2, g0, Y - 1, Y + 0.9, Math.min(f0, f1) - 0.35, Math.max(f0, f1) + 0.35, '#6f7466'); else det.box(Math.min(f0, f1) - 0.35, Math.max(f0, f1) + 0.35, Y - 1, Y + 0.9, s2, g0, '#6f7466'); } s2 = Math.max(s2, g1); } }   // chân tường rêu — chỉ dưới đoạn có tường (trước: chạy liền qua khe cổng → gờ 0,43 m chắn mọi cổng)
       if (!far) for (const [g0, g1] of gs) for (const g of [g0, g1]) if (axis === 'v') wall.box(g - 0.6, g + 0.6, Y - 1, Y + h + 2.1, f0 - 0.4, f1 + 0.4, COL.wall); else wall.box(f0 - 0.4, f1 + 0.4, Y - 1, Y + h + 2.1, g - 0.6, g + 0.6, COL.wall);   // trụ cổng
     };
     run('v', -hv, hv, u1 - t, u1, gaps.front, u1 - 0.3, 1);
