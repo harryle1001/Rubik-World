@@ -17,20 +17,24 @@ import * as THREE from 'three';
 import { PHI } from './layout.js';
 import { CFG } from './config.js';
 import { instancedTwin } from './style.js';
+import { canSplit, split, check as splitCheck } from './split.js';
+import { shrinkCanvas } from './gltf-tex.js';
 
 const HIGH = 21, FOG_HIGH = 1 / Math.sqrt(PHI);   // độ cao coi là "trên cao" (m) · hệ số sương khi bay cao (điện thoại)
 const FAR_K = 89, FAR_MIN = 34, OUTLINE_D = 34, SMALL_R = 1.6;   // ngưỡng Fibonacci; SMALL_R ≈ φ m
 const NOSHADOW_R = CFG.isMobile ? 1 / PHI : 0.5;                  // vật nhỏ hơn: không đổ bóng
 const _m = new THREE.Matrix4(), _sc = new THREE.Vector3();
 const _s = new THREE.Sphere(), _v = new THREE.Vector3();
-const DEPTH = new Map();
+const DEPTH = new Map(), NOSPLIT = /[?&]nosplit/.test(location.search);   // ?nosplit: so sánh khi đo
 
 export function createPerf(ctx) {
-  const { scene, camera } = ctx, list = [];
+  const { scene, camera } = ctx, list = [], ins = [], pts = [];
   function register(o) {
     const ud = o.userData; if (ud._pf) return; ud._pf = 1;
+    if (o.isPoints && o.geometry && o.geometry.attributes.position) { pts.push({ o, ver: -1, h: false }); return; }
     if (!(o.isMesh)) return;
     const g = o.geometry; if (!g || !g.attributes.position) return;
+    if (CFG.isMobile && o.material) for (const m of [].concat(o.material)) if (m.map && m.map.isCanvasTexture) shrinkCanvas(m.map);   // biển chữ canvas lớn: ½ trên điện thoại (gltf-tex.js)
     if (o.isInstancedMesh && !Array.isArray(o.material)) o.material = instancedTwin(o.material);   // vật liệu dùng chung với Mesh thường → bản riêng (style.js)
     // pass bóng đổ: three dùng 1 vật liệu chiều sâu cho mọi vật → đổi chương trình mỗi lần xen kẽ lưới thường/instanced/có xương; mỗi kiểu 1 bản riêng
     //   (bỏ qua vật liệu cắt alpha / displacement: three cần bản chiều sâu riêng theo từng vật liệu để giữ hình lá, hoa…)
@@ -46,14 +50,20 @@ export function createPerf(ctx) {
       list.push({ o, kind: ud.outline ? 'outline' : 'skin' }); return;
     }
     if (ud.outline) { o.frustumCulled = true; list.push({ o, kind: 'outline' }); return; }
-    if (!o.frustumCulled) return;   // vật cố ý luôn vẽ (bầu trời, nước, hiệu ứng) — giữ nguyên
+    // InstancedMesh đang 0 bản sao (đồ tạm ẩn, hiệu ứng chưa chạy…): three vẫn gọi 1 lần vẽ rỗng mỗi khung (+ pass bóng) → ẩn mỗi khung (update)
+    const ie = o.isInstancedMesh ? { o, far: false } : null; if (ie) ins.push(ie);
+    if (!o.frustumCulled) {   // vật cố ý luôn vẽ (bầu trời, nước, hiệu ứng) — giữ nguyên; bộ bản sao di chuyển (chim, thuyền, người LOD…): ẩn khi bản sao gần nhất > 89 m
+      if (ie && o.count <= 4096) list.push(Object.assign(ie, { kind: 'iset', ver: -1, n: -1, P: null, r: 0, min: 89 }));
+      return;
+    }
     if (o.isInstancedMesh) {
-      if (ud.itemR === undefined) {   // InstancedMesh phủ rộng không rõ cỡ từng vật → chỉ xét bóng đổ (điện thoại)
+      if (ud.itemR === undefined) {   // InstancedMesh phủ rộng không rõ cỡ từng vật → xét bóng đổ (điện thoại) + ẩn cả bộ khi mọi bản sao đều xa
         if (CFG.isMobile && o.castShadow && o.count > 0) { if (!g.boundingSphere) g.computeBoundingSphere(); o.getMatrixAt(0, _m); _sc.setFromMatrixScale(_m); if (g.boundingSphere.radius * Math.max(_sc.x, _sc.y, _sc.z) * o.matrixWorld.getMaxScaleOnAxis() < NOSHADOW_R) o.castShadow = false; }
+        if (o.count <= 4096) list.push(Object.assign(ie, { kind: 'iset', ver: -1, n: -1, P: null, r: 0, min: FAR_MIN }));   // bộ rải khắp đảo (vòng mốc, pha lê, đèn…): khung hình luôn chạm hình cầu bao lớn → 1 lần vẽ mỗi khung dù bản sao gần nhất ở rất xa
         return;
       }
       if (ud.itemR < NOSHADOW_R) o.castShadow = false;
-      if (ud.itemR < SMALL_R) list.push({ o, kind: 'inst', r: ud.itemR });
+      if (ud.itemR < SMALL_R) list.push(Object.assign(ie, { kind: 'inst', r: ud.itemR }));
       return;
     }
     if (!g.boundingSphere) g.computeBoundingSphere();
@@ -63,6 +73,15 @@ export function createPerf(ctx) {
   }
   // quét: chỉ gom vật CHƯA đăng ký (rẻ); đăng ký (tính hình cầu bao…) tối đa 1,5 ms/khung → không dồn vài chục ms vào 1 khung
   const pending = [];
+  // ---- chia khối gộp lớn thành ô (split.js): chạy dần, ≤ 2 ms/khung (lúc màn che vào game: không giới hạn) ----
+  const splitQ = []; let job = null, jobO = null, lastDt = 1 / 60;
+  function splitStep() {
+    const t0 = performance.now(), B = ctx.loading && ctx.loading.veil ? 50 : Math.max(2, lastDt * 100);   // ≤ 1/10 thời gian khung (máy chậm vẫn chia xong trong vài giây)
+    while (performance.now() - t0 < B) {
+      if (!job) { jobO = splitQ.shift(); if (!jobO) return; if (!jobO.parent || !jobO.userData._fz || !canSplit(jobO)) { jobO.userData._spq = 0; job = null; continue; } job = split(jobO); }
+      if (job.next().done) { if (jobO.userData._sp && jobO.userData._sp.g) jobO.userData._sp.g.dispose(); else jobO.userData._spq = 0; job = null; }   // GPU: bỏ bộ đệm của hình học gốc (giữ bản CPU để hoàn lại nếu cần)
+    }
+  }
   // ---- đóng băng ma trận ----
   const frozen = [], cand = new Map();   // cand: vật → ảnh chụp lần quét trước
   const snap = (o, a) => { const p = o.position, q = o.quaternion, s = o.scale; a[0] = p.x; a[1] = p.y; a[2] = p.z; a[3] = q.x; a[4] = q.y; a[5] = q.z; a[6] = q.w; a[7] = s.x; a[8] = s.y; a[9] = s.z; return a; };
@@ -88,7 +107,8 @@ export function createPerf(ctx) {
   }
   let scanId = 0;
   const scan = () => {
-    const id = ++scanId; scene.traverse(o => { const u = o.userData; u._sc = id; if (!u._pf && !u._pq) { u._pq = 1; pending.push(o); } freezeScan(o); });
+    const id = ++scanId; scene.traverse(o => { const u = o.userData; u._sc = id; if (!u._pf && !u._pq) { u._pq = 1; pending.push(o); } freezeScan(o);
+      if (u._sp) { if (u._sp.g) splitCheck(o); } else if (u._fz && !u._spq && o.isMesh && !NOSPLIT && canSplit(o)) { u._spq = 1; splitQ.push(o); } });
     for (let i = frozen.length - 1; i >= 0; i--) if (frozen[i].o.userData._sc !== id) unfreeze(i);   // cả nhánh đã gỡ khỏi cảnh: thả ra, không giữ tham chiếu
     for (const o of cand.keys()) if (o.userData._sc !== id) cand.delete(o);
   };
@@ -97,6 +117,22 @@ export function createPerf(ctx) {
     const L = o.layers;
     if (h) { if (L.mask !== 0) { o.userData._pm = L.mask; L.mask = 0; } }
     else if (L.mask === 0 && o.userData._pm !== undefined) L.mask = o.userData._pm;
+  }
+  // bộ InstancedMesh: khoảng cách tới bản sao gần nhất (tâm bản sao lưu sẵn, tính lại khi instanceMatrix đổi); e.r = bán kính bản sao lớn nhất
+  function nearInst(e) {
+    const o = e.o, n = o.count, im = o.instanceMatrix;
+    if (im.version !== e.ver || n !== e.n) {
+      const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); const gs = g.boundingSphere, a = im.array, W = o.matrixWorld.elements, ws = o.matrixWorld.getMaxScaleOnAxis();
+      if (!e.P || e.P.length < n * 4) e.P = new Float32Array(Math.max(4, n * 4)); let rm = 0;
+      for (let i = 0; i < n; i++) { const b = i * 16, cx = gs.center.x, cy = gs.center.y, cz = gs.center.z;
+        const x = a[b] * cx + a[b + 4] * cy + a[b + 8] * cz + a[b + 12], y = a[b + 1] * cx + a[b + 5] * cy + a[b + 9] * cz + a[b + 13], z = a[b + 2] * cx + a[b + 6] * cy + a[b + 10] * cz + a[b + 14];
+        e.P[i * 4] = W[0] * x + W[4] * y + W[8] * z + W[12]; e.P[i * 4 + 1] = W[1] * x + W[5] * y + W[9] * z + W[13]; e.P[i * 4 + 2] = W[2] * x + W[6] * y + W[10] * z + W[14];
+        const r = gs.radius * ws * Math.sqrt(Math.max(a[b] * a[b] + a[b + 1] * a[b + 1] + a[b + 2] * a[b + 2], a[b + 4] * a[b + 4] + a[b + 5] * a[b + 5] + a[b + 6] * a[b + 6], a[b + 8] * a[b + 8] + a[b + 9] * a[b + 9] + a[b + 10] * a[b + 10]));
+        e.P[i * 4 + 3] = r; if (r > rm) rm = r; }
+      e.ver = im.version; e.n = n; e.r = rm;
+    }
+    let d = 1e9; for (let i = 0; i < n; i++) { const P = e.P, j = i * 4, dx = P[j] - cam.x, dy = P[j + 1] - cam.y, dz = P[j + 2] - cam.z, q = Math.sqrt(dx * dx + dy * dy + dz * dz) - P[j + 3]; if (q < d) d = q; }
+    return Math.max(0, d);
   }
   function near(o) {   // khoảng cách từ camera tới điểm gần nhất của hình cầu bao
     if (o.isInstancedMesh) { if (!o.boundingSphere) o.computeBoundingSphere(); _s.copy(o.boundingSphere); }
@@ -115,12 +151,20 @@ export function createPerf(ctx) {
     if ((tScan += dt) > 3) { tScan = 0; scan(); }
     const t0 = performance.now(), budget = first ? 1e9 : 1.5; if (pending.length) first = false;   // lần quét đầu (đang vào game): đăng ký hết ngay
     while (pending.length && performance.now() - t0 < budget) { const o = pending.pop(); delete o.userData._pq; register(o); }   // ≤ 1,5 ms/khung
+    lastDt = dt; if (job || splitQ.length) splitStep();
     camera.getWorldPosition(cam);
     if ((tCheck += dt) >= 0.2) {   // độ cao camera: 0,2 s/lần
       tCheck = 0; const g = ctx.terrain ? Math.max(ctx.terrain.heightAt(cam.x, cam.z), CFG.island.waterLevel) : 0;
       ctx.camAlt = cam.y - g; ctx.high = ctx.camAlt > HIGH && !ctx.underwater;   // terrain.js/vehicles: LOD theo độ cao
     }
     fogByAlt(dt);
+    // hạt (Points) đang "cất" dưới đất (mọi điểm y < −50: bụi chân, bọt nước, tia lửa… lúc không dùng) → không vẽ; tính lại khi vị trí đổi
+    for (let i = pts.length - 1; i >= 0; i--) { const e = pts[i], o = e.o; if (!o.parent) { pts[i] = pts[pts.length - 1]; pts.pop(); continue; }
+      const A = o.geometry.attributes.position; if (!A || A.version === e.ver && !e.dirty) continue; e.ver = A.version;
+      const W = o.matrixWorld.elements, n = Math.min(A.count, o.geometry.drawRange.count); let low = n > 0;
+      for (let j = 0; j < n && low; j++) if (W[1] * A.getX(j) + W[5] * A.getY(j) + W[9] * A.getZ(j) + W[13] > -50) low = false;
+      if (low !== e.h) { e.h = low; hide(o, low); } }
+    for (let i = ins.length - 1; i >= 0; i--) { const e = ins[i], o = e.o; if (!o.parent) { ins[i] = ins[ins.length - 1]; ins.pop(); continue; } const h = e.far || o.count === 0; if (h !== e.h) { e.h = h; hide(o, h); } }
     if (!list.length) return;
     const k = (ctx.underwater ? 0.5 : ctx.high ? 1 / PHI : 1) * (ctx.perfScale || 1);   // dưới nước nhìn gần hơn; bay cao/chất lượng thấp: ẩn sớm hơn
     let n = Math.ceil(list.length * Math.min(1, dt / 0.2));   // phần danh sách tỉ lệ thời gian: mỗi vật ~0,2 s xét 1 lần dù FPS cao/thấp
@@ -128,11 +172,13 @@ export function createPerf(ctx) {
       if (cur >= list.length) cur = 0;
       const i = cur++, e = list[i], o = e.o;
       if (!o.parent) { hide(o, false); list.splice(i, 1); cur--; continue; }   // vật đã bị gỡ khỏi cảnh
+      if (e.kind === 'iset') { if (o.count) e.far = nearInst(e) > Math.max(e.min, FAR_K * e.r) * k; continue; }
       const d = near(o);
+      if (e.kind === 'inst') { e.far = d > Math.max(FAR_MIN, FAR_K * e.r) * k; continue; }
       if (e.kind === 'outline') hide(o, d > OUTLINE_D * k);
       else if (e.kind === 'skin') hide(o, d > FAR_K * k);
       else hide(o, d > Math.max(FAR_MIN, FAR_K * e.r) * k);
     }
   }
-  return { update, scan, list, frozen };
+  return { update, scan, list, frozen, splitQ };
 }
