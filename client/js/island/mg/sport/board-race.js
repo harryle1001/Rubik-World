@@ -46,7 +46,8 @@ const ORDER = ['coast', 'canyon', 'cloud'];
 
 function start(ctx, { api, track: want }) {
   const board = ctx.silverBoard, P = board.pos, mobile = CFG.isMobile, root = api.root; root.position.set(0, 0, 0); root.rotation.set(0, 0, 0);
-  if (!board.riding && !board.summon(true)) { setTimeout(() => api.exit(), 0); return { update() {}, dispose() {} }; }
+  const summoned = !board.riding;   // ván do cuộc đua gọi ra → thoát đua thì cất ván (không để em kẹt trên ván: mất nút, 🏫 Đến trường không chạy)
+  if (summoned && !board.summon(true)) { setTimeout(() => api.exit(), 0); return { update() {}, dispose() {} }; }
   const home = { x: P.x, y: P.y, z: P.z, yaw: board.yaw };
   ctx.camera.far = Math.max(ctx.camera.far, CFG.view.far); ctx.camera.updateProjectionMatrix();   // đua giữa thế giới mở: giữ tầm nhìn đầy đủ (host cắt còn 233 m làm thủng vòm trời)
   let state = 'lobby', tr = null, id = '', X, Y, Z, n = 0, L = 0, ds = 3, total = 0, t = 0, cd = 0, loadT = 0, idx = 0, sAbs = 0, prevS = 0, offT = 0, wallT = 0, emitT = 0, hudT = 0, pen = 0, hits = 0, combo = 0, right = 0, place = 1, auto = false, result = null, msgT = 0;
@@ -268,7 +269,7 @@ function start(ctx, { api, track: want }) {
   }
   function dispose() {
     document.body.classList.remove('sb-lobby'); const S = board.S; S.hold = S.free = S.noBoost = false; S.assistY = S.steer = S.auto = S.onTrick = null;
-    if (board.riding) board.place(home.x, home.y, home.z, home.yaw);
+    if (board.riding) { board.place(home.x, home.y, home.z, home.yaw); if (summoned) board.finish(); }
     ctx.net && ctx.net.emit && ctx.net.emit('sb', { on: 1, k: '' }); ctx.boardRace = null;
   }
   // tự lái (kiểm thử / xem thử): bám điểm ngắm của trợ lái, thỉnh thoảng nhào lộn
