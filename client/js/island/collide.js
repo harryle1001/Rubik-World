@@ -14,7 +14,7 @@ export const LOW = 0.3, HEAD = 1.4;     // vật/mép cao ≤ 0,3 m trên chân 
 const OVER = 1.8 * Q, GAP = 1.7 * Q, SCAN = 0.809, BUDGET = CFG.isMobile ? 0.25 : 0.5;   // ms/khung cho việc nền (lập chỉ mục, vẽ chunk)
 // nature-*: cây/đá/bụi của terrain.js đổi bản sao theo khoảng cách người chơi → đã có collider tròn riêng (terrain.js), không quét
 // person-*: người (NPC) đứng/ngồi yên vẫn là vật động — không đăng ký
-const SKIP_NAME = /^(ground|seafloor|ocean|sky|nature-|person)|water/i, EMPTY_LO = 32767, EMPTY_HI = -32768;
+const SKIP_NAME = /^(ground|seafloor|ocean|sky|nature-|person)|water|grass|flower|fern|reed|vine|ivy|moss|kelp|seaweed/i, EMPTY_LO = 32767, EMPTY_HI = -32768;
 const ck = (ci, cj) => (ci + 32768) * 65536 + (cj + 32768);
 
 export function createCollide(ctx) {
