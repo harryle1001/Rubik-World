@@ -32,12 +32,20 @@
    "why": "Làm chậm tải lần đầu; thuộc phần tải/bộ nhớ (v74l)."
   },
   {
-   "t": "Vài ảnh khu khác ảnh chuẩn 25–62% (Sân Rubik, Khu cờ vua, Lớp Rubik).",
-   "why": "Đã xem: Khu cờ vua/Sân Rubik khác do học sinh đi lại; Lớp Rubik còn nền tuyết vì bộ kiểm vừa ép mùa thu và nền đang nướng lại — do bộ kiểm, không phải lỗi game."
+   "t": "Vài ảnh khu khác ảnh chuẩn 20–72% (Lớp Rubik, Khu khinh khí cầu, Sân trượt ván, Khu cờ vua…).",
+   "why": "Đã xem từng ảnh: do hiệu ứng LEVEL UP / thông báo hiện đúng lúc chụp, học sinh đi lại, hoặc nền đang nướng lại sau khi bộ kiểm ép mùa thu — không phải lỗi game."
   },
   {
    "t": "Thông báo nổi (toast) có lúc che hàng phím Q-W-E trong 💻 Bài Gõ phím nhanh trên máy tính.",
    "why": "Chỉ vài giây. Có thể dời toast lên trên khi đang trong mini game — cần chủ game chọn vị trí."
+  },
+  {
+   "t": "FPS: check.js đo 60 FPS ở cả 3 cỡ (đứng, đi bộ, sau 150 giây) sau khi gộp v74r/v74l; session điều phối đo 52–53 FPS ở 1440×900 trong 2 giây ngay sau đăng nhập.",
+   "why": "Khác nhau do thời điểm đo: ngay sau đăng nhập game còn đang nướng nền/tải lười; check.js đo sau khi đi hết các khu và mini game."
+  },
+  {
+   "t": "Nhánh gốc từng có 2 dòng function extFinalInit (dòng sau thiếu v74rInit đè dòng trước → v74r không chạy).",
+   "why": "Đã báo, session điều phối đã sửa trên school-v45-all; check.js phát hiện được lỗi này (mục “hàm khai báo 2 lần”)."
   }
  ],
  "cleanup": [
