@@ -20,7 +20,7 @@ body.intro-on>*:not(canvas):not(#intro){visibility:hidden!important}
 #intro .ttl small{display:block;margin-top:8px;font:700 13px system-ui;letter-spacing:.3em;opacity:.8}
 #intro .cap{position:absolute;left:50%;bottom:calc(8.3vh + 21px);transform:translateX(-50%);width:min(92vw,610px);text-align:center;font:700 clamp(16px,4.4vw,21px)/1.45 system-ui;text-shadow:0 2px 8px #000,0 0 21px #000a;opacity:0;transition:opacity .618s}
 #intro .say{position:absolute;left:50%;top:calc(8.3vh + 21px);transform:translateX(-50%);width:min(88vw,520px);text-align:center;font:italic 600 clamp(14px,3.8vw,17px)/1.45 system-ui;color:#fff6d8;text-shadow:0 2px 8px #000;opacity:0;transition:opacity .618s}
-#intro .btns{position:absolute;top:calc(max(12px,env(safe-area-inset-top)) + 8.3vh + 8px);right:max(12px,env(safe-area-inset-right));display:flex;gap:8px;pointer-events:auto}
+#intro .ibtns{position:absolute;top:calc(max(12px,env(safe-area-inset-top)) + 8.3vh + 8px);right:max(12px,env(safe-area-inset-right));display:flex;gap:8px;pointer-events:auto}
 #intro button{white-space:nowrap;min-height:44px;min-width:44px;padding:0 16px;border-radius:22px;border:2px solid #fff8;background:#0009;color:#fff;font:800 15px system-ui;cursor:pointer;touch-action:manipulation;backdrop-filter:blur(4px)}
 #intro .prep{position:absolute;left:50%;top:58%;transform:translateX(-50%);font:600 13px system-ui;opacity:.7;letter-spacing:.1em}`;
 
@@ -36,7 +36,7 @@ export async function playIntro(ctx, { first = false } = {}) {
   const ui = document.createElement('div'); ui.id = 'intro';
   ui.innerHTML = `<div class="grade"></div><div class="vig"></div><canvas></canvas><div class="bar t"></div><div class="bar b"></div><div class="blk"></div>
   <div class="ttl"><b>KHỐI RUBIK PHA LÊ</b><small>MỞ ĐẦU</small></div><div class="say"></div><div class="cap"></div><div class="prep">Đang chuẩn bị…</div>
-  <div class="btns"><button class="vo" type="button" title="Giọng đọc">🔈</button><button class="sk" type="button">Bỏ qua ⏭</button></div>`;
+  <div class="ibtns"><button class="vo" type="button" title="Giọng đọc">🔈</button><button class="sk" type="button">Bỏ qua ⏭</button></div>`;
   document.body.appendChild(ui); document.body.classList.add('intro-on');
   const $ = s => ui.querySelector(s), blk = $('.blk'), cap = $('.cap'), say = $('.say'), cv = $('canvas'), g2 = cv.getContext('2d');
   let voice = localStorage.getItem('island.voice') === '1';

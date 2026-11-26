@@ -218,7 +218,7 @@ document.getElementById('bMenu').onclick = () => school.menu();
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight); });
 const clock = new THREE.Clock(), stepDt = createDt();
 function warm() {
-  const rt = renderer.getRenderTarget(); renderer.setRenderTarget(post.composer.readBuffer); let pw; try { pw = renderer.compileAsync(scene, camera).catch(() => {}); } catch (e) { pw = Promise.resolve(); } renderer.setRenderTarget(rt);
+  const rt = renderer.getRenderTarget(); renderer.setRenderTarget(post.composer.readBuffer); let pw; try { const mats = renderer.compile(scene, camera); pw = new Promise(res => { const chk = () => { for (const m of mats) { const pg = renderer.properties.get(m).currentProgram; if (!pg || pg.isReady()) mats.delete(m); } if (mats.size) setTimeout(chk, 10); else res(); }; chk(); }); } catch (e) { pw = Promise.resolve(); }   // như compileAsync nhưng bỏ qua vật liệu bị huỷ giữa chừng (three: currentProgram undefined → lỗi isReady) renderer.setRenderTarget(rt);
   // biên dịch với render target hậu kỳ (đúng biến thể shader); tải sẵn texture lên GPU (biển chữ canvas, model): lần đầu vật vào khung hình không phải chờ tải ảnh
   const T = new Set(); scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) for (const k in m) { const v = m[k]; if (v && v.isTexture && !v.isRenderTargetTexture) T.add(v); } });
   for (const t of T) renderer.initTexture(t);
