@@ -42,8 +42,8 @@ export function* split(o) {
     for (const t of tris) for (let k = 0; k < 3; k++) { const i = vi(t * 3 + k); let j = map.get(i); if (j === undefined) { j = order.length; map.set(i, j); order.push(i); } I.push(j); }
     const cg = new THREE.BufferGeometry();
     for (const name in g.attributes) {
-      const A = g.attributes[name], T = A.isInterleavedBufferAttribute ? A.data.array.constructor : A.array.constructor, s = A.itemSize, arr = new T(order.length * s);
-      for (let j = 0; j < order.length; j++) for (let c = 0; c < s; c++) arr[j * s + c] = A.getComponent(order[j], c);
+      const A = g.attributes[name], IL = A.isInterleavedBufferAttribute, src = IL ? A.data.array : A.array, st = IL ? A.data.stride : A.itemSize, off = IL ? A.offset : 0, s = A.itemSize, arr = new src.constructor(order.length * s);
+      for (let j = 0; j < order.length; j++) { const b = order[j] * st + off; for (let c = 0; c < s; c++) arr[j * s + c] = src[b + c]; }   // chép giá trị THÔ (getComponent giải chuẩn hoá → hỏng thuộc tính nén Int16/Uint8)
       cg.setAttribute(name, new THREE.BufferAttribute(arr, s, A.normalized));
     }
     cg.setIndex(order.length > 65535 ? new THREE.Uint32BufferAttribute(I, 1) : new THREE.Uint16BufferAttribute(I, 1));
@@ -57,7 +57,7 @@ export function* split(o) {
     yield;
   }
   if (o.geometry !== g || ver(g) !== v0) return;   // file khác vừa đổi hình học trong lúc chia → bỏ, thử lại sau
-  for (const m of kids) o.add(m);
+  for (const m of kids) { o.add(m); m.updateMatrixWorld(true); }   // cha thường đã đóng băng ma trận (perf.js) → three không tự tính ma trận thế giới cho con mới
   o.userData._sp = { g, v: v0, kids }; o.geometry = EMPTY;
 }
 
