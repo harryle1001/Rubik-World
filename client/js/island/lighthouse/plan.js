@@ -79,7 +79,7 @@ export function isleH(e, n) {
   let h = (Y0 + 0.2 + (nz - 0.5) * 6 * smooth(17, 25, r)) * land - 6 * (1 - land);
   if (r < 23) h = lerp(Y0, h, smooth(17, 23, r));                           // mặt bằng phẳng quanh tháp, nhà, vườn
   const dc = Math.hypot(e - CRAG.e, n - CRAG.n); if (dc < CRAG.r + 5) h = Math.max(h, lerp(CRAG.h + nz * 1.6, h, smooth(CRAG.r - 4, CRAG.r + 5, dc)));
-  if (e > STAIR.e0 - 1 && Math.abs(n) < 3.4) {                              // rãnh bậc đá xuống bến: đất thấp hơn mặt bậc 0,35 m
+  if (e > STAIR.e0 && Math.abs(n) < 3.4) {   // (trước: e0 − 1 → đầu bậc có rãnh sâu 0,35 m, vướng vách dốc → kẹt không lên được tháp)                              // rãnh bậc đá xuống bến: đất thấp hơn mặt bậc 0,35 m
     const cut = lerp(Y0, PIER.y - 1.2, clamp((e - STAIR.e0) / (STAIR.e1 - STAIR.e0), 0, 1.4)) - 0.35;
     h = Math.min(h, lerp(cut, h, smooth(1.9, 3.4, Math.abs(n))));
   }
