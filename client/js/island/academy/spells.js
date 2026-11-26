@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { mat } from '../sample/palette.js';
 import { toon } from '../style.js';
+import { freeAll } from '../free.js';
 
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
@@ -103,6 +104,6 @@ export function createSpells(ctx, magic, { toWorld, L, Y }) {
     };
     return built;
   }
-  function unbuild() { if (!built) return; ctx.scene.remove(built.g); built.g.traverse(o => o.geometry && o.geometry.dispose()); for (const t of built.T) magic.removeTarget(t); for (const b of built.boxes) { const k = ctx.boxes.indexOf(b); if (k >= 0) ctx.boxes.splice(k, 1); } built = null; }
+  function unbuild() { if (!built) return; ctx.scene.remove(built.g); freeAll(built.g); for (const t of built.T) magic.removeTarget(t); for (const b of built.boxes) { const k = ctx.boxes.indexOf(b); if (k >= 0) ctx.boxes.splice(k, 1); } built = null; }
   return { build, unbuild, update(dt) { built && built.update(dt); } };
 }

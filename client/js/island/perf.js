@@ -27,6 +27,7 @@ const DEPTH = new Map();
 
 export function createPerf(ctx) {
   const { scene, camera } = ctx, list = [];
+  const entry = new WeakMap(), add = e => { entry.set(e.o, e); list.push(e); };   // mục giữ trên vật: gỡ khỏi cảnh rồi gắn lại → quét sau đưa lại vào danh sách
   function register(o) {
     const ud = o.userData; if (ud._pf) return; ud._pf = 1;
     if (!(o.isMesh)) return;
@@ -43,9 +44,9 @@ export function createPerf(ctx) {
       if (!o.frustumCulled) {   // hình cầu bao theo tư thế hiện tại, nới rộng φ lần (tay chân vung, chạy nhảy)
         try { o.computeBoundingSphere(); o.boundingSphere.radius *= PHI; o.frustumCulled = true; } catch (e) { return; }
       }
-      list.push({ o, kind: ud.outline ? 'outline' : 'skin' }); return;
+      add({ o, kind: ud.outline ? 'outline' : 'skin' }); return;
     }
-    if (ud.outline) { o.frustumCulled = true; list.push({ o, kind: 'outline' }); return; }
+    if (ud.outline) { o.frustumCulled = true; add({ o, kind: 'outline' }); return; }
     if (!o.frustumCulled) return;   // vật cố ý luôn vẽ (bầu trời, nước, hiệu ứng) — giữ nguyên
     if (o.isInstancedMesh) {
       if (ud.itemR === undefined) {   // InstancedMesh phủ rộng không rõ cỡ từng vật → chỉ xét bóng đổ (điện thoại)
@@ -53,13 +54,13 @@ export function createPerf(ctx) {
         return;
       }
       if (ud.itemR < NOSHADOW_R) o.castShadow = false;
-      if (ud.itemR < SMALL_R) list.push({ o, kind: 'inst', r: ud.itemR });
+      if (ud.itemR < SMALL_R) add({ o, kind: 'inst', r: ud.itemR });
       return;
     }
     if (!g.boundingSphere) g.computeBoundingSphere();
     const r = g.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis();
     if (r < NOSHADOW_R) o.castShadow = false;
-    if (r < SMALL_R && !o.isSprite) list.push({ o, kind: 'small', r });
+    if (r < SMALL_R && !o.isSprite) add({ o, kind: 'small', r });
   }
   // quét: chỉ gom vật CHƯA đăng ký (rẻ); đăng ký (tính hình cầu bao…) tối đa 1,5 ms/khung → không dồn vài chục ms vào 1 khung
   const pending = [];
@@ -88,7 +89,7 @@ export function createPerf(ctx) {
   }
   let scanId = 0;
   const scan = () => {
-    const id = ++scanId; scene.traverse(o => { const u = o.userData; u._sc = id; if (!u._pf && !u._pq) { u._pq = 1; pending.push(o); } freezeScan(o); });
+    const id = ++scanId; scene.traverse(o => { const u = o.userData; u._sc = id; if (!u._pf && !u._pq) { u._pq = 1; pending.push(o); } else if (u._pfOut) { u._pfOut = 0; const e = entry.get(o); if (e) list.push(e); } freezeScan(o); });
     for (let i = frozen.length - 1; i >= 0; i--) if (frozen[i].o.userData._sc !== id) unfreeze(i);   // cả nhánh đã gỡ khỏi cảnh: thả ra, không giữ tham chiếu
     for (const o of cand.keys()) if (o.userData._sc !== id) cand.delete(o);
   };
@@ -127,7 +128,7 @@ export function createPerf(ctx) {
     while (n-- > 0 && list.length) {
       if (cur >= list.length) cur = 0;
       const i = cur++, e = list[i], o = e.o;
-      if (!o.parent) { hide(o, false); list.splice(i, 1); cur--; continue; }   // vật đã bị gỡ khỏi cảnh
+      if (!o.parent || o.userData._sc !== scanId) { hide(o, false); o.userData._pfOut = 1; list.splice(i, 1); cur--; continue; }   // vật đã bị gỡ khỏi cảnh (cả khi cả nhóm cha bị gỡ: lần quét gần nhất không thấy) → thả tham chiếu
       const d = near(o);
       if (e.kind === 'outline') hide(o, d > OUTLINE_D * k);
       else if (e.kind === 'skin') hide(o, d > FAR_K * k);

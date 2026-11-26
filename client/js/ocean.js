@@ -222,6 +222,9 @@ function warm() {
   // biên dịch với render target hậu kỳ (đúng biến thể shader); tải sẵn texture lên GPU (biển chữ canvas, model): lần đầu vật vào khung hình không phải chờ tải ảnh
   const T = new Set(); scene.traverse(o => { if (o.material) for (const m of [].concat(o.material)) for (const k in m) { const v = m[k]; if (v && v.isTexture && !v.isRenderTargetTexture) T.add(v); } });
   for (const t of T) renderer.initTexture(t);
+  // trong lúc compileAsync: hoãn dispose vật liệu (thoát mini game / dỡ khu giữa chừng → three đọc currentProgram đã xoá: lỗi isReady)
+  const MP = THREE.Material.prototype; if (!MP._wq) { const d0 = MP.dispose, q = MP._wq = [], done = () => { if (MP._wq !== q) return; MP.dispose = d0; MP._wq = null; for (const m of q) d0.call(m); };
+    MP.dispose = function () { q.push(this); }; pw.then(done); setTimeout(done, 13000); }
   return pw;
 }
 const perf = ctx.perf = createPerf(ctx); // cắt vật nhỏ ở xa, viền, người/thú ngoài khung hình (perf.js)

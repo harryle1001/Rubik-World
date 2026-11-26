@@ -10,6 +10,7 @@ import { VILLAGE as V, QUAY, toWorld as tw } from './plan.js';
 import { S, BY_ID, pieceGeo, loadAll, mergeLot, edgeDir, MAX_PIECES } from './village-pieces.js';
 import { TEMPLATES } from './village-data.js';
 import { createBuilder } from './village-build.js';
+import { freeTex, freeAll } from '../free.js';
 
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
@@ -115,7 +116,7 @@ export function create(ctx, magic, { toWorld = tw } = {}) {
     if (!built) return; builder.close();
     for (const L of lots) { for (const b of L.boxes) { const k = ctx.boxes.indexOf(b); if (k >= 0) ctx.boxes.splice(k, 1); } L.boxes = []; L.cellMap = new Map(); if (L.mesh) L.mesh.geometry.dispose(); L.mesh = null; if (L.sign) { L.sign.material.map.dispose(); L.sign.material.dispose(); } L.sign = null; }
     const k = ctx.colliders.indexOf(built.col); if (k >= 0) ctx.colliders.splice(k, 1);
-    ctx.scene.remove(built.g); built.g.traverse(o => { if (o.geometry) o.geometry.dispose(); }); built = null;
+    ctx.scene.remove(built.g); built.g.traverse(o => { if (o.geometry) o.geometry.dispose(); }); freeAll(built.g); built = null;
   }
 
   // ---------- thăm nhà bạn (chỉ xem) ----------
