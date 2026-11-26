@@ -345,6 +345,8 @@ export function buildLighthouse(ctx, chart) {
   scatterModel(g, 'rua', [[27.5, hY(27.5, -6) + 0.02, -6, 1.5, 2.2], [-26.5, 2.75, 13.2, 1.3, 0.8], [-13.2, 6.3, 11.4, 1.1, 4.1]]).then(ms => { for (const m of ms) { m.castShadow = false; m.userData.noCamOcc = true; } });
 
   const dispose = () => { g.traverse(o => { if (o.isMesh && !o.isInstancedMesh) { o.geometry.dispose(); const m = o.material; if (m && m.map) { m.map.dispose(); m.dispose(); } } }); foam.material.dispose(); lensM.dispose(); inMat.dispose(); for (const m of kitMats.values()) m.dispose(); g.removeFromParent(); };
+  // đồ gắn mặt tường trong tháp (biển số bậc, khung cửa sổ, lớp ốp, bản đồ, biển): không vào lưới va chạm — gộp với bậc thang thành tường giả, kẹt ở bậc 6/144
+  g.traverse(o => { if (/^lighthouse-(plaques|win-in|win-out|lining|chart|sign)/.test(o.name)) o.userData.noCollide = true; });
   return { group: g, tower, shell, lens, lensM, lamp, winOut, winIn, glassM, foam, cloth, dispose };
 }
 const S_TOP = [STAIR.e0 - 0.5, STAIR.hw + 0.55];
