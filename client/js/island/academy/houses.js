@@ -13,7 +13,7 @@ import { HALL_HOUSE } from './plan.js';
 const PHI = 1.618, NEAR = 55;
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-const css = `#hsCard{position:fixed;left:50%;top:calc(max(12px,env(safe-area-inset-top)) + 89px);transform:translateX(-50%);z-index:29;width:min(92vw,377px);max-height:70vh;overflow:auto;background:#141022f2;color:#f7ecd0;border:1px solid #ffe3a066;border-radius:16px;padding:13px 14px;font:600 14px/1.45 system-ui;box-shadow:0 8px 30px #0006}
+const css = `#hsCard .hx{position:sticky;top:0;float:right;margin:-5px -6px 0 8px;width:34px;height:34px;border-radius:50%;border:1px solid #ffe3a066;background:#0006;color:#f7ecd0;font:700 16px system-ui;cursor:pointer}#hsCard{position:fixed;left:50%;top:calc(max(12px,env(safe-area-inset-top)) + 89px);transform:translateX(-50%);z-index:29;width:min(92vw,377px);max-height:70vh;overflow:auto;background:#141022f2;color:#f7ecd0;border:1px solid #ffe3a066;border-radius:16px;padding:13px 14px;font:600 14px/1.45 system-ui;box-shadow:0 8px 30px #0006}
 #hsCard h4{margin:0 0 8px;font:800 16px system-ui;color:#ffe3a0}#hsCard .ch{display:grid;gap:6px;margin-top:8px}
 #hsCard button{border:1px solid #fff4;background:#2a2340;color:#fff;border-radius:10px;padding:9px 8px;font:700 14px system-ui;text-align:left}
 #hsCard .ft{display:flex;gap:6px;justify-content:flex-end;margin-top:8px}#hsCard .ft button{text-align:center}#hsCard .ok{background:#2c6455}#hsCard .no{background:#7a2e2e}
@@ -93,7 +93,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   // ---------- thẻ hỏi đáp ----------
   let card = null;
   const closeCard = () => { if (card) { card.remove(); card = null; } };
-  function openCard(html, onClick) { closeCard(); card = document.createElement('div'); card.id = 'hsCard'; card.innerHTML = html; card.onclick = e => { const b = e.target.closest('button'); if (b) onClick(b); }; document.body.appendChild(card); return card; }
+  function openCard(html, onClick) { closeCard(); card = document.createElement('div'); card.id = 'hsCard'; card.innerHTML = '<button class="hx" type="button" aria-label="Đóng">✕</button>' + html; card.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.classList.contains('hx')) { closeCard(); busy = false; return; } onClick(b); }; document.body.appendChild(card); return card; }   // ✕ đóng mọi thẻ nhà
 
   // ---------- lễ chọn nhà: 5 câu ngẫu nhiên (trong 8), mỗi đáp án cộng 1 cho 1 nhà; hoà → bốc thăm trong nhóm cao nhất ----------
   let busy = false;
