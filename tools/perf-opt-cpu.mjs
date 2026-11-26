@@ -140,7 +140,7 @@ if (LEAK) {
       await page.evaluate(() => { const c = __island, [x, z] = c.__L.village; c.player.teleport(x, z); c.sea.pilot.board(); }); await page.waitForTimeout(1500); await page.evaluate(() => { const c = __island; if (c.sea.pilot.aboard) c.sea.pilot.leave({ land: c.__L.village, name: '' }); }); await page.waitForTimeout(800); },
   };
   const leak = {};
-  for (const [k, fn] of Object.entries(cycles)) { await fn(); const a = await mem(); for (let i = 0; i < 10; i++) await fn(); const b = await mem(); leak[k] = { truoc: a, sau10: b, dHeapMB: +(b.heap - a.heap).toFixed(1), dGeo: b.geo - a.geo, dTex: b.tex - a.tex, dLis: b.lis - a.lis, dIv: b.iv - a.iv }; console.log('rò rỉ', k, JSON.stringify(leak[k])); }
+  for (const [k, fn] of Object.entries(cycles)) { for (let i = 0; i < 5; i++) await fn(); /* 5 vòng khởi động: bộ đệm/pool đầy dần không tính là rò */ const a = await mem(); for (let i = 0; i < 10; i++) await fn(); const b = await mem(); leak[k] = { truoc: a, sau10: b, dHeapMB: +(b.heap - a.heap).toFixed(1), dGeo: b.geo - a.geo, dTex: b.tex - a.tex, dLis: b.lis - a.lis, dIv: b.iv - a.iv }; console.log('rò rỉ', k, JSON.stringify(leak[k])); }
   all.leak = leak;
 }
 if (OUT) fs.writeFileSync(`${OUT}/result.json`, JSON.stringify(all, null, 1));
