@@ -170,7 +170,7 @@ export function createTreasure(ctx) {
   // ---------- Cập nhật ----------
   let T = 0, lT = 0;
   function update(dt) {
-    T += dt; pU.uTime.value = T; pU.uScale.value = innerHeight * ctx.renderer.getPixelRatio() / (2 * Math.tan(camera.fov * PI / 360));
+    T += dt; pU.uTime.value = T; pU.uScale.value = ctx.renderer.domElement.height / (2 * Math.tan(camera.fov * PI / 360));   // = innerHeight·pixelRatio; đọc innerHeight mỗi khung ép trình duyệt tính lại bố cục
     const cam = camera.position, p = ctx.player.pos, under = !!ctx.underwater || cam.y < W - 0.1;
     // rương chỉ vẽ khi ở dưới nước / nhìn gần mặt nước (2 draw call + 1 Points)
     let near = 1e9; for (const c of C) near = Math.min(near, Math.hypot(c.s.x - cam.x, c.s.z - cam.z));
