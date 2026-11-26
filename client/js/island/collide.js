@@ -233,9 +233,11 @@ export function createCollide(ctx) {
     }
     return dist;
   }
-  let nextScan = 0, nextPlan = 0, lastU = 0;
+  let nextScan = 0, nextPlan = 0, lastU = 0, wasUp = false;
   function update() {   // theo đồng hồ thật (không theo dt bị kẹp khi khung chậm)
     const now = performance.now(), el = lastU ? now - lastU : 16.7; lastU = now;
+    const pl = ctx.player; if (ctx.high && pl && pl.vehicle && pl.vehicle.fly) { wasUp = true; return; }   // bay cao (máy bay, chổi, tàu lượn): không đi bộ → nghỉ quét/lập chỉ mục (bay nhanh dựng chunk liên tục, vô ích)
+    if (wasUp) { wasUp = false; nextScan = Math.min(nextScan, now); }   // hạ thấp: quét ngay
     if (now >= nextScan) { nextScan = now + (nextScan ? SCAN * 1000 : 500); scan(); return; }
     if (now >= nextPlan) { nextPlan = now + 250; plan(); }
     work(BUDGET * Math.min(8, Math.max(1, el / 16.7)) * (pending.length > 55 ? 3 : 1));   // máy chậm (khung dài): giữ cùng tỉ lệ ≈ 1,5 % thời gian; hàng chờ dài (vừa vào game/vùng mới) ×3 → vật kịp chặn, không đi xuyên

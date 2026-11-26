@@ -1,8 +1,8 @@
 // brooms.js — 🧹 CHỔI BAY: phương tiện cưỡi được ở khắp đảo (đăng ký qua ctx.vehicles.register, dùng chung điều khiển bay).
 // Gọi chổi: nút 🧹 (cột phương tiện) / phím J · phép "Gọi Chổi!" nếu có ctx.spells.register. Bay: WASD/joystick hướng,
-// Space/⬆ lên · C/⬇ xuống · Shift/Nhanh tăng tốc · chạm đất bấm E/🧹 để xuống. Độ cao tối đa 55 m trên mặt đất / nóc nhà.
+// Space/⬆ lên · C/⬇ xuống · Shift/Nhanh tăng tốc · chạm đất bấm E/🧹 để xuống. Độ cao tối đa 89 m trên mặt đất / nóc nhà.
 // Không xuyên nhà: tra ctx.boxes như aircraft.js (roofAt) — chạm tường thì trượt dọc tường, bay trên nóc thì đậu được.
-// Tư thế: dáng ngồi ghế (people-model) + xoay 2 cánh tay ra trước nắm cán; áo choàng (màu áo mua / màu nhà) bay phần phật theo tốc độ.
+// Tư thế: ngồi dạng chân trên cán (IK ride-pose.js — VRM lẫn KayKit): 2 tay nắm cán phía trước, gối gập, người rướn tới; áo choàng (màu áo mua / màu nhà) bay phần phật theo tốc độ.
 // Hình chổi: model CC0 "Medieval Tools Pack" (assets/models/alley/broom.glb, CREDITS.txt) tô màu theo loại; 1 draw call / chổi.
 import * as THREE from 'three';
 import { loadModel } from './models.js';
@@ -20,7 +20,8 @@ export const BROOM_TYPES = [
   { id: 'broom-sao', name: 'Chổi Sao Băng', col: '#8a7cff', speed: 21, boost: 2, climb: 13, fact: 'Nhanh nhất học viện: tăng tốc gấp đôi như sao băng vụt qua bầu trời.' },
 ];
 export const BROOM = Object.fromEntries(BROOM_TYPES.map(b => [b.id, b]));
-const HOVER = 0.82, ALT = 55, ALT_CAP = 233, GAP = 0.45;   // chổi lơ lửng 0,82 m · tối đa 55 m trên mặt đất · trần 233 m
+const HOVER = 0.82, ALT = 89, ALT_CAP = 233, GAP = 0.45;   // chổi lơ lửng 0,82 m · tối đa 89 m trên mặt đất (Fibonacci; cao hơn điện thoại chỉ thấy sương) · trần 233 m
+const SHAFT = 0.16, SEAT = HOVER - 0.01;   // cán chổi (model) cao hơn gốc chổi 0,16 m · gốc nhân vật: hông dáng ngồi đặt đúng lên cán
 
 // Chổi (group) — dùng cho người chơi, chổi đặt sẵn và NPC của môn Săn Cầu Vàng (academy/pitch.js)
 export function makeBroomMesh(type) {
@@ -113,7 +114,9 @@ export function createBrooms(ctx) {
     const v = { type: 'broom', kind: type, name: T.name, group, r: 2.4, far: 89, side: 1.3, takeoff: 0.8,
       label: `🧹 Cưỡi ${T.name}`, bye: '🧹 Xuống chổi',
       hello: `🧹 <b>${T.name}</b> — ${T.fact}<br><small>Bay: <b>WASD</b>/cần điều khiển · <b>Space/⬆</b> lên · <b>C/⬇</b> xuống · <b>Shift/Nhanh</b> tăng tốc · chạm đất bấm <b>E</b> để xuống</small>`,
-      mode: { speed: T.speed, boost: T.boost, turn: 2.6, accel: 1.6, fly: true, climb: T.climb, lift: 0, maxAlt: ALT, anim: 'drive', seat: HOVER + 0.05, seatZ: 0.02, camAdd: 2.5 },
+      mode: { speed: T.speed, boost: T.boost, turn: 2.6, accel: 1.6, fly: true, climb: T.climb, lift: 0, maxAlt: ALT, anim: 'drive', seat: SEAT, seatZ: 0.02, camAdd: 2.5 },
+      // tay: 2 nắm trên cán phía trước (toạ độ của chổi, cán dọc +z) · chân: dạng hai bên cán, bàn chân lùi ra sau, gối gập (toạ độ người)
+      ride: { hand: group.userData.inner, hands: [new THREE.Vector3(0.05, SHAFT + 0.03, 0.32), new THREE.Vector3(-0.05, SHAFT + 0.05, 0.5)], foot: pl.root, feet: [new THREE.Vector3(0.21, SEAT - 0.4, -0.12), new THREE.Vector3(-0.21, SEAT - 0.4, -0.12)], lean: 0.34 },
       onMount() { prev.copy(pl.pos); wearCape(); ctx.sfx && ctx.sfx('ok'); },
       onDismount() { if (cape) cape.visible = false; if (v.temp) v.gone = 1.6; },
       tick(dt, sp, st) {
@@ -136,7 +139,7 @@ export function createBrooms(ctx) {
         prev.copy(p);
         // tư thế: nghiêng vào cua, chúi mũi khi lao xuống / ngóc khi bay lên; tay nắm cán
         pl.root.rotation.z = st.lean * 1.3; pl.root.rotation.x = THREE.MathUtils.clamp(-pl.vy * 0.035, -0.3, 0.3) + (st.fast ? 0.06 : 0);
-        const hero = pl.hero; if (hero) holdPose(hero.model, pl.root);
+        // tay/chân: vehicles.js gọi ridePose(v.ride) ngay sau tick()
         group.userData.inner.position.y = HOVER + (st.grounded ? Math.sin(t * 2.4) * 0.03 : Math.sin(t * 1.3) * 0.05);
         if (cape) { const U = cape.userData.U; U.uT.value = t; U.uS.value += (Math.min(1, sp / 21) - U.uS.value) * Math.min(1, dt * 3); }
       } };

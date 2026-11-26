@@ -355,7 +355,7 @@ export function createMiniGameHost(ctx) {
     const P = ctx.player; P.pos.copy(S.saved.pos); P.cam.yaw = S.saved.yaw; P.cam.pitch = S.saved.pitch; P.frozen = false; ctx.freeCam = false;
     if (S.saved.rot != null && P.setRot) P.setRot(S.saved.rot);
     camera.far = S.saved.far; camera.fov = S.saved.fov; camera.updateProjectionMatrix();
-    hudEl.hidden = true; document.body.classList.remove('mg-on', 'rs-modal'); $('.mg-msg').style.opacity = 0;
+    hudEl.hidden = true; $('.mg-bar').innerHTML = ''; document.body.classList.remove('mg-on', 'rs-modal');   // nút của game giữ cả khu chơi đã dỡ (onclick) → bỏ ngay khi thoát $('.mg-msg').style.opacity = 0;
     host.active = null; host.key = null; ctx.mgActive = null; S = null; natureSkip(false);
     if (!silent) ctx.toast && ctx.toast('👋 Đã rời khu chơi');
   };

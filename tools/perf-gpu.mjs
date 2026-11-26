@@ -18,6 +18,10 @@ const page = await browser.newPage({ viewport: { width: 390, height: 844 }, devi
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
 await page.addInitScript(() => {
+  performance.setResourceTimingBufferSize(5000);   // mặc định 250 mục → đếm thiếu file/dung lượng
+  // mốc tải theo đồng hồ của trang (waitForFunction của Playwright trễ vài giây khi giả lập mạng chậm): đảo dựng · trường sẵn sàng · màn che mở
+  { let v; const T = window.__tl = {}; Object.defineProperty(window, '__island', { configurable: true, get() { return v; }, set(x) { v = x; T.island = performance.now(); } });
+    const iv = setInterval(() => { if (!v) return; if (!T.ready && v.school && v.school.ready) T.ready = performance.now(); if (!T.play && v.loading && !v.loading.veil) { T.play = performance.now(); clearInterval(iv); } }, 100); }
   try { localStorage.setItem('island.tut', '1'); localStorage.setItem('island.intro', '1'); localStorage.setItem('academy.nightGate', '1'); } catch (e) {}
   // bộ nhớ GPU: đếm byte cấp cho từng texture/buffer/renderbuffer (ghi đè khi cấp lại, trừ khi xoá)
   const G = window.__gmem = { tex: new Map(), dim: new Map(), buf: new Map(), rb: new Map(), sum() { let t = 0, b = 0, r = 0; for (const v of this.tex.values()) t += v; for (const v of this.buf.values()) b += v; for (const v of this.rb.values()) r += v; return { tex: t, buf: b, rb: r }; } };
@@ -48,7 +52,8 @@ await page.waitForFunction(() => window.__island && __island.school && __island.
 await page.waitForFunction(() => !__island.loading.veil, null, { timeout: 120000 }).catch(() => {}); const tPlay = (Date.now() - t0) / 1000;
 const bytes = () => page.evaluate(() => { let t = 0, d = 0, n = 0; const by = {}; for (const e of performance.getEntriesByType('resource')) { t += e.transferSize || 0; d += e.decodedBodySize || 0; n++; const k = (e.name.match(/\.(glb|vrm|js|mp3|ogg|wav|png|jpg|webp|json|css|ktx2|html)(\?|$)/) || [, 'khác'])[1]; by[k] = (by[k] || 0) + (e.transferSize || 0); } for (const k in by) by[k] = Math.round(by[k] / 1024); return { files: n, transferKB: Math.round(t / 1024), decodedKB: Math.round(d / 1024), by }; });
 const atPlay = await bytes();
-const load = { firstFrameS: +tFirst.toFixed(1), readyS: +tReady.toFixed(1), playableS: +tPlay.toFixed(1), atPlay };
+const TL = await page.evaluate(() => window.__tl), atPlay2 = await page.evaluate(t => { let b = 0, n = 0; for (const e of performance.getEntriesByType('resource')) if (e.responseEnd <= t) { b += e.transferSize || 0; n++; } return { files: n, transferKB: Math.round(b / 1024) }; }, TL.play || 1e9);
+const load = { islandS: +(TL.island / 1000).toFixed(1), readyS: +(TL.ready / 1000).toFixed(1), playableS: +(TL.play / 1000).toFixed(1), atPlay: atPlay2, all: atPlay };
 console.log('TẢI', JSON.stringify(load));
 if (LOAD) { await page.waitForTimeout(30000); load.after30s = await bytes(); console.log('sau 30 s', JSON.stringify(load.after30s)); if (JSONF) fs.writeFileSync(JSONF, JSON.stringify({ load, errors }, null, 1)); console.log(errors.length ? 'LỖI CONSOLE:\n' + errors.join('\n') : 'Không lỗi console'); await browser.close(); process.exit(0); }
 

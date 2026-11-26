@@ -142,7 +142,7 @@ export function create(ctx, magic, { toWorld, toLocal, L, Y }) {
   const C0 = toWorld(0, 0), A = L.astro;
   const night = () => (ctx.sky && ctx.sky.state ? ctx.sky.state.night || 0 : 0);
   const hAt = (u, v) => { const [x, z] = toWorld(u, v); return ctx.terrain.heightAt(x, z); };
-  const blocked = (u, v, m) => { const [x, z] = toWorld(u, v); for (const b of ctx.boxes || []) if (b.top > Y + 0.6 && x > b.x0 - m && x < b.x1 + m && z > b.z0 - m && z < b.z1 + m) return true; for (const c of ctx.colliders || []) if (!c.lan && Math.abs(c.x - x) < c.r + m && Math.abs(c.z - z) < c.r + m && Math.hypot(c.x - x, c.z - z) < c.r + m) return true; return false; };   // tường + vật tròn (cây đa…)
+  const blocked = (u, v, m) => { const [x, z] = toWorld(u, v), N = m <= 1.5 && ctx.grid ? ctx.grid.near(x, z) : null; for (const b of N ? N.boxes : ctx.boxes || []) if (b.top > Y + 0.6 && x > b.x0 - m && x < b.x1 + m && z > b.z0 - m && z < b.z1 + m) return true; for (const c of N ? N.cols : ctx.colliders || []) if (!c.lan && Math.abs(c.x - x) < c.r + m && Math.abs(c.z - z) < c.r + m && Math.hypot(c.x - x, c.z - z) < c.r + m) return true; return false; };   // lưới ô 8 m (physics.js) khi lề ≤ 1,5 m: không duyệt mọi hộp/cây của cả đảo mỗi khung · tường + vật tròn (cây đa…)
   const HERB = { u0: -92, u1: 24, v0: 46, v1: 102 };   // Sân Thảo Mộc (sân đông)
   let seed = 55; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const spot = (m, tries = 34) => { for (let i = 0; i < tries; i++) { const u = HERB.u0 + rnd() * (HERB.u1 - HERB.u0), v = HERB.v0 + rnd() * (HERB.v1 - HERB.v0); if (!blocked(u, v, m)) return [u, v]; } return [-34, 60]; };
