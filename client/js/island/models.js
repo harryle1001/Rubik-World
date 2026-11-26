@@ -7,9 +7,10 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { toonify, gradientMap } from './style.js';
+import { texPlugin } from './gltf-tex.js';
 
 const draco = new DRACOLoader().setDecoderPath('/lib/three/examples/jsm/libs/draco/gltf/');
-const loader = new GLTFLoader().setDRACOLoader(draco).setMeshoptDecoder(MeshoptDecoder);
+const loader = new GLTFLoader().setDRACOLoader(draco).setMeshoptDecoder(MeshoptDecoder).register(texPlugin);   // texture trùng nội dung dùng chung · điện thoại ≤ 512 px (gltf-tex.js)
 const cache = new Map();
 // lưới trong bộ đệm model dùng chung mọi bản sao → đánh dấu: dỡ khu / thoát mini game không dispose (free.js, mg/host.js)
 const share = r => { if (r) r.traverse(o => { if (o.geometry) o.geometry.userData.shared = true; for (const m of [].concat(o.material || [])) if (m) for (const k in m) { const t = m[k]; if (t && t.isTexture) t.userData.shared = true; } }); return r; };
@@ -37,7 +38,7 @@ export async function scatterModel(scene, name, transforms, cell = 0) {
     for (const list of groups.values()) {
       const im = new THREE.InstancedMesh(mesh.geometry, mesh.material, list.length); let sMax = 0;
       list.forEach(([x, y, z, s, ry], i) => { o.position.set(x, y, z); o.rotation.set(0, ry, 0); o.scale.setScalar(s); o.updateMatrix(); im.setMatrixAt(i, o.matrix.clone().multiply(mesh.matrixWorld)); sMax = Math.max(sMax, s); });
-      im.castShadow = im.receiveShadow = true; im.userData.itemR = r0 * sMax; im.computeBoundingSphere(); scene.add(im); out.push(im);
+      im.castShadow = im.receiveShadow = true; im.userData.itemR = r0 * sMax; im.computeBoundingSphere(); im.name = 'scatter-' + name; scene.add(im); out.push(im);
     }
   }
   return out;

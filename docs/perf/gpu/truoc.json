@@ -1,0 +1,697 @@
+{
+"rows": [
+{
+"name": "spawn",
+"callsMax": 207,
+"callsAvg": 194,
+"shMax": 22,
+"trisMaxK": 655,
+"trisAvgK": 545,
+"tex": 223,
+"geo": 294,
+"gpuMB": 206.8,
+"texMB": 154.8,
+"ms": 219,
+"p95": 286,
+"pos": [
+-66,
+1,
+9
+],
+"dirs": [
+"199/464k",
+"187/546k",
+"183/517k",
+"207/655k"
+]
+},
+{
+"name": "cong-truong",
+"callsMax": 218,
+"callsAvg": 199,
+"shMax": 26,
+"trisMaxK": 633,
+"trisAvgK": 573,
+"tex": 255,
+"geo": 317,
+"gpuMB": 223.2,
+"texMB": 168.8,
+"ms": 218,
+"p95": 290,
+"pos": [
+-53,
+1,
+9
+],
+"dirs": [
+"218/591k",
+"200/573k",
+"191/495k",
+"187/633k"
+]
+},
+{
+"name": "quang-truong",
+"callsMax": 202,
+"callsAvg": 190,
+"shMax": 21,
+"trisMaxK": 644,
+"trisAvgK": 536,
+"tex": 255,
+"geo": 325,
+"gpuMB": 223.7,
+"texMB": 168.8,
+"ms": 204,
+"p95": 270,
+"pos": [
+-75,
+1,
+9
+],
+"dirs": [
+"195/446k",
+"186/542k",
+"175/513k",
+"202/644k"
+]
+},
+{
+"name": "trong-truong",
+"callsMax": 233,
+"callsAvg": 220,
+"shMax": 28,
+"trisMaxK": 605,
+"trisAvgK": 526,
+"tex": 269,
+"geo": 369,
+"gpuMB": 226,
+"texMB": 169,
+"ms": 225,
+"p95": 267,
+"pos": [
+-10,
+1,
+8
+],
+"dirs": [
+"227/520k",
+"233/605k",
+"205/442k",
+"215/537k"
+]
+},
+{
+"name": "thi-tran",
+"callsMax": 224,
+"callsAvg": 198,
+"shMax": 25,
+"trisMaxK": 522,
+"trisAvgK": 403,
+"tex": 296,
+"geo": 506,
+"gpuMB": 233.3,
+"texMB": 169.6,
+"ms": 168,
+"p95": 239,
+"pos": [
+0,
+1,
+-223
+],
+"dirs": [
+"170/297k",
+"224/433k",
+"207/522k",
+"191/359k"
+]
+},
+{
+"name": "san-bay",
+"callsMax": 178,
+"callsAvg": 154,
+"shMax": 17,
+"trisMaxK": 497,
+"trisAvgK": 304,
+"tex": 298,
+"geo": 549,
+"gpuMB": 236.7,
+"texMB": 169.4,
+"ms": 152,
+"p95": 189,
+"pos": [
+158,
+1,
+158
+],
+"dirs": [
+"178/497k",
+"155/256k",
+"131/231k",
+"151/230k"
+]
+},
+{
+"name": "bo-bien",
+"callsMax": 170,
+"callsAvg": 134,
+"shMax": 12,
+"trisMaxK": 365,
+"trisAvgK": 261,
+"tex": 312,
+"geo": 571,
+"gpuMB": 244.2,
+"texMB": 175.1,
+"ms": 154,
+"p95": 226,
+"pos": [
+-201,
+3,
+201
+],
+"dirs": [
+"170/291k",
+"115/202k",
+"110/184k",
+"142/365k"
+]
+},
+{
+"name": "lang-chai",
+"callsMax": 180,
+"callsAvg": 155,
+"shMax": 15,
+"trisMaxK": 341,
+"trisAvgK": 266,
+"tex": 318,
+"geo": 589,
+"gpuMB": 242.7,
+"texMB": 173.2,
+"ms": 170,
+"p95": 225,
+"pos": [
+238,
+0,
+101
+],
+"dirs": [
+"180/341k",
+"177/292k",
+"136/222k",
+"125/209k"
+]
+},
+{
+"name": "hai-dang",
+"callsMax": 121,
+"callsAvg": 111,
+"shMax": 13,
+"trisMaxK": 188,
+"trisAvgK": 157,
+"tex": 322,
+"geo": 612,
+"gpuMB": 246.6,
+"texMB": 175.2,
+"ms": 140,
+"p95": 174,
+"pos": [
+-363,
+6,
+410
+],
+"dirs": [
+"121/186k",
+"101/125k",
+"111/130k",
+"109/188k"
+]
+},
+{
+"name": "hv-san",
+"callsMax": 252,
+"callsAvg": 218,
+"shMax": 26,
+"trisMaxK": 619,
+"trisAvgK": 438,
+"tex": 437,
+"geo": 775,
+"gpuMB": 368.5,
+"texMB": 270.5,
+"ms": 297,
+"p95": 368,
+"pos": [
+-852,
+55,
+-820
+],
+"dirs": [
+"201/371k",
+"208/378k",
+"211/383k",
+"252/619k"
+]
+},
+{
+"name": "hv-dai-sanh",
+"callsMax": 211,
+"callsAvg": 192,
+"shMax": 0,
+"trisMaxK": 487,
+"trisAvgK": 339,
+"tex": 442,
+"geo": 823,
+"gpuMB": 372,
+"texMB": 270.5,
+"ms": 236,
+"p95": 272,
+"pos": [
+-812,
+55,
+-884
+],
+"dirs": [
+"186/280k",
+"181/272k",
+"211/316k",
+"188/487k"
+]
+},
+{
+"name": "hv-noi-that",
+"callsMax": 181,
+"callsAvg": 174,
+"shMax": 12,
+"trisMaxK": 222,
+"trisAvgK": 196,
+"tex": 473,
+"geo": 886,
+"gpuMB": 428.9,
+"texMB": 323.2,
+"ms": 243,
+"p95": 291,
+"pos": [
+-812,
+1597,
+-834
+],
+"dirs": [
+"164/164k",
+"181/222k",
+"180/184k",
+"172/213k"
+]
+},
+{
+"name": "pho-phep-thuat",
+"callsMax": 213,
+"callsAvg": 192,
+"shMax": 0,
+"trisMaxK": 489,
+"trisAvgK": 338,
+"tex": 478,
+"geo": 894,
+"gpuMB": 429.2,
+"texMB": 323.2,
+"ms": 247,
+"p95": 300,
+"pos": [
+-817,
+55,
+-871
+],
+"dirs": [
+"171/263k",
+"193/281k",
+"213/318k",
+"190/489k"
+]
+},
+{
+"name": "rung-phep-thuat",
+"callsMax": 184,
+"callsAvg": 149,
+"shMax": 15,
+"trisMaxK": 270,
+"trisAvgK": 192,
+"tex": 481,
+"geo": 918,
+"gpuMB": 430.3,
+"texMB": 323.5,
+"ms": 171,
+"p95": 214,
+"pos": [
+-1168,
+2,
+-825
+],
+"dirs": [
+"144/167k",
+"133/159k",
+"135/173k",
+"184/270k"
+]
+},
+{
+"name": "rung-thien",
+"callsMax": 231,
+"callsAvg": 218,
+"shMax": 29,
+"trisMaxK": 565,
+"trisAvgK": 393,
+"tex": 468,
+"geo": 762,
+"gpuMB": 375.1,
+"texMB": 299,
+"ms": 209,
+"p95": 290,
+"pos": [
+-137,
+2,
+-145
+],
+"dirs": [
+"214/314k",
+"204/306k",
+"222/565k",
+"231/387k"
+]
+},
+{
+"name": "thien-dinh",
+"callsMax": 232,
+"callsAvg": 169,
+"shMax": 17,
+"trisMaxK": 582,
+"trisAvgK": 334,
+"tex": 475,
+"geo": 781,
+"gpuMB": 376.6,
+"texMB": 299.5,
+"ms": 194,
+"p95": 223,
+"pos": [
+-172,
+5,
+-272
+],
+"dirs": [
+"133/209k",
+"142/232k",
+"232/582k",
+"168/313k"
+]
+},
+{
+"name": "vung-tuong-lai",
+"callsMax": 101,
+"callsAvg": 92,
+"shMax": 11,
+"trisMaxK": 145,
+"trisAvgK": 132,
+"tex": 479,
+"geo": 790,
+"gpuMB": 379.3,
+"texMB": 301.6,
+"ms": 112,
+"p95": 140,
+"pos": [
+660,
+3,
+-29
+],
+"dirs": [
+"86/127k",
+"101/145k",
+"97/130k",
+"82/127k"
+]
+},
+{
+"name": "vung-lang-co",
+"callsMax": 99,
+"callsAvg": 92,
+"shMax": 10,
+"trisMaxK": 187,
+"trisAvgK": 155,
+"tex": 481,
+"geo": 796,
+"gpuMB": 379.7,
+"texMB": 301.7,
+"ms": 122,
+"p95": 146,
+"pos": [
+-626,
+2,
+119
+],
+"dirs": [
+"91/152k",
+"87/134k",
+"90/148k",
+"99/187k"
+]
+},
+{
+"name": "may-bay",
+"callsMax": 185,
+"callsAvg": 175,
+"shMax": 16,
+"trisMaxK": 286,
+"trisAvgK": 276,
+"tex": 491,
+"geo": 814,
+"gpuMB": 379.7,
+"texMB": 302,
+"ms": 145,
+"p95": 208,
+"pos": [
+79,
+17,
+166
+],
+"dirs": [
+"170/277k",
+"167/267k",
+"179/275k",
+"185/286k"
+]
+},
+{
+"name": "choi-bay",
+"callsMax": 139,
+"callsAvg": 137,
+"shMax": 14,
+"trisMaxK": 237,
+"trisAvgK": 230,
+"tex": 493,
+"geo": 828,
+"gpuMB": 380.4,
+"texMB": 301.5,
+"ms": 135,
+"p95": 171,
+"pos": [
+-113,
+18,
+166
+],
+"dirs": [
+"139/236k",
+"135/216k",
+"134/231k",
+"138/237k"
+]
+},
+{
+"name": "van-bay",
+"callsMax": 217,
+"callsAvg": 203,
+"shMax": 24,
+"trisMaxK": 480,
+"trisAvgK": 466,
+"tex": 252,
+"geo": 286,
+"gpuMB": 208.1,
+"texMB": 157.1,
+"ms": 211,
+"p95": 314,
+"pos": [
+-75,
+2,
+9
+],
+"dirs": [
+{
+"calls": 217,
+"sh": 24,
+"tris": 480376,
+"tex": 252,
+"geo": 286,
+"gpuMB": 208.1,
+"texMB": 157.1,
+"ms": 262,
+"p95": 314,
+"pos": [
+-75,
+2,
+9
+]
+},
+{
+"calls": 199,
+"sh": 20,
+"tris": 461039,
+"tex": 252,
+"geo": 286,
+"gpuMB": 208.1,
+"texMB": 157.1,
+"ms": 192,
+"p95": 204,
+"pos": [
+-75,
+2,
+9
+]
+},
+{
+"calls": 198,
+"sh": 20,
+"tris": 461029,
+"tex": 252,
+"geo": 286,
+"gpuMB": 208.1,
+"texMB": 157.1,
+"ms": 189,
+"p95": 218,
+"pos": [
+-75,
+2,
+9
+]
+},
+{
+"calls": 197,
+"sh": 20,
+"tris": 459975,
+"tex": 252,
+"geo": 286,
+"gpuMB": 208.1,
+"texMB": 157.1,
+"ms": 200,
+"p95": 220,
+"pos": [
+-75,
+2,
+9
+]
+}
+]
+},
+{
+"name": "tren-tau",
+"callsMax": 248,
+"callsAvg": 224,
+"shMax": 22,
+"trisMaxK": 606,
+"trisAvgK": 558,
+"tex": 371,
+"geo": 488,
+"gpuMB": 334.8,
+"texMB": 256.2,
+"ms": 214,
+"p95": 420,
+"pos": [
+-805,
+1,
+-734
+],
+"dirs": [
+{
+"calls": 248,
+"sh": 22,
+"tris": 605953,
+"tex": 371,
+"geo": 480,
+"gpuMB": 334.8,
+"texMB": 256.2,
+"ms": 259,
+"p95": 420,
+"pos": [
+-805,
+1,
+-734
+]
+},
+{
+"calls": 225,
+"sh": 17,
+"tris": 563557,
+"tex": 371,
+"geo": 484,
+"gpuMB": 334.8,
+"texMB": 256.2,
+"ms": 206,
+"p95": 273,
+"pos": [
+-809,
+0,
+-718
+]
+},
+{
+"calls": 207,
+"sh": 13,
+"tris": 531825,
+"tex": 371,
+"geo": 486,
+"gpuMB": 334.8,
+"texMB": 256.2,
+"ms": 188,
+"p95": 205,
+"pos": [
+-812,
+0,
+-699
+]
+},
+{
+"calls": 214,
+"sh": 13,
+"tris": 530183,
+"tex": 371,
+"geo": 488,
+"gpuMB": 334.8,
+"texMB": 256.2,
+"ms": 202,
+"p95": 225,
+"pos": [
+-816,
+0,
+-679
+]
+}
+]
+}
+],
+"load4g": {
+"firstFrameS": 12.4,
+"readyS": 12.8,
+"playableS": 13.3,
+"atPlay": {
+"files": 250,
+"transferKB": 2751,
+"decodedKB": 7608,
+"by": {
+"glb": 890,
+"js": 1861
+}
+},
+"after30s": {
+"files": 250,
+"transferKB": 2751,
+"decodedKB": 7608,
+"by": {
+"glb": 890,
+"js": 1861
+}
+}
+}
+}

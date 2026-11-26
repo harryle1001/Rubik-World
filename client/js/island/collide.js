@@ -124,6 +124,8 @@ export function createCollide(ctx) {
     for (const key of s.b.keys()) { const S = byKey.get(key); if (S) { S.delete(s); if (!S.size) byKey.delete(key); } if (chunks.has(key)) dirty.add(key); }
     s.b.clear(); s.state = 0; s.ti = 0;
   }
+  // InstancedMesh: khoảng cách tới bản sao gần nhất (mesh rải khắp đảo không còn chen trước vật ngay cạnh người chơi)
+  function instD(o, e, P) { const a = o.instanceMatrix.array, n = o.count; let m = 1e9; for (let i = 0; i < n; i++) { const d = Math.hypot(e[12] + a[i * 16 + 12] - P.x, e[14] + a[i * 16 + 14] - P.z); if (d < m) m = d; } return Math.max(0, m - 3); }
   function scan() {
     scanId++; const skipRoot = ctx.player && ctx.player.root;
     stack.length = 0; stack.push(ctx.scene);
@@ -148,7 +150,7 @@ export function createCollide(ctx) {
     // nguồn chờ lập chỉ mục: gần người chơi trước
     const P = ctx.player && ctx.player.pos;
     if (P && pending.length > 1) { for (const q of pending) { const e = q.o.matrixWorld.elements, g = q.o.geometry; if (!g.boundingSphere) g.computeBoundingSphere();
-      q.d = q.o.isInstancedMesh ? 0 : Math.max(0, Math.hypot(e[12] + g.boundingSphere.center.x - P.x, e[14] + g.boundingSphere.center.z - P.z) - g.boundingSphere.radius * Math.hypot(e[0], e[1], e[2])); }
+      q.d = q.o.isInstancedMesh ? instD(q.o, e, P) : Math.max(0, Math.hypot(e[12] + g.boundingSphere.center.x - P.x, e[14] + g.boundingSphere.center.z - P.z) - g.boundingSphere.radius * Math.hypot(e[0], e[1], e[2])); }
       pending.sort((a, b) => a.d - b.d); }
   }
   // nạp chunk trong BUILD m quanh người chơi (gần trước), bỏ chunk xa hơn DROP m
@@ -173,7 +175,8 @@ export function createCollide(ctx) {
         const jb = bjob.list[bjob.i]; if (jb.s.state !== 2 || rasterStep(jb, until)) bjob.i++;
         continue;
       }
-      if (pending.length) {   // nguồn mới: lập chỉ mục; chunk đã nạp mà nguồn chạm tới → đánh dấu dựng lại
+      const w0 = want.length ? want[0] : -1, wNew = w0 >= 0 && w0 < 24 * 16 * 1e10 && !chunks.has(w0 % 1e10);   // chunk cạnh người chơi CHƯA dựng lần nào → dựng trước nguồn ở xa
+      if (pending.length && !(wNew && pending[0].d > 8)) {   // nguồn mới: lập chỉ mục; chunk đã nạp mà nguồn chạm tới → đánh dấu dựng lại
         const s = pending[0]; if (s.state !== 1) { pending.shift(); continue; }
         if (indexStep(s, until)) { s.state = 2; pending.shift(); for (const key of s.b.keys()) if (chunks.has(key)) dirty.add(key); }
         continue;
@@ -226,12 +229,12 @@ export function createCollide(ctx) {
     }
     return dist;
   }
-  let nextScan = 0, nextPlan = 0;
+  let nextScan = 0, nextPlan = 0, lastU = 0;
   function update() {   // theo đồng hồ thật (không theo dt bị kẹp khi khung chậm)
-    const now = performance.now();
+    const now = performance.now(), el = lastU ? now - lastU : 16.7; lastU = now;
     if (now >= nextScan) { nextScan = now + (nextScan ? SCAN * 1000 : 500); scan(); return; }
     if (now >= nextPlan) { nextPlan = now + 250; plan(); }
-    work(BUDGET);
+    work(BUDGET * Math.min(8, Math.max(1, el / 16.7)) * (pending.length > 55 ? 3 : 1));   // máy chậm (khung dài): giữ cùng tỉ lệ ≈ 1,5 % thời gian; hàng chờ dài (vừa vào game/vùng mới) ×3 → vật kịp chặn, không đi xuyên
   }
   const stats = () => { let n = 0, q = 0, idx = 0; for (const s of src.values()) { if (s.state === 2) n++; else if (s.state === 1) q++; for (const b of s.b.values()) idx += b.length; } return { chunks: chunks.size, sources: n, queued: q, idx, want: want.length, kb: chunks.size * CN * CN * 8 / 1024 | 0 }; };
   // gỡ lỗi: nguồn nào đang chiếm chunk chứa (x, z) (tên, cha, số lần đổi)
