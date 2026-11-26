@@ -11,7 +11,7 @@ import { isOutlineMat } from './style.js';
 export const CS = 0.25;                 // cạnh ô (m)
 const CN = 64, CM = CS * CN, Q = 32;    // ô/chunk · cạnh chunk (16 m) · lượng tử độ cao 1/32 m (Int16)
 export const LOW = 0.3, HEAD = 1.4;     // vật/mép cao ≤ 0,3 m trên chân (cỏ, hoa, nấm, gờ thấp): bước qua · đáy vật cao hơn đầu 1,4 m: đi dưới
-const GAP = 1.7 * Q, SCAN = 0.809, BUDGET = CFG.isMobile ? 0.25 : 0.5;   // ms/khung cho việc nền (lập chỉ mục, vẽ chunk)
+const OVER = 1.8 * Q, GAP = 1.7 * Q, SCAN = 0.809, BUDGET = CFG.isMobile ? 0.25 : 0.5;   // ms/khung cho việc nền (lập chỉ mục, vẽ chunk)
 // nature-*: cây/đá/bụi của terrain.js đổi bản sao theo khoảng cách người chơi → đã có collider tròn riêng (terrain.js), không quét
 // person-*: người (NPC) đứng/ngồi yên vẫn là vật động — không đăng ký
 const SKIP_NAME = /^(ground|seafloor|ocean|sky|nature-|person)|water/i, EMPTY_LO = 32767, EMPTY_HI = -32768;
@@ -32,7 +32,10 @@ export function createCollide(ctx) {
     if (a[i] > a[i + 1]) { a[i] = lo; a[i + 1] = hi; ch.n++; return; }
     if (lo <= a[i + 1] + GAP && hi >= a[i] - GAP) { if (lo < a[i]) a[i] = lo; if (hi > a[i + 1]) a[i + 1] = hi; return; }
     if (a[i + 2] > a[i + 3]) { a[i + 2] = lo; a[i + 3] = hi; return; }
-    const j = Math.abs(lo - a[i + 2]) < Math.abs(lo - a[i]) ? i + 2 : i; if (lo < a[j]) a[j] = lo; if (hi > a[j + 1]) a[j + 1] = hi;
+    const j = Math.abs(lo - a[i + 2]) < Math.abs(lo - a[i]) ? i + 2 : i;
+    // đầy 2 khoảng: không gộp qua khe > 1,8 m (gộp dây cờ/đèn treo/mái với gờ dưới đất → bức tường giả, kẹt ở cổng) — phần treo cao hơn thì bỏ
+    if (lo - a[j + 1] > OVER) return; if (a[j] - hi > OVER) { a[j] = lo; a[j + 1] = hi; return; }
+    if (lo < a[j]) a[j] = lo; if (hi > a[j + 1]) a[j + 1] = hi;
   }
   // cạnh tam giác chiếu xuống mặt phẳng ngang, mỗi bước ≤ ½ ô; mỗi bước ghi khoảng độ cao cạnh đi qua
   function edge(ax, ay, az, bx, by, bz) {
