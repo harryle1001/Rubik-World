@@ -11,6 +11,7 @@ import { stoneMaterial, lookChoice } from './castle.js';
 import { mat } from '../sample/palette.js';
 import { loadModel } from '../models.js';
 import { heightLocal, toWorld as tw0 } from './plan.js';
+import { freeAll } from '../free.js';
 
 export const NORTH = { u0: -176, u1: -121, gap: 6, hv: 96 };   // 2 nửa: v ∈ [−96, −6] và [6, 96]
 export const OWLERY = { u: -170, v: -18, r: 4.2, h: 34 };
@@ -62,7 +63,7 @@ export function createNorth(ctx, magic, { Y, toWorld, toLocal }) {
     ctx.scene.add(G);
   }
   function unbuild() {
-    if (!G) return; ctx.scene.remove(G); G.traverse(o => { if (o.isMesh && !o.isInstancedMesh) o.geometry.dispose(); });
+    if (!G) return; ctx.scene.remove(G); freeAll(G);
     for (const b of boxes) { const i = ctx.boxes.indexOf(b); if (i >= 0) ctx.boxes.splice(i, 1); } boxes = []; G = null; owls = null; ow = [];
   }
   const o3 = new THREE.Object3D(); let mailT = -99;

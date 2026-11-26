@@ -8,6 +8,7 @@ import { loadHero, STUDENTS } from '../characters.js';
 import { toon } from '../style.js';
 import { signBoard } from './guide.js';
 import { CFG } from '../config.js';
+import { freeTex, freeAll } from '../free.js';
 
 const S = 3.4, PI = Math.PI;
 const STYLE = {
@@ -111,7 +112,7 @@ export function createPho2(ctx, magic, { Y, toWorld, toLocal }) {
     ctx.boxes.push(...boxes);
     built = { g, boxes, keepers };
   }
-  function unbuild() { if (!built) return; ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); }); for (const b of built.boxes) { const i = ctx.boxes.indexOf(b); if (i >= 0) ctx.boxes.splice(i, 1); } built = null; }
+  function unbuild() { if (!built) return; ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); }); freeAll(built.g); for (const b of built.boxes) { const i = ctx.boxes.indexOf(b); if (i >= 0) ctx.boxes.splice(i, 1); } built = null; }
   let cool = 0, top = null, topT = 0;
   function doJob(k) {
     const J = JOB[k.sh.name] || {}; cool = 1.2; ctx.sfx && ctx.sfx('ui'); k.work = 3;

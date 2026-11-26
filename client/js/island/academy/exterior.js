@@ -9,6 +9,7 @@ import { matV, mat } from '../sample/palette.js';
 import { placeKit } from '../kit.js';
 import { toon } from '../style.js';
 import { C, CASTLE_L as L, WATCH } from './plan.js';
+import { freeAll } from '../free.js';
 
 const PHI = 1.618, PI = Math.PI;
 const STONE = '#8f8a82', STONE_D = '#6f6a62', WOOD = '#6e4a30', IRON = '#34343c';
@@ -79,7 +80,7 @@ export function createExterior(ctx, { Y, toLocal }) {
   }
   function unbuild() {
     if (!G) return; ctx.scene.remove(G);
-    G.traverse(o => { if (o.isMesh && !o.isInstancedMesh) o.geometry.dispose(); });
+    freeAll(G);
     for (const arr of [[ctx.boxes, boxes], [ctx.colliders, cols]]) for (const x of arr[1]) { const i = arr[0].indexOf(x); if (i >= 0) arr[0].splice(i, 1); }
     G = null; boxes = []; cols = []; kitMs = [];
   }

@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { mat } from '../sample/palette.js';
 import { toon } from '../style.js';
+import { freeTex, freeAll } from '../free.js';
 
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
@@ -127,6 +128,6 @@ export function createContent(ctx, magic, { toWorld, L, Y }) {
     };
     return built;
   }
-  function unbuild() { if (!built) return; for (const t of built.T) magic.removeTarget(t); ctx.scene.remove(built.g); built.g.traverse(o => o.geometry && o.geometry.dispose()); built = null; }
+  function unbuild() { if (!built) return; for (const t of built.T) magic.removeTarget(t); ctx.scene.remove(built.g); built.g.traverse(o => o.geometry && o.geometry.dispose()); freeAll(built.g); built = null; }
   return { build, unbuild, update(dt, t) { built && built.update(dt, t); } };
 }

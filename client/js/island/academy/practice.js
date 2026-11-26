@@ -9,6 +9,7 @@ import { matV, mat } from '../sample/palette.js';
 import { loadHero, STUDENTS } from '../characters.js';
 import { loadModel } from '../models.js';
 import { CFG } from '../config.js';
+import { freeAll } from '../free.js';
 
 const PI = Math.PI, HOUSE_COL = ['#c8302c', '#3a6fc4', '#3f8a4c', '#7a4fb0'];
 const MOUNT = { hat: ['head', 'alley/wiz-hat', [0, 0.2, -0.01], 0.42, [-0.12, 0, 0]], cape: ['chest', 'alley/wiz-cape', [0, 0.32, -0.3], [0.62, 0.46, 0.5], [0.1, 0, 0]] };
@@ -54,7 +55,7 @@ export function createPractice(ctx, magic, { Y, toWorld, toLocal }) {
     ctx.scene.add(G);
     for (const n of npcs) { const [x, z] = W(n.u, n.v); ctx.colliders.push({ x, z, r: 0.35, practice: 1 }); }
   }
-  function unbuild() { if (!G) return; ctx.scene.remove(G); G = null; npcs = []; for (let i = ctx.colliders.length - 1; i >= 0; i--) if (ctx.colliders[i].practice) ctx.colliders.splice(i, 1); }
+  function unbuild() { if (!G) return; ctx.scene.remove(G); freeAll(G); G = null; npcs = []; books = sparks = bubbles = brew = null; for (let i = ctx.colliders.length - 1; i >= 0; i--) if (ctx.colliders[i].practice) ctx.colliders.splice(i, 1); }
   const o = new THREE.Object3D(), col = new THREE.Color();
   function update(dt, t) {
     if (!G) return; const cam = ctx.camera.position, [cu, cv] = toLocal(cam.x, cam.z), near = Math.hypot(cu - A.u, cv - A.v) < 144 && cam.y < 600 && (cu < -100 || cam.y > Y + 21); G.visible = near; if (!near) return;

@@ -5,6 +5,7 @@ import { CFG } from './config.js';
 // Dải sáng nhiều bậc (CFG.toon.steps), lọc Nearest để ra các mảng màu rõ ràng
 const steps = CFG.toon.steps.map(v => Math.round(v * 255));
 export const gradientMap = new THREE.DataTexture(new Uint8Array(steps), steps.length, 1, THREE.RedFormat);
+gradientMap.userData.shared = true;   // dùng chung mọi vật liệu toon: dỡ khu không dispose (free.js)
 gradientMap.minFilter = gradientMap.magFilter = THREE.NearestFilter; gradientMap.needsUpdate = true;
 
 // ===== PHONG CÁCH VẼ TAY (kiểu Zelda/Genshin) — áp cho MỌI MeshToonMaterial một lần, không tốn draw call =====
@@ -55,7 +56,7 @@ export function toon(color, opts = {}) {
   const key = color + JSON.stringify(opts);
   if (!opts.unique && cache.has(key)) return cache.get(key);
   const o = Object.assign({ color, gradientMap }, opts); delete o.unique;
-  const m = new THREE.MeshToonMaterial(o); cache.set(key, m); if (!opts.unique) m.userData.shared = true; return m;
+  const m = new THREE.MeshToonMaterial(o); if (!opts.unique) { cache.set(key, m); m.userData.shared = true; } return m;   // unique: không giữ trong bộ đệm (khu dỡ ra được giải phóng)
 }
 // Bản sao cho InstancedMesh của vật liệu dùng chung (toon theo màu, viền): cùng 1 vật liệu vừa cho Mesh vừa cho InstancedMesh
 // → three đổi chương trình shader mỗi lần vẽ xen kẽ (getProgram mỗi lần đổi). perf.js gán tự động khi quét cảnh.

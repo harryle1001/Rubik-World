@@ -12,6 +12,7 @@ import { loadModel } from '../models.js';
 import { KIT, kitSize } from '../kit.js';
 import { ISLAND_R, MEADOWS, ACADEMY } from '../layout.js';
 import { TOWERS, CASTLE_L, BASE_Y, toWorld as acadW, R_BOUND } from '../academy/plan.js';
+import { freeAll } from '../free.js';
 
 const T1_IN = 377, T1_OUT = 610, T2_IN = 144, T2_OUT = 233, SEEN_KEY = 'rs.regions.seen';
 
@@ -160,7 +161,7 @@ export function createRegions(ctx) {
     for (const L of live) {
       const d = Math.max(0, Math.hypot(p.x - L.R.c[0], p.z - L.R.c[1]) - L.R.R);
       if (!L.t1 && d < T1_IN) { L.t1 = L.B.t1(); L.t1.group.position.set(L.R.c[0], 0, L.R.c[1]); L.t1.group.name = 'region-' + L.R.id; scene.add(L.t1.group); (ctx.boxes = ctx.boxes || []).push(...L.t1.boxes); }
-      else if (L.t1 && d > T1_OUT) { scene.remove(L.t1.group); for (const b of L.t1.boxes) { const i = ctx.boxes.indexOf(b); if (i >= 0) ctx.boxes.splice(i, 1); } L.t1.group.traverse(o => { if (o.isMesh && !o.isInstancedMesh) o.geometry.dispose(); if (o.isSprite) o.material.map.dispose(); }); L.t1 = null; if (L.t2p) { dropKit(L.t2p); L.t2p = null; } }
+      else if (L.t1 && d > T1_OUT) { scene.remove(L.t1.group); for (const b of L.t1.boxes) { const i = ctx.boxes.indexOf(b); if (i >= 0) ctx.boxes.splice(i, 1); } L.t1.group.traverse(o => { if (o.isMesh && !o.isInstancedMesh) o.geometry.dispose(); if (o.isSprite) o.material.map.dispose(); }); freeAll(L.t1.group); L.t1 = null; if (L.t2p) { dropKit(L.t2p); L.t2p = null; } }
       if (L.t1 && !L.t2p && d < T2_IN) L.t2p = Promise.all(L.B.t2(L.t1.group));
       else if (L.t2p && d > T2_OUT) { dropKit(L.t2p); L.t2p = null; }
     }

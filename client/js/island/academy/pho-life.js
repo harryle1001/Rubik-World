@@ -32,9 +32,11 @@ export function createPhoLife(ctx, { Y, toWorld }) {
   }
   function unbuild() { if (!G) return; ctx.scene.remove(G); G = null; people = []; }
   const play = (m, c) => { if (m.clip !== c) { m.clip = c; m.hero.anim.play(m.hero.set[c] || m.hero.set.idle, 0.3); } };
+  let newG = null, findT = 0;   // nhóm phố mới: tìm theo tên 1 lần/s khi chưa có (getObjectByName duyệt cả cảnh — mỗi khung tốn ~2 ms trên điện thoại)
   function update(dt) {
     if (!G) return;
-    const oldG = ctx.alley && ctx.alley.built && ctx.alley.built.g, newG = ctx.scene.getObjectByName('academy-pho2'), vis = { old: !!(oldG && oldG.visible), new: !!(newG && newG.visible) };
+    if ((!newG || !newG.parent) && (findT -= dt) <= 0) { findT = 1; newG = ctx.scene.getObjectByName('academy-pho2') || null; }
+    const oldG = ctx.alley && ctx.alley.built && ctx.alley.built.g, vis = { old: !!(oldG && oldG.visible), new: !!(newG && newG.visible) };
     const cam = ctx.camera.position;
     for (const m of people) {
       if (!m.hero) continue; m.hero.model.visible = vis[m.street]; if (!vis[m.street]) continue;

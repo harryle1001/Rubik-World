@@ -47,7 +47,7 @@ export async function loadHero(kind, height = 1.65, look = null) {
   stretchRig(model, B);
   if (!jointCache.has(bk)) jointCache.set(bk, jointsOf(model));
   const key = JSON.stringify(L);
-  if (!geoCache.has(key)) geoCache.set(key, buildPerson(jointCache.get(bk), L));
+  if (!geoCache.has(key)) { const G = buildPerson(jointCache.get(bk), L); G.body.userData.shared = G.all.userData.shared = true; geoCache.set(key, G); }   // lưới dùng chung nhiều người: dỡ khu không dispose (free.js)
   const G = geoCache.get(key);
   const parts = skinTo(model, G); model.scale.setScalar(height / G.top);
   parts.body.geometry = G.body; addOutline(model); parts.body.geometry = G.all;   // viền theo hình thân (không viền mắt, miệng)

@@ -18,6 +18,7 @@ import { buildNight } from './alley-night.js';
 import { createLife } from './alley-life.js';
 import { GATE_RIDDLES } from './alley-shops.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { freeTex, freeAll } from '../free.js';
 
 const S = 3.4;                                                   // 1 ô module Kenney = 3,4 m (cửa ≈ 2 m)
 const V_CASTLE = 117, V_WALL = 135.2;                            // mặt ngoài dãy đông lâu đài · mặt trong tường thành
@@ -395,7 +396,7 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
     }
     mergeModels(merged, g, { shadow: n => /^alley\/(wall|roof|chimney$|stairs|balcony|overhang)/.test(n), flatMat: () => toon('#ffffff', { unique: true }) })
       .then(ms => { for (const m of ms) if (m.material.map) { m.material.emissiveMap = m.material.map; m.material.emissive.setRGB(0.2, 0.17, 0.15); }   // ánh sáng dội trong hẻm hẹp: mặt khuất bóng vẫn thấy màu gỗ/vữa
-      if (built && built.g === g) meshes.push(...ms); else ms.forEach(m => m.geometry.dispose()); }).catch(e => console.error('alley merge', e));
+      if (built && built.g === g) meshes.push(...ms); else ms.forEach(m => { m.geometry.dispose(); freeTex(m); }); }).catch(e => console.error('alley merge', e));
     // ---------- hạt sáng, khói, quầng đèn ----------
     steams.push(stalls[1].clone().setY(stalls[1].y + 1.05));
     const fx = makeFx(houses.filter(h => h.smoke).map(h => h.smoke), lamps, W, gy, steams);
@@ -428,7 +429,7 @@ export function create(ctx, magic, { toWorld, toLocal, Y }) {
     for (const b of built.boxes) { const k = ctx.boxes.indexOf(b); if (k >= 0) ctx.boxes.splice(k, 1); }
     for (let i = ctx.colliders.length - 1; i >= 0; i--) if (ctx.colliders[i].alley) ctx.colliders.splice(i, 1);
     shop.close();
-    ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); else if (o.isMesh && /merged/.test(o.name)) o.geometry.dispose(); });
+    ctx.scene.remove(built.g); built.g.traverse(o => { if (o.isInstancedMesh) o.dispose(); else if (o.isMesh && /merged/.test(o.name)) o.geometry.dispose(); }); freeAll(built.g); glowWin = null;
     built = null;
   }
 

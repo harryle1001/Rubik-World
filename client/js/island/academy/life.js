@@ -15,6 +15,7 @@ import { CFG } from '../config.js';
 import { HALL_HOUSE } from './plan.js';
 import { toon } from '../style.js';
 import { dressWizard } from './practice.js';
+import { freeTex, freeAll } from '../free.js';
 
 const PI = Math.PI;
 const Q = (q, choices, explain) => ({ q, choices, a: 0, explain });
@@ -123,7 +124,7 @@ export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
     if (gl.list.length) fest.g.add(new THREE.Mesh(gl.build(), new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false })));
   }
   function unbuild() {
-    if (!G) return; ctx.scene.remove(G); G.traverse(o => { if (o.isMesh && !o.isInstancedMesh && !o.isSkinnedMesh && o.geometry) o.geometry.dispose(); });
+    if (!G) return; ctx.scene.remove(G); G.traverse(o => { if (o.isMesh && !o.isInstancedMesh && !o.isSkinnedMesh && o.geometry) o.geometry.dispose(); }); freeAll(G);
     G = null; kids = []; plates = []; ghost = null; fest = null;
   }
 

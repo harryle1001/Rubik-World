@@ -8,13 +8,14 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { VRMLoaderPlugin, VRMUtils } from '../../vendor/three-vrm.module.min.js';
+import { texPlugin } from '../gltf-tex.js';
 
 export const BASES = {   // mẫu đã duyệt (CC0, pixiv/VRoid) — texture WebP đủ màu (tools/vrm-slim.mjs --hq)
   victoria: { name: 'Nữ tóc buộc', gender: 'f' }, vivi: { name: 'Nữ tóc bob', gender: 'f' }, shino: { name: 'Nữ tóc dài', gender: 'f' },
   'hair-m': { name: 'Nam', gender: 'm' }, fumiriya: { name: 'Thầy giáo', gender: 'm' },
   shibu: { name: 'Nữ (thân Shibu)', gender: 'f', donor: true }, dshibu: { name: 'Nữ (thân D. Shibu)', gender: 'f', donor: true }, vita: { gender: 'f', donor: true }, 'hair-f': { gender: 'f', donor: true },   // donor: chủ yếu cho tóc
 };
-const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder); loader.register(p => new VRMLoaderPlugin(p));
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder); loader.register(p => new VRMLoaderPlugin(p)); loader.register(texPlugin);   // điện thoại: texture ≤ 512 px (gltf-tex.js)
 const bufs = new Map();   // ArrayBuffer theo url (tải 1 lần, mỗi nhân vật parse riêng: three-vrm không clone được)
 const fetchBuf = url => { if (!bufs.has(url)) bufs.set(url, fetch(url).then(r => { if (!r.ok) throw new Error(url + ' ' + r.status); return r.arrayBuffer(); })); return bufs.get(url); };
 export const prefetch = (id, set = 'mobile') => fetchBuf(`/assets/vrm/${set}/${id}.vrm`).catch(() => null);
