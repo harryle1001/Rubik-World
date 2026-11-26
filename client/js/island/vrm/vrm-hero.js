@@ -8,6 +8,7 @@ import { loadVrm, tint, hideParts, hasPart, cutBelow, outlineMats, BASES } from 
 import { vrmClips, kaykitRest } from './vrm-anim.js';
 import { dressVrm, PALETTE } from './vrm-outfit.js';
 import { setHairStyle, HAIRS } from './vrm-hair.js';
+import { CFG } from '../config.js';
 
 export const NAMES = { idle: 'Idle', walk: 'Walking_A', run: 'Running_A', jump: 'Jump_Idle', cheer: 'Cheer', interact: 'Interact', pickup: 'PickUp', sit: 'Sit_Chair', floor: 'Sit_Floor_Idle', no: 'Head_No', hit: 'Hit_A', use: 'Use_Item' };
 export const HAIR = ['#2a2230', '#4a3226', '#7a5236', '#9c4a32', '#d9b46a', '#3a4a78', '#e8a0b8', '#c8ccd8'];
@@ -82,7 +83,7 @@ export async function loadVrmHero(look = {}, opt = {}) {
   const detail = []; vrm.scene.traverse(o => { if (o.isMesh && /EyeHighlight|FaceEyeline/.test([].concat(o.material)[0].name)) detail.push(o); });
   hero.setLod = mode => { if (hero.vrmMode === mode) return; hero.vrmMode = mode; const near = mode === 'full'; for (const o of detail) o.visible = near; if (fit.parts.wand) fit.parts.wand.visible = near && hero.wandOn !== false; };
   hero.setWand = on => { hero.wandOn = !!on; fit.setWand(on && hero.vrmMode === 'full'); };
-  let blinkT = 1 + Math.random() * 3, t = 0;
+  let blinkT = 1 + Math.random() * 3, t = 0, sbT = 0, sbF = 0;
   hero.anim = {
     mixer, actions, has: n => !!actions[n], get current() { return cur; },
     play(n, fade = 0.2, once = false) {
@@ -98,7 +99,11 @@ export async function loadVrmHero(look = {}, opt = {}) {
           if (!happy && t > blinkT) { const k = (t - blinkT) / 0.14; if (k >= 1) { t = 0; blinkT = 2 + Math.random() * 3; } else b = 1 - Math.abs(k * 2 - 1); }
           exprs.setValue('blink', b); exprs.setValue('happy', happy ? 0.8 : 0);
         }
-        vrm.update(dt);
+        if (CFG.isMobile && vrm.springBoneManager) {   // điện thoại: tóc/áo (lò xo) 30 Hz với bước 2·dt — khung bỏ qua tóc vẫn bám đầu; thân, mặt, mắt vẫn mỗi khung
+          vrm.humanoid.update(); if (vrm.lookAt) vrm.lookAt.update(dt); if (vrm.expressionManager) vrm.expressionManager.update(); if (vrm.nodeConstraintManager) vrm.nodeConstraintManager.update();
+          sbT += dt; if ((sbF ^= 1) === 0) { vrm.springBoneManager.update(sbT); sbT = 0; }
+          if (vrm.materials) for (const m of vrm.materials) if (m.update) m.update(dt);
+        } else vrm.update(dt);
       } else { vrm.humanoid.update(); if (exprs && exprs.getValue('blink')) { exprs.setValue('blink', 0); exprs.update(); } }
     },
   };
