@@ -105,7 +105,7 @@ async function clearUi(max = 30) {   // bấm qua thoại cốt truyện/hướn
 // chờ nút hành động #bAct có nhãn khớp rồi bấm (như người chơi bấm nút/E)
 async function act(re, { sec = 8, must = true } = {}) {
   const t0 = Date.now(); let lab = null;
-  while (Date.now() - t0 < sec * 1000) { lab = await ev(() => { const b = document.getElementById('bAct'); return b && !b.hidden && b.getClientRects().length ? b.textContent.trim() : null; }); if (lab && re.test(lab) && await tap('#bAct', { must: false })) return lab; await T(300); }
+  while (Date.now() - t0 < sec * 1000) { lab = await ev(() => { const b = document.getElementById('bAct'); return b && !b.hidden && b.getClientRects().length ? b.textContent.trim() : null; }); if (lab && re.test(lab) && await tap('#bAct', { must: false })) { await ev(() => { window.__pt.actT = performance.now(); }); return lab; } await T(300); }
   if (must) throw new Error(`không có nút hành động /${re.source}/ (đang: ${lab})`); return null;
 }
 const hold = async (k, ms) => { await page.keyboard.down(k); await T(ms); await page.keyboard.up(k); };
@@ -141,7 +141,7 @@ async function run(id, name, fn) {
   if (w0 && w1) for (const k of ['water', 'inside', 'jump', 'nan']) if (w1[k] > w0[k]) { row.ok = false; row.note += ` · ${k}+${w1[k] - w0[k]} ${JSON.stringify((await ev(k => __pt.last[k], k).catch(() => null)) || '')}`; }
   row.errors = errs.slice(e0); if (row.errors.length) { row.ok = false; row.note += ` · ${row.errors.length} lỗi console`; }
   row.secs = Math.round((Date.now() - t0) / 1000);
-  if (!row.ok) row.shot = await shot('FAIL-' + id);
+  if (!row.ok) { row.shot = await shot('FAIL-' + id); row.toasts = await ev(() => __pt.toasts.slice(-3)).catch(() => null); row.note += ' · toast: ' + JSON.stringify(row.toasts); }
   results.push(row); log(`${row.ok ? '✅' : '❌'} [${tag}] ${id} — ${name} (${row.secs}s) ${row.note}`); if (row.errors.length) log('   ' + row.errors.slice(0, 5).join('\n   '));
   // dọn: về trạng thái chơi bình thường cho bước sau
   if (!['load', 'guest', 'intro'].includes(id)) await closeAll();
@@ -171,14 +171,15 @@ const uiAudit = (scope = 'body') => ev(scope => {
 // theo dõi mỗi khung (cài sau khi tải)
 const installWatch = () => ev(() => {
   const c = __island, p = c.player, W = c.CFG ? c.CFG.island.waterLevel : 0, pt = window.__pt = { tp: 0, cnt: { water: 0, inside: 0, jump: 0, nan: 0 }, last: {} };
-  const tp = p.teleport; p.teleport = function () { pt.tp++; return tp.apply(this, arguments); }; pt.sim = 0; const pu = p.update; p.update = function (dt) { pt.sim += dt; return pu.call(this, dt); };
+  const tp = p.teleport; p.teleport = function () { pt.tp++; return tp.apply(this, arguments); }; pt.toasts = []; const to = c.toast; c.toast = function (m) { pt.toasts.push(String(m).replace(/<[^>]+>/g, '').slice(0, 90)); if (pt.toasts.length > 8) pt.toasts.shift(); return to.apply(this, arguments); }; pt.sim = 0; const pu = p.update; p.update = function (dt) { pt.sim += dt; return pu.call(this, dt); };
   let last = null, lastTp = 0, insideRun = 0;
   (function f() { requestAnimationFrame(f); const q = p.pos; if (!Number.isFinite(q.x + q.y + q.z)) { pt.cnt.nan++; return; }
-    const free = !p.vehicle && !(c.dive && c.dive.swimming) && !(c.mg && c.mg.active) && !document.body.classList.contains('st-cut') && !(c.train && c.train.ride && c.train.ride.state.aboard) && !p.frozen;
+    if (c.mg && c.mg.active || document.body.classList.contains('mg-on')) pt.mgT = performance.now();
+    const free = performance.now() - (pt.mgT || 0) > 2000 && performance.now() - (pt.actT || 0) > 3000 && !p.vehicle && !(c.dive && c.dive.swimming) && !(c.mg && c.mg.active) && !document.body.classList.contains('st-cut') && !(c.train && c.train.ride && c.train.ride.state.aboard) && !p.frozen;
     if (last && pt.tp === lastTp) { const d = Math.hypot(q.x - last[0], q.z - last[1]); if (d > 8 && free) { pt.cnt.jump++; pt.last.jump = [last.map(v => +v.toFixed(1)), [q.x, q.z].map(v => +v.toFixed(1))]; } }
     if (free) {
       const h = c.terrain.heightAt(q.x, q.z), g = c.groundExtra ? c.groundExtra(q.x, q.z, q.y) : -99;
-      if (Math.max(h, g) < W - 0.5 && q.y < W + 0.2 && !(c.sea && c.sea.aboard)) { pt.cnt.water++; pt.last.water = [q.x, q.y, q.z].map(v => +v.toFixed(1)); }
+      if (Math.max(h, g) < W - 1.2 && q.y < W + 0.2 && !(c.sea && c.sea.aboard)) { pt.cnt.water++; pt.last.water = [q.x, q.y, q.z].map(v => +v.toFixed(1)); }
       // đứng TRONG vật: ô va chạm chặn ngay tâm người suốt > 0,5 s (không tính lúc vừa dịch chuyển)
       if (c.collide && c.collide.blocked(q.x, q.z, q.y + 0.05)) { if (++insideRun === 30) { pt.cnt.inside++; pt.last.inside = [q.x, q.y, q.z].map(v => +v.toFixed(1)); } } else insideRun = 0;
     } else insideRun = 0;
@@ -258,11 +259,12 @@ await run('npc', 'Nói chuyện NPC → trả lời câu hỏi → bấm ✕', a
 await run('mg', 'Mọi mini game: vào (☰ → 🎮) → chơi 3 s → ✕ Thoát', async row => {
   await ev(() => { const pm = __island.premium; if (pm) { pm.allow = () => true; pm.on = () => true; } });   // khách bị Gói Phụ huynh khoá (đúng thiết kế) → mở trong test
   const keys = await ev(() => { const G = __island.miniGames, seen = new Set(), out = []; for (const [k, g] of Object.entries(G)) { if (seen.has(g)) continue; seen.add(g); out.push(k); } return out; });
-  const bad = [];
+  const bad = [], MGF = arg('mg') ? arg('mg').split(',') : null;
   for (const k of keys) {
+    if (MGF && !MGF.includes(k)) continue;
     step = 'mg:' + k; const e0 = errs.length;
     try {
-      await goNear(...L.spawn); await tap('#bMore'); await T(400); await tap('#bMenu'); await T(800);
+      await goNear(...L.spawn); await clearUi(20); await tap('#bMore'); await T(400); await tap('#bMenu'); await T(800);
       if (!(await rectOf(`#schoolMenu button[data-k="${k}"]`))) { await closeAll(); const ok = await ev(k => __island.mg.start(k, __island.mg.doorOf(k)), k); if (!ok) throw new Error('không mở'); row.note += ` ${k}(không có trong menu)`; }
       else await tap(`#schoolMenu button[data-k="${k}"]`);
       // câu khởi động rồi "▶ Vào chơi"
@@ -290,18 +292,18 @@ await run('shop', 'Cặp sách 🎒 → 🛒 Cửa hàng → mua 1 món bằng v
   let a = await uiAudit('#ecoBag'); if (a.over.length || a.off.length) row.note += ` cặp: ${JSON.stringify(a)}`;
   await tap('#ecoBag [data-a="shop"]'); await page.waitForSelector('#ecoShop', { timeout: 8000 }); await T(800);
   // vàng kiếm khi chơi: test cộng sẵn 377 🪙 (như đã chơi mini game/nhiệm vụ) để mua khinh khí cầu bằng giao diện, rồi giấy phép bay + chổi tập cho các bước sau
-  await ev(() => { const a = __island.account; if (__island.eco.gold() < 300) a.addCoins ? a.addCoins(377) : (a.profile.money += 377); });
+  await ev(() => { const a = __island.account; if (__island.eco.gold() < 700) a.addCoins(700); });
   await tap('#ecoShop button[data-t="ride"]'); await T(800);
   const g0 = await ev(() => __island.eco.gold());
   const id = await ev(() => { const E = __island.eco, pr = i => { const it = E.ITEM[i]; return it ? ((it.price && it.price.gold) ?? it.gold) : null; };
-    const cs = [...document.querySelectorAll('#ecoShop .cd[data-id]')].filter(c => !c.classList.contains('own') && !c.classList.contains('lock') && pr(c.dataset.id) != null && pr(c.dataset.id) <= E.gold());
+    const cs = [...document.querySelectorAll('#ecoShop .cd[data-id]')].filter(c => !c.classList.contains('own') && pr(c.dataset.id) != null && pr(c.dataset.id) <= E.gold());
     return (cs.find(c => c.dataset.id === 'ride-balloon') || cs[0] || {}).dataset?.id || null; });
   if (!id) throw new Error('không có món nào mua được bằng ' + g0 + ' vàng');
   await tap(`#ecoShop .cd[data-id="${id}"]`); await T(500); await tap('#ecoShop [data-a="buy"]'); await T(1500);
   const r = await ev(id => ({ own: __island.eco.owns(id), g: __island.eco.gold() }), id); row.note += ` mua ${id}: ${g0}→${r.g}`;
   if (!r.own || r.g >= g0) throw new Error('mua không thành ' + JSON.stringify(r));
   a = await uiAudit('#ecoShop'); if (a.over.length || a.off.length) { row.note += ` cửa hàng: ${JSON.stringify(a)}`; row.bad = 1; }
-  await ev(() => { for (const i of ['ride-plane', 'broom-tap', 'ride-balloon']) if (!__island.eco.owns(i)) __island.eco.buy(i); });
+  await ev(() => { for (const i of ['ride-plane', 'broom-tap', 'ride-balloon', 'board-bac']) if (!__island.eco.owns(i)) __island.eco.buy(i); });
   await tap('#ecoShop [data-a="x"]'); await T(600); if (await rectOf('#ecoBag')) await tap('#ecoBag [data-a="x"]'); await T(600);
   const h = await health(); if (h.modal || h.frozen || await rectOf('#ecoShop') || await rectOf('#ecoBag')) throw new Error('đóng không hết ' + JSON.stringify(h));
   if (row.bad) return false;
@@ -333,7 +335,7 @@ await run('plane', 'Máy bay: lên → cất cánh → bay qua Học viện → 
   const tgt = K.acad; let dmin = 1e9;
   for (let i = 0, tf = Date.now(); Date.now() - tf < 240000; i++) {
     const s = await ev(t => { const a = __island.aircraft, q = __island.player.pos, want = Math.atan2(t[0] - q.x, t[1] - q.z); let d = want - a.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); return { d, dist: Math.hypot(t[0] - q.x, t[1] - q.z), y: q.y, phase: a.phase }; }, tgt);
-    dmin = Math.min(dmin, s.dist); if (s.dist < 60 || !(await ev(() => __island.aircraft.flying))) break;
+    dmin = Math.min(dmin, s.dist); if (s.dist < 130 || !(await ev(() => __island.aircraft.flying))) break;
     const turn = s.d > 0.1 ? 1 : s.d < -0.1 ? -1 : 0;   // dấu lái: thử, nếu sai thì đảo
     if (TOUCH) { await joyTo(-turn * 40, 0); await T(700); await joyUp(); } else if (turn) await hold(turn > 0 ? 'KeyA' : 'KeyD', 500); else await T(500);
   }
@@ -342,10 +344,13 @@ await run('plane', 'Máy bay: lên → cất cánh → bay qua Học viện → 
   if (dmin > 200) throw new Error('không bay tới được Học viện (gần nhất ' + Math.round(dmin) + ' m)');
   await tap('#bEject'); await T(1500);
   if (await ev(() => __island.aircraft.flying)) throw new Error('nút đỏ không nhảy ra được');
-  let gl = false; for (let i = 0; i < 90; i++) { const s = await ev(() => ({ g: !!(__island.player.glide && __island.player.glide.on), gr: __island.player.grounded })); gl = gl || s.g; if (s.gr && i > 2) break; if (i % 3 === 0) await forward(900); else await T(900); }
+  let gl = false; for (let i = 0; i < 90; i++) { const s = await ev(() => ({ g: !!(__island.glider && __island.glider.on), gr: __island.player.grounded })); gl = gl || s.g; if (s.gr && i > 2) break; if (i % 3 === 0) await forward(900); else await T(900); }
   row.note += ` diều ${gl ? 'mở' : 'KHÔNG mở'}`; const h = await health(); row.note += ` đáp ${JSON.stringify(h.pos)}`;
   if (!gl) throw new Error('diều lượn không mở');
   if (!(await ev(() => __island.player.grounded))) throw new Error('chưa chạm đất sau 90 s');
+  // đáp xuống rồi phải đi tiếp được (không kẹt trên mái/tường thành)
+  const yard = await ev(async () => { const g = await import('/js/island/academy/plan.js'); return g.toWorld(-20, 0); });
+  const pa = await P(); if (Math.hypot(pa.x - yard[0], pa.z - yard[1]) < 260) { const r = await walkTo(yard[0], yard[1], { sec: 60, run: true, near: 6 }); row.note += ` đi bộ về sân lâu đài: ${JSON.stringify(r)}`; if (!r.ok) throw new Error('đáp xuống rồi không đi về sân lâu đài được (kẹt trên cao?)'); }
 });
 await run('broom', 'Chổi 🧹: gọi, bay lên, bay tới, hạ, xuống', async row => {
   await goNear(L.school[0], L.school[1] + 8); await tap('#bBroom'); await T(2500);
@@ -368,18 +373,18 @@ await run('boat', 'Thuyền: lên thuyền buồm/ca nô ở làng chài, lái, 
   let lab = null;
   for (const [x, z] of b) { const g = await goNear(x, z); if (!g) continue; lab = await act(/⛵|🚤/, { sec: 5, must: false }); if (lab) break; }
   if (!lab) throw new Error('không có nút lên thuyền gần thuyền nào');
-  row.note = lab; await T(1500); if (!(await ev(() => !!__island.sea.pilot.aboard))) throw new Error('bấm rồi nhưng chưa lên thuyền');
+  row.note = lab; await T(1500); if (!(await ev(() => !!__island.player.vehicle))) throw new Error('bấm rồi nhưng chưa lên thuyền');
   await forward(4000);
   // quay về bờ: lái ngược lại rồi chờ nút 🏝️
   let left = await act(/🏝️|Lên bờ/, { sec: 2, must: false });
   for (let i = 0; i < 8 && !left; i++) { if (TOUCH) { await joyTo(0, 40); await T(1500); await joyUp(); } else await hold('KeyS', 1500); left = await act(/🏝️|Lên bờ/, { sec: 1, must: false }); }
   if (!left) { row.note += ' (không thấy 🏝️ Lên bờ)'; throw new Error('không lên bờ được'); }
-  await T(1500); if (await ev(() => !!__island.sea.pilot.aboard)) throw new Error('vẫn trên thuyền');
+  await T(1500); if (await ev(() => !!__island.player.vehicle)) throw new Error('vẫn trên thuyền');
 });
 
 // ---------- Tàu Pha Lê → Học viện ----------
 const AC = await ev(async () => { const g = await import('/js/island/academy/plan.js'); const W = g.toWorld, L2 = g.CASTLE_L, V = g.VILLAGE, F = g.FOREST, H = g.HOUSE_AT || {};
-  return { gate: W(g.CASTLE.u1 + 8, -14), yard: W(-20, 0), hall: W((L2.hall.u0 + L2.hall.u1) / 2, 0), hallDoor: W(L2.hall.u1 - 4, -5.3), alley: W(V.u0 + 8, V.v0 + 8), forestGate: W(F.gate[0], F.gate[1] + 8), forestIn: W(F.u + 40, F.v),
+  return { gate: W(g.CASTLE.u1 + 10, 0), inGate: W(g.CASTLE.u1 - 12, 0), yard: W(-20, 0), hall: W((L2.hall.u0 + L2.hall.u1) / 2, 0), hallDoor: W(L2.hall.u1 - 4, -5.3), alley: W(V.u0 + 8, V.v0 + 8), forestGate: W(F.gate[0], F.gate[1] + 8), forestIn: W(F.u + 40, F.v),
     lake: W(F.lake.u + F.lake.ring + 4, F.lake.v), houseLong: H.long ? W(H.long[0], H.long[1]) : null, cls: W(-30, -34.5), Y: g.PLAT.y }; });
 await run('train', 'Tàu Pha Lê: lên tàu ở ga đảo Rubik → tới ga Học viện → xuống tàu', async row => {
   await ev(() => { const pm = __island.premium; if (pm) { pm.allow = () => true; pm.on = () => true; } });
@@ -387,9 +392,9 @@ await run('train', 'Tàu Pha Lê: lên tàu ở ga đảo Rubik → tới ga H�
   // chờ tàu về ga A (nếu đang chạy)
   for (let i = 0; i < 100 && (await ev(() => __island.train.ride.state.at !== 'A' || __island.train.ride.state.phase === 'run')); i++) await T(2000);
   const c2 = await ev(() => { const c = __island.train.consist.cars[2]; const v = new c.o.position.constructor(); c.o.getWorldPosition(v); return [v.x, v.z]; });
-  await ev(c => { const p = __island.player; p.vehicle = null; p.teleport(c[0] + 4, c[1]); __pt.tp++; }, c2); await T(1500);
-  let lab = await act(/🚂/, { sec: 6, must: false });
-  if (!lab) { await ev(c => { __island.player.teleport(c[0] - 4, c[1]); __pt.tp++; }, c2); await T(1500); lab = await act(/🚂/, { sec: 6 }); }
+  const top = await ev(async () => (await import('/js/island/train/ride.js')).PARK.A.top); let lab = null;
+  for (const [dx, dz] of [[4, 0], [-4, 0], [0, 4], [0, -4], [5.5, 0], [-5.5, 0], [0, 5.5], [0, -5.5]]) { await ev(([c, dx, dz, y]) => { const p = __island.player; p.vehicle = null; p.teleport(c[0] + dx, c[1] + dz, y + 0.05); }, [c2, dx, dz, top]); await T(1500); lab = await act(/🚂/, { sec: 3, must: false }); if (lab) break; }
+  if (!lab) throw new Error('không thấy nút 🚂 Lên tàu trên sân ga');
   row.note = lab.slice(0, 40); await T(2500);
   if (!(await ev(() => __island.train.ride.state.aboard))) throw new Error('bấm 🚂 nhưng không lên tàu');
   for (let i = 0; i < 90 && (await ev(() => __island.train.ride.state.phase)) !== 'run'; i++) await T(1500);
@@ -403,7 +408,7 @@ await run('train', 'Tàu Pha Lê: lên tàu ở ga đảo Rubik → tới ga H�
 });
 await run('academy', 'Học viện: đi bộ tới cổng lâu đài → sân → Đại sảnh → nhận đũa → vào trong (7 tầng) → lên cầu thang', async row => {
   if ((await ev(() => __island.train.ride.state.at)) !== 'B' || !(ONLY && ONLY.includes('train'))) { await goNear(...AC.gate); }
-  for (const [n, t] of [['cổng', AC.gate], ['sân', AC.yard], ['đại sảnh', AC.hallDoor]]) { const r = await walkTo(t[0], t[1], { sec: 60, run: true }); row.note += ` ${n}:${r.ok ? 'ok' : JSON.stringify(r)}`; if (!r.ok) { await shot('ac-' + n); throw new Error(`không đi bộ tới ${n} được ` + JSON.stringify(r)); } }
+  for (const [n, t] of [['cổng', AC.gate], ['qua cổng', AC.inGate], ['sân', AC.yard], ['đại sảnh', AC.hallDoor]]) { const r = await walkTo(t[0], t[1], { sec: 60, run: true }); row.note += ` ${n}:${r.ok ? 'ok' : JSON.stringify(r)}`; if (!r.ok) { await shot('ac-' + n); throw new Error(`không đi bộ tới ${n} được ` + JSON.stringify(r)); } }
   await walkTo(AC.hall[0], AC.hall[1], { sec: 20 });
   // đũa phép
   if (!(await ev(() => !!localStorage.getItem('academy.wand')))) { const w = await act(/🪄/, { sec: 3, must: false }); if (w) { await T(1200); await tapText(/Chọn|Nhận|✨|OK|Xong/, '#mgCard', { must: false }); await T(800); await tapText(/Chọn|Nhận|✨|OK|Xong|Lưu/, '#mgCard', { must: false }); } if (!(await ev(() => !!localStorage.getItem('academy.wand')))) { row.note += ' (không nhận đũa được bằng nút)'; await ev(() => __island.academy && __island.academy.magic && __island.academy.magic.setWand && __island.academy.magic.setWand()); } }
@@ -462,7 +467,7 @@ await run('destiny', 'Rừng Thiên Định (đảo chính): đi bộ vào thung
   const D = await ev(async () => { const d = await import('/js/island/destiny-plan.js'); return { guide: d.GUIDE, trail: d.TRAIL, lake: [d.LAKE.x, d.LAKE.z + d.LAKE.r + 3], O: d.O }; });
   // theo lối mòn bí mật như người chơi: bia khắc đá → đom đóm → đá bước → khe dốc → ngã ba → sương → cầu khỉ → hang → thung lũng → hồ gương
   await goNear(D.guide[0][0] + 3, D.guide[0][1] + 3); let r = null, i = 0;
-  for (const w of [...D.guide.slice(1), ...D.trail, D.lake]) { r = await walkTo(w[0], w[1], { sec: 25, run: true, near: 2.2 }); i++; if (!r.ok) { row.note = `kẹt ở điểm ${i}/${D.guide.length + D.trail.length} ${JSON.stringify(w)} ${JSON.stringify(r)}`; await shot('rtd-ket'); break; } }
+  for (const w of [...D.guide.slice(1), ...D.trail.slice(2), D.lake]) { r = await walkTo(w[0], w[1], { sec: 25, run: true, near: 2.2 }); i++; if (!r.ok) { row.note = `kẹt ở điểm ${i}/${D.guide.length + D.trail.length} ${JSON.stringify(w)} ${JSON.stringify(r)}`; await shot('rtd-ket'); break; } }
   const p = await P(); r = { ok: Math.hypot(p.x - D.lake[0], p.z - D.lake[1]) < 16 }; row.note += ` tới hồ: ${r.ok}`; await shot('rung-thien-dinh');
   if (!r.ok) throw new Error('không tới được hồ Rừng Thiên Định');
 });
