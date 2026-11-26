@@ -171,7 +171,8 @@ export function createVehicles(ctx) {
   }
   function toggleBalloon() {
     if (cur && cur.type === 'balloon') return dismount();
-    if (deny('balloon') || !pl.grounded) return;
+    if (deny('balloon')) return;
+    if (!pl.grounded) return ctx.toast(`${ICON.balloon} Đứng vững trên mặt đất rồi bấm lại để thả khinh khí cầu nhé!`, 2200);   // trước đây bấm không phản hồi gì
     if (!owns('ride-balloon') && !nearest('balloon', 6)) return ctx.eco.locked('ride-balloon');
     if (pl.pos.y > 0.9 && Math.max(ctx.groundExtra ? ctx.groundExtra(pl.pos.x, pl.pos.z, pl.pos.y) : -99, boxTop(pl.pos.x, pl.pos.z, pl.pos.y)) > pl.pos.y - 0.3 && (ctx.boxes || []).some(b => pl.pos.x > b.x0 - 3 && pl.pos.x < b.x1 + 3 && pl.pos.z > b.z0 - 3 && pl.pos.z < b.z1 + 3 && b.top > pl.pos.y + 1)) { ctx.toast(`${ICON.balloon} Chỗ này chật quá, ra chỗ trống để thả khinh khí cầu!`, 2200); return; }
     const v = nearest('balloon', 6) || bring(mine.balloon || (mine.balloon = balloon()));
