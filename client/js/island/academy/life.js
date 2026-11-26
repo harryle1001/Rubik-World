@@ -39,7 +39,7 @@ const TALES = [
 
 export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
   const { player } = ctx, MOB = CFG.isMobile, H = L.hall;
-  let orbFx = null, feastFx = null, feastT = -99, sortK = -1, myDish = null;
+  let orbFx = null, feastFx = null, feastT = -99, sortK = -1, sortToastT = -99, myDish = null;
   let G = null, kids = [], flag = null, candles = null, flames = null, plates = [], fest = null, ghost = null, cook = null;
   const POLE = [22, 0];   // cột cờ (u, v) — Sân Đại Sảnh, sau cổng chính
   const hour = () => ctx.sky && ctx.sky.state ? ctx.sky.state.hour : 10;
@@ -213,7 +213,7 @@ export function createLife(ctx, magic, { Y, toWorld, toLocal, interior, L }) {
     if (ph === 'sorting' && kids.length) {
       const k = Math.floor(t / 5) % kids.length, kid = kids[k], HN = [['Nhà Long', '#ff5a4a'], ['Nhà Phụng', '#5aa0ff'], ['Nhà Lân', '#5ad070'], ['Nhà Quy', '#b07aff']], hn = HN[(k * 3 + Math.floor(t / 5 / kids.length)) % 4];
       if (k !== sortK) { sortK = k; if (kid.hero) kid.tgt = [HALL_HOUSE.orb[0] + 1.6, 0]; const prevKid = kids[(k + kids.length - 1) % kids.length]; if (prevKid) prevKid.tgt = seatSpot(prevKid.i);
-        orbFx.material.color.set(hn[1]); if (!interior.inside && pu > H.u0 && pu < H.u1 + 3 && Math.abs(pv) < H.v1) { ctx.sfx && ctx.sfx('magic'); ctx.toast(`🔮 Quả cầu Tứ Linh sáng rực màu… <b style="color:${hn[1]}">${hn[0]}</b>! Cả sảnh vỗ tay chào bạn mới. 👏`, 4000); } }
+        orbFx.material.color.set(hn[1]); if (!interior.inside && pu > H.u0 && pu < H.u1 + 3 && Math.abs(pv) < H.v1 && t - sortToastT > 34) { sortToastT = t;   // 1 lần mỗi 34 s (trước: mỗi 5 s, đè mất lời nhắc khác) ctx.sfx && ctx.sfx('magic'); ctx.toast(`🔮 Quả cầu Tứ Linh sáng rực màu… <b style="color:${hn[1]}">${hn[0]}</b>! Cả sảnh vỗ tay chào bạn mới. 👏`, 4000); } }
       orbFx.visible = true; const f = (t % 5) / 5; orbFx.scale.setScalar(1.5 + Math.sin(f * Math.PI) * 3.4);
     } else if (orbFx) orbFx.visible = false;
     // món ăn hiện ra bằng phép: hạt sáng xoáy trên bàn 2,6 s đầu giờ ăn
