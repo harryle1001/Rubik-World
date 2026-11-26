@@ -1,0 +1,1490 @@
+{
+ "thi-tran": {
+  "res": {
+   "name": "thi-tran",
+   "frames": 474,
+   "fps": 7.9,
+   "jsAvg": 66.7,
+   "jsP95": 112.7,
+   "jsP99": 164.8,
+   "jsMax": 239,
+   "logicAvg": 26.2,
+   "logicP99": 81,
+   "renderAvg": 40.6,
+   "over33": 473,
+   "over50": 369,
+   "over100": 37,
+   "gcMinor": 102,
+   "gcMajor": 4,
+   "gcMs": 441,
+   "heapMB": [
+    243.5,
+    295,
+    295
+   ],
+   "heapSlopeMBmin": 51.5,
+   "mods": "perf 5.33 · collide 3.14 · school 3.07 · ambience 0.61 · wild 0.50 · academy 0.46 · eggs 0.40 · train 0.39",
+   "ivLive": 2,
+   "toPerS": 0.3,
+   "rafPerF": 1,
+   "listeners": 211,
+   "geo": 423,
+   "tex": 223,
+   "prog": 184
+  },
+  "top": [
+   {
+    "fn": "updateMatrixWorld three/build/three.module.js:7772",
+    "msF": 11.2,
+    "pct": 8.1
+   },
+   {
+    "fn": "multiplyMatrices three/build/three.module.js:6262",
+    "msF": 4.01,
+    "pct": 2.9
+   },
+   {
+    "fn": "projectObject three/build/three.module.js:30038",
+    "msF": 3.53,
+    "pct": 2.6
+   },
+   {
+    "fn": "dispatchEvent :0",
+    "msF": 1.38,
+    "pct": 1
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:22551",
+    "msF": 1.36,
+    "pct": 1
+   },
+   {
+    "fn": "applyMatrix4 three/build/three.module.js:4168",
+    "msF": 1.23,
+    "pct": 0.9
+   },
+   {
+    "fn": "WebGLRenderer.renderBufferDirect three/build/three.module.js:29463",
+    "msF": 0.95,
+    "pct": 0.7
+   },
+   {
+    "fn": "o.update :5",
+    "msF": 0.92,
+    "pct": 0.7
+   },
+   {
+    "fn": "still island/perf.js:93",
+    "msF": 0.92,
+    "pct": 0.7
+   },
+   {
+    "fn": "setProgram three/build/three.module.js:30501",
+    "msF": 0.91,
+    "pct": 0.7
+   },
+   {
+    "fn": "update island/perf.js:152",
+    "msF": 0.82,
+    "pct": 0.6
+   },
+   {
+    "fn": "mark island/collide.js:26",
+    "msF": 0.77,
+    "pct": 0.6
+   },
+   {
+    "fn": "bindVertexArray :0",
+    "msF": 0.75,
+    "pct": 0.5
+   },
+   {
+    "fn": "traverse three/build/three.module.js:7720",
+    "msF": 0.72,
+    "pct": 0.5
+   },
+   {
+    "fn": "applyBoneTransform three/build/three.module.js:32881",
+    "msF": 0.68,
+    "pct": 0.5
+   }
+  ],
+  "heap": [
+   243.5,
+   239,
+   251.7,
+   231.8,
+   240.7,
+   257.2,
+   256.9,
+   249.9,
+   249.7,
+   243.6,
+   246.2,
+   238.9,
+   236.5,
+   256.3,
+   248.3,
+   238.1,
+   259.3,
+   250.6,
+   243.9,
+   268.2,
+   253.3,
+   240.8,
+   270.3,
+   256.3,
+   274.8,
+   265.7,
+   253.8,
+   272.4,
+   269,
+   270.3,
+   262,
+   282.9,
+   269.2,
+   261.6,
+   254.5,
+   279.8,
+   267.8,
+   265.5,
+   259.8,
+   282,
+   276.1,
+   265.4,
+   287.1,
+   278,
+   265.3,
+   288.4,
+   277.4,
+   267.5,
+   289.2,
+   276.3,
+   263.3,
+   282.7,
+   272.7,
+   264.5,
+   284.9,
+   277.5,
+   267,
+   285.4,
+   277.6,
+   295
+  ],
+  "ivSrc": [
+   "30000ms island/data/account.js:158:3",
+   "200ms island/hud-bar.js:81:3"
+  ]
+ },
+ "quang-truong": {
+  "res": {
+   "name": "quang-truong",
+   "frames": 419,
+   "fps": 7,
+   "jsAvg": 63.4,
+   "jsP95": 95,
+   "jsP99": 120.4,
+   "jsMax": 298,
+   "logicAvg": 18.6,
+   "logicP99": 57.4,
+   "renderAvg": 44.8,
+   "over33": 419,
+   "over50": 330,
+   "over100": 10,
+   "gcMinor": 68,
+   "gcMajor": 0,
+   "gcMs": 258,
+   "heapMB": [
+    267.2,
+    288.1,
+    282.3
+   ],
+   "heapSlopeMBmin": 15.1,
+   "mods": "perf 3.80 · ambience 2.01 · collide 1.92 · school 1.71 · train 0.40 · academy 0.39 · wild 0.37 · eggs 0.32",
+   "ivLive": 2,
+   "toPerS": 0.1,
+   "rafPerF": 1,
+   "listeners": 211,
+   "geo": 464,
+   "tex": 263,
+   "prog": 184
+  },
+  "top": [
+   {
+    "fn": "updateMatrixWorld three/build/three.module.js:7772",
+    "msF": 11.96,
+    "pct": 7.6
+   },
+   {
+    "fn": "multiplyMatrices three/build/three.module.js:6262",
+    "msF": 4.64,
+    "pct": 3
+   },
+   {
+    "fn": "projectObject three/build/three.module.js:30038",
+    "msF": 3.78,
+    "pct": 2.4
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:22551",
+    "msF": 1.34,
+    "pct": 0.9
+   },
+   {
+    "fn": "update three/build/three.module.js:33064",
+    "msF": 1.27,
+    "pct": 0.8
+   },
+   {
+    "fn": "WebGLRenderer.renderBufferDirect three/build/three.module.js:29463",
+    "msF": 1.25,
+    "pct": 0.8
+   },
+   {
+    "fn": "still island/perf.js:93",
+    "msF": 1.09,
+    "pct": 0.7
+   },
+   {
+    "fn": "applyMatrix4 three/build/three.module.js:4168",
+    "msF": 1.03,
+    "pct": 0.7
+   },
+   {
+    "fn": "setProgram three/build/three.module.js:30501",
+    "msF": 0.96,
+    "pct": 0.6
+   },
+   {
+    "fn": "bindVertexArray :0",
+    "msF": 0.94,
+    "pct": 0.6
+   },
+   {
+    "fn": "update three/build/three.module.js:18021",
+    "msF": 0.87,
+    "pct": 0.6
+   },
+   {
+    "fn": "update island/perf.js:152",
+    "msF": 0.79,
+    "pct": 0.5
+   },
+   {
+    "fn": "upload three/build/three.module.js:19283",
+    "msF": 0.69,
+    "pct": 0.4
+   },
+   {
+    "fn": "arraysEqual three/build/three.module.js:18261",
+    "msF": 0.61,
+    "pct": 0.4
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:30323",
+    "msF": 0.6,
+    "pct": 0.4
+   }
+  ],
+  "heap": [
+   267.2,
+   250.4,
+   247.7,
+   282.2,
+   273,
+   259.5,
+   275.4,
+   259.9,
+   280.4,
+   268,
+   286.9,
+   272.2,
+   287.9,
+   282,
+   272.9,
+   258.3,
+   272.5,
+   257.1,
+   273.7,
+   286.6,
+   272,
+   287.6,
+   275.4,
+   258.4,
+   277.6,
+   264,
+   279.9,
+   262.9,
+   281.8,
+   269,
+   287.7,
+   275.2,
+   258.7,
+   273.3,
+   287.6,
+   270.5,
+   284.8,
+   267.7,
+   284.1,
+   264.8,
+   281.4,
+   266.2,
+   280.4,
+   263.3,
+   280.1,
+   262.5,
+   279.1,
+   263.9,
+   279,
+   263.9,
+   282.1,
+   269.3,
+   288.1,
+   275.3,
+   261.9,
+   279.1,
+   262.2,
+   280.8,
+   265.6,
+   282.3
+  ],
+  "ivSrc": [
+   "30000ms island/data/account.js:158:3",
+   "200ms island/hud-bar.js:81:3"
+  ]
+ },
+ "hoc-vien": {
+  "res": {
+   "name": "hoc-vien",
+   "frames": 446,
+   "fps": 7.4,
+   "jsAvg": 72.7,
+   "jsP95": 109.1,
+   "jsP99": 199.9,
+   "jsMax": 402,
+   "logicAvg": 23.4,
+   "logicP99": 68.8,
+   "renderAvg": 49.3,
+   "over33": 446,
+   "over50": 423,
+   "over100": 29,
+   "gcMinor": 114,
+   "gcMajor": 0,
+   "gcMs": 440,
+   "heapMB": [
+    351.1,
+    411.7,
+    381
+   ],
+   "heapSlopeMBmin": 29.9,
+   "mods": "perf 5.73 · academy 4.91 · collide 1.70 · academyCreatures 1.02 · academyLife 0.91 · alley 0.79 · school 0.79 · forest 0.60",
+   "ivLive": 2,
+   "toPerS": 0.1,
+   "rafPerF": 1,
+   "listeners": 211,
+   "geo": 657,
+   "tex": 376,
+   "prog": 225
+  },
+  "top": [
+   {
+    "fn": "updateMatrixWorld three/build/three.module.js:7772",
+    "msF": 17.64,
+    "pct": 11.8
+   },
+   {
+    "fn": "multiplyMatrices three/build/three.module.js:6262",
+    "msF": 5.25,
+    "pct": 3.5
+   },
+   {
+    "fn": "projectObject three/build/three.module.js:30038",
+    "msF": 3.28,
+    "pct": 2.2
+   },
+   {
+    "fn": "applyMatrix4 three/build/three.module.js:4168",
+    "msF": 1.43,
+    "pct": 1
+   },
+   {
+    "fn": "texSubImage2D :0",
+    "msF": 1.27,
+    "pct": 0.9
+   },
+   {
+    "fn": "still island/perf.js:93",
+    "msF": 1.24,
+    "pct": 0.8
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:22551",
+    "msF": 1.1,
+    "pct": 0.7
+   },
+   {
+    "fn": "WebGLRenderer.renderBufferDirect three/build/three.module.js:29463",
+    "msF": 1.01,
+    "pct": 0.7
+   },
+   {
+    "fn": "applyBoneTransform three/build/three.module.js:32881",
+    "msF": 0.95,
+    "pct": 0.6
+   },
+   {
+    "fn": "update island/perf.js:152",
+    "msF": 0.95,
+    "pct": 0.6
+   },
+   {
+    "fn": "setProgram three/build/three.module.js:30501",
+    "msF": 0.93,
+    "pct": 0.6
+   },
+   {
+    "fn": "traverse three/build/three.module.js:7720",
+    "msF": 0.85,
+    "pct": 0.6
+   },
+   {
+    "fn": "bindVertexArray :0",
+    "msF": 0.85,
+    "pct": 0.6
+   },
+   {
+    "fn": "intersectsObject three/build/three.module.js:13401",
+    "msF": 0.8,
+    "pct": 0.5
+   },
+   {
+    "fn": "update three/build/three.module.js:18021",
+    "msF": 0.77,
+    "pct": 0.5
+   }
+  ],
+  "heap": [
+   351.1,
+   346.5,
+   358.5,
+   349.6,
+   349.8,
+   352.9,
+   362.6,
+   363.2,
+   361.8,
+   361.5,
+   368.4,
+   361.4,
+   358.1,
+   353,
+   373.9,
+   358.8,
+   348.3,
+   366.6,
+   362.3,
+   354.2,
+   353.3,
+   379.8,
+   370.3,
+   368.2,
+   365.7,
+   359,
+   387,
+   381.1,
+   374.4,
+   365.5,
+   358.4,
+   382.9,
+   372.8,
+   369.4,
+   363.5,
+   357.7,
+   379.7,
+   389.3,
+   399.5,
+   390.5,
+   409.8,
+   399.4,
+   386.9,
+   407.9,
+   393,
+   382.1,
+   385.2,
+   389.3,
+   382.3,
+   405.5,
+   397,
+   386.6,
+   408.3,
+   398,
+   390.1,
+   411.7,
+   406.1,
+   398.4,
+   391,
+   381
+  ],
+  "ivSrc": [
+   "30000ms island/data/account.js:158:3",
+   "200ms island/hud-bar.js:81:3"
+  ]
+ },
+ "lang-chai": {
+  "res": {
+   "name": "lang-chai",
+   "frames": 638,
+   "fps": 10.6,
+   "jsAvg": 48.6,
+   "jsP95": 72.3,
+   "jsP99": 103.6,
+   "jsMax": 118,
+   "logicAvg": 15.4,
+   "logicP99": 33.7,
+   "renderAvg": 33.3,
+   "over33": 629,
+   "over50": 211,
+   "over100": 8,
+   "gcMinor": 408,
+   "gcMajor": 3,
+   "gcMs": 1363,
+   "heapMB": [
+    408.2,
+    426,
+    270.6
+   ],
+   "heapSlopeMBmin": -137.6,
+   "mods": "perf 2.99 · sea 1.45 · school 0.72 · collide 0.70 · wild 0.62 · story 0.41 · academy 0.36 · train 0.34",
+   "ivLive": 2,
+   "toPerS": 0.1,
+   "rafPerF": 1,
+   "listeners": 211,
+   "geo": 566,
+   "tex": 298,
+   "prog": 212
+  },
+  "top": [
+   {
+    "fn": "updateMatrixWorld three/build/three.module.js:7772",
+    "msF": 9.99,
+    "pct": 10
+   },
+   {
+    "fn": "multiplyMatrices three/build/three.module.js:6262",
+    "msF": 3.14,
+    "pct": 3.1
+   },
+   {
+    "fn": "projectObject three/build/three.module.js:30038",
+    "msF": 2.68,
+    "pct": 2.7
+   },
+   {
+    "fn": "still island/perf.js:93",
+    "msF": 0.89,
+    "pct": 0.9
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:22551",
+    "msF": 0.8,
+    "pct": 0.8
+   },
+   {
+    "fn": "WebGLRenderer.renderBufferDirect three/build/three.module.js:29463",
+    "msF": 0.77,
+    "pct": 0.8
+   },
+   {
+    "fn": "setProgram three/build/three.module.js:30501",
+    "msF": 0.77,
+    "pct": 0.8
+   },
+   {
+    "fn": "update island/perf.js:152",
+    "msF": 0.76,
+    "pct": 0.8
+   },
+   {
+    "fn": "update three/build/three.module.js:18021",
+    "msF": 0.7,
+    "pct": 0.7
+   },
+   {
+    "fn": "applyMatrix4 three/build/three.module.js:4168",
+    "msF": 0.6,
+    "pct": 0.6
+   },
+   {
+    "fn": "intersectsObject three/build/three.module.js:13401",
+    "msF": 0.6,
+    "pct": 0.6
+   },
+   {
+    "fn": "bindVertexArray :0",
+    "msF": 0.6,
+    "pct": 0.6
+   },
+   {
+    "fn": "upload three/build/three.module.js:19283",
+    "msF": 0.57,
+    "pct": 0.6
+   },
+   {
+    "fn": "o.update :5",
+    "msF": 0.53,
+    "pct": 0.5
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:30323",
+    "msF": 0.44,
+    "pct": 0.4
+   }
+  ],
+  "heap": [
+   408.2,
+   397.5,
+   416.3,
+   404.7,
+   423.9,
+   410.2,
+   398,
+   417.9,
+   402.2,
+   420.3,
+   408.3,
+   426,
+   417.1,
+   406.6,
+   396.8,
+   419.9,
+   260.4,
+   261.2,
+   262.2,
+   262.5,
+   262.8,
+   263.5,
+   262.7,
+   266.6,
+   264.7,
+   267.4,
+   267.9,
+   268,
+   266.3,
+   266.6,
+   265.4,
+   267.9,
+   268.8,
+   266.4,
+   269.3,
+   268.7,
+   268,
+   269.8,
+   267,
+   269.8,
+   270.5,
+   267.4,
+   260.7,
+   268.1,
+   266.6,
+   268.3,
+   262.3,
+   262.5,
+   264.3,
+   268.2,
+   263.7,
+   262.8,
+   268.8,
+   266.9,
+   264.9,
+   270.8,
+   265.7,
+   270.4,
+   270.3,
+   270.6
+  ],
+  "ivSrc": [
+   "30000ms island/data/account.js:158:3",
+   "200ms island/hud-bar.js:81:3"
+  ]
+ },
+ "may-bay": {
+  "res": {
+   "name": "may-bay",
+   "frames": 526,
+   "fps": 8.8,
+   "jsAvg": 51.2,
+   "jsP95": 79.9,
+   "jsP99": 108.5,
+   "jsMax": 142,
+   "logicAvg": 15.4,
+   "logicP99": 61.3,
+   "renderAvg": 35.8,
+   "over33": 515,
+   "over50": 216,
+   "over100": 9,
+   "gcMinor": 164,
+   "gcMajor": 2,
+   "gcMs": 660,
+   "heapMB": [
+    279.4,
+    292,
+    276.2
+   ],
+   "heapSlopeMBmin": -3.2,
+   "mods": "perf 3.37 · school 1.38 · aircraft 0.75 · wild 0.71 · terrain 0.42 · eggs 0.39 · train 0.39 · academy 0.36",
+   "ivLive": 2,
+   "toPerS": 0.6,
+   "rafPerF": 1,
+   "listeners": 211,
+   "geo": 658,
+   "tex": 327,
+   "prog": 212
+  },
+  "top": [
+   {
+    "fn": "updateMatrixWorld three/build/three.module.js:7772",
+    "msF": 10.53,
+    "pct": 8.6
+   },
+   {
+    "fn": "multiplyMatrices three/build/three.module.js:6262",
+    "msF": 3.29,
+    "pct": 2.7
+   },
+   {
+    "fn": "projectObject three/build/three.module.js:30038",
+    "msF": 2.55,
+    "pct": 2.1
+   },
+   {
+    "fn": "WebGLRenderer.renderBufferDirect three/build/three.module.js:29463",
+    "msF": 0.97,
+    "pct": 0.8
+   },
+   {
+    "fn": "still island/perf.js:93",
+    "msF": 0.93,
+    "pct": 0.8
+   },
+   {
+    "fn": "update island/perf.js:152",
+    "msF": 0.83,
+    "pct": 0.7
+   },
+   {
+    "fn": "applyMatrix4 three/build/three.module.js:4168",
+    "msF": 0.82,
+    "pct": 0.7
+   },
+   {
+    "fn": "update three/build/three.module.js:18021",
+    "msF": 0.81,
+    "pct": 0.7
+   },
+   {
+    "fn": "o.update :5",
+    "msF": 0.81,
+    "pct": 0.7
+   },
+   {
+    "fn": "bindVertexArray :0",
+    "msF": 0.8,
+    "pct": 0.7
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:22551",
+    "msF": 0.76,
+    "pct": 0.6
+   },
+   {
+    "fn": "setProgram three/build/three.module.js:30501",
+    "msF": 0.73,
+    "pct": 0.6
+   },
+   {
+    "fn": "intersectsObject three/build/three.module.js:13401",
+    "msF": 0.66,
+    "pct": 0.5
+   },
+   {
+    "fn": "upload three/build/three.module.js:19283",
+    "msF": 0.61,
+    "pct": 0.5
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:30323",
+    "msF": 0.54,
+    "pct": 0.4
+   }
+  ],
+  "heap": [
+   279.4,
+   279.1,
+   277.2,
+   280.7,
+   280.4,
+   278.3,
+   274.6,
+   282.6,
+   278.4,
+   276.2,
+   275.9,
+   277.4,
+   281.5,
+   280.8,
+   279.2,
+   282.2,
+   279.4,
+   292,
+   290.6,
+   287.8,
+   285.3,
+   264.4,
+   276.6,
+   276.9,
+   275.5,
+   275.6,
+   277.4,
+   278.4,
+   279.4,
+   266.2,
+   268.5,
+   270.7,
+   272.7,
+   275.9,
+   265.3,
+   268.7,
+   276.5,
+   268.9,
+   274,
+   281.9,
+   284.5,
+   280.4,
+   283.8,
+   286.9,
+   277.4,
+   277.9,
+   281.2,
+   284.5,
+   285.8,
+   286.7,
+   287.7,
+   286.6,
+   287.1,
+   287.6,
+   288.1,
+   288.5,
+   274.8,
+   275.2,
+   275.6,
+   276.2
+  ],
+  "ivSrc": [
+   "30000ms island/data/account.js:158:3",
+   "200ms island/hud-bar.js:81:3"
+  ]
+ },
+ "tau": {
+  "res": {
+   "name": "tau",
+   "frames": 657,
+   "fps": 10.9,
+   "jsAvg": 46.2,
+   "jsP95": 66.8,
+   "jsP99": 85,
+   "jsMax": 129,
+   "logicAvg": 14.7,
+   "logicP99": 35.6,
+   "renderAvg": 31.6,
+   "over33": 634,
+   "over50": 185,
+   "over100": 2,
+   "gcMinor": 82,
+   "gcMajor": 0,
+   "gcMs": 247,
+   "heapMB": [
+    271.9,
+    306.6,
+    291.9
+   ],
+   "heapSlopeMBmin": 20,
+   "mods": "perf 3.31 · sea 1.01 · lighthouse 0.88 · school 0.75 · collide 0.51 · questsMod 0.39 · story 0.38 · academy 0.36",
+   "ivLive": 2,
+   "toPerS": 0.1,
+   "rafPerF": 1,
+   "listeners": 211,
+   "geo": 671,
+   "tex": 337,
+   "prog": 216
+  },
+  "top": [
+   {
+    "fn": "updateMatrixWorld three/build/three.module.js:7772",
+    "msF": 10.53,
+    "pct": 10.9
+   },
+   {
+    "fn": "multiplyMatrices three/build/three.module.js:6262",
+    "msF": 3.17,
+    "pct": 3.3
+   },
+   {
+    "fn": "projectObject three/build/three.module.js:30038",
+    "msF": 2.26,
+    "pct": 2.3
+   },
+   {
+    "fn": "still island/perf.js:93",
+    "msF": 1.03,
+    "pct": 1.1
+   },
+   {
+    "fn": "update island/perf.js:152",
+    "msF": 0.89,
+    "pct": 0.9
+   },
+   {
+    "fn": "WebGLRenderer.renderBufferDirect three/build/three.module.js:29463",
+    "msF": 0.76,
+    "pct": 0.8
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:22551",
+    "msF": 0.68,
+    "pct": 0.7
+   },
+   {
+    "fn": "update three/build/three.module.js:18021",
+    "msF": 0.68,
+    "pct": 0.7
+   },
+   {
+    "fn": "intersectsObject three/build/three.module.js:13401",
+    "msF": 0.65,
+    "pct": 0.7
+   },
+   {
+    "fn": "applyMatrix4 three/build/three.module.js:4168",
+    "msF": 0.64,
+    "pct": 0.7
+   },
+   {
+    "fn": "bindVertexArray :0",
+    "msF": 0.62,
+    "pct": 0.6
+   },
+   {
+    "fn": "setProgram three/build/three.module.js:30501",
+    "msF": 0.58,
+    "pct": 0.6
+   },
+   {
+    "fn": "depth island/ocean-water.js:191",
+    "msF": 0.55,
+    "pct": 0.6
+   },
+   {
+    "fn": "o.update :5",
+    "msF": 0.53,
+    "pct": 0.6
+   },
+   {
+    "fn": "upload three/build/three.module.js:19283",
+    "msF": 0.52,
+    "pct": 0.5
+   }
+  ],
+  "heap": [
+   271.9,
+   280.9,
+   285.1,
+   271.6,
+   275.8,
+   280.1,
+   282.6,
+   286.7,
+   272.9,
+   276.8,
+   296.4,
+   282.8,
+   300.8,
+   287.2,
+   278.1,
+   299.1,
+   286.7,
+   276.1,
+   295.5,
+   283.1,
+   304,
+   291.6,
+   275.9,
+   295.3,
+   283,
+   302.6,
+   287,
+   273.1,
+   291,
+   278.5,
+   297.9,
+   284.2,
+   277.6,
+   297,
+   284.6,
+   301.3,
+   286.3,
+   301.1,
+   284.2,
+   299,
+   290.2,
+   276.8,
+   295.2,
+   280.6,
+   299,
+   285.4,
+   300.8,
+   285.5,
+   302,
+   286.9,
+   301.6,
+   286.5,
+   306.6,
+   291.3,
+   275.7,
+   290.8,
+   275.2,
+   291.4,
+   275.7,
+   291.9
+  ],
+  "ivSrc": [
+   "30000ms island/data/account.js:158:3",
+   "200ms island/hud-bar.js:81:3"
+  ]
+ },
+ "mini-game": {
+  "res": {
+   "name": "mini-game",
+   "frames": 607,
+   "fps": 10.1,
+   "jsAvg": 48.8,
+   "jsP95": 73.3,
+   "jsP99": 91.1,
+   "jsMax": 112,
+   "logicAvg": 13,
+   "logicP99": 29.2,
+   "renderAvg": 35.8,
+   "over33": 598,
+   "over50": 211,
+   "over100": 3,
+   "gcMinor": 64,
+   "gcMajor": 0,
+   "gcMs": 183,
+   "heapMB": [
+    308.4,
+    340.3,
+    331.4
+   ],
+   "heapSlopeMBmin": 23,
+   "mods": "mg 3.56 · perf 3.32 · school 0.82 · collide 0.50 · sea 0.40 · academy 0.37 · eggs 0.37 · train 0.36",
+   "ivLive": 2,
+   "toPerS": 0.1,
+   "rafPerF": 1,
+   "listeners": 211,
+   "geo": 696,
+   "tex": 353,
+   "prog": 212
+  },
+  "top": [
+   {
+    "fn": "updateMatrixWorld three/build/three.module.js:7772",
+    "msF": 11.35,
+    "pct": 10.8
+   },
+   {
+    "fn": "multiplyMatrices three/build/three.module.js:6262",
+    "msF": 3.71,
+    "pct": 3.5
+   },
+   {
+    "fn": "projectObject three/build/three.module.js:30038",
+    "msF": 2.63,
+    "pct": 2.5
+   },
+   {
+    "fn": "still island/perf.js:93",
+    "msF": 1.11,
+    "pct": 1.1
+   },
+   {
+    "fn": "update island/perf.js:152",
+    "msF": 0.94,
+    "pct": 0.9
+   },
+   {
+    "fn": "update three/build/three.module.js:18021",
+    "msF": 0.89,
+    "pct": 0.8
+   },
+   {
+    "fn": "upload three/build/three.module.js:19283",
+    "msF": 0.81,
+    "pct": 0.8
+   },
+   {
+    "fn": "WebGLRenderer.renderBufferDirect three/build/three.module.js:29463",
+    "msF": 0.81,
+    "pct": 0.8
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:22551",
+    "msF": 0.8,
+    "pct": 0.8
+   },
+   {
+    "fn": "intersectsObject three/build/three.module.js:13401",
+    "msF": 0.75,
+    "pct": 0.7
+   },
+   {
+    "fn": "bindVertexArray :0",
+    "msF": 0.7,
+    "pct": 0.7
+   },
+   {
+    "fn": "setProgram three/build/three.module.js:30501",
+    "msF": 0.66,
+    "pct": 0.6
+   },
+   {
+    "fn": "update three/build/three.module.js:33064",
+    "msF": 0.62,
+    "pct": 0.6
+   },
+   {
+    "fn": "applyMatrix4 three/build/three.module.js:4168",
+    "msF": 0.61,
+    "pct": 0.6
+   },
+   {
+    "fn": "o.update :5",
+    "msF": 0.54,
+    "pct": 0.5
+   }
+  ],
+  "heap": [
+   308.4,
+   326.2,
+   310,
+   328.8,
+   316.2,
+   335,
+   318.8,
+   336.1,
+   318,
+   335.3,
+   320.6,
+   339.3,
+   326.6,
+   313.4,
+   332.5,
+   317.9,
+   335.2,
+   320.6,
+   339.3,
+   326.5,
+   312,
+   330.6,
+   315.7,
+   332.9,
+   316.6,
+   333.7,
+   318.9,
+   336,
+   322.6,
+   309.6,
+   328.1,
+   313.3,
+   330.4,
+   317.4,
+   334.4,
+   317.7,
+   334.7,
+   321.8,
+   340.3,
+   325.6,
+   309.1,
+   327.6,
+   314.6,
+   331.6,
+   316.7,
+   331.8,
+   316.9,
+   333.9,
+   319.1,
+   336.1,
+   321.1,
+   336.7,
+   321.8,
+   338.8,
+   320.5,
+   334.1,
+   317.3,
+   332.7,
+   317.9,
+   331.4
+  ],
+  "ivSrc": [
+   "30000ms island/data/account.js:158:3",
+   "200ms island/hud-bar.js:81:3"
+  ]
+ },
+ "giao-dien": {
+  "res": {
+   "name": "giao-dien",
+   "frames": 682,
+   "fps": 11.4,
+   "jsAvg": 46.1,
+   "jsP95": 73.6,
+   "jsP99": 90.9,
+   "jsMax": 224,
+   "logicAvg": 17.2,
+   "logicP99": 37.2,
+   "renderAvg": 28.9,
+   "over33": 558,
+   "over50": 226,
+   "over100": 3,
+   "gcMinor": 292,
+   "gcMajor": 1,
+   "gcMs": 906,
+   "heapMB": [
+    313.6,
+    355.5,
+    306.4
+   ],
+   "heapSlopeMBmin": -7.2,
+   "mods": "perf 3.35 · worldMap 2.04 · sea 1.54 · school 0.80 · wild 0.61 · collide 0.46 · academy 0.36 · vehicles 0.36",
+   "ivLive": 3,
+   "toPerS": 0.1,
+   "rafPerF": 1,
+   "listeners": 231,
+   "geo": 698,
+   "tex": 344,
+   "prog": 212
+  },
+  "top": [
+   {
+    "fn": "updateMatrixWorld three/build/three.module.js:7772",
+    "msF": 9.55,
+    "pct": 9.9
+   },
+   {
+    "fn": "multiplyMatrices three/build/three.module.js:6262",
+    "msF": 2.74,
+    "pct": 2.8
+   },
+   {
+    "fn": "projectObject three/build/three.module.js:30038",
+    "msF": 2.41,
+    "pct": 2.5
+   },
+   {
+    "fn": "buildBase island/world-map.js:56",
+    "msF": 1.21,
+    "pct": 1.2
+   },
+   {
+    "fn": "flatDist island/layout.js:118",
+    "msF": 1.04,
+    "pct": 1.1
+   },
+   {
+    "fn": "still island/perf.js:93",
+    "msF": 1.01,
+    "pct": 1
+   },
+   {
+    "fn": "update island/perf.js:152",
+    "msF": 0.92,
+    "pct": 1
+   },
+   {
+    "fn": "W island/world-map.js:128",
+    "msF": 0.69,
+    "pct": 0.7
+   },
+   {
+    "fn": "renderObject three/build/three.module.js:22551",
+    "msF": 0.68,
+    "pct": 0.7
+   },
+   {
+    "fn": "WebGLRenderer.renderBufferDirect three/build/three.module.js:29463",
+    "msF": 0.66,
+    "pct": 0.7
+   },
+   {
+    "fn": "update three/build/three.module.js:18021",
+    "msF": 0.64,
+    "pct": 0.7
+   },
+   {
+    "fn": "applyMatrix4 three/build/three.module.js:4168",
+    "msF": 0.55,
+    "pct": 0.6
+   },
+   {
+    "fn": "intersectsObject three/build/three.module.js:13401",
+    "msF": 0.54,
+    "pct": 0.6
+   },
+   {
+    "fn": "o.update :5",
+    "msF": 0.53,
+    "pct": 0.5
+   },
+   {
+    "fn": "bindVertexArray :0",
+    "msF": 0.52,
+    "pct": 0.5
+   }
+  ],
+  "heap": [
+   313.6,
+   333.7,
+   321.7,
+   341.5,
+   329.1,
+   318.4,
+   339.9,
+   327.7,
+   336,
+   355.5,
+   343.6,
+   328.6,
+   345.5,
+   330.4,
+   347.6,
+   337.5,
+   326.1,
+   345.8,
+   333.3,
+   351.5,
+   336.4,
+   353.1,
+   336.7,
+   343.5,
+   348.9,
+   328.4,
+   345.1,
+   331.7,
+   350.3,
+   333.9,
+   349.3,
+   333.3,
+   352,
+   337.3,
+   354.1,
+   342.1,
+   331.9,
+   351.9,
+   340,
+   354.6,
+   328.9,
+   301.9,
+   303.1,
+   302.6,
+   302.1,
+   302.6,
+   302.5,
+   302.6,
+   302.8,
+   302.6,
+   303.8,
+   302.1,
+   302.4,
+   304.7,
+   305.6,
+   304.5,
+   303.8,
+   305.8,
+   304.7,
+   306.4
+  ],
+  "ivSrc": [
+   "30000ms island/data/account.js:158:3",
+   "200ms island/hud-bar.js:81:3",
+   "3000ms at eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:2:19"
+  ]
+ },
+ "leak": {
+  "mini-game": {
+   "truoc": {
+    "heap": 333.2,
+    "geo": 732,
+    "tex": 374,
+    "lis": 231,
+    "iv": 2,
+    "kids": 1152
+   },
+   "sau10": {
+    "heap": 332.8,
+    "geo": 734,
+    "tex": 380,
+    "lis": 231,
+    "iv": 2,
+    "kids": 1152
+   },
+   "dHeapMB": -0.4,
+   "dGeo": 2,
+   "dTex": 6,
+   "dLis": 0,
+   "dIv": 0
+  },
+  "khu": {
+   "truoc": {
+    "heap": 324,
+    "geo": 705,
+    "tex": 390,
+    "lis": 231,
+    "iv": 2,
+    "kids": 1153
+   },
+   "sau10": {
+    "heap": 372.2,
+    "geo": 663,
+    "tex": 372,
+    "lis": 231,
+    "iv": 2,
+    "kids": 1153
+   },
+   "dHeapMB": 48.2,
+   "dGeo": -42,
+   "dTex": -18,
+   "dLis": 0,
+   "dIv": 0
+  },
+  "phuong-tien": {
+   "truoc": {
+    "heap": 323.5,
+    "geo": 682,
+    "tex": 375,
+    "lis": 231,
+    "iv": 2,
+    "kids": 1154
+   },
+   "sau10": {
+    "heap": 326.4,
+    "geo": 691,
+    "tex": 377,
+    "lis": 231,
+    "iv": 2,
+    "kids": 1160
+   },
+   "dHeapMB": 2.9,
+   "dGeo": 9,
+   "dTex": 2,
+   "dLis": 0,
+   "dIv": 0
+  }
+ }
+}
