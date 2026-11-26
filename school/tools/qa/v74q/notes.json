@@ -1,0 +1,65 @@
+{
+ "ver": "v74q · ổn định & kiểm tra tự động",
+ "fixed": [
+  {
+   "t": "NẶNG — FPS tụt dần theo thời gian chơi (máy tính: 58 → 18 FPS sau 3 phút, ~7 FPS sau 8 phút đứng yên).",
+   "f": "v46ZoneCache gọi clip() lên cùng canvas ~8 lần/giây không save/restore → ngăn xếp vùng cắt dài mãi. v74q đặt lại trạng thái canvas trước mỗi lần làm mới; sau sửa: 60 FPS cả 3 cỡ màn hình, vẫn 60 sau 150 giây (trước: 33 / 52 / 13 FPS khi đo cuối lượt)."
+  },
+  {
+   "t": "Nút “🏆 Bảng vàng / 🎉 Lễ hội” vẫn hiện khi đang bay, nằm dưới cần lái máy bay (bấm nhầm).",
+   "f": "Ẩn nút khi đang bay / điều khiển drone."
+  },
+  {
+   "t": "Chữ < 16px: 6 mảnh ánh sáng + gợi ý nhiệm vụ trong 📖 Hành trình (13px), “Fire Station · ☎️ 114” (15.8px), số cơ số ₂ trong bài Số nhị phân (13px).",
+   "f": "Nâng lên 16px; màn hẹp xếp 6 mảnh thành 3 cột."
+  },
+  {
+   "t": "Nút 🍚 no bụng chỉ cao 26px trên điện thoại (khó chạm).",
+   "f": "Nới vùng chạm ~40px bằng lớp trong suốt, hình không đổi."
+  }
+ ],
+ "decide": [
+  {
+   "t": "🔥 Đường bay tốc độ Tia Lửa: nút ✕ / Esc chỉ dừng đường bay, em vẫn ngồi trên máy bay (phải hạ cánh mới ra).",
+   "why": "Đúng thiết kế lái máy bay v51p. Nếu muốn trẻ nhỏ thoát nhanh, có thể thêm nút “Về mặt đất”."
+  },
+  {
+   "t": "56 bộ hẹn giờ setInterval chạy cùng lúc (không tăng thêm khi mở/đóng mini game — không rò rỉ).",
+   "why": "Gộp lại sẽ nhẹ máy hơn; thuộc phần độ mượt (v74r)."
+  },
+  {
+   "t": "v53cInit / v66tInit / v52wInit mất 130–170 ms lúc khởi động.",
+   "why": "Làm chậm tải lần đầu; thuộc phần tải/bộ nhớ (v74l)."
+  },
+  {
+   "t": "Vài ảnh khu khác ảnh chuẩn 25–62% (Sân Rubik, Khu cờ vua, Lớp Rubik).",
+   "why": "Đã xem: Khu cờ vua/Sân Rubik khác do học sinh đi lại; Lớp Rubik còn nền tuyết vì bộ kiểm vừa ép mùa thu và nền đang nướng lại — do bộ kiểm, không phải lỗi game."
+  },
+  {
+   "t": "Thông báo nổi (toast) có lúc che hàng phím Q-W-E trong 💻 Bài Gõ phím nhanh trên máy tính.",
+   "why": "Chỉ vài giây. Có thể dời toast lên trên khi đang trong mini game — cần chủ game chọn vị trí."
+  }
+ ],
+ "cleanup": [
+  {
+   "f": "js/ext/v60t-core.js, js/ext/v60t-view.js (~44 KB)",
+   "why": "Góc nhìn thứ 3 v60t đã gỡ khỏi FILES; không file nào gọi tới (chỉ còn nhắc trong chú thích v64p-sky)."
+  },
+  {
+   "f": "tools/qa: run.js, review.js, look.js, fps.js, fps_review.js, compose_review.js, build_report.py, qa-lib.js",
+   "why": "Bộ QA v54 cũ — check.js đã làm đủ (tải, khu, mini game, chữ, nút, FPS, lưu/tải)."
+  },
+  {
+   "f": "tools/qa: v62f-*, v63f-*, v64m-*, v64s-*, v71d-* (kịch bản chụp duyệt từng đợt)",
+   "why": "Dùng một lần cho từng bản; giữ nếu muốn chụp lại đúng đợt cũ."
+  },
+  {
+   "f": "school/*.png — 114 ảnh REVIEW_/PREVIEW_ (~90 MB) và BAO_CAO_*.html cũ",
+   "why": "Ảnh duyệt các bản trước; có thể chuyển ra kho riêng để repo nhẹ."
+  },
+  {
+   "f": "js/ext/v54q-* (Robo Thám Tử trong game, chỉ chủ game)",
+   "why": "KHÔNG xoá: check.js dùng lại v54qPlaces / v54qGames / v54qSig."
+  }
+ ]
+}
