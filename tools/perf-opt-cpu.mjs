@@ -2,6 +2,7 @@
 // Chạy: node server/index.js &  rồi  node tools/perf-opt-cpu.mjs --out=docs/perf/opt-cpu/before [--sec=60] [--only=thi-tran,may-bay] [--leak] [--no-scen]
 // Mỗi kịch bản: JS/khung (vòng lặp game + vẽ phía CPU) trung bình · p95 · p99, khung > 33/50/100 ms, GC (số lần, ms),
 // heap theo giây, TOP 15 hàm (self time), số setInterval sống / setTimeout mỗi giây / rAF phụ mỗi khung / listener.
+// --alloc: lấy mẫu cấp phát (hàm nào tạo rác) · --dom: đếm thay đổi DOM/giây · --save-prof: lưu .cpuprofile
 // --leak: vào/ra mini game, khu (học viện ↔ thị trấn), phương tiện (xe đạp, phà) 10 lần → heap sau GC + geometry/texture.
 // GPU giả lập (SwiftShader) → giảm điểm ảnh (--px, mặc định 0,25) để luồng chính không chờ GPU, đo đúng phần JS.
 import { createRequire } from 'module';
@@ -10,7 +11,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const arg = k => (process.argv.find(a => a.startsWith('--' + k + '=')) || '').split('=')[1];
 const URL = arg('url') || 'http://localhost:3000/ocean.html', OUT = arg('out'), THR = +(arg('throttle') ?? 4), SEC = +(arg('sec') ?? 60), PX = +(arg('px') ?? 0.25);
-const ONLY = arg('only') ? arg('only').split(',') : null, LEAK = process.argv.includes('--leak'), NOSCEN = process.argv.includes('--no-scen'), MG = arg('mg') || 'caro', DOM = process.argv.includes('--dom');
+const ONLY = arg('only') ? arg('only').split(',') : null, LEAK = process.argv.includes('--leak'), NOSCEN = process.argv.includes('--no-scen'), MG = arg('mg') || 'caro', DOM = process.argv.includes('--dom'), ALLOC = process.argv.includes('--alloc');
 if (OUT) fs.mkdirSync(OUT, { recursive: true });
 const errors = [];
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--js-flags=--expose-gc'] });
@@ -90,8 +91,10 @@ async function measure(name) {
   if (DOM) await page.evaluate(() => { const M = window.__dm = new Map(); const d = n => { const e = n.nodeType === 1 ? n : n.parentElement; return e ? (e.id ? '#' + e.id : e.tagName.toLowerCase() + (e.className && typeof e.className === 'string' ? '.' + e.className.split(' ')[0] : '') + (e.parentElement && e.parentElement.id ? '<#' + e.parentElement.id : '')) : '?'; };
     window.__mo = new MutationObserver(l => { for (const m of l) { const k = d(m.target) + ' ' + m.type + (m.attributeName ? ':' + m.attributeName : ''); M.set(k, (M.get(k) || 0) + 1); } }); __mo.observe(document.body, { subtree: true, attributes: true, childList: true, characterData: true }); });
   await cdp.send('Profiler.start');
+  if (ALLOC) { await cdp.send('HeapProfiler.enable'); await cdp.send('HeapProfiler.startSampling', { samplingInterval: 16384, includeObjectsCollectedByMajorGC: true, includeObjectsCollectedByMinorGC: true }); }
   const heap = []; for (let s = 0; s < SEC; s++) { await page.waitForTimeout(1000); heap.push(await page.evaluate(() => +(performance.memory.usedJSHeapSize / 1048576).toFixed(1))); }
   const { profile } = await cdp.send('Profiler.stop');
+  let alloc = null; if (ALLOC) { const { profile: hp } = await cdp.send('HeapProfiler.stopSampling'); const m = new Map(); const nm = q => q ? `${q.callFrame.functionName || '(anon)'} ${(q.callFrame.url || '').replace(/^.*\/(js|lib)\//, '').replace('three/build/three.module.js', 'three')}:${q.callFrame.lineNumber + 1}` : ''; const walk = (q, a, b) => { const k = nm(q) + ' < ' + nm(a) + ' < ' + nm(b); m.set(k, (m.get(k) || 0) + q.selfSize); q.children.forEach(c => walk(c, q, a)); }; walk(hp.head, null, null); alloc = [...m].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, b]) => k.slice(0, 160) + ' ' + Math.round(b / 1024 / SEC) + ' KB/s'); }
   const dom = DOM ? await page.evaluate(S => { __mo.disconnect(); return [...__dm].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, v]) => k + ' ' + (v / S).toFixed(1) + '/s'); }, SEC) : null;
   await cdp.send('Tracing.end'); await done; cdp.off('Tracing.dataCollected', onData);
   const P = await page.evaluate(() => { const F = __pf, T = __tm; F.on = false; return { mod: F.mod, js: F.js.slice(), rd: F.rd.slice(), iv: F.iv.slice(), to: T.to, raf: T.raf, lis: T.lis, ivLive: T.iv.size, ivSrc: [...T.ivSrc.values()], info: { geo: __island.renderer.info.memory.geometries, tex: __island.renderer.info.memory.textures, prog: __island.renderer.info.programs.length } }; });
@@ -108,7 +111,7 @@ async function measure(name) {
     gcMinor: minor.length, gcMajor: major.length, gcMs: Math.round(gcs.reduce((a, g) => a + g.dur, 0)),
     heapMB: [heap[0], Math.max(...heap), heap.at(-1)], heapSlopeMBmin: +((heap.at(-1) - heap[0]) / SEC * 60).toFixed(1),
     mods: Object.entries(P.mod).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, v]) => k + ' ' + (v / n).toFixed(2)).join(' · '), ivLive: P.ivLive, toPerS: +((P.to - t0.to) / SEC).toFixed(1), rafPerF: +((P.raf - t0.raf) / n).toFixed(2), listeners: P.lis, ...P.info };
-  if (dom) res.dom = dom; return { res, top, heap, ivSrc: P.ivSrc, profile };
+  if (dom) res.dom = dom; if (alloc) res.alloc = alloc; return { res, top, heap, ivSrc: P.ivSrc, profile };
 }
 const rows = [], all = {};
 if (!NOSCEN) for (const [name, setup] of Object.entries(SCEN)) {
@@ -119,7 +122,7 @@ if (!NOSCEN) for (const [name, setup] of Object.entries(SCEN)) {
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: THR });
   const m = await measure(name);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
-  if (OUT) { await page.screenshot({ path: `${OUT}/${name}.jpg`, quality: 70, scale: 'css', type: 'jpeg' }); fs.writeFileSync(`${OUT}/${name}.cpuprofile`, JSON.stringify(m.profile)); }
+  if (OUT) { await page.screenshot({ path: `${OUT}/${name}.jpg`, quality: 70, scale: 'css', type: 'jpeg' }); if (process.argv.includes('--save-prof')) fs.writeFileSync(`${OUT}/${name}.cpuprofile`, JSON.stringify(m.profile)); }
   await page.evaluate(() => __pf.release());
   if (TEARDOWN[name]) await page.evaluate(src => { (0, eval)('(' + src + ')')(); }, TEARDOWN[name].toString()).catch(e => console.log('teardown', e.message));
   await page.waitForTimeout(1500);
