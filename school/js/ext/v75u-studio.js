@@ -164,6 +164,7 @@ function v75uCss(){
   for(const k in V75U.B){ const B = V75U.B[k], d = L[k];
     if(d && (d.hide || d.menu) && !B.o.lock){ s += `html:not(.v75uArr):not([data-v75upk~="${k}"]) ${B.sel}{display:none!important}html.v75uArr ${B.sel}{filter:opacity(.38)!important}`; }
     else if(B.o.panel && a < 1) s += `html:not(.v75uArr) ${B.sel}{filter:opacity(${a})!important}`; }
+  if(L.toast) s += '#toast{pointer-events:none!important}';   // thông báo chỉ để đọc: đặt chỗ mới thì không chặn nút bên dưới
   V75U.css.textContent = s;
 }
 // dời vào menu: bấm ô trong ☰ → nút thì bấm luôn, bảng/hàng nút thì hiện tạm 12 giây
