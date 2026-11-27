@@ -549,7 +549,10 @@ function v75uExportLayout(){
 function v75uFabPos(){
   const b = document.getElementById('v75uFab'), st = document.getElementById('stage'); if(!b || !st) return; let y = 0, x = 0; const sr = st.getBoundingClientRect();
   ['#v32MisBtn', '#v32LogBtn', '#v70sIc'].forEach(q => { const e = document.querySelector(q); if(!e || !e.getClientRects().length) return; const r = e.getBoundingClientRect(); if(r.left > sr.left + sr.width/2 && r.bottom > y){ y = r.bottom; x = sr.right - r.right; } });
-  if(y){ const v = Math.round(y - sr.top + 8) + 'px', h = Math.round(x) + 'px'; if(b.style.top !== v) b.style.top = v; if(b.style.right !== h) b.style.right = h; }
+  if(y){ // chỗ mặc định: dưới cột nút phải; đè khối khác (vd. cột nút tròn đã dời sang phải) → thử sang trái từng 54px
+    const others = v75uBoxes().filter(o => o.k !== 'studio'), W = 46; let bx = sr.right - x - W, by = y + 8;
+    for(let i = 0; i < 6 && others.some(o => v75uHit({x:bx, y:by, w:W, h:W}, o, 2)); i++) bx -= 54;
+    const v = Math.round(by - sr.top) + 'px', h = Math.round(sr.right - bx - W) + 'px'; if(b.style.top !== v) b.style.top = v; if(b.style.right !== h) b.style.right = h; }
   else if(b.style.top){ b.style.top = ''; b.style.right = ''; }
 }
 function v75uOnResize(){
