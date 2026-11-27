@@ -1,31 +1,31 @@
 {
  "mode": "files",
- "at": "2026-11-27T05:00:09.060Z",
+ "at": "2026-11-27T05:06:45.886Z",
  "url": "http://localhost:8792/index.html",
  "issues": [
   {
    "sev": "info",
    "cat": "init",
    "vp": "phone",
-   "title": "Init v52wInit() chạy chậm: 120.7 ms"
+   "title": "Init v52wInit() chạy chậm: 134.6 ms"
   },
   {
    "sev": "info",
    "cat": "init",
    "vp": "phone",
-   "title": "Init v53cInit() chạy chậm: 164 ms"
+   "title": "Init v53cInit() chạy chậm: 171.5 ms"
   },
   {
    "sev": "info",
    "cat": "init",
    "vp": "phone",
-   "title": "Init v66tInit() chạy chậm: 147.8 ms"
+   "title": "Init v66tInit() chạy chậm: 145.1 ms"
   },
   {
    "sev": "low",
    "cat": "ảnh",
    "vp": "phone",
-   "title": "Ảnh “Lớp Rubik” khác ảnh chuẩn 66%",
+   "title": "Ảnh “Lớp Rubik” khác ảnh chuẩn 65%",
    "img": "files_phone_z_rubik.jpg",
    "ref": "v74q/base/phone_rubik.jpg"
   },
@@ -33,7 +33,7 @@
    "sev": "low",
    "cat": "ảnh",
    "vp": "phone",
-   "title": "Ảnh “Sân Rubik” khác ảnh chuẩn 80%",
+   "title": "Ảnh “Sân Rubik” khác ảnh chuẩn 81%",
    "img": "files_phone_z_rubikyard.jpg",
    "ref": "v74q/base/phone_rubikyard.jpg"
   },
@@ -65,7 +65,7 @@
    "sev": "low",
    "cat": "ảnh",
    "vp": "phone",
-   "title": "Ảnh “Khu rừng thông” khác ảnh chuẩn 19%",
+   "title": "Ảnh “Khu rừng thông” khác ảnh chuẩn 20%",
    "img": "files_phone_z_forest.jpg",
    "ref": "v74q/base/phone_forest.jpg"
   },
@@ -81,7 +81,7 @@
    "sev": "low",
    "cat": "ảnh",
    "vp": "phone",
-   "title": "Ảnh “Hầm tên lửa · tàu hải quân” khác ảnh chuẩn 46%",
+   "title": "Ảnh “Hầm tên lửa · tàu hải quân” khác ảnh chuẩn 50%",
    "img": "files_phone_z_navy.jpg",
    "ref": "v74q/base/phone_navy.jpg"
   },
@@ -112,7 +112,7 @@
   {
    "sev": "low",
    "cat": "ảnh",
-   "vp": "phone,desk",
+   "vp": "phone",
    "title": "Ảnh “Trường Tin học” khác ảnh chuẩn 22%",
    "img": "files_phone_z_v51t.jpg",
    "ref": "v74q/base/phone_v51t.jpg"
@@ -120,179 +120,15 @@
   {
    "sev": "info",
    "cat": "mini game",
-   "vp": "phone,desk",
+   "vp": "phone",
    "title": "“🚁 Drone” không mở với người chơi thường (chỉ chủ game — đúng thiết kế)"
   },
   {
    "sev": "info",
    "cat": "mini game",
-   "vp": "phone,desk",
+   "vp": "phone",
    "title": "“🔥 Đường bay tốc độ Tia Lửa” không đóng bằng Esc / nút ✕ (phải ép đóng)",
    "img": "files_phone_g__duong_bay_toc_do_Tia_Lua.jpg"
-  },
-  {
-   "sev": "mid",
-   "cat": "nút che",
-   "vp": "phone",
-   "title": "Nút bị che trên màn hình chính: #v44Lamp ⟵ bị #v75uFab che",
-   "desc": "#v44Lamp ⟵ bị #v75uFab che",
-   "img": "files_phone_hud.jpg"
-  },
-  {
-   "sev": "info",
-   "cat": "init",
-   "vp": "desk",
-   "title": "Init v53cInit() chạy chậm: 157.2 ms"
-  },
-  {
-   "sev": "info",
-   "cat": "init",
-   "vp": "desk",
-   "title": "Init v66tInit() chạy chậm: 130.8 ms"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Lớp Rubik” khác ảnh chuẩn 68%",
-   "img": "files_desk_z_rubik.jpg",
-   "ref": "v74q/base/desk_rubik.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Sân Rubik” khác ảnh chuẩn 63%",
-   "img": "files_desk_z_rubikyard.jpg",
-   "ref": "v74q/base/desk_rubikyard.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Sân bóng đá” khác ảnh chuẩn 26%",
-   "img": "files_desk_z_field.jpg",
-   "ref": "v74q/base/desk_field.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Cánh đồng hoa” khác ảnh chuẩn 30%",
-   "img": "files_desk_z_flowerfield.jpg",
-   "ref": "v74q/base/desk_flowerfield.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Sân bóng rổ” khác ảnh chuẩn 23%",
-   "img": "files_desk_z_basket.jpg",
-   "ref": "v74q/base/desk_basket.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Vườn hoa Đà Lạt” khác ảnh chuẩn 25%",
-   "img": "files_desk_z_garden.jpg",
-   "ref": "v74q/base/desk_garden.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Khu rừng thông” khác ảnh chuẩn 25%",
-   "img": "files_desk_z_forest.jpg",
-   "ref": "v74q/base/desk_forest.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Hồ bơi Olympic 5 làn” khác ảnh chuẩn 23%",
-   "img": "files_desk_z_pool.jpg",
-   "ref": "v74q/base/desk_pool.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Trường đua Rubik Kart” khác ảnh chuẩn 24%",
-   "img": "files_desk_z_kart.jpg",
-   "ref": "v74q/base/desk_kart.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Quảng trường lễ hội” khác ảnh chuẩn 24%",
-   "img": "files_desk_z_plaza.jpg",
-   "ref": "v74q/base/desk_plaza.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Hầm tên lửa · tàu hải quân” khác ảnh chuẩn 39%",
-   "img": "files_desk_z_navy.jpg",
-   "ref": "v74q/base/desk_navy.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Nhà ống phố” khác ảnh chuẩn 43%",
-   "img": "files_desk_z_hNha_ong_pho.jpg",
-   "ref": "v74q/base/desk_hNha_ong_pho.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Nhà kiểu Nhật” khác ảnh chuẩn 31%",
-   "img": "files_desk_z_hNha_kieu_Nhat.jpg",
-   "ref": "v74q/base/desk_hNha_kieu_Nhat.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Nhà Địa Trung Hải” khác ảnh chuẩn 32%",
-   "img": "files_desk_z_hNha_dia_Trung_Hai.jpg",
-   "ref": "v74q/base/desk_hNha_dia_Trung_Hai.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Đồng lúa Vàng” khác ảnh chuẩn 20%",
-   "img": "files_desk_z_v52rice.jpg",
-   "ref": "v74q/base/desk_v52rice.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Bãi Cát Vàng · lặn biển” khác ảnh chuẩn 22%",
-   "img": "files_desk_z_v52beach.jpg",
-   "ref": "v74q/base/desk_v52beach.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Trạm cứu hỏa” khác ảnh chuẩn 21%",
-   "img": "files_desk_z_v53c.jpg",
-   "ref": "v74q/base/desk_v53c.jpg"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Phố nhà Đà Lạt” khác ảnh chuẩn 21%",
-   "img": "files_desk_z_dalat.jpg",
-   "ref": "v74q/base/desk_dalat.jpg"
   }
  ],
  "static": {
@@ -799,18 +635,18 @@
     "head": "v60t · GÓC NHÌN THỨ 3 SAU LƯNG 1/2: vẽ phối cảnh khi đi bộ / đạp xe (mặt đất mode-7, trời, billboard, nhân vật nhìn từ sau) ================"
    }
   ],
-  "lines": 33278
+  "lines": 33281
  },
  "vp": {
   "phone": {
    "vi": "Điện thoại dọc 390×844",
    "steps": {},
-   "loadMs": 2715,
+   "loadMs": 2960,
    "init": [
     {
      "n": "extInit",
      "ok": 1,
-     "ms": 17.5
+     "ms": 14.8
     },
     {
      "n": "ext7Init",
@@ -820,17 +656,17 @@
     {
      "n": "ext8Init",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "ext9Init",
      "ok": 1,
-     "ms": 6.6
+     "ms": 0.8
     },
     {
      "n": "ext11Init",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "ext12Init",
@@ -840,52 +676,52 @@
     {
      "n": "ext13Init",
      "ok": 1,
-     "ms": 0.8
+     "ms": 0.6
     },
     {
      "n": "ext14Init",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.3
     },
     {
      "n": "ext15Init",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0.2
     },
     {
      "n": "ext16Init",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0
     },
     {
      "n": "ext17Init",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.3
     },
     {
      "n": "ext18Init",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "ext19Init",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.4
     },
     {
      "n": "v16Init",
      "ok": 1,
-     "ms": 0.8
+     "ms": 0.5
     },
     {
      "n": "v17Init",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.2
     },
     {
      "n": "v18Init",
      "ok": 1,
-     "ms": 1.3
+     "ms": 1.1
     },
     {
      "n": "v19Init",
@@ -895,27 +731,27 @@
     {
      "n": "v21Init",
      "ok": 1,
-     "ms": 1.4
+     "ms": 0.9
     },
     {
      "n": "v22Init",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.3
     },
     {
      "n": "v23Init",
      "ok": 1,
-     "ms": 16.5
+     "ms": 15
     },
     {
      "n": "v24Init",
      "ok": 1,
-     "ms": 0.7
+     "ms": 0.5
     },
     {
      "n": "v25Init",
      "ok": 1,
-     "ms": 0.7
+     "ms": 0.4
     },
     {
      "n": "v26Init",
@@ -925,17 +761,17 @@
     {
      "n": "v27Init",
      "ok": 1,
-     "ms": 9.3
+     "ms": 11
     },
     {
      "n": "v32Init",
      "ok": 1,
-     "ms": 9.1
+     "ms": 8.4
     },
     {
      "n": "v33Init",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0.2
     },
     {
      "n": "v34Init",
@@ -945,7 +781,7 @@
     {
      "n": "v35Init",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0
     },
     {
      "n": "v36Init",
@@ -955,17 +791,17 @@
     {
      "n": "v37Init",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.3
     },
     {
      "n": "v38Init",
      "ok": 1,
-     "ms": 0.7
+     "ms": 0.5
     },
     {
      "n": "v39Init",
      "ok": 1,
-     "ms": 3.9
+     "ms": 3.5
     },
     {
      "n": "v40Init",
@@ -975,12 +811,12 @@
     {
      "n": "v41Init",
      "ok": 1,
-     "ms": 0.6
+     "ms": 0.5
     },
     {
      "n": "v42Init",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.3
     },
     {
      "n": "v44Init",
@@ -1005,22 +841,22 @@
     {
      "n": "v45FarmInit",
      "ok": 1,
-     "ms": 0.6
+     "ms": 0.7
     },
     {
      "n": "v45PondInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "v45ArtsInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "v45SportsInit",
      "ok": 1,
-     "ms": 0
+     "ms": 0.1
     },
     {
      "n": "v45RubikChessInit",
@@ -1030,7 +866,7 @@
     {
      "n": "v45OnlineInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0
     },
     {
      "n": "v45ShopInit",
@@ -1040,7 +876,7 @@
     {
      "n": "v46Init",
      "ok": 1,
-     "ms": 47.4
+     "ms": 49.3
     },
     {
      "n": "v48mInit",
@@ -1050,7 +886,7 @@
     {
      "n": "v48cInit",
      "ok": 1,
-     "ms": 1.5
+     "ms": 1.8
     },
     {
      "n": "v49rInit",
@@ -1060,117 +896,117 @@
     {
      "n": "v50Init",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.3
     },
     {
      "n": "v51aInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "v51pInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.4
     },
     {
      "n": "v51tInit",
      "ok": 1,
-     "ms": 37.3
+     "ms": 38.1
     },
     {
      "n": "v52wInit",
      "ok": 1,
-     "ms": 120.7
+     "ms": 134.6
     },
     {
      "n": "v52lInit",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.3
     },
     {
      "n": "v53cInit",
      "ok": 1,
-     "ms": 164
+     "ms": 171.5
     },
     {
      "n": "v53sInit",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.6
     },
     {
      "n": "v53vInit",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.5
     },
     {
      "n": "v55sInit",
      "ok": 1,
-     "ms": 88.9
+     "ms": 109.9
     },
     {
      "n": "v56pInit",
      "ok": 1,
-     "ms": 2.2
+     "ms": 3.1
     },
     {
      "n": "v54qInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0.2
     },
     {
      "n": "v58tInit",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.8
     },
     {
      "n": "v57pInit",
      "ok": 1,
-     "ms": 20.6
+     "ms": 29.6
     },
     {
      "n": "v59gInit",
      "ok": 1,
-     "ms": 0
+     "ms": 0.1
     },
     {
      "n": "v62fInit",
      "ok": 1,
-     "ms": 1.1
+     "ms": 1.5
     },
     {
      "n": "v62kInit",
      "ok": 1,
-     "ms": 2
+     "ms": 0.6
     },
     {
      "n": "v63fInit",
      "ok": 1,
-     "ms": 0.7
+     "ms": 0.4
     },
     {
      "n": "v61lInit",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.3
     },
     {
      "n": "v61fInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0.2
     },
     {
      "n": "v64mInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "v64pInit",
      "ok": 1,
-     "ms": 6.4
+     "ms": 9.7
     },
     {
      "n": "v64sInit",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.7
     },
     {
      "n": "v65aInit",
@@ -1180,17 +1016,17 @@
     {
      "n": "v65bInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "v65cInit",
      "ok": 1,
-     "ms": 0
+     "ms": 0.2
     },
     {
      "n": "v65fInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0.2
     },
     {
      "n": "v65dInit",
@@ -1200,22 +1036,22 @@
     {
      "n": "v65eInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0.2
     },
     {
      "n": "v66cInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0
     },
     {
      "n": "v66tInit",
      "ok": 1,
-     "ms": 147.8
+     "ms": 145.1
     },
     {
      "n": "v67lInit",
      "ok": 1,
-     "ms": 1.2
+     "ms": 1.3
     },
     {
      "n": "v68mInit",
@@ -1230,7 +1066,7 @@
     {
      "n": "v70sInit",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.6
     },
     {
      "n": "v70eInit",
@@ -1240,12 +1076,12 @@
     {
      "n": "v70fInit",
      "ok": 1,
-     "ms": 12.6
+     "ms": 12.9
     },
     {
      "n": "v71dInit",
      "ok": 1,
-     "ms": 3.8
+     "ms": 4.3
     },
     {
      "n": "v72pInit",
@@ -1255,7 +1091,7 @@
     {
      "n": "v73aInit",
      "ok": 1,
-     "ms": 15.8
+     "ms": 15.4
     },
     {
      "n": "v74rInit",
@@ -1265,35 +1101,33 @@
     {
      "n": "v74lInit",
      "ok": 1,
-     "ms": 2.8
+     "ms": 3.3
     },
     {
      "n": "v74qInit",
      "ok": 1,
-     "ms": 0
+     "ms": 0.2
     },
     {
      "n": "v75uInit",
      "ok": 1,
-     "ms": 19.6
+     "ms": 18.3
     },
     {
      "n": "v75wInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.3
     }
    ],
    "initPatched": true,
    "bootLogs": [],
-   "user": "qaphoneec2v",
+   "user": "qaphonenvky",
    "login": true,
    "hud": {
     "bad": [],
     "small": [],
     "tiny": [],
-    "cover": [
-     "#v44Lamp ⟵ bị #v75uFab che"
-    ],
+    "cover": [],
     "over": false
    },
    "placesAll": 74,
@@ -1303,12 +1137,12 @@
      "name": "Lớp Rubik",
      "ic": "🧊",
      "img": "files_phone_z_rubik.jpg",
-     "diff": 0.659,
+     "diff": 0.65,
      "mv": {
-      "right": 51,
+      "right": 52,
       "down": 56,
       "left": 53,
-      "up": 53
+      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -1318,12 +1152,12 @@
      "name": "Sân Rubik",
      "ic": "🧊",
      "img": "files_phone_z_rubikyard.jpg",
-     "diff": 0.799,
+     "diff": 0.814,
      "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 54,
-      "up": 54
+      "right": 50,
+      "down": 52,
+      "left": 53,
+      "up": 52
      },
      "stuck": false,
      "errs": 0
@@ -1348,7 +1182,7 @@
      "name": "Cánh đồng hoa",
      "ic": "🌼",
      "img": "files_phone_z_flowerfield.jpg",
-     "diff": 0.19,
+     "diff": 0.185,
      "mv": {
       "right": 50,
       "down": 52,
@@ -1363,12 +1197,12 @@
      "name": "Sân bóng rổ",
      "ic": "🏀",
      "img": "files_phone_z_basket.jpg",
-     "diff": 0.185,
+     "diff": 0.186,
      "mv": {
       "right": 50,
       "down": 52,
       "left": 53,
-      "up": 52
+      "up": 53
      },
      "stuck": false,
      "errs": 0
@@ -1380,10 +1214,10 @@
      "img": "files_phone_z_garden.jpg",
      "diff": 0.176,
      "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
+      "right": 50,
+      "down": 52,
+      "left": 53,
+      "up": 52
      },
      "stuck": false,
      "errs": 0
@@ -1393,7 +1227,7 @@
      "name": "Khu rừng thông",
      "ic": "📍",
      "img": "files_phone_z_forest.jpg",
-     "diff": 0.194,
+     "diff": 0.201,
      "mv": {
       "right": 50,
       "down": 52,
@@ -1408,7 +1242,7 @@
      "name": "Hồ bơi Olympic 5 làn",
      "ic": "🏊",
      "img": "files_phone_z_pool.jpg",
-     "diff": 0.16,
+     "diff": 0.159,
      "mv": {
       "right": 50,
       "down": 52,
@@ -1427,7 +1261,7 @@
      "mv": {
       "right": 49,
       "down": 54,
-      "left": 52,
+      "left": 53,
       "up": 54
      },
      "stuck": false,
@@ -1438,12 +1272,12 @@
      "name": "Quảng trường lễ hội",
      "ic": "🏮",
      "img": "files_phone_z_plaza.jpg",
-     "diff": 0.178,
+     "diff": 0.179,
      "mv": {
       "right": 49,
       "down": 54,
-      "left": 54,
-      "up": 53
+      "left": 52,
+      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -1453,12 +1287,12 @@
      "name": "Hầm tên lửa · tàu hải quân",
      "ic": "🚀",
      "img": "files_phone_z_navy.jpg",
-     "diff": 0.463,
+     "diff": 0.498,
      "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
+      "right": 49,
+      "down": 54,
+      "left": 52,
+      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -1468,7 +1302,7 @@
      "name": "Nhà ống phố",
      "ic": "🏠",
      "img": "files_phone_z_hNha_ong_pho.jpg",
-     "diff": 0.708,
+     "diff": 0.707,
      "mv": {
       "right": 50,
       "down": 52,
@@ -1483,12 +1317,12 @@
      "name": "Nhà kiểu Nhật",
      "ic": "🏠",
      "img": "files_phone_z_hNha_kieu_Nhat.jpg",
-     "diff": 0.467,
+     "diff": 0.466,
      "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
+      "right": 50,
+      "down": 52,
+      "left": 53,
+      "up": 52
      },
      "stuck": false,
      "errs": 0
@@ -1498,7 +1332,7 @@
      "name": "Nhà Địa Trung Hải",
      "ic": "🏠",
      "img": "files_phone_z_hNha_dia_Trung_Hai.jpg",
-     "diff": 0.482,
+     "diff": 0.481,
      "mv": {
       "right": 49,
       "down": 54,
@@ -1513,12 +1347,12 @@
      "name": "Trường Tin học",
      "ic": "💻",
      "img": "files_phone_z_v51t.jpg",
-     "diff": 0.221,
+     "diff": 0.22,
      "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
+      "right": 49,
+      "down": 54,
+      "left": 52,
+      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -1543,7 +1377,7 @@
      "name": "Bãi Cát Vàng · lặn biển",
      "ic": "🏖️",
      "img": "files_phone_z_v52beach.jpg",
-     "diff": 0.157,
+     "diff": 0.158,
      "mv": {
       "right": 50,
       "down": 52,
@@ -1560,10 +1394,10 @@
      "img": "files_phone_z_v53c.jpg",
      "diff": 0.148,
      "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
+      "right": 50,
+      "down": 53,
+      "left": 53,
+      "up": 53
      },
      "stuck": false,
      "errs": 0
@@ -1573,12 +1407,12 @@
      "name": "Phố nhà Đà Lạt",
      "ic": "",
      "img": "files_phone_z_dalat.jpg",
-     "diff": 0.145,
+     "diff": 0.144,
      "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
+      "right": 49,
+      "down": 54,
+      "left": 52,
+      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -2207,1425 +2041,6 @@
    },
    "save": {
     "ok": true,
-    "keys": 24,
-    "diffs": [],
-    "ign": 2,
-    "check": {
-     "money": true,
-     "hat": true,
-     "luong": true,
-     "story": true,
-     "cay": true
-    }
-   },
-   "logs": [],
-   "warnN": 0,
-   "errN": 0,
-   "sec": 178
-  },
-  "desk": {
-   "vi": "Máy tính 1440×900",
-   "steps": {},
-   "loadMs": 2871,
-   "init": [
-    {
-     "n": "extInit",
-     "ok": 1,
-     "ms": 16.4
-    },
-    {
-     "n": "ext7Init",
-     "ok": 1,
-     "ms": 0.5
-    },
-    {
-     "n": "ext8Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "ext9Init",
-     "ok": 1,
-     "ms": 6
-    },
-    {
-     "n": "ext11Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "ext12Init",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "ext13Init",
-     "ok": 1,
-     "ms": 0.9
-    },
-    {
-     "n": "ext14Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "ext15Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "ext16Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "ext17Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "ext18Init",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "ext19Init",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v16Init",
-     "ok": 1,
-     "ms": 0.7
-    },
-    {
-     "n": "v17Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v18Init",
-     "ok": 1,
-     "ms": 1.5
-    },
-    {
-     "n": "v19Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v21Init",
-     "ok": 1,
-     "ms": 1
-    },
-    {
-     "n": "v22Init",
-     "ok": 1,
-     "ms": 0.5
-    },
-    {
-     "n": "v23Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v24Init",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v25Init",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v26Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v27Init",
-     "ok": 1,
-     "ms": 11.5
-    },
-    {
-     "n": "v32Init",
-     "ok": 1,
-     "ms": 11.1
-    },
-    {
-     "n": "v33Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v34Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v35Init",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v36Init",
-     "ok": 1,
-     "ms": 0.5
-    },
-    {
-     "n": "v37Init",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v38Init",
-     "ok": 1,
-     "ms": 1.1
-    },
-    {
-     "n": "v39Init",
-     "ok": 1,
-     "ms": 6.6
-    },
-    {
-     "n": "v40Init",
-     "ok": 1,
-     "ms": 1.2
-    },
-    {
-     "n": "v41Init",
-     "ok": 1,
-     "ms": 0.8
-    },
-    {
-     "n": "v42Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v44Init",
-     "ok": 1,
-     "ms": 12.4
-    },
-    {
-     "n": "v44CoachInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v44PolishInit",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v44BalloonInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v45FarmInit",
-     "ok": 1,
-     "ms": 1.1
-    },
-    {
-     "n": "v45PondInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v45ArtsInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v45SportsInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v45RubikChessInit",
-     "ok": 1,
-     "ms": 0.9
-    },
-    {
-     "n": "v45OnlineInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v45ShopInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v46Init",
-     "ok": 1,
-     "ms": 79.7
-    },
-    {
-     "n": "v48mInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v48cInit",
-     "ok": 1,
-     "ms": 3.7
-    },
-    {
-     "n": "v49rInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v50Init",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v51aInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v51pInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v51tInit",
-     "ok": 1,
-     "ms": 58
-    },
-    {
-     "n": "v52wInit",
-     "ok": 1,
-     "ms": 111.4
-    },
-    {
-     "n": "v52lInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v53cInit",
-     "ok": 1,
-     "ms": 157.2
-    },
-    {
-     "n": "v53sInit",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v53vInit",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v55sInit",
-     "ok": 1,
-     "ms": 94.6
-    },
-    {
-     "n": "v56pInit",
-     "ok": 1,
-     "ms": 2.2
-    },
-    {
-     "n": "v54qInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v58tInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v57pInit",
-     "ok": 1,
-     "ms": 17.4
-    },
-    {
-     "n": "v59gInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v62fInit",
-     "ok": 1,
-     "ms": 1
-    },
-    {
-     "n": "v62kInit",
-     "ok": 1,
-     "ms": 0.5
-    },
-    {
-     "n": "v63fInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v61lInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v61fInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v64mInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v64pInit",
-     "ok": 1,
-     "ms": 5.9
-    },
-    {
-     "n": "v64sInit",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v65aInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v65bInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v65cInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v65fInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v65dInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v65eInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v66cInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v66tInit",
-     "ok": 1,
-     "ms": 130.8
-    },
-    {
-     "n": "v67lInit",
-     "ok": 1,
-     "ms": 1.1
-    },
-    {
-     "n": "v68mInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v69qInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v70sInit",
-     "ok": 1,
-     "ms": 0.8
-    },
-    {
-     "n": "v70eInit",
-     "ok": 1,
-     "ms": 1.1
-    },
-    {
-     "n": "v70fInit",
-     "ok": 1,
-     "ms": 13.1
-    },
-    {
-     "n": "v71dInit",
-     "ok": 1,
-     "ms": 37.9
-    },
-    {
-     "n": "v72pInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v73aInit",
-     "ok": 1,
-     "ms": 14.9
-    },
-    {
-     "n": "v74rInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v74lInit",
-     "ok": 1,
-     "ms": 4.8
-    },
-    {
-     "n": "v74qInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v75uInit",
-     "ok": 1,
-     "ms": 24.7
-    },
-    {
-     "n": "v75wInit",
-     "ok": 1,
-     "ms": 0.3
-    }
-   ],
-   "initPatched": true,
-   "bootLogs": [],
-   "user": "qadesk96k9",
-   "login": true,
-   "hud": {
-    "bad": [],
-    "small": [],
-    "tiny": [],
-    "cover": [],
-    "over": false
-   },
-   "placesAll": 74,
-   "zones": [
-    {
-     "k": "rubik",
-     "name": "Lớp Rubik",
-     "ic": "🧊",
-     "img": "files_desk_z_rubik.jpg",
-     "diff": 0.675,
-     "mv": {
-      "right": 54,
-      "down": 56,
-      "left": 53,
-      "up": 56
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "rubikyard",
-     "name": "Sân Rubik",
-     "ic": "🧊",
-     "img": "files_desk_z_rubikyard.jpg",
-     "diff": 0.634,
-     "mv": {
-      "right": 52,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "field",
-     "name": "Sân bóng đá",
-     "ic": "⚽",
-     "img": "files_desk_z_field.jpg",
-     "diff": 0.261,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "flowerfield",
-     "name": "Cánh đồng hoa",
-     "ic": "🌼",
-     "img": "files_desk_z_flowerfield.jpg",
-     "diff": 0.296,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "basket",
-     "name": "Sân bóng rổ",
-     "ic": "🏀",
-     "img": "files_desk_z_basket.jpg",
-     "diff": 0.233,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "garden",
-     "name": "Vườn hoa Đà Lạt",
-     "ic": "🌷",
-     "img": "files_desk_z_garden.jpg",
-     "diff": 0.245,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "forest",
-     "name": "Khu rừng thông",
-     "ic": "📍",
-     "img": "files_desk_z_forest.jpg",
-     "diff": 0.249,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "pool",
-     "name": "Hồ bơi Olympic 5 làn",
-     "ic": "🏊",
-     "img": "files_desk_z_pool.jpg",
-     "diff": 0.233,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "kart",
-     "name": "Trường đua Rubik Kart",
-     "ic": "🏎️",
-     "img": "files_desk_z_kart.jpg",
-     "diff": 0.239,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "plaza",
-     "name": "Quảng trường lễ hội",
-     "ic": "🏮",
-     "img": "files_desk_z_plaza.jpg",
-     "diff": 0.244,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "navy",
-     "name": "Hầm tên lửa · tàu hải quân",
-     "ic": "🚀",
-     "img": "files_desk_z_navy.jpg",
-     "diff": 0.389,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà ống phố",
-     "name": "Nhà ống phố",
-     "ic": "🏠",
-     "img": "files_desk_z_hNha_ong_pho.jpg",
-     "diff": 0.425,
-     "mv": {
-      "right": 53,
-      "down": 53,
-      "left": 54,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà kiểu Nhật",
-     "name": "Nhà kiểu Nhật",
-     "ic": "🏠",
-     "img": "files_desk_z_hNha_kieu_Nhat.jpg",
-     "diff": 0.307,
-     "mv": {
-      "right": 51,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà Địa Trung Hải",
-     "name": "Nhà Địa Trung Hải",
-     "ic": "🏠",
-     "img": "files_desk_z_hNha_dia_Trung_Hai.jpg",
-     "diff": 0.323,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v51t",
-     "name": "Trường Tin học",
-     "ic": "💻",
-     "img": "files_desk_z_v51t.jpg",
-     "diff": 0.218,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52rice",
-     "name": "Đồng lúa Vàng",
-     "ic": "🌾",
-     "img": "files_desk_z_v52rice.jpg",
-     "diff": 0.204,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52beach",
-     "name": "Bãi Cát Vàng · lặn biển",
-     "ic": "🏖️",
-     "img": "files_desk_z_v52beach.jpg",
-     "diff": 0.22,
-     "mv": {
-      "right": 50,
-      "down": 53,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v53c",
-     "name": "Trạm cứu hỏa",
-     "ic": "🚒",
-     "img": "files_desk_z_v53c.jpg",
-     "diff": 0.214,
-     "mv": {
-      "right": 50,
-      "down": 53,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "dalat",
-     "name": "Phố nhà Đà Lạt",
-     "ic": "",
-     "img": "files_desk_z_dalat.jpg",
-     "diff": 0.214,
-     "mv": {
-      "right": 50,
-      "down": 53,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    }
-   ],
-   "sig0": "",
-   "games": [
-    {
-     "n": "🕹 Bóng đá 3 đánh 3",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Bong_da_3_danh_3.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Trượt patin",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Truot_patin.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Lửa trại & tiệc nướng BBQ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Lua_trai_tiec_nuong_BBQ.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Chạy 110 m vượt rào",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Chay_110_m_vuot_rao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy sào",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Nhay_sao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Cử tạ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Cu_ta.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bơi lội 5 làn Olympic",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Boi_loi_5_lan_Olympic.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Khúc côn cầu trên bàn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Khuc_con_cau_tren_ban.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Câu cá ngoài khơi",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Cau_ca_ngoai_khoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🛍 Cửa hàng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Cua_hang.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🗺 Bản đồ lớn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__Ban_do_lon.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Pha Chế Thuốc",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Pha_Che_Thuoc.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "🪄 Vẽ Ký Hiệu Phép",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Ve_Ky_Hieu_Phep.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Giải Đố Rune Rubik",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Giai_do_Rune_Rubik.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Lập trình khối",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Bai_Lap_trinh_khoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Số nhị phân",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Bai_So_nhi_phan.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài An toàn trên mạng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Bai_An_toan_tren_mang.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "✈️ Hangar máy bay",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Hangar_may_bay.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏬 TTTM",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__TTTM.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "💻 Laptop",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Laptop.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🚁 Drone",
-     "opened": false,
-     "err": null,
-     "closed": true,
-     "how": "sẵn",
-     "left": "",
-     "img": null,
-     "scan": null,
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧯 Cứu hoả: Nhà bếp",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Cuu_hoa_Nha_bep.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "📖 Sổ cá biển",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__So_ca_bien.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💰 Bảng Lương",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Bang_Luong.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🌳 Cây thần kỳ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Cay_than_ky.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏆 Thành tựu & Lễ hội",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Thanh_tuu_Le_hoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "📖 Sổ Hành trình",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__So_Hanh_trinh.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "✈️ Hangar (v73a)",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "files_desk_g__Hangar_v73a_.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🔥 Đường bay tốc độ Tia Lửa",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "ép đóng",
-     "left": "",
-     "img": "files_desk_g__duong_bay_toc_do_Tia_Lua.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏬 TTTM tầng 2 · cần câu",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "files_desk_g__TTTM_tang_2_can_cau.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    }
-   ],
-   "leak0": {
-    "iv": 60,
-    "ls": 70
-   },
-   "leakRep": [
-    {
-     "n": "🕹 Bóng đá 3 đánh 3",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Trượt patin",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Lửa trại & tiệc nướng BBQ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Chạy 110 m vượt rào",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy sào",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Cử tạ",
-     "iv": 0,
-     "ls": 0
-    }
-   ],
-   "leak1": {
-    "iv": 60,
-    "ls": 79
-   },
-   "fps": {
-    "stand": {
-     "fps": 60,
-     "p95": 16.7,
-     "max": 16.8,
-     "long": 0
-    },
-    "walk": {
-     "fps": 60,
-     "p95": 16.7,
-     "max": 16.8,
-     "long": 0
-    }
-   },
-   "save": {
-    "ok": true,
     "keys": 23,
     "diffs": [],
     "ign": 1,
@@ -3640,7 +2055,7 @@
    "logs": [],
    "warnN": 0,
    "errN": 0,
-   "sec": 185
+   "sec": 178
   }
  }
 }
