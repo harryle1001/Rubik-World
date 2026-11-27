@@ -1,82 +1,90 @@
 {
  "mode": "bundle",
- "at": "2026-11-26T19:35:49.345Z",
+ "at": "2026-11-27T04:09:40.688Z",
  "url": "http://localhost:8792/index.html?bundle",
  "issues": [
   {
    "sev": "info",
    "cat": "init",
    "vp": "phone",
-   "title": "Init v53cInit() chạy chậm: 130.9 ms"
+   "title": "Init v52wInit() chạy chậm: 137.6 ms"
   },
   {
    "sev": "info",
    "cat": "init",
    "vp": "phone",
-   "title": "Init v66tInit() chạy chậm: 172.3 ms"
+   "title": "Init v53cInit() chạy chậm: 145.1 ms"
+  },
+  {
+   "sev": "info",
+   "cat": "init",
+   "vp": "phone",
+   "title": "Init v66tInit() chạy chậm: 168.9 ms"
   },
   {
    "sev": "low",
    "cat": "ảnh",
    "vp": "phone",
-   "title": "Ảnh “Hội trường lớn” khác ảnh chuẩn 21%",
-   "img": "bundle_phone_z_hall.jpg",
-   "ref": "v74q/base/phone_hall.jpg"
+   "title": "Ảnh “Lớp Rubik” khác ảnh chuẩn 54%",
+   "img": "bundle_phone_z_rubik.jpg",
+   "ref": "v74q/base/phone_rubik.jpg"
+  },
+  {
+   "sev": "low",
+   "cat": "ảnh",
+   "vp": "phone",
+   "title": "Ảnh “Sân Rubik” khác ảnh chuẩn 72%",
+   "img": "bundle_phone_z_rubikyard.jpg",
+   "ref": "v74q/base/phone_rubikyard.jpg"
+  },
+  {
+   "sev": "low",
+   "cat": "ảnh",
+   "vp": "phone",
+   "title": "Ảnh “Hầm tên lửa · tàu hải quân” khác ảnh chuẩn 30%",
+   "img": "bundle_phone_z_navy.jpg",
+   "ref": "v74q/base/phone_navy.jpg"
+  },
+  {
+   "sev": "low",
+   "cat": "ảnh",
+   "vp": "phone",
+   "title": "Ảnh “Nhà ống phố” khác ảnh chuẩn 63%",
+   "img": "bundle_phone_z_hNha_ong_pho.jpg",
+   "ref": "v74q/base/phone_hNha_ong_pho.jpg"
+  },
+  {
+   "sev": "low",
+   "cat": "ảnh",
+   "vp": "phone",
+   "title": "Ảnh “Nhà kiểu Nhật” khác ảnh chuẩn 34%",
+   "img": "bundle_phone_z_hNha_kieu_Nhat.jpg",
+   "ref": "v74q/base/phone_hNha_kieu_Nhat.jpg"
+  },
+  {
+   "sev": "low",
+   "cat": "ảnh",
+   "vp": "phone",
+   "title": "Ảnh “Nhà Địa Trung Hải” khác ảnh chuẩn 36%",
+   "img": "bundle_phone_z_hNha_dia_Trung_Hai.jpg",
+   "ref": "v74q/base/phone_hNha_dia_Trung_Hai.jpg"
   },
   {
    "sev": "info",
    "cat": "mini game",
-   "vp": "phone,land,desk",
+   "vp": "phone",
    "title": "“🚁 Drone” không mở với người chơi thường (chỉ chủ game — đúng thiết kế)"
   },
   {
    "sev": "info",
    "cat": "mini game",
-   "vp": "phone,land,desk",
+   "vp": "phone",
    "title": "“🔥 Đường bay tốc độ Tia Lửa” không đóng bằng Esc / nút ✕ (phải ép đóng)",
    "img": "bundle_phone_g__duong_bay_toc_do_Tia_Lua.jpg"
-  },
-  {
-   "sev": "info",
-   "cat": "init",
-   "vp": "land",
-   "title": "Init v53cInit() chạy chậm: 165.9 ms"
-  },
-  {
-   "sev": "info",
-   "cat": "init",
-   "vp": "land",
-   "title": "Init v66tInit() chạy chậm: 144.3 ms"
-  },
-  {
-   "sev": "info",
-   "cat": "init",
-   "vp": "desk",
-   "title": "Init v52wInit() chạy chậm: 149.7 ms"
-  },
-  {
-   "sev": "info",
-   "cat": "init",
-   "vp": "desk",
-   "title": "Init v53cInit() chạy chậm: 181 ms"
-  },
-  {
-   "sev": "info",
-   "cat": "init",
-   "vp": "desk",
-   "title": "Init v66tInit() chạy chậm: 123.5 ms"
-  },
-  {
-   "sev": "low",
-   "cat": "ảnh",
-   "vp": "desk",
-   "title": "Ảnh “Khu cờ vua” khác ảnh chuẩn 40%",
-   "img": "bundle_desk_z_chess.jpg",
-   "ref": "v74q/base/desk_chess.jpg"
   }
  ],
  "static": {
-  "files": 198,
+  "files": 199,
   "missing": [],
   "hard": [],
   "fnDup": [],
@@ -193,6 +201,21 @@
     ]
    },
    {
+    "n": "v32Items",
+    "k": 9,
+    "by": [
+     "v40-coach.js",
+     "v41-move-column.js",
+     "v51p-games.js",
+     "v53c-ui.js",
+     "v66t-core.js",
+     "v67l-core.js",
+     "v67l-stage.js",
+     "v70e-core.js",
+     "v75u-studio.js"
+    ]
+   },
+   {
     "n": "toast",
     "k": 8,
     "by": [
@@ -204,20 +227,6 @@
      "v54q-ui.js",
      "v58t-tap.js",
      "v70f-ui.js"
-    ]
-   },
-   {
-    "n": "v32Items",
-    "k": 8,
-    "by": [
-     "v40-coach.js",
-     "v41-move-column.js",
-     "v51p-games.js",
-     "v53c-ui.js",
-     "v66t-core.js",
-     "v67l-core.js",
-     "v67l-stage.js",
-     "v70e-core.js"
     ]
    },
    {
@@ -576,18 +585,18 @@
     "head": "v60t · GÓC NHÌN THỨ 3 SAU LƯNG 1/2: vẽ phối cảnh khi đi bộ / đạp xe (mặt đất mode-7, trời, billboard, nhân vật nhìn từ sau) ================"
    }
   ],
-  "lines": 32524
+  "lines": 32959
  },
  "vp": {
   "phone": {
    "vi": "Điện thoại dọc 390×844",
    "steps": {},
-   "loadMs": 2167,
+   "loadMs": 2132,
    "init": [
     {
      "n": "extInit",
      "ok": 1,
-     "ms": 11.6
+     "ms": 15.3
     },
     {
      "n": "ext7Init",
@@ -597,17 +606,17 @@
     {
      "n": "ext8Init",
      "ok": 1,
-     "ms": 0
+     "ms": 0.1
     },
     {
      "n": "ext9Init",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.4
     },
     {
      "n": "ext11Init",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "ext12Init",
@@ -632,37 +641,37 @@
     {
      "n": "ext16Init",
      "ok": 1,
-     "ms": 0
+     "ms": 0.1
     },
     {
      "n": "ext17Init",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.2
     },
     {
      "n": "ext18Init",
      "ok": 1,
-     "ms": 0
+     "ms": 0.1
     },
     {
      "n": "ext19Init",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.4
     },
     {
      "n": "v16Init",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.4
     },
     {
      "n": "v17Init",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0.2
     },
     {
      "n": "v18Init",
      "ok": 1,
-     "ms": 0.8
+     "ms": 0.9
     },
     {
      "n": "v19Init",
@@ -672,47 +681,47 @@
     {
      "n": "v21Init",
      "ok": 1,
-     "ms": 0.7
+     "ms": 0.9
     },
     {
      "n": "v22Init",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.2
     },
     {
      "n": "v23Init",
      "ok": 1,
-     "ms": 12
+     "ms": 15.5
     },
     {
      "n": "v24Init",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.6
     },
     {
      "n": "v25Init",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.6
     },
     {
      "n": "v26Init",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.6
     },
     {
      "n": "v27Init",
      "ok": 1,
-     "ms": 9
+     "ms": 10.7
     },
     {
      "n": "v32Init",
      "ok": 1,
-     "ms": 8.9
+     "ms": 8.8
     },
     {
      "n": "v33Init",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0.2
     },
     {
      "n": "v34Init",
@@ -722,52 +731,52 @@
     {
      "n": "v35Init",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0
     },
     {
      "n": "v36Init",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.4
     },
     {
      "n": "v37Init",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.5
     },
     {
      "n": "v38Init",
      "ok": 1,
-     "ms": 0.7
+     "ms": 0.6
     },
     {
      "n": "v39Init",
      "ok": 1,
-     "ms": 3.4
+     "ms": 3.8
     },
     {
      "n": "v40Init",
      "ok": 1,
-     "ms": 0.9
+     "ms": 1.2
     },
     {
      "n": "v41Init",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.6
     },
     {
      "n": "v42Init",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.3
     },
     {
      "n": "v44Init",
      "ok": 1,
-     "ms": 2.9
+     "ms": 3.5
     },
     {
      "n": "v44CoachInit",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.4
     },
     {
      "n": "v44PolishInit",
@@ -782,7 +791,7 @@
     {
      "n": "v45FarmInit",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.8
     },
     {
      "n": "v45PondInit",
@@ -802,12 +811,12 @@
     {
      "n": "v45RubikChessInit",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.7
     },
     {
      "n": "v45OnlineInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0
     },
     {
      "n": "v45ShopInit",
@@ -817,22 +826,22 @@
     {
      "n": "v46Init",
      "ok": 1,
-     "ms": 46.2
+     "ms": 57.5
     },
     {
      "n": "v48mInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.3
     },
     {
      "n": "v48cInit",
      "ok": 1,
-     "ms": 1.7
+     "ms": 2.9
     },
     {
      "n": "v49rInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0.2
     },
     {
      "n": "v50Init",
@@ -847,17 +856,17 @@
     {
      "n": "v51pInit",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.4
     },
     {
      "n": "v51tInit",
      "ok": 1,
-     "ms": 38.6
+     "ms": 44.9
     },
     {
      "n": "v52wInit",
      "ok": 1,
-     "ms": 99.7
+     "ms": 137.6
     },
     {
      "n": "v52lInit",
@@ -867,7 +876,7 @@
     {
      "n": "v53cInit",
      "ok": 1,
-     "ms": 130.9
+     "ms": 145.1
     },
     {
      "n": "v53sInit",
@@ -877,32 +886,32 @@
     {
      "n": "v53vInit",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.7
     },
     {
      "n": "v55sInit",
      "ok": 1,
-     "ms": 76.3
+     "ms": 73.7
     },
     {
      "n": "v56pInit",
      "ok": 1,
-     "ms": 3
+     "ms": 2.3
     },
     {
      "n": "v54qInit",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.2
     },
     {
      "n": "v58tInit",
      "ok": 1,
-     "ms": 0.6
+     "ms": 0.4
     },
     {
      "n": "v57pInit",
      "ok": 1,
-     "ms": 32.9
+     "ms": 22
     },
     {
      "n": "v59gInit",
@@ -912,52 +921,52 @@
     {
      "n": "v62fInit",
      "ok": 1,
-     "ms": 1.4
+     "ms": 1.5
     },
     {
      "n": "v62kInit",
      "ok": 1,
-     "ms": 0.7
+     "ms": 0.5
     },
     {
      "n": "v63fInit",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.6
     },
     {
      "n": "v61lInit",
      "ok": 1,
-     "ms": 0.4
+     "ms": 0.3
     },
     {
      "n": "v61fInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0
     },
     {
      "n": "v64mInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.4
     },
     {
      "n": "v64pInit",
      "ok": 1,
-     "ms": 10.2
+     "ms": 9.3
     },
     {
      "n": "v64sInit",
      "ok": 1,
-     "ms": 0.6
+     "ms": 0.8
     },
     {
      "n": "v65aInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
     },
     {
      "n": "v65bInit",
      "ok": 1,
-     "ms": 0.1
+     "ms": 0
     },
     {
      "n": "v65cInit",
@@ -977,7 +986,7 @@
     {
      "n": "v65eInit",
      "ok": 1,
-     "ms": 0.3
+     "ms": 0.2
     },
     {
      "n": "v66cInit",
@@ -987,12 +996,12 @@
     {
      "n": "v66tInit",
      "ok": 1,
-     "ms": 172.3
+     "ms": 168.9
     },
     {
      "n": "v67lInit",
      "ok": 1,
-     "ms": 1.1
+     "ms": 1.3
     },
     {
      "n": "v68mInit",
@@ -1007,22 +1016,22 @@
     {
      "n": "v70sInit",
      "ok": 1,
-     "ms": 0.5
+     "ms": 0.7
     },
     {
      "n": "v70eInit",
      "ok": 1,
-     "ms": 1
+     "ms": 1.5
     },
     {
      "n": "v70fInit",
      "ok": 1,
-     "ms": 10.8
+     "ms": 13.6
     },
     {
      "n": "v71dInit",
      "ok": 1,
-     "ms": 1.9
+     "ms": 2.6
     },
     {
      "n": "v72pInit",
@@ -1032,7 +1041,7 @@
     {
      "n": "v73aInit",
      "ok": 1,
-     "ms": 10.4
+     "ms": 13.9
     },
     {
      "n": "v74rInit",
@@ -1042,17 +1051,22 @@
     {
      "n": "v74lInit",
      "ok": 1,
-     "ms": 2.2
+     "ms": 3.2
     },
     {
      "n": "v74qInit",
      "ok": 1,
-     "ms": 0.2
+     "ms": 0.1
+    },
+    {
+     "n": "v75uInit",
+     "ok": 1,
+     "ms": 6.1
     }
    ],
    "initPatched": true,
    "bootLogs": [],
-   "user": "qaphoneklb9",
+   "user": "qaphonemyjk",
    "login": true,
    "hud": {
     "bad": [],
@@ -1068,56 +1082,11 @@
      "name": "Lớp Rubik",
      "ic": "🧊",
      "img": "bundle_phone_z_rubik.jpg",
-     "diff": 0.087,
-     "mv": {
-      "right": 52,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "chess",
-     "name": "Khu cờ vua",
-     "ic": "♟️",
-     "img": "bundle_phone_z_chess.jpg",
-     "diff": 0.107,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 54,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "music",
-     "name": "Khu âm nhạc",
-     "ic": "🎹",
-     "img": "bundle_phone_z_music.jpg",
-     "diff": 0.065,
+     "diff": 0.542,
      "mv": {
       "right": 50,
-      "down": 52,
+      "down": 54,
       "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hall",
-     "name": "Hội trường lớn",
-     "ic": "🎭",
-     "img": "bundle_phone_z_hall.jpg",
-     "diff": 0.207,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 18,
       "up": 54
      },
      "stuck": false,
@@ -1128,57 +1097,12 @@
      "name": "Sân Rubik",
      "ic": "🧊",
      "img": "bundle_phone_z_rubikyard.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 4,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "office",
-     "name": "Văn phòng",
-     "ic": "🏫",
-     "img": "bundle_phone_z_office.jpg",
-     "diff": 0.025,
-     "mv": {
-      "right": 50,
-      "down": 4,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "attend",
-     "name": "Khu điểm danh",
-     "ic": "📋",
-     "img": "bundle_phone_z_attend.jpg",
-     "diff": 0.05,
+     "diff": 0.72,
      "mv": {
       "right": 50,
       "down": 52,
       "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "elec",
-     "name": "Lớp lắp ráp điện",
-     "ic": "🔌",
-     "img": "bundle_phone_z_elec.jpg",
-     "diff": 0.147,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
+      "up": 53
      },
      "stuck": false,
      "errs": 0
@@ -1188,57 +1112,12 @@
      "name": "Sân bóng đá",
      "ic": "⚽",
      "img": "bundle_phone_z_field.jpg",
-     "diff": 0.008,
+     "diff": 0.095,
      "mv": {
       "right": 49,
       "down": 54,
       "left": 52,
       "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "giantchess",
-     "name": "Quảng trường cờ vua khổng lồ",
-     "ic": "♞",
-     "img": "bundle_phone_z_giantchess.jpg",
-     "diff": 0.018,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "rubikpark",
-     "name": "Tượng đài Rubik · biểu tượng trường",
-     "ic": "🧊",
-     "img": "bundle_phone_z_rubikpark.jpg",
-     "diff": 0.066,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "pond",
-     "name": "Hồ câu thư giãn",
-     "ic": "🎣",
-     "img": "bundle_phone_z_pond.jpg",
-     "diff": 0.009,
-     "mv": {
-      "right": 49,
-      "down": 37,
-      "left": 54,
-      "up": 52
      },
      "stuck": false,
      "errs": 0
@@ -1248,52 +1127,7 @@
      "name": "Cánh đồng hoa",
      "ic": "🌼",
      "img": "bundle_phone_z_flowerfield.jpg",
-     "diff": 0.022,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "bpad",
-     "name": "Khu khinh khí cầu",
-     "ic": "🎈",
-     "img": "bundle_phone_z_bpad.jpg",
-     "diff": 0.147,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "skate",
-     "name": "Sân trượt ván",
-     "ic": "🛹",
-     "img": "bundle_phone_z_skate.jpg",
-     "diff": 0.034,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "patin",
-     "name": "Sân trượt patin",
-     "ic": "⛸️",
-     "img": "bundle_phone_z_patin.jpg",
-     "diff": 0.037,
+     "diff": 0.086,
      "mv": {
       "right": 49,
       "down": 54,
@@ -1308,57 +1142,12 @@
      "name": "Sân bóng rổ",
      "ic": "🏀",
      "img": "bundle_phone_z_basket.jpg",
-     "diff": 0.012,
+     "diff": 0.09,
      "mv": {
       "right": 49,
       "down": 54,
       "left": 52,
       "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "ski",
-     "name": "Sân trượt tuyết",
-     "ic": "⛷️",
-     "img": "bundle_phone_z_ski.jpg",
-     "diff": 0.021,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "art",
-     "name": "Góc họa sĩ",
-     "ic": "🎨",
-     "img": "bundle_phone_z_art.jpg",
-     "diff": 0.016,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "farm",
-     "name": "Nông trại",
-     "ic": "🌾",
-     "img": "bundle_phone_z_farm.jpg",
-     "diff": 0.037,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
      },
      "stuck": false,
      "errs": 0
@@ -1368,57 +1157,12 @@
      "name": "Vườn hoa Đà Lạt",
      "ic": "🌷",
      "img": "bundle_phone_z_garden.jpg",
-     "diff": 0.015,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "picnic",
-     "name": "Khu picnic",
-     "ic": "🧺",
-     "img": "bundle_phone_z_picnic.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "lotus",
-     "name": "Đầm sen",
-     "ic": "🪷",
-     "img": "bundle_phone_z_lotus.jpg",
-     "diff": 0.009,
+     "diff": 0.067,
      "mv": {
       "right": 50,
       "down": 52,
       "left": 53,
       "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "lake",
-     "name": "Hồ cá Koi & khu cắm trại",
-     "ic": "🐟",
-     "img": "bundle_phone_z_lake.jpg",
-     "diff": 0.017,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -1428,57 +1172,12 @@
      "name": "Khu rừng thông",
      "ic": "📍",
      "img": "bundle_phone_z_forest.jpg",
-     "diff": 0.017,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "library",
-     "name": "Thư viện Tri Thức",
-     "ic": "📚",
-     "img": "bundle_phone_z_library.jpg",
-     "diff": 0.022,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "zen",
-     "name": "Vườn thiền tĩnh tâm",
-     "ic": "🧘",
-     "img": "bundle_phone_z_zen.jpg",
-     "diff": 0.01,
+     "diff": 0.063,
      "mv": {
       "right": 50,
       "down": 52,
       "left": 53,
       "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "stadium",
-     "name": "Sân vận động Olympic",
-     "ic": "🏟️",
-     "img": "bundle_phone_z_stadium.jpg",
-     "diff": 0.01,
-     "mv": {
-      "right": 48,
-      "down": 54,
-      "left": 52,
-      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -1488,57 +1187,12 @@
      "name": "Hồ bơi Olympic 5 làn",
      "ic": "🏊",
      "img": "bundle_phone_z_pool.jpg",
-     "diff": 0.004,
+     "diff": 0.032,
      "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "archery",
-     "name": "Trường bắn cung",
-     "ic": "🏹",
-     "img": "bundle_phone_z_archery.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "gym",
-     "name": "Nhà thi đấu thể dục dụng cụ",
-     "ic": "🤸",
-     "img": "bundle_phone_z_gym.jpg",
-     "diff": 0.08,
-     "mv": {
-      "right": 48,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "arena",
-     "name": "Đấu trường online",
-     "ic": "🌐",
-     "img": "bundle_phone_z_arena.jpg",
-     "diff": 0.072,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
+      "right": 50,
+      "down": 52,
+      "left": 53,
+      "up": 52
      },
      "stuck": false,
      "errs": 0
@@ -1548,57 +1202,12 @@
      "name": "Trường đua Rubik Kart",
      "ic": "🏎️",
      "img": "bundle_phone_z_kart.jpg",
-     "diff": 0.071,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "academy",
-     "name": "Học viện trí tuệ",
-     "ic": "🎓",
-     "img": "bundle_phone_z_academy.jpg",
-     "diff": 0.036,
-     "mv": {
-      "right": 48,
-      "down": 54,
-      "left": 51,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "shopst",
-     "name": "Phố mua sắm",
-     "ic": "🛍️",
-     "img": "bundle_phone_z_shopst.jpg",
-     "diff": 0.004,
+     "diff": 0.098,
      "mv": {
       "right": 50,
       "down": 52,
       "left": 53,
       "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hall2p",
-     "name": "Nhà game 2 người",
-     "ic": "🎮",
-     "img": "bundle_phone_z_hall2p.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -1608,57 +1217,12 @@
      "name": "Quảng trường lễ hội",
      "ic": "🏮",
      "img": "bundle_phone_z_plaza.jpg",
-     "diff": 0.02,
+     "diff": 0.053,
      "mv": {
       "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "botanic",
-     "name": "Vườn bách thảo & đài thiên văn",
-     "ic": "🔭",
-     "img": "bundle_phone_z_botanic.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "pstreet",
-     "name": "Phố nhà & cửa hàng người chơi",
-     "ic": "🏘️",
-     "img": "bundle_phone_z_pstreet.jpg",
-     "diff": 0.029,
-     "mv": {
-      "right": 49,
       "down": 54,
-      "left": 52,
+      "left": 51,
       "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "beach",
-     "name": "Bãi biển & bến tàu",
-     "ic": "⚓",
-     "img": "bundle_phone_z_beach.jpg",
-     "diff": 0.045,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
      },
      "stuck": false,
      "errs": 0
@@ -1668,54 +1232,9 @@
      "name": "Hầm tên lửa · tàu hải quân",
      "ic": "🚀",
      "img": "bundle_phone_z_navy.jpg",
-     "diff": 0.04,
+     "diff": 0.302,
      "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "gardenbuy",
-     "name": "Khu vườn mở bán",
-     "ic": "🥕",
-     "img": "bundle_phone_z_gardenbuy.jpg",
-     "diff": 0.053,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "gate",
-     "name": "Cổng trường",
-     "ic": "🏫",
-     "img": "bundle_phone_z_gate.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hBiệt thự cổ điển",
-     "name": "Biệt thự cổ điển",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hBiet_thu_co_dien.jpg",
-     "diff": 0.074,
-     "mv": {
-      "right": 50,
+      "right": 49,
       "down": 54,
       "left": 52,
       "up": 54
@@ -1728,7 +1247,7 @@
      "name": "Nhà ống phố",
      "ic": "🏠",
      "img": "bundle_phone_z_hNha_ong_pho.jpg",
-     "diff": 0.005,
+     "diff": 0.629,
      "mv": {
       "right": 49,
       "down": 54,
@@ -1739,101 +1258,11 @@
      "errs": 0
     },
     {
-     "k": "hNhà gỗ",
-     "name": "Nhà gỗ",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hNha_go.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà tròn mái nấm",
-     "name": "Nhà tròn mái nấm",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hNha_tron_mai_nam.jpg",
-     "diff": 0.063,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hResort hồ bơi",
-     "name": "Resort hồ bơi",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hResort_ho_boi.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
      "k": "hNhà kiểu Nhật",
      "name": "Nhà kiểu Nhật",
      "ic": "🏠",
      "img": "bundle_phone_z_hNha_kieu_Nhat.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hLâu đài mini",
-     "name": "Lâu đài mini",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hLau_dai_mini.jpg",
-     "diff": 0.083,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 54,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà sàn",
-     "name": "Nhà sàn",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hNha_san.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà kính hiện đại",
-     "name": "Nhà kính hiện đại",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hNha_kinh_hien_dai.jpg",
-     "diff": 0.005,
+     "diff": 0.341,
      "mv": {
       "right": 50,
       "down": 52,
@@ -1848,52 +1277,7 @@
      "name": "Nhà Địa Trung Hải",
      "ic": "🏠",
      "img": "bundle_phone_z_hNha_dia_Trung_Hai.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà mái Thái",
-     "name": "Nhà mái Thái",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hNha_mai_Thai.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà container",
-     "name": "Nhà container",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hNha_container.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hVilla hiện đại",
-     "name": "Villa hiện đại",
-     "ic": "🏠",
-     "img": "bundle_phone_z_hVilla_hien_dai.jpg",
-     "diff": 0.005,
+     "diff": 0.358,
      "mv": {
       "right": 49,
       "down": 54,
@@ -1908,57 +1292,12 @@
      "name": "Trường Tin học",
      "ic": "💻",
      "img": "bundle_phone_z_v51t.jpg",
-     "diff": 0.006,
+     "diff": 0.101,
      "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52mall",
-     "name": "TTTM Cầu Vồng",
-     "ic": "🛍️",
-     "img": "bundle_phone_z_v52mall.jpg",
-     "diff": 0.089,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52street",
-     "name": "Phố đi bộ Hoa Phượng",
-     "ic": "🚶",
-     "img": "bundle_phone_z_v52street.jpg",
-     "diff": 0.007,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52village",
-     "name": "Làng Gió Xanh",
-     "ic": "🏡",
-     "img": "bundle_phone_z_v52village.jpg",
-     "diff": 0.01,
-     "mv": {
-      "right": 48,
-      "down": 54,
-      "left": 52,
-      "up": 54
+      "right": 50,
+      "down": 52,
+      "left": 53,
+      "up": 52
      },
      "stuck": false,
      "errs": 0
@@ -1968,52 +1307,7 @@
      "name": "Đồng lúa Vàng",
      "ic": "🌾",
      "img": "bundle_phone_z_v52rice.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 48,
-      "down": 54,
-      "left": 51,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52river",
-     "name": "Sông Bạc",
-     "ic": "🏞️",
-     "img": "bundle_phone_z_v52river.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 39,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52camp",
-     "name": "Rừng Thông Reo · cắm trại",
-     "ic": "🏕️",
-     "img": "bundle_phone_z_v52camp.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 54,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52hill",
-     "name": "Đồi Mây · leo núi",
-     "ic": "⛰️",
-     "img": "bundle_phone_z_v52hill.jpg",
-     "diff": 0.004,
+     "diff": 0.013,
      "mv": {
       "right": 49,
       "down": 54,
@@ -2028,57 +1322,12 @@
      "name": "Bãi Cát Vàng · lặn biển",
      "ic": "🏖️",
      "img": "bundle_phone_z_v52beach.jpg",
-     "diff": 0.009,
-     "mv": {
-      "right": 49,
-      "down": 53,
-      "left": 52,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52flowers",
-     "name": "Cánh đồng hoa Gió",
-     "ic": "🌷",
-     "img": "bundle_phone_z_v52flowers.jpg",
-     "diff": 0.042,
+     "diff": 0.019,
      "mv": {
       "right": 50,
       "down": 52,
       "left": 53,
       "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52br0",
-     "name": "Cầu Bình Minh",
-     "ic": "🌉",
-     "img": "bundle_phone_z_v52br0.jpg",
-     "diff": 0.007,
-     "mv": {
-      "right": 61,
-      "down": 35,
-      "left": 54,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52br1",
-     "name": "Cầu Lúa Vàng",
-     "ic": "🌉",
-     "img": "bundle_phone_z_v52br1.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 36,
-      "down": 54,
-      "left": 49,
-      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -2088,57 +1337,12 @@
      "name": "Trạm cứu hỏa",
      "ic": "🚒",
      "img": "bundle_phone_z_v53c.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 50,
-      "down": 53,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v57pAp",
-     "name": "Sân bay Quốc tế Rubik",
-     "ic": "✈️",
-     "img": "bundle_phone_z_v57pAp.jpg",
-     "diff": 0.014,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v66t",
-     "name": "Cây thần kỳ",
-     "ic": "🌳",
-     "img": "bundle_phone_z_v66t.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v73aBig",
-     "name": "Khu Máy bay cỡ lớn",
-     "ic": "🛬",
-     "img": "bundle_phone_z_v73aBig.jpg",
-     "diff": 0.073,
+     "diff": 0.017,
      "mv": {
       "right": 49,
       "down": 54,
       "left": 52,
-      "up": 54
+      "up": 53
      },
      "stuck": false,
      "errs": 0
@@ -2148,27 +1352,12 @@
      "name": "Phố nhà Đà Lạt",
      "ic": "",
      "img": "bundle_phone_z_dalat.jpg",
-     "diff": 0.006,
+     "diff": 0.014,
      "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "houses",
-     "name": "houses",
-     "ic": "",
-     "img": "bundle_phone_z_houses.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
+      "right": 49,
+      "down": 54,
+      "left": 52,
+      "up": 54
      },
      "stuck": false,
      "errs": 0
@@ -2184,44 +1373,6 @@
      "how": "Esc",
      "left": "",
      "img": "bundle_phone_g__Bong_da_3_danh_3.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bóng rổ ném rổ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Bong_ro_nem_ro.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Trượt ván",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Truot_van.jpg",
      "scan": {
       "bad": [],
       "small": [],
@@ -2253,44 +1404,6 @@
      "errs": []
     },
     {
-     "n": "🕹 Trượt tuyết 5 ngọn núi",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Truot_tuyet_5_ngon_nui.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bay khinh khí cầu",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Bay_khinh_khi_cau.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
      "n": "🕹 Lửa trại & tiệc nướng BBQ",
      "opened": true,
      "err": null,
@@ -2298,44 +1411,6 @@
      "how": "Esc",
      "left": "",
      "img": "bundle_phone_g__Lua_trai_tiec_nuong_BBQ.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Đua thú ở nông trại",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__dua_thu_o_nong_trai.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Chạy 100 m",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Chay_100_m.jpg",
      "scan": {
       "bad": [],
       "small": [],
@@ -2367,44 +1442,6 @@
      "errs": []
     },
     {
-     "n": "🕹 Nhảy xa",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Nhay_xa.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy cao",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Nhay_cao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
      "n": "🕹 Nhảy sào",
      "opened": true,
      "err": null,
@@ -2412,44 +1449,6 @@
      "how": "Esc",
      "left": "",
      "img": "bundle_phone_g__Nhay_sao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Ném lao",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Nem_lao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Đẩy tạ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__day_ta.jpg",
      "scan": {
       "bad": [],
       "small": [],
@@ -2481,44 +1480,6 @@
      "errs": []
     },
     {
-     "n": "🕹 Nhảy cầu 10 m",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Nhay_cau_10_m.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Thể dục dụng cụ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__The_duc_dung_cu.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
      "n": "🕹 Bơi lội 5 làn Olympic",
      "opened": true,
      "err": null,
@@ -2526,44 +1487,6 @@
      "how": "Esc",
      "left": "",
      "img": "bundle_phone_g__Boi_loi_5_lan_Olympic.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bắn cung Olympic",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Ban_cung_Olympic.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Rubik Kart · đua xe 3D",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Rubik_Kart_dua_xe_3D.jpg",
      "scan": {
       "bad": [],
       "small": [],
@@ -2595,44 +1518,6 @@
      "errs": []
     },
     {
-     "n": "🕹 Đấu xe tăng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__dau_xe_tang.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Câu cá thư giãn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Cau_ca_thu_gian.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
      "n": "🕹 Câu cá ngoài khơi",
      "opened": true,
      "err": null,
@@ -2640,44 +1525,6 @@
      "how": "Esc",
      "left": "",
      "img": "bundle_phone_g__Cau_ca_ngoai_khoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Tàu hải tặc Râu Cam",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Tau_hai_tac_Rau_Cam.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏟 Đấu trường online v45",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__dau_truong_online_v45.jpg",
      "scan": {
       "bad": [],
       "small": [],
@@ -2709,44 +1556,6 @@
      "errs": []
     },
     {
-     "n": "🏠 Nhà tôi",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Nha_toi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🛒 Chợ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Cho.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
      "n": "🗺 Bản đồ lớn",
      "opened": true,
      "err": null,
@@ -2766,44 +1575,6 @@
      "errs": []
     },
     {
-     "n": "🏰 Bản đồ nhà v48",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Ban_do_nha_v48.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 2,
-     "errs": []
-    },
-    {
-     "n": "🪄 Học viện phép thuật",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Hoc_vien_phep_thuat.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
      "n": "🪄 Pha Chế Thuốc",
      "opened": true,
      "err": null,
@@ -2819,45 +1590,7 @@
       "over": false
      },
      "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Bay Chổi Qua Vòng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Bay_Choi_Qua_Vong.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Đấu Phép Hình Nộm",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__dau_Phep_Hinh_Nom.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
+     "ls": 3,
      "errs": []
     },
     {
@@ -2868,44 +1601,6 @@
      "how": "nút ✕",
      "left": "",
      "img": "bundle_phone_g__Ve_Ky_Hieu_Phep.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Xem Sao Tháp Thiên Văn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Xem_Sao_Thap_Thien_Van.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Chăm Sinh Vật Phép",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Cham_Sinh_Vat_Phep.jpg",
      "scan": {
       "bad": [],
       "small": [],
@@ -2937,44 +1632,6 @@
      "errs": []
     },
     {
-     "n": "🧙 Phố phép thuật",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Pho_phep_thuat.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "💻 Trường tin học",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Truong_tin_hoc.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
      "n": "💻 Bài Lập trình khối",
      "opened": true,
      "err": null,
@@ -2990,45 +1647,7 @@
       "over": false
      },
      "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Tìm lỗi (debug)",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Bai_Tim_loi_debug_.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Thuật toán Rubik",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Bai_Thuat_toan_Rubik.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
+     "ls": 3,
      "errs": []
     },
     {
@@ -3043,55 +1662,6 @@
       "bad": [],
       "small": [],
       "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Vẽ pixel theo toạ độ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Bai_Ve_pixel_theo_toa_do.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Gõ phím nhanh",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Bai_Go_phim_nhanh.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [
-       "33×52 BUTTON q",
-       "33×52 BUTTON w",
-       "33×52 BUTTON e",
-       "33×52 BUTTON r",
-       "33×52 BUTTON t",
-       "33×52 BUTTON y",
-       "33×52 BUTTON u",
-       "33×52 BUTTON i",
-       "33×52 BUTTON o",
-       "33×52 BUTTON p"
-      ],
       "cover": [],
       "over": false
      },
@@ -3176,44 +1746,6 @@
      "errs": []
     },
     {
-     "n": "🍳 Bếp nhà",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Bep_nha.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🍳 Nấu ăn: Phở bò",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Nau_an_Pho_bo.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
      "n": "🚁 Drone",
      "opened": false,
      "err": null,
@@ -3222,44 +1754,6 @@
      "left": "",
      "img": null,
      "scan": null,
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🚒 Trạm cứu hoả",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Tram_cuu_hoa.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🚓 Đồn cảnh sát",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__don_canh_sat.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
      "iv": 0,
      "ls": 0,
      "errs": []
@@ -3284,44 +1778,6 @@
      "errs": []
     },
     {
-     "n": "🧯 Cứu hoả: Bìa rừng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Cuu_hoa_Bia_rung.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧯 Cứu hoả: Máy bay",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_phone_g__Cuu_hoa_May_bay.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
      "n": "📖 Sổ cá biển",
      "opened": true,
      "err": null,
@@ -3329,25 +1785,6 @@
      "how": "nút ✕",
      "left": "",
      "img": "bundle_phone_g__So_ca_bien.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏴‍☠️ Tàu hải tặc",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_phone_g__Tau_hai_tac.jpg",
      "scan": {
       "bad": [],
       "small": [],
@@ -3494,22 +1931,12 @@
     }
    ],
    "leak0": {
-    "iv": 58,
-    "ls": 63
+    "iv": 59,
+    "ls": 67
    },
    "leakRep": [
     {
      "n": "🕹 Bóng đá 3 đánh 3",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bóng rổ ném rổ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Trượt ván",
      "iv": 0,
      "ls": 0
     },
@@ -3519,27 +1946,7 @@
      "ls": 0
     },
     {
-     "n": "🕹 Trượt tuyết 5 ngọn núi",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bay khinh khí cầu",
-     "iv": 0,
-     "ls": 0
-    },
-    {
      "n": "🕹 Lửa trại & tiệc nướng BBQ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Đua thú ở nông trại",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Chạy 100 m",
      "iv": 0,
      "ls": 0
     },
@@ -3549,27 +1956,7 @@
      "ls": 0
     },
     {
-     "n": "🕹 Nhảy xa",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy cao",
-     "iv": 0,
-     "ls": 0
-    },
-    {
      "n": "🕹 Nhảy sào",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Ném lao",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Đẩy tạ",
      "iv": 0,
      "ls": 0
     },
@@ -3577,149 +1964,29 @@
      "n": "🕹 Cử tạ",
      "iv": 0,
      "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy cầu 10 m",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Thể dục dụng cụ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bơi lội 5 làn Olympic",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bắn cung Olympic",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Rubik Kart · đua xe 3D",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Khúc côn cầu trên bàn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Đấu xe tăng",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Câu cá thư giãn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Câu cá ngoài khơi",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Tàu hải tặc Râu Cam",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🏟 Đấu trường online v45",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🛍 Cửa hàng",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🏠 Nhà tôi",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🛒 Chợ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🗺 Bản đồ lớn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🏰 Bản đồ nhà v48",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Học viện phép thuật",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Pha Chế Thuốc",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Bay Chổi Qua Vòng",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Đấu Phép Hình Nộm",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Vẽ Ký Hiệu Phép",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Xem Sao Tháp Thiên Văn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Chăm Sinh Vật Phép",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Giải Đố Rune Rubik",
-     "iv": 0,
-     "ls": 0
     }
    ],
    "leak1": {
-    "iv": 58,
-    "ls": 80
+    "iv": 59,
+    "ls": 76
    },
    "fps": {
     "stand": {
      "fps": 60,
-     "p95": 16.8,
+     "p95": 16.7,
      "max": 16.8,
      "long": 0
     },
     "walk": {
-     "fps": 59.6,
-     "p95": 16.8,
-     "max": 33.4,
+     "fps": 60,
+     "p95": 16.7,
+     "max": 16.8,
      "long": 0
     }
    },
    "save": {
     "ok": true,
-    "keys": 25,
+    "keys": 23,
     "diffs": [],
     "ign": 1,
     "check": {
@@ -3733,6306 +2000,7 @@
    "logs": [],
    "warnN": 0,
    "errN": 0,
-   "sec": 597
-  },
-  "land": {
-   "vi": "Điện thoại ngang 844×390",
-   "steps": {},
-   "loadMs": 1964,
-   "init": [
-    {
-     "n": "extInit",
-     "ok": 1,
-     "ms": 12.8
-    },
-    {
-     "n": "ext7Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "ext8Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "ext9Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "ext11Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "ext12Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "ext13Init",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "ext14Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "ext15Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "ext16Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "ext17Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "ext18Init",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "ext19Init",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v16Init",
-     "ok": 1,
-     "ms": 0.5
-    },
-    {
-     "n": "v17Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v18Init",
-     "ok": 1,
-     "ms": 1.2
-    },
-    {
-     "n": "v19Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v21Init",
-     "ok": 1,
-     "ms": 0.7
-    },
-    {
-     "n": "v22Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v23Init",
-     "ok": 1,
-     "ms": 9.4
-    },
-    {
-     "n": "v24Init",
-     "ok": 1,
-     "ms": 0.9
-    },
-    {
-     "n": "v25Init",
-     "ok": 1,
-     "ms": 1
-    },
-    {
-     "n": "v26Init",
-     "ok": 1,
-     "ms": 0.8
-    },
-    {
-     "n": "v27Init",
-     "ok": 1,
-     "ms": 10.3
-    },
-    {
-     "n": "v32Init",
-     "ok": 1,
-     "ms": 10
-    },
-    {
-     "n": "v33Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v34Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v35Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v36Init",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v37Init",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v38Init",
-     "ok": 1,
-     "ms": 0.9
-    },
-    {
-     "n": "v39Init",
-     "ok": 1,
-     "ms": 4.2
-    },
-    {
-     "n": "v40Init",
-     "ok": 1,
-     "ms": 0.9
-    },
-    {
-     "n": "v41Init",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v42Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v44Init",
-     "ok": 1,
-     "ms": 3.5
-    },
-    {
-     "n": "v44CoachInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v44PolishInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v44BalloonInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v45FarmInit",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v45PondInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v45ArtsInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v45SportsInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v45RubikChessInit",
-     "ok": 1,
-     "ms": 0.7
-    },
-    {
-     "n": "v45OnlineInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v45ShopInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v46Init",
-     "ok": 1,
-     "ms": 51.3
-    },
-    {
-     "n": "v48mInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v48cInit",
-     "ok": 1,
-     "ms": 2.1
-    },
-    {
-     "n": "v49rInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v50Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v51aInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v51pInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v51tInit",
-     "ok": 1,
-     "ms": 38.9
-    },
-    {
-     "n": "v52wInit",
-     "ok": 1,
-     "ms": 114.2
-    },
-    {
-     "n": "v52lInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v53cInit",
-     "ok": 1,
-     "ms": 165.9
-    },
-    {
-     "n": "v53sInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v53vInit",
-     "ok": 1,
-     "ms": 0.5
-    },
-    {
-     "n": "v55sInit",
-     "ok": 1,
-     "ms": 63.3
-    },
-    {
-     "n": "v56pInit",
-     "ok": 1,
-     "ms": 1.9
-    },
-    {
-     "n": "v54qInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v58tInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v57pInit",
-     "ok": 1,
-     "ms": 15.3
-    },
-    {
-     "n": "v59gInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v62fInit",
-     "ok": 1,
-     "ms": 1
-    },
-    {
-     "n": "v62kInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v63fInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v61lInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v61fInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v64mInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v64pInit",
-     "ok": 1,
-     "ms": 6.1
-    },
-    {
-     "n": "v64sInit",
-     "ok": 1,
-     "ms": 0.5
-    },
-    {
-     "n": "v65aInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v65bInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v65cInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v65fInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v65dInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v65eInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v66cInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v66tInit",
-     "ok": 1,
-     "ms": 144.3
-    },
-    {
-     "n": "v67lInit",
-     "ok": 1,
-     "ms": 1
-    },
-    {
-     "n": "v68mInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v69qInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v70sInit",
-     "ok": 1,
-     "ms": 0.5
-    },
-    {
-     "n": "v70eInit",
-     "ok": 1,
-     "ms": 0.9
-    },
-    {
-     "n": "v70fInit",
-     "ok": 1,
-     "ms": 13.1
-    },
-    {
-     "n": "v71dInit",
-     "ok": 1,
-     "ms": 1.9
-    },
-    {
-     "n": "v72pInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v73aInit",
-     "ok": 1,
-     "ms": 14.5
-    },
-    {
-     "n": "v74rInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v74lInit",
-     "ok": 1,
-     "ms": 3.8
-    },
-    {
-     "n": "v74qInit",
-     "ok": 1,
-     "ms": 0.2
-    }
-   ],
-   "initPatched": true,
-   "bootLogs": [],
-   "user": "qalandvh0c",
-   "login": true,
-   "hud": {
-    "bad": [],
-    "small": [],
-    "tiny": [],
-    "cover": [],
-    "over": false
-   },
-   "placesAll": 74,
-   "zones": [
-    {
-     "k": "rubik",
-     "name": "Lớp Rubik",
-     "ic": "🧊",
-     "img": "bundle_land_z_rubik.jpg",
-     "diff": 0.043,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "chess",
-     "name": "Khu cờ vua",
-     "ic": "♟️",
-     "img": "bundle_land_z_chess.jpg",
-     "diff": 0.072,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "music",
-     "name": "Khu âm nhạc",
-     "ic": "🎹",
-     "img": "bundle_land_z_music.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hall",
-     "name": "Hội trường lớn",
-     "ic": "🎭",
-     "img": "bundle_land_z_hall.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 18,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "rubikyard",
-     "name": "Sân Rubik",
-     "ic": "🧊",
-     "img": "bundle_land_z_rubikyard.jpg",
-     "diff": 0.001,
-     "mv": {
-      "right": 50,
-      "down": 4,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "office",
-     "name": "Văn phòng",
-     "ic": "🏫",
-     "img": "bundle_land_z_office.jpg",
-     "diff": 0.015,
-     "mv": {
-      "right": 50,
-      "down": 4,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "attend",
-     "name": "Khu điểm danh",
-     "ic": "📋",
-     "img": "bundle_land_z_attend.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "elec",
-     "name": "Lớp lắp ráp điện",
-     "ic": "🔌",
-     "img": "bundle_land_z_elec.jpg",
-     "diff": 0.003,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "field",
-     "name": "Sân bóng đá",
-     "ic": "⚽",
-     "img": "bundle_land_z_field.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "giantchess",
-     "name": "Quảng trường cờ vua khổng lồ",
-     "ic": "♞",
-     "img": "bundle_land_z_giantchess.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "rubikpark",
-     "name": "Tượng đài Rubik · biểu tượng trường",
-     "ic": "🧊",
-     "img": "bundle_land_z_rubikpark.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "pond",
-     "name": "Hồ câu thư giãn",
-     "ic": "🎣",
-     "img": "bundle_land_z_pond.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 37,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "flowerfield",
-     "name": "Cánh đồng hoa",
-     "ic": "🌼",
-     "img": "bundle_land_z_flowerfield.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "bpad",
-     "name": "Khu khinh khí cầu",
-     "ic": "🎈",
-     "img": "bundle_land_z_bpad.jpg",
-     "diff": 0.124,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "skate",
-     "name": "Sân trượt ván",
-     "ic": "🛹",
-     "img": "bundle_land_z_skate.jpg",
-     "diff": 0.014,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "patin",
-     "name": "Sân trượt patin",
-     "ic": "⛸️",
-     "img": "bundle_land_z_patin.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 49,
-      "down": 53,
-      "left": 52,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "basket",
-     "name": "Sân bóng rổ",
-     "ic": "🏀",
-     "img": "bundle_land_z_basket.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "ski",
-     "name": "Sân trượt tuyết",
-     "ic": "⛷️",
-     "img": "bundle_land_z_ski.jpg",
-     "diff": 0.007,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "art",
-     "name": "Góc họa sĩ",
-     "ic": "🎨",
-     "img": "bundle_land_z_art.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "farm",
-     "name": "Nông trại",
-     "ic": "🌾",
-     "img": "bundle_land_z_farm.jpg",
-     "diff": 0.018,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "garden",
-     "name": "Vườn hoa Đà Lạt",
-     "ic": "🌷",
-     "img": "bundle_land_z_garden.jpg",
-     "diff": 0.001,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "picnic",
-     "name": "Khu picnic",
-     "ic": "🧺",
-     "img": "bundle_land_z_picnic.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "lotus",
-     "name": "Đầm sen",
-     "ic": "🪷",
-     "img": "bundle_land_z_lotus.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "lake",
-     "name": "Hồ cá Koi & khu cắm trại",
-     "ic": "🐟",
-     "img": "bundle_land_z_lake.jpg",
-     "diff": 0.001,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "forest",
-     "name": "Khu rừng thông",
-     "ic": "📍",
-     "img": "bundle_land_z_forest.jpg",
-     "diff": 0.001,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "library",
-     "name": "Thư viện Tri Thức",
-     "ic": "📚",
-     "img": "bundle_land_z_library.jpg",
-     "diff": 0.031,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "zen",
-     "name": "Vườn thiền tĩnh tâm",
-     "ic": "🧘",
-     "img": "bundle_land_z_zen.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "stadium",
-     "name": "Sân vận động Olympic",
-     "ic": "🏟️",
-     "img": "bundle_land_z_stadium.jpg",
-     "diff": 0.003,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "pool",
-     "name": "Hồ bơi Olympic 5 làn",
-     "ic": "🏊",
-     "img": "bundle_land_z_pool.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "archery",
-     "name": "Trường bắn cung",
-     "ic": "🏹",
-     "img": "bundle_land_z_archery.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "gym",
-     "name": "Nhà thi đấu thể dục dụng cụ",
-     "ic": "🤸",
-     "img": "bundle_land_z_gym.jpg",
-     "diff": 0.094,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "arena",
-     "name": "Đấu trường online",
-     "ic": "🌐",
-     "img": "bundle_land_z_arena.jpg",
-     "diff": 0.079,
-     "mv": {
-      "right": 50,
-      "down": 51,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "kart",
-     "name": "Trường đua Rubik Kart",
-     "ic": "🏎️",
-     "img": "bundle_land_z_kart.jpg",
-     "diff": 0.028,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "academy",
-     "name": "Học viện trí tuệ",
-     "ic": "🎓",
-     "img": "bundle_land_z_academy.jpg",
-     "diff": 0.015,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "shopst",
-     "name": "Phố mua sắm",
-     "ic": "🛍️",
-     "img": "bundle_land_z_shopst.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hall2p",
-     "name": "Nhà game 2 người",
-     "ic": "🎮",
-     "img": "bundle_land_z_hall2p.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "plaza",
-     "name": "Quảng trường lễ hội",
-     "ic": "🏮",
-     "img": "bundle_land_z_plaza.jpg",
-     "diff": 0.015,
-     "mv": {
-      "right": 48,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "botanic",
-     "name": "Vườn bách thảo & đài thiên văn",
-     "ic": "🔭",
-     "img": "bundle_land_z_botanic.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "pstreet",
-     "name": "Phố nhà & cửa hàng người chơi",
-     "ic": "🏘️",
-     "img": "bundle_land_z_pstreet.jpg",
-     "diff": 0.037,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "beach",
-     "name": "Bãi biển & bến tàu",
-     "ic": "⚓",
-     "img": "bundle_land_z_beach.jpg",
-     "diff": 0.026,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "navy",
-     "name": "Hầm tên lửa · tàu hải quân",
-     "ic": "🚀",
-     "img": "bundle_land_z_navy.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "gardenbuy",
-     "name": "Khu vườn mở bán",
-     "ic": "🥕",
-     "img": "bundle_land_z_gardenbuy.jpg",
-     "diff": 0.094,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "gate",
-     "name": "Cổng trường",
-     "ic": "🏫",
-     "img": "bundle_land_z_gate.jpg",
-     "diff": 0.007,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hBiệt thự cổ điển",
-     "name": "Biệt thự cổ điển",
-     "ic": "🏠",
-     "img": "bundle_land_z_hBiet_thu_co_dien.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà ống phố",
-     "name": "Nhà ống phố",
-     "ic": "🏠",
-     "img": "bundle_land_z_hNha_ong_pho.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà gỗ",
-     "name": "Nhà gỗ",
-     "ic": "🏠",
-     "img": "bundle_land_z_hNha_go.jpg",
-     "diff": 0.007,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà tròn mái nấm",
-     "name": "Nhà tròn mái nấm",
-     "ic": "🏠",
-     "img": "bundle_land_z_hNha_tron_mai_nam.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hResort hồ bơi",
-     "name": "Resort hồ bơi",
-     "ic": "🏠",
-     "img": "bundle_land_z_hResort_ho_boi.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà kiểu Nhật",
-     "name": "Nhà kiểu Nhật",
-     "ic": "🏠",
-     "img": "bundle_land_z_hNha_kieu_Nhat.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hLâu đài mini",
-     "name": "Lâu đài mini",
-     "ic": "🏠",
-     "img": "bundle_land_z_hLau_dai_mini.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà sàn",
-     "name": "Nhà sàn",
-     "ic": "🏠",
-     "img": "bundle_land_z_hNha_san.jpg",
-     "diff": 0.003,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà kính hiện đại",
-     "name": "Nhà kính hiện đại",
-     "ic": "🏠",
-     "img": "bundle_land_z_hNha_kinh_hien_dai.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà Địa Trung Hải",
-     "name": "Nhà Địa Trung Hải",
-     "ic": "🏠",
-     "img": "bundle_land_z_hNha_dia_Trung_Hai.jpg",
-     "diff": 0.001,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà mái Thái",
-     "name": "Nhà mái Thái",
-     "ic": "🏠",
-     "img": "bundle_land_z_hNha_mai_Thai.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà container",
-     "name": "Nhà container",
-     "ic": "🏠",
-     "img": "bundle_land_z_hNha_container.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hVilla hiện đại",
-     "name": "Villa hiện đại",
-     "ic": "🏠",
-     "img": "bundle_land_z_hVilla_hien_dai.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 48,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v51t",
-     "name": "Trường Tin học",
-     "ic": "💻",
-     "img": "bundle_land_z_v51t.jpg",
-     "diff": 0.007,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52mall",
-     "name": "TTTM Cầu Vồng",
-     "ic": "🛍️",
-     "img": "bundle_land_z_v52mall.jpg",
-     "diff": 0.003,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52street",
-     "name": "Phố đi bộ Hoa Phượng",
-     "ic": "🚶",
-     "img": "bundle_land_z_v52street.jpg",
-     "diff": 0.001,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52village",
-     "name": "Làng Gió Xanh",
-     "ic": "🏡",
-     "img": "bundle_land_z_v52village.jpg",
-     "diff": 0.003,
-     "mv": {
-      "right": 50,
-      "down": 53,
-      "left": 54,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52rice",
-     "name": "Đồng lúa Vàng",
-     "ic": "🌾",
-     "img": "bundle_land_z_v52rice.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 48,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52river",
-     "name": "Sông Bạc",
-     "ic": "🏞️",
-     "img": "bundle_land_z_v52river.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 39,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52camp",
-     "name": "Rừng Thông Reo · cắm trại",
-     "ic": "🏕️",
-     "img": "bundle_land_z_v52camp.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 54,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52hill",
-     "name": "Đồi Mây · leo núi",
-     "ic": "⛰️",
-     "img": "bundle_land_z_v52hill.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52beach",
-     "name": "Bãi Cát Vàng · lặn biển",
-     "ic": "🏖️",
-     "img": "bundle_land_z_v52beach.jpg",
-     "diff": 0.001,
-     "mv": {
-      "right": 48,
-      "down": 53,
-      "left": 52,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52flowers",
-     "name": "Cánh đồng hoa Gió",
-     "ic": "🌷",
-     "img": "bundle_land_z_v52flowers.jpg",
-     "diff": 0.007,
-     "mv": {
-      "right": 50,
-      "down": 51,
-      "left": 52,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52br0",
-     "name": "Cầu Bình Minh",
-     "ic": "🌉",
-     "img": "bundle_land_z_v52br0.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 57,
-      "down": 35,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52br1",
-     "name": "Cầu Lúa Vàng",
-     "ic": "🌉",
-     "img": "bundle_land_z_v52br1.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 36,
-      "down": 54,
-      "left": 49,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v53c",
-     "name": "Trạm cứu hỏa",
-     "ic": "🚒",
-     "img": "bundle_land_z_v53c.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v57pAp",
-     "name": "Sân bay Quốc tế Rubik",
-     "ic": "✈️",
-     "img": "bundle_land_z_v57pAp.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v66t",
-     "name": "Cây thần kỳ",
-     "ic": "🌳",
-     "img": "bundle_land_z_v66t.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v73aBig",
-     "name": "Khu Máy bay cỡ lớn",
-     "ic": "🛬",
-     "img": "bundle_land_z_v73aBig.jpg",
-     "diff": 0.089,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "dalat",
-     "name": "Phố nhà Đà Lạt",
-     "ic": "",
-     "img": "bundle_land_z_dalat.jpg",
-     "diff": 0.001,
-     "mv": {
-      "right": 48,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "houses",
-     "name": "houses",
-     "ic": "",
-     "img": "bundle_land_z_houses.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    }
-   ],
-   "sig0": "",
-   "games": [
-    {
-     "n": "🕹 Bóng đá 3 đánh 3",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Bong_da_3_danh_3.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bóng rổ ném rổ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Bong_ro_nem_ro.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Trượt ván",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Truot_van.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Trượt patin",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Truot_patin.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Trượt tuyết 5 ngọn núi",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Truot_tuyet_5_ngon_nui.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bay khinh khí cầu",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Bay_khinh_khi_cau.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Lửa trại & tiệc nướng BBQ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Lua_trai_tiec_nuong_BBQ.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Đua thú ở nông trại",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__dua_thu_o_nong_trai.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Chạy 100 m",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Chay_100_m.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Chạy 110 m vượt rào",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Chay_110_m_vuot_rao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy xa",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Nhay_xa.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy cao",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Nhay_cao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy sào",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Nhay_sao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Ném lao",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Nem_lao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Đẩy tạ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__day_ta.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Cử tạ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Cu_ta.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy cầu 10 m",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Nhay_cau_10_m.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Thể dục dụng cụ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__The_duc_dung_cu.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bơi lội 5 làn Olympic",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Boi_loi_5_lan_Olympic.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bắn cung Olympic",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Ban_cung_Olympic.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Rubik Kart · đua xe 3D",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Rubik_Kart_dua_xe_3D.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Khúc côn cầu trên bàn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Khuc_con_cau_tren_ban.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Đấu xe tăng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__dau_xe_tang.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Câu cá thư giãn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Cau_ca_thu_gian.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Câu cá ngoài khơi",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Cau_ca_ngoai_khoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Tàu hải tặc Râu Cam",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Tau_hai_tac_Rau_Cam.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏟 Đấu trường online v45",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__dau_truong_online_v45.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🛍 Cửa hàng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Cua_hang.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏠 Nhà tôi",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Nha_toi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🛒 Chợ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Cho.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🗺 Bản đồ lớn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Ban_do_lon.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏰 Bản đồ nhà v48",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Ban_do_nha_v48.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 2,
-     "errs": []
-    },
-    {
-     "n": "🪄 Học viện phép thuật",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Hoc_vien_phep_thuat.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "🪄 Pha Chế Thuốc",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Pha_Che_Thuoc.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Bay Chổi Qua Vòng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Bay_Choi_Qua_Vong.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Đấu Phép Hình Nộm",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__dau_Phep_Hinh_Nom.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Vẽ Ký Hiệu Phép",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Ve_Ky_Hieu_Phep.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Xem Sao Tháp Thiên Văn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Xem_Sao_Thap_Thien_Van.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Chăm Sinh Vật Phép",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Cham_Sinh_Vat_Phep.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Giải Đố Rune Rubik",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Giai_do_Rune_Rubik.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧙 Phố phép thuật",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Pho_phep_thuat.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "💻 Trường tin học",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Truong_tin_hoc.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Lập trình khối",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Bai_Lap_trinh_khoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Tìm lỗi (debug)",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Bai_Tim_loi_debug_.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Thuật toán Rubik",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Bai_Thuat_toan_Rubik.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Số nhị phân",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Bai_So_nhi_phan.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Vẽ pixel theo toạ độ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Bai_Ve_pixel_theo_toa_do.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [
-       "33×33 BUTTON "
-      ],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Gõ phím nhanh",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Bai_Go_phim_nhanh.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài An toàn trên mạng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Bai_An_toan_tren_mang.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "✈️ Hangar máy bay",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Hangar_may_bay.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏬 TTTM",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__TTTM.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "💻 Laptop",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Laptop.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🍳 Bếp nhà",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Bep_nha.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🍳 Nấu ăn: Phở bò",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Nau_an_Pho_bo.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "🚁 Drone",
-     "opened": false,
-     "err": null,
-     "closed": true,
-     "how": "sẵn",
-     "left": "",
-     "img": null,
-     "scan": null,
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🚒 Trạm cứu hoả",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Tram_cuu_hoa.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🚓 Đồn cảnh sát",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__don_canh_sat.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧯 Cứu hoả: Nhà bếp",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Cuu_hoa_Nha_bep.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧯 Cứu hoả: Bìa rừng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Cuu_hoa_Bia_rung.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧯 Cứu hoả: Máy bay",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Cuu_hoa_May_bay.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "📖 Sổ cá biển",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__So_ca_bien.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏴‍☠️ Tàu hải tặc",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__Tau_hai_tac.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💰 Bảng Lương",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Bang_Luong.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🌳 Cây thần kỳ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Cay_than_ky.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏆 Thành tựu & Lễ hội",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Thanh_tuu_Le_hoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "📖 Sổ Hành trình",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__So_Hanh_trinh.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "✈️ Hangar (v73a)",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_land_g__Hangar_v73a_.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🔥 Đường bay tốc độ Tia Lửa",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "ép đóng",
-     "left": "",
-     "img": "bundle_land_g__duong_bay_toc_do_Tia_Lua.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏬 TTTM tầng 2 · cần câu",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_land_g__TTTM_tang_2_can_cau.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    }
-   ],
-   "leak0": {
-    "iv": 58,
-    "ls": 63
-   },
-   "leakRep": [
-    {
-     "n": "🕹 Bóng đá 3 đánh 3",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bóng rổ ném rổ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Trượt ván",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Trượt patin",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Trượt tuyết 5 ngọn núi",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bay khinh khí cầu",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Lửa trại & tiệc nướng BBQ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Đua thú ở nông trại",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Chạy 100 m",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Chạy 110 m vượt rào",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy xa",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy cao",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy sào",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Ném lao",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Đẩy tạ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Cử tạ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy cầu 10 m",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Thể dục dụng cụ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bơi lội 5 làn Olympic",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bắn cung Olympic",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Rubik Kart · đua xe 3D",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Khúc côn cầu trên bàn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Đấu xe tăng",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Câu cá thư giãn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Câu cá ngoài khơi",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Tàu hải tặc Râu Cam",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🏟 Đấu trường online v45",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🛍 Cửa hàng",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🏠 Nhà tôi",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🛒 Chợ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🗺 Bản đồ lớn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🏰 Bản đồ nhà v48",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Học viện phép thuật",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Pha Chế Thuốc",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Bay Chổi Qua Vòng",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Đấu Phép Hình Nộm",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Vẽ Ký Hiệu Phép",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Xem Sao Tháp Thiên Văn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Chăm Sinh Vật Phép",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Giải Đố Rune Rubik",
-     "iv": 0,
-     "ls": 0
-    }
-   ],
-   "leak1": {
-    "iv": 58,
-    "ls": 80
-   },
-   "fps": {
-    "stand": {
-     "fps": 60,
-     "p95": 16.7,
-     "max": 16.8,
-     "long": 0
-    },
-    "walk": {
-     "fps": 60,
-     "p95": 16.8,
-     "max": 16.8,
-     "long": 0
-    }
-   },
-   "save": {
-    "ok": true,
-    "keys": 25,
-    "diffs": [],
-    "ign": 0,
-    "check": {
-     "money": true,
-     "hat": true,
-     "luong": true,
-     "story": true,
-     "cay": true
-    }
-   },
-   "logs": [],
-   "warnN": 0,
-   "errN": 0,
-   "sec": 599
-  },
-  "desk": {
-   "vi": "Máy tính 1440×900",
-   "steps": {},
-   "loadMs": 2013,
-   "init": [
-    {
-     "n": "extInit",
-     "ok": 1,
-     "ms": 14.2
-    },
-    {
-     "n": "ext7Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "ext8Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "ext9Init",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "ext11Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "ext12Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "ext13Init",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "ext14Init",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "ext15Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "ext16Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "ext17Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "ext18Init",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "ext19Init",
-     "ok": 1,
-     "ms": 0.9
-    },
-    {
-     "n": "v16Init",
-     "ok": 1,
-     "ms": 0.8
-    },
-    {
-     "n": "v17Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v18Init",
-     "ok": 1,
-     "ms": 1.5
-    },
-    {
-     "n": "v19Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v21Init",
-     "ok": 1,
-     "ms": 1.1
-    },
-    {
-     "n": "v22Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v23Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v24Init",
-     "ok": 1,
-     "ms": 0.5
-    },
-    {
-     "n": "v25Init",
-     "ok": 1,
-     "ms": 0.9
-    },
-    {
-     "n": "v26Init",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v27Init",
-     "ok": 1,
-     "ms": 11.3
-    },
-    {
-     "n": "v32Init",
-     "ok": 1,
-     "ms": 9.1
-    },
-    {
-     "n": "v33Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v34Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v35Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v36Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v37Init",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v38Init",
-     "ok": 1,
-     "ms": 0.8
-    },
-    {
-     "n": "v39Init",
-     "ok": 1,
-     "ms": 4.9
-    },
-    {
-     "n": "v40Init",
-     "ok": 1,
-     "ms": 1
-    },
-    {
-     "n": "v41Init",
-     "ok": 1,
-     "ms": 0.7
-    },
-    {
-     "n": "v42Init",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v44Init",
-     "ok": 1,
-     "ms": 10.8
-    },
-    {
-     "n": "v44CoachInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v44PolishInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v44BalloonInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v45FarmInit",
-     "ok": 1,
-     "ms": 0.9
-    },
-    {
-     "n": "v45PondInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v45ArtsInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v45SportsInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v45RubikChessInit",
-     "ok": 1,
-     "ms": 0.7
-    },
-    {
-     "n": "v45OnlineInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v45ShopInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v46Init",
-     "ok": 1,
-     "ms": 65
-    },
-    {
-     "n": "v48mInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v48cInit",
-     "ok": 1,
-     "ms": 2.6
-    },
-    {
-     "n": "v49rInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v50Init",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v51aInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v51pInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v51tInit",
-     "ok": 1,
-     "ms": 59.7
-    },
-    {
-     "n": "v52wInit",
-     "ok": 1,
-     "ms": 149.7
-    },
-    {
-     "n": "v52lInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v53cInit",
-     "ok": 1,
-     "ms": 181
-    },
-    {
-     "n": "v53sInit",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v53vInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v55sInit",
-     "ok": 1,
-     "ms": 67.1
-    },
-    {
-     "n": "v56pInit",
-     "ok": 1,
-     "ms": 1.9
-    },
-    {
-     "n": "v54qInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v58tInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v57pInit",
-     "ok": 1,
-     "ms": 26
-    },
-    {
-     "n": "v59gInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v62fInit",
-     "ok": 1,
-     "ms": 1.1
-    },
-    {
-     "n": "v62kInit",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v63fInit",
-     "ok": 1,
-     "ms": 0.3
-    },
-    {
-     "n": "v61lInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v61fInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v64mInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v64pInit",
-     "ok": 1,
-     "ms": 7
-    },
-    {
-     "n": "v64sInit",
-     "ok": 1,
-     "ms": 0.6
-    },
-    {
-     "n": "v65aInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v65bInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v65cInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v65fInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v65dInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v65eInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v66cInit",
-     "ok": 1,
-     "ms": 0
-    },
-    {
-     "n": "v66tInit",
-     "ok": 1,
-     "ms": 123.5
-    },
-    {
-     "n": "v67lInit",
-     "ok": 1,
-     "ms": 1.2
-    },
-    {
-     "n": "v68mInit",
-     "ok": 1,
-     "ms": 0.4
-    },
-    {
-     "n": "v69qInit",
-     "ok": 1,
-     "ms": 0.2
-    },
-    {
-     "n": "v70sInit",
-     "ok": 1,
-     "ms": 0.7
-    },
-    {
-     "n": "v70eInit",
-     "ok": 1,
-     "ms": 1.2
-    },
-    {
-     "n": "v70fInit",
-     "ok": 1,
-     "ms": 12.1
-    },
-    {
-     "n": "v71dInit",
-     "ok": 1,
-     "ms": 27.1
-    },
-    {
-     "n": "v72pInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v73aInit",
-     "ok": 1,
-     "ms": 12
-    },
-    {
-     "n": "v74rInit",
-     "ok": 1,
-     "ms": 0.1
-    },
-    {
-     "n": "v74lInit",
-     "ok": 1,
-     "ms": 3.9
-    },
-    {
-     "n": "v74qInit",
-     "ok": 1,
-     "ms": 0.1
-    }
-   ],
-   "initPatched": true,
-   "bootLogs": [],
-   "user": "qadesklrp5",
-   "login": true,
-   "hud": {
-    "bad": [],
-    "small": [],
-    "tiny": [],
-    "cover": [],
-    "over": false
-   },
-   "placesAll": 74,
-   "zones": [
-    {
-     "k": "rubik",
-     "name": "Lớp Rubik",
-     "ic": "🧊",
-     "img": "bundle_desk_z_rubik.jpg",
-     "diff": 0.035,
-     "mv": {
-      "right": 53,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "chess",
-     "name": "Khu cờ vua",
-     "ic": "♟️",
-     "img": "bundle_desk_z_chess.jpg",
-     "diff": 0.397,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "music",
-     "name": "Khu âm nhạc",
-     "ic": "🎹",
-     "img": "bundle_desk_z_music.jpg",
-     "diff": 0.011,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hall",
-     "name": "Hội trường lớn",
-     "ic": "🎭",
-     "img": "bundle_desk_z_hall.jpg",
-     "diff": 0.068,
-     "mv": {
-      "right": 54,
-      "down": 50,
-      "left": 23,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "rubikyard",
-     "name": "Sân Rubik",
-     "ic": "🧊",
-     "img": "bundle_desk_z_rubikyard.jpg",
-     "diff": 0.071,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "office",
-     "name": "Văn phòng",
-     "ic": "🏫",
-     "img": "bundle_desk_z_office.jpg",
-     "diff": 0.093,
-     "mv": {
-      "right": 50,
-      "down": 4,
-      "left": 52,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "attend",
-     "name": "Khu điểm danh",
-     "ic": "📋",
-     "img": "bundle_desk_z_attend.jpg",
-     "diff": 0.061,
-     "mv": {
-      "right": 52,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "elec",
-     "name": "Lớp lắp ráp điện",
-     "ic": "🔌",
-     "img": "bundle_desk_z_elec.jpg",
-     "diff": 0.019,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "field",
-     "name": "Sân bóng đá",
-     "ic": "⚽",
-     "img": "bundle_desk_z_field.jpg",
-     "diff": 0.018,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "giantchess",
-     "name": "Quảng trường cờ vua khổng lồ",
-     "ic": "♞",
-     "img": "bundle_desk_z_giantchess.jpg",
-     "diff": 0.021,
-     "mv": {
-      "right": 52,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "rubikpark",
-     "name": "Tượng đài Rubik · biểu tượng trường",
-     "ic": "🧊",
-     "img": "bundle_desk_z_rubikpark.jpg",
-     "diff": 0.043,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "pond",
-     "name": "Hồ câu thư giãn",
-     "ic": "🎣",
-     "img": "bundle_desk_z_pond.jpg",
-     "diff": 0.007,
-     "mv": {
-      "right": 50,
-      "down": 37,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "flowerfield",
-     "name": "Cánh đồng hoa",
-     "ic": "🌼",
-     "img": "bundle_desk_z_flowerfield.jpg",
-     "diff": 0.066,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "bpad",
-     "name": "Khu khinh khí cầu",
-     "ic": "🎈",
-     "img": "bundle_desk_z_bpad.jpg",
-     "diff": 0.018,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "skate",
-     "name": "Sân trượt ván",
-     "ic": "🛹",
-     "img": "bundle_desk_z_skate.jpg",
-     "diff": 0,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "patin",
-     "name": "Sân trượt patin",
-     "ic": "⛸️",
-     "img": "bundle_desk_z_patin.jpg",
-     "diff": 0.029,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "basket",
-     "name": "Sân bóng rổ",
-     "ic": "🏀",
-     "img": "bundle_desk_z_basket.jpg",
-     "diff": 0.015,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "ski",
-     "name": "Sân trượt tuyết",
-     "ic": "⛷️",
-     "img": "bundle_desk_z_ski.jpg",
-     "diff": 0.009,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "art",
-     "name": "Góc họa sĩ",
-     "ic": "🎨",
-     "img": "bundle_desk_z_art.jpg",
-     "diff": 0.01,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "farm",
-     "name": "Nông trại",
-     "ic": "🌾",
-     "img": "bundle_desk_z_farm.jpg",
-     "diff": 0.036,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "garden",
-     "name": "Vườn hoa Đà Lạt",
-     "ic": "🌷",
-     "img": "bundle_desk_z_garden.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "picnic",
-     "name": "Khu picnic",
-     "ic": "🧺",
-     "img": "bundle_desk_z_picnic.jpg",
-     "diff": 0.002,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "lotus",
-     "name": "Đầm sen",
-     "ic": "🪷",
-     "img": "bundle_desk_z_lotus.jpg",
-     "diff": 0.011,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "lake",
-     "name": "Hồ cá Koi & khu cắm trại",
-     "ic": "🐟",
-     "img": "bundle_desk_z_lake.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "forest",
-     "name": "Khu rừng thông",
-     "ic": "📍",
-     "img": "bundle_desk_z_forest.jpg",
-     "diff": 0.026,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "library",
-     "name": "Thư viện Tri Thức",
-     "ic": "📚",
-     "img": "bundle_desk_z_library.jpg",
-     "diff": 0.03,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "zen",
-     "name": "Vườn thiền tĩnh tâm",
-     "ic": "🧘",
-     "img": "bundle_desk_z_zen.jpg",
-     "diff": 0.011,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "stadium",
-     "name": "Sân vận động Olympic",
-     "ic": "🏟️",
-     "img": "bundle_desk_z_stadium.jpg",
-     "diff": 0.002,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "pool",
-     "name": "Hồ bơi Olympic 5 làn",
-     "ic": "🏊",
-     "img": "bundle_desk_z_pool.jpg",
-     "diff": 0.003,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "archery",
-     "name": "Trường bắn cung",
-     "ic": "🏹",
-     "img": "bundle_desk_z_archery.jpg",
-     "diff": 0.013,
-     "mv": {
-      "right": 52,
-      "down": 52,
-      "left": 54,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "gym",
-     "name": "Nhà thi đấu thể dục dụng cụ",
-     "ic": "🤸",
-     "img": "bundle_desk_z_gym.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 54,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "arena",
-     "name": "Đấu trường online",
-     "ic": "🌐",
-     "img": "bundle_desk_z_arena.jpg",
-     "diff": 0.05,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "kart",
-     "name": "Trường đua Rubik Kart",
-     "ic": "🏎️",
-     "img": "bundle_desk_z_kart.jpg",
-     "diff": 0.019,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "academy",
-     "name": "Học viện trí tuệ",
-     "ic": "🎓",
-     "img": "bundle_desk_z_academy.jpg",
-     "diff": 0.002,
-     "mv": {
-      "right": 52,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "shopst",
-     "name": "Phố mua sắm",
-     "ic": "🛍️",
-     "img": "bundle_desk_z_shopst.jpg",
-     "diff": 0.034,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hall2p",
-     "name": "Nhà game 2 người",
-     "ic": "🎮",
-     "img": "bundle_desk_z_hall2p.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "plaza",
-     "name": "Quảng trường lễ hội",
-     "ic": "🏮",
-     "img": "bundle_desk_z_plaza.jpg",
-     "diff": 0.007,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "botanic",
-     "name": "Vườn bách thảo & đài thiên văn",
-     "ic": "🔭",
-     "img": "bundle_desk_z_botanic.jpg",
-     "diff": 0.015,
-     "mv": {
-      "right": 52,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "pstreet",
-     "name": "Phố nhà & cửa hàng người chơi",
-     "ic": "🏘️",
-     "img": "bundle_desk_z_pstreet.jpg",
-     "diff": 0.145,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "beach",
-     "name": "Bãi biển & bến tàu",
-     "ic": "⚓",
-     "img": "bundle_desk_z_beach.jpg",
-     "diff": 0.026,
-     "mv": {
-      "right": 50,
-      "down": 53,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "navy",
-     "name": "Hầm tên lửa · tàu hải quân",
-     "ic": "🚀",
-     "img": "bundle_desk_z_navy.jpg",
-     "diff": 0.031,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "gardenbuy",
-     "name": "Khu vườn mở bán",
-     "ic": "🥕",
-     "img": "bundle_desk_z_gardenbuy.jpg",
-     "diff": 0.037,
-     "mv": {
-      "right": 50,
-      "down": 53,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "gate",
-     "name": "Cổng trường",
-     "ic": "🏫",
-     "img": "bundle_desk_z_gate.jpg",
-     "diff": 0.018,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hBiệt thự cổ điển",
-     "name": "Biệt thự cổ điển",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hBiet_thu_co_dien.jpg",
-     "diff": 0.018,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà ống phố",
-     "name": "Nhà ống phố",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hNha_ong_pho.jpg",
-     "diff": 0.037,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà gỗ",
-     "name": "Nhà gỗ",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hNha_go.jpg",
-     "diff": 0.003,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà tròn mái nấm",
-     "name": "Nhà tròn mái nấm",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hNha_tron_mai_nam.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hResort hồ bơi",
-     "name": "Resort hồ bơi",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hResort_ho_boi.jpg",
-     "diff": 0.026,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà kiểu Nhật",
-     "name": "Nhà kiểu Nhật",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hNha_kieu_Nhat.jpg",
-     "diff": 0.032,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hLâu đài mini",
-     "name": "Lâu đài mini",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hLau_dai_mini.jpg",
-     "diff": 0.036,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà sàn",
-     "name": "Nhà sàn",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hNha_san.jpg",
-     "diff": 0.009,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà kính hiện đại",
-     "name": "Nhà kính hiện đại",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hNha_kinh_hien_dai.jpg",
-     "diff": 0.03,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà Địa Trung Hải",
-     "name": "Nhà Địa Trung Hải",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hNha_dia_Trung_Hai.jpg",
-     "diff": 0.011,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà mái Thái",
-     "name": "Nhà mái Thái",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hNha_mai_Thai.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hNhà container",
-     "name": "Nhà container",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hNha_container.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "hVilla hiện đại",
-     "name": "Villa hiện đại",
-     "ic": "🏠",
-     "img": "bundle_desk_z_hVilla_hien_dai.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v51t",
-     "name": "Trường Tin học",
-     "ic": "💻",
-     "img": "bundle_desk_z_v51t.jpg",
-     "diff": 0.01,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52mall",
-     "name": "TTTM Cầu Vồng",
-     "ic": "🛍️",
-     "img": "bundle_desk_z_v52mall.jpg",
-     "diff": 0.003,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52street",
-     "name": "Phố đi bộ Hoa Phượng",
-     "ic": "🚶",
-     "img": "bundle_desk_z_v52street.jpg",
-     "diff": 0.002,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52village",
-     "name": "Làng Gió Xanh",
-     "ic": "🏡",
-     "img": "bundle_desk_z_v52village.jpg",
-     "diff": 0.002,
-     "mv": {
-      "right": 50,
-      "down": 53,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52rice",
-     "name": "Đồng lúa Vàng",
-     "ic": "🌾",
-     "img": "bundle_desk_z_v52rice.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52river",
-     "name": "Sông Bạc",
-     "ic": "🏞️",
-     "img": "bundle_desk_z_v52river.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 39,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52camp",
-     "name": "Rừng Thông Reo · cắm trại",
-     "ic": "🏕️",
-     "img": "bundle_desk_z_v52camp.jpg",
-     "diff": 0.002,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 54,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52hill",
-     "name": "Đồi Mây · leo núi",
-     "ic": "⛰️",
-     "img": "bundle_desk_z_v52hill.jpg",
-     "diff": 0.002,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52beach",
-     "name": "Bãi Cát Vàng · lặn biển",
-     "ic": "🏖️",
-     "img": "bundle_desk_z_v52beach.jpg",
-     "diff": 0.005,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52flowers",
-     "name": "Cánh đồng hoa Gió",
-     "ic": "🌷",
-     "img": "bundle_desk_z_v52flowers.jpg",
-     "diff": 0.018,
-     "mv": {
-      "right": 50,
-      "down": 53,
-      "left": 52,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52br0",
-     "name": "Cầu Bình Minh",
-     "ic": "🌉",
-     "img": "bundle_desk_z_v52br0.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 35,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v52br1",
-     "name": "Cầu Lúa Vàng",
-     "ic": "🌉",
-     "img": "bundle_desk_z_v52br1.jpg",
-     "diff": 0.01,
-     "mv": {
-      "right": 36,
-      "down": 54,
-      "left": 49,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v53c",
-     "name": "Trạm cứu hỏa",
-     "ic": "🚒",
-     "img": "bundle_desk_z_v53c.jpg",
-     "diff": 0.003,
-     "mv": {
-      "right": 49,
-      "down": 54,
-      "left": 54,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v57pAp",
-     "name": "Sân bay Quốc tế Rubik",
-     "ic": "✈️",
-     "img": "bundle_desk_z_v57pAp.jpg",
-     "diff": 0.002,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 53
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v66t",
-     "name": "Cây thần kỳ",
-     "ic": "🌳",
-     "img": "bundle_desk_z_v66t.jpg",
-     "diff": 0.004,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 52,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "v73aBig",
-     "name": "Khu Máy bay cỡ lớn",
-     "ic": "🛬",
-     "img": "bundle_desk_z_v73aBig.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "dalat",
-     "name": "Phố nhà Đà Lạt",
-     "ic": "",
-     "img": "bundle_desk_z_dalat.jpg",
-     "diff": 0.006,
-     "mv": {
-      "right": 50,
-      "down": 52,
-      "left": 53,
-      "up": 52
-     },
-     "stuck": false,
-     "errs": 0
-    },
-    {
-     "k": "houses",
-     "name": "houses",
-     "ic": "",
-     "img": "bundle_desk_z_houses.jpg",
-     "diff": 0.008,
-     "mv": {
-      "right": 50,
-      "down": 54,
-      "left": 53,
-      "up": 54
-     },
-     "stuck": false,
-     "errs": 0
-    }
-   ],
-   "sig0": "",
-   "games": [
-    {
-     "n": "🕹 Bóng đá 3 đánh 3",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Bong_da_3_danh_3.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bóng rổ ném rổ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Bong_ro_nem_ro.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Trượt ván",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Truot_van.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Trượt patin",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Truot_patin.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Trượt tuyết 5 ngọn núi",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Truot_tuyet_5_ngon_nui.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bay khinh khí cầu",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Bay_khinh_khi_cau.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Lửa trại & tiệc nướng BBQ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Lua_trai_tiec_nuong_BBQ.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Đua thú ở nông trại",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__dua_thu_o_nong_trai.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Chạy 100 m",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Chay_100_m.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Chạy 110 m vượt rào",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Chay_110_m_vuot_rao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy xa",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Nhay_xa.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy cao",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Nhay_cao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy sào",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Nhay_sao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Ném lao",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Nem_lao.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Đẩy tạ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__day_ta.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Cử tạ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Cu_ta.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Nhảy cầu 10 m",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Nhay_cau_10_m.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Thể dục dụng cụ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__The_duc_dung_cu.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bơi lội 5 làn Olympic",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Boi_loi_5_lan_Olympic.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Bắn cung Olympic",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Ban_cung_Olympic.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Rubik Kart · đua xe 3D",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Rubik_Kart_dua_xe_3D.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Khúc côn cầu trên bàn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Khuc_con_cau_tren_ban.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Đấu xe tăng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__dau_xe_tang.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Câu cá thư giãn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Cau_ca_thu_gian.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Câu cá ngoài khơi",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Cau_ca_ngoai_khoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🕹 Tàu hải tặc Râu Cam",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Tau_hai_tac_Rau_Cam.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏟 Đấu trường online v45",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__dau_truong_online_v45.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🛍 Cửa hàng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Cua_hang.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏠 Nhà tôi",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Nha_toi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🛒 Chợ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Cho.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🗺 Bản đồ lớn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Ban_do_lon.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏰 Bản đồ nhà v48",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Ban_do_nha_v48.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 2,
-     "errs": []
-    },
-    {
-     "n": "🪄 Học viện phép thuật",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Hoc_vien_phep_thuat.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "🪄 Pha Chế Thuốc",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Pha_Che_Thuoc.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Bay Chổi Qua Vòng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Bay_Choi_Qua_Vong.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Đấu Phép Hình Nộm",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__dau_Phep_Hinh_Nom.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Vẽ Ký Hiệu Phép",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Ve_Ky_Hieu_Phep.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Xem Sao Tháp Thiên Văn",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Xem_Sao_Thap_Thien_Van.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Chăm Sinh Vật Phép",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Cham_Sinh_Vat_Phep.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🪄 Giải Đố Rune Rubik",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Giai_do_Rune_Rubik.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧙 Phố phép thuật",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Pho_phep_thuat.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "💻 Trường tin học",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Truong_tin_hoc.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Lập trình khối",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Bai_Lap_trinh_khoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Tìm lỗi (debug)",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Bai_Tim_loi_debug_.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Thuật toán Rubik",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Bai_Thuat_toan_Rubik.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Số nhị phân",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Bai_So_nhi_phan.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Vẽ pixel theo toạ độ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Bai_Ve_pixel_theo_toa_do.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài Gõ phím nhanh",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Bai_Go_phim_nhanh.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💻 Bài An toàn trên mạng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Bai_An_toan_tren_mang.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "✈️ Hangar máy bay",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Hangar_may_bay.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏬 TTTM",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__TTTM.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "💻 Laptop",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Laptop.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🍳 Bếp nhà",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Bep_nha.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🍳 Nấu ăn: Phở bò",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Nau_an_Pho_bo.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 3,
-     "errs": []
-    },
-    {
-     "n": "🚁 Drone",
-     "opened": false,
-     "err": null,
-     "closed": true,
-     "how": "sẵn",
-     "left": "",
-     "img": null,
-     "scan": null,
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🚒 Trạm cứu hoả",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Tram_cuu_hoa.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🚓 Đồn cảnh sát",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__don_canh_sat.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧯 Cứu hoả: Nhà bếp",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Cuu_hoa_Nha_bep.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧯 Cứu hoả: Bìa rừng",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Cuu_hoa_Bia_rung.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🧯 Cứu hoả: Máy bay",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Cuu_hoa_May_bay.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "📖 Sổ cá biển",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__So_ca_bien.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏴‍☠️ Tàu hải tặc",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__Tau_hai_tac.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "💰 Bảng Lương",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Bang_Luong.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🌳 Cây thần kỳ",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Cay_than_ky.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏆 Thành tựu & Lễ hội",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Thanh_tuu_Le_hoi.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "📖 Sổ Hành trình",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__So_Hanh_trinh.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "✈️ Hangar (v73a)",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "nút ✕",
-     "left": "",
-     "img": "bundle_desk_g__Hangar_v73a_.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🔥 Đường bay tốc độ Tia Lửa",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "ép đóng",
-     "left": "",
-     "img": "bundle_desk_g__duong_bay_toc_do_Tia_Lua.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    },
-    {
-     "n": "🏬 TTTM tầng 2 · cần câu",
-     "opened": true,
-     "err": null,
-     "closed": true,
-     "how": "Esc",
-     "left": "",
-     "img": "bundle_desk_g__TTTM_tang_2_can_cau.jpg",
-     "scan": {
-      "bad": [],
-      "small": [],
-      "tiny": [],
-      "cover": [],
-      "over": false
-     },
-     "iv": 0,
-     "ls": 0,
-     "errs": []
-    }
-   ],
-   "leak0": {
-    "iv": 58,
-    "ls": 63
-   },
-   "leakRep": [
-    {
-     "n": "🕹 Bóng đá 3 đánh 3",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bóng rổ ném rổ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Trượt ván",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Trượt patin",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Trượt tuyết 5 ngọn núi",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bay khinh khí cầu",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Lửa trại & tiệc nướng BBQ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Đua thú ở nông trại",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Chạy 100 m",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Chạy 110 m vượt rào",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy xa",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy cao",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy sào",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Ném lao",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Đẩy tạ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Cử tạ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Nhảy cầu 10 m",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Thể dục dụng cụ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bơi lội 5 làn Olympic",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Bắn cung Olympic",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Rubik Kart · đua xe 3D",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Khúc côn cầu trên bàn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Đấu xe tăng",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Câu cá thư giãn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Câu cá ngoài khơi",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🕹 Tàu hải tặc Râu Cam",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🏟 Đấu trường online v45",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🛍 Cửa hàng",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🏠 Nhà tôi",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🛒 Chợ",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🗺 Bản đồ lớn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🏰 Bản đồ nhà v48",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Học viện phép thuật",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Pha Chế Thuốc",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Bay Chổi Qua Vòng",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Đấu Phép Hình Nộm",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Vẽ Ký Hiệu Phép",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Xem Sao Tháp Thiên Văn",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Chăm Sinh Vật Phép",
-     "iv": 0,
-     "ls": 0
-    },
-    {
-     "n": "🪄 Giải Đố Rune Rubik",
-     "iv": 0,
-     "ls": 0
-    }
-   ],
-   "leak1": {
-    "iv": 58,
-    "ls": 80
-   },
-   "fps": {
-    "stand": {
-     "fps": 60,
-     "p95": 16.8,
-     "max": 16.8,
-     "long": 0
-    },
-    "walk": {
-     "fps": 60,
-     "p95": 16.7,
-     "max": 16.8,
-     "long": 0
-    },
-    "soak": {
-     "fps": 59.7,
-     "p95": 16.8,
-     "max": 33.3,
-     "long": 0,
-     "sec": 150
-    }
-   },
-   "save": {
-    "ok": true,
-    "keys": 25,
-    "diffs": [],
-    "ign": 0,
-    "check": {
-     "money": true,
-     "hat": true,
-     "luong": true,
-     "story": true,
-     "cay": true
-    }
-   },
-   "logs": [],
-   "warnN": 0,
-   "errN": 0,
-   "sec": 765
+   "sec": 176
   }
  }
 }
