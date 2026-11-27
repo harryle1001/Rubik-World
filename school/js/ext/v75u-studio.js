@@ -87,6 +87,11 @@ function v75uPlace(k, force){
   const r = el.getBoundingClientRect(), W = innerWidth, H = innerHeight;
   const off = r.right <= 0 || r.bottom <= 0 || r.left >= W || r.top >= H;
   let tv = t0;
+  if(!off && d.rw != null && !V75U.rwBusy){ const base = r.width/sc, q = d.rw/base/(V75U.S.play.ui || 1), B = V75U.B[k];
+    let ns = Math.abs(q - 1) < .04 ? 1 : Math.round(Math.max(B.o.min || .85, Math.min(V75U_PHI, q))*1000)/1000;
+    if(Math.abs(ns - (d.s || 1)) > .01){ if(ns === 1) delete d.s; else d.s = ns;
+      if(tr) st.setProperty('transition', tr, tp); else st.removeProperty('transition'); if(t0) st.setProperty('translate', t0, 'important'); else st.removeProperty('translate');
+      V75U.rwBusy = true; try { return v75uPlace(k, true); } finally { V75U.rwBusy = false; } } }
   if(!off){ const [x, y] = v75uXY(d, r.width, r.height); tv = Math.round(x - r.left) + 'px ' + Math.round(y - r.top) + 'px';
     V75U.comp.set(k, {nx:r.left, ny:r.top, w:r.width, h:r.height, tv, dx:Math.round(x - r.left), dy:Math.round(y - r.top)}); d.lw = Math.round(r.width); d.lh = Math.round(r.height); }
   if(tv) st.setProperty('translate', tv, 'important'); else st.removeProperty('translate');
@@ -268,7 +273,10 @@ function v75uPanelFill(){
         + `<button type="button" data-h="${k}" ${B.o.lock ? 'disabled title="Khối này luôn cần có trên màn"' : ''} aria-label="${d.hide ? 'Hiện' : 'Ẩn'} ${B.n}">${d.hide ? '🙈' : '👁'}</button>`
         + `<button type="button" data-m="${k}" ${B.o.lock || B.o.nomenu ? 'disabled' : ''} class="${d.menu ? 'on' : ''}" aria-label="${d.menu ? 'Đưa ra màn hình' : 'Dời vào menu'}">${d.menu ? '📤 Ra ngoài' : '📥 Vào menu'}</button>`
         + `<button type="button" data-r="${k}" aria-label="Về mặc định ${B.n}">↩️</button></div>`; }
-    h += '<div class="v75uFoot"><button type="button" data-ra>↩️ Về mặc định toàn bộ bố cục</button></div>';
+    h += '<div class="v75uFoot"><button type="button" data-ra>↩️ Về mặc định toàn bộ bố cục</button></div>'
+      + '<div class="v75uRow"><span>📋 Bố cục dạng JSON<small>Dán bố cục đã xếp trên trang Claude, hoặc sao chép bố cục hiện tại</small></span>'
+      + '<textarea id="v75uJson" rows="3" aria-label="Bố cục JSON" style="flex:1 1 100%;min-height:66px;font:16px/1.4 ui-monospace,monospace;border-radius:13px;border:2px solid rgba(255,255,255,.22);background:rgba(0,0,0,.35);color:#fff;padding:8px"></textarea>'
+      + '<button type="button" data-ij>📥 Nhập</button><button type="button" data-ej>📤 Xuất ra ô trên</button></div>';
   } else {
     const P = V75U.S.play, g = v75uGfx(), vol = v75uVol(), pace = v75uPace();
     const row = (t, sub, ctl) => `<div class="v75uRow"><span>${t}<small>${sub}</small></span>${ctl}</div>`;
@@ -290,6 +298,9 @@ function v75uPanelFill(){
     if(ds.h){ const d = v75uDx(ds.h); d.hide = !d.hide; if(d.hide) d.menu = false; v75uChanged(ds.h); return; }
     if(ds.m){ const d = v75uDx(ds.m); d.menu = !d.menu; if(d.menu) d.hide = false; v75uChanged(ds.m); if(d.menu) try { toast('📥 “' + V75U.B[ds.m].n + '” đã vào ☰ Menu.'); } catch(er){} return; }
     if(ds.r){ v75uReset(ds.r); return; }
+    if('ij' in ds){ const t = document.getElementById('v75uJson'); let o = null; try { o = JSON.parse(t.value); } catch(er){}
+      if(!o || !o.screens){ try { toast('⚠️ JSON chưa đúng định dạng bố cục (cần "screens").'); } catch(er){} return; } v75uApplyLayout(o); try { toast('📥 Đã nhập bố cục.'); } catch(er){} return; }
+    if('ej' in ds){ const t = document.getElementById('v75uJson'); t.value = JSON.stringify(v75uExportLayout()); t.select(); try { navigator.clipboard && navigator.clipboard.writeText(t.value).catch(() => {}); } catch(er){} return; }
     if('ra' in ds){ if(confirm('Đưa mọi khối của kiểu màn “' + V75U_KN[V75U.kind] + '” về chỗ cũ?')) v75uResetAll(); return; }
     if('rp' in ds){ v75uPlayReset(); return; }
     if(ds.k){ let v = ds.v; v = v === 'true' ? true : v === 'false' ? false : isNaN(+v) ? v : +v;
@@ -365,7 +376,7 @@ function v75uActFill(){
 // đổi cỡ giữ góc trên-trái đứng yên; giới hạn để khối không tràn màn / không che quá nhiều
 function v75uResize(k, r, s){
   const B = V75U.B[k], D = v75uDx(k), s0 = D.s || 1, W = innerWidth, H = innerHeight, k0 = r.w/s0/(V75U.S.play.ui || 1), h0 = r.h/s0/(V75U.S.play.ui || 1), ui = V75U.S.play.ui || 1;
-  s = Math.max(B.o.min || .85, Math.min(V75U_PHI, s));
+  delete D.rw; delete D.rh; s = Math.max(B.o.min || .85, Math.min(V75U_PHI, s));
   const cap = Math.min((W - 2*V75U_G)/(k0*ui), (H*.618)/(h0*ui), Math.sqrt(W*H*.382/(k0*h0))/ui); if(s > s0 && s > cap) s = Math.max(s0, cap);
   if(s > s0 && (V75U.cov || 0) > .5) s = s0;
   const w = k0*s*ui, h = h0*s*ui, [fx, fy] = v75uF(r.x, r.y, w, h); D.s = Math.round(s*1000)/1000; D.fx = fx; D.fy = fy;
@@ -407,6 +418,49 @@ function v75uDragBind(f, k){
   f.addEventListener('focus', () => v75uSelect(k));
 }
 
+// ---------- 7b. nhập / xuất bố cục JSON (định dạng trang sắp xếp trên Claude) ----------
+// {"ver":1,"screens":{"doc"|"ngang"|"pc":{"w","h","blocks":[{"id","x","y","w","h","hidden","inMenu"}]}},"play":{speed,swipe,zoom,font,alpha,gfx,pace,steps,autodoor}}
+const V75U_SCR = {doc:'phone', ngang:'land', pc:'desk'};
+const V75U_REF = {phone:[390, 844], land:[844, 390], desk:[1440, 900]};
+function v75uIdKey(id){
+  if(V75U.B[id]) return id; const q = '#' + id;
+  for(const k in V75U.B){ const sel = V75U.B[k].sel; if(sel === q || (id === 'hud' && /\.hud$/.test(sel))) return k; }
+  return null;
+}
+function v75uApplyLayout(o, quiet){
+  if(!o || typeof o !== 'object') return false; const g = V75U_G;
+  for(const sn in (o.screens || {})){ const kind = V75U_SCR[sn] || (V75U.S.lay[sn] ? sn : null), sc = o.screens[sn]; if(!kind || !sc || !Array.isArray(sc.blocks)) continue;
+    const W = +sc.w || V75U_REF[kind][0], H = +sc.h || V75U_REF[kind][1], L = {};
+    sc.blocks.forEach(b => { const k = b && v75uIdKey(String(b.id || '')); if(!k) return; const d = {};
+      if(isFinite(b.x) && isFinite(b.y) && isFinite(b.w) && isFinite(b.h)){ const fw = W - b.w - 2*g, fh = H - b.h - 2*g, c = v => Math.max(0, Math.min(1, v));
+        d.fx = fw > 0 ? c((b.x - g)/fw) : .5; d.fy = fh > 0 ? c((b.y - g)/fh) : .5; d.rw = +b.w; d.rh = +b.h; d.lw = Math.round(b.w); d.lh = Math.round(b.h); }
+      if(b.hidden && !V75U.B[k].o.lock) d.hide = true; if(b.inMenu && !V75U.B[k].o.lock && !V75U.B[k].o.nomenu){ d.menu = true; d.hide = false; }
+      L[k] = d; });
+    V75U.S.lay[kind] = L; }
+  const P = o.play, S = V75U.S.play;
+  if(P && typeof P === 'object'){
+    if(isFinite(P.speed)) S.spd = Math.max(.5, Math.min(2, +P.speed)); if(isFinite(P.swipe)) S.swipe = Math.max(.5, Math.min(2.5, +P.swipe));
+    if(isFinite(P.zoom)) S.zoom = +P.zoom ? Math.max(.4, Math.min(2.5, +P.zoom)) : 0; if(isFinite(P.font)) S.ui = Math.max(1, Math.min(1.5, +P.font/16));
+    if(isFinite(P.alpha)) S.alpha = Math.max(.5, Math.min(1, +P.alpha)); if(typeof P.steps === 'boolean') S.guide = P.steps ? 'foot' : 'none'; if(typeof P.autodoor === 'boolean') S.door = P.autodoor;
+    if(P.gfx != null) try { if(String(P.gfx) === 'auto'){ V70F.auto = true; v70fSave(); } else if(/^[012]$/.test(String(P.gfx))){ V70F.slow = 0; V70F.down = performance.now(); v70fSet(+P.gfx); } } catch(e){}
+    if(P.pace === 'chill' || P.pace === 'normal') try { SETTINGS.pace = P.pace; setSave(); v53vApplyPace(); } catch(e){}
+    V75U.zoomed = false; }
+  for(const key in V75U.B){ const el = v75uEl(key); if(el){ el.style.removeProperty('translate'); el.style.removeProperty('scale'); el.style.removeProperty('transform-origin'); } }
+  if(!quiet) v75uSave(); v75uAll(); v75uZoom(); if(V75U.arr){ v75uSelect(null); v75uFrames(); } v75uPanelFill(); return true;
+}
+function v75uExportLayout(){
+  const o = {ver:1, savedAt:new Date().toISOString(), screens:{}, play:{}}, g = V75U_G, P = V75U.S.play;
+  for(const sn in V75U_SCR){ const kind = V75U_SCR[sn], cur = kind === V75U.kind, W = cur ? innerWidth : V75U_REF[kind][0], H = cur ? innerHeight : V75U_REF[kind][1], L = V75U.S.lay[kind], blocks = [];
+    for(const k in V75U.B){ const d = L[k], el = v75uEl(k); let r = null;
+      if(cur && el && v75uVis(el)){ const q = el.getBoundingClientRect(); r = [q.left, q.top, q.width, q.height]; }
+      else if(d && d.fx != null && d.lw){ const w = d.lw, h = d.lh || 40; r = [g + d.fx*Math.max(0, W - w - 2*g), g + d.fy*Math.max(0, H - h - 2*g), w, h]; }
+      if(!r && !(d && (d.hide || d.menu))) continue; const id = (V75U.B[k].sel.match(/#([\w-]+)$/) || [0, k === 'hud' ? 'hud' : k])[1];
+      const b = {id}; if(r){ b.x = Math.round(r[0]); b.y = Math.round(r[1]); b.w = Math.round(r[2]); b.h = Math.round(r[3]); } b.hidden = !!(d && d.hide); b.inMenu = !!(d && d.menu); blocks.push(b); }
+    o.screens[sn] = {w:W, h:H, blocks}; }
+  o.play = {speed:P.spd, swipe:P.swipe, zoom:P.zoom, font:Math.round(16*(P.ui || 1)), alpha:P.alpha, gfx:typeof V70F === 'object' ? (V70F.auto ? 'auto' : String(V70F.q)) : 'auto', pace:v75uPace() || 'chill', steps:P.guide !== 'none', autodoor:P.door !== false};
+  return o;
+}
+
 // ---------- 8. khởi động ----------
 function v75uFabPos(){
   const b = document.getElementById('v75uFab'), st = document.getElementById('stage'); if(!b || !st) return; let y = 0, x = 0; const sr = st.getBoundingClientRect();
@@ -421,6 +475,7 @@ function v75uOnResize(){
 function v75uInit(){
   V75U_B.forEach(([k, sel, n, o]) => V75U.B[k] = {sel, n, o});
   v75uLoad(); V75U.kind = v75uKindNow(); v75uUi(); v75uMenuHook(); v75uPlayHooks();
+  if(!V75U.S.t && typeof V75U_PRESET !== 'undefined' && V75U_PRESET) try { v75uApplyLayout(V75U_PRESET, true); } catch(e){ console.warn('v75u preset', e); }
   let rT = 0; const rs = () => { clearTimeout(rT); rT = setTimeout(v75uOnResize, 180); };
   addEventListener('resize', rs); addEventListener('orientationchange', rs);
   addEventListener('keydown', e => {
@@ -430,5 +485,5 @@ function v75uInit(){
     if(typeof openModal !== 'undefined' && openModal) return; e.preventDefault(); if(V75U.arr) v75uArr(false, true); else if(V75U.panel.hidden) v75uOpen(); else v75uClose(); }, true);
   setInterval(() => { try { v75uFabPos(); v75uProf(); v75uZoom(); if(!V75U.arr) v75uCheck(); } catch(e){ console.warn('v75u', e); } }, 1000);
   v75uFabPos(); v75uAll();
-  if(location.hostname === 'localhost' || location.hostname === '127.0.0.1') window.__v75u = {V75U, v75uOpen, v75uArr, v75uAll, v75uKindNow};
+  if(location.hostname === 'localhost' || location.hostname === '127.0.0.1') window.__v75u = {V75U, v75uOpen, v75uArr, v75uAll, v75uKindNow, v75uApplyLayout, v75uExportLayout};
 }
