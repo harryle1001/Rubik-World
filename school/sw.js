@@ -6,10 +6,10 @@
 //  • ảnh trong assets/: bảng băm nội dung dist/assets.<hash>.json (build.js tạo) → ảnh không đổi thì không bao giờ hỏi lại máy chủ,
 //    ảnh đổi nội dung thì khoá cache đổi theo → tải bản mới. Ảnh lạ (không có trong bảng): dùng cache, hỏi lại ở nền.
 //  • cài bản mới: nạp sẵn bản gói + trang + css; ảnh đã có trong cache HTTP thì chép sang (không tải lại).
-const VER = 'v61l-9143673fda';
-const PRE = ["dist/game.25a4bc4bc3.js","dist/lazy.b695231910.json","dist/cat.3e417e9e52.json"];                 // bản gói hiện tại + dữ liệu nhỏ: nạp sẵn khi cài
+const VER = 'v61l-169c635e7a';
+const PRE = ["dist/game.9421be972c.js","dist/lazy.b695231910.json","dist/cat.3e417e9e52.json"];                 // bản gói hiện tại + dữ liệu nhỏ: nạp sẵn khi cài
 const MAN = 'dist/assets.ec3513ae59.json';               // bảng băm ảnh/css (rỗng nếu thư mục không có assets/)
-const DIST = ["dist/game.25a4bc4bc3.js","dist/piano.666dfec6ba.json","dist/cat.3e417e9e52.json","dist/books.ac53496e42.json","dist/lazy.b695231910.json"];               // mọi file dist/ của phiên bản này (bản gói + dữ liệu tải lười)
+const DIST = ["dist/game.9421be972c.js","dist/piano.666dfec6ba.json","dist/cat.3e417e9e52.json","dist/books.ac53496e42.json","dist/lazy.b695231910.json"];               // mọi file dist/ của phiên bản này (bản gói + dữ liệu tải lười)
 const IMM = 'v74l-imm', RT = 'v74l-rt', META = 'v74l-meta';
 const IMMUTABLE = [/\/dist\/[\w-]+\.[0-9a-f]{8,}\.(js|json)$/, /\/js\/vendor\//, /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js\/r128\//, /^https:\/\/fonts\.gstatic\.com\//];
 const SWR = [/^https:\/\/fonts\.googleapis\.com\/css2?\?/];
